@@ -72,6 +72,10 @@ import static org.ballerinalang.net.grpc.GrpcConstants.ANN_ATTR_RESOURCE_SERVER_
 import static org.ballerinalang.net.grpc.GrpcConstants.ANN_RESOURCE_CONFIG;
 import static org.ballerinalang.net.grpc.GrpcConstants.ON_COMPLETE_RESOURCE;
 import static org.ballerinalang.net.grpc.GrpcConstants.ON_MESSAGE_RESOURCE;
+import static org.ballerinalang.net.grpc.GrpcConstants.WRAPPER_BOOL_MESSAGE;
+import static org.ballerinalang.net.grpc.GrpcConstants.WRAPPER_FLOAT_MESSAGE;
+import static org.ballerinalang.net.grpc.GrpcConstants.WRAPPER_INT64_MESSAGE;
+import static org.ballerinalang.net.grpc.GrpcConstants.WRAPPER_STRING_MESSAGE;
 
 /**
  * Utility class providing proto file based of the Ballerina service.
@@ -251,7 +255,6 @@ public class ServiceProtoUtils {
                 fileBuilder.setDependency(requestMessage.getDependency());
             }
         }
-
         if (responseMessage.getMessageKind() == MessageKind.USER_DEFINED) {
             updateFileBuilder(fileBuilder, responseMessage);
         }
@@ -260,7 +263,6 @@ public class ServiceProtoUtils {
                 fileBuilder.setDependency(responseMessage.getDependency());
             }
         }
-        
         Method resourceMethod = Method.newBuilder(serviceConfig.getRpcEndpoint())
                 .setClientStreaming(serviceConfig.isClientStreaming())
                 .setServerStreaming(serviceConfig.isServerStreaming())
@@ -272,7 +274,6 @@ public class ServiceProtoUtils {
     }
 
     private static void updateFileBuilder(File.Builder fileBuilder, Message message) {
-
         if (isNewMessageDefinition(fileBuilder, message)) {
             fileBuilder.setMessage(message);
         }
@@ -333,9 +334,7 @@ public class ServiceProtoUtils {
     }
 
     private static BType getMessageParamType(List<?> variableNodes) throws GrpcServerException {
-
         BType requestType = null;
-
         for (Object variable : variableNodes)  {
             if (variable instanceof BLangNode) {
                 BType tempType = ((BLangNode) variable).type;
@@ -370,19 +369,19 @@ public class ServiceProtoUtils {
         Message message = null;
         switch (messageType.getKind()) {
             case STRING: {
-                message = WrapperMessage.newBuilder(ServiceProtoConstants.WRAPPER_STRING_MESSAGE).build();
+                message = WrapperMessage.newBuilder(WRAPPER_STRING_MESSAGE).build();
                 break;
             }
             case INT: {
-                message = WrapperMessage.newBuilder(ServiceProtoConstants.WRAPPER_INT64_MESSAGE).build();
+                message = WrapperMessage.newBuilder(WRAPPER_INT64_MESSAGE).build();
                 break;
             }
             case FLOAT: {
-                message = WrapperMessage.newBuilder(ServiceProtoConstants.WRAPPER_FLOAT_MESSAGE).build();
+                message = WrapperMessage.newBuilder(WRAPPER_FLOAT_MESSAGE).build();
                 break;
             }
             case BOOLEAN: {
-                message = WrapperMessage.newBuilder(ServiceProtoConstants.WRAPPER_BOOL_MESSAGE).build();
+                message = WrapperMessage.newBuilder(WRAPPER_BOOL_MESSAGE).build();
                 break;
             }
             case OBJECT:
@@ -438,7 +437,6 @@ public class ServiceProtoUtils {
                 fieldType = elementType;
                 fieldLabel = "repeated";
             }
-
             messageField = Field.newBuilder(fieldName)
                     .setIndex(++fieldIndex)
                     .setLabel(fieldLabel)
