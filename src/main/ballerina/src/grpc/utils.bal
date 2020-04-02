@@ -1,4 +1,4 @@
-// Copyright (c) 2018 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2020 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -14,20 +14,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/grpc;
-
-
-service HelloWorld on new grpc:Listener(9090) {
-
-    resource function returnError(grpc:Caller caller, string name) returns error? {
-        error err = error("Return Error");
-        return err;
+function checkErrorForRetry(Error e, ErrorType[] errors) returns boolean {
+    string reason = e.reason();
+    foreach var errorType in errors {
+        if (errorType == reason) {
+            return true;
+        }
     }
-
-    resource function returnNil(grpc:Caller caller, string name) returns error? {
-        return;
-    }
-
-    resource function noReturn(grpc:Caller caller, string name) {
-    }
+    return false;
 }
