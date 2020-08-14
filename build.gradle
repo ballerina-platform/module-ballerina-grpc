@@ -45,6 +45,7 @@ dependencies {
     implementation project(':ballerina-http')
     implementation project(':ballerina-runtime')
     implementation project(':ballerina-java')
+    implementation project(':ballerina-tool')
 
     interopImports project(':ballerina-io')
 
@@ -54,6 +55,7 @@ dependencies {
     implementation 'com.github.jknack:handlebars'
     implementation 'io.netty:netty-codec-http'
     implementation 'org.wso2.transport.http:org.wso2.transport.http.netty'
+    implementation 'info.picocli:picocli'
 
     interopImports project(':ballerina-config-api')
     interopImports project(':ballerina-io')
