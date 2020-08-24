@@ -1,2 +1,2 @@
-org.ballerinalang.protobuf.cmd.GrpcCmd
+org.ballerinalang.net.grpc.protobuf.cmd.GrpcCmd
 

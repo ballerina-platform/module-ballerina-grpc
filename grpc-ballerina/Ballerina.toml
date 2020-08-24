@@ -12,12 +12,12 @@ target = "java8"
     groupId = "ballerina"
     modules = ["grpc"]
 
-#    [[platform.libraries]]
-#    artifactId = "http"
-#    version = "1.0.0"
-#    path = "./build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-2.0.0-Preview4-SNAPSHOT/bre/lib/ballerina-http-1.0.0-java.jar"
-#    groupId = "ballerina"
-#    modules = ["grpc"]
+    [[platform.libraries]]
+    artifactId = "http"
+    version = "1.0.0"
+    path = "./build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-2.0.0-Preview4-SNAPSHOT/bre/lib/ballerina-http-1.0.0-java.jar"
+    groupId = "ballerina"
+    modules = ["grpc"]
 
     [[platform.libraries]]
     artifactId = "org.wso2.transport.http.netty"
