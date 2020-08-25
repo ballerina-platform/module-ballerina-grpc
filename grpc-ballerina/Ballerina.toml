@@ -1,14 +1,14 @@
 [project]
 org-name = "ballerina"
-version = "@toml.version@"
+version = "0.7.0"
 
 [platform]
 target = "java8"
 
     [[platform.libraries]]
     artifactId = "grpc"
-    version = "@project.version@"
-    path = "../grpc-native/build/libs/grpc-native-@project.version@.jar"
+    version = "0.7.0-SNAPSHOT"
+    path = "../grpc-native/build/libs/grpc-native-0.7.0-SNAPSHOT.jar"
     groupId = "ballerina"
     modules = ["grpc"]
 

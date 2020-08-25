@@ -14,74 +14,67 @@
 // specific language governing permissions and limitations
 // under the License.
 
+// This is client implementation for server streaming scenario
 import ballerina/io;
 import ballerina/runtime;
 import ballerina/test;
 
-string response = "";
-int total = 0;
+int msgCount = 0;
+boolean eof = false;
 
 @test:Config {}
-function testClientStreaming() {
-    string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
+function testReceiveStreamingResponse() {
+    string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld4Client helloWorldEp = new ("http://localhost:9094");
+    HelloWorld6Client helloWorldEp = new("http://localhost:9096");
 
-    StreamingClient ep = new;
     // Executing unary non-blocking call registering server message listener.
-    var res = helloWorldEp->lotsOfGreetings(HelloWorldMessageListener);
-    if (res is Error) {
-        test:assertFail("Error from Connector: " + res.message());
+    Error? result = helloWorldEp->lotsOfReplies(name, HelloWorld6MessageListener);
+    if (result is Error) {
+        test:assertFail("Error from Connector: " + result.message());
     } else {
-        ep = res;
+        io:println("Connected successfully");
     }
-    io:println("Initialized connection sucessfully.");
-
-    foreach var greet in requests {
-        Error? err = ep->send(greet);
-        if (err is Error) {
-            test:assertFail("Error from Connector: " + err.message());
-        }
-    }
-    checkpanic ep->complete();
 
     int waitCount = 0;
-    while(total < 1) {
+    while(msgCount < 3 || !eof) {
         runtime:sleep(1000);
-        io:println("msg count: ", total);
+        io:println("msg count: " + msgCount.toString());
         if (waitCount > 10) {
             break;
         }
         waitCount += 1;
     }
-    io:println("completed successfully");
-    test:assertEquals(response, "Ack");
+
+    io:println("responses count: " + msgCount.toString());
+    test:assertEquals(msgCount, 3);
 }
 
 // Server Message Listener.
-service HelloWorldMessageListener = service {
+service HelloWorld6MessageListener = service {
 
     // Resource registered to receive server messages
-    function onMessage(string message) {
-        response = <@untainted> message;
-        io:println("Response received from server: " + response);
-        total = 1;
+    resource function onMessage(string message) {
+        lock {
+            io:println("Response received from server: " + message);
+            msgCount = msgCount + 1;
+        }
     }
 
     // Resource registered to receive server error messages
-    function onError(error err) {
+    resource function onError(error err) {
         io:println("Error from Connector: " + err.message());
     }
 
     // Resource registered to receive server completed message.
-    function onComplete() {
-        total = 1;
-        io:println("Server Complete Sending Responses.");
+    resource function onComplete() {
+        io:println("Server Complete Sending Response.");
+        eof = true;
     }
 };
 
 // Non-blocking client endpoint
-public type HelloWorld4Client client object {
+public type HelloWorld6Client client object {
 
     *AbstractClientEndpoint;
 
@@ -90,10 +83,10 @@ public type HelloWorld4Client client object {
     public function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_4, getDescriptorMap4());
+        Error? result = self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 
-    public remote function lotsOfGreetings(service msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
-        return self.grpcClient->streamingExecute("grpcservices.HelloWorld7/lotsOfGreetings", msgListener, headers);
+    public remote function lotsOfReplies(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld45/lotsOfReplies", req, msgListener, headers);
     }
 };

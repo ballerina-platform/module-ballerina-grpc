@@ -20,13 +20,6 @@ import ballerina/runtime;
 import ballerina/test;
 
 string responseMsg = "";
-const string RESP_MSG_FORMAT = "Failed: Invalid Response, expected %s, but received %s";
-
-// Enable when you need to test locally.
-//public function main() {
-//    string resp = testBidiStreaming();
-//    io:println(resp);
-//}
 
 @test:Config {}
 public function testBidiStreaming() {
@@ -53,7 +46,7 @@ public function testBidiStreaming() {
     if (connErr is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
     }
-    if (!isValidResponse("Sam: Hi")) {
+    if (!responseReceived("Sam: Hi")) {
         test:assertFail(io:sprintf(RESP_MSG_FORMAT, "Sam: Hi", responseMsg));
     } else {
         responseMsg = "";
@@ -64,14 +57,14 @@ public function testBidiStreaming() {
     if (connErr is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
     }
-    if (!isValidResponse("Sam: GM")) {
+    if (!responseReceived("Sam: GM")) {
         test:assertFail(io:sprintf(RESP_MSG_FORMAT, "Sam: GM", responseMsg));
     }
 
     checkpanic ep->complete();
 }
 
-function isValidResponse(string expectedMsg) returns boolean {
+function responseReceived(string expectedMsg) returns boolean {
     int waitCount = 0;
     while(responseMsg == "") {
         runtime:sleep(1000);
