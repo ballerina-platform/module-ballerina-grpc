@@ -70,7 +70,7 @@ allprojects {
         }
 
         maven {
-            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerinax-nats'
+            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-grpc'
         }
     }
 }
