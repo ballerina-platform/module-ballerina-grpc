@@ -29,8 +29,7 @@ under the License.
          <classes>
             <class name="org.ballerinalang.net.grpc.CompressorCodecTest"/>
             <class name="org.ballerinalang.net.grpc.ProtoBuilderDefinitionTest"/>
-            <class name="org.ballerinalang.net.grpc.ResourceReturnTypeTest"/>
-            <!--<class name="org.ballerinalang.net.grpc.ConnectionPoolTestCase"/>-->
+            <class name="org.ballerinalang.net.grpc.ProtoMessageTestCase"/>
         </classes>
     </test>
 </suite>

@@ -300,4 +300,5 @@ unpackStdLibs.dependsOn unpackJballerinaTools
 copyStdlibs.dependsOn unpackStdLibs
 ballerinaBuild.dependsOn copyStdlibs
 ballerinaBuild.dependsOn ":grpc-native:build"
+ballerinaBuild.dependsOn ":grpc-test-utils:build"
 build.dependsOn ballerinaBuild

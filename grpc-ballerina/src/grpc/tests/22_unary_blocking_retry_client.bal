@@ -61,10 +61,10 @@ public function testRetryFailingClient() {
     var result = failingRetryClient->getResult("FailingRetryClient");
     if (result is Error) {
         io:println(result);
-        test:assertFail(result.message());
+        test:assertEquals(result.message(), "Maximum retry attempts completed without getting a result");
     } else {
         var [message, headers] = result;
-        test:assertEquals(message, "Maximum retry attempts completed without getting a result");
+        test:assertFail(message);
     }
 }
 

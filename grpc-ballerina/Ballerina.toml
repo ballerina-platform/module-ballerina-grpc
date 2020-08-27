@@ -13,10 +13,32 @@ target = "java8"
     modules = ["grpc"]
 
     [[platform.libraries]]
+    artifactId = "grpc"
+    version = "0.7.0-SNAPSHOT"
+    path = "../grpc-test-utils/build/libs/grpc-test-utils-0.7.0-SNAPSHOT.jar"
+    groupId = "org.ballerinalang"
+    modules = ["grpc"]
+    scope = "testOnly"
+
+    [[platform.libraries]]
     artifactId = "http"
     version = "1.0.0"
     path = "./build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-2.0.0-Preview4-SNAPSHOT/bre/lib/ballerina-http-1.0.0-java.jar"
     groupId = "ballerina"
+    modules = ["grpc"]
+
+    [[platform.libraries]]
+    artifactId = "ballerina-tool"
+    version = "2.0.0-Preview4-SNAPSHOT"
+    path = "./build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-2.0.0-Preview4-SNAPSHOT/bre/lib/ballerina-tool-2.0.0-Preview4-SNAPSHOT.jar"
+    groupId = "org.ballerinalang"
+    modules = ["grpc"]
+
+    [[platform.libraries]]
+    artifactId = "ballerina-lang"
+    version = "2.0.0-Preview4-SNAPSHOT"
+    path = "./build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-2.0.0-Preview4-SNAPSHOT/bre/lib/ballerina-lang-2.0.0-Preview4-SNAPSHOT.jar"
+    groupId = "org.ballerinalang"
     modules = ["grpc"]
 
     [[platform.libraries]]
@@ -157,6 +179,13 @@ target = "java8"
     version = "3.9.1"
     path = "./lib/protobuf-java-3.9.1.jar"
     groupId = "com.google.protobuf"
+    modules = ["grpc"]
+
+    [[platform.libraries]]
+    artifactId = "proto-google-common-protos"
+    version = "1.17.0"
+    path = "./lib/proto-google-common-protos-1.17.0.jar"
+    groupId = "com.google.api.grpc"
     modules = ["grpc"]
 
     [[platform.libraries]]
