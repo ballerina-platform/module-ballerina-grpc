@@ -14,7 +14,7 @@ target = "java8"
 
     [[platform.libraries]]
     artifactId = "grpc"
-    version = "0.7.0-SNAPSHOT"
+    version = "@project.version@"
     path = "../grpc-test-utils/build/libs/grpc-test-utils-@project.version@.jar"
     groupId = "org.ballerinalang"
     modules = ["grpc"]
