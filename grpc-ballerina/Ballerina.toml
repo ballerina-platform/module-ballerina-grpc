@@ -125,34 +125,6 @@ target = "java8"
     groupId = "io.netty"
     modules = ["grpc"]
 
-#    [[platform.libraries]]
-#    artifactId = "mimepull"
-#    version = "1.9.7"
-#    path = "./lib/mimepull-1.9.7.jar"
-#    groupId = "org.jvnet.mimepull"
-#    modules = ["grpc"]
-#
-#    [[platform.libraries]]
-#    artifactId = "org.wso2.carbon.messaging"
-#    version = "2.3.7"
-#    path = "./lib/org.wso2.carbon.messaging-2.3.7.jar"
-#    groupId = "org.wso2.carbon.messaging"
-#    modules = ["grpc"]
-#
-#    [[platform.libraries]]
-#    artifactId = "org.wso2.carbon.core"
-#    version = "5.1.0"
-#    path = "./lib/org.wso2.carbon.core-5.1.0.jar"
-#    groupId = "org.wso2.carbon"
-#    modules = ["grpc"]
-#
-#    [[platform.libraries]]
-#    artifactId = "org.wso2.carbon.secvault"
-#    version = "1.0.0"
-#    path = "./lib/org.wso2.securevault-1.0.0-wso2v2.jar"
-#    groupId = "org.wso2.carbon.secvault"
-#    modules = ["grpc"]
-
     [[platform.libraries]]
     artifactId = "protobuf-java"
     version = "3.9.1"
