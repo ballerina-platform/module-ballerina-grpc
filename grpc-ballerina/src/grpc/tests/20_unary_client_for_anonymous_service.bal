@@ -40,7 +40,9 @@ function beforeFunc() {
     log:printInfo("beforeFunc ends execution");
 }
 
-@test:Config {}
+@test:Config {
+    enable: false
+}
 function testAnonymousServiceWithBlockingClient() {
     // Executing unary blocking call
     [string, Headers]|Error unionResp = helloWorld20BlockingEp->hello("WSO2");

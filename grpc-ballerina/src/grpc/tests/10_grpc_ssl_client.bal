@@ -17,7 +17,9 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {}
+@test:Config {
+    enable: false
+}
 function testUnarySecuredBlockingWithCerts() {
     grpcMutualSslServiceBlockingClient helloWorldBlockingEp = new ("https://localhost:9100", {
         secureSocket:{
