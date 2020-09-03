@@ -19,35 +19,35 @@ import ballerina/java;
 # Provides the gRPC streaming client actions for interacting with the gRPC server.
 public type StreamingClient client object {
 
-# Sends the request message to the server.
-# ```ballerina
-# grpc:Error? err = caller->send(message);
-# ```
-#
-# + res - The inbound request message
-# + return - A `grpc:Error` if an error occurs while sending the response or else `()`
+    # Sends the request message to the server.
+    # ```ballerina
+    # grpc:Error? err = caller->send(message);
+    # ```
+    #
+    # + res - The inbound request message
+    # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
     public remote function send(anydata res) returns Error? {
         return streamSend(self, res);
     }
 
-# Informs the server when the caller has sent all the messages.
-# ```ballerina
-# grpc:Error? result = caller->complete();
-# ```
-#
-# + return - A `grpc:Error` if an error occurs while sending the response or else `()`
+    # Informs the server when the caller has sent all the messages.
+    # ```ballerina
+    # grpc:Error? result = caller->complete();
+    # ```
+    #
+    # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
     public remote function complete() returns Error? {
         return streamComplete(self);
     }
 
-# Sends an error message to the server.
-# ```ballerina
-# grpc:Error? result = streamingClient->sendError(grpc:ABORTED, "Operation aborted");
-# ```
-#
-# + statusCode - Error status code
-# + message - Error message
-# + return - A `grpc:Error` if an error occurs while sending the response or else `()`
+    # Sends an error message to the server.
+    # ```ballerina
+    # grpc:Error? result = streamingClient->sendError(grpc:ABORTED, "Operation aborted");
+    # ```
+    #
+    # + statusCode - Error status code
+    # + message - Error message
+    # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
     public remote function sendError(int statusCode, string message) returns Error? {
         return streamSendError(self, statusCode, message);
     }

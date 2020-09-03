@@ -21,8 +21,6 @@ description = 'Ballerina - gRPC Ballerina Generator'
 
 configurations {
     jbalTools
-    grpcBallerinaBirDir
-    grpcBallerinaJar
     externalJars
 }
 
@@ -31,10 +29,6 @@ dependencies {
         transitive = false
     }
     compile project(':grpc-native')
-
-    externalJars (group: 'org.ballerinalang', name: 'ballerina-http', version: "${ballerinaLangVersion}") {
-        transitive = false
-    }
 
     externalJars (group: 'org.wso2.transport.http', name: 'org.wso2.transport.http.netty', version: "${wso2HttpTransportVersion}") {
         transitive = false
@@ -169,11 +163,36 @@ def tomlVersion = project.version.split("-")[0]
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 def targetBallerinaJar = file("$project.projectDir/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
 def targetNativeJar = file("$project.rootDir/${moduleName}-native/build/libs/${moduleName}-native-${project.version}.jar")
+def originalConfig = ballerinaConfigFile.text
+
+task updateTomlVersions {
+    doLast {
+        def stdlibDependentRuntimeVersion = project.stdlibRuntimeVersion.split("-")[0]
+        def stdlibDependentCryptoVersion = project.stdlibCryptoVersion.split("-")[0]
+        def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
+        def stdlibDependentConfigVersion = project.stdlibConfigVersion.split("-")[0]
+
+        def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
+        newConfig = newConfig.replace("@toml.version@", tomlVersion)
+        newConfig = newConfig.replace("@stdlib.runtime.version@", stdlibDependentRuntimeVersion)
+        newConfig = newConfig.replace("@stdlib.crypto.version@", stdlibDependentCryptoVersion)
+        newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
+        newConfig = newConfig.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
+        ballerinaConfigFile.text = newConfig
+    }
+}
+
+task revertTomlFile {
+    doLast {
+        ballerinaConfigFile.text = originalConfig
+    }
+}
 
 task ballerinaBuild {
     inputs.dir file(project.projectDir)
+    finalizedBy(revertTomlFile)
+
     doLast {
-        def originalConfig = ballerinaConfigFile.text
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
         ballerinaConfigFile.text = newConfig
@@ -185,8 +204,8 @@ task ballerinaBuild {
             additionalBuildParams += "--skip-tests"
         }
 
-        if (project.hasProperty("debugBallerina")) {
-            def port = project.getProperty("debugBallerina").toString();
+        if (project.hasProperty("debug")) {
+            def port = project.getProperty("debug").toString();
             additionalBuildParams += "--debug ${port}"
         }
 
@@ -263,7 +282,6 @@ task ballerinaBuild {
             from file("$project.projectDir/target/apidocs/${moduleName}")
             into file("$project.projectDir/build/docs_parent/docs/${moduleName}")
         }
-        ballerinaConfigFile.text = originalConfig
     }
 
     outputs.dir artifactCacheParent
@@ -298,7 +316,8 @@ publishing {
 unpackJballerinaTools.dependsOn copyToLib
 unpackStdLibs.dependsOn unpackJballerinaTools
 copyStdlibs.dependsOn unpackStdLibs
-ballerinaBuild.dependsOn copyStdlibs
+updateTomlVersions.dependsOn copyStdlibs
 ballerinaBuild.dependsOn ":grpc-native:build"
 ballerinaBuild.dependsOn ":grpc-test-utils:build"
+ballerinaBuild.dependsOn updateTomlVersions
 build.dependsOn ballerinaBuild

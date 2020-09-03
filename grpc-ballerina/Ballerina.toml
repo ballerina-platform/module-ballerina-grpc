@@ -2,6 +2,12 @@
 org-name = "ballerina"
 version = "@toml.version@"
 
+[dependencies]
+"ballerina/runtime" = "@stdlib.runtime.version@"
+"ballerina/crypto" = "@stdlib.crypto.version@"
+"ballerina/http" = "@stdlib.http.version@"
+"ballerina/config" = "@stdlib.config.version@"
+
 [platform]
 target = "java8"
 
@@ -149,5 +155,3 @@ target = "java8"
 
 [build-options]
 observability-included=true
-
-[dependencies]

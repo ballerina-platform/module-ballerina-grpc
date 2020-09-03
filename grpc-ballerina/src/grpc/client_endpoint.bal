@@ -39,30 +39,30 @@ public type Client client object {
         }
     }
 
-# Calls when initializing the client endpoint with the service descriptor data extracted from the proto file.
-# ```ballerina
-# grpc:Error? result = grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR, getDescriptorMap());
-# ```
-#
-# + clientEndpoint -  Client endpoint
-# + stubType - Service Stub type. Possible values: blocking, nonblocking
-# + descriptorKey - Key of the proto descriptor
-# + descriptorMap - Proto descriptor map with all the dependent descriptors
-# + return - A `grpc:Error` if an error occurs while initializing the stub or else `()`
+    # Calls when initializing the client endpoint with the service descriptor data extracted from the proto file.
+    # ```ballerina
+    # grpc:Error? result = grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR, getDescriptorMap());
+    # ```
+    #
+    # + clientEndpoint -  Client endpoint
+    # + stubType - Service Stub type. Possible values: blocking, nonblocking
+    # + descriptorKey - Key of the proto descriptor
+    # + descriptorMap - Proto descriptor map with all the dependent descriptors
+    # + return - A `grpc:Error` if an error occurs while initializing the stub or else `()`
     public function initStub(AbstractClientEndpoint clientEndpoint, string stubType, string descriptorKey,
                              map<any> descriptorMap) returns Error? {
         return externInitStub(self, clientEndpoint, stubType, descriptorKey, descriptorMap);
     }
 
-# Calls when executing a blocking call with a gRPC service.
-# ```ballerina
-# [anydata, grpc:Headers]|grpc:Error result = grpcClient->blockingExecute("HelloWorld/hello", req, headers);
-# ```
-#
-# + methodID - Remote service method ID
-# + payload - Request message. The message type varies with the remote service method parameter
-# + headers - Optional headers parameter. The header value are passed only if needed. The default value is `()`
-# + return - The response message and headers if executed successfully or else a `grpc:Error`
+    # Calls when executing a blocking call with a gRPC service.
+    # ```ballerina
+    # [anydata, grpc:Headers]|grpc:Error result = grpcClient->blockingExecute("HelloWorld/hello", req, headers);
+    # ```
+    #
+    # + methodID - Remote service method ID
+    # + payload - Request message. The message type varies with the remote service method parameter
+    # + headers - Optional headers parameter. The header value are passed only if needed. The default value is `()`
+    # + return - The response message and headers if executed successfully or else a `grpc:Error`
     public remote function blockingExecute(string methodID, anydata payload, Headers? headers = ())
                                    returns ([anydata, Headers]|Error) {
         var retryConfig = self.config.retryConfiguration;
@@ -72,31 +72,31 @@ public type Client client object {
         return externBlockingExecute(self, methodID, payload, headers);
     }
 
-# Calls when executing a non-blocking call with a gRPC service.
-# ```ballerina
-# grpc:Error? result = grpcClient->nonBlockingExecute("HelloWorld/hello", req, msgListener, headers);
-# ```
-#
-# + methodID - Remote service method ID
-# + payload - Request message. The message type varies with the remote service method parameter
-# + listenerService - Call back listener service. This service listens to the response message from the service
-# + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
-# + return - A `grpc:Error` if an error occurs while sending the request or else `()`
+    # Calls when executing a non-blocking call with a gRPC service.
+    # ```ballerina
+    # grpc:Error? result = grpcClient->nonBlockingExecute("HelloWorld/hello", req, msgListener, headers);
+    # ```
+    #
+    # + methodID - Remote service method ID
+    # + payload - Request message. The message type varies with the remote service method parameter
+    # + listenerService - Call back listener service. This service listens to the response message from the service
+    # + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
+    # + return - A `grpc:Error` if an error occurs while sending the request or else `()`
     public remote function nonBlockingExecute(string methodID, anydata payload, service listenerService,
                                               Headers? headers = ()) returns Error? {
          return externNonBlockingExecute(self, methodID, payload, listenerService, headers);
     }
 
 
-# Calls when executing  a streaming call with a gRPC service.
-# ```ballerina
-# grpc:StreamingClient|grpc:Error result = grpcClient->streamingExecute("HelloWorld/lotsOfGreetings", msgListener,
-#                                                                        headers);
-# ```
-# + methodID - Remote service method ID
-# + listenerService - Call back listener service. This service listens to the response message from the service
-# + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
-# + return - A `grpc:StreamingClient` object if executed successfully or else `()`
+    # Calls when executing  a streaming call with a gRPC service.
+    # ```ballerina
+    # grpc:StreamingClient|grpc:Error result = grpcClient->streamingExecute("HelloWorld/lotsOfGreetings", msgListener,
+    #                                                                        headers);
+    # ```
+    # + methodID - Remote service method ID
+    # + listenerService - Call back listener service. This service listens to the response message from the service
+    # + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
+    # + return - A `grpc:StreamingClient` object if executed successfully or else `()`
     public remote function streamingExecute(string methodID, service listenerService, Headers? headers = ())
                                     returns StreamingClient|Error {
         return externStreamingExecute(self, methodID, listenerService, headers);
