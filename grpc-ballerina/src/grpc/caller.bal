@@ -28,57 +28,57 @@ public type Caller client object {
 
     private int instanceId = -1;
 
-# Returns the unique identification of the caller.
-# ```ballerina
-# int result = caller.getId();
-# ```
-#
-# + return - caller ID
+    # Returns the unique identification of the caller.
+    # ```ballerina
+    # int result = caller.getId();
+    # ```
+    #
+    # + return - caller ID
     public function getId() returns int {
         return self.instanceId;
     }
 
-# Sends the outbound response to the caller.
-# ```ballerina
-# grpc:Error? err = caller->send(message, headers);
-# ```
-#
-# + res - - The outbound response message
-# + headers - - Optional headers parameter. The header values are passed only if needed. The default value is `()`
-# + return - - A `grpc:Error` if an error occurs while sending the response or else `()`
+    # Sends the outbound response to the caller.
+    # ```ballerina
+    # grpc:Error? err = caller->send(message, headers);
+    # ```
+    #
+    # + res - - The outbound response message
+    # + headers - - Optional headers parameter. The header values are passed only if needed. The default value is `()`
+    # + return - - A `grpc:Error` if an error occurs while sending the response or else `()`
     public remote function send(anydata res, Headers? headers = ()) returns Error? {
         return externSend(self, res, headers);
     }
 
-# Informs the caller, when the server has sent all the messages.
-# ```ballerina
-# grpc:Error? result = caller->complete();
-# ```
-#
-# + return - A `grpc:Error` if an error occurs while sending the response or else `()`
+    # Informs the caller, when the server has sent all the messages.
+    # ```ballerina
+    # grpc:Error? result = caller->complete();
+    # ```
+    #
+    # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
     public remote function complete() returns Error? {
         return externComplete(self);
     }
 
-# Checks whether the connection is closed by the caller.
-# ```ballerina
-# boolean result = caller.isCancelled();
-# ```
-#
-# + return - True if the caller has already closed the connection or else false
+    # Checks whether the connection is closed by the caller.
+    # ```ballerina
+    # boolean result = caller.isCancelled();
+    # ```
+    #
+    # + return - True if the caller has already closed the connection or else false
     public function isCancelled() returns boolean {
         return externIsCancelled(self);
     }
 
-# Sends a server error to the caller.
-# ```ballerina
-# grpc:Error? result = caller->sendError(grpc:ABORTED, "Operation aborted", headers);
-# ```
-#
-# + statusCode - Error status code
-# + message - Error message
-# + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
-# + return - A `grpc:Error` if an error occurs while sending the response or else `()`
+    # Sends a server error to the caller.
+    # ```ballerina
+    # grpc:Error? result = caller->sendError(grpc:ABORTED, "Operation aborted", headers);
+    # ```
+    #
+    # + statusCode - Error status code
+    # + message - Error message
+    # + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
+    # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
     public remote function sendError(int statusCode, string message, Headers? headers = ()) returns Error? {
         return externSendError(self, statusCode, message, headers);
     }
