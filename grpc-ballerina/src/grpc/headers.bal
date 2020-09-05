@@ -19,25 +19,25 @@ import ballerina/java;
 # Provides the actions to read/write header values in a gRPC request/response message.
 public type Headers object {
 
-# Checks whether the requested header exists.
-# ```ballerina
-# boolean result = headers.exists("content-type");
-# ```
-#
-# + headerName - The header name
-# + return - True if header exists or else false
+    # Checks whether the requested header exists.
+    # ```ballerina
+    # boolean result = headers.exists("content-type");
+    # ```
+    #
+    # + headerName - The header name
+    # + return - True if header exists or else false
     public function exists(string headerName) returns boolean {
         return externExists(self, headerName);
     }
 
-# Returns the header value with the specified header name. If there are more than one header values for the
-# specified header name, the first value is returned.
-# ```ballerina
-# string? result = headers.get("content-type");
-# ```
-#
-# + headerName - The header name
-# + return - First header value if exists or else `()`
+    # Returns the header value with the specified header name. If there are more than one header values for the
+    # specified header name, the first value is returned.
+    # ```ballerina
+    # string? result = headers.get("content-type");
+    # ```
+    #
+    # + headerName - The header name
+    # + return - First header value if exists or else `()`
     public function get(string headerName) returns string? {
         string? result = externGet(self, headerName);
         if (result is ()) {
@@ -47,54 +47,54 @@ public type Headers object {
         }
     }
 
-# Gets all the transport headers with the specified header name.
-# ```ballerina
-# string[] result = headers.getAll("content-type");
-# ```
-#
-# + headerName - The header name
-# + return - Header value array
+    # Gets all the transport headers with the specified header name.
+    # ```ballerina
+    # string[] result = headers.getAll("content-type");
+    # ```
+    #
+    # + headerName - The header name
+    # + return - Header value array
     public function getAll(string headerName) returns string[] {
         return externGetAll(self, headerName);
     }
 
-# Sets the value of a transport header.
-# ```ballerina
-# headers.setEntry("content-type", "application/grpc")
-# ```
-#
-# + headerName - The header name
-# + headerValue - The header value
+    # Sets the value of a transport header.
+    # ```ballerina
+    # headers.setEntry("content-type", "application/grpc")
+    # ```
+    #
+    # + headerName - The header name
+    # + headerValue - The header value
     public function setEntry(string headerName, string headerValue) {
         return externSetEntry(self, headerName, headerValue);
     }
 
-# Adds the specified key/value pair as an HTTP header to the request.
-# ```ballerina
-# headers.addEntry("content-type", "application/grpc")
-# ```
-#
-# + headerName - The header name
-# + headerValue - The header value
+    # Adds the specified key/value pair as an HTTP header to the request.
+    # ```ballerina
+    # headers.addEntry("content-type", "application/grpc")
+    # ```
+    #
+    # + headerName - The header name
+    # + headerValue - The header value
     public function addEntry(string headerName, string headerValue) {
         return externAddEntry(self, headerName, headerValue);
     }
 
-# Removes a transport header from the request.
-# ```ballerina
-# headers.remove("content-type")
-# ```
-#
-# + headerName - The header name
+    # Removes a transport header from the request.
+    # ```ballerina
+    # headers.remove("content-type")
+    # ```
+    #
+    # + headerName - The header name
     public function remove(string headerName) {
         return externRemove(self, headerName);
     }
 
-# Removes all the transport headers from the message.
-# ```ballerina
-# headers.removeAll()
-# ```
-#
+    # Removes all the transport headers from the message.
+    # ```ballerina
+    # headers.removeAll()
+    # ```
+    #
     public function removeAll() {
         return externRemoveAll(self);
     }
