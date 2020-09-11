@@ -132,7 +132,7 @@ function testSendStructNoReceive() {
     }
 }
 
-public type HelloWorld1BlockingClient client object {
+public client class HelloWorld1BlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -214,9 +214,9 @@ public type HelloWorld1BlockingClient client object {
             return InternalError("Error while constructing the message", value);
         }
     }
-};
+}
 
-public type HelloWorldClient client object {
+public client class HelloWorldClient {
 
     *AbstractClientEndpoint;
 
@@ -257,4 +257,4 @@ public type HelloWorldClient client object {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testNoInputOutputArray", req, msgListener,
             headers);
     }
-};
+}

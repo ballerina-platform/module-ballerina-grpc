@@ -21,7 +21,7 @@ import ballerina/java;
 # + instanceId - The connection id
 # + remoteDetails - The remote details
 # + local - The local details
-public type Caller client object {
+public client class Caller {
 
     public Remote remoteDetails = {};
     public Local local = {};
@@ -82,26 +82,26 @@ public type Caller client object {
     public remote function sendError(int statusCode, string message, Headers? headers = ()) returns Error? {
         return externSendError(self, statusCode, message, headers);
     }
-};
+}
 
 function externSend(Caller endpointClient, anydata res, Headers? headers) returns Error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;
 
 function externComplete(Caller endpointClient) returns Error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;
 
 function externIsCancelled(Caller endpointClient) returns boolean =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;
 
 function externSendError(Caller endpointClient, int statusCode, string message, Headers? headers) returns Error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;
 
 # Presents a read-only view of the remote address.

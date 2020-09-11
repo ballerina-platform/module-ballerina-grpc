@@ -204,7 +204,7 @@ function testReceiveStructArray() {
     }
 }
 
-public type HelloWorld2BlockingClient client object {
+public client class HelloWorld2BlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -340,9 +340,9 @@ public type HelloWorld2BlockingClient client object {
             return InternalError("Error while constructing the message", value);
         }
     }
-};
+}
 
-public type HelloWorld2Client client object {
+public client class HelloWorld2Client {
 
     *AbstractClientEndpoint;
 
@@ -398,4 +398,4 @@ public type HelloWorld2Client client object {
         Empty req = {};
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testStructArrayOutput", req, msgListener, headers);
     }
-};
+}

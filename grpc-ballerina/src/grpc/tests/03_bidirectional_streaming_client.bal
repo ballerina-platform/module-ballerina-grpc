@@ -96,7 +96,7 @@ service ChatMessageListener = service {
 
 
 // Non-blocking client endpoint
-public type ChatClient client object {
+public client class ChatClient {
 
     *AbstractClientEndpoint;
 
@@ -112,4 +112,4 @@ public type ChatClient client object {
     (StreamingClient|Error) {
         return self.grpcClient->streamingExecute("Chat/chat", msgListener, headers);
     }
-};
+}

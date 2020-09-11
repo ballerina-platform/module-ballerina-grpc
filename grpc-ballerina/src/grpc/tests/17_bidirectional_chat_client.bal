@@ -95,7 +95,7 @@ service Chat17MessageListener = service {
 };
 
 // Non-blocking client endpoint
-public type Chat17Client client object {
+public client class Chat17Client {
 
     *AbstractClientEndpoint;
 
@@ -111,7 +111,7 @@ public type Chat17Client client object {
     public remote function chat(service msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
         return self.grpcClient->streamingExecute("Chat/chat", msgListener, headers);
     }
-};
+}
 
 const string ROOT_DESCRIPTOR_17 =
 "0A0A436861742E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F22280A0B436861744D657373616765120A0A046E616D6518012809120D0A076D65737361676518022809323C0A044368617412340A0463686174120B436861744D6573736167651A1B676F6F676C652E70726F746F6275662E537472696E6756616C756528013001620670726F746F33";

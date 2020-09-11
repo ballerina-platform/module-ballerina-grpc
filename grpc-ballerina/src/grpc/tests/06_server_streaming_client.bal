@@ -74,7 +74,7 @@ service HelloWorld6MessageListener = service {
 };
 
 // Non-blocking client endpoint
-public type HelloWorld6Client client object {
+public client class HelloWorld6Client {
 
     *AbstractClientEndpoint;
 
@@ -89,4 +89,4 @@ public type HelloWorld6Client client object {
     public remote function lotsOfReplies(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld45/lotsOfReplies", req, msgListener, headers);
     }
-};
+}

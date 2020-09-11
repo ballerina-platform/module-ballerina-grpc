@@ -20,7 +20,7 @@ import ballerina/java;
 
 # Represents server listener where one or more services can be registered. so that ballerina program can offer
 # service through this listener.
-public type Listener object {
+public class Listener {
 
     *lang:Listener;
 
@@ -96,7 +96,7 @@ public type Listener object {
 
 # The stream iterator object that is used to iterate through the stream messages.
 #
-type StreamIterator object {
+class StreamIterator {
     private boolean isClosed = false;
 
     public function next() returns record {|anydata value;|}|error? {
@@ -125,36 +125,36 @@ type StreamIterator object {
             return StreamClosedError("Stream is closed. Therefore, no operations are allowed further on the stream.");
         }
     }
-};
+}
 
 function externInitEndpoint(Listener listenerObject) returns error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 function externRegister(Listener listenerObject, service serviceType, string? name) returns error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 function externStart(Listener listenerObject) returns error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 function externStop(Listener listenerObject) returns error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 function nextResult(StreamIterator iterator) returns anydata|handle|error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 function closeStream(StreamIterator iterator) returns error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 # Maximum number of requests that can be processed at a given time on a single connection.

@@ -43,7 +43,7 @@ public function testOptionalFieldMessage() {
     }
 }
 
-public type CheckoutServiceBlockingClient client object {
+public client class CheckoutServiceBlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -64,9 +64,9 @@ public type CheckoutServiceBlockingClient client object {
         return [<PlaceOrderResponse>result, resHeaders];
     }
 
-};
+}
 
-public type CheckoutServiceClient client object {
+public client class CheckoutServiceClient {
 
     *AbstractClientEndpoint;
 
@@ -82,4 +82,4 @@ public type CheckoutServiceClient client object {
         return self.grpcClient->nonBlockingExecute("grpcservices.CheckoutService/PlaceOrder", req, msgListener, headers);
     }
 
-};
+}

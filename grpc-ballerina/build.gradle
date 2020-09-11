@@ -30,6 +30,9 @@ dependencies {
     }
     compile project(':grpc-native')
 
+    externalJars (group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}") {
+        transitive = false
+    }
     externalJars (group: 'org.wso2.transport.http', name: 'org.wso2.transport.http.netty', version: "${wso2HttpTransportVersion}") {
         transitive = false
     }
@@ -163,6 +166,8 @@ def tomlVersion = project.version.split("-")[0]
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 def targetBallerinaJar = file("$project.projectDir/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
 def targetNativeJar = file("$project.rootDir/${moduleName}-native/build/libs/${moduleName}-native-${project.version}.jar")
+// external jar file which need to pack to distribution
+def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
 def originalConfig = ballerinaConfigFile.text
 
 task updateTomlVersions {
@@ -177,6 +182,7 @@ task updateTomlVersions {
         newConfig = newConfig.replace("@stdlib.runtime.version@", stdlibDependentRuntimeVersion)
         newConfig = newConfig.replace("@stdlib.crypto.version@", stdlibDependentCryptoVersion)
         newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
+        newConfig = newConfig.replace("@http.native.version@", project.stdlibHttpVersion)
         newConfig = newConfig.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
         ballerinaConfigFile.text = newConfig
     }
@@ -251,6 +257,11 @@ task ballerinaBuild {
 
         copy {
             from targetNativeJar
+            into file("$artifactLibParent/libs")
+        }
+
+        copy {
+            from externalGoogleProtosCommonJar
             into file("$artifactLibParent/libs")
         }
 

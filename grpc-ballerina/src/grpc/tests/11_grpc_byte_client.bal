@@ -60,7 +60,7 @@ function testLargeByteArray() {
     }
 }
 
-public type byteServiceBlockingClient client object {
+public client class byteServiceBlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -84,9 +84,9 @@ public type byteServiceBlockingClient client object {
             return InternalError("Error while constructing the message", value);
         }
     }
-};
+}
 
-public type byteServiceClient client object {
+public client class byteServiceClient {
 
     *AbstractClientEndpoint;
 
@@ -101,4 +101,4 @@ public type byteServiceClient client object {
     public remote function checkBytes (byte[] req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.byteService/checkBytes", req, msgListener, headers);
     }
-};
+}

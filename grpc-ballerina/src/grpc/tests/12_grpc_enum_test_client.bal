@@ -32,7 +32,7 @@ function testSendAndReceiveEnum() {
     }
 }
 
-public type testEnumServiceBlockingClient client object {
+public client class testEnumServiceBlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -51,9 +51,9 @@ public type testEnumServiceBlockingClient client object {
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
-};
+}
 
-public type testEnumServiceClient client object {
+public client class testEnumServiceClient {
 
     *AbstractClientEndpoint;
 
@@ -68,4 +68,4 @@ public type testEnumServiceClient client object {
     public remote function testEnum (orderInfo req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.testEnumService/testEnum", req, msgListener, headers);
     }
-};
+}
