@@ -81,7 +81,7 @@ service HelloWorldMessageListener = service {
 };
 
 // Non-blocking client endpoint
-public type HelloWorld4Client client object {
+public client class HelloWorld4Client {
 
     *AbstractClientEndpoint;
 
@@ -96,4 +96,4 @@ public type HelloWorld4Client client object {
     public remote function lotsOfGreetings(service msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
         return self.grpcClient->streamingExecute("grpcservices.HelloWorld7/lotsOfGreetings", msgListener, headers);
     }
-};
+}

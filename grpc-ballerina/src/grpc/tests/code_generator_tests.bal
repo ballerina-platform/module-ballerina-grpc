@@ -123,6 +123,6 @@ serviceFilePath, string clientFilePath) {
 }
 
 public function generateSourceCode(string protoFilePath, string outputDirPath, string? mode = ()) = @java:Method {
-    class: "org.ballerinalang.net.grpc.testutils.CodeGeneratorUtils",
+    'class: "org.ballerinalang.net.grpc.testutils.CodeGeneratorUtils",
     name: "generateSourceCode"
 } external;

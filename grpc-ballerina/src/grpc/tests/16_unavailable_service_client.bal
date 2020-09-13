@@ -34,7 +34,7 @@ function testInvokeUnavailableService() {
     }
 }
 
-public type HelloWorld16BlockingClient client object {
+public client class HelloWorld16BlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -53,9 +53,9 @@ public type HelloWorld16BlockingClient client object {
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
-};
+}
 
-public type HelloWorld16Client client object {
+public client class HelloWorld16Client {
 
     *AbstractClientEndpoint;
 
@@ -70,7 +70,7 @@ public type HelloWorld16Client client object {
     public remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("HelloWorld/hello", req, msgListener, headers);
     }
-};
+}
 
 const string ROOT_DESCRIPTOR_16 =
 "0A1668656C6C6F576F726C64537472696E672E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32510A0A48656C6C6F576F726C6412430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";

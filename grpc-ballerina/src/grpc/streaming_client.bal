@@ -17,7 +17,7 @@
 import ballerina/java;
 
 # Provides the gRPC streaming client actions for interacting with the gRPC server.
-public type StreamingClient client object {
+public client class StreamingClient {
 
     # Sends the request message to the server.
     # ```ballerina
@@ -51,19 +51,19 @@ public type StreamingClient client object {
     public remote function sendError(int statusCode, string message) returns Error? {
         return streamSendError(self, statusCode, message);
     }
-};
+}
 
 function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
 function streamComplete(StreamingClient streamConnection) returns Error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
 function streamSendError(StreamingClient streamConnection, int statusCode, string message) returns Error? =
 @java:Method {
-    class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;

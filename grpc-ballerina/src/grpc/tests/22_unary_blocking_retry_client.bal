@@ -68,7 +68,7 @@ public function testRetryFailingClient() {
     }
 }
 
-public type RetryServiceBlockingClient client object {
+public client class RetryServiceBlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -86,4 +86,4 @@ public type RetryServiceBlockingClient client object {
         [result, resHeaders] = payload;
         return [result.toString(), resHeaders];
     }
-};
+}

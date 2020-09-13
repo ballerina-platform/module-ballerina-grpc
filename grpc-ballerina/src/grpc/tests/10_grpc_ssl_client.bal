@@ -41,7 +41,7 @@ function testUnarySecuredBlockingWithCerts() {
     }
 }
 
-public type grpcMutualSslServiceBlockingClient client object {
+public client class grpcMutualSslServiceBlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -60,9 +60,9 @@ public type grpcMutualSslServiceBlockingClient client object {
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
-};
+}
 
-public type grpcMutualSslServiceClient client object {
+public client class grpcMutualSslServiceClient {
 
     *AbstractClientEndpoint;
 
@@ -77,4 +77,4 @@ public type grpcMutualSslServiceClient client object {
     public remote function hello (string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.grpcMutualSslService/hello", req, msgListener, headers);
     }
-};
+}

@@ -64,7 +64,7 @@ function testInvalidOutputResponse() {
     }
 }
 
-public type HelloWorld5BlockingClient client object {
+public client class HelloWorld5BlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -109,4 +109,4 @@ public type HelloWorld5BlockingClient client object {
             return InternalError("Error while constructing the message", value);
         }
     }
-};
+}

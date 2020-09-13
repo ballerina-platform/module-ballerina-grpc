@@ -28,7 +28,6 @@ under the License.
         <parameter name="enableJBallerinaTests" value="true"/>
          <classes>
             <class name="org.ballerinalang.net.grpc.CompressorCodecTest"/>
-            <class name="org.ballerinalang.net.grpc.ProtoBuilderDefinitionTest"/>
             <class name="org.ballerinalang.net.grpc.ProtoMessageTestCase"/>
         </classes>
     </test>

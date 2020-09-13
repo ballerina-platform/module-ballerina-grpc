@@ -24,7 +24,7 @@ public function testErrorResponse() {
     var unionResp = helloWorld13BlockingEp->hello(name);
 
     if (unionResp is Error) {
-        test:assertEquals(unionResp.message(), "error Details");
+        test:assertEquals(unionResp.message(), "error(\"Details\")");
     } else {
         string result = "";
         [result, _] = unionResp;
@@ -32,7 +32,7 @@ public function testErrorResponse() {
     }
 }
 
-public type HelloWorld13BlockingClient client object {
+public client class HelloWorld13BlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -52,9 +52,9 @@ public type HelloWorld13BlockingClient client object {
         return [result.toString(), resHeaders];
     }
 
-};
+}
 
-public type HelloWorld13Client client object {
+public client class HelloWorld13Client {
 
     *AbstractClientEndpoint;
 
@@ -70,4 +70,4 @@ public type HelloWorld13Client client object {
         return self.grpcClient->nonBlockingExecute("HelloWorld13/hello", req, msgListener, headers);
     }
 
-};
+}

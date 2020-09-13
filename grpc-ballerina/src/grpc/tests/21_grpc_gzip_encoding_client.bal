@@ -34,7 +34,7 @@ public function testGzipEncoding() {
     }
 }
 
-public type OrderManagementBlockingClient client object {
+public client class OrderManagementBlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -62,9 +62,9 @@ public type OrderManagementBlockingClient client object {
         return [<Order>result, resHeaders];
     }
 
-};
+}
 
-public type OrderManagementClient client object {
+public client class OrderManagementClient {
 
     *AbstractClientEndpoint;
 
@@ -83,4 +83,4 @@ public type OrderManagementClient client object {
     public remote function getOrder(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("ecommerce.OrderManagement/getOrder", req, msgListener, headers);
     }
-};
+}

@@ -52,7 +52,7 @@ function testUnarySecuredBlocking() {
     }
 }
 
-public type HelloWorld9BlockingClient client object {
+public client class HelloWorld9BlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -71,9 +71,9 @@ public type HelloWorld9BlockingClient client object {
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
-};
+}
 
-public type HelloWorld9Client client object {
+public client class HelloWorld9Client {
 
     *AbstractClientEndpoint;
 
@@ -88,4 +88,4 @@ public type HelloWorld9Client client object {
     public remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld85/hello", req, msgListener, headers);
     }
-};
+}
