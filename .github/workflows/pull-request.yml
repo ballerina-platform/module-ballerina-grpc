@@ -1,4 +1,4 @@
-name: Ballerina gRPC module build
+name: PR build
 
 on: [push, pull_request]
 
