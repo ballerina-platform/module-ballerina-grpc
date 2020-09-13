@@ -73,7 +73,7 @@ service HelloWorld7MessageListener = service {
     }
 };
 
-public type HelloWorld7Client client object {
+public client class HelloWorld7Client {
 
     *AbstractClientEndpoint;
 
@@ -104,4 +104,4 @@ public type HelloWorld7Client client object {
     public remote function testStruct(Request req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testStruct", req, msgListener, headers);
     }
-};
+}

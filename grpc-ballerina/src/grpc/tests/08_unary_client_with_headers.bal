@@ -64,7 +64,7 @@ function testHeadersInBlockingClient() {
 }
 
 // Blocking endpoint.
-public type HelloWorld8BlockingClient client object {
+public client class HelloWorld8BlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -83,10 +83,10 @@ public type HelloWorld8BlockingClient client object {
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
-};
+}
 
 //Non-blocking endpoint
-public type HelloWorld8Client client object {
+public client class HelloWorld8Client {
 
     *AbstractClientEndpoint;
 
@@ -101,4 +101,4 @@ public type HelloWorld8Client client object {
     public remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld101/hello", req, msgListener, headers);
     }
-};
+}

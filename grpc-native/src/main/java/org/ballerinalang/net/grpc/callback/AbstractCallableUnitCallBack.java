@@ -52,7 +52,7 @@ public class AbstractCallableUnitCallBack implements CallableUnitCallback {
      * @param error          error message struct
      */
     static void handleFailure(StreamObserver streamObserver, ErrorValue error) {
-        String errorMsg = error.stringValue();
+        String errorMsg = error.stringValue(null);
         if (streamObserver != null) {
             streamObserver.onError(new Message(
                     new StatusRuntimeException(org.ballerinalang.net.grpc.Status.fromCodeValue(

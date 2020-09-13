@@ -65,7 +65,7 @@ function afterFunc() {
 }
 
 // Blocking endpoint.
-public type HelloWorld20BlockingClient client object {
+public client class HelloWorld20BlockingClient {
 
     *AbstractClientEndpoint;
 
@@ -84,10 +84,10 @@ public type HelloWorld20BlockingClient client object {
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
-};
+}
 
 //Non-blocking endpoint
-public type HelloWorld20Client client object {
+public client class HelloWorld20Client {
 
     *AbstractClientEndpoint;
 
@@ -102,7 +102,7 @@ public type HelloWorld20Client client object {
     public remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld101/hello", req, msgListener, headers);
     }
-};
+}
 
 service helloService =
     @ServiceDescriptor {

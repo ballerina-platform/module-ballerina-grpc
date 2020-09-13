@@ -1,4 +1,4 @@
-public type {{serviceName}}{{#equals stubType "blocking"}}Blocking{{/equals}}Client client object {
+public client class {{serviceName}}{{#equals stubType "blocking"}}Blocking{{/equals}}Client {
 
     *grpc:AbstractClientEndpoint;
 
@@ -30,4 +30,4 @@ public type {{serviceName}}{{#equals stubType "blocking"}}Blocking{{/equals}}Cli
     public remote function {{methodName}}(service msgListener, grpc:Headers? headers = ()) returns (grpc:StreamingClient|grpc:Error) {
         return self.grpcClient->streamingExecute("{{methodId}}", msgListener, headers);
     }{{/streamingFunctions}}
-};
+}
