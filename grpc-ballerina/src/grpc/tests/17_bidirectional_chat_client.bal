@@ -25,7 +25,7 @@ string responseChatMsg = "";
 public function testBidiStreamingInChatClient() {
 
     //Client endpoint configuration.
-    Chat17Client chatEp = new("https://localhost:9107", {
+    Chat17Client chatEp = new("https://localhost:9093", {
         secureSocket: {
             trustStore: {
                 path: TRUSTSTORE_PATH,

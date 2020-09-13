@@ -1,27 +1,26 @@
 [project]
 org-name = "ballerina"
-version = "0.7.0"
+version = "@toml.version@"
 
 [dependencies]
-"ballerina/runtime" = "0.5.0"
-"ballerina/crypto" = "1.0.0"
-"ballerina/http" = "1.0.0"
-"ballerina/config" = "1.0.0"
+"ballerina/runtime" = "@stdlib.runtime.version@"
+"ballerina/crypto" = "@stdlib.crypto.version@"
+"ballerina/config" = "@stdlib.config.version@"
 
 [platform]
 target = "java8"
 
     [[platform.libraries]]
     artifactId = "grpc"
-    version = "0.7.0-SNAPSHOT"
-    path = "../grpc-native/build/libs/grpc-native-0.7.0-SNAPSHOT.jar"
+    version = "@project.version@"
+    path = "../grpc-native/build/libs/grpc-native-@project.version@.jar"
     groupId = "ballerina"
     modules = ["grpc"]
 
     [[platform.libraries]]
     artifactId = "grpc"
-    version = "0.7.0-SNAPSHOT"
-    path = "../grpc-test-utils/build/libs/grpc-test-utils-0.7.0-SNAPSHOT.jar"
+    version = "@project.version@"
+    path = "../grpc-test-utils/build/libs/grpc-test-utils-@project.version@.jar"
     groupId = "org.ballerinalang"
     modules = ["grpc"]
     scope = "testOnly"

@@ -24,7 +24,7 @@ public function testErrorResponse() {
     var unionResp = helloWorld13BlockingEp->hello(name);
 
     if (unionResp is Error) {
-        test:assertEquals(unionResp.message(), "error Details");
+        test:assertEquals(unionResp.message(), "error(\"Details\")");
     } else {
         string result = "";
         [result, _] = unionResp;
