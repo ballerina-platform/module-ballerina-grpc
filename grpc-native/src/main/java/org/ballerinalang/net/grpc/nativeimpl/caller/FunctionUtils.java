@@ -20,12 +20,12 @@ import com.google.protobuf.Descriptors;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.ballerinalang.jvm.TypeChecker;
+import org.ballerinalang.jvm.api.values.BObject;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.observability.ObserveUtils;
 import org.ballerinalang.jvm.observability.ObserverContext;
 import org.ballerinalang.jvm.scheduling.Scheduler;
 import org.ballerinalang.jvm.types.TypeTags;
-import org.ballerinalang.jvm.values.ObjectValue;
-import org.ballerinalang.jvm.values.api.BString;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
@@ -56,7 +56,7 @@ public class FunctionUtils {
      * @param endpointClient caller instance.
      * @return Error if there is an error while informing the caller, else returns nil
      */
-    public static Object externComplete(ObjectValue endpointClient) {
+    public static Object externComplete(BObject endpointClient) {
         StreamObserver responseObserver = MessageUtils.getResponseObserver(endpointClient);
         Descriptors.Descriptor outputType = (Descriptors.Descriptor) endpointClient.getNativeData(GrpcConstants
                 .RESPONSE_MESSAGE_DEFINITION);
@@ -88,7 +88,7 @@ public class FunctionUtils {
      * @param endpointClient caller instance.
      * @return True if caller has terminated the connection, false otherwise.
      */
-    public static boolean externIsCancelled(ObjectValue endpointClient) {
+    public static boolean externIsCancelled(BObject endpointClient) {
         StreamObserver responseObserver = MessageUtils.getResponseObserver(endpointClient);
 
         if (responseObserver instanceof ServerCallHandler.ServerCallStreamObserver) {
@@ -108,7 +108,7 @@ public class FunctionUtils {
      * @param headerValues custom metadata to pass with response.
      * @return Error if there is an error while responding the caller, else returns nil
      */
-    public static Object externSend(ObjectValue endpointClient, Object responseValue,
+    public static Object externSend(BObject endpointClient, Object responseValue,
                                     Object headerValues) {
         StreamObserver responseObserver = MessageUtils.getResponseObserver(endpointClient);
         Descriptors.Descriptor outputType = (Descriptors.Descriptor) endpointClient.getNativeData(GrpcConstants
@@ -130,7 +130,7 @@ public class FunctionUtils {
                     HttpHeaders headers = null;
                     if (headerValues != null &&
                             (TypeChecker.getType(headerValues).getTag() == TypeTags.OBJECT_TYPE_TAG)) {
-                        headers = (HttpHeaders) ((ObjectValue) headerValues).getNativeData(MESSAGE_HEADERS);
+                        headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
                     }
                     if (headers != null) {
                         responseMessage.setHeaders(headers);
@@ -156,7 +156,7 @@ public class FunctionUtils {
      * @param headerValues custom metadata to pass with response.
      * @return Error if there is an error while responding the caller, else returns nil
      */
-    public static Object externSendError(ObjectValue endpointClient, long statusCode, BString errorMsg,
+    public static Object externSendError(BObject endpointClient, long statusCode, BString errorMsg,
                                          Object headerValues) {
         StreamObserver responseObserver = MessageUtils.getResponseObserver(endpointClient);
         Optional<ObserverContext> observerContext =
@@ -173,7 +173,7 @@ public class FunctionUtils {
                         .withDescription(errorMsg.getValue())));
                 if (headerValues != null &&
                         (TypeChecker.getType(headerValues).getTag() == TypeTags.OBJECT_TYPE_TAG)) {
-                    headers = (HttpHeaders) ((ObjectValue) headerValues).getNativeData(MESSAGE_HEADERS);
+                    headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
                 }
                 if (headers != null) {
                     errorMessage.setHeaders(headers);

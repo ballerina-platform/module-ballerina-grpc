@@ -20,13 +20,13 @@ package org.ballerinalang.net.grpc.listener;
 
 import com.google.protobuf.Descriptors;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.BallerinaValues;
+import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.values.BObject;
 import org.ballerinalang.jvm.observability.ObservabilityConstants;
 import org.ballerinalang.jvm.observability.ObserveUtils;
 import org.ballerinalang.jvm.observability.ObserverContext;
 import org.ballerinalang.jvm.types.BStreamType;
 import org.ballerinalang.jvm.types.BType;
-import org.ballerinalang.jvm.values.ObjectValue;
 import org.ballerinalang.jvm.values.StreamValue;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
@@ -76,7 +76,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
 
     private StreamObserver invoke(StreamObserver responseObserver, ServerCall call) {
         ObserverContext context = call.getObserverContext();
-        ObjectValue streamIterator = BallerinaValues.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+        BObject streamIterator = BValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
                 ITERATOR_OBJECT_NAME, new Object[1]);
         BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
         streamIterator.addNativeData(MESSAGE_QUEUE, messageQueue);
@@ -89,7 +89,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
     private static final class StreamingServerRequestObserver implements StreamObserver {
         private final BlockingQueue<Message> messageQueue;
 
-        StreamingServerRequestObserver(ObjectValue streamIterator, BlockingQueue<Message> messageQueue) {
+        StreamingServerRequestObserver(BObject streamIterator, BlockingQueue<Message> messageQueue) {
             this.messageQueue = messageQueue;
         }
 

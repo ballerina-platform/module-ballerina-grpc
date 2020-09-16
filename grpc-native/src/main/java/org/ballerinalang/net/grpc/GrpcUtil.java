@@ -20,9 +20,10 @@ package org.ballerinalang.net.grpc;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ballerinalang.config.ConfigRegistry;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.util.exceptions.BallerinaConnectorException;
 import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.api.BString;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
 import org.ballerinalang.net.http.HttpConstants;
 import org.ballerinalang.net.http.HttpUtil;
@@ -77,7 +78,7 @@ public class GrpcUtil {
 
     private static final Logger log = LoggerFactory.getLogger(GrpcUtil.class);
 
-    public static ConnectionManager getConnectionManager(MapValue<BString, Long> poolStruct) {
+    public static ConnectionManager getConnectionManager(BMap<BString, Long> poolStruct) {
         ConnectionManager poolManager = (ConnectionManager) poolStruct.getNativeData(CONNECTION_MANAGER);
         if (poolManager == null) {
             synchronized (poolStruct) {
@@ -92,7 +93,7 @@ public class GrpcUtil {
         return poolManager;
     }
 
-    public static void populatePoolingConfig(MapValue<BString, Long> poolRecord, PoolConfiguration poolConfiguration) {
+    public static void populatePoolingConfig(BMap<BString, Long> poolRecord, PoolConfiguration poolConfiguration) {
         long maxActiveConnections = poolRecord.get(HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_CONNECTIONS);
         poolConfiguration.setMaxActivePerPool(
                 validateConfig(maxActiveConnections, HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_CONNECTIONS));
@@ -111,8 +112,8 @@ public class GrpcUtil {
     }
 
     public static void populateSenderConfigurations(SenderConfiguration senderConfiguration,
-                                                    MapValue<BString, Object> clientEndpointConfig, String scheme) {
-        MapValue secureSocket = clientEndpointConfig.getMapValue(HttpConstants.ENDPOINT_CONFIG_SECURE_SOCKET);
+                                                    BMap<BString, Object> clientEndpointConfig, String scheme) {
+        BMap secureSocket = clientEndpointConfig.getMapValue(HttpConstants.ENDPOINT_CONFIG_SECURE_SOCKET);
 
         if (secureSocket != null) {
             populateSSLConfiguration(senderConfiguration, secureSocket);
@@ -137,11 +138,11 @@ public class GrpcUtil {
      * @param secureSocket    secure socket configuration.
      */
     public static void populateSSLConfiguration(SslConfiguration sslConfiguration,
-            MapValue<BString, Object> secureSocket) {
-        MapValue trustStore = secureSocket.getMapValue(ENDPOINT_CONFIG_TRUST_STORE);
-        MapValue keyStore = secureSocket.getMapValue(ENDPOINT_CONFIG_KEY_STORE);
-        MapValue protocols = secureSocket.getMapValue(ENDPOINT_CONFIG_PROTOCOLS);
-        MapValue validateCert = secureSocket.getMapValue(ENDPOINT_CONFIG_VALIDATE_CERT);
+            BMap<BString, Object> secureSocket) {
+        BMap trustStore = secureSocket.getMapValue(ENDPOINT_CONFIG_TRUST_STORE);
+        BMap keyStore = secureSocket.getMapValue(ENDPOINT_CONFIG_KEY_STORE);
+        BMap protocols = secureSocket.getMapValue(ENDPOINT_CONFIG_PROTOCOLS);
+        BMap validateCert = secureSocket.getMapValue(ENDPOINT_CONFIG_VALIDATE_CERT);
         String keyFile = secureSocket.getStringValue(ENDPOINT_CONFIG_KEY).getValue();
         String certFile = secureSocket.getStringValue(ENDPOINT_CONFIG_CERTIFICATE).getValue();
         String trustCerts = secureSocket.getStringValue(ENDPOINT_CONFIG_TRUST_CERTIFICATES).getValue();
@@ -230,9 +231,11 @@ public class GrpcUtil {
         sslConfiguration.setHostNameVerificationEnabled(hostNameVerificationEnabled);
 
         sslConfiguration
-                .setSslSessionTimeOut((int) secureSocket.getDefaultableIntValue(ENDPOINT_CONFIG_SESSION_TIMEOUT));
+                .setSslSessionTimeOut((int) ((MapValue)secureSocket)
+                        .getDefaultableIntValue(ENDPOINT_CONFIG_SESSION_TIMEOUT));
 
-        sslConfiguration.setSslHandshakeTimeOut(secureSocket.getDefaultableIntValue(ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT));
+        sslConfiguration.setSslHandshakeTimeOut(((MapValue)secureSocket)
+                                                        .getDefaultableIntValue(ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT));
 
         Object[] cipherConfigs = secureSocket.getArrayValue(HttpConstants.SSL_CONFIG_CIPHERS).getStringArray();
         if (cipherConfigs != null) {
@@ -261,9 +264,9 @@ public class GrpcUtil {
      * @param endpointConfig    listener endpoint configuration.
      * @return                  transport listener configuration instance.
      */
-    public static ListenerConfiguration getListenerConfig(long port, MapValue<BString, Object> endpointConfig) {
+    public static ListenerConfiguration getListenerConfig(long port, BMap<BString, Object> endpointConfig) {
         BString host = endpointConfig.getStringValue(HttpConstants.ENDPOINT_CONFIG_HOST);
-        MapValue sslConfig = endpointConfig.getMapValue(HttpConstants.ENDPOINT_CONFIG_SECURE_SOCKET);
+        BMap sslConfig = endpointConfig.getMapValue(HttpConstants.ENDPOINT_CONFIG_SECURE_SOCKET);
         long idleTimeout = endpointConfig.getIntValue(HttpConstants.ENDPOINT_CONFIG_TIMEOUT);
 
         ListenerConfiguration listenerConfiguration = new ListenerConfiguration();
@@ -315,14 +318,14 @@ public class GrpcUtil {
         return userAgent;
     }
 
-    private static ListenerConfiguration setSslConfig(MapValue<BString, Object> sslConfig,
+    private static ListenerConfiguration setSslConfig(BMap<BString, Object> sslConfig,
             ListenerConfiguration listenerConfiguration) {
         listenerConfiguration.setScheme(PROTOCOL_HTTPS);
-        MapValue trustStore = sslConfig.getMapValue(ENDPOINT_CONFIG_TRUST_STORE);
-        MapValue keyStore = sslConfig.getMapValue(ENDPOINT_CONFIG_KEY_STORE);
-        MapValue protocols = sslConfig.getMapValue(ENDPOINT_CONFIG_PROTOCOLS);
-        MapValue validateCert = sslConfig.getMapValue(ENDPOINT_CONFIG_VALIDATE_CERT);
-        MapValue ocspStapling = sslConfig.getMapValue(ENDPOINT_CONFIG_OCSP_STAPLING);
+        BMap trustStore = sslConfig.getMapValue(ENDPOINT_CONFIG_TRUST_STORE);
+        BMap keyStore = sslConfig.getMapValue(ENDPOINT_CONFIG_KEY_STORE);
+        BMap protocols = sslConfig.getMapValue(ENDPOINT_CONFIG_PROTOCOLS);
+        BMap validateCert = sslConfig.getMapValue(ENDPOINT_CONFIG_VALIDATE_CERT);
+        BMap ocspStapling = sslConfig.getMapValue(ENDPOINT_CONFIG_OCSP_STAPLING);
         String keyFile = sslConfig.getStringValue(ENDPOINT_CONFIG_KEY) != null
                 ? sslConfig.getStringValue(ENDPOINT_CONFIG_KEY).getValue() : null;
         String certFile = sslConfig.getStringValue(ENDPOINT_CONFIG_CERTIFICATE) != null 
@@ -369,9 +372,11 @@ public class GrpcUtil {
                     ? sslConfig.getStringValue(SSL_CONFIG_SSL_VERIFY_CLIENT).getValue() : null;
         listenerConfiguration.setVerifyClient(sslVerifyClient);
         listenerConfiguration
-                .setSslSessionTimeOut((int) sslConfig.getDefaultableIntValue(ENDPOINT_CONFIG_SESSION_TIMEOUT));
+                .setSslSessionTimeOut((int) ((MapValue)sslConfig)
+                        .getDefaultableIntValue(ENDPOINT_CONFIG_SESSION_TIMEOUT));
         listenerConfiguration
-                .setSslHandshakeTimeOut(sslConfig.getDefaultableIntValue(ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT));
+                .setSslHandshakeTimeOut( ((MapValue)sslConfig)
+                                                 .getDefaultableIntValue(ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT));
         if (trustStore == null && StringUtils.isNotBlank(sslVerifyClient) && StringUtils.isBlank(trustCerts)) {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Truststore location or " +
