@@ -21,8 +21,11 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.ballerinalang.jvm.BRuntime;
-import org.ballerinalang.jvm.StringUtils;
+import org.ballerinalang.jvm.api.BRuntime;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BObject;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.types.AttachedFunction;
 import org.ballerinalang.jvm.types.BArrayType;
 import org.ballerinalang.jvm.types.BPackage;
@@ -31,9 +34,6 @@ import org.ballerinalang.jvm.types.BStreamType;
 import org.ballerinalang.jvm.types.BType;
 import org.ballerinalang.jvm.types.BTypes;
 import org.ballerinalang.jvm.types.TypeFlags;
-import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.ObjectValue;
-import org.ballerinalang.jvm.values.api.BString;
 import org.ballerinalang.net.grpc.exception.GrpcServerException;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 import org.ballerinalang.net.grpc.listener.StreamingServerCallHandler;
@@ -63,7 +63,7 @@ import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.ANN_SERVICE
  */
 public class ServicesBuilderUtils {
     
-    public static ServerServiceDefinition getServiceDefinition(BRuntime runtime, ObjectValue service,
+    public static ServerServiceDefinition getServiceDefinition(BRuntime runtime, BObject service,
                                                                Object annotationData) throws
             GrpcServerException {
         Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
@@ -78,11 +78,11 @@ public class ServicesBuilderUtils {
         return getServiceDefinition(runtime, service, serviceDescriptor);
     }
 
-    private static String getServiceName(ObjectValue service) {
-        Object serviceConfigData = service.getType().getAnnotation(StringUtils.fromString(ANN_SERVICE_CONFIG_FQN));
+    private static String getServiceName(BObject service) {
+        Object serviceConfigData = service.getType().getAnnotation(BStringUtils.fromString(ANN_SERVICE_CONFIG_FQN));
         if (serviceConfigData != null) {
-            MapValue configMap = (MapValue) serviceConfigData;
-            BString providedName = configMap.getStringValue(StringUtils.fromString("name"));
+            BMap configMap = (BMap) serviceConfigData;
+            BString providedName = configMap.getStringValue(BStringUtils.fromString("name"));
             if (providedName != null && !providedName.getValue().isEmpty()) {
                 return providedName.getValue();
             }
@@ -92,7 +92,7 @@ public class ServicesBuilderUtils {
         return splitValues[0];
     }
 
-    private static ServerServiceDefinition getServiceDefinition(BRuntime runtime, ObjectValue service,
+    private static ServerServiceDefinition getServiceDefinition(BRuntime runtime, BObject service,
                                                                 Descriptors.ServiceDescriptor serviceDescriptor)
             throws GrpcServerException {
         // Get full service name for the service definition. <package>.<service>
@@ -179,10 +179,10 @@ public class ServicesBuilderUtils {
         }
 
         try {
-            MapValue<BString, Object> annotationMap = (MapValue) annotationData;
-            BString descriptorData = annotationMap.getStringValue(StringUtils.fromString("descriptor"));
-            MapValue<BString, BString> descMap = (MapValue<BString, BString>) annotationMap.getMapValue(
-                StringUtils.fromString("descMap"));
+            BMap<BString, Object> annotationMap = (BMap) annotationData;
+            BString descriptorData = annotationMap.getStringValue(BStringUtils.fromString("descriptor"));
+            BMap<BString, BString> descMap = (BMap<BString, BString>) annotationMap.getMapValue(
+                BStringUtils.fromString("descMap"));
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
@@ -191,7 +191,7 @@ public class ServicesBuilderUtils {
     }
 
     private static Descriptors.FileDescriptor getFileDescriptor(
-        BString descriptorData, MapValue<BString, BString> descMap) 
+        BString descriptorData, BMap<BString, BString> descMap) 
         throws InvalidProtocolBufferException, Descriptors.DescriptorValidationException, GrpcServerException {
         byte[] descriptor = hexStringToByteArray(descriptorData.getValue());
         if (descriptor.length == 0) {
@@ -209,8 +209,8 @@ public class ServicesBuilderUtils {
         int i = 0;
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             String dependencyKey = dependency.toStringUtf8();
-            if (descMap.containsKey(StringUtils.fromString(dependencyKey))) {
-                fileDescriptors[i++] = getFileDescriptor(descMap.get(StringUtils.fromString(dependencyKey)), descMap);
+            if (descMap.containsKey(BStringUtils.fromString(dependencyKey))) {
+                fileDescriptors[i++] = getFileDescriptor(descMap.get(BStringUtils.fromString(dependencyKey)), descMap);
             } else if (descMap.size() == 0) {
                 Descriptors.FileDescriptor dependentDescriptor = StandardDescriptorBuilder.getFileDescriptor
                         (dependencyKey);

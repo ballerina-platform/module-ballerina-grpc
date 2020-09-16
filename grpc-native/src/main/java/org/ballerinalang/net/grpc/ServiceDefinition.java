@@ -21,7 +21,9 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.ballerinalang.jvm.StringUtils;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.types.AttachedFunction;
 import org.ballerinalang.jvm.types.BObjectType;
 import org.ballerinalang.jvm.types.BTupleType;
@@ -29,8 +31,6 @@ import org.ballerinalang.jvm.types.BType;
 import org.ballerinalang.jvm.types.BTypes;
 import org.ballerinalang.jvm.types.BUnionType;
 import org.ballerinalang.jvm.types.TypeTags;
-import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.api.BString;
 import org.ballerinalang.net.grpc.exception.GrpcClientException;
 
 import java.io.IOException;
@@ -53,10 +53,10 @@ import static org.ballerinalang.net.grpc.ServicesBuilderUtils.hexStringToByteArr
 public final class ServiceDefinition {
 
     private String rootDescriptor;
-    private MapValue<BString, Object> descriptorMap;
+    private BMap<BString, Object> descriptorMap;
     private Descriptors.FileDescriptor fileDescriptor;
 
-    public ServiceDefinition(String rootDescriptor, MapValue<BString, Object> descriptorMap) {
+    public ServiceDefinition(String rootDescriptor, BMap<BString, Object> descriptorMap) {
         this.rootDescriptor = rootDescriptor;
         this.descriptorMap = descriptorMap;
     }
@@ -78,7 +78,7 @@ public final class ServiceDefinition {
         }
     }
 
-    private Descriptors.FileDescriptor getFileDescriptor(String rootDescriptor, MapValue<BString, Object> descriptorMap)
+    private Descriptors.FileDescriptor getFileDescriptor(String rootDescriptor, BMap<BString, Object> descriptorMap)
             throws InvalidProtocolBufferException, Descriptors.DescriptorValidationException, GrpcClientException {
         byte[] descriptor = hexStringToByteArray(rootDescriptor);
         if (descriptor.length == 0) {
@@ -95,9 +95,9 @@ public final class ServiceDefinition {
                 .getDependencyList().size()];
         int i = 0;
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
-            if (descriptorMap.containsKey(StringUtils.fromString(dependency.toStringUtf8()))) {
+            if (descriptorMap.containsKey(BStringUtils.fromString(dependency.toStringUtf8()))) {
                 BString bRootDescriptor = (BString) descriptorMap
-                        .get(StringUtils.fromString(dependency.toString(StandardCharsets.UTF_8)));
+                        .get(BStringUtils.fromString(dependency.toString(StandardCharsets.UTF_8)));
                 fileDescriptors[i++] =
                         getFileDescriptor(bRootDescriptor.getValue() , descriptorMap);
             }
