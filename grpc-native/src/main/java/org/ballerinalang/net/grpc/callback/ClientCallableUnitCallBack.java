@@ -17,8 +17,6 @@
  */
 package org.ballerinalang.net.grpc.callback;
 
-import org.ballerinalang.jvm.values.ErrorValue;
-
 import java.util.concurrent.Semaphore;
 
 /**
@@ -40,7 +38,7 @@ public class ClientCallableUnitCallBack extends AbstractCallableUnitCallBack {
     }
     
     @Override
-    public void notifyFailure(ErrorValue error) {
+    public void notifyFailure(org.ballerinalang.jvm.api.values.BError error) {
         super.notifyFailure(error);
         semaphore.release();
     }

@@ -16,10 +16,10 @@
 package org.ballerinalang.net.grpc;
 
 import com.google.protobuf.DescriptorProtos;
-import org.ballerinalang.jvm.StringUtils;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.scheduling.StrandMetadata;
 import org.ballerinalang.jvm.types.BPackage;
-import org.ballerinalang.jvm.values.api.BString;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class GrpcConstants {
     public static final String CALLER_ENDPOINT_TYPE = PROTOCOL_STRUCT_PACKAGE_GRPC + ":" + CALLER;
     public static final String RESPONSE_OBSERVER = "RESPONSE_OBSERVER";
     public static final String RESPONSE_MESSAGE_DEFINITION = "RESPONSE_DEFINITION";
-    public static final BString CALLER_ID = StringUtils.fromString("instanceId");
+    public static final BString CALLER_ID = BStringUtils.fromString("instanceId");
     public static final String MESSAGE_QUEUE = "messageQueue";
     public static final String COMPLETED_MESSAGE = "completedMessage";
     public static final String ERROR_MESSAGE = "errorMessage";
