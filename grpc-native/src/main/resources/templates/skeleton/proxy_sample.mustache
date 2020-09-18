@@ -10,7 +10,7 @@ service {{serviceName}} on new http:Listener(9091) {
 {{#blockingFunctions}}{{> proxy_unary service=../serviceName}}
 {{/blockingFunctions}}{{#literal "}"}}{{/literal}}
 {{/equals}}{{/stubList}}
-public function castFunction(string? fieldToCast, string fieldType) returns anydata | error {
+public isolated function castFunction(string? fieldToCast, string fieldType) returns anydata | error {
     string castField = fieldToCast.toString();
     match fieldType {
         "string" => { return castField; }
@@ -19,7 +19,7 @@ public function castFunction(string? fieldToCast, string fieldType) returns anyd
     }
 }
 
-public function arrayCaster (string[] fieldArray, string fieldType) returns any | error {
+public isolated function arrayCaster (string[] fieldArray, string fieldType) returns any | error {
     match fieldType {
         "string" => {
             return fieldArray;
@@ -52,7 +52,7 @@ public function arrayCaster (string[] fieldArray, string fieldType) returns any 
     return ();
 }
 
-public function sendResponse (http:Caller caller, any | error responseData) {
+public isolated function sendResponse (http:Caller caller, any | error responseData) {
     if (responseData is [anydata, grpc:Headers]) {
         [anydata, grpc:Headers] [response, header] = responseData;
         json | error responseJson = response.cloneWithType(json);
