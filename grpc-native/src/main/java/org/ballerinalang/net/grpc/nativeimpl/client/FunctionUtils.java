@@ -22,6 +22,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.jvm.TypeChecker;
 import org.ballerinalang.jvm.api.BRuntime;
 import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.BalEnv;
 import org.ballerinalang.jvm.api.values.BError;
 import org.ballerinalang.jvm.api.values.BMap;
 import org.ballerinalang.jvm.api.values.BObject;
@@ -30,7 +31,7 @@ import org.ballerinalang.jvm.scheduling.Scheduler;
 import org.ballerinalang.jvm.scheduling.State;
 import org.ballerinalang.jvm.scheduling.Strand;
 import org.ballerinalang.jvm.types.TypeTags;
-import org.ballerinalang.jvm.values.connector.NonBlockingCallback;
+import org.ballerinalang.jvm.api.BalFuture;
 import org.ballerinalang.net.grpc.DataContext;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
@@ -204,7 +205,7 @@ public class FunctionUtils extends AbstractExecute {
      * @return Error if there is an error while calling remote method, else returns response message.
      */
     @SuppressWarnings("unchecked")
-    public static Object externBlockingExecute(BObject clientEndpoint, BString methodName,
+    public static Object externBlockingExecute(BalEnv env, BObject clientEndpoint, BString methodName,
                                                Object payloadBValue, Object headerValues) {
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC client connector " +
@@ -251,8 +252,7 @@ public class FunctionUtils extends AbstractExecute {
                 MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
                 if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
 
-                    dataContext = new DataContext(Scheduler.getStrand(),
-                            new NonBlockingCallback(Scheduler.getStrand()));
+                    dataContext = new DataContext(Scheduler.getStrand(), env.markAsync());
                     blockingStub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()), dataContext);
                 } else {
                     return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
