@@ -26,7 +26,7 @@ listener Listener ep2 = new (9092, {
 }
 service HelloWorld3 on ep2 {
 
-    resource function testIntArrayInput(Caller caller, TestInt req) {
+    isolated resource function testIntArrayInput(Caller caller, TestInt req) {
         io:println(req);
         int[] numbers = req.values;
         int result = 0;
@@ -42,7 +42,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testStringArrayInput(Caller caller, TestString req) {
+    isolated resource function testStringArrayInput(Caller caller, TestString req) {
         io:println(req);
         string[] values = req.values;
         string result = "";
@@ -58,7 +58,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testFloatArrayInput(Caller caller, TestFloat req) {
+    isolated resource function testFloatArrayInput(Caller caller, TestFloat req) {
         io:println(req);
         float[] values = req.values;
         float result = 0.0;
@@ -74,7 +74,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testBooleanArrayInput(Caller caller, TestBoolean req) {
+    isolated resource function testBooleanArrayInput(Caller caller, TestBoolean req) {
         io:println(req);
         boolean[] values = req.values;
         boolean result = false;
@@ -90,7 +90,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testStructArrayInput(Caller caller, TestStruct req) {
+    isolated resource function testStructArrayInput(Caller caller, TestStruct req) {
         io:println(req);
         A[] values = req.values;
         string result = "";
@@ -106,7 +106,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testIntArrayOutput(Caller caller) {
+    isolated resource function testIntArrayOutput(Caller caller) {
         TestInt intArray = {values:[1, 2, 3, 4, 5]};
         Error? err = caller->send(intArray);
         if (err is Error) {
@@ -117,7 +117,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testStringArrayOutput(Caller caller) {
+    isolated resource function testStringArrayOutput(Caller caller) {
         TestString stringArray = {values:["A", "B", "C"]};
         Error? err = caller->send(stringArray);
         if (err is Error) {
@@ -128,7 +128,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testFloatArrayOutput(Caller caller) {
+    isolated resource function testFloatArrayOutput(Caller caller) {
         TestFloat floatArray = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
         Error? err = caller->send(floatArray);
         if (err is Error) {
@@ -139,7 +139,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testBooleanArrayOutput(Caller caller) {
+    isolated resource function testBooleanArrayOutput(Caller caller) {
         TestBoolean booleanArray = {values:[true, false, true]};
         Error? err = caller->send(booleanArray);
         if (err is Error) {
@@ -150,7 +150,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    resource function testStructArrayOutput(Caller caller) {
+    isolated resource function testStructArrayOutput(Caller caller) {
         A a1 = {name:"Sam"};
         A a2 = {name:"John"};
         TestStruct structArray = {values:[a1, a2]};

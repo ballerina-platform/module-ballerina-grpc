@@ -74,12 +74,12 @@ public client class RetryServiceBlockingClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
-    public remote function getResult(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    public isolated remote function getResult(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("RetryService/getResult", req, headers);
         Headers resHeaders = new;
         anydata result = ();

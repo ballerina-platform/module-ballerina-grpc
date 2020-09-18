@@ -46,7 +46,7 @@ listener Listener ep9 = new (9099, {
     descMap: getDescriptorMap9()
 }
 service HelloWorld85 on ep9 {
-    resource function hello(Caller caller, string name) {
+    isolated resource function hello(Caller caller, string name) {
         log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->send(message);

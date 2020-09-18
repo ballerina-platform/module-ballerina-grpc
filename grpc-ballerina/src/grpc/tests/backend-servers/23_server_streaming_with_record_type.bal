@@ -24,7 +24,7 @@ listener Listener helloWorldStreamingep = new (9113);
 }
 service helloWorldServerStreaming on helloWorldStreamingep {
 
-    resource function lotsOfReplies(Caller caller, HelloRequest value) {
+    isolated resource function lotsOfReplies(Caller caller, HelloRequest value) {
         log:printInfo("Server received hello from " + value.name);
         string[] greets = ["Hi", "Hey", "GM"];
 

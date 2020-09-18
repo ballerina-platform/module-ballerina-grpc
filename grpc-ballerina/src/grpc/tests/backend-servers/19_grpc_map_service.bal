@@ -25,7 +25,7 @@ listener Listener negotiatorep = new (9109);
 }
 service Negotiator on negotiatorep {
 
-    resource function handshake(Caller caller, HandshakeRequest value) {
+    isolated resource function handshake(Caller caller, HandshakeRequest value) {
         log:printInfo(io:sprintf("Handshake request: %s", value.toString()));
 
         if (value.jsonStr != "") {
@@ -57,7 +57,7 @@ service Negotiator on negotiatorep {
         }
     }
 
-    resource function publishMetrics(Caller caller, MetricsPublishRequest value) {
+    isolated resource function publishMetrics(Caller caller, MetricsPublishRequest value) {
         log:printInfo(io:sprintf("publishMetrics request: %s", value.toString()));
 
         if (value.metrics.length() < 0) {
@@ -74,7 +74,7 @@ service Negotiator on negotiatorep {
         error? complete = caller->complete();
     }
 
-    resource function publishTraces(Caller caller, TracesPublishRequest value) {
+    isolated resource function publishTraces(Caller caller, TracesPublishRequest value) {
         log:printInfo(io:sprintf("publishTraces request: %s", value.toString()));
         error? complete = caller->complete();
         io:println(complete);

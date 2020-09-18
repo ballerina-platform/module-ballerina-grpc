@@ -28,7 +28,7 @@ listener Listener retryListener = new (9112);
     descMap: getDescriptorMap22()
 }
 service RetryService on retryListener {
-    resource function getResult(Caller caller, string value) {
+    isolated resource function getResult(Caller caller, string value) {
         // Identifying the client to maintain state to track retry attempts.
         if (clientName != value) {
             requestCount = 0;

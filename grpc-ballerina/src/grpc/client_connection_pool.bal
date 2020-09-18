@@ -32,25 +32,21 @@ public type PoolConfiguration record {|
 
 //This is a hack to get the global map initialized, without involving locking.
 public class ConnectionManager {
-    private PoolConfiguration poolConfig = {};
+    public PoolConfiguration & readonly poolConfig = {};
 
-    public function init() {
+    public isolated function init() {
         self.initGlobalPool(self.poolConfig);
     }
 
-    function initGlobalPool(PoolConfiguration poolConfig) {
+    isolated function initGlobalPool(PoolConfiguration poolConfig) {
         return externInitGlobalPool(self, poolConfig);
-    }
-
-    public function getPoolConfiguration() returns PoolConfiguration {
-        return self.poolConfig;
     }
 }
 
-function externInitGlobalPool(ConnectionManager connectionManager, PoolConfiguration poolConfig) =
+isolated function externInitGlobalPool(ConnectionManager connectionManager, PoolConfiguration poolConfig) =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 ConnectionManager connectionManager = new;
-PoolConfiguration globalGrpcClientConnPool = connectionManager.getPoolConfiguration();
+final PoolConfiguration & readonly globalGrpcClientConnPool = connectionManager.poolConfig;

@@ -79,29 +79,29 @@ public client class HelloWorld7Client {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_7, getDescriptorMap7());
     }
 
-    public remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/hello", req, msgListener, headers);
     }
 
-    public remote function testInt(int req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function testInt(int req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testInt", req, msgListener, headers);
     }
 
-    public remote function testFloat(float req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function testFloat(float req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testFloat", req, msgListener, headers);
     }
 
-    public remote function testBoolean(boolean req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function testBoolean(boolean req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testBoolean", req, msgListener, headers);
     }
 
-    public remote function testStruct(Request req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function testStruct(Request req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testStruct", req, msgListener, headers);
     }
 }

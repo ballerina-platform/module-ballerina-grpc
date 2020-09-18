@@ -38,13 +38,13 @@ public client class HelloWorld13BlockingClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
-    public remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("HelloWorld13/hello", req, headers);
         Headers resHeaders = new;
         any result = ();
@@ -60,13 +60,13 @@ public client class HelloWorld13Client {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
-    public remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("HelloWorld13/hello", req, msgListener, headers);
     }
 

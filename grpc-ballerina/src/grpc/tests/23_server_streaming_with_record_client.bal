@@ -74,13 +74,13 @@ public client class helloWorldServerStreamingClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_23, getDescriptorMap23());
     }
 
-    public remote function lotsOfReplies(HelloRequest req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function lotsOfReplies(HelloRequest req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("helloWorldServerStreaming/lotsOfReplies", req, msgListener, headers);
     }
 

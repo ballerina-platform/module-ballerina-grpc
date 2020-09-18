@@ -43,7 +43,7 @@ boolean initialized = false;
 }
 service Chat on ep3 {
 
-    resource function chat(Caller caller, stream<ChatMessage, error> clientStream) {
+    isolated resource function chat(Caller caller, stream<ChatMessage, error> clientStream) {
         log:printInfo(string `${caller.getId()} connected to chat`);
         connectionsMap[caller.getId().toString()] = caller;
         log:printInfo("Client registration completed. Connection map status");

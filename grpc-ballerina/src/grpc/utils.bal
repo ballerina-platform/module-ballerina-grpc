@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-function checkErrorForRetry(Error receivedError, ErrorType[] errorTypes) returns boolean {
+isolated function checkErrorForRetry(Error receivedError, ErrorType[] errorTypes) returns boolean {
     if (receivedError is CancelledError) {
         foreach var errorType in errorTypes {
             if (errorType is typedesc<CancelledError>) {

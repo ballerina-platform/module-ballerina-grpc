@@ -26,7 +26,7 @@ public class Headers {
     #
     # + headerName - The header name
     # + return - True if header exists or else false
-    public function exists(string headerName) returns boolean {
+    public isolated function exists(string headerName) returns boolean {
         return externExists(self, headerName);
     }
 
@@ -38,7 +38,7 @@ public class Headers {
     #
     # + headerName - The header name
     # + return - First header value if exists or else `()`
-    public function get(string headerName) returns string? {
+    public isolated function get(string headerName) returns string? {
         string? result = externGet(self, headerName);
         if (result is ()) {
             return result;
@@ -54,7 +54,7 @@ public class Headers {
     #
     # + headerName - The header name
     # + return - Header value array
-    public function getAll(string headerName) returns string[] {
+    public isolated function getAll(string headerName) returns string[] {
         return externGetAll(self, headerName);
     }
 
@@ -65,7 +65,7 @@ public class Headers {
     #
     # + headerName - The header name
     # + headerValue - The header value
-    public function setEntry(string headerName, string headerValue) {
+    public isolated function setEntry(string headerName, string headerValue) {
         return externSetEntry(self, headerName, headerValue);
     }
 
@@ -76,7 +76,7 @@ public class Headers {
     #
     # + headerName - The header name
     # + headerValue - The header value
-    public function addEntry(string headerName, string headerValue) {
+    public isolated function addEntry(string headerName, string headerValue) {
         return externAddEntry(self, headerName, headerValue);
     }
 
@@ -86,7 +86,7 @@ public class Headers {
     # ```
     #
     # + headerName - The header name
-    public function remove(string headerName) {
+    public isolated function remove(string headerName) {
         return externRemove(self, headerName);
     }
 
@@ -95,42 +95,42 @@ public class Headers {
     # headers.removeAll()
     # ```
     #
-    public function removeAll() {
+    public isolated function removeAll() {
         return externRemoveAll(self);
     }
 }
 
-function externExists(Headers headerValues, string headerName) returns boolean =
+isolated function externExists(Headers headerValues, string headerName) returns boolean =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
 } external;
 
-function externGet(Headers headerValues, string headerName) returns string? =
+isolated function externGet(Headers headerValues, string headerName) returns string? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
 } external;
 
-function externGetAll(Headers headerValues, string headerName) returns string[] =
+isolated function externGetAll(Headers headerValues, string headerName) returns string[] =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
 } external;
 
-function externSetEntry(Headers headerValues, string headerName, string headerValue) =
+isolated function externSetEntry(Headers headerValues, string headerName, string headerValue) =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
 } external;
 
-function externAddEntry(Headers headerValues, string headerName, string headerValue) =
+isolated function externAddEntry(Headers headerValues, string headerName, string headerValue) =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
 } external;
 
-function externRemove(Headers headerValues, string headerName) =
+isolated function externRemove(Headers headerValues, string headerName) =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
 } external;
 
-function externRemoveAll(Headers headerValues) =
+isolated function externRemoveAll(Headers headerValues) =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
 } external;

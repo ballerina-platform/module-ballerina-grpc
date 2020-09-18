@@ -101,14 +101,14 @@ public client class Chat17Client {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_17, getDescriptorMap17());
     }
 
 
-    public remote function chat(service msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
+    public isolated remote function chat(service msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
         return self.grpcClient->streamingExecute("Chat/chat", msgListener, headers);
     }
 }
