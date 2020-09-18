@@ -121,11 +121,10 @@ public class BlockingStub extends AbstractStub {
                 httpConnectorError = MessageUtils.getConnectorError(status.asRuntimeException());
             }
             if (inboundResponse != null) {
-                dataContext.getCallback().setReturnValues(inboundResponse);
+                dataContext.getFuture().complete(inboundResponse);
             } else {
-                dataContext.getCallback().setReturnValues(httpConnectorError);
+                dataContext.getFuture().complete(httpConnectorError);
             }
-            dataContext.getCallback().notifySuccess();
         }
     }
 }
