@@ -22,7 +22,7 @@ import ballerina/io;
 }
 service OneofFieldService on new Listener(9105) {
 
-    resource function hello(Caller caller, Request1 value) {
+    isolated resource function hello(Caller caller, Request1 value) {
         string? request = "";
         if (value?.first_name is string) {
             request = value?.first_name;
@@ -35,7 +35,7 @@ service OneofFieldService on new Listener(9105) {
         checkpanic caller->complete();
     }
 
-    resource function testOneofField(Caller caller, ZZZ req) {
+    isolated resource function testOneofField(Caller caller, ZZZ req) {
         checkpanic caller->send(req);
         checkpanic caller->complete();
     }

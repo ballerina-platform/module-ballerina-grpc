@@ -21,6 +21,10 @@ import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.WireFormat;
 import io.netty.handler.codec.http.HttpHeaders;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.types.BArrayType;
 import org.ballerinalang.jvm.types.BRecordType;
 import org.ballerinalang.jvm.types.BType;
@@ -28,11 +32,6 @@ import org.ballerinalang.jvm.types.BTypes;
 import org.ballerinalang.jvm.types.BUnionType;
 import org.ballerinalang.jvm.types.TypeTags;
 import org.ballerinalang.jvm.values.ArrayValue;
-import org.ballerinalang.jvm.values.MapValue;
-import org.ballerinalang.jvm.values.api.BMap;
-import org.ballerinalang.jvm.values.api.BString;
-import org.ballerinalang.jvm.values.api.BValueCreator;
-import org.ballerinalang.jvm.values.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -127,23 +126,23 @@ public class Message {
             }
         }
 
-        BMap<BString, Object> bMapValue = null;
+        BMap<BString, Object> bBMap = null;
         if (bType.getTag() == TypeTags.RECORD_TYPE_TAG) {
-            bMapValue = BValueCreator.createRecordValue(bType.getPackage(), bType.getName());
-            bMessage = bMapValue;
+            bBMap = BValueCreator.createRecordValue(bType.getPackage(), bType.getName());
+            bMessage = bBMap;
         }
 
         if (input == null) {
-            if (bMapValue != null) {
+            if (bBMap != null) {
                 for (Map.Entry<Integer, Descriptors.FieldDescriptor> entry : fieldDescriptors.entrySet()) {
-                    BString bFieldName = org.ballerinalang.jvm.StringUtils.fromString(entry.getValue().getName());
+                    BString bFieldName = org.ballerinalang.jvm.api.BStringUtils.fromString(entry.getValue().getName());
                     if (entry.getValue().getType().toProto().getNumber() ==
                             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE_VALUE &&
                             !entry.getValue().isRepeated()) {
-                        bMapValue.put(bFieldName, null);
+                        bBMap.put(bFieldName, null);
                     } else if (entry.getValue().getType().toProto().getNumber() ==
                             DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM_VALUE) {
-                        bMapValue.put(bFieldName, org.ballerinalang.jvm.StringUtils
+                        bBMap.put(bFieldName, org.ballerinalang.jvm.api.BStringUtils
                                 .fromString(entry.getValue().getEnumType().findValueByNumber(0).toString()));
                     }
                 }
@@ -165,7 +164,7 @@ public class Message {
                             break;
                         }
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING_VALUE: {
-                            bMessage = org.ballerinalang.jvm.StringUtils.fromString("");
+                            bMessage = org.ballerinalang.jvm.api.BStringUtils.fromString("");
                             break;
                         }
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL_VALUE: {
@@ -189,22 +188,22 @@ public class Message {
                 done = true;
             } else if (fieldDescriptors.containsKey(tag)) {
                 Descriptors.FieldDescriptor fieldDescriptor = fieldDescriptors.get(tag);
-                BString bFieldName = org.ballerinalang.jvm.StringUtils.fromString(fieldDescriptor.getName());
+                BString bFieldName = org.ballerinalang.jvm.api.BStringUtils.fromString(fieldDescriptor.getName());
                 switch (fieldDescriptor.getType().toProto().getNumber()) {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue floatArray = (ArrayValue) BValueCreator.createArrayValue(floatArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    floatArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    floatArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, floatArray);
+                                    bBMap.put(bFieldName, floatArray);
                                 }
                                 floatArray.add(floatArray.size(), input.readDouble());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBMapValue(bMapValue, fieldDescriptor, input.readDouble());
+                                updateBBMap(bBMap, fieldDescriptor, input.readDouble());
                             } else {
-                                bMapValue.put(bFieldName, input.readDouble());
+                                bBMap.put(bFieldName, input.readDouble());
                             }
                         } else {
                             bMessage = input.readDouble();
@@ -212,21 +211,21 @@ public class Message {
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue floatArray = (ArrayValue) BValueCreator.createArrayValue(floatArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    floatArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    floatArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, floatArray);
+                                    bBMap.put(bFieldName, floatArray);
                                 }
                                 floatArray.add(floatArray.size(),
                                         Double.parseDouble(String.valueOf(input.readFloat())));
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 double bValue = Double.parseDouble(String.valueOf(input.readFloat()));
-                                updateBMapValue(bMapValue, fieldDescriptor, bValue);
+                                updateBBMap(bBMap, fieldDescriptor, bValue);
                             } else {
-                                bMapValue.put(bFieldName, Double.parseDouble(String.valueOf(input.readFloat())));
+                                bBMap.put(bFieldName, Double.parseDouble(String.valueOf(input.readFloat())));
                             }
                         } else {
                             bMessage = Double.parseDouble(String.valueOf(input.readFloat()));
@@ -234,19 +233,19 @@ public class Message {
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue intArray = (ArrayValue) BValueCreator.createArrayValue(intArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    intArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    intArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, intArray);
+                                    bBMap.put(bFieldName, intArray);
                                 }
                                 intArray.add(intArray.size(), input.readInt64());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBMapValue(bMapValue, fieldDescriptor, input.readInt64());
+                                updateBBMap(bBMap, fieldDescriptor, input.readInt64());
                             } else {
-                                bMapValue.put(bFieldName, input.readInt64());
+                                bBMap.put(bFieldName, input.readInt64());
                             }
                         } else {
                             bMessage = input.readInt64();
@@ -254,19 +253,19 @@ public class Message {
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT64_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue intArray = (ArrayValue) BValueCreator.createArrayValue(intArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    intArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    intArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, intArray);
+                                    bBMap.put(bFieldName, intArray);
                                 }
                                 intArray.add(intArray.size(), input.readUInt64());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBMapValue(bMapValue, fieldDescriptor, input.readUInt64());
+                                updateBBMap(bBMap, fieldDescriptor, input.readUInt64());
                             } else {
-                                bMapValue.put(bFieldName, input.readUInt64());
+                                bBMap.put(bFieldName, input.readUInt64());
                             }
                         } else {
                             bMessage = input.readUInt64();
@@ -274,19 +273,19 @@ public class Message {
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue intArray = (ArrayValue) BValueCreator.createArrayValue(intArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    intArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    intArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, intArray);
+                                    bBMap.put(bFieldName, intArray);
                                 }
                                 intArray.add(intArray.size(), input.readInt32());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBMapValue(bMapValue, fieldDescriptor, input.readInt32());
+                                updateBBMap(bBMap, fieldDescriptor, input.readInt32());
                             } else {
-                                bMapValue.put(bFieldName, input.readInt32());
+                                bBMap.put(bFieldName, input.readInt32());
                             }
                         } else {
                             bMessage = input.readInt32();
@@ -294,19 +293,19 @@ public class Message {
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED64_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue intArray = (ArrayValue) BValueCreator.createArrayValue(intArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    intArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    intArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, intArray);
+                                    bBMap.put(bFieldName, intArray);
                                 }
                                 intArray.add(intArray.size(), input.readFixed64());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBMapValue(bMapValue, fieldDescriptor, input.readFixed64());
+                                updateBBMap(bBMap, fieldDescriptor, input.readFixed64());
                             } else {
-                                bMapValue.put(bFieldName, input.readFixed64());
+                                bBMap.put(bFieldName, input.readFixed64());
                             }
                         } else {
                             bMessage = input.readFixed64();
@@ -314,19 +313,19 @@ public class Message {
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue intArray = (ArrayValue) BValueCreator.createArrayValue(intArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    intArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    intArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, intArray);
+                                    bBMap.put(bFieldName, intArray);
                                 }
                                 intArray.add(intArray.size(), input.readFixed32());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBMapValue(bMapValue, fieldDescriptor, input.readFixed32());
+                                updateBBMap(bBMap, fieldDescriptor, input.readFixed32());
                             } else {
-                                bMapValue.put(bFieldName, input.readFixed32());
+                                bBMap.put(bFieldName, input.readFixed32());
                             }
                         } else {
                             bMessage = input.readFixed32();
@@ -334,19 +333,19 @@ public class Message {
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue booleanArray = (ArrayValue) BValueCreator.createArrayValue(booleanArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    booleanArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    booleanArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, booleanArray);
+                                    bBMap.put(bFieldName, booleanArray);
                                 }
                                 booleanArray.add(booleanArray.size(), input.readBool());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBMapValue(bMapValue, fieldDescriptor, input.readBool());
+                                updateBBMap(bBMap, fieldDescriptor, input.readBool());
                             } else {
-                                bMapValue.put(bFieldName, input.readBool());
+                                bBMap.put(bFieldName, input.readBool());
                             }
                         } else {
                             bMessage = input.readBool();
@@ -354,63 +353,63 @@ public class Message {
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue stringArray = (ArrayValue) BValueCreator.createArrayValue(stringArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    stringArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    stringArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, stringArray);
+                                    bBMap.put(bFieldName, stringArray);
                                 }
                                 stringArray.add(stringArray.size(),
-                                        org.ballerinalang.jvm.StringUtils.fromString(input.readStringRequireUtf8()));
-                                bMapValue.put(bFieldName, stringArray);
+                                        org.ballerinalang.jvm.api.BStringUtils.fromString(input.readStringRequireUtf8()));
+                                bBMap.put(bFieldName, stringArray);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBMapValue(bMapValue, fieldDescriptor,
-                                        org.ballerinalang.jvm.StringUtils.fromString(input.readStringRequireUtf8()));
+                                updateBBMap(bBMap, fieldDescriptor,
+                                        org.ballerinalang.jvm.api.BStringUtils.fromString(input.readStringRequireUtf8()));
                             } else {
-                                bMapValue.put(bFieldName,
-                                        org.ballerinalang.jvm.StringUtils.fromString(input.readStringRequireUtf8()));
+                                bBMap.put(bFieldName,
+                                        org.ballerinalang.jvm.api.BStringUtils.fromString(input.readStringRequireUtf8()));
                             }
                         } else if (!fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_ANY_TYPE_URL)) {
-                            bMessage = org.ballerinalang.jvm.StringUtils.fromString(input.readStringRequireUtf8());
+                            bMessage = org.ballerinalang.jvm.api.BStringUtils.fromString(input.readStringRequireUtf8());
                         }
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 ArrayValue stringArray = (ArrayValue) BValueCreator.createArrayValue(stringArrayType);
-                                if (bMapValue.containsKey(bFieldName)) {
-                                    stringArray = (ArrayValue) bMapValue.get(bFieldName);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    stringArray = (ArrayValue) bBMap.get(bFieldName);
                                 } else {
-                                    bMapValue.put(bFieldName, stringArray);
+                                    bBMap.put(bFieldName, stringArray);
                                 }
-                                stringArray.add(stringArray.size(), org.ballerinalang.jvm.StringUtils.fromString(
+                                stringArray.add(stringArray.size(), org.ballerinalang.jvm.api.BStringUtils.fromString(
                                         fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
-                                bMapValue.put(bFieldName, stringArray);
+                                bBMap.put(bFieldName, stringArray);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 String bValue = fieldDescriptor.getEnumType().findValueByNumber(input
                                         .readEnum()).toString();
-                                updateBMapValue(bMapValue, fieldDescriptor,
-                                        org.ballerinalang.jvm.StringUtils.fromString(bValue));
+                                updateBBMap(bBMap, fieldDescriptor,
+                                        org.ballerinalang.jvm.api.BStringUtils.fromString(bValue));
                             } else {
-                                bMapValue.put(bFieldName, org.ballerinalang.jvm.StringUtils.fromString(
+                                bBMap.put(bFieldName, org.ballerinalang.jvm.api.BStringUtils.fromString(
                                         fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
                             }
                         } else {
-                            bMessage = org.ballerinalang.jvm.StringUtils.fromString(
+                            bMessage = org.ballerinalang.jvm.api.BStringUtils.fromString(
                                     fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString());
                         }
                         break;
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES_VALUE: {
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                              if (fieldDescriptor.getContainingOneof() != null) {
                                 Object bValue = BValueCreator.createArrayValue(input.readByteArray());
-                                updateBMapValue(bMapValue, fieldDescriptor, bValue);
+                                updateBBMap(bBMap, fieldDescriptor, bValue);
                              } else {
-                                 bMapValue.put(bFieldName, BValueCreator.createArrayValue(input.readByteArray()));
+                                 bBMap.put(bFieldName, BValueCreator.createArrayValue(input.readByteArray()));
                              }
                         } else {
                             bMessage = BValueCreator.createArrayValue(input.readByteArray());
@@ -426,24 +425,24 @@ public class Message {
                                     "message. record type is not supported : " +
                                     fieldDescriptor.getType()).asRuntimeException();
                         }
-                        if (bMapValue != null) {
+                        if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                ArrayValue structArray = bMapValue.get(bFieldName) != null ?
-                                        (ArrayValue) bMapValue.get(bFieldName) : null;
+                                ArrayValue structArray = bBMap.get(bFieldName) != null ?
+                                        (ArrayValue) bBMap.get(bFieldName) : null;
                                 BType fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
                                 if (structArray == null || structArray.size() == 0) {
                                     structArray = (ArrayValue) BValueCreator.createArrayValue((BArrayType) fieldType);
-                                    bMapValue.put(bFieldName, structArray);
+                                    bBMap.put(bFieldName, structArray);
                                 }
                                 structArray.add(structArray.size(), readMessage(fieldDescriptor,
                                         ((BArrayType) fieldType).getElementType(), input).bMessage);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 BType fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
                                 Object bValue = readMessage(fieldDescriptor, fieldType, input).bMessage;
-                                updateBMapValue(bMapValue, fieldDescriptor, bValue);
+                                updateBBMap(bBMap, fieldDescriptor, bValue);
                             } else {
                                 BType fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
-                                bMapValue.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
+                                bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             }
                         } else {
                             BType fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
@@ -460,9 +459,9 @@ public class Message {
         }
     }
 
-    private void updateBMapValue(BMap<BString, Object> bMapValue,
+    private void updateBBMap(BMap<BString, Object> bBMap,
                                  Descriptors.FieldDescriptor fieldDescriptor, Object bValue) {
-        bMapValue.put(org.ballerinalang.jvm.StringUtils.fromString(fieldDescriptor.getName()), bValue);
+        bBMap.put(org.ballerinalang.jvm.api.BStringUtils.fromString(fieldDescriptor.getName()), bValue);
     }
 
     public com.google.protobuf.Descriptors.Descriptor getDescriptor() {
@@ -486,16 +485,16 @@ public class Message {
                     .asRuntimeException();
         }
 
-        MapValue<BString, Object> bMapValue = null;
-        if (bMessage instanceof MapValue) {
-            bMapValue = (MapValue<BString, Object>) bMessage;
+        BMap<BString, Object> bBMap = null;
+        if (bMessage instanceof BMap) {
+            bBMap = (BMap<BString, Object>) bMessage;
         }
         for (Descriptors.FieldDescriptor fieldDescriptor : messageDescriptor.getFields()) {
-            BString bFieldName = org.ballerinalang.jvm.StringUtils.fromString(fieldDescriptor.getName());
+            BString bFieldName = org.ballerinalang.jvm.api.BStringUtils.fromString(fieldDescriptor.getName());
             switch (fieldDescriptor.getType().toProto().getNumber()) {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -510,8 +509,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -528,8 +527,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -544,8 +543,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT64_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -560,8 +559,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -577,8 +576,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED64_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -593,8 +592,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -610,8 +609,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -626,8 +625,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -643,8 +642,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue
                                 && !fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY_VALUE)) {
                             ArrayValue valueArray = (ArrayValue) bValue;
@@ -665,16 +664,16 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         output.writeEnum(fieldDescriptor.getNumber(), fieldDescriptor.getEnumType()
                                 .findValueByName(((BString) bValue).getValue()).getNumber());
                     }
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             output.writeByteArray(fieldDescriptor.getNumber(), valueArray.getBytes());
@@ -711,17 +710,17 @@ public class Message {
                             "message name: " + messageName)
                     .asRuntimeException();
         }
-        MapValue<BString, Object> bMapValue = null;
-        if (bMessage instanceof MapValue) {
-            bMapValue = (MapValue<BString, Object>) bMessage;
+        BMap<BString, Object> bBMap = null;
+        if (bMessage instanceof BMap) {
+            bBMap = (BMap<BString, Object>) bMessage;
         }
 
         for (Descriptors.FieldDescriptor fieldDescriptor : messageDescriptor.getFields()) {
-            BString bFieldName = org.ballerinalang.jvm.StringUtils.fromString(fieldDescriptor.getName());
+            BString bFieldName = org.ballerinalang.jvm.api.BStringUtils.fromString(fieldDescriptor.getName());
             switch (fieldDescriptor.getType().toProto().getNumber()) {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -739,8 +738,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FLOAT_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -759,8 +758,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -778,8 +777,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT64_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -797,8 +796,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -816,8 +815,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED64_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -835,8 +834,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -854,8 +853,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -873,8 +872,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -892,13 +891,13 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue
                                 && !fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                MapValue<BString, Object> value = (MapValue<BString, Object>) valueArray.getRefValue(i);
+                                BMap<BString, Object> value = (BMap<BString, Object>) valueArray.getRefValue(i);
                                 Message message = new Message(fieldDescriptor.getMessageType(), value);
                                 size += computeMessageSize(fieldDescriptor, message);
                             }
@@ -910,8 +909,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
 
                         size += com.google.protobuf.CodedOutputStream.computeEnumSize(
                                 fieldDescriptor.getNumber(),
@@ -921,8 +920,8 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES_VALUE: {
-                    if (bMapValue != null && bMapValue.containsKey(bFieldName)) {
-                        Object bValue = bMapValue.get(bFieldName);
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof ArrayValue) {
                             ArrayValue valueArray = (ArrayValue) bValue;
                             size += com.google.protobuf.CodedOutputStream
@@ -986,7 +985,7 @@ public class Message {
     public String toString() {
         StringBuilder payload = new StringBuilder("Message : ");
         if (bMessage != null) {
-            payload.append("{ ").append(StringUtils.getJsonString(bMessage)).append(" }");
+            payload.append("{ ").append(BStringUtils.getJsonString(bMessage)).append(" }");
         } else {
             payload.append("null");
         }

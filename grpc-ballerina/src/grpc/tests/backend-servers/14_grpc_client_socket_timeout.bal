@@ -23,7 +23,7 @@ import ballerina/runtime;
 }
 service HelloWorld14 on new Listener(9104) {
 
-    resource function hello (Caller caller, string name,
+    isolated resource function hello (Caller caller, string name,
                              Headers headers) {
         string message = "Hello " + name;
         runtime:sleep(2000);

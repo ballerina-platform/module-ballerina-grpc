@@ -33,7 +33,7 @@ public class Listener {
     # ```
     #
     # + return - An `error` if an error occurs while starting the server or else `()`
-    public function __start() returns error? {
+    public isolated function __start() returns error? {
         return externStart(self);
     }
 
@@ -43,7 +43,7 @@ public class Listener {
     # ```
     #
     # + return - An `error` if an error occurred during the listener stopping process or else `()`
-    public function __gracefulStop() returns error? {
+    public isolated function __gracefulStop() returns error? {
         return ();
     }
 
@@ -53,7 +53,7 @@ public class Listener {
     # ```
     #
     # + return - An `error` if an error occurs while stopping the server or else `()`
-    public function __immediateStop() returns error? {
+    public isolated function __immediateStop() returns error? {
         return externStop(self);
     }
 
@@ -65,7 +65,7 @@ public class Listener {
     # + s - The type of the service to be registered
     # + name - Name of the service
     # + return - An `error` if encounters an error while attaching the service or else `()`
-    public function __attach(service s, string? name = ()) returns error? {
+    public isolated function __attach(service s, string? name = ()) returns error? {
         return externRegister(self, s, name);
     }
 
@@ -77,14 +77,14 @@ public class Listener {
     #
     # + s - The service to be detached
     # + return - An `error` if occurred during detaching of a service or else `()`
-    public function __detach(service s) returns error? {
+    public isolated function __detach(service s) returns error? {
     }
 
     # Gets called when the endpoint is being initialized during the module init time.
     #
     # + port - Listener port
     # + config - The `grpc:ListenerConfiguration` of the endpoint
-    public function init(int port, ListenerConfiguration? config = ()) {
+    public isolated function init(int port, ListenerConfiguration? config = ()) {
         self.config = config ?: {};
         self.port = port;
         error? err = externInitEndpoint(self);
@@ -99,7 +99,7 @@ public class Listener {
 class StreamIterator {
     private boolean isClosed = false;
 
-    public function next() returns record {|anydata value;|}|error? {
+    public isolated function next() returns record {|anydata value;|}|error? {
         if (self.isClosed) {
             return StreamClosedError("Stream is closed. Therefore, no operations are allowed further on the stream.");
         }
@@ -117,7 +117,7 @@ class StreamIterator {
         }
     }
 
-    public function close() returns error? {
+    public isolated function close() returns error? {
         if (!self.isClosed) {
             self.isClosed = true;
             return closeStream(self);
@@ -127,32 +127,32 @@ class StreamIterator {
     }
 }
 
-function externInitEndpoint(Listener listenerObject) returns error? =
+isolated function externInitEndpoint(Listener listenerObject) returns error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
-function externRegister(Listener listenerObject, service serviceType, string? name) returns error? =
+isolated function externRegister(Listener listenerObject, service serviceType, string? name) returns error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
-function externStart(Listener listenerObject) returns error? =
+isolated function externStart(Listener listenerObject) returns error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
-function externStop(Listener listenerObject) returns error? =
+isolated function externStop(Listener listenerObject) returns error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
-function nextResult(StreamIterator iterator) returns anydata|handle|error? =
+isolated function nextResult(StreamIterator iterator) returns anydata|handle|error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
-function closeStream(StreamIterator iterator) returns error? =
+isolated function closeStream(StreamIterator iterator) returns error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;

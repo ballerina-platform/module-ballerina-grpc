@@ -19,25 +19,25 @@
 package org.ballerinalang.net.grpc;
 
 import org.ballerinalang.jvm.scheduling.Strand;
-import org.ballerinalang.jvm.values.connector.NonBlockingCallback;
+import org.ballerinalang.jvm.api.BalFuture;
 
 /**
- * {@code DataContext} is the wrapper to hold {@code Strand} and {@code NonBlockingCallback}.
+ * {@code DataContext} is the wrapper to hold {@code Strand} and {@code BalFuture}.
  */
 public class DataContext {
     private Strand strand = null;
-    private NonBlockingCallback callback = null;
+    private BalFuture balFuture = null;
 
-    public DataContext(Strand strand, NonBlockingCallback callback) {
+    public DataContext(Strand strand, BalFuture balFuture) {
         this.strand = strand;
-        this.callback = callback;
+        this.balFuture = balFuture;
     }
 
     public Strand getStrand() {
         return strand;
     }
 
-    public NonBlockingCallback getCallback() {
-        return callback;
+    public BalFuture getFuture() {
+        return balFuture;
     }
 }

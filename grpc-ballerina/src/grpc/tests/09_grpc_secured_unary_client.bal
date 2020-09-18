@@ -58,13 +58,13 @@ public client class HelloWorld9BlockingClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_9, getDescriptorMap9());
     }
 
-    public remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld85/hello", req, headers);
         any result = ();
         Headers resHeaders = new;
@@ -79,13 +79,13 @@ public client class HelloWorld9Client {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_9, getDescriptorMap9());
     }
 
-    public remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld85/hello", req, msgListener, headers);
     }
 }

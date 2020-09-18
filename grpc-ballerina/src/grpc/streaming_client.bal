@@ -26,7 +26,7 @@ public client class StreamingClient {
     #
     # + res - The inbound request message
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public remote function send(anydata res) returns Error? {
+    public isolated remote function send(anydata res) returns Error? {
         return streamSend(self, res);
     }
 
@@ -36,7 +36,7 @@ public client class StreamingClient {
     # ```
     #
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public remote function complete() returns Error? {
+    public isolated remote function complete() returns Error? {
         return streamComplete(self);
     }
 
@@ -48,22 +48,22 @@ public client class StreamingClient {
     # + statusCode - Error status code
     # + message - Error message
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public remote function sendError(int statusCode, string message) returns Error? {
+    public isolated remote function sendError(int statusCode, string message) returns Error? {
         return streamSendError(self, statusCode, message);
     }
 }
 
-function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
+isolated function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
-function streamComplete(StreamingClient streamConnection) returns Error? =
+isolated function streamComplete(StreamingClient streamConnection) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
-function streamSendError(StreamingClient streamConnection, int statusCode, string message) returns Error? =
+isolated function streamSendError(StreamingClient streamConnection, int statusCode, string message) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;

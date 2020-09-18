@@ -31,7 +31,7 @@ listener Listener ep10 = new (9100, {
     descMap: getDescriptorMap10()
 }
 service grpcMutualSslService on ep10 {
-    resource function hello(Caller caller, string name) {
+    isolated resource function hello(Caller caller, string name) {
         log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->send(message);

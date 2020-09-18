@@ -30,7 +30,7 @@ public client class Client {
     #
     # + url - The server URL
     # + config - - The `grpc:ClientConfiguration` of the endpoint
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         self.config = config ?: {};
         self.url = url;
         error? err = externInit(self, self.url, self.config, globalGrpcClientConnPool);
@@ -49,7 +49,7 @@ public client class Client {
     # + descriptorKey - Key of the proto descriptor
     # + descriptorMap - Proto descriptor map with all the dependent descriptors
     # + return - A `grpc:Error` if an error occurs while initializing the stub or else `()`
-    public function initStub(AbstractClientEndpoint clientEndpoint, string stubType, string descriptorKey,
+    public isolated function initStub(AbstractClientEndpoint clientEndpoint, string stubType, string descriptorKey,
                              map<any> descriptorMap) returns Error? {
         return externInitStub(self, clientEndpoint, stubType, descriptorKey, descriptorMap);
     }
@@ -63,7 +63,7 @@ public client class Client {
     # + payload - Request message. The message type varies with the remote service method parameter
     # + headers - Optional headers parameter. The header value are passed only if needed. The default value is `()`
     # + return - The response message and headers if executed successfully or else a `grpc:Error`
-    public remote function blockingExecute(string methodID, anydata payload, Headers? headers = ())
+    public isolated remote function blockingExecute(string methodID, anydata payload, Headers? headers = ())
                                    returns ([anydata, Headers]|Error) {
         var retryConfig = self.config.retryConfiguration;
         if (retryConfig is RetryConfiguration) {
@@ -82,7 +82,7 @@ public client class Client {
     # + listenerService - Call back listener service. This service listens to the response message from the service
     # + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
     # + return - A `grpc:Error` if an error occurs while sending the request or else `()`
-    public remote function nonBlockingExecute(string methodID, anydata payload, service listenerService,
+    public isolated remote function nonBlockingExecute(string methodID, anydata payload, service listenerService,
                                               Headers? headers = ()) returns Error? {
          return externNonBlockingExecute(self, methodID, payload, listenerService, headers);
     }
@@ -97,13 +97,13 @@ public client class Client {
     # + listenerService - Call back listener service. This service listens to the response message from the service
     # + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
     # + return - A `grpc:StreamingClient` object if executed successfully or else `()`
-    public remote function streamingExecute(string methodID, service listenerService, Headers? headers = ())
+    public isolated remote function streamingExecute(string methodID, service listenerService, Headers? headers = ())
                                     returns StreamingClient|Error {
         return externStreamingExecute(self, methodID, listenerService, headers);
     }
 }
 
-function retryBlockingExecute(Client grpcClient, string methodID, anydata payload, Headers? headers,
+isolated function retryBlockingExecute(Client grpcClient, string methodID, anydata payload, Headers? headers,
     RetryConfiguration retryConfig) returns ([anydata, Headers]|Error) {
     int currentRetryCount = 0;
     int retryCount = retryConfig.retryCount;
@@ -136,27 +136,29 @@ function retryBlockingExecute(Client grpcClient, string methodID, anydata payloa
     }
 }
 
-function externInit(Client clientEndpoint, string url, ClientConfiguration config, PoolConfiguration globalPoolConfig)
+isolated function externInit(Client clientEndpoint, string url, ClientConfiguration config, PoolConfiguration
+globalPoolConfig)
                 returns Error? = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
-function externInitStub(Client genericEndpoint, AbstractClientEndpoint clientEndpoint, string stubType,
+isolated function externInitStub(Client genericEndpoint, AbstractClientEndpoint clientEndpoint, string stubType,
                         string descriptorKey, map<any> descriptorMap) returns Error? = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
-function externBlockingExecute(Client clientEndpoint, string methodID, anydata payload, Headers? headers)
+isolated function externBlockingExecute(Client clientEndpoint, string methodID, anydata payload, Headers? headers)
                 returns ([anydata, Headers]|Error) = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
-function externNonBlockingExecute(Client clientEndpoint, string methodID, anydata payload, service listenerService,
+isolated function externNonBlockingExecute(Client clientEndpoint, string methodID, anydata payload, service
+listenerService,
                   Headers? headers) returns Error? = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
-function externStreamingExecute(Client clientEndpoint, string methodID, service listenerService,
+isolated function externStreamingExecute(Client clientEndpoint, string methodID, service listenerService,
                 Headers? headers) returns StreamingClient|Error = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
@@ -165,6 +167,8 @@ function externStreamingExecute(Client clientEndpoint, string methodID, service 
 # Represents the abstract gRPC client endpoint. This abstract object is used in client endpoints generated by the
 # Protocol Buffer tool.
 public type AbstractClientEndpoint object {};
+
+final ErrorType[] & readonly defaultErrorTypes = [InternalError];
 
 # Represents grpc client retry functionality configurations.
 #
@@ -178,7 +182,7 @@ public type RetryConfiguration record {|
    int intervalInMillis;
    int maxIntervalInMillis;
    int backoffFactor;
-   ErrorType[] errorTypes = [InternalError];
+   ErrorType[] errorTypes = defaultErrorTypes;
 |};
 
 # Represents client endpoint configuration.

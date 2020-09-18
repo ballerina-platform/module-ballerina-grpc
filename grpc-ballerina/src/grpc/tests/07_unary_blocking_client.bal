@@ -117,13 +117,13 @@ public client class HelloWorld7BlockingClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_7, getDescriptorMap7());
     }
 
-    public remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/hello", req, headers);
         any result = ();
         Headers resHeaders = new;
@@ -131,7 +131,7 @@ public client class HelloWorld7BlockingClient {
         return [result.toString(), resHeaders];
     }
 
-    public remote function testInt(int req, Headers? headers = ()) returns ([int, Headers]|Error) {
+    public isolated remote function testInt(int req, Headers? headers = ()) returns ([int, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testInt", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -144,7 +144,7 @@ public client class HelloWorld7BlockingClient {
         }
     }
 
-    public remote function testFloat(float req, Headers? headers = ()) returns ([float, Headers]|Error) {
+    public isolated remote function testFloat(float req, Headers? headers = ()) returns ([float, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testFloat", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -157,7 +157,7 @@ public client class HelloWorld7BlockingClient {
         }
     }
 
-    public remote function testBoolean(boolean req, Headers? headers = ()) returns ([boolean, Headers]|Error) {
+    public isolated remote function testBoolean(boolean req, Headers? headers = ()) returns ([boolean, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testBoolean", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -170,7 +170,7 @@ public client class HelloWorld7BlockingClient {
         }
     }
 
-    public remote function testStruct(Request req, Headers? headers = ()) returns ([Response, Headers]|Error) {
+    public isolated remote function testStruct(Request req, Headers? headers = ()) returns ([Response, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testStruct", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -183,7 +183,7 @@ public client class HelloWorld7BlockingClient {
         }
     }
 
-    public remote function testResponseInsideMatch(string req, Headers? headers = ()) returns [Response, Headers]|Error {
+    public isolated remote function testResponseInsideMatch(string req, Headers? headers = ()) returns [Response, Headers]|Error {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testResponseInsideMatch", req, headers);
         anydata result = ();
         Headers resHeaders = new;

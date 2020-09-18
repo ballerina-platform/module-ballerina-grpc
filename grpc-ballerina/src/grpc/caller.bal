@@ -34,7 +34,7 @@ public client class Caller {
     # ```
     #
     # + return - caller ID
-    public function getId() returns int {
+    public isolated function getId() returns int {
         return self.instanceId;
     }
 
@@ -46,7 +46,7 @@ public client class Caller {
     # + res - - The outbound response message
     # + headers - - Optional headers parameter. The header values are passed only if needed. The default value is `()`
     # + return - - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public remote function send(anydata res, Headers? headers = ()) returns Error? {
+    public isolated remote function send(anydata res, Headers? headers = ()) returns Error? {
         return externSend(self, res, headers);
     }
 
@@ -56,7 +56,7 @@ public client class Caller {
     # ```
     #
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public remote function complete() returns Error? {
+    public isolated remote function complete() returns Error? {
         return externComplete(self);
     }
 
@@ -66,7 +66,7 @@ public client class Caller {
     # ```
     #
     # + return - True if the caller has already closed the connection or else false
-    public function isCancelled() returns boolean {
+    public isolated function isCancelled() returns boolean {
         return externIsCancelled(self);
     }
 
@@ -79,27 +79,27 @@ public client class Caller {
     # + message - Error message
     # + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public remote function sendError(int statusCode, string message, Headers? headers = ()) returns Error? {
+    public isolated remote function sendError(int statusCode, string message, Headers? headers = ()) returns Error? {
         return externSendError(self, statusCode, message, headers);
     }
 }
 
-function externSend(Caller endpointClient, anydata res, Headers? headers) returns Error? =
+isolated function externSend(Caller endpointClient, anydata res, Headers? headers) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;
 
-function externComplete(Caller endpointClient) returns Error? =
+isolated function externComplete(Caller endpointClient) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;
 
-function externIsCancelled(Caller endpointClient) returns boolean =
+isolated function externIsCancelled(Caller endpointClient) returns boolean =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;
 
-function externSendError(Caller endpointClient, int statusCode, string message, Headers? headers) returns Error? =
+isolated function externSendError(Caller endpointClient, int statusCode, string message, Headers? headers) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;

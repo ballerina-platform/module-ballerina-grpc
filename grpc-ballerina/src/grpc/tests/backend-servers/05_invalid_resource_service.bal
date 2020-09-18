@@ -22,7 +22,7 @@ listener Listener ep5 = new (9095);
     descMap: getDescriptorMap5()
 }
 service HelloWorld98 on ep5 {
-    resource function hello(Caller caller, string name) {
+    isolated resource function hello(Caller caller, string name) {
         log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
@@ -37,7 +37,7 @@ service HelloWorld98 on ep5 {
         checkpanic caller->complete();
     }
 
-    resource function testInt(Caller caller, string age) {
+    isolated resource function testInt(Caller caller, string age) {
         log:printInfo("age: " + age);
         int displayAge = 0;
         if (age == "") {
@@ -54,7 +54,7 @@ service HelloWorld98 on ep5 {
         checkpanic caller->complete();
     }
 
-    resource function testFloat(Caller caller, float salary) {
+    isolated resource function testFloat(Caller caller, float salary) {
         log:printInfo("gross salary: " + salary.toString());
         string netSalary = "salary";
         Error? err = caller->send(netSalary);

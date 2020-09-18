@@ -26,7 +26,7 @@ listener Listener ep = new (9091, {
 }
 service HelloWorld on ep {
 
-    resource function testInputNestedStruct(Caller caller, Person req) {
+    isolated resource function testInputNestedStruct(Caller caller, Person req) {
         io:println("name: " + req.name);
         string message = "Submitted name: " + req.name;
         io:println("Response message " + message);
@@ -37,7 +37,7 @@ service HelloWorld on ep {
         checkpanic caller->complete();
     }
 
-    resource function testOutputNestedStruct(Caller caller, string name) {
+    isolated resource function testOutputNestedStruct(Caller caller, string name) {
         io:println("requested name: " + name);
         Person person = {name:"Sam", address:{postalCode:10300, state:"CA", country:"USA"}};
         io:println(person);
@@ -48,7 +48,7 @@ service HelloWorld on ep {
         checkpanic caller->complete();
     }
 
-    resource function testInputStructOutputStruct(Caller caller, StockRequest req) {
+    isolated resource function testInputStructOutputStruct(Caller caller, StockRequest req) {
         io:println("Getting stock details for symbol: " + req.name);
         StockQuote res = {symbol:"WSO2", name:"WSO2.com", last:149.52, low:150.70, high:
         149.18};
@@ -60,7 +60,7 @@ service HelloWorld on ep {
         checkpanic caller->complete();
     }
 
-    resource function testInputStructNoOutput(Caller caller, StockQuote req) {
+    isolated resource function testInputStructNoOutput(Caller caller, StockQuote req) {
         io:println("Symbol: " + req.symbol);
         io:println("Name: " + req.name);
         io:println("Last: " + req.last.toString());
@@ -68,7 +68,7 @@ service HelloWorld on ep {
         io:println("High: " + req.high.toString());
     }
 
-    resource function testNoInputOutputStruct(Caller caller) {
+    isolated resource function testNoInputOutputStruct(Caller caller) {
         StockQuote res = {symbol:"WSO2", name:"WSO2 Inc.", last:14.0, low:15.0, high:16.0};
         StockQuote res1 = {symbol:"Google", name:"Google Inc.", last:100.0, low:101.0, high:102.0};
         StockQuotes quotes = {stock:[res, res1]};
@@ -80,7 +80,7 @@ service HelloWorld on ep {
         checkpanic caller->complete();
     }
 
-    resource function testNoInputOutputArray(Caller caller) {
+    isolated resource function testNoInputOutputArray(Caller caller) {
         string[] names = ["WSO2", "Google"];
         StockNames stockNames = {names:names};
         Error? err = caller->send(stockNames);

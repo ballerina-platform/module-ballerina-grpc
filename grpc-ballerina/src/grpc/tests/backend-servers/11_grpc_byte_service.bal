@@ -23,7 +23,7 @@ listener Listener ep11 = new (9101, {
     descMap: getDescriptorMap11()
 }
 service byteService on ep11 {
-    resource function checkBytes(Caller caller, byte[] value) {
+    isolated resource function checkBytes(Caller caller, byte[] value) {
         checkpanic caller->send(value);
         checkpanic caller->complete();
     }

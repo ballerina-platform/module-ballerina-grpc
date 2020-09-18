@@ -20,7 +20,7 @@
 }
 service HelloWorld13 on new Listener(9103) {
 
-    resource function hello (Caller caller, string name,
+    isolated resource function hello (Caller caller, string name,
                              Headers headers) returns error? {
 
         return error("Details");

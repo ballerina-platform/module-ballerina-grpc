@@ -18,13 +18,12 @@
 package org.ballerinalang.net.grpc.stubs;
 
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.BallerinaValues;
+import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.values.BArray;
+import org.ballerinalang.jvm.api.values.BError;
+import org.ballerinalang.jvm.api.values.BObject;
 import org.ballerinalang.jvm.types.BTupleType;
 import org.ballerinalang.jvm.types.BTypes;
-import org.ballerinalang.jvm.values.ErrorValue;
-import org.ballerinalang.jvm.values.ObjectValue;
-import org.ballerinalang.jvm.values.api.BArray;
-import org.ballerinalang.jvm.values.api.BValueCreator;
 import org.ballerinalang.net.grpc.ClientCall;
 import org.ballerinalang.net.grpc.DataContext;
 import org.ballerinalang.net.grpc.Message;
@@ -100,7 +99,7 @@ public class BlockingStub extends AbstractStub {
 
         @Override
         public void onClose(Status status, HttpHeaders trailers) {
-            ErrorValue httpConnectorError = null;
+            BError httpConnectorError = null;
             BArray inboundResponse = null;
             if (status.isOk()) {
                 if (value == null) {
@@ -110,7 +109,7 @@ public class BlockingStub extends AbstractStub {
                 } else {
                     Object responseBValue = value.getbMessage();
                     // Set response headers, when response headers exists in the message context.
-                    ObjectValue headerObject = BallerinaValues.createObjectValue(PROTOCOL_GRPC_PKG_ID, HEADERS);
+                    BObject headerObject = BValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID, HEADERS);
                     headerObject.addNativeData(MESSAGE_HEADERS, value.getHeaders());
                     BArray contentTuple = BValueCreator.createTupleValue(
                             new BTupleType(Arrays.asList(BTypes.typeAnydata, headerObject.getType())));
@@ -122,11 +121,10 @@ public class BlockingStub extends AbstractStub {
                 httpConnectorError = MessageUtils.getConnectorError(status.asRuntimeException());
             }
             if (inboundResponse != null) {
-                dataContext.getCallback().setReturnValues(inboundResponse);
+                dataContext.getFuture().complete(inboundResponse);
             } else {
-                dataContext.getCallback().setReturnValues(httpConnectorError);
+                dataContext.getFuture().complete(httpConnectorError);
             }
-            dataContext.getCallback().notifySuccess();
         }
     }
 }
