@@ -23,7 +23,7 @@ listener Listener ep7 = new (9097);
     descMap: getDescriptorMap7()
 }
 service HelloWorld100 on ep7 {
-    resource function hello(Caller caller, string name) {
+    isolated resource function hello(Caller caller, string name) {
         io:println("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
@@ -38,7 +38,7 @@ service HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    resource function testInt(Caller caller, int age) {
+    isolated resource function testInt(Caller caller, int age) {
         io:println("age: " + age.toString());
         int displayAge = age - 2;
         Error? err = caller->send(displayAge);
@@ -50,7 +50,7 @@ service HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    resource function testFloat(Caller caller, float salary) {
+    isolated resource function testFloat(Caller caller, float salary) {
         io:println("gross salary: " + salary.toString());
         float netSalary = salary * 0.88;
         Error? err = caller->send(netSalary);
@@ -62,7 +62,7 @@ service HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    resource function testBoolean(Caller caller, boolean available) {
+    isolated resource function testBoolean(Caller caller, boolean available) {
         io:println("is available: " + available.toString());
         boolean aval = available || true;
         Error? err = caller->send(aval);
@@ -74,7 +74,7 @@ service HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    resource function testStruct(Caller caller, Request msg) {
+    isolated resource function testStruct(Caller caller, Request msg) {
         io:println(msg.name + " : " + msg.message);
         Response response = {resp:"Acknowledge " + msg.name};
         Error? err = caller->send(response);
@@ -86,7 +86,7 @@ service HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    resource function testNoRequest(Caller caller) {
+    isolated resource function testNoRequest(Caller caller) {
         string resp = "service invoked with no request";
         Error? err = caller->send(resp);
         if (err is Error) {
@@ -97,11 +97,11 @@ service HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    resource function testNoResponse(Caller caller, string msg) {
+    isolated resource function testNoResponse(Caller caller, string msg) {
         io:println("Request: " + msg);
     }
 
-    resource function testResponseInsideMatch(Caller caller, string msg) {
+    isolated resource function testResponseInsideMatch(Caller caller, string msg) {
         io:println("Request: " + msg);
         Response? res = {resp:"Acknowledge " + msg};
         if (res is Response) {

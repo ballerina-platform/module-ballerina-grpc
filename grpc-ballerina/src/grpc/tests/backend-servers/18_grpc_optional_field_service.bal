@@ -24,7 +24,7 @@ listener Listener checkoutep = new (9108);
 }
 service CheckoutService on checkoutep {
 
-    resource function PlaceOrder(Caller caller, PlaceOrderRequest value) {
+    isolated resource function PlaceOrder(Caller caller, PlaceOrderRequest value) {
         log:printInfo("PlaceOrderRequest: " + value.toString());
 
         var addr = value.address;

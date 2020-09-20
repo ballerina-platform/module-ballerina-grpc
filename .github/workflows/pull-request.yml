@@ -1,6 +1,6 @@
-name: Ballerina gRPC module build
+name: PR build
 
-on: [push, pull_request]
+on: [push, pull_request_target]
 
 jobs:
     ubuntu-build:

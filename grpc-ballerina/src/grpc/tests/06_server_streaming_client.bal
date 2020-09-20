@@ -80,13 +80,13 @@ public client class HelloWorld6Client {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         Error? result = self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 
-    public remote function lotsOfReplies(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function lotsOfReplies(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld45/lotsOfReplies", req, msgListener, headers);
     }
 }

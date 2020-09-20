@@ -38,13 +38,13 @@ public client class testEnumServiceBlockingClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_12, getDescriptorMap12());
     }
 
-    public remote function testEnum (orderInfo req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    public isolated remote function testEnum (orderInfo req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.testEnumService/testEnum", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -59,13 +59,13 @@ public client class testEnumServiceClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_12, getDescriptorMap12());
     }
 
-    public remote function testEnum (orderInfo req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function testEnum (orderInfo req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.testEnumService/testEnum", req, msgListener, headers);
     }
 }

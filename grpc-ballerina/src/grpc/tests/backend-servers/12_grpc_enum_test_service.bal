@@ -23,7 +23,7 @@ listener Listener ep12 = new (9102, {
     descMap: getDescriptorMap12()
 }
 service testEnumService on ep12 {
-    resource function testEnum(Caller caller, orderInfo orderReq) {
+    isolated resource function testEnum(Caller caller, orderInfo orderReq) {
         string permission = "";
         if (orderReq.mode == r) {
             permission = "r";

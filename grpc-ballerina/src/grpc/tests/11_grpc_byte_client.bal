@@ -66,13 +66,13 @@ public client class byteServiceBlockingClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
-    public remote function checkBytes (byte[] req, Headers? headers = ()) returns ([byte[], Headers]|Error) {
+    public isolated remote function checkBytes (byte[] req, Headers? headers = ()) returns ([byte[], Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.byteService/checkBytes", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -92,13 +92,13 @@ public client class byteServiceClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
-    public remote function checkBytes (byte[] req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function checkBytes (byte[] req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.byteService/checkBytes", req, msgListener, headers);
     }
 }

@@ -27,7 +27,7 @@ listener Listener ep8 = new (9098, {
     descMap: getDescriptorMap8()
 }
 service HelloWorld101 on ep8 {
-    resource function hello(Caller caller, string name, Headers headers) {
+    isolated resource function hello(Caller caller, string name, Headers headers) {
         io:println("name: " + name);
         string message = "Hello " + name;
         if (!headers.exists("x-id")) {

@@ -55,13 +55,13 @@ public client class NegotiatorBlockingClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new (url, config);
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
-    public remote function handshake(HandshakeRequest req, Headers? headers = ())
+    public isolated remote function handshake(HandshakeRequest req, Headers? headers = ())
                                                 returns ([HandshakeResponse, Headers] | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/handshake", req, headers);
         Headers resHeaders = new;
@@ -70,7 +70,7 @@ public client class NegotiatorBlockingClient {
         return [<HandshakeResponse>result, resHeaders];
     }
 
-    public remote function publishMetrics(MetricsPublishRequest req, Headers? headers = ())
+    public isolated remote function publishMetrics(MetricsPublishRequest req, Headers? headers = ())
                                                 returns (Headers | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/publishMetrics", req, headers);
         Headers resHeaders = new;
@@ -78,7 +78,7 @@ public client class NegotiatorBlockingClient {
         return resHeaders;
     }
 
-    public remote function publishTraces(TracesPublishRequest req, Headers? headers = ())
+    public isolated remote function publishTraces(TracesPublishRequest req, Headers? headers = ())
                                                 returns (Headers | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/publishTraces", req, headers);
         Headers resHeaders = new;
@@ -93,23 +93,23 @@ public client class NegotiatorClient {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new (url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
-    public remote function handshake(HandshakeRequest req, service msgListener, Headers? headers = ())
+    public isolated remote function handshake(HandshakeRequest req, service msgListener, Headers? headers = ())
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/handshake", req, msgListener, headers);
     }
 
-    public remote function publishMetrics(MetricsPublishRequest req, service msgListener, Headers? headers = ())
+    public isolated remote function publishMetrics(MetricsPublishRequest req, service msgListener, Headers? headers = ())
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/publishMetrics", req, msgListener, headers);
     }
 
-    public remote function publishTraces(TracesPublishRequest req, service msgListener, Headers? headers = ())
+    public isolated remote function publishTraces(TracesPublishRequest req, service msgListener, Headers? headers = ())
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/publishTraces", req, msgListener, headers);
     }
