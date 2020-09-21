@@ -284,7 +284,7 @@ task ballerinaBuild {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$distributionBinPath/ballerina.bat doc --offline ${moduleName}"
+                commandLine 'cmd', '/c', "$distributionBinPath/ballerina.bat doc --offline ${moduleName} && exit %%ERRORLEVEL%%"
             } else {
                 commandLine 'sh', '-c', "$distributionBinPath/ballerina doc --offline ${moduleName}"
             }
