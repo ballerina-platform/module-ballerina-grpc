@@ -28,11 +28,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Publish artifact
-          env:
-            BALLERINA_CENTRAL_ACCESS_TOKEN: ${{ secrets.BALLERINA_CENTRAL_ACCESS_TOKEN }}
-            packageUser: ${{ github.actor }}
-            packagePAT: ${{ secrets.BALLERINA_STDLIB_TOKEN }}
-            GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+        env:
+          BALLERINA_CENTRAL_ACCESS_TOKEN: ${{ secrets.BALLERINA_CENTRAL_ACCESS_TOKEN }}
+          packageUser: ${{ github.actor }}
+          packagePAT: ${{ secrets.BALLERINA_STDLIB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
           ./gradlew -Pversion=${VERSION} publish -x test
