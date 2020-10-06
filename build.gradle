@@ -71,10 +71,6 @@ allprojects {
         }
 
         maven {
-            url = 'https://maven.wso2.org/nexus/content/repositories/snapshots/'
-        }
-
-        maven {
             url = 'https://maven.wso2.org/nexus/content/groups/wso2-public/'
         }
 
@@ -90,9 +86,6 @@ allprojects {
             }
         }
 
-        maven {
-            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-grpc'
-        }
         //stdlib module dependencies
         maven {
             url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-io'
