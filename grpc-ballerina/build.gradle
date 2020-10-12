@@ -33,9 +33,6 @@ dependencies {
     externalJars (group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.wso2.transport.http', name: 'org.wso2.transport.http.netty', version: "${wso2HttpTransportVersion}") {
-        transitive = false
-    }
     externalJars (group: 'io.netty', name: 'netty-common', version: "${nettyVersion}") {
         transitive = false
     }
@@ -176,6 +173,7 @@ task updateTomlVersions {
         def stdlibDependentCryptoVersion = project.stdlibCryptoVersion.split("-")[0]
         def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
         def stdlibDependentConfigVersion = project.stdlibConfigVersion.split("-")[0]
+        def stdlibDependentNettyVersion = project.nettyVersion
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
@@ -184,6 +182,7 @@ task updateTomlVersions {
         newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
         newConfig = newConfig.replace("@http.native.version@", project.stdlibHttpVersion)
         newConfig = newConfig.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
+        newConfig = newConfig.replace("@netty.version@", stdlibDependentNettyVersion)
         ballerinaConfigFile.text = newConfig
     }
 }
