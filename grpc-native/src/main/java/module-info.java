@@ -17,7 +17,6 @@
  */
 
 module io.ballerina.stdlib.grpc {
-    exports org.ballerinalang.net.grpc.protobuf.cmd;
     requires io.netty.codec.http;
     requires org.slf4j;
     requires io.netty.buffer;
@@ -31,4 +30,11 @@ module io.ballerina.stdlib.grpc {
     requires io.ballerina.lang;
     requires io.ballerina.tool;
     requires info.picocli;
+    exports org.ballerinalang.net.grpc.protobuf.cmd;
+    exports org.ballerinalang.net.grpc.nativeimpl;
+    exports org.ballerinalang.net.grpc.nativeimpl.caller;
+    exports org.ballerinalang.net.grpc.nativeimpl.client;
+    exports org.ballerinalang.net.grpc.nativeimpl.headers;
+    exports org.ballerinalang.net.grpc.nativeimpl.serviceendpoint;
+    exports org.ballerinalang.net.grpc.nativeimpl.streamingclient;
 }
