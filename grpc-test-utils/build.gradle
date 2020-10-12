@@ -19,7 +19,6 @@ plugins {
     id 'java'
 }
 
-sourceCompatibility = 1.8
 description = 'Ballerina - gRPC test utils'
 
 repositories {
@@ -30,4 +29,13 @@ dependencies {
     compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
     compile project(":grpc-native")
+}
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
 }

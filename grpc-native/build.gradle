@@ -24,6 +24,7 @@ description = 'Ballerina - gRPC Java Native'
 dependencies {
     compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-rt', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-tool', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-config', version: "${ballerinaLangVersion}"
@@ -33,8 +34,16 @@ dependencies {
     compile group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}"
     compile group: 'com.github.jknack', name: 'handlebars', version: "${jknackHandlebarsVersion}"
     compile group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}"
-    compile group: 'org.wso2.transport.http', name: 'org.wso2.transport.http.netty', version: "${wso2HttpTransportVersion}"
     compile group: 'info.picocli', name: 'picocli', version: "${picocliVersion}"
 
     testCompile group: 'org.testng', name: 'testng', version: "${testngVersion}"
+}
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
 }

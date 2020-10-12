@@ -18,9 +18,9 @@ package org.ballerinalang.net.grpc;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.wso2.transport.http.netty.contract.HttpResponseFuture;
-import org.wso2.transport.http.netty.contract.exceptions.ServerConnectorException;
-import org.wso2.transport.http.netty.message.HttpCarbonMessage;
+import org.ballerinalang.net.transport.contract.HttpResponseFuture;
+import org.ballerinalang.net.transport.contract.exceptions.ServerConnectorException;
+import org.ballerinalang.net.transport.message.HttpCarbonMessage;
 
 import java.io.InputStream;
 import java.util.Map;

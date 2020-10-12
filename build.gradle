@@ -32,7 +32,6 @@ ext.protoGoogleCommonsVersion = project.protoGoogleCommonsVersion
 ext.protobufJavaVersion = project.protobufJavaVersion
 ext.jknackHandlebarsVersion = project.jknackHandlebarsVersion
 ext.nettyVersion = project.nettyVersion
-ext.wso2HttpTransportVersion = project.wso2HttpTransportVersion
 ext.picocliVersion = project.picocliVersion
 ext.testngVersion = project.testngVersion
 ext.wso2SnakeYamlVersion = project.wso2SnakeYamlVersion
