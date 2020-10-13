@@ -24,8 +24,8 @@ function testInvokeUnavailableService() {
     string name = "WSO2";
     [string, Headers]|Error unionResp = helloWorld16BlockingEp->hello(name);
     if (unionResp is Error) {
-        io:println(unionResp.message());
-        test:assertTrue(unionResp.message().startsWith("Connection refused:"));
+        test:assertTrue(unionResp.message().startsWith("Connection refused:"), msg = "Failed with error: " +
+        unionResp.message());
     } else {
         io:println("Client Got Response : ");
         string result;
