@@ -22,14 +22,14 @@ HelloWorld16BlockingClient helloWorld16BlockingEp = new ("http://localhost:9106"
 @test:Config {}
 function testInvokeUnavailableService() {
     string name = "WSO2";
-    [string, Headers]|Error unionResp = helloWorld16BlockingEp->hello(name);
-    if (unionResp is Error) {
-        test:assertTrue(unionResp.message().startsWith("Connection refused:"), msg = "Failed with error: " +
-        unionResp.message());
+    [string, Headers]|Error unionResp16 = helloWorld16BlockingEp->hello(name);
+    if (unionResp16 is Error) {
+        test:assertTrue(unionResp16.message().startsWith("Connection refused:"), msg = "Failed with error: " +
+        unionResp16.message());
     } else {
         io:println("Client Got Response : ");
         string result;
-        [result, _] = unionResp;
+        [result, _] = unionResp16;
         io:println(result);
         test:assertFail(result);
     }
