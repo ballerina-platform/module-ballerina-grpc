@@ -17,9 +17,9 @@
  */
 package org.ballerinalang.net.grpc;
 
+import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.observability.ObserverContext;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 import org.ballerinalang.net.transport.contract.exceptions.ServerConnectorException;

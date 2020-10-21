@@ -16,9 +16,9 @@
 
 package org.ballerinalang.net.grpc;
 
-import org.ballerinalang.jvm.observability.ObservabilityConstants;
-import org.ballerinalang.jvm.observability.ObserveUtils;
-import org.ballerinalang.jvm.observability.ObserverContext;
+import io.ballerina.runtime.observability.ObservabilityConstants;
+import io.ballerina.runtime.observability.ObserveUtils;
+import io.ballerina.runtime.observability.ObserverContext;
 import org.ballerinalang.net.transport.contract.exceptions.ClientConnectorException;
 import org.ballerinalang.net.transport.message.HttpCarbonMessage;
 

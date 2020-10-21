@@ -17,7 +17,7 @@
 import ballerina/test;
 
 @test:Config {}
-public function testErrorResponse() {
+isolated function testErrorResponse() {
     string name = "WSO2";
     // Client endpoint configuration
     HelloWorld13BlockingClient helloWorld13BlockingEp = new("http://localhost:9103");

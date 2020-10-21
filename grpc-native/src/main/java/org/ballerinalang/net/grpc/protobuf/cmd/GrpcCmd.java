@@ -327,8 +327,9 @@ public class GrpcCmd implements BLauncherCmd {
     public void setParentCmdParser(CommandLine parentCmdParser) {
         this.parentCmdParser = parentCmdParser;
     }
-    
+
     private List<String> readProperties(ClassLoader classLoader) throws CodeGeneratorException {
+
         String fileName;
         List<String> protoFilesList = new ArrayList<>();
         try (InputStream initialStream = classLoader.getResourceAsStream("standardProtos.properties");

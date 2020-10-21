@@ -17,10 +17,10 @@
 import ballerina/log;
 import ballerina/test;
 
-CheckoutServiceBlockingClient checkoutServiceBlockingEp = new("http://localhost:9108");
-
 @test:Config {}
-public function testOptionalFieldMessage() {
+isolated function testOptionalFieldMessage() {
+    CheckoutServiceBlockingClient checkoutServiceBlockingEp = new("http://localhost:9108");
+
     PlaceOrderRequest orderRequest = {
         user_id: "2e8f27b9-b966-45b0-b51f-dcccea697d01",
         user_currency: "USD",

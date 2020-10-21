@@ -17,11 +17,11 @@
  */
 package org.ballerinalang.net.grpc.callback;
 
+import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.ballerinalang.jvm.observability.ObserverContext;
 import org.ballerinalang.net.grpc.StreamObserver;
 
-import static org.ballerinalang.jvm.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 
 /**
  * Call back class registered for streaming gRPC service in B7a executor.
@@ -45,7 +45,7 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
     }
 
     @Override
-    public void notifyFailure(org.ballerinalang.jvm.api.values.BError error) {
+    public void notifyFailure(io.ballerina.runtime.api.values.BError error) {
         if (responseSender != null) {
             handleFailure(responseSender, error);
         }

@@ -18,11 +18,11 @@
 
 package org.ballerinalang.net.grpc.nativeimpl.serviceendpoint;
 
-import org.ballerinalang.jvm.api.BRuntime;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.api.values.BError;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BObject;
+import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BObject;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
 import org.ballerinalang.net.grpc.ServerConnectorListener;
@@ -107,8 +107,8 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
                                 "initializing service register builder.")));
             } else {
                 servicesRegistryBuilder.addService(ServicesBuilderUtils.getServiceDefinition(
-                        BRuntime.getCurrentRuntime(), service,
-                        service.getType().getAnnotation(BStringUtils.fromString(ANN_SERVICE_DESCRIPTOR_FQN))));
+                        Runtime.getCurrentRuntime(), service,
+                        service.getType().getAnnotation(StringUtils.fromString(ANN_SERVICE_DESCRIPTOR_FQN))));
                 return null;
             }
         } catch (GrpcServerException e) {

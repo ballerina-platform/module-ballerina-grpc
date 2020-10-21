@@ -141,10 +141,12 @@ public class BalFileGenerationUtils {
      */
     public static void downloadFile(URL url, File file) throws CodeGeneratorException {
         try (InputStream in = url.openStream(); FileOutputStream fos = new FileOutputStream(file)) {
-            int length;
-            byte[] buffer = new byte[1024]; // buffer for portion of data from
-            while ((length = in.read(buffer)) > -1) {
-                fos.write(buffer, 0, length);
+            if (in != null) {
+                int length;
+                byte[] buffer = new byte[1024]; // buffer for portion of data from
+                while ((length = in.read(buffer)) > -1) {
+                    fos.write(buffer, 0, length);
+                }
             }
         } catch (IOException e) {
             String msg = "Error while downloading the file: " + file.getName() + ". " + e.getMessage();

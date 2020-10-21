@@ -17,14 +17,14 @@
 import ballerina/io;
 import ballerina/test;
 
-OneofFieldServiceBlockingClient blockingEp = new("http://localhost:9105");
+final OneofFieldServiceBlockingClient blockingEp = new("http://localhost:9105");
 const string ERROR_MESSAGE = "Expected response value type not received";
 
 type Response1Typedesc typedesc<Response1>;
 type ZZZTypedesc typedesc<ZZZ>;
 
 @test:Config {}
-public function testOneofFieldValue() {
+function testOneofFieldValue() {
     Request1 request = {first_name:"Sam", age:31};
     var result = blockingEp->hello(request);
     if (result is Error) {
@@ -38,7 +38,7 @@ public function testOneofFieldValue() {
 }
 
 @test:Config {}
-public function testDoubleFieldValue() {
+function testDoubleFieldValue() {
     ZZZ zzz = {one_a:1.7976931348623157E308};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -51,7 +51,7 @@ public function testDoubleFieldValue() {
 }
 
 @test:Config {}
-public function testFloatFieldValue() {
+function testFloatFieldValue() {
     ZZZ zzz = {one_b:3.4028235E38};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -64,7 +64,7 @@ public function testFloatFieldValue() {
 }
 
 @test:Config {}
-public function testInt64FieldValue() {
+function testInt64FieldValue() {
     ZZZ zzz = {one_c:-9223372036854775808};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -77,7 +77,7 @@ public function testInt64FieldValue() {
 }
 
 @test:Config {}
-public function testUInt64FieldValue() {
+function testUInt64FieldValue() {
     ZZZ zzz = {one_d:9223372036854775807};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -90,7 +90,7 @@ public function testUInt64FieldValue() {
 }
 
 @test:Config {}
-public function testInt32FieldValue() {
+function testInt32FieldValue() {
     ZZZ zzz = {one_e:-2147483648};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -103,7 +103,7 @@ public function testInt32FieldValue() {
 }
 
 @test:Config {}
-public function testFixed64FieldValue() {
+function testFixed64FieldValue() {
     ZZZ zzz = {one_f:9223372036854775807};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -116,7 +116,7 @@ public function testFixed64FieldValue() {
 }
 
 @test:Config {}
-public function testFixed32FieldValue() {
+function testFixed32FieldValue() {
     ZZZ zzz = {one_g:2147483647};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -129,7 +129,7 @@ public function testFixed32FieldValue() {
 }
 
 @test:Config {}
-public function testBolFieldValue() {
+function testBolFieldValue() {
     ZZZ zzz = {one_h:true};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -142,7 +142,7 @@ public function testBolFieldValue() {
 }
 
 @test:Config {}
-public function testStringFieldValue() {
+function testStringFieldValue() {
     ZZZ zzz = {one_i:"Testing"};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
@@ -155,7 +155,7 @@ public function testStringFieldValue() {
 }
 
 @test:Config {}
-public function testMessageFieldValue() {
+function testMessageFieldValue() {
     AAA aaa = {aaa: "Testing"};
     ZZZ zzz = {one_j:aaa};
     var result = blockingEp->testOneofField(zzz);
@@ -169,7 +169,7 @@ public function testMessageFieldValue() {
 }
 
 @test:Config {}
-public function testBytesFieldValue() {
+function testBytesFieldValue() {
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();
     ZZZ zzz = {one_k:bytes};

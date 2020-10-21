@@ -19,15 +19,15 @@
 package org.ballerinalang.net.grpc.listener;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.observability.ObservabilityConstants;
+import io.ballerina.runtime.observability.ObserveUtils;
+import io.ballerina.runtime.observability.ObserverContext;
+import io.ballerina.runtime.types.BStreamType;
+import io.ballerina.runtime.values.StreamValue;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.observability.ObservabilityConstants;
-import org.ballerinalang.jvm.observability.ObserveUtils;
-import org.ballerinalang.jvm.observability.ObserverContext;
-import org.ballerinalang.jvm.types.BStreamType;
-import org.ballerinalang.jvm.types.BType;
-import org.ballerinalang.jvm.values.StreamValue;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.ServerCall;
@@ -55,10 +55,10 @@ import static org.ballerinalang.net.grpc.GrpcConstants.ON_MESSAGE_METADATA;
 public class StreamingServerCallHandler extends ServerCallHandler {
 
     private final ServiceResource resource;
-    private final BType inputType;
+    private final Type inputType;
 
     public StreamingServerCallHandler(Descriptors.MethodDescriptor methodDescriptor, ServiceResource resource,
-                                      BType inputType) throws GrpcServerException {
+                                      Type inputType) throws GrpcServerException {
         super(methodDescriptor);
         if (resource == null) {
             throw new GrpcServerException("Streaming service resource doesn't exist.");
@@ -76,7 +76,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
 
     private StreamObserver invoke(StreamObserver responseObserver, ServerCall call) {
         ObserverContext context = call.getObserverContext();
-        BObject streamIterator = BValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+        BObject streamIterator = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
                 ITERATOR_OBJECT_NAME, new Object[1]);
         BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
         streamIterator.addNativeData(MESSAGE_QUEUE, messageQueue);

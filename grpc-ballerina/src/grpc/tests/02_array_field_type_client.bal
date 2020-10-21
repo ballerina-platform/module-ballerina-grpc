@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-HelloWorld2BlockingClient HelloWorld2BlockingEp = new ("http://localhost:9092");
+final HelloWorld2BlockingClient HelloWorld2BlockingEp = new ("http://localhost:9092");
 
 @test:Config {}
 function testSendIntArray() {

@@ -17,13 +17,13 @@
  */
 package org.ballerinalang.net.grpc.callback;
 
+import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.ballerinalang.jvm.observability.ObserverContext;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 
-import static org.ballerinalang.jvm.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 
 /**
@@ -70,7 +70,7 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
     }
 
     @Override
-    public void notifyFailure(org.ballerinalang.jvm.api.values.BError error) {
+    public void notifyFailure(io.ballerina.runtime.api.values.BError error) {
         handleFailure(requestSender, error);
         if (observerContext != null) {
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.INTERNAL_SERVER_ERROR.code());

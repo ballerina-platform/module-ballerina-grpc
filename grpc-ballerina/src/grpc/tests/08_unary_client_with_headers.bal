@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 
 // Client endpoint configuration
-HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9098");
+final HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9098");
 
 @test:Config {}
 function testHeadersInUnaryClient() {
@@ -92,13 +92,13 @@ public client class HelloWorld8Client {
 
     private Client grpcClient;
 
-    public function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_8, getDescriptorMap8());
     }
 
-    public remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld101/hello", req, msgListener, headers);
     }
 }

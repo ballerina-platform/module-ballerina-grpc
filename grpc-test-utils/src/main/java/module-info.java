@@ -17,6 +17,6 @@
  */
 
 module io.ballerina.stdlib.grpc.testutils {
-    requires io.ballerina.jvm;
+    requires io.ballerina.runtime;
     requires io.ballerina.stdlib.grpc;
 }

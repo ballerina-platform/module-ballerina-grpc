@@ -15,11 +15,11 @@
  */
 package org.ballerinalang.net.grpc;
 
+import io.ballerina.runtime.scheduling.BLangThreadFactory;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.LastHttpContent;
-import org.ballerinalang.jvm.runtime.BLangThreadFactory;
 import org.ballerinalang.net.transport.contract.HttpClientConnectorListener;
 import org.ballerinalang.net.transport.message.HttpCarbonMessage;
 

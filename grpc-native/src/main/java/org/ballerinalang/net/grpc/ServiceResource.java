@@ -18,10 +18,10 @@
 
 package org.ballerinalang.net.grpc;
 
-import org.ballerinalang.jvm.api.BRuntime;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.types.AttachedFunction;
-import org.ballerinalang.jvm.types.BType;
+import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.types.AttachedFunction;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,14 +38,14 @@ public class ServiceResource {
 
     private final BObject service;
     private final String functionName;
-    private final BType[] paramTypes;
+    private final Type[] paramTypes;
     private final boolean headerRequired;
-    private final BRuntime runtime;
+    private final Runtime runtime;
 
-    public ServiceResource(BRuntime runtime, BObject service, AttachedFunction function) {
+    public ServiceResource(Runtime runtime, BObject service, AttachedFunction function) {
         this.service = service;
         this.functionName = function.funcName;
-        paramTypes = function.getParameterType();
+        paramTypes = function.getParameterTypes();
         this.headerRequired = headersRequired(function);
         this.runtime = runtime;
     }
@@ -54,7 +54,7 @@ public class ServiceResource {
         return service;
     }
 
-    public List<BType> getParamTypes() {
+    public List<Type> getParamTypes() {
         return Collections.unmodifiableList(Arrays.asList(paramTypes));
     }
 
@@ -66,7 +66,7 @@ public class ServiceResource {
         return functionName;
     }
 
-    public BRuntime getRuntime() {
+    public Runtime getRuntime() {
         return runtime;
     }
 }

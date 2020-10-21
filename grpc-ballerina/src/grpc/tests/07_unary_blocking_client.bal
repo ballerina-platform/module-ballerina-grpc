@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-HelloWorld7BlockingClient helloWorld7BlockingEp = new ("http://localhost:9097");
+final HelloWorld7BlockingClient helloWorld7BlockingEp = new ("http://localhost:9097");
 
 //type ResponseTypedesc typedesc<Response>;
 

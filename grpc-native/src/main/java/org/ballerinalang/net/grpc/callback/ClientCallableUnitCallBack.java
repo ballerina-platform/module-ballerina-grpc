@@ -38,7 +38,7 @@ public class ClientCallableUnitCallBack extends AbstractCallableUnitCallBack {
     }
     
     @Override
-    public void notifyFailure(org.ballerinalang.jvm.api.values.BError error) {
+    public void notifyFailure(io.ballerina.runtime.api.values.BError error) {
         super.notifyFailure(error);
         semaphore.release();
     }
