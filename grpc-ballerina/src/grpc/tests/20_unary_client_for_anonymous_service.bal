@@ -43,7 +43,7 @@ function beforeFunc() {
 @test:Config {
     enable: false
 }
-function testAnonymousServiceWithBlockingClient() {
+isolated function testAnonymousServiceWithBlockingClient() {
     // Executing unary blocking call
     [string, Headers]|Error unionResp = helloWorld20BlockingEp->hello("WSO2");
     if (unionResp is Error) {
@@ -56,7 +56,7 @@ function testAnonymousServiceWithBlockingClient() {
 }
 
 @test:AfterSuite {}
-function afterFunc() {
+isolated function afterFunc() {
     error? 'stop = ep20.__immediateStop();
     if ('stop is error) {
         log:printInfo("Error while stopping the listener: " + 'stop.message());
@@ -113,7 +113,7 @@ service helloService =
         name: "HelloWorld101"
     }
     service {
-        resource function hello(Caller caller, string name) {
+        isolated resource function hello(Caller caller, string name) {
             log:printInfo("name: " + name);
             string message = "Hello " + name;
             Error? err = caller->send(message);
@@ -127,7 +127,7 @@ service helloService =
     };
 
 const string ROOT_DESCRIPTOR_20 = "0A1348656C6C6F576F726C643130312E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32540A0D48656C6C6F576F726C6431303112430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";
-function getDescriptorMap20() returns map<string> {
+isolated function getDescriptorMap20() returns map<string> {
     return {
         "HelloWorld101.proto":
         "0A1348656C6C6F576F726C643130312E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32540A0D48656C6C6F576F726C6431303112430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33"

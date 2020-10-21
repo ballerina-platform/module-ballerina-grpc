@@ -25,7 +25,7 @@ type StockQuotesTypedesc typedesc<StockQuotes>;
 type StockNamesTypedesc typedesc<StockNames>;
 
 @test:Config {}
-function testSendNestedStruct() {
+isolated function testSendNestedStruct() {
     Person p = {name:"Sam", address:{postalCode:10300, state:"Western", country:"Sri Lanka"}};
     io:println("testInputNestedStruct: input:");
     io:println(p);
@@ -43,7 +43,7 @@ function testSendNestedStruct() {
 }
 
 @test:Config {}
-function testReceiveNestedStruct() {
+isolated function testReceiveNestedStruct() {
     string name  = "WSO2";
     io:println("testOutputNestedStruct: input: " + name);
     [Person, Headers]|Error unionResp = HelloWorld1BlockingEp->testOutputNestedStruct(name);
@@ -63,7 +63,7 @@ function testReceiveNestedStruct() {
 }
 
 @test:Config {}
-function testSendStructReceiveStruct() {
+isolated function testSendStructReceiveStruct() {
     StockRequest request = {name: "WSO2"};
     io:println("testInputStructOutputStruct: input:");
     io:println(request);
@@ -85,7 +85,7 @@ function testSendStructReceiveStruct() {
 }
 
 @test:Config {}
-function testSendNoReceiveStruct() {
+isolated function testSendNoReceiveStruct() {
     io:println("testNoInputOutputStruct: No input:");
     [StockQuotes, Headers]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputStruct();
     io:println(unionResp);
@@ -103,7 +103,7 @@ function testSendNoReceiveStruct() {
 }
 
 @test:Config {}
-function testSendNoReceiveArray() {
+isolated function testSendNoReceiveArray() {
     io:println("testNoInputOutputStruct: No input:");
     [StockNames, Headers]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputArray();
     io:println(unionResp);
@@ -121,7 +121,7 @@ function testSendNoReceiveArray() {
 }
 
 @test:Config {}
-function testSendStructNoReceive() {
+isolated function testSendStructNoReceive() {
     StockQuote quote = {symbol: "Ballerina", name:"ballerina/io", last:1.0, low:0.5, high:2.0};
     io:println("testNoInputOutputStruct: input:");
     io:println(quote);

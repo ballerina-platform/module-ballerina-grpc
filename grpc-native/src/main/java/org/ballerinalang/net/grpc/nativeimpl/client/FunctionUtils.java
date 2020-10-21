@@ -18,19 +18,19 @@
 
 package org.ballerinalang.net.grpc.nativeimpl.client;
 
+import io.ballerina.runtime.TypeChecker;
+import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.scheduling.Scheduler;
+import io.ballerina.runtime.scheduling.State;
+import io.ballerina.runtime.scheduling.Strand;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.TypeChecker;
-import org.ballerinalang.jvm.api.BRuntime;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.BalEnv;
-import org.ballerinalang.jvm.api.values.BError;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.scheduling.Scheduler;
-import org.ballerinalang.jvm.scheduling.State;
-import org.ballerinalang.jvm.scheduling.Strand;
-import org.ballerinalang.jvm.types.TypeTags;
 import org.ballerinalang.net.grpc.DataContext;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
@@ -204,7 +204,7 @@ public class FunctionUtils extends AbstractExecute {
      * @return Error if there is an error while calling remote method, else returns response message.
      */
     @SuppressWarnings("unchecked")
-    public static Object externBlockingExecute(BalEnv env, BObject clientEndpoint, BString methodName,
+    public static Object externBlockingExecute(Environment env, BObject clientEndpoint, BString methodName,
                                                Object payloadBValue, Object headerValues) {
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC client connector " +
@@ -337,11 +337,11 @@ public class FunctionUtils extends AbstractExecute {
                 DataContext context = new DataContext(Scheduler.getStrand(), null);
                 Semaphore semaphore = new Semaphore(1, true);
                 if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
-                    nonBlockingStub.executeUnary(requestMsg, new DefaultStreamObserver(BRuntime.getCurrentRuntime(),
+                    nonBlockingStub.executeUnary(requestMsg, new DefaultStreamObserver(Runtime.getCurrentRuntime(),
                             callbackService, semaphore), methodDescriptors.get(methodName.getValue()), context);
                 } else if (methodType.equals(MethodDescriptor.MethodType.SERVER_STREAMING)) {
                     nonBlockingStub.executeServerStreaming(requestMsg,
-                            new DefaultStreamObserver(BRuntime.getCurrentRuntime(), callbackService, semaphore),
+                            new DefaultStreamObserver(Runtime.getCurrentRuntime(), callbackService, semaphore),
                             methodDescriptors.get(methodName.getValue()), context);
                 } else {
                     return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
@@ -409,7 +409,7 @@ public class FunctionUtils extends AbstractExecute {
             try {
                 MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
                 Semaphore semaphore = new Semaphore(1, true);
-                DefaultStreamObserver responseObserver = new DefaultStreamObserver(BRuntime.getCurrentRuntime(),
+                DefaultStreamObserver responseObserver = new DefaultStreamObserver(Runtime.getCurrentRuntime(),
                         callbackService, semaphore);
                 StreamObserver requestSender;
                 DataContext context = new DataContext(Scheduler.getStrand(), null);
@@ -423,7 +423,7 @@ public class FunctionUtils extends AbstractExecute {
                     return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
                             methodType.name() + " not supported");
                 }
-                BObject streamingConnection = BValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID,
+                BObject streamingConnection = ValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID,
                         STREAMING_CLIENT);
                 streamingConnection.addNativeData(REQUEST_SENDER, requestSender);
                 streamingConnection.addNativeData(REQUEST_MESSAGE_DEFINITION, methodDescriptor

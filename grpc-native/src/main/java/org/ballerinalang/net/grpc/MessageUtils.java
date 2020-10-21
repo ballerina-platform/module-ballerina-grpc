@@ -17,6 +17,13 @@ package org.ballerinalang.net.grpc;
 
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.ErrorCreator;
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.types.AttachedFunction;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
@@ -24,13 +31,6 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import org.ballerinalang.jvm.api.BErrorCreator;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BError;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.types.AttachedFunction;
-import org.ballerinalang.jvm.types.BType;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
 import org.ballerinalang.net.grpc.proto.ServiceProtoConstants;
 import org.ballerinalang.net.transport.message.HttpCarbonMessage;
@@ -63,15 +63,15 @@ public class MessageUtils {
     private static final String GOOGLE_PROTOBUF_EMPTY = "google.protobuf.Empty";
 
     public static BObject getHeaderObject() {
-        return BValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID, "Headers");
+        return ValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID, "Headers");
     }
 
-    static boolean headersRequired(AttachedFunction function) {
-        if (function == null || function.getParameterType() == null) {
+    static boolean headersRequired(AttachedFunction functionType) {
+        if (functionType == null || functionType.getParameterTypes() == null) {
             throw new RuntimeException("Invalid resource input arguments");
         }
         boolean headersRequired = false;
-        for (BType paramType : function.getParameterType()) {
+        for (Type paramType : functionType.getParameterTypes()) {
             if (paramType != null && "Headers".equals(paramType.getName()) &&
                     paramType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(paramType.getPackage().getName())) {
                 headersRequired = true;
@@ -135,7 +135,7 @@ public class MessageUtils {
                 message = error.getMessage();
             }
         }
-        return BErrorCreator.createDistinctError(errorIdName, PROTOCOL_GRPC_PKG_ID, BStringUtils.fromString(message));
+        return ErrorCreator.createDistinctError(errorIdName, PROTOCOL_GRPC_PKG_ID, StringUtils.fromString(message));
     }
     
     /**

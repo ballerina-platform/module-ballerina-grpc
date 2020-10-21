@@ -21,16 +21,16 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.types.AttachedFunction;
-import org.ballerinalang.jvm.types.BObjectType;
-import org.ballerinalang.jvm.types.BTupleType;
-import org.ballerinalang.jvm.types.BType;
-import org.ballerinalang.jvm.types.BTypes;
-import org.ballerinalang.jvm.types.BUnionType;
-import org.ballerinalang.jvm.types.TypeTags;
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.types.AttachedFunctionType;
+import io.ballerina.runtime.api.types.ObjectType;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.types.BTupleType;
+import io.ballerina.runtime.types.BUnionType;
 import org.ballerinalang.net.grpc.exception.GrpcClientException;
 
 import java.io.IOException;
@@ -95,9 +95,9 @@ public final class ServiceDefinition {
                 .getDependencyList().size()];
         int i = 0;
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
-            if (descriptorMap.containsKey(BStringUtils.fromString(dependency.toStringUtf8()))) {
+            if (descriptorMap.containsKey(StringUtils.fromString(dependency.toStringUtf8()))) {
                 BString bRootDescriptor = (BString) descriptorMap
-                        .get(BStringUtils.fromString(dependency.toString(StandardCharsets.UTF_8)));
+                        .get(StringUtils.fromString(dependency.toString(StandardCharsets.UTF_8)));
                 fileDescriptors[i++] =
                         getFileDescriptor(bRootDescriptor.getValue() , descriptorMap);
             }
@@ -140,12 +140,12 @@ public final class ServiceDefinition {
         return serviceDescriptor;
     }
 
-    public Map<String, MethodDescriptor> getMethodDescriptors(BObjectType clientEndpointType)
+    public Map<String, MethodDescriptor> getMethodDescriptors(ObjectType clientEndpointType)
             throws GrpcClientException {
         Map<String, MethodDescriptor> descriptorMap = new HashMap<>();
         Descriptors.ServiceDescriptor serviceDescriptor = getServiceDescriptor(clientEndpointType.getName());
-        AttachedFunction[] attachedFunctions = clientEndpointType.getAttachedFunctions();
-        for (AttachedFunction attachedFunction : attachedFunctions) {
+        AttachedFunctionType[] attachedFunctions = clientEndpointType.getAttachedFunctions();
+        for (AttachedFunctionType attachedFunction : attachedFunctions) {
             String methodName = attachedFunction.getName();
             Descriptors.MethodDescriptor methodDescriptor = serviceDescriptor.findMethodByName(methodName);
             if (methodDescriptor == null) {
@@ -162,8 +162,8 @@ public final class ServiceDefinition {
             messageRegistry.addMessageDescriptor(resMessage.getName(), resMessage);
             setNestedMessages(resMessage, messageRegistry);
             String fullMethodName = generateFullMethodName(serviceDescriptor.getFullName(), methodName);
-            BType requestType = getInputParameterType(attachedFunction);
-            BType responseType = getReturnParameterType(attachedFunction);
+            Type requestType = getInputParameterType(attachedFunction);
+            Type responseType = getReturnParameterType(attachedFunction);
             MethodDescriptor descriptor =
                     MethodDescriptor.newBuilder()
                             .setType(MessageUtils.getMethodType(methodDescriptor.toProto()))
@@ -181,34 +181,34 @@ public final class ServiceDefinition {
         return Collections.unmodifiableMap(descriptorMap);
     }
 
-    private BType getReturnParameterType(AttachedFunction attachedFunction) {
-        BType functionReturnType = attachedFunction.type.getReturnParameterType();
+    private Type getReturnParameterType(AttachedFunctionType attachedFunction) {
+        Type functionReturnType = attachedFunction.getType().getReturnParameterType();
         if (functionReturnType.getTag() == TypeTags.UNION_TAG) {
             BUnionType unionReturnType = (BUnionType) functionReturnType;
-            BType firstParamType = unionReturnType.getMemberTypes().get(0);
+            Type firstParamType = unionReturnType.getMemberTypes().get(0);
             if (firstParamType.getTag() == TypeTags.TUPLE_TAG) {
                 BTupleType tupleType = (BTupleType) firstParamType;
                 return tupleType.getTupleTypes().get(0);
             } else if ("Headers".equals(firstParamType.getName()) &&
                     firstParamType.getPackage() != null &&
                     PROTOCOL_PACKAGE_GRPC.equals(firstParamType.getPackage().getName())) {
-                return BTypes.typeNull;
+                return PredefinedTypes.TYPE_NULL;
             }
         }
         return null;
     }
 
-    private BType getInputParameterType(AttachedFunction attachedFunction) {
-        BType[] inputParams = attachedFunction.type.getParameterType();
+    private Type getInputParameterType(AttachedFunctionType attachedFunction) {
+        Type[] inputParams = attachedFunction.getParameterTypes();
         if (inputParams.length > 0) {
-            BType inputType = inputParams[0];
+            Type inputType = inputParams[0];
             if (inputType != null && "Headers".equals(inputType.getName()) &&
                     inputType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
-                return BTypes.typeNull;
+                return PredefinedTypes.TYPE_NULL;
             } else {
                 return inputParams[0];
             }
         }
-        return BTypes.typeNull;
+        return PredefinedTypes.TYPE_NULL;
     }
 }

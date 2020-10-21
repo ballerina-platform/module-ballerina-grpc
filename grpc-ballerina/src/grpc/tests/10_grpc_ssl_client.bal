@@ -20,7 +20,7 @@ import ballerina/test;
 @test:Config {
     enable: false
 }
-function testUnarySecuredBlockingWithCerts() {
+isolated function testUnarySecuredBlockingWithCerts() {
     grpcMutualSslServiceBlockingClient helloWorldBlockingEp = new ("https://localhost:9100", {
         secureSocket:{
             keyFile: PRIVATE_KEY_PATH,

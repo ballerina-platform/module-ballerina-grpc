@@ -17,13 +17,13 @@
  */
 package org.ballerinalang.net.grpc.stubs;
 
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.values.BArray;
+import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.types.BTupleType;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BArray;
-import org.ballerinalang.jvm.api.values.BError;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.types.BTupleType;
-import org.ballerinalang.jvm.types.BTypes;
 import org.ballerinalang.net.grpc.ClientCall;
 import org.ballerinalang.net.grpc.DataContext;
 import org.ballerinalang.net.grpc.Message;
@@ -109,10 +109,10 @@ public class BlockingStub extends AbstractStub {
                 } else {
                     Object responseBValue = value.getbMessage();
                     // Set response headers, when response headers exists in the message context.
-                    BObject headerObject = BValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID, HEADERS);
+                    BObject headerObject = ValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID, HEADERS);
                     headerObject.addNativeData(MESSAGE_HEADERS, value.getHeaders());
-                    BArray contentTuple = BValueCreator.createTupleValue(
-                            new BTupleType(Arrays.asList(BTypes.typeAnydata, headerObject.getType())));
+                    BArray contentTuple = ValueCreator.createTupleValue(
+                            new BTupleType(Arrays.asList(PredefinedTypes.TYPE_ANYDATA, headerObject.getType())));
                     contentTuple.add(0, responseBValue);
                     contentTuple.add(1, headerObject);
                     inboundResponse = contentTuple;

@@ -18,8 +18,8 @@
 
 package org.ballerinalang.net.grpc.callback;
 
-import org.ballerinalang.jvm.api.values.BError;
-import org.ballerinalang.jvm.api.connector.CallableUnitCallback;
+import io.ballerina.runtime.api.async.Callback;
+import io.ballerina.runtime.api.values.BError;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
@@ -31,7 +31,7 @@ import java.util.concurrent.Semaphore;
  *
  * @since 0.995.0
  */
-public class AbstractCallableUnitCallBack implements CallableUnitCallback {
+public class AbstractCallableUnitCallBack implements Callback {
 
     public final Semaphore available = new Semaphore(1, true);
 
@@ -41,7 +41,7 @@ public class AbstractCallableUnitCallBack implements CallableUnitCallback {
     }
 
     @Override
-    public void notifyFailure(org.ballerinalang.jvm.api.values.BError error) {
+    public void notifyFailure(io.ballerina.runtime.api.values.BError error) {
         available.release();
     }
 

@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {}
-function testSendAndReceiveEnum() {
+isolated function testSendAndReceiveEnum() {
     testEnumServiceBlockingClient blockingEp = new ("http://localhost:9102");
 
     orderInfo orderReq = { id:"100500", mode:r };

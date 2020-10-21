@@ -20,7 +20,7 @@ import ballerina/test;
 type ByteArrayTypedesc typedesc<byte[]>;
 
 @test:Config {}
-function testByteArray() {
+isolated function testByteArray() {
     byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();

@@ -22,7 +22,7 @@ HelloWorld7BlockingClient helloWorld7BlockingEp = new ("http://localhost:9097");
 //type ResponseTypedesc typedesc<Response>;
 
 @test:Config {}
-function testUnaryBlockingClient() {
+isolated function testUnaryBlockingClient() {
     string name = "WSO2";
     [string, Headers]|Error unionResp = helloWorld7BlockingEp->hello(name);
     if (unionResp is Error) {
@@ -37,7 +37,7 @@ function testUnaryBlockingClient() {
 }
 
 @test:Config {}
-function testUnaryBlockingIntClient() {
+isolated function testUnaryBlockingIntClient() {
     int age = 10;
     [int, Headers]|Error unionResp = helloWorld7BlockingEp->testInt(age);
     if (unionResp is Error) {
@@ -52,7 +52,7 @@ function testUnaryBlockingIntClient() {
 }
 
 @test:Config {}
-function testUnaryBlockingFloatClient() {
+isolated function testUnaryBlockingFloatClient() {
     float salary = 1000.5;
     [float, Headers]|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
     if (unionResp is Error) {
@@ -67,7 +67,7 @@ function testUnaryBlockingFloatClient() {
 }
 
 @test:Config {}
-function testUnaryBlockingBoolClient() {
+isolated function testUnaryBlockingBoolClient() {
     boolean isAvailable = false;
     [boolean, Headers]|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
     if (unionResp is Error) {
@@ -82,7 +82,7 @@ function testUnaryBlockingBoolClient() {
 }
 
 @test:Config {}
-function testUnaryBlockingReceiveRecord() {
+isolated function testUnaryBlockingReceiveRecord() {
     string msg = "WSO2";
     [Response, Headers]|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
     if (unionResp is Error) {
@@ -97,7 +97,7 @@ function testUnaryBlockingReceiveRecord() {
 }
 
 @test:Config {}
-function testUnaryBlockingStructClient() {
+isolated function testUnaryBlockingStructClient() {
     Request req = {name:"Sam", age:10, message:"Testing."};
     [Response, Headers]|Error unionResp = helloWorld7BlockingEp->testStruct(req);
     if (unionResp is Error) {

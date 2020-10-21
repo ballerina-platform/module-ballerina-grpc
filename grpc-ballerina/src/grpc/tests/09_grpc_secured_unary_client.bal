@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {}
-function testUnarySecuredBlocking() {
+isolated function testUnarySecuredBlocking() {
     HelloWorld9BlockingClient helloWorld9BlockingEp = new ("https://localhost:9099", {
         secureSocket:{
             trustStore:{

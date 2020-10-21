@@ -15,12 +15,13 @@
  */
 package org.ballerinalang.net.grpc.stubs;
 
-import org.ballerinalang.jvm.api.BRuntime;
-import org.ballerinalang.jvm.api.connector.CallableUnitCallback;
-import org.ballerinalang.jvm.api.values.BError;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.types.AttachedFunction;
-import org.ballerinalang.jvm.types.BType;
+import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.async.Callback;
+import io.ballerina.runtime.api.types.AttachedFunctionType;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.types.AttachedFunction;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
@@ -54,13 +55,14 @@ public class DefaultStreamObserver implements StreamObserver {
     private Map<String, ServiceResource> resourceMap = new HashMap<>();
     private Semaphore semaphore;
     
-    public DefaultStreamObserver(BRuntime runtime, BObject callbackService, Semaphore semaphore) throws
+    public DefaultStreamObserver(Runtime runtime, BObject callbackService, Semaphore semaphore) throws
             GrpcClientException {
         if (callbackService == null) {
             throw new GrpcClientException("Error while building the connection. Listener Service does not exist");
         }
-        for (AttachedFunction function : callbackService.getType().getAttachedFunctions()) {
-            resourceMap.put(function.getName(), new ServiceResource(runtime, callbackService, function));
+        for (AttachedFunctionType function : callbackService.getType().getAttachedFunctions()) {
+            resourceMap.put(function.getName(), new ServiceResource(runtime, callbackService,
+                    (AttachedFunction) function));
         }
         this.semaphore = semaphore;
     }
@@ -74,7 +76,7 @@ public class DefaultStreamObserver implements StreamObserver {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription(message)));
         }
-        List<BType> signatureParams = resource.getParamTypes();
+        List<Type> signatureParams = resource.getParamTypes();
         Object[] paramValues = new Object[signatureParams.size() * 2];
 
         BObject headerObject = null;
@@ -93,7 +95,7 @@ public class DefaultStreamObserver implements StreamObserver {
         }
         try {
             semaphore.acquire();
-            CallableUnitCallback callback = new ClientCallableUnitCallBack(semaphore);
+            Callback callback = new ClientCallableUnitCallBack(semaphore);
             resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
                                                     ON_MESSAGE_METADATA, callback,
                                                     null, paramValues);
@@ -115,7 +117,7 @@ public class DefaultStreamObserver implements StreamObserver {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription(message)));
         }
-        List<BType> signatureParams = onError.getParamTypes();
+        List<Type> signatureParams = onError.getParamTypes();
         Object[] paramValues = new Object[signatureParams.size() * 2];
         BObject headerObject = null;
         if (onError.isHeaderRequired()) {
@@ -133,7 +135,7 @@ public class DefaultStreamObserver implements StreamObserver {
         }
         try {
             semaphore.acquire();
-            CallableUnitCallback callback = new ClientCallableUnitCallBack(semaphore);
+            Callback callback = new ClientCallableUnitCallBack(semaphore);
             onError.getRuntime().invokeMethodAsync(onError.getService(), onError.getFunctionName(), null,
                                                    ON_ERROR_METADATA, callback, null,
                                                    paramValues);
@@ -155,11 +157,11 @@ public class DefaultStreamObserver implements StreamObserver {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription(message)));
         }
-        List<BType> signatureParams = onCompleted.getParamTypes();
+        List<Type> signatureParams = onCompleted.getParamTypes();
         Object[] paramValues = new Object[signatureParams.size() * 2];
         try {
             semaphore.acquire();
-            CallableUnitCallback callback = new ClientCallableUnitCallBack(semaphore);
+            Callback callback = new ClientCallableUnitCallBack(semaphore);
             onCompleted.getRuntime().invokeMethodAsync(onCompleted.getService(), onCompleted.getFunctionName(),
                                                        null, ON_COMPLETE_METADATA, callback, null, paramValues);
         } catch (InterruptedException e) {

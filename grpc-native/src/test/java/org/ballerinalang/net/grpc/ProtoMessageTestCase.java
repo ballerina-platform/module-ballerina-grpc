@@ -19,13 +19,13 @@ package org.ballerinalang.net.grpc;
 
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.types.BPackage;
-import org.ballerinalang.jvm.types.BRecordType;
-import org.ballerinalang.jvm.values.ArrayValueImpl;
+import io.ballerina.runtime.api.Module;
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.types.BRecordType;
+import io.ballerina.runtime.values.ArrayValueImpl;
 import org.ballerinalang.net.grpc.protobuf.exception.CodeGeneratorException;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -40,8 +40,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.ballerinalang.jvm.util.BLangConstants.ANON_ORG;
-import static org.ballerinalang.jvm.util.BLangConstants.DOT;
+import static io.ballerina.runtime.util.BLangConstants.ANON_ORG;
+import static io.ballerina.runtime.util.BLangConstants.DOT;
 
 /**
  * Test class for Proto message.
@@ -51,7 +51,7 @@ import static org.ballerinalang.jvm.util.BLangConstants.DOT;
 public class ProtoMessageTestCase {
 
     private File compilerFile;
-    private BPackage defaultPkg = new BPackage(ANON_ORG, DOT);
+    private Module defaultPkg = new Module(ANON_ORG, DOT);
 
     @BeforeClass
     private void setup() throws Exception {
@@ -67,15 +67,15 @@ public class ProtoMessageTestCase {
     @Test(description = "Test case for parsing proto message with string field")
     public void testStringTypeProtoMessage() {
         // convert message to byte array.
-        BMap<BString, Object> bBMap = BValueCreator.createRecordValue(defaultPkg, "Test1");
-        bBMap.put(BStringUtils.fromString("name"), BStringUtils.fromString("John"));
+        BMap<BString, Object> bBMap = ValueCreator.createRecordValue(defaultPkg, "Test1");
+        bBMap.put(StringUtils.fromString("name"), StringUtils.fromString("John"));
         Message message = new Message("Test1", bBMap);
         Assert.assertEquals(message.getSerializedSize(), 6);
         byte[] msgArray = message.toByteArray();
         //convert byte array back to message object.
         InputStream messageStream = new ByteArrayInputStream(msgArray);
         Message message1 = ProtoUtils.marshaller(new MessageParser("Test1", new BRecordType("Test1",
-                new BPackage(null, ".", null), 0, false, 0))).parse(messageStream);
+                new Module(null, ".", null), 0, false, 0))).parse(messageStream);
         Assert.assertEquals(message1.toString(), message.toString());
         Assert.assertFalse(message1.isError());
     }
@@ -83,15 +83,15 @@ public class ProtoMessageTestCase {
     @Test(description = "Test case for parsing proto message with primitive field")
     public void testPrimitiveTypeProtoMessage() {
         // convert message to byte array.
-        BMap<BString, Object> bBMap = BValueCreator.createRecordValue(defaultPkg, "Test2");
-        bBMap.put(BStringUtils.fromString("a"), BStringUtils.fromString("John"));
-        bBMap.put(BStringUtils.fromString("b"), 1.2D);
-        bBMap.put(BStringUtils.fromString("c"), 2.5D);
-        bBMap.put(BStringUtils.fromString("d"), 1);
-        bBMap.put(BStringUtils.fromString("e"), 2L);
-        bBMap.put(BStringUtils.fromString("f"), 3L);
-        bBMap.put(BStringUtils.fromString("g"), 4);
-        bBMap.put(BStringUtils.fromString("h"), 5L);
+        BMap<BString, Object> bBMap = ValueCreator.createRecordValue(defaultPkg, "Test2");
+        bBMap.put(StringUtils.fromString("a"), StringUtils.fromString("John"));
+        bBMap.put(StringUtils.fromString("b"), 1.2D);
+        bBMap.put(StringUtils.fromString("c"), 2.5D);
+        bBMap.put(StringUtils.fromString("d"), 1);
+        bBMap.put(StringUtils.fromString("e"), 2L);
+        bBMap.put(StringUtils.fromString("f"), 3L);
+        bBMap.put(StringUtils.fromString("g"), 4);
+        bBMap.put(StringUtils.fromString("h"), 5L);
 
         Message message = new Message("Test2", bBMap);
         Assert.assertEquals(message.getSerializedSize(), 40);
@@ -99,7 +99,7 @@ public class ProtoMessageTestCase {
         //convert byte array back to message object.
         InputStream messageStream = new ByteArrayInputStream(msgArray);
         Message message1 = ProtoUtils.marshaller(new MessageParser("Test2", new BRecordType("Test2",
-                new BPackage(null, ".", null), 0, false, 0))).parse(messageStream);
+                new Module(null, ".", null), 0, false, 0))).parse(messageStream);
         Assert.assertEquals(message1.toString(), message.toString());
         Assert.assertFalse(message1.isError());
     }
@@ -107,22 +107,22 @@ public class ProtoMessageTestCase {
     @Test(description = "Test case for parsing proto message with array field")
     public void testArrayFieldTypeProtoMessage() {
         // convert message to byte array.
-        BMap<BString, Object> bBMap = BValueCreator.createRecordValue(defaultPkg, "Test3");
-        bBMap.put(BStringUtils.fromString("a"), new ArrayValueImpl(new String[]{"John"}));
-        bBMap.put(BStringUtils.fromString("b"), new ArrayValueImpl(new double[]{1.2}));
-        bBMap.put(BStringUtils.fromString("c"), new ArrayValueImpl(new double[]{2.5F}));
-        bBMap.put(BStringUtils.fromString("d"), new ArrayValueImpl(new long[]{1}));
-        bBMap.put(BStringUtils.fromString("e"), new ArrayValueImpl(new long[]{2L}));
-        bBMap.put(BStringUtils.fromString("f"), new ArrayValueImpl(new long[]{3L}));
-        bBMap.put(BStringUtils.fromString("g"), new ArrayValueImpl(new long[]{4}));
-        bBMap.put(BStringUtils.fromString("h"), new ArrayValueImpl(new long[]{5L}));
+        BMap<BString, Object> bBMap = ValueCreator.createRecordValue(defaultPkg, "Test3");
+        bBMap.put(StringUtils.fromString("a"), new ArrayValueImpl(new String[]{"John"}));
+        bBMap.put(StringUtils.fromString("b"), new ArrayValueImpl(new double[]{1.2}));
+        bBMap.put(StringUtils.fromString("c"), new ArrayValueImpl(new double[]{2.5F}));
+        bBMap.put(StringUtils.fromString("d"), new ArrayValueImpl(new long[]{1}));
+        bBMap.put(StringUtils.fromString("e"), new ArrayValueImpl(new long[]{2L}));
+        bBMap.put(StringUtils.fromString("f"), new ArrayValueImpl(new long[]{3L}));
+        bBMap.put(StringUtils.fromString("g"), new ArrayValueImpl(new long[]{4}));
+        bBMap.put(StringUtils.fromString("h"), new ArrayValueImpl(new long[]{5L}));
         Message message = new Message("Test3", bBMap);
         Assert.assertEquals(message.getSerializedSize(), 40);
         byte[] msgArray = message.toByteArray();
         //convert byte array back to message object.
         InputStream messageStream = new ByteArrayInputStream(msgArray);
         Message message1 = ProtoUtils.marshaller(new MessageParser("Test3", new BRecordType("Test3",
-                new BPackage(null, ".", null), 0, false, 0))).parse(messageStream);
+                new Module(null, ".", null), 0, false, 0))).parse(messageStream);
         Assert.assertEquals(((BMap<String, Object>) message1.getbMessage()).size(), bBMap.size());
         Assert.assertFalse(message1.isError());
     }

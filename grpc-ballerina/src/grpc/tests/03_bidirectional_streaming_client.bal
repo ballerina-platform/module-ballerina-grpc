@@ -22,7 +22,7 @@ import ballerina/test;
 string responseMsg = "";
 
 @test:Config {}
-public function testBidiStreaming() {
+function testBidiStreaming() {
     StreamingClient ep = new;
     ChatClient chatEp = new ("https://localhost:9093", {
         secureSocket: {

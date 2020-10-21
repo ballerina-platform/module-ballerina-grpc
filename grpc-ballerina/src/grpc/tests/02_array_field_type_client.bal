@@ -20,7 +20,7 @@ import ballerina/test;
 HelloWorld2BlockingClient HelloWorld2BlockingEp = new ("http://localhost:9092");
 
 @test:Config {}
-function testSendIntArray() {
+isolated function testSendIntArray() {
     TestInt req = {values: [1, 2, 3, 4, 5]};
     io:println("testIntArrayInput: input:");
     io:println(req);
@@ -38,7 +38,7 @@ function testSendIntArray() {
 }
 
 @test:Config {}
-function testSendStringArray() {
+isolated function testSendStringArray() {
     TestString req = {values:["A", "B", "C"]};
     io:println("testStringArrayInput: input:");
     io:println(req);
@@ -56,7 +56,7 @@ function testSendStringArray() {
 }
 
 @test:Config {}
-function testSendFloatArray() {
+isolated function testSendFloatArray() {
     TestFloat req = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
     io:println("testFloatArrayInput: input:");
     io:println(req);
@@ -74,7 +74,7 @@ function testSendFloatArray() {
 }
 
 @test:Config {}
-function testSendBooleanArray() {
+isolated function testSendBooleanArray() {
     TestBoolean req = {values:[true, false, true]};
     io:println("testBooleanArrayInput: input:");
     io:println(req);
@@ -92,7 +92,7 @@ function testSendBooleanArray() {
 }
 
 @test:Config {}
-function testSendStructArray() {
+isolated function testSendStructArray() {
     TestStruct testStruct = {values: [{name: "Sam"}, {name: "John"}]};
     io:println("testStructArrayInput: input:");
     io:println(testStruct);
@@ -110,7 +110,7 @@ function testSendStructArray() {
 }
 
 @test:Config {}
-function testReceiveIntArray() {
+isolated function testReceiveIntArray() {
     io:println("testIntArrayOutput: No input:");
     [TestInt, Headers]|Error unionResp = HelloWorld2BlockingEp->testIntArrayOutput();
     io:println(unionResp);
@@ -131,7 +131,7 @@ function testReceiveIntArray() {
 }
 
 @test:Config {}
-function testReceiveStringArray() {
+isolated function testReceiveStringArray() {
     io:println("testStringArrayOutput: No input:");
     [TestString, Headers]|Error unionResp = HelloWorld2BlockingEp->testStringArrayOutput();
     io:println(unionResp);
@@ -150,7 +150,7 @@ function testReceiveStringArray() {
 }
 
 @test:Config {}
-function testReceiveFloatArray() {
+isolated function testReceiveFloatArray() {
     io:println("testFloatArrayOutput: No input:");
     [TestFloat, Headers]|Error unionResp = HelloWorld2BlockingEp->testFloatArrayOutput();
     io:println(unionResp);
@@ -169,7 +169,7 @@ function testReceiveFloatArray() {
 }
 
 @test:Config {}
-function testReceiveBooleanArray() {
+isolated function testReceiveBooleanArray() {
     io:println("testBooleanArrayOutput: No input:");
     [TestBoolean, Headers]|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayOutput();
     io:println(unionResp);
@@ -188,7 +188,7 @@ function testReceiveBooleanArray() {
 }
 
 @test:Config {}
-function testReceiveStructArray() {
+isolated function testReceiveStructArray() {
     io:println("testStructArrayOutput: No input:");
     [TestStruct, Headers]|Error unionResp = HelloWorld2BlockingEp->testStructArrayOutput();
     io:println(unionResp);

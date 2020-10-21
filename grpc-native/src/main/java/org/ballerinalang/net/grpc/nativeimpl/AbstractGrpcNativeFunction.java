@@ -17,7 +17,7 @@
  */
 package org.ballerinalang.net.grpc.nativeimpl;
 
-import org.ballerinalang.jvm.api.values.BObject;
+import io.ballerina.runtime.api.values.BObject;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.ServicesRegistry;
 import org.ballerinalang.net.transport.contract.ServerConnector;

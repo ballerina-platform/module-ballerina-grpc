@@ -17,9 +17,9 @@
  */
 package org.ballerinalang.net.grpc.stubs;
 
+import io.ballerina.runtime.util.exceptions.BallerinaException;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.util.exceptions.BallerinaException;
 import org.ballerinalang.net.grpc.ClientCall;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.ballerinalang.jvm.runtime.RuntimeConstants.BALLERINA_VERSION;
+import static io.ballerina.runtime.util.RuntimeConstants.BALLERINA_VERSION;
 import static org.ballerinalang.net.grpc.GrpcConstants.AUTHORITY;
 import static org.ballerinalang.net.grpc.GrpcConstants.SCHEME_HEADER;
 

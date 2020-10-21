@@ -18,15 +18,15 @@
 package org.ballerinalang.net.grpc.listener;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.async.Callback;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.observability.ObservabilityConstants;
+import io.ballerina.runtime.observability.ObserveUtils;
+import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.connector.CallableUnitCallback;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.observability.ObservabilityConstants;
-import org.ballerinalang.jvm.observability.ObserveUtils;
-import org.ballerinalang.jvm.observability.ObserverContext;
-import org.ballerinalang.jvm.types.BType;
 import org.ballerinalang.net.grpc.CallStreamObserver;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
@@ -143,7 +143,7 @@ public abstract class ServerCallHandler {
      */
     BObject getConnectionParameter(StreamObserver responseObserver) {
         // generate client responder struct on request message with response observer and response msg type.
-        BObject clientEndpoint = BValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+        BObject clientEndpoint = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
                 GrpcConstants.CALLER);
         clientEndpoint.set(CALLER_ID, responseObserver.hashCode());
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_OBSERVER, responseObserver);
@@ -162,7 +162,7 @@ public abstract class ServerCallHandler {
 
     void onMessageInvoke(ServiceResource resource, Message request, StreamObserver responseObserver,
                          ObserverContext context) {
-        CallableUnitCallback callback = new UnaryCallableUnitCallBack(responseObserver, isEmptyResponse(), context);
+        Callback callback = new UnaryCallableUnitCallBack(responseObserver, isEmptyResponse(), context);
         Object requestParam = request != null ? request.getbMessage() : null;
         HttpHeaders headers = request != null ? request.getHeaders() : null;
         Object[] requestParams = computeResourceParams(resource, requestParam, headers, responseObserver);
@@ -176,7 +176,7 @@ public abstract class ServerCallHandler {
 
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,
                                    StreamObserver responseObserver) {
-        List<BType> signatureParams = resource.getParamTypes();
+        List<Type> signatureParams = resource.getParamTypes();
         Object[] paramValues = new Object[signatureParams.size() * 2];
         paramValues[0] = getConnectionParameter(responseObserver);
         paramValues[1] = true;

@@ -20,7 +20,7 @@ import ballerina/test;
 OrderManagementBlockingClient OrderMgtBlockingEp = new("http://localhost:9111");
 
 @test:Config {}
-public function testGzipEncoding() {
+isolated function testGzipEncoding() {
     Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
     Headers headers = new;
     headers.setEntry("grpc-encoding", "gzip");

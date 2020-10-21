@@ -19,7 +19,7 @@ package org.ballerinalang.net.grpc.nativeimpl.client;
 
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
-import org.ballerinalang.jvm.api.values.BError;
+import io.ballerina.runtime.api.values.BError;
 import org.ballerinalang.net.grpc.MessageUtils;
 import org.ballerinalang.net.grpc.MethodDescriptor;
 import org.ballerinalang.net.grpc.Status;

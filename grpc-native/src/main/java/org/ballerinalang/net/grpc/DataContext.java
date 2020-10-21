@@ -18,26 +18,26 @@
 
 package org.ballerinalang.net.grpc;
 
-import org.ballerinalang.jvm.scheduling.Strand;
-import org.ballerinalang.jvm.api.BalFuture;
+import io.ballerina.runtime.api.Future;
+import io.ballerina.runtime.scheduling.Strand;
 
 /**
- * {@code DataContext} is the wrapper to hold {@code Strand} and {@code BalFuture}.
+ * {@code DataContext} is the wrapper to hold {@code Strand} and {@code Future}.
  */
 public class DataContext {
     private Strand strand = null;
-    private BalFuture balFuture = null;
+    private Future future = null;
 
-    public DataContext(Strand strand, BalFuture balFuture) {
+    public DataContext(Strand strand, Future future) {
         this.strand = strand;
-        this.balFuture = balFuture;
+        this.future = future;
     }
 
     public Strand getStrand() {
         return strand;
     }
 
-    public BalFuture getFuture() {
-        return balFuture;
+    public Future getFuture() {
+        return future;
     }
 }

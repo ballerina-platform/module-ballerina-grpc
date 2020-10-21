@@ -17,7 +17,7 @@ package org.ballerinalang.net.grpc;
 
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Descriptors;
-import org.ballerinalang.jvm.types.BType;
+import io.ballerina.runtime.api.types.Type;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
 
 import java.io.IOException;
@@ -32,17 +32,17 @@ import java.util.Map;
 public class MessageParser {
 
     private final String messageName;
-    private final BType bType;
+    private final Type bType;
     private final Map<Integer, Descriptors.FieldDescriptor> fieldDescriptors;
 
-    public MessageParser(String messageName, BType bType) {
+    public MessageParser(String messageName, Type bType) {
         this.messageName = messageName;
         this.bType = bType;
         Descriptors.Descriptor messageDescriptor = MessageRegistry.getInstance().getMessageDescriptor(messageName);
         this.fieldDescriptors = computeFieldTagValues(messageDescriptor);
     }
 
-    MessageParser(Descriptors.Descriptor descriptor, BType bType) {
+    MessageParser(Descriptors.Descriptor descriptor, Type bType) {
         this.messageName = descriptor.getName();
         this.bType = bType;
         this.fieldDescriptors = computeFieldTagValues(descriptor);

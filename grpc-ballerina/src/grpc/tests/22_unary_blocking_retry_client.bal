@@ -45,7 +45,7 @@ RetryServiceBlockingClient retryClient = new("http://localhost:9112", clientConf
 RetryServiceBlockingClient failingRetryClient = new("http://localhost:9112", failingClientConfig);
 
 @test:Config {}
-public function testRetry() {
+isolated function testRetry() {
     var result = retryClient->getResult("RetryClient");
     if (result is Error) {
         io:println(result);
@@ -57,7 +57,7 @@ public function testRetry() {
 }
 
 @test:Config {}
-public function testRetryFailingClient() {
+isolated function testRetryFailingClient() {
     var result = failingRetryClient->getResult("FailingRetryClient");
     if (result is Error) {
         io:println(result);

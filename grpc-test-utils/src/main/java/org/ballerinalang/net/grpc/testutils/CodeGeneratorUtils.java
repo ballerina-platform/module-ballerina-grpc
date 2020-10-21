@@ -17,7 +17,7 @@
  */
 package org.ballerinalang.net.grpc.testutils;
 
-import org.ballerinalang.jvm.api.values.BString;
+import io.ballerina.runtime.api.values.BString;
 import org.ballerinalang.net.grpc.protobuf.cmd.GrpcCmd;
 
 import java.nio.file.Path;

@@ -18,13 +18,13 @@
 
 package org.ballerinalang.net.grpc.nativeimpl.headers;
 
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.values.ArrayValue;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.values.ArrayValue;
 
 import java.util.List;
 
@@ -81,7 +81,7 @@ public class FunctionUtils {
     public static Object externGet(final BObject headerValues, final BString headerName) {
         final HttpHeaders headers = headerValues != null ? 
                 (HttpHeaders) headerValues.getNativeData(MESSAGE_HEADERS) : null;
-        return headers != null ? BStringUtils.fromString(headers.get(headerName.getValue())) : null;
+        return headers != null ? StringUtils.fromString(headers.get(headerName.getValue())) : null;
     }
 
     /**
@@ -97,8 +97,8 @@ public class FunctionUtils {
         final List<String> headersList = headers != null ? headers.getAll(headerName.getValue()) : null;
 
         if (headersList != null) {
-            BString[] headerValue = headersList.stream().map(s -> BStringUtils.fromString(s)).toArray(BString[]::new);
-            return (ArrayValue) BValueCreator.createArrayValue(headerValue);
+            BString[] headerValue = headersList.stream().map(s -> StringUtils.fromString(s)).toArray(BString[]::new);
+            return (ArrayValue) ValueCreator.createArrayValue(headerValue);
         } else {
             return null;
         }

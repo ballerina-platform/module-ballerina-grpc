@@ -16,17 +16,17 @@
 package org.ballerinalang.net.grpc;
 
 import com.google.protobuf.DescriptorProtos;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.scheduling.StrandMetadata;
-import org.ballerinalang.jvm.types.BPackage;
+import io.ballerina.runtime.api.Module;
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.async.StrandMetadata;
+import io.ballerina.runtime.api.values.BString;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.ballerinalang.jvm.util.BLangConstants.BALLERINA_BUILTIN_PKG_PREFIX;
-import static org.ballerinalang.jvm.util.BLangConstants.ORG_NAME_SEPARATOR;
+import static io.ballerina.runtime.util.BLangConstants.BALLERINA_BUILTIN_PKG_PREFIX;
+import static io.ballerina.runtime.util.BLangConstants.ORG_NAME_SEPARATOR;
 
 /**
  * Proto Message Constants Class.
@@ -40,7 +40,7 @@ public class GrpcConstants {
     public static final String ORG_NAME = "ballerina";
     public static final String PROTOCOL_STRUCT_PACKAGE_GRPC = ORG_NAME + ORG_NAME_SEPARATOR +
             "grpc:" + PROTOCOL_PACKAGE_VERSION_GRPC;
-    public static final BPackage PROTOCOL_GRPC_PKG_ID = new BPackage(BALLERINA_BUILTIN_PKG_PREFIX, "grpc",
+    public static final Module PROTOCOL_GRPC_PKG_ID = new Module(BALLERINA_BUILTIN_PKG_PREFIX, "grpc",
                                                                      PROTOCOL_PACKAGE_VERSION_GRPC);
 
     public static final String HTTPS_ENDPOINT_STARTED = "[ballerina/grpc] started HTTPS/WSS listener ";
@@ -57,7 +57,7 @@ public class GrpcConstants {
     public static final String CALLER_ENDPOINT_TYPE = PROTOCOL_STRUCT_PACKAGE_GRPC + ":" + CALLER;
     public static final String RESPONSE_OBSERVER = "RESPONSE_OBSERVER";
     public static final String RESPONSE_MESSAGE_DEFINITION = "RESPONSE_DEFINITION";
-    public static final BString CALLER_ID = BStringUtils.fromString("instanceId");
+    public static final BString CALLER_ID = StringUtils.fromString("instanceId");
     public static final String MESSAGE_QUEUE = "messageQueue";
     public static final String COMPLETED_MESSAGE = "completedMessage";
     public static final String ERROR_MESSAGE = "errorMessage";
