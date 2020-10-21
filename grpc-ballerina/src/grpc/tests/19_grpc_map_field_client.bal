@@ -20,7 +20,7 @@ import ballerina/test;
 final NegotiatorBlockingClient negotiatorEp = new ("http://localhost:9109");
 
 @test:Config {}
-isolated function testMapFields() {
+function testMapFields() {
     MetricsPublishRequest request = {
         id: "xxxxx",
         metrics: [{
@@ -37,7 +37,7 @@ isolated function testMapFields() {
 }
 
 @test:Config {}
-isolated function testOptionalFields() {
+function testOptionalFields() {
     HandshakeRequest request = {};
     [HandshakeResponse, Headers] | Error result = negotiatorEp->handshake(request);
     if (result is error) {

@@ -43,7 +43,7 @@ function beforeFunc() {
 @test:Config {
     enable: false
 }
-isolated function testAnonymousServiceWithBlockingClient() {
+function testAnonymousServiceWithBlockingClient() {
     // Executing unary blocking call
     [string, Headers]|Error unionResp = helloWorld20BlockingEp->hello("WSO2");
     if (unionResp is Error) {
@@ -56,7 +56,7 @@ isolated function testAnonymousServiceWithBlockingClient() {
 }
 
 @test:AfterSuite {}
-isolated function afterFunc() {
+function afterFunc() {
     error? 'stop = ep20.__immediateStop();
     if ('stop is error) {
         log:printInfo("Error while stopping the listener: " + 'stop.message());
