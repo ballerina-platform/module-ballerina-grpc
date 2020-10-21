@@ -51,24 +51,6 @@ checkstyle {
 
 checkstyleMain.dependsOn(":build-config:checkstyle:downloadMultipleFiles")
 
-spotbugs {
-    toolVersion = '4.0.2'
-}
-
-//spotbugsMain {
-//    effort "max"
-//    reportLevel "low"
-//    reportsDir = file("$project.buildDir/reports/spotbugs")
-//    reports {
-//        html.enabled true
-//        text.enabled = true
-//    }
-//    def excludeFile = file("${rootDir}/grpc-native/spotbugs-exclude.xml")
-//    if(excludeFile.exists()) {
-//        excludeFilter = excludeFile
-//    }
-//}
-
 def excludePattern = '**/module-info.java'
 tasks.withType(Checkstyle) {
     exclude excludePattern
