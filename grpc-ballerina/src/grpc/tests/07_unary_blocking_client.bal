@@ -22,7 +22,7 @@ final HelloWorld7BlockingClient helloWorld7BlockingEp = new ("http://localhost:9
 //type ResponseTypedesc typedesc<Response>;
 
 @test:Config {}
-isolated function testUnaryBlockingClient() {
+function testUnaryBlockingClient() {
     string name = "WSO2";
     [string, Headers]|Error unionResp = helloWorld7BlockingEp->hello(name);
     if (unionResp is Error) {
@@ -37,7 +37,7 @@ isolated function testUnaryBlockingClient() {
 }
 
 @test:Config {}
-isolated function testUnaryBlockingIntClient() {
+function testUnaryBlockingIntClient() {
     int age = 10;
     [int, Headers]|Error unionResp = helloWorld7BlockingEp->testInt(age);
     if (unionResp is Error) {
@@ -52,7 +52,7 @@ isolated function testUnaryBlockingIntClient() {
 }
 
 @test:Config {}
-isolated function testUnaryBlockingFloatClient() {
+function testUnaryBlockingFloatClient() {
     float salary = 1000.5;
     [float, Headers]|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
     if (unionResp is Error) {
@@ -67,7 +67,7 @@ isolated function testUnaryBlockingFloatClient() {
 }
 
 @test:Config {}
-isolated function testUnaryBlockingBoolClient() {
+function testUnaryBlockingBoolClient() {
     boolean isAvailable = false;
     [boolean, Headers]|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
     if (unionResp is Error) {
@@ -82,7 +82,7 @@ isolated function testUnaryBlockingBoolClient() {
 }
 
 @test:Config {}
-isolated function testUnaryBlockingReceiveRecord() {
+function testUnaryBlockingReceiveRecord() {
     string msg = "WSO2";
     [Response, Headers]|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
     if (unionResp is Error) {
@@ -97,7 +97,7 @@ isolated function testUnaryBlockingReceiveRecord() {
 }
 
 @test:Config {}
-isolated function testUnaryBlockingStructClient() {
+function testUnaryBlockingStructClient() {
     Request req = {name:"Sam", age:10, message:"Testing."};
     [Response, Headers]|Error unionResp = helloWorld7BlockingEp->testStruct(req);
     if (unionResp is Error) {

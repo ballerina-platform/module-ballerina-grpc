@@ -21,7 +21,7 @@ import ballerina/test;
 final HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9098");
 
 @test:Config {}
-isolated function testHeadersInUnaryClient() {
+function testHeadersInUnaryClient() {
 
     //Working with custom headers
     Headers headers = new;
@@ -44,7 +44,7 @@ isolated function testHeadersInUnaryClient() {
 }
 
 @test:Config {}
-isolated function testHeadersInBlockingClient() {
+function testHeadersInBlockingClient() {
 
     Headers headers = new;
     headers.setEntry("x-id", "0987654321");

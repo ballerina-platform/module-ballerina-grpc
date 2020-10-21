@@ -25,7 +25,7 @@ type StockQuotesTypedesc typedesc<StockQuotes>;
 type StockNamesTypedesc typedesc<StockNames>;
 
 @test:Config {}
-isolated function testSendNestedStruct() {
+function testSendNestedStruct() {
     Person p = {name:"Sam", address:{postalCode:10300, state:"Western", country:"Sri Lanka"}};
     io:println("testInputNestedStruct: input:");
     io:println(p);
@@ -43,7 +43,7 @@ isolated function testSendNestedStruct() {
 }
 
 @test:Config {}
-isolated function testReceiveNestedStruct() {
+function testReceiveNestedStruct() {
     string name  = "WSO2";
     io:println("testOutputNestedStruct: input: " + name);
     [Person, Headers]|Error unionResp = HelloWorld1BlockingEp->testOutputNestedStruct(name);
@@ -63,7 +63,7 @@ isolated function testReceiveNestedStruct() {
 }
 
 @test:Config {}
-isolated function testSendStructReceiveStruct() {
+function testSendStructReceiveStruct() {
     StockRequest request = {name: "WSO2"};
     io:println("testInputStructOutputStruct: input:");
     io:println(request);
@@ -85,7 +85,7 @@ isolated function testSendStructReceiveStruct() {
 }
 
 @test:Config {}
-isolated function testSendNoReceiveStruct() {
+function testSendNoReceiveStruct() {
     io:println("testNoInputOutputStruct: No input:");
     [StockQuotes, Headers]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputStruct();
     io:println(unionResp);
@@ -103,7 +103,7 @@ isolated function testSendNoReceiveStruct() {
 }
 
 @test:Config {}
-isolated function testSendNoReceiveArray() {
+function testSendNoReceiveArray() {
     io:println("testNoInputOutputStruct: No input:");
     [StockNames, Headers]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputArray();
     io:println(unionResp);
@@ -121,7 +121,7 @@ isolated function testSendNoReceiveArray() {
 }
 
 @test:Config {}
-isolated function testSendStructNoReceive() {
+function testSendStructNoReceive() {
     StockQuote quote = {symbol: "Ballerina", name:"ballerina/io", last:1.0, low:0.5, high:2.0};
     io:println("testNoInputOutputStruct: input:");
     io:println(quote);
