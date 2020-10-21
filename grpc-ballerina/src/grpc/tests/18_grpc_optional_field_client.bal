@@ -17,7 +17,7 @@
 import ballerina/log;
 import ballerina/test;
 
-CheckoutServiceBlockingClient checkoutServiceBlockingEp = new("http://localhost:9108");
+final CheckoutServiceBlockingClient checkoutServiceBlockingEp = new("http://localhost:9108");
 
 @test:Config {}
 isolated function testOptionalFieldMessage() {

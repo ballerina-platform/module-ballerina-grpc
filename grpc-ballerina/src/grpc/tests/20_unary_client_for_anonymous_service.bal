@@ -19,7 +19,7 @@ import ballerina/log;
 import ballerina/test;
 
 // Client endpoint configuration
-HelloWorld20BlockingClient helloWorld20BlockingEp = new ("http://localhost:9110");
+final HelloWorld20BlockingClient helloWorld20BlockingEp = new ("http://localhost:9110");
 
 // Server endpoint configuration
 listener Listener ep20 = new (9110, {

@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-OneofFieldServiceBlockingClient blockingEp = new("http://localhost:9105");
+final OneofFieldServiceBlockingClient blockingEp = new("http://localhost:9105");
 const string ERROR_MESSAGE = "Expected response value type not received";
 
 type Response1Typedesc typedesc<Response1>;

@@ -41,8 +41,8 @@ ClientConfiguration failingClientConfig = {
     retryConfiguration: failingRetryConfig
 };
 
-RetryServiceBlockingClient retryClient = new("http://localhost:9112", clientConfig);
-RetryServiceBlockingClient failingRetryClient = new("http://localhost:9112", failingClientConfig);
+final RetryServiceBlockingClient retryClient = new("http://localhost:9112", clientConfig);
+final RetryServiceBlockingClient failingRetryClient = new("http://localhost:9112", failingClientConfig);
 
 @test:Config {}
 isolated function testRetry() {

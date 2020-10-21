@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-HelloWorld5BlockingClient helloWorld5BlockingEp = new ("http://localhost:9095");
+final HelloWorld5BlockingClient helloWorld5BlockingEp = new ("http://localhost:9095");
 
 @test:Config {}
 isolated function testInvalidRemoteMethod() {

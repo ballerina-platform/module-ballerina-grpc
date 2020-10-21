@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-HelloWorld1BlockingClient HelloWorld1BlockingEp = new("http://localhost:9091");
+final HelloWorld1BlockingClient HelloWorld1BlockingEp = new("http://localhost:9091");
 
 type PersonTypedesc typedesc<Person>;
 type StockQuoteTypedesc typedesc<StockQuote>;

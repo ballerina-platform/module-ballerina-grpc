@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-HelloWorld16BlockingClient helloWorld16BlockingEp = new ("http://localhost:9106");
+final HelloWorld16BlockingClient helloWorld16BlockingEp = new ("http://localhost:9106");
 
 @test:Config {enable : false}
 isolated function testInvokeUnavailableService() {

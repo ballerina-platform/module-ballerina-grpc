@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 
 // Client endpoint configuration
-HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9098");
+final HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9098");
 
 @test:Config {}
 isolated function testHeadersInUnaryClient() {

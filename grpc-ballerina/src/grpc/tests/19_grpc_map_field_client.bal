@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-NegotiatorBlockingClient negotiatorEp = new ("http://localhost:9109");
+final NegotiatorBlockingClient negotiatorEp = new ("http://localhost:9109");
 
 @test:Config {}
 isolated function testMapFields() {
