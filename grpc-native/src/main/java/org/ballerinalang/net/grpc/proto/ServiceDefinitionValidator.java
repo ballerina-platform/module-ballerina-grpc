@@ -17,6 +17,7 @@
  */
 package org.ballerinalang.net.grpc.proto;
 
+import io.ballerina.tools.diagnostics.Location;
 import org.ballerinalang.model.tree.AnnotationAttachmentNode;
 import org.ballerinalang.model.tree.ServiceNode;
 import org.ballerinalang.model.tree.expressions.RecordLiteralNode;
@@ -26,7 +27,6 @@ import org.wso2.ballerinalang.compiler.tree.BLangFunction;
 import org.wso2.ballerinalang.compiler.tree.BLangSimpleVariable;
 import org.wso2.ballerinalang.compiler.tree.expressions.BLangRecordLiteral;
 import org.wso2.ballerinalang.compiler.tree.expressions.BLangSimpleVarRef;
-import org.wso2.ballerinalang.compiler.util.diagnotic.DiagnosticPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +98,7 @@ public class ServiceDefinitionValidator {
     }
 
     private static boolean validateResourceSignature(BLangFunction resourceNode, DiagnosticLog dlog,
-                                                     DiagnosticPos pos) {
+                                                     Location pos) {
         List<BLangSimpleVariable> signatureParams = resourceNode.getParameters();
         final int nParams = signatureParams.size();
         if (nParams < COMPULSORY_PARAM_COUNT) {

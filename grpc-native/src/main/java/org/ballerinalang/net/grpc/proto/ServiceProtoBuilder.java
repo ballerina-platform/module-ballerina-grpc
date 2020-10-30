@@ -17,6 +17,7 @@
  */
 package org.ballerinalang.net.grpc.proto;
 
+import io.ballerina.tools.diagnostics.Location;
 import org.ballerinalang.compiler.plugins.AbstractCompilerPlugin;
 import org.ballerinalang.compiler.plugins.SupportedResourceParamTypes;
 import org.ballerinalang.model.TreeBuilder;
@@ -50,7 +51,6 @@ import org.wso2.ballerinalang.compiler.tree.expressions.BLangSimpleVarRef;
 import org.wso2.ballerinalang.compiler.util.CompilerContext;
 import org.wso2.ballerinalang.compiler.util.Names;
 import org.wso2.ballerinalang.compiler.util.TypeTags;
-import org.wso2.ballerinalang.compiler.util.diagnotic.DiagnosticPos;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -128,7 +128,7 @@ public class ServiceProtoBuilder extends AbstractCompilerPlugin {
 
     private void addDescriptorAnnotation(ServiceNode serviceNode, String rootDescriptor) {
         BLangService service = (BLangService) serviceNode;
-        DiagnosticPos pos = service.pos;
+        Location pos = service.pos;
         // Create Annotation Attachment.
         BLangAnnotationAttachment annoAttachment = (BLangAnnotationAttachment) TreeBuilder.createAnnotAttachmentNode();
         serviceNode.addAnnotationAttachment(annoAttachment);
