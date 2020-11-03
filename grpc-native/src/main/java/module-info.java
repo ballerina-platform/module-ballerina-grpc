@@ -29,6 +29,7 @@ module io.ballerina.stdlib.grpc {
     requires java.logging;
     requires io.ballerina.lang;
     requires io.ballerina.tool;
+    requires io.ballerina.tools.api;
     requires info.picocli;
     exports org.ballerinalang.net.grpc.protobuf.cmd;
     exports org.ballerinalang.net.grpc.nativeimpl;

@@ -17,6 +17,8 @@
  */
 package org.ballerinalang.net.grpc.proto;
 
+import io.ballerina.tools.diagnostics.DiagnosticSeverity;
+import io.ballerina.tools.diagnostics.Location;
 import org.ballerinalang.compiler.plugins.AbstractCompilerPlugin;
 import org.ballerinalang.compiler.plugins.SupportedResourceParamTypes;
 import org.ballerinalang.model.TreeBuilder;
@@ -25,7 +27,6 @@ import org.ballerinalang.model.tree.AnnotationAttachmentNode;
 import org.ballerinalang.model.tree.NodeKind;
 import org.ballerinalang.model.tree.ServiceNode;
 import org.ballerinalang.model.tree.expressions.LiteralNode;
-import org.ballerinalang.util.diagnostic.Diagnostic;
 import org.ballerinalang.util.diagnostic.DiagnosticLog;
 import org.wso2.ballerinalang.compiler.desugar.ASTBuilderUtil;
 import org.wso2.ballerinalang.compiler.semantics.analyzer.SymbolResolver;
@@ -50,7 +51,6 @@ import org.wso2.ballerinalang.compiler.tree.expressions.BLangSimpleVarRef;
 import org.wso2.ballerinalang.compiler.util.CompilerContext;
 import org.wso2.ballerinalang.compiler.util.Names;
 import org.wso2.ballerinalang.compiler.util.TypeTags;
-import org.wso2.ballerinalang.compiler.util.diagnotic.DiagnosticPos;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -120,7 +120,7 @@ public class ServiceProtoBuilder extends AbstractCompilerPlugin {
                 addDescriptorAnnotation(serviceNode, (String) ((BLangLiteral) rootDescriptor.get().expr)
                         .getValue());
             } else {
-                dlog.logDiagnostic(Diagnostic.Kind.ERROR, serviceNode.getPosition(),
+                dlog.logDiagnostic(DiagnosticSeverity.ERROR, serviceNode.getPosition(),
                         "Root descriptor and/or the descriptor map function is missing");
             }
         }
@@ -128,7 +128,7 @@ public class ServiceProtoBuilder extends AbstractCompilerPlugin {
 
     private void addDescriptorAnnotation(ServiceNode serviceNode, String rootDescriptor) {
         BLangService service = (BLangService) serviceNode;
-        DiagnosticPos pos = service.pos;
+        Location pos = service.pos;
         // Create Annotation Attachment.
         BLangAnnotationAttachment annoAttachment = (BLangAnnotationAttachment) TreeBuilder.createAnnotAttachmentNode();
         serviceNode.addAnnotationAttachment(annoAttachment);
