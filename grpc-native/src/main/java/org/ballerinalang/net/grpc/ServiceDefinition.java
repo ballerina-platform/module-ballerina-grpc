@@ -22,15 +22,15 @@ import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.StringUtils;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.AttachedFunctionType;
 import io.ballerina.runtime.api.types.ObjectType;
+import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.types.UnionType;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.types.BTupleType;
-import io.ballerina.runtime.types.BUnionType;
 import org.ballerinalang.net.grpc.exception.GrpcClientException;
 
 import java.io.IOException;
@@ -184,10 +184,10 @@ public final class ServiceDefinition {
     private Type getReturnParameterType(AttachedFunctionType attachedFunction) {
         Type functionReturnType = attachedFunction.getType().getReturnParameterType();
         if (functionReturnType.getTag() == TypeTags.UNION_TAG) {
-            BUnionType unionReturnType = (BUnionType) functionReturnType;
+            UnionType unionReturnType = (UnionType) functionReturnType;
             Type firstParamType = unionReturnType.getMemberTypes().get(0);
             if (firstParamType.getTag() == TypeTags.TUPLE_TAG) {
-                BTupleType tupleType = (BTupleType) firstParamType;
+                TupleType tupleType = (TupleType) firstParamType;
                 return tupleType.getTupleTypes().get(0);
             } else if ("Headers".equals(firstParamType.getName()) &&
                     firstParamType.getPackage() != null &&

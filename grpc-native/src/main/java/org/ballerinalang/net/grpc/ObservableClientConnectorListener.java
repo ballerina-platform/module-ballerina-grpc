@@ -22,8 +22,6 @@ import io.ballerina.runtime.observability.ObserverContext;
 import org.ballerinalang.net.transport.contract.exceptions.ClientConnectorException;
 import org.ballerinalang.net.transport.message.HttpCarbonMessage;
 
-import java.util.Optional;
-
 import static org.ballerinalang.net.http.HttpConstants.RESPONSE_STATUS_CODE_FIELD;
 
 /**
@@ -51,20 +49,21 @@ public class ObservableClientConnectorListener extends ClientConnectorListener {
         if (throwable instanceof ClientConnectorException) {
             ClientConnectorException clientConnectorException = (ClientConnectorException) throwable;
             addHttpStatusCode(clientConnectorException.getHttpStatusCode());
-            Optional<ObserverContext> observerContext =
-                    ObserveUtils.getObserverContextOfCurrentFrame(context.getStrand());
-            observerContext.ifPresent(ctx -> {
-                ctx.addTag(ObservabilityConstants.TAG_KEY_ERROR, ObservabilityConstants.TAG_TRUE_VALUE);
-                ctx.addProperty(ObservabilityConstants.PROPERTY_ERROR_MESSAGE, throwable.getMessage());
-            });
+            ObserverContext observerContext =
+                    ObserveUtils.getObserverContextOfCurrentFrame(context.getEnvironment());
+            if (observerContext != null) {
+                observerContext.addTag(ObservabilityConstants.TAG_KEY_ERROR, ObservabilityConstants.TAG_TRUE_VALUE);
+                observerContext.addProperty(ObservabilityConstants.PROPERTY_ERROR_MESSAGE, throwable.getMessage());
+            }
 
         }
         super.onError(throwable);
     }
 
     private void addHttpStatusCode(int statusCode) {
-        Optional<ObserverContext> observerContext = ObserveUtils.getObserverContextOfCurrentFrame(context.getStrand());
-        observerContext.ifPresent(ctx -> ctx.addProperty(ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE,
-                statusCode));
+        ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(context.getEnvironment());
+        if (observerContext != null) {
+            observerContext.addProperty(ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE, statusCode);
+        }
     }
 }

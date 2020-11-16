@@ -17,9 +17,6 @@ package org.ballerinalang.net.grpc;
 
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
-import io.ballerina.runtime.scheduling.BLangThreadFactory;
-import io.ballerina.runtime.util.exceptions.BallerinaConnectorException;
-import io.ballerina.runtime.util.exceptions.BallerinaException;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -63,7 +60,7 @@ public class ServerConnectorListener implements HttpConnectorListener {
     }
 
     private ExecutorService workerExecutor = Executors.newFixedThreadPool(10,
-            new BLangThreadFactory(new ThreadGroup("grpc-worker"), "grpc-service-worker-thread-pool"));
+            new GrpcThreadFactory(new ThreadGroup("grpc-worker"), "grpc-service-worker-thread-pool"));
 
     @Override
     public void onMessage(HttpCarbonMessage inboundMessage) {
@@ -77,9 +74,9 @@ public class ServerConnectorListener implements HttpConnectorListener {
             CharSequence path = request.getPath();
             String method = path != null ? path.subSequence(1, path.length()).toString() : null;
             deliver(method, request, outboundMessage);
-        } catch (BallerinaException ex) {
+        } catch (RuntimeException ex) {
             try {
-                HttpUtil.handleFailure(inboundMessage, new BallerinaConnectorException(ex.getMessage(), ex.getCause()));
+                HttpUtil.handleFailure(inboundMessage, ex.getMessage());
             } catch (Exception e) {
                 log.error("Cannot handle error using the error handler for: " + e.getMessage(), e);
             }
@@ -123,8 +120,7 @@ public class ServerConnectorListener implements HttpConnectorListener {
                     httpContent = inboundMessage.getHttpCarbonMessage().getHttpContent();
                 }
             } catch (RuntimeException e) {
-                HttpUtil.handleFailure(inboundMessage.getHttpCarbonMessage(), new BallerinaConnectorException(e
-                        .getMessage(), e.getCause()));
+                HttpUtil.handleFailure(inboundMessage.getHttpCarbonMessage(), e.getMessage());
             }
         });
     }

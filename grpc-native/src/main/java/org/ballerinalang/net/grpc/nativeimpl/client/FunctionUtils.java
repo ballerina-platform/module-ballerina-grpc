@@ -18,18 +18,13 @@
 
 package org.ballerinalang.net.grpc.nativeimpl.client;
 
-import io.ballerina.runtime.TypeChecker;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Runtime;
-import io.ballerina.runtime.api.TypeTags;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.scheduling.Scheduler;
-import io.ballerina.runtime.scheduling.State;
-import io.ballerina.runtime.scheduling.Strand;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.DataContext;
 import org.ballerinalang.net.grpc.Message;
@@ -239,7 +234,7 @@ public class FunctionUtils extends AbstractExecute {
             Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payloadBValue);
             // Update request headers when request headers exists in the context.
             HttpHeaders headers = null;
-            if (headerValues != null && (TypeChecker.getType(headerValues).getTag() == TypeTags.OBJECT_TYPE_TAG)) {
+            if (headerValues instanceof BObject) {
                 headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
             }
             if (headers != null) {
@@ -251,7 +246,7 @@ public class FunctionUtils extends AbstractExecute {
                 MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
                 if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
 
-                    dataContext = new DataContext(Scheduler.getStrand(), env.markAsync());
+                    dataContext = new DataContext(env);
                     blockingStub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()), dataContext);
                 } else {
                     return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
@@ -259,7 +254,7 @@ public class FunctionUtils extends AbstractExecute {
                 }
             } catch (Exception e) {
                 if (dataContext != null) {
-                    unBlockStrand(dataContext.getStrand());
+                    dataContext.getFuture().complete(e);
                 }
                 return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
             }
@@ -268,13 +263,6 @@ public class FunctionUtils extends AbstractExecute {
                     "type not supported");
         }
         return null;
-    }
-
-    // Please refer #18763. This should be done through a JBallerina API which provides the capability
-    // of high level strand state handling - There is no such API ATM.
-    private static void unBlockStrand(Strand strand) {
-        strand.setState(State.RUNNABLE);
-        strand.blockedOnExtern = false;
     }
 
     /**
@@ -288,7 +276,7 @@ public class FunctionUtils extends AbstractExecute {
      * @return Error if there is an error while initializing the stub, else returns nil
      */
     @SuppressWarnings("unchecked")
-    public static Object externNonBlockingExecute(BObject clientEndpoint, BString methodName,
+    public static Object externNonBlockingExecute(Environment env, BObject clientEndpoint, BString methodName,
                                                   Object payload, BObject callbackService, Object headerValues) {
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector is " +
@@ -324,7 +312,7 @@ public class FunctionUtils extends AbstractExecute {
             Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payload);
             // Update request headers when request headers exists in the context.
             HttpHeaders headers = null;
-            if (headerValues != null && (TypeChecker.getType(headerValues).getTag() == TypeTags.OBJECT_TYPE_TAG)) {
+            if (headerValues instanceof BObject) {
                 headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
             }
             if (headers != null) {
@@ -334,7 +322,7 @@ public class FunctionUtils extends AbstractExecute {
             NonBlockingStub nonBlockingStub = (NonBlockingStub) connectionStub;
             try {
                 MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
-                DataContext context = new DataContext(Scheduler.getStrand(), null);
+                DataContext context = new DataContext(env);
                 Semaphore semaphore = new Semaphore(1, true);
                 if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
                     nonBlockingStub.executeUnary(requestMsg, new DefaultStreamObserver(Runtime.getCurrentRuntime(),
@@ -367,7 +355,7 @@ public class FunctionUtils extends AbstractExecute {
      * @return Error if there is an error while initializing the stub, else returns nil
      */
     @SuppressWarnings("unchecked")
-    public static Object externStreamingExecute(BObject clientEndpoint, BString methodName,
+    public static Object externStreamingExecute(Environment env, BObject clientEndpoint, BString methodName,
                                                 BObject callbackService, Object headerValues) {
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector " +
@@ -402,7 +390,7 @@ public class FunctionUtils extends AbstractExecute {
         if (connectionStub instanceof NonBlockingStub) {
             NonBlockingStub nonBlockingStub = (NonBlockingStub) connectionStub;
             HttpHeaders headers = null;
-            if (headerValues != null && (TypeChecker.getType(headerValues).getTag() == TypeTags.OBJECT_TYPE_TAG)) {
+            if (headerValues instanceof BObject) {
                 headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
             }
 
@@ -412,7 +400,7 @@ public class FunctionUtils extends AbstractExecute {
                 DefaultStreamObserver responseObserver = new DefaultStreamObserver(Runtime.getCurrentRuntime(),
                         callbackService, semaphore);
                 StreamObserver requestSender;
-                DataContext context = new DataContext(Scheduler.getStrand(), null);
+                DataContext context = new DataContext(env);
                 if (methodType.equals(MethodDescriptor.MethodType.CLIENT_STREAMING)) {
                     requestSender = nonBlockingStub.executeClientStreaming(headers, responseObserver,
                             methodDescriptors.get(methodName.getValue()), context);

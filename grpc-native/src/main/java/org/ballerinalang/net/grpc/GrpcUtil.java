@@ -20,8 +20,6 @@ package org.ballerinalang.net.grpc;
 
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.util.exceptions.BallerinaConnectorException;
-import io.ballerina.runtime.values.MapValue;
 import org.apache.commons.lang3.StringUtils;
 import org.ballerinalang.config.ConfigRegistry;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
@@ -42,7 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.ballerina.runtime.util.RuntimeConstants.BALLERINA_VERSION;
+import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_VERSION;
 import static org.ballerinalang.net.http.HttpConstants.ANN_CONFIG_ATTR_SSL_ENABLED_PROTOCOLS;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION;
@@ -235,10 +233,10 @@ public class GrpcUtil {
         sslConfiguration.setHostNameVerificationEnabled(hostNameVerificationEnabled);
 
         sslConfiguration
-                .setSslSessionTimeOut((int) ((MapValue) secureSocket)
+                .setSslSessionTimeOut((int) (secureSocket)
                         .getDefaultableIntValue(ENDPOINT_CONFIG_SESSION_TIMEOUT));
 
-        sslConfiguration.setSslHandshakeTimeOut(((MapValue) secureSocket)
+        sslConfiguration.setSslHandshakeTimeOut((secureSocket)
                 .getDefaultableIntValue(ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT));
 
         Object[] cipherConfigs = secureSocket.getArrayValue(HttpConstants.SSL_CONFIG_CIPHERS).getStringArray();
@@ -284,12 +282,12 @@ public class GrpcUtil {
         }
 
         if (port == 0) {
-            throw new BallerinaConnectorException("Listener port is not defined!");
+            throw new RuntimeException("Listener port is not defined!");
         }
         listenerConfiguration.setPort(Math.toIntExact(port));
 
         if (idleTimeout < 0) {
-            throw new BallerinaConnectorException("Idle timeout cannot be negative. If you want to disable the " +
+            throw new RuntimeException("Idle timeout cannot be negative. If you want to disable the " +
                     "timeout please use value 0");
         }
         listenerConfiguration.setSocketIdleTimeout(Math.toIntExact(idleTimeout));
@@ -379,10 +377,10 @@ public class GrpcUtil {
                 ? sslConfig.getStringValue(SSL_CONFIG_SSL_VERIFY_CLIENT).getValue() : null;
         listenerConfiguration.setVerifyClient(sslVerifyClient);
         listenerConfiguration
-                .setSslSessionTimeOut((int) ((MapValue) sslConfig)
+                .setSslSessionTimeOut((int) (sslConfig)
                         .getDefaultableIntValue(ENDPOINT_CONFIG_SESSION_TIMEOUT));
         listenerConfiguration
-                .setSslHandshakeTimeOut(((MapValue) sslConfig)
+                .setSslHandshakeTimeOut((sslConfig)
                         .getDefaultableIntValue(ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT));
         if (trustStore == null && StringUtils.isNotBlank(sslVerifyClient) && StringUtils.isBlank(trustCerts)) {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status

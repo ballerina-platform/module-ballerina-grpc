@@ -18,23 +18,23 @@
 
 package org.ballerinalang.net.grpc;
 
+import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Future;
-import io.ballerina.runtime.scheduling.Strand;
 
 /**
  * {@code DataContext} is the wrapper to hold {@code Strand} and {@code Future}.
  */
 public class DataContext {
-    private Strand strand = null;
-    private Future future = null;
+    private Environment environment;
+    private Future future;
 
-    public DataContext(Strand strand, Future future) {
-        this.strand = strand;
-        this.future = future;
+    public DataContext(Environment env) {
+        this.environment = env;
+        this.future = env.markAsync();
     }
 
-    public Strand getStrand() {
-        return strand;
+    public Environment getEnvironment() {
+        return environment;
     }
 
     public Future getFuture() {

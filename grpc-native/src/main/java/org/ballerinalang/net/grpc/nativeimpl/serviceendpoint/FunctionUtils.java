@@ -18,8 +18,9 @@
 
 package org.ballerinalang.net.grpc.nativeimpl.serviceendpoint;
 
+import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Runtime;
-import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -180,7 +181,7 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
         }
     }
 
-    public static Object closeStream(BObject streamIterator) {
+    public static Object closeStream(Environment env, BObject streamIterator) {
         Semaphore listenerSemaphore = (Semaphore) streamIterator.getNativeData(MESSAGE_QUEUE);
         BObject clientEndpoint = (BObject) streamIterator.getNativeData(CLIENT_ENDPOINT_TYPE);
         Object errorVal = streamIterator.getNativeData(ERROR_MESSAGE);
@@ -188,7 +189,7 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
         if (errorVal instanceof BError) {
             returnError = (BError) errorVal;
         } else {
-            externComplete(clientEndpoint);
+            externComplete(env, clientEndpoint);
             returnError = null;
         }
         while (listenerSemaphore.hasQueuedThreads()) {
