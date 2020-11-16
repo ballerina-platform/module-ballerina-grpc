@@ -19,7 +19,7 @@ import ballerina/filepath;
 import ballerina/java;
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryStubGeneration() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "helloWorld.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test1");
@@ -29,7 +29,7 @@ function testUnaryStubGeneration() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testDirectoryWithSpace() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "a b", "helloWorld.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test2");
@@ -39,7 +39,7 @@ function testDirectoryWithSpace() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryHelloWorldWithDependency() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "helloWorldWithDependency.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test3");
@@ -49,7 +49,7 @@ function testUnaryHelloWorldWithDependency() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryHelloWorldWithEnum() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "helloWorldWithEnum.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test4");
@@ -59,7 +59,7 @@ function testUnaryHelloWorldWithEnum() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryHelloWorldWithNestedEnum() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "helloWorldWithNestedEnum.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test5");
@@ -69,7 +69,7 @@ function testUnaryHelloWorldWithNestedEnum() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryHelloWorldWithNestedMessage() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "helloWorldWithNestedMessage.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test6");
@@ -79,7 +79,7 @@ function testUnaryHelloWorldWithNestedMessage() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryHelloWorldWithMaps() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "helloWorldWithMap.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test7");
@@ -89,7 +89,7 @@ function testUnaryHelloWorldWithMaps() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryHelloWorldWithReservedNames() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "helloWorldWithReservedNames.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test8");
@@ -99,7 +99,7 @@ function testUnaryHelloWorldWithReservedNames() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryHelloWorldWithInvalidDependency() {
     string protoFilePath = checkpanic filepath:build(PROTO_FILE_DIRECTORY, "helloWorldWithInvalidDependency.proto");
     string outputDirPath = checkpanic filepath:build(GENERATED_SOURCES_DIRECTORY, "tool_test9");

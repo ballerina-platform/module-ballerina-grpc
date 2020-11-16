@@ -44,7 +44,7 @@ public class ServiceResource {
 
     public ServiceResource(Runtime runtime, BObject service, AttachedFunctionType function) {
         this.service = service;
-        this.functionName = function.getQualifiedName();
+        this.functionName = function.getName();
         paramTypes = function.getParameterTypes();
         this.headerRequired = headersRequired(function);
         this.runtime = runtime;

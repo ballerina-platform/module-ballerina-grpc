@@ -16,7 +16,7 @@
 
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable:true}
 isolated function testClientSocketTimeout() {
     // Client endpoint configuration
     HelloWorld14BlockingClient helloWorldBlockingEp = new("http://localhost:9104", {

@@ -19,7 +19,7 @@ import ballerina/test;
 
 final HelloWorld5BlockingClient helloWorld5BlockingEp = new ("http://localhost:9095");
 
-@test:Config {}
+@test:Config {enable:true}
 function testInvalidRemoteMethod() {
     string name = "WSO2";
     [string, Headers]|Error unionResp = helloWorld5BlockingEp->hello(name);
@@ -35,7 +35,7 @@ function testInvalidRemoteMethod() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testInvalidInputParameter() {
     int age = 10;
     [int, Headers]|Error unionResp = helloWorld5BlockingEp->testInt(age);
@@ -49,7 +49,7 @@ function testInvalidInputParameter() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testInvalidOutputResponse() {
     float salary = 1000.5;
     [float, Headers]|Error unionResp = helloWorld5BlockingEp->testFloat(salary);
