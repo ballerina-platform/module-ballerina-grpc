@@ -28,9 +28,9 @@ public class DataContext {
     private Environment environment;
     private Future future;
 
-    public DataContext(Environment env) {
+    public DataContext(Environment env, Future future) {
         this.environment = env;
-        this.future = env.markAsync();
+        this.future = future;
     }
 
     public Environment getEnvironment() {

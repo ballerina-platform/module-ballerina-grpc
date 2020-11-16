@@ -246,7 +246,7 @@ public class FunctionUtils extends AbstractExecute {
                 MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
                 if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
 
-                    dataContext = new DataContext(env);
+                    dataContext = new DataContext(env, env.markAsync());
                     blockingStub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()), dataContext);
                 } else {
                     return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
@@ -322,7 +322,7 @@ public class FunctionUtils extends AbstractExecute {
             NonBlockingStub nonBlockingStub = (NonBlockingStub) connectionStub;
             try {
                 MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
-                DataContext context = new DataContext(env);
+                DataContext context = new DataContext(env, null);
                 Semaphore semaphore = new Semaphore(1, true);
                 if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
                     nonBlockingStub.executeUnary(requestMsg, new DefaultStreamObserver(Runtime.getCurrentRuntime(),
@@ -400,7 +400,7 @@ public class FunctionUtils extends AbstractExecute {
                 DefaultStreamObserver responseObserver = new DefaultStreamObserver(Runtime.getCurrentRuntime(),
                         callbackService, semaphore);
                 StreamObserver requestSender;
-                DataContext context = new DataContext(env);
+                DataContext context = new DataContext(env, null);
                 if (methodType.equals(MethodDescriptor.MethodType.CLIENT_STREAMING)) {
                     requestSender = nonBlockingStub.executeClientStreaming(headers, responseObserver,
                             methodDescriptors.get(methodName.getValue()), context);
