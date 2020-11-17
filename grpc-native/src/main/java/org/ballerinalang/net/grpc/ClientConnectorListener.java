@@ -15,7 +15,6 @@
  */
 package org.ballerinalang.net.grpc;
 
-import io.ballerina.runtime.scheduling.BLangThreadFactory;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -47,7 +46,7 @@ public class ClientConnectorListener implements HttpClientConnectorListener {
     private ClientInboundStateListener stateListener;
 
     private static ExecutorService workerExecutor = Executors.newFixedThreadPool(10,
-            new BLangThreadFactory(new ThreadGroup("grpc-worker"), "grpc-client-worker-thread-pool"));
+            new GrpcThreadFactory(new ThreadGroup("grpc-worker"), "grpc-client-worker-thread-pool"));
 
     ClientConnectorListener(ClientCall.ClientStreamListener streamListener) {
         this.stateListener = new ClientInboundStateListener(DEFAULT_MAX_MESSAGE_SIZE, streamListener);

@@ -18,11 +18,11 @@
 package org.ballerinalang.net.grpc.stubs;
 
 import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.types.BTupleType;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.ClientCall;
 import org.ballerinalang.net.grpc.DataContext;
@@ -112,7 +112,8 @@ public class BlockingStub extends AbstractStub {
                     BObject headerObject = ValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID, HEADERS);
                     headerObject.addNativeData(MESSAGE_HEADERS, value.getHeaders());
                     BArray contentTuple = ValueCreator.createTupleValue(
-                            new BTupleType(Arrays.asList(PredefinedTypes.TYPE_ANYDATA, headerObject.getType())));
+                            TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_ANYDATA,
+                                    headerObject.getType())));
                     contentTuple.add(0, responseBValue);
                     contentTuple.add(1, headerObject);
                     inboundResponse = contentTuple;

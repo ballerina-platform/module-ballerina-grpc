@@ -19,9 +19,9 @@
 package org.ballerinalang.net.grpc;
 
 import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.types.AttachedFunctionType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.types.AttachedFunction;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,9 +42,9 @@ public class ServiceResource {
     private final boolean headerRequired;
     private final Runtime runtime;
 
-    public ServiceResource(Runtime runtime, BObject service, AttachedFunction function) {
+    public ServiceResource(Runtime runtime, BObject service, AttachedFunctionType function) {
         this.service = service;
-        this.functionName = function.funcName;
+        this.functionName = function.getName();
         paramTypes = function.getParameterTypes();
         this.headerRequired = headersRequired(function);
         this.runtime = runtime;

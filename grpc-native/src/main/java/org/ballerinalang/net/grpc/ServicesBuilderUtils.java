@@ -24,17 +24,15 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
-import io.ballerina.runtime.api.StringUtils;
-import io.ballerina.runtime.api.TypeFlags;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.flags.TypeFlags;
 import io.ballerina.runtime.api.types.AttachedFunctionType;
+import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.types.AttachedFunction;
-import io.ballerina.runtime.types.BArrayType;
-import io.ballerina.runtime.types.BRecordType;
-import io.ballerina.runtime.types.BStreamType;
 import org.ballerinalang.net.grpc.exception.GrpcServerException;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 import org.ballerinalang.net.grpc.listener.StreamingServerCallHandler;
@@ -124,7 +122,7 @@ public class ServicesBuilderUtils {
 
             for (AttachedFunctionType function : service.getType().getAttachedFunctions()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
-                    mappedResource = new ServiceResource(runtime, service, (AttachedFunction) function);
+                    mappedResource = new ServiceResource(runtime, service, function);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
                             getResourceInputParameterType(function)));
                 }
@@ -274,9 +272,9 @@ public class ServicesBuilderUtils {
         } else if (protoType.equalsIgnoreCase(EMPTY_DATATYPE_NAME)) {
             return PredefinedTypes.TYPE_NULL;
         } else if (protoType.equalsIgnoreCase(WRAPPER_BYTES_MESSAGE)) {
-            return new BArrayType(PredefinedTypes.TYPE_BYTE);
+            return TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE);
         } else {
-            return new BRecordType(protoType, module, 0, true,
+            return TypeCreator.createRecordType(protoType, module, 0, true,
                     TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
         }
     }
@@ -289,8 +287,8 @@ public class ServicesBuilderUtils {
             if (inputType != null && "Headers".equals(inputType.getName()) &&
                     inputType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
                 return PredefinedTypes.TYPE_NULL;
-            } else if (inputType instanceof BStreamType) {
-                return ((BStreamType) inputType).getConstrainedType();
+            } else if (inputType instanceof StreamType) {
+                return ((StreamType) inputType).getConstrainedType();
             } else {
                 return inputParams[1];
             }

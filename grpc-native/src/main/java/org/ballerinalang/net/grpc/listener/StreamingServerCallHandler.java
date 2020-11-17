@@ -19,14 +19,14 @@
 package org.ballerinalang.net.grpc.listener;
 
 import com.google.protobuf.Descriptors;
-import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.observability.ObservabilityConstants;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
-import io.ballerina.runtime.types.BStreamType;
-import io.ballerina.runtime.values.StreamValue;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
@@ -81,7 +81,8 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
         streamIterator.addNativeData(MESSAGE_QUEUE, messageQueue);
         streamIterator.addNativeData(CLIENT_ENDPOINT_TYPE, getConnectionParameter(responseObserver));
-        StreamValue requestStream = new StreamValue(new BStreamType(inputType), streamIterator);
+        BStream requestStream = ValueCreator.createStreamValue(TypeCreator.createStreamType(inputType),
+                streamIterator);
         onStreamInvoke(resource, requestStream, call.getHeaders(), responseObserver, context);
         return new StreamingServerRequestObserver(streamIterator, messageQueue);
     }
@@ -155,7 +156,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         }
     }
 
-    void onStreamInvoke(ServiceResource resource, StreamValue requestStream, HttpHeaders headers,
+    void onStreamInvoke(ServiceResource resource, BStream requestStream, HttpHeaders headers,
                         StreamObserver responseObserver, ObserverContext context) {
         Object[] requestParams = computeResourceParams(resource, requestStream, headers, responseObserver);
         Map<String, Object> properties = new HashMap<>();

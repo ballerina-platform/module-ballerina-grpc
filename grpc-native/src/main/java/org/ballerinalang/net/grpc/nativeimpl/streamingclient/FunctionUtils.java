@@ -19,11 +19,11 @@
 package org.ballerinalang.net.grpc.nativeimpl.streamingclient;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
-import io.ballerina.runtime.scheduling.Scheduler;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
@@ -32,8 +32,6 @@ import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Optional;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_SENDER;
 import static org.ballerinalang.net.grpc.GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE;
@@ -83,7 +81,7 @@ public class FunctionUtils {
      * @param errorMsg error message.
      * @return Error if there is an error while sending error message to the server, else returns nil.
      */
-    public static Object streamSendError(BObject streamingConnection, long statusCode,
+    public static Object streamSendError(Environment env, BObject streamingConnection, long statusCode,
                                          BString errorMsg) {
         StreamObserver requestSender = (StreamObserver) streamingConnection.getNativeData(REQUEST_SENDER);
         if (requestSender == null) {
@@ -95,10 +93,9 @@ public class FunctionUtils {
                 requestSender.onError(new Message(new StatusRuntimeException(Status.fromCodeValue((int) statusCode)
                         .withDescription(errorMsg.getValue()))));
                 // Add message content to observer context.
-                Optional<ObserverContext> observerContext =
-                        ObserveUtils.getObserverContextOfCurrentFrame(Scheduler.getStrand());
-                observerContext.ifPresent(ctx -> ctx.addTag(TAG_KEY_GRPC_ERROR_MESSAGE,
-                        getMappingHttpStatusCode((int) statusCode) + " : " + errorMsg.getValue()));
+                ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
+                observerContext.addTag(TAG_KEY_GRPC_ERROR_MESSAGE,
+                        getMappingHttpStatusCode((int) statusCode) + " : " + errorMsg.getValue());
 
             } catch (Exception e) {
                 LOG.error("Error while sending error to server.", e);

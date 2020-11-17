@@ -17,7 +17,6 @@
  */
 package org.ballerinalang.net.grpc.stubs;
 
-import io.ballerina.runtime.util.exceptions.BallerinaException;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.ClientCall;
@@ -36,7 +35,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static io.ballerina.runtime.util.RuntimeConstants.BALLERINA_VERSION;
+import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_VERSION;
 import static org.ballerinalang.net.grpc.GrpcConstants.AUTHORITY;
 import static org.ballerinalang.net.grpc.GrpcConstants.SCHEME_HEADER;
 
@@ -96,9 +95,9 @@ public abstract class AbstractStub {
             }
             return new OutboundMessage(carbonMessage);
         } catch (MalformedURLException e) {
-            throw new BallerinaException("Malformed url specified. " + e.getMessage());
+            throw new RuntimeException("Malformed url specified. " + e.getMessage());
         } catch (Exception t) {
-            throw new BallerinaException("Failed to prepare request. " + t.getMessage());
+            throw new RuntimeException("Failed to prepare request. " + t.getMessage());
         }
     }
 

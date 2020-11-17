@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CancellationException;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
@@ -81,16 +80,17 @@ public final class ClientCall {
 
     private void prepareHeaders(
             Compressor compressor) {
-        Optional<ObserverContext> observerContext = ObserveUtils.getObserverContextOfCurrentFrame(context.getStrand());
+        ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(context.getEnvironment());
         outboundMessage.removeHeader(MESSAGE_ENCODING);
         if (compressor != Codec.Identity.NONE) {
             outboundMessage.setHeader(MESSAGE_ENCODING, compressor.getMessageEncoding());
         }
         String advertisedEncodings = String.join(",", decompressorRegistry.getAdvertisedMessageEncodings());
         outboundMessage.setHeader(MESSAGE_ACCEPT_ENCODING, advertisedEncodings);
-        outboundMessage.getHeaders().entries().forEach(
-                x -> observerContext.ifPresent(ctx -> ctx.addTag(x.getKey(), x.getValue())));
-
+        if (observerContext != null) {
+            outboundMessage.getHeaders().entries().forEach(
+                    x -> observerContext.addTag(x.getKey(), x.getValue()));
+        }
         outboundMessage.setProperty(Constants.TO, "/" + method.getFullMethodName());
         outboundMessage.setHttpMethod();
         outboundMessage.setHttpVersion("2.0");
@@ -99,25 +99,25 @@ public final class ClientCall {
     }
 
     public void checkAndObserveHttpRequest() {
-        Optional<ObserverContext> observerContext =
-                ObserveUtils.getObserverContextOfCurrentFrame(context.getStrand());
-        observerContext.ifPresent(ctx -> {
-            injectHeaders(outboundMessage, ObserveUtils.getContextProperties(ctx));
-            ctx.addTag(TAG_KEY_HTTP_METHOD, GrpcConstants.HTTP_METHOD);
-            ctx.addTag(TAG_KEY_HTTP_URL, String.valueOf(outboundMessage.getProperty(HttpConstants.TO)));
-            ctx.addTag(TAG_KEY_PEER_ADDRESS,
+        ObserverContext observerContext =
+                ObserveUtils.getObserverContextOfCurrentFrame(context.getEnvironment());
+        if (observerContext != null) {
+            injectHeaders(outboundMessage, ObserveUtils.getContextProperties(observerContext));
+            observerContext.addTag(TAG_KEY_HTTP_METHOD, GrpcConstants.HTTP_METHOD);
+            observerContext.addTag(TAG_KEY_HTTP_URL, String.valueOf(outboundMessage.getProperty(HttpConstants.TO)));
+            observerContext.addTag(TAG_KEY_PEER_ADDRESS,
                     outboundMessage.getProperty(Constants.HTTP_HOST) + ":"
                             + outboundMessage.getProperty(Constants.HTTP_PORT));
-            ctx.addTag(TE_KEY, GrpcConstants.TE_TRAILERS);
-            ctx.addTag(CONTENT_TYPE_KEY, GrpcConstants.CONTENT_TYPE_GRPC);
-            ctx.addTag(HTTP_VERSION, "2.0");
+            observerContext.addTag(TE_KEY, GrpcConstants.TE_TRAILERS);
+            observerContext.addTag(CONTENT_TYPE_KEY, GrpcConstants.CONTENT_TYPE_GRPC);
+            observerContext.addTag(HTTP_VERSION, "2.0");
             // Add HTTP Status Code tag. The HTTP status code will be set using the response message.
             // Sometimes the HTTP status code will not be set due to errors etc. Therefore, it's very important to set
             // some value to HTTP Status Code to make sure that tags will not change depending on various
             // circumstances.
             // HTTP Status code must be a number.
-            ctx.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, 0);
-        });
+            observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, 0);
+        }
     }
 
     private void injectHeaders(OutboundMessage msg, Map<String, String> headers) {
