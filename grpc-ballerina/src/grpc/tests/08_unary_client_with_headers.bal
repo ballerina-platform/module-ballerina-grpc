@@ -20,7 +20,7 @@ import ballerina/test;
 // Client endpoint configuration
 final HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9098");
 
-@test:Config {enable:true}
+@test:Config {}
 function testHeadersInUnaryClient() {
 
     //Working with custom headers
@@ -43,7 +43,7 @@ function testHeadersInUnaryClient() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testHeadersInBlockingClient() {
 
     Headers headers = new;

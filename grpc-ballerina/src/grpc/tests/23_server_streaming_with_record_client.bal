@@ -21,7 +21,7 @@ import ballerina/test;
 int count = 0;
 boolean eos = false;
 
-@test:Config {enable:true}
+@test:Config {}
 public function testServerStreamingWithRecord() {
     string name = "WSO2";
     helloWorldServerStreamingClient helloWorldEp = new("http://localhost:9113");

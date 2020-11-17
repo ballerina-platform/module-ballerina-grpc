@@ -23,7 +23,7 @@ const string ERROR_MESSAGE = "Expected response value type not received";
 type Response1Typedesc typedesc<Response1>;
 type ZZZTypedesc typedesc<ZZZ>;
 
-@test:Config {enable:true}
+@test:Config {}
 function testOneofFieldValue() {
     Request1 request = {first_name:"Sam", age:31};
     var result = blockingEp->hello(request);
@@ -37,7 +37,7 @@ function testOneofFieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testDoubleFieldValue() {
     ZZZ zzz = {one_a:1.7976931348623157E308};
     var result = blockingEp->testOneofField(zzz);
@@ -50,7 +50,7 @@ function testDoubleFieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testFloatFieldValue() {
     ZZZ zzz = {one_b:3.4028235E38};
     var result = blockingEp->testOneofField(zzz);
@@ -63,7 +63,7 @@ function testFloatFieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testInt64FieldValue() {
     ZZZ zzz = {one_c:-9223372036854775808};
     var result = blockingEp->testOneofField(zzz);
@@ -76,7 +76,7 @@ function testInt64FieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testUInt64FieldValue() {
     ZZZ zzz = {one_d:9223372036854775807};
     var result = blockingEp->testOneofField(zzz);
@@ -89,7 +89,7 @@ function testUInt64FieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testInt32FieldValue() {
     ZZZ zzz = {one_e:-2147483648};
     var result = blockingEp->testOneofField(zzz);
@@ -102,7 +102,7 @@ function testInt32FieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testFixed64FieldValue() {
     ZZZ zzz = {one_f:9223372036854775807};
     var result = blockingEp->testOneofField(zzz);
@@ -115,7 +115,7 @@ function testFixed64FieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testFixed32FieldValue() {
     ZZZ zzz = {one_g:2147483647};
     var result = blockingEp->testOneofField(zzz);
@@ -128,7 +128,7 @@ function testFixed32FieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testBolFieldValue() {
     ZZZ zzz = {one_h:true};
     var result = blockingEp->testOneofField(zzz);
@@ -141,7 +141,7 @@ function testBolFieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testStringFieldValue() {
     ZZZ zzz = {one_i:"Testing"};
     var result = blockingEp->testOneofField(zzz);
@@ -154,7 +154,7 @@ function testStringFieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testMessageFieldValue() {
     AAA aaa = {aaa: "Testing"};
     ZZZ zzz = {one_j:aaa};
@@ -168,7 +168,7 @@ function testMessageFieldValue() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testBytesFieldValue() {
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();

@@ -16,7 +16,7 @@
 
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {}
 isolated function testErrorResponse() {
     string name = "WSO2";
     // Client endpoint configuration

@@ -19,7 +19,7 @@ import ballerina/test;
 
 type ByteArrayTypedesc typedesc<byte[]>;
 
-@test:Config {enable:true}
+@test:Config {}
 isolated function testByteArray() {
     byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
     string statement = "Lion in Town.";
@@ -35,7 +35,7 @@ isolated function testByteArray() {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {}
 function testLargeByteArray() {
     string filePath = "src/grpc/tests/resources/sample_bytes.txt";
     byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
