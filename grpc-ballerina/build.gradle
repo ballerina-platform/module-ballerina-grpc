@@ -101,7 +101,13 @@ jar {
     }
 }
 
+task copyToLib(type: Copy) {
+    into "$project.projectDir/lib"
+    from configurations.externalJars
+}
+
 task unpackJballerinaTools(type: Copy) {
+    dependsOn(copyToLib)
     configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
         from zipTree(artifact.getFile())
         into new File("${buildDir}/target/extracted-distributions", "jballerina-tools-zip")
@@ -109,6 +115,7 @@ task unpackJballerinaTools(type: Copy) {
 }
 
 task unpackStdLibs() {
+    dependsOn(unpackJballerinaTools)
     doLast {
         configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
             copy {
@@ -120,6 +127,7 @@ task unpackStdLibs() {
 }
 
 task copyStdlibs(type: Copy) {
+    dependsOn(unpackStdLibs)
     def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
     into ballerinaDist
 
@@ -148,11 +156,6 @@ task copyStdlibs(type: Copy) {
     }
 }
 
-task copyToLib(type: Copy) {
-    into "$project.projectDir/lib"
-    from configurations.externalJars
-}
-
 def moduleName = "grpc"
 def moduleOrg = "ballerina"
 def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
@@ -165,9 +168,10 @@ def targetBallerinaJar = file("$project.projectDir/target/caches/jar_cache/${mod
 def targetNativeJar = file("$project.rootDir/${moduleName}-native/build/libs/${moduleName}-native-${project.version}.jar")
 // external jar file which need to pack to distribution
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
+def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 def originalConfig = ballerinaConfigFile.text
 
-task updateTomlVersions {
+task updateTomlFile {
     doLast {
         def stdlibDependentRuntimeVersion = project.stdlibRuntimeVersion.split("-")[0]
         def stdlibDependentCryptoVersion = project.stdlibCryptoVersion.split("-")[0]
@@ -193,35 +197,58 @@ task revertTomlFile {
     }
 }
 
+assemble {
+    dependsOn(copyStdlibs)
+    dependsOn(":grpc-native:build")
+    dependsOn(":grpc-test-utils:build")
+}
+
+task ballerinaTest {
+    dependsOn(assemble)
+    dependsOn(updateTomlFile)
+    finalizedBy(revertTomlFile)
+
+    def debugParams = ""
+    if (project.hasProperty("debug")) {
+        debugParams = "--debug ${project.findProperty("debug")}"
+    }
+
+    def balJavaDebugParam = ""
+    if (project.hasProperty("balJavaDebug")) {
+        balJavaDebugParam = "BAL_JAVA_DEBUG=${project.findProperty("balJavaDebug")}"
+    }
+
+    doLast {
+        exec {
+            workingDir project.projectDir
+            environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/ballerina.bat test --all ${debugParams} && exit %%ERRORLEVEL%%"
+            } else {
+                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/ballerina test --all ${debugParams}"
+            }
+        }
+    }
+}
+
+test {
+    dependsOn(ballerinaTest)
+}
+
 task ballerinaBuild {
-    inputs.dir file(project.projectDir)
+    dependsOn(test)
+    dependsOn(updateTomlFile)
     finalizedBy(revertTomlFile)
 
     doLast {
-        def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
-        newConfig = newConfig.replace("@toml.version@", tomlVersion)
-        ballerinaConfigFile.text = newConfig
-
-        def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
-        def additionalBuildParams = ""
-
-        if (project.hasProperty("skipBallerinaTests")) {
-            additionalBuildParams += "--skip-tests"
-        }
-
-        if (project.hasProperty("debug")) {
-            def port = project.getProperty("debug").toString();
-            additionalBuildParams += "--debug ${port}"
-        }
-
         // Build and populate caches
         exec {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$distributionBinPath/ballerina.bat build ${additionalBuildParams}  -c ${moduleName} && exit %%ERRORLEVEL%%"
+                commandLine 'cmd', '/c', "$distributionBinPath/ballerina.bat build --skip-tests -c ${moduleName} && exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "$distributionBinPath/ballerina build ${additionalBuildParams}  -c ${moduleName}"
+                commandLine 'sh', '-c', "$distributionBinPath/ballerina build --skip-tests -c ${moduleName}"
             }
         }
         copy {
@@ -299,6 +326,10 @@ task ballerinaBuild {
     outputs.dir artifactLibParent
 }
 
+build {
+    dependsOn(ballerinaBuild)
+}
+
 task createArtifactZip(type: Zip) {
     destinationDirectory = file("$buildDir/distributions")
     from ballerinaBuild
@@ -322,12 +353,3 @@ publishing {
         }
     }
 }
-
-unpackJballerinaTools.dependsOn copyToLib
-unpackStdLibs.dependsOn unpackJballerinaTools
-copyStdlibs.dependsOn unpackStdLibs
-updateTomlVersions.dependsOn copyStdlibs
-ballerinaBuild.dependsOn ":grpc-native:build"
-ballerinaBuild.dependsOn ":grpc-test-utils:build"
-ballerinaBuild.dependsOn updateTomlVersions
-build.dependsOn ballerinaBuild
