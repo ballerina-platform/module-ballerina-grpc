@@ -137,14 +137,14 @@ public class Message {
             if (bBMap != null) {
                 for (Map.Entry<Integer, Descriptors.FieldDescriptor> entry : fieldDescriptors.entrySet()) {
                     BString bFieldName =
-                            io.ballerina.runtime.api.utils.StringUtils.fromString(entry.getValue().getName());
+                            StringUtils.fromString(entry.getValue().getName());
                     if (entry.getValue().getType().toProto().getNumber() ==
                             DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE_VALUE &&
                             !entry.getValue().isRepeated()) {
                         bBMap.put(bFieldName, null);
                     } else if (entry.getValue().getType().toProto().getNumber() ==
                             DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM_VALUE) {
-                        bBMap.put(bFieldName, io.ballerina.runtime.api.utils.StringUtils
+                        bBMap.put(bFieldName, StringUtils
                                 .fromString(entry.getValue().getEnumType().findValueByNumber(0).toString()));
                     }
                 }
@@ -166,7 +166,7 @@ public class Message {
                             break;
                         }
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_STRING_VALUE: {
-                            bMessage = io.ballerina.runtime.api.utils.StringUtils.fromString("");
+                            bMessage = StringUtils.fromString("");
                             break;
                         }
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BOOL_VALUE: {
@@ -190,7 +190,7 @@ public class Message {
                 done = true;
             } else if (fieldDescriptors.containsKey(tag)) {
                 Descriptors.FieldDescriptor fieldDescriptor = fieldDescriptors.get(tag);
-                BString bFieldName = io.ballerina.runtime.api.utils.StringUtils.fromString(fieldDescriptor.getName());
+                BString bFieldName = StringUtils.fromString(fieldDescriptor.getName());
                 switch (fieldDescriptor.getType().toProto().getNumber()) {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE_VALUE: {
                         if (bBMap != null) {
@@ -363,18 +363,18 @@ public class Message {
                                 } else {
                                     bBMap.put(bFieldName, stringArray);
                                 }
-                                stringArray.add(stringArray.size(), io.ballerina.runtime.api.utils.StringUtils
+                                stringArray.add(stringArray.size(), StringUtils
                                                 .fromString(input.readStringRequireUtf8()));
                                 bBMap.put(bFieldName, stringArray);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBBMap(bBMap, fieldDescriptor, io.ballerina.runtime.api.utils.StringUtils
+                                updateBBMap(bBMap, fieldDescriptor, StringUtils
                                                 .fromString(input.readStringRequireUtf8()));
                             } else {
-                                bBMap.put(bFieldName, io.ballerina.runtime.api.utils.StringUtils.fromString(
+                                bBMap.put(bFieldName, StringUtils.fromString(
                                                 input.readStringRequireUtf8()));
                             }
                         } else if (!fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_ANY_TYPE_URL)) {
-                            bMessage = io.ballerina.runtime.api.utils.StringUtils.fromString(
+                            bMessage = StringUtils.fromString(
                                     input.readStringRequireUtf8());
                         }
                         break;
@@ -389,20 +389,20 @@ public class Message {
                                     bBMap.put(bFieldName, stringArray);
                                 }
                                 stringArray.add(stringArray.size(),
-                                        io.ballerina.runtime.api.utils.StringUtils.fromString(
+                                        StringUtils.fromString(
                                         fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
                                 bBMap.put(bFieldName, stringArray);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 String bValue = fieldDescriptor.getEnumType().findValueByNumber(input
                                         .readEnum()).toString();
                                 updateBBMap(bBMap, fieldDescriptor,
-                                        io.ballerina.runtime.api.utils.StringUtils.fromString(bValue));
+                                        StringUtils.fromString(bValue));
                             } else {
-                                bBMap.put(bFieldName, io.ballerina.runtime.api.utils.StringUtils.fromString(
+                                bBMap.put(bFieldName, StringUtils.fromString(
                                         fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
                             }
                         } else {
-                            bMessage = io.ballerina.runtime.api.utils.StringUtils.fromString(
+                            bMessage = StringUtils.fromString(
                                     fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString());
                         }
                         break;
@@ -465,7 +465,7 @@ public class Message {
 
     private void updateBBMap(BMap<BString, Object> bBMap,
                                  Descriptors.FieldDescriptor fieldDescriptor, Object bValue) {
-        bBMap.put(io.ballerina.runtime.api.utils.StringUtils.fromString(fieldDescriptor.getName()), bValue);
+        bBMap.put(StringUtils.fromString(fieldDescriptor.getName()), bValue);
     }
 
     public com.google.protobuf.Descriptors.Descriptor getDescriptor() {
@@ -494,7 +494,7 @@ public class Message {
             bBMap = (BMap<BString, Object>) bMessage;
         }
         for (Descriptors.FieldDescriptor fieldDescriptor : messageDescriptor.getFields()) {
-            BString bFieldName = io.ballerina.runtime.api.utils.StringUtils.fromString(fieldDescriptor.getName());
+            BString bFieldName = StringUtils.fromString(fieldDescriptor.getName());
             switch (fieldDescriptor.getType().toProto().getNumber()) {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE_VALUE: {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
@@ -720,7 +720,7 @@ public class Message {
         }
 
         for (Descriptors.FieldDescriptor fieldDescriptor : messageDescriptor.getFields()) {
-            BString bFieldName = io.ballerina.runtime.api.utils.StringUtils.fromString(fieldDescriptor.getName());
+            BString bFieldName = StringUtils.fromString(fieldDescriptor.getName());
             switch (fieldDescriptor.getType().toProto().getNumber()) {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE_VALUE: {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
