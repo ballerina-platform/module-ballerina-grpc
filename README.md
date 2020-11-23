@@ -45,17 +45,24 @@ Execute the commands below to build from source.
         
         ./gradlew clean build
 
-2. To run the integration tests:
+1. To run the integration tests:
 
         ./gradlew clean test
 
-3. To build the module without the tests:
+1. To build the module without the tests:
 
         ./gradlew clean build -x test
 
-4. To debug the tests:
-
-        ./gradlew clean build -Pdebug=<port>
+1. To debug the Ballerina implementation against the native implementation:
+   ```
+   ./gradlew clean build -Pdebug=<port>
+   ./gradlew clean test -Pdebug=<port>
+   ```
+1. To debug the Ballerina implementation against the Ballerina language:
+   ```
+   ./gradlew clean build -PbalJavaDebug=<port>
+   ./gradlew clean test -PbalJavaDebug=<port>
+   ```
 
 ## Contributing to Ballerina
 
