@@ -37,7 +37,7 @@ isolated function testByteArray() {
 
 @test:Config {}
 function testLargeByteArray() {
-    string filePath = "src/grpc/tests/resources/sample_bytes.txt";
+    string filePath = "tests/resources/sample_bytes.txt";
     byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
     var rch = <@untainted> io:openReadableFile(filePath);
     if (rch is error) {

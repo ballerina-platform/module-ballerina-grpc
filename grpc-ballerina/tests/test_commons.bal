@@ -17,12 +17,12 @@
 const string ERROR_MSG_FORMAT = "Error from Connector: %s";
 const string RESP_MSG_FORMAT = "Failed: Invalid Response, expected %s, but received %s";
 
-const string KEYSTORE_PATH = "src/grpc/tests/resources/ballerinaKeystore.p12";
-const string TRUSTSTORE_PATH = "src/grpc/tests/resources/ballerinaTruststore.p12";
-const string PUBLIC_CRT_PATH = "src/grpc/tests/resources/public.crt";
-const string PRIVATE_KEY_PATH = "src/grpc/tests/resources/private.key";
+const string KEYSTORE_PATH = "tests/resources/ballerinaKeystore.p12";
+const string TRUSTSTORE_PATH = "tests/resources/ballerinaTruststore.p12";
+const string PUBLIC_CRT_PATH = "tests/resources/public.crt";
+const string PRIVATE_KEY_PATH = "tests/resources/private.key";
 
-const string PROTO_FILE_DIRECTORY = "src/grpc/tests/resources/proto-files/";
+const string PROTO_FILE_DIRECTORY = "tests/resources/proto-files/";
 const string GENERATED_SOURCES_DIRECTORY = "build/generated-sources/";
 public type Empty record {};
 
