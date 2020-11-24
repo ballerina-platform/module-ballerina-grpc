@@ -92,7 +92,7 @@ public class Listener {
             panic err;
         }
     }
-};
+}
 
 # The stream iterator object that is used to iterate through the stream messages.
 #
