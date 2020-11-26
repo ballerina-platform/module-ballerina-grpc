@@ -152,6 +152,7 @@ def tomlVersion = project.version.split("-")[0]
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 // external jar file which need to pack to distribution
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
+def targetNativeJar = file("$project.rootDir/${packageName}-native/build/libs/${packageName}-native-${project.version}.jar")
 def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 def originalConfig = ballerinaConfigFile.text
 
@@ -272,6 +273,10 @@ task ballerinaBuild {
         copy {
             from file("$project.projectDir/target/apidocs/${packageName}")
             into file("$project.projectDir/build/docs_parent/docs/${packageName}")
+        }
+        copy {
+            from targetNativeJar
+            into file("$artifactLibParent/libs")
         }
     }
 
