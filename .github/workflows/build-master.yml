@@ -3,9 +3,9 @@ name: Build
 on:
   repository_dispatch:
     types: [ stdlib-publish-snapshot ]
-    push:
-      branches:
-        - master
+  push:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
