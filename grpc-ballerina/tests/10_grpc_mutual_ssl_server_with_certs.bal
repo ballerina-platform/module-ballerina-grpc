@@ -30,8 +30,8 @@ listener Listener ep10 = new (9100, {
     descriptor: ROOT_DESCRIPTOR_10,
     descMap: getDescriptorMap10()
 }
-service grpcMutualSslService on ep10 {
-    isolated resource function hello(Caller caller, string name) {
+service /grpcMutualSslService on ep10 {
+    isolated remote function hello(Caller caller, string name) {
         log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->send(message);
@@ -42,6 +42,10 @@ service grpcMutualSslService on ep10 {
         }
         checkpanic caller->complete();
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_10;
+    final map<string> descMap = getDescriptorMap10();
 }
 
 const string ROOT_DESCRIPTOR_10 = "0A1A677270634D757475616C53736C536572766963652E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F325B0A14677270634D757475616C53736C5365727669636512430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";

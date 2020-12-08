@@ -19,7 +19,7 @@ import ballerina/test;
 
 final NegotiatorBlockingClient negotiatorEp = new ("http://localhost:9109");
 
-@test:Config {}
+@test:Config {enable:false}
 function testMapFields() {
     MetricsPublishRequest request = {
         id: "xxxxx",
@@ -36,7 +36,7 @@ function testMapFields() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testOptionalFields() {
     HandshakeRequest request = {};
     [HandshakeResponse, Headers] | Error result = negotiatorEp->handshake(request);
@@ -61,7 +61,7 @@ public client class NegotiatorBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
-    public isolated remote function handshake(HandshakeRequest req, Headers? headers = ())
+    isolated remote function handshake(HandshakeRequest req, Headers? headers = ())
                                                 returns ([HandshakeResponse, Headers] | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/handshake", req, headers);
         Headers resHeaders = new;
@@ -70,7 +70,7 @@ public client class NegotiatorBlockingClient {
         return [<HandshakeResponse>result, resHeaders];
     }
 
-    public isolated remote function publishMetrics(MetricsPublishRequest req, Headers? headers = ())
+    isolated remote function publishMetrics(MetricsPublishRequest req, Headers? headers = ())
                                                 returns (Headers | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/publishMetrics", req, headers);
         Headers resHeaders = new;
@@ -78,7 +78,7 @@ public client class NegotiatorBlockingClient {
         return resHeaders;
     }
 
-    public isolated remote function publishTraces(TracesPublishRequest req, Headers? headers = ())
+    isolated remote function publishTraces(TracesPublishRequest req, Headers? headers = ())
                                                 returns (Headers | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/publishTraces", req, headers);
         Headers resHeaders = new;
@@ -99,17 +99,17 @@ public client class NegotiatorClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
-    public isolated remote function handshake(HandshakeRequest req, service msgListener, Headers? headers = ())
+    isolated remote function handshake(HandshakeRequest req, service object {} msgListener, Headers? headers = ())
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/handshake", req, msgListener, headers);
     }
 
-    public isolated remote function publishMetrics(MetricsPublishRequest req, service msgListener, Headers? headers = ())
+    isolated remote function publishMetrics(MetricsPublishRequest req, service object {} msgListener, Headers? headers = ())
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/publishMetrics", req, msgListener, headers);
     }
 
-    public isolated remote function publishTraces(TracesPublishRequest req, service msgListener, Headers? headers = ())
+    isolated remote function publishTraces(TracesPublishRequest req, service object {} msgListener, Headers? headers = ())
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/publishTraces", req, msgListener, headers);
     }

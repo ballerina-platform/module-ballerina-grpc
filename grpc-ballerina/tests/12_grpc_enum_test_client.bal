@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable:false}
 isolated function testSendAndReceiveEnum() {
     testEnumServiceBlockingClient blockingEp = new ("http://localhost:9102");
 
@@ -44,7 +44,7 @@ public client class testEnumServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_12, getDescriptorMap12());
     }
 
-    public isolated remote function testEnum (orderInfo req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function testEnum (orderInfo req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.testEnumService/testEnum", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -65,7 +65,7 @@ public client class testEnumServiceClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_12, getDescriptorMap12());
     }
 
-    public isolated remote function testEnum (orderInfo req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function testEnum (orderInfo req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.testEnumService/testEnum", req, msgListener, headers);
     }
 }

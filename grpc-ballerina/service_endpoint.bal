@@ -15,69 +15,66 @@
 // under the License.
 
 import ballerina/crypto;
-import ballerina/lang.'object as lang;
 import ballerina/java;
 
 # Represents server listener where one or more services can be registered. so that ballerina program can offer
 # service through this listener.
 public class Listener {
 
-    *lang:Listener;
-
     private int port = 0;
     private ListenerConfiguration config = {};
 
     # Starts the registered service.
     # ```ballerina
-    # error? result = listenerEp.__start();
+    # error? result = listenerEp.'start();
     # ```
     #
     # + return - An `error` if an error occurs while starting the server or else `()`
-    public isolated function __start() returns error? {
+    public isolated function 'start() returns error? {
         return externStart(self);
     }
 
     # Stops the service listener gracefully. Already-accepted requests will be served before the connection closure.
     # ```ballerina
-    # error? result = listenerEp.__gracefulStop();
+    # error? result = listenerEp.gracefulStop();
     # ```
     #
     # + return - An `error` if an error occurred during the listener stopping process or else `()`
-    public isolated function __gracefulStop() returns error? {
+    public isolated function gracefulStop() returns error? {
         return ();
     }
 
     # Stops the registered service.
     # ```ballerina
-    # error? result = listenerEp.__immediateStop();
+    # error? result = listenerEp.immediateStop();
     # ```
     #
     # + return - An `error` if an error occurs while stopping the server or else `()`
-    public isolated function __immediateStop() returns error? {
+    public isolated function immediateStop() returns error? {
         return externStop(self);
     }
 
     # Gets called every time a service attaches itself to this endpoint - also happens at module init time.
     # ```ballerina
-    # error? result = listenerEp.__attach(helloService);
+    # error? result = listenerEp.attach(helloService);
     # ```
     #
     # + s - The type of the service to be registered
     # + name - Name of the service
     # + return - An `error` if encounters an error while attaching the service or else `()`
-    public isolated function __attach(service s, string? name = ()) returns error? {
+    public isolated function attach(service object {} s, string[]|string? name = ()) returns error? {
         return externRegister(self, s, name);
     }
 
     # Detaches an HTTP or WebSocket service from the listener. Note that detaching a WebSocket service would not affect
     # the functionality of the existing connections.
     # ```ballerina
-    # error? result = listenerEp.__detach(helloService);
+    # error? result = listenerEp.detach(helloService);
     # ```
     #
     # + s - The service to be detached
     # + return - An `error` if occurred during detaching of a service or else `()`
-    public isolated function __detach(service s) returns error? {
+    public isolated function detach(service object {} s) returns error? {
     }
 
     # Gets called when the endpoint is being initialized during the module init time.
@@ -132,7 +129,7 @@ isolated function externInitEndpoint(Listener listenerObject) returns error? =
     'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
-isolated function externRegister(Listener listenerObject, service serviceType, string? name) returns error? =
+isolated function externRegister(Listener listenerObject, service object {} serviceType, string[]|string? name) returns error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;

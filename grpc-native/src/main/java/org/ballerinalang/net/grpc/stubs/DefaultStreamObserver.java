@@ -17,7 +17,7 @@ package org.ballerinalang.net.grpc.stubs;
 
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.async.Callback;
-import io.ballerina.runtime.api.types.AttachedFunctionType;
+import io.ballerina.runtime.api.types.MemberFunctionType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
@@ -59,7 +59,7 @@ public class DefaultStreamObserver implements StreamObserver {
         if (callbackService == null) {
             throw new GrpcClientException("Error while building the connection. Listener Service does not exist");
         }
-        for (AttachedFunctionType function : callbackService.getType().getAttachedFunctions()) {
+        for (MemberFunctionType function : callbackService.getType().getAttachedFunctions()) {
             resourceMap.put(function.getName(), new ServiceResource(runtime, callbackService, function));
         }
         this.semaphore = semaphore;

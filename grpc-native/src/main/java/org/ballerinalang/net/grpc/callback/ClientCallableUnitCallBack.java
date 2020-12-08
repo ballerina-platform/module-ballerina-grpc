@@ -32,8 +32,8 @@ public class ClientCallableUnitCallBack extends AbstractCallableUnitCallBack {
     }
 
     @Override
-    public void notifySuccess() {
-        super.notifySuccess();
+    public void notifySuccess(Object response) {
+        super.notifySuccess(response);
         semaphore.release();
     }
     

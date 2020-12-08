@@ -20,7 +20,7 @@ import ballerina/test;
 // Client endpoint configuration
 final HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9098");
 
-@test:Config {}
+@test:Config {enable:false}
 function testHeadersInUnaryClient() {
 
     //Working with custom headers
@@ -43,7 +43,7 @@ function testHeadersInUnaryClient() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testHeadersInBlockingClient() {
 
     Headers headers = new;
@@ -76,7 +76,7 @@ public client class HelloWorld8BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_8, getDescriptorMap8());
     }
 
-    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld101/hello", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -98,7 +98,7 @@ public client class HelloWorld8Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_8, getDescriptorMap8());
     }
 
-    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld101/hello", req, msgListener, headers);
     }
 }

@@ -19,7 +19,7 @@ import ballerina/test;
 
 final HelloWorld5BlockingClient helloWorld5BlockingEp = new ("http://localhost:9095");
 
-@test:Config {}
+@test:Config {enable:false}
 function testInvalidRemoteMethod() {
     string name = "WSO2";
     [string, Headers]|Error unionResp = helloWorld5BlockingEp->hello(name);
@@ -35,7 +35,7 @@ function testInvalidRemoteMethod() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testInvalidInputParameter() {
     int age = 10;
     [int, Headers]|Error unionResp = helloWorld5BlockingEp->testInt(age);
@@ -49,7 +49,7 @@ function testInvalidInputParameter() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testInvalidOutputResponse() {
     float salary = 1000.5;
     [float, Headers]|Error unionResp = helloWorld5BlockingEp->testFloat(salary);
@@ -76,7 +76,7 @@ public client class HelloWorld5BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_5, getDescriptorMap5());
     }
 
-    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/hello1", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -84,7 +84,7 @@ public client class HelloWorld5BlockingClient {
         return [result.toString(), resHeaders];
     }
 
-    public isolated remote function testInt(int req, Headers? headers = ()) returns ([int, Headers]|Error) {
+    isolated remote function testInt(int req, Headers? headers = ()) returns ([int, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/testInt", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -97,7 +97,7 @@ public client class HelloWorld5BlockingClient {
         }
     }
 
-    public isolated remote function testFloat(float req, Headers? headers = ()) returns ([float, Headers]|Error) {
+    isolated remote function testFloat(float req, Headers? headers = ()) returns ([float, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/testFloat", req, headers);
         anydata result = ();
         Headers resHeaders = new;

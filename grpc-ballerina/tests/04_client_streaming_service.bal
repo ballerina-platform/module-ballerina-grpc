@@ -25,9 +25,9 @@ listener Listener ep4 = new (9094);
     descriptor: ROOT_DESCRIPTOR_4,
     descMap: getDescriptorMap4()
 }
-service HelloWorld7 on ep4 {
+service /HelloWorld7 on ep4 {
 
-    resource function lotsOfGreetings(Caller caller, stream<string, error>clientStream) {
+    remote function lotsOfGreetings(Caller caller, stream<string, error>clientStream) {
         log:printInfo("connected sucessfully.");
         error? e = clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);
@@ -44,6 +44,10 @@ service HelloWorld7 on ep4 {
             log:printError("Something unexpected happens at server :: " + e.message());
         }
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_4;
+    final map<string> descMap = getDescriptorMap4();
 }
 
 const string ROOT_DESCRIPTOR_4 = "0A1148656C6C6F576F726C64372E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F325E0A0B48656C6C6F576F726C6437124F0A0F6C6F74734F664772656574696E6773121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75652801620670726F746F33";

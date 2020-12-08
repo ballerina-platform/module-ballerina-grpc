@@ -22,9 +22,9 @@ listener Listener helloWorldStreamingep = new (9113);
     descriptor: ROOT_DESCRIPTOR_23,
     descMap: getDescriptorMap23()
 }
-service helloWorldServerStreaming on helloWorldStreamingep {
+service /helloWorldServerStreaming on helloWorldStreamingep {
 
-    isolated resource function lotsOfReplies(Caller caller, HelloRequest value) {
+    isolated remote function lotsOfReplies(Caller caller, HelloRequest value) {
         log:printInfo("Server received hello from " + value.name);
         string[] greets = ["Hi", "Hey", "GM"];
 
@@ -45,6 +45,10 @@ service helloWorldServerStreaming on helloWorldStreamingep {
                 err = result);
         }
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_23;
+    final map<string> descMap = getDescriptorMap23();
 }
 
 public type HelloRequest record {|

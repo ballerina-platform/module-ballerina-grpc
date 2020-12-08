@@ -44,7 +44,7 @@ ClientConfiguration failingClientConfig = {
 final RetryServiceBlockingClient retryClient = new("http://localhost:9112", clientConfig);
 final RetryServiceBlockingClient failingRetryClient = new("http://localhost:9112", failingClientConfig);
 
-@test:Config {}
+@test:Config {enable:false}
 function testRetry() {
     var result = retryClient->getResult("RetryClient");
     if (result is Error) {
@@ -56,7 +56,7 @@ function testRetry() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testRetryFailingClient() {
     var result = failingRetryClient->getResult("FailingRetryClient");
     if (result is Error) {
@@ -79,7 +79,7 @@ public client class RetryServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
-    public isolated remote function getResult(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function getResult(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("RetryService/getResult", req, headers);
         Headers resHeaders = new;
         anydata result = ();

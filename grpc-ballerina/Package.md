@@ -47,7 +47,7 @@ The code snippet given below contains a service that sends a response to each re
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090)  {
    // A resource that accepts a string message.
-   resource function hello(grpc:Caller caller, string name) {
+   remote function hello(grpc:Caller caller, string name) {
        // Send the response to the client.
        grpc:Error? err = caller->send("Hi " + name + "! Greetings from gRPC service!");
 
@@ -86,7 +86,7 @@ The code snippet given below contains a service that sends a sequence of respons
 ```ballerina
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090) {
-   resource function lotsOfReplies(grpc:Caller caller, string name) {
+   remote function lotsOfReplies(grpc:Caller caller, string name) {
        string[] greets = ["Hi", "Welcome"];
        // Send multiple responses to the client.
        foreach string greet in greets {
@@ -113,15 +113,15 @@ The code snippet given below calls the above service using the auto-generated Ba
 service HelloWorldMessageListener = service {
 
    // This resource method is invoked when the service receives a message.
-   resource function onMessage(string message) {
+   remote function onMessage(string message) {
    }
    
    // This resource method is invoked if an error is returned.
-   resource function onError(error err) {
+   remote function onError(error err) {
    }
 
    // Invoke this resource when the server sends all the responses to the request.
-    resource function onComplete() {
+    remote function onComplete() {
    }
 }
 ```
@@ -143,7 +143,7 @@ The code snippet given below contains a service that receives a sequence of requ
 service HelloWorld on new grpc:Listener(9090) {
 
     //This `resource` is triggered when a new caller connection is initialized.
-    resource function lotsOfGreetings(grpc:Caller caller, stream<string,error> clientStream) {
+    remote function lotsOfGreetings(grpc:Caller caller, stream<string,error> clientStream) {
         //Iterate through the client stream
         error? e = clientStream.forEach(function(string name) {
             // Handle the message sent from the stream here
@@ -182,15 +182,15 @@ grpc:Error? result = ep->complete();
 service HelloWorldMessageListener = service {
 
    // This resource method is invoked when the service receives a message.
-   resource function onMessage(string message) {
+   remote function onMessage(string message) {
    }
    
    // This resource method is invoked if an error is returned.
-   resource function onError(error err) {
+   remote function onError(error err) {
    }
 
    // Invoke this resource when the server sends all the responses to the request.
-    resource function onComplete() {
+    remote function onComplete() {
    }
 }
 ```
@@ -211,7 +211,7 @@ The code snippet given below includes a service that handles bidirectional strea
 service Chat on new grpc:Listener(9090) {
 
     //This `resource` is triggered when a new caller connection is initialized.
-    resource function chat(grpc:Caller caller, stream<ChatMessage, error> clientStream) {
+    remote function chat(grpc:Caller caller, stream<ChatMessage, error> clientStream) {
         //Iterate through the client stream
         error? e = clientStream.forEach(function(ChatMessage chatMsg) {
             // Handle the streamed messages sent from the client here
@@ -251,15 +251,15 @@ grpc:Error? result = ep->complete();
 service ChatMessageListener = service {
 
    // This resource method is invoked when the service receives a message.
-   resource function onMessage(string message) {
+   remote function onMessage(string message) {
    }
    
    // This resource method is invoked if an error is returned.
-   resource function onError(error err) {
+   remote function onError(error err) {
    }
 
    // Invoke this resource when the server sends all the responses to the request.
-    resource function onComplete() {
+    remote function onComplete() {
    }
 }
 ```

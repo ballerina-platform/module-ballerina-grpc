@@ -18,13 +18,17 @@
     descriptor: ROOT_DESCRIPTOR_13,
     descMap: getDescriptorMap13()
 }
-service HelloWorld13 on new Listener(9103) {
+service /HelloWorld13 on new Listener(9103) {
 
-    isolated resource function hello (Caller caller, string name,
+    isolated remote function hello (Caller caller, string name,
                              Headers headers) returns error? {
 
         return error("Details");
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_13;
+    final map<string> descMap = getDescriptorMap13();
 }
 
 const string ROOT_DESCRIPTOR_13 = "0A1E677270635F756E6172795F626C6F636B696E675F636F6E742E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32530A0C48656C6C6F576F726C64313312430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";

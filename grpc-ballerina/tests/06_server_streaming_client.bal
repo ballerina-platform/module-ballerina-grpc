@@ -22,7 +22,7 @@ import ballerina/test;
 int msgCount = 0;
 boolean eof = false;
 
-@test:Config {}
+@test:Config {enable:false}
 function testReceiveStreamingResponse() {
     string name = "WSO2";
     // Client endpoint configuration
@@ -51,10 +51,10 @@ function testReceiveStreamingResponse() {
 }
 
 // Server Message Listener.
-service HelloWorld6MessageListener = service {
+service object {} HelloWorld6MessageListener = service object {
 
     // Resource registered to receive server messages
-    resource function onMessage(string message) {
+    remote function onMessage(string message) {
         lock {
             io:println("Response received from server: " + message);
             msgCount = msgCount + 1;
@@ -62,12 +62,12 @@ service HelloWorld6MessageListener = service {
     }
 
     // Resource registered to receive server error messages
-    resource function onError(error err) {
+    remote function onError(error err) {
         io:println("Error from Connector: " + err.message());
     }
 
     // Resource registered to receive server completed message.
-    resource function onComplete() {
+    remote function onComplete() {
         io:println("Server Complete Sending Response.");
         eof = true;
     }
@@ -86,7 +86,7 @@ public client class HelloWorld6Client {
         Error? result = self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 
-    public isolated remote function lotsOfReplies(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function lotsOfReplies(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld45/lotsOfReplies", req, msgListener, headers);
     }
 }

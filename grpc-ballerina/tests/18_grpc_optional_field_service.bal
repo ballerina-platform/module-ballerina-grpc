@@ -22,9 +22,9 @@ listener Listener checkoutep = new (9108);
     descriptor: ROOT_DESCRIPTOR_18,
     descMap: getDescriptorMap18()
 }
-service CheckoutService on checkoutep {
+service /CheckoutService on checkoutep {
 
-    isolated resource function PlaceOrder(Caller caller, PlaceOrderRequest value) {
+    isolated remote function PlaceOrder(Caller caller, PlaceOrderRequest value) {
         log:printInfo("PlaceOrderRequest: " + value.toString());
 
         var addr = value.address;
@@ -48,6 +48,10 @@ service CheckoutService on checkoutep {
             log:printError("Error while completing the response.", complete);
         }
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_18;
+    final map<string> descMap = getDescriptorMap18();
 }
 
 public type PlaceOrderRequest record {|

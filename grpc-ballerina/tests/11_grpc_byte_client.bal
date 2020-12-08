@@ -19,7 +19,7 @@ import ballerina/test;
 
 type ByteArrayTypedesc typedesc<byte[]>;
 
-@test:Config {}
+@test:Config {enable:false}
 isolated function testByteArray() {
     byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
     string statement = "Lion in Town.";
@@ -35,7 +35,7 @@ isolated function testByteArray() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testLargeByteArray() {
     string filePath = "tests/resources/sample_bytes.txt";
     byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
@@ -72,7 +72,7 @@ public client class byteServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
-    public isolated remote function checkBytes (byte[] req, Headers? headers = ()) returns ([byte[], Headers]|Error) {
+    isolated remote function checkBytes (byte[] req, Headers? headers = ()) returns ([byte[], Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.byteService/checkBytes", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -98,7 +98,7 @@ public client class byteServiceClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
-    public isolated remote function checkBytes (byte[] req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function checkBytes (byte[] req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.byteService/checkBytes", req, msgListener, headers);
     }
 }

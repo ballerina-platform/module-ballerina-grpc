@@ -22,8 +22,8 @@ listener Listener ep12 = new (9102, {
     descriptor: ROOT_DESCRIPTOR_12,
     descMap: getDescriptorMap12()
 }
-service testEnumService on ep12 {
-    isolated resource function testEnum(Caller caller, orderInfo orderReq) {
+service /testEnumService on ep12 {
+    isolated remote function testEnum(Caller caller, orderInfo orderReq) {
         string permission = "";
         if (orderReq.mode == r) {
             permission = "r";
@@ -31,6 +31,10 @@ service testEnumService on ep12 {
         checkpanic caller->send(permission);
         checkpanic caller->complete();
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_12;
+    final map<string> descMap = getDescriptorMap12();
 }
 
 public type orderInfo record {

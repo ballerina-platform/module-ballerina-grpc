@@ -40,8 +40,8 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
     }
 
     @Override
-    public void notifySuccess() {
-        super.notifySuccess();
+    public void notifySuccess(Object response) {
+        super.notifySuccess(response);
     }
 
     @Override

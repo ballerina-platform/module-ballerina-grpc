@@ -26,7 +26,7 @@ public client class StreamingClient {
     #
     # + res - The inbound request message
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public isolated remote function send(anydata res) returns Error? {
+    isolated remote function send(anydata res) returns Error? {
         return streamSend(self, res);
     }
 
@@ -36,7 +36,7 @@ public client class StreamingClient {
     # ```
     #
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public isolated remote function complete() returns Error? {
+    isolated remote function complete() returns Error? {
         return streamComplete(self);
     }
 
@@ -48,7 +48,7 @@ public client class StreamingClient {
     # + statusCode - Error status code
     # + message - Error message
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public isolated remote function sendError(int statusCode, string message) returns Error? {
+    isolated remote function sendError(int statusCode, string message) returns Error? {
         return streamSendError(self, statusCode, message);
     }
 }

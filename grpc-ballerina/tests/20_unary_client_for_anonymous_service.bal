@@ -29,11 +29,11 @@ listener Listener ep20 = new (9110, {
 @test:BeforeSuite
 function beforeFunc() {
     log:printInfo("Starting beforeFunc to attach anonymous service");
-    error? attach = ep20.__attach(helloService);
+    error? attach = ep20.attach(helloService);
     if (attach is error) {
         log:printInfo("Error while attaching the service: " + attach.message());
     }
-    error? 'start = ep20.__start();
+    error? 'start = ep20.'start();
     if ('start is error) {
         log:printInfo("Error while starting the listener: " + 'start.message());
     }
@@ -57,7 +57,7 @@ function testAnonymousServiceWithBlockingClient() {
 
 @test:AfterSuite {}
 function afterFunc() {
-    error? 'stop = ep20.__immediateStop();
+    error? 'stop = ep20.immediateStop();
     if ('stop is error) {
         log:printInfo("Error while stopping the listener: " + 'stop.message());
     }
@@ -77,7 +77,7 @@ public client class HelloWorld20BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_20, getDescriptorMap20());
     }
 
-    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld101/hello", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -99,12 +99,12 @@ public client class HelloWorld20Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_20, getDescriptorMap20());
     }
 
-    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld101/hello", req, msgListener, headers);
     }
 }
 
-service helloService =
+service object {} helloService =
     @ServiceDescriptor {
         descriptor: ROOT_DESCRIPTOR_20,
         descMap: getDescriptorMap20()
@@ -112,8 +112,8 @@ service helloService =
     @ServiceConfig {
         name: "HelloWorld101"
     }
-    service {
-        isolated resource function hello(Caller caller, string name) {
+    service object {
+        isolated remote function hello(Caller caller, string name) {
             log:printInfo("name: " + name);
             string message = "Hello " + name;
             Error? err = caller->send(message);

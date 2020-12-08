@@ -24,9 +24,9 @@ listener Listener ep2 = new (9092, {
     descriptor: ROOT_DESCRIPTOR_2,
     descMap: getDescriptorMap2()
 }
-service HelloWorld3 on ep2 {
+service /HelloWorld3 on ep2 {
 
-    isolated resource function testIntArrayInput(Caller caller, TestInt req) {
+    isolated remote function testIntArrayInput(Caller caller, TestInt req) {
         io:println(req);
         int[] numbers = req.values;
         int result = 0;
@@ -42,7 +42,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testStringArrayInput(Caller caller, TestString req) {
+    isolated remote function testStringArrayInput(Caller caller, TestString req) {
         io:println(req);
         string[] values = req.values;
         string result = "";
@@ -58,7 +58,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testFloatArrayInput(Caller caller, TestFloat req) {
+    isolated remote function testFloatArrayInput(Caller caller, TestFloat req) {
         io:println(req);
         float[] values = req.values;
         float result = 0.0;
@@ -74,7 +74,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testBooleanArrayInput(Caller caller, TestBoolean req) {
+    isolated remote function testBooleanArrayInput(Caller caller, TestBoolean req) {
         io:println(req);
         boolean[] values = req.values;
         boolean result = false;
@@ -90,7 +90,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testStructArrayInput(Caller caller, TestStruct req) {
+    isolated remote function testStructArrayInput(Caller caller, TestStruct req) {
         io:println(req);
         A[] values = req.values;
         string result = "";
@@ -106,7 +106,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testIntArrayOutput(Caller caller) {
+    isolated remote function testIntArrayOutput(Caller caller) {
         TestInt intArray = {values:[1, 2, 3, 4, 5]};
         Error? err = caller->send(intArray);
         if (err is Error) {
@@ -117,7 +117,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testStringArrayOutput(Caller caller) {
+    isolated remote function testStringArrayOutput(Caller caller) {
         TestString stringArray = {values:["A", "B", "C"]};
         Error? err = caller->send(stringArray);
         if (err is Error) {
@@ -128,7 +128,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testFloatArrayOutput(Caller caller) {
+    isolated remote function testFloatArrayOutput(Caller caller) {
         TestFloat floatArray = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
         Error? err = caller->send(floatArray);
         if (err is Error) {
@@ -139,7 +139,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testBooleanArrayOutput(Caller caller) {
+    isolated remote function testBooleanArrayOutput(Caller caller) {
         TestBoolean booleanArray = {values:[true, false, true]};
         Error? err = caller->send(booleanArray);
         if (err is Error) {
@@ -150,7 +150,7 @@ service HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testStructArrayOutput(Caller caller) {
+    isolated remote function testStructArrayOutput(Caller caller) {
         A a1 = {name:"Sam"};
         A a2 = {name:"John"};
         TestStruct structArray = {values:[a1, a2]};
@@ -162,6 +162,10 @@ service HelloWorld3 on ep2 {
         }
         checkpanic caller->complete();
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_2;
+    final map<string> descMap = getDescriptorMap2();
 }
 
 public type TestInt record {

@@ -26,8 +26,8 @@ listener Listener ep8 = new (9098, {
     descriptor: ROOT_DESCRIPTOR_8,
     descMap: getDescriptorMap8()
 }
-service HelloWorld101 on ep8 {
-    isolated resource function hello(Caller caller, string name, Headers headers) {
+service /HelloWorld101 on ep8 {
+    isolated remote function hello(Caller caller, string name, Headers headers) {
         io:println("name: " + name);
         string message = "Hello " + name;
         if (!headers.exists("x-id")) {
@@ -48,6 +48,10 @@ service HelloWorld101 on ep8 {
         }
         checkpanic caller->complete();
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_8;
+    final map<string> descMap = getDescriptorMap8();
 }
 
 const string ROOT_DESCRIPTOR_8 = "0A1348656C6C6F576F726C643130312E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32540A0D48656C6C6F576F726C6431303112430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";

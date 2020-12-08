@@ -44,8 +44,8 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
     }
 
     @Override
-    public void notifySuccess() {
-        super.notifySuccess();
+    public void notifySuccess(Object response) {
+        super.notifySuccess(response);
         // check whether connection is closed.
         if (requestSender instanceof ServerCallHandler.ServerCallStreamObserver) {
             ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler

@@ -21,7 +21,7 @@ import ballerina/test;
 
 string responseMsg = "";
 
-@test:Config {}
+@test:Config {enable:false}
 function testBidiStreaming() {
     StreamingClient ep = new;
     ChatClient chatEp = new ("https://localhost:9093", {
@@ -77,7 +77,7 @@ function responseReceived(string expectedMsg) returns boolean {
     return responseMsg == expectedMsg;
 }
 
-service ChatMessageListener = service {
+service object {} ChatMessageListener = service object {
 
     function onMessage(string message) {
         responseMsg = <@untainted> message;
@@ -89,7 +89,7 @@ service ChatMessageListener = service {
         io:println(responseMsg);
     }
 
-    resource function onComplete() {
+    remote function onComplete() {
         io:println("Server Complete Sending Responses.");
     }
 };
@@ -108,7 +108,7 @@ public client class ChatClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_3, getDescriptorMap3());
     }
 
-    public isolated remote function chat(service msgListener, Headers? headers = ()) returns
+    isolated remote function chat(service object {} msgListener, Headers? headers = ()) returns
     (StreamingClient|Error) {
         return self.grpcClient->streamingExecute("Chat/chat", msgListener, headers);
     }

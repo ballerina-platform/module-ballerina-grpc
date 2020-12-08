@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable:false}
 isolated function testGzipEncoding() {
     OrderManagementBlockingClient OrderMgtBlockingEp = new("http://localhost:9111");
 
@@ -46,7 +46,7 @@ public client class OrderManagementBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_21, getDescriptorMap21());
     }
 
-    public isolated remote function addOrder(Order req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function addOrder(Order req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("ecommerce.OrderManagement/addOrder", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -54,7 +54,7 @@ public client class OrderManagementBlockingClient {
         return [result.toString(), resHeaders];
     }
 
-    public isolated remote function getOrder(string req, Headers? headers = ()) returns ([Order, Headers]|Error) {
+    isolated remote function getOrder(string req, Headers? headers = ()) returns ([Order, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("ecommerce.OrderManagement/getOrder", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -76,11 +76,11 @@ public client class OrderManagementClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_21, getDescriptorMap21());
     }
 
-    public isolated remote function addOrder(Order req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function addOrder(Order req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("ecommerce.OrderManagement/addOrder", req, msgListener, headers);
     }
 
-    public isolated remote function getOrder(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function getOrder(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("ecommerce.OrderManagement/getOrder", req, msgListener, headers);
     }
 }

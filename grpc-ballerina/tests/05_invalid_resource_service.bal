@@ -21,8 +21,8 @@ listener Listener ep5 = new (9095);
     descriptor: ROOT_DESCRIPTOR_5,
     descMap: getDescriptorMap5()
 }
-service HelloWorld98 on ep5 {
-    isolated resource function hello(Caller caller, string name) {
+service /HelloWorld98 on ep5 {
+    isolated remote function hello(Caller caller, string name) {
         log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
@@ -37,7 +37,7 @@ service HelloWorld98 on ep5 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testInt(Caller caller, string age) {
+    isolated remote function testInt(Caller caller, string age) {
         log:printInfo("age: " + age);
         int displayAge = 0;
         if (age == "") {
@@ -54,7 +54,7 @@ service HelloWorld98 on ep5 {
         checkpanic caller->complete();
     }
 
-    isolated resource function testFloat(Caller caller, float salary) {
+    isolated remote function testFloat(Caller caller, float salary) {
         log:printInfo("gross salary: " + salary.toString());
         string netSalary = "salary";
         Error? err = caller->send(netSalary);
@@ -65,6 +65,10 @@ service HelloWorld98 on ep5 {
         }
         checkpanic caller->complete();
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_5;
+    final map<string> descMap = getDescriptorMap5();
 }
 
 const string ROOT_DESCRIPTOR_5 = "0A1248656C6C6F576F726C6439382E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32E1010A0C48656C6C6F576F726C64393812430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512440A0774657374496E74121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1B2E676F6F676C652E70726F746F6275662E496E74363456616C756512460A0974657374466C6F6174121B2E676F6F676C652E70726F746F6275662E466C6F617456616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";

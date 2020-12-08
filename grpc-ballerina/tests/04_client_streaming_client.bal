@@ -21,7 +21,7 @@ import ballerina/test;
 string response = "";
 int total = 0;
 
-@test:Config {}
+@test:Config {enable:false}
 function testClientStreaming() {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
     // Client endpoint configuration
@@ -59,7 +59,7 @@ function testClientStreaming() {
 }
 
 // Server Message Listener.
-service HelloWorldMessageListener = service {
+service object {} HelloWorldMessageListener = service object {
 
     // Resource registered to receive server messages
     function onMessage(string message) {
@@ -93,7 +93,7 @@ public client class HelloWorld4Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_4, getDescriptorMap4());
     }
 
-    public isolated remote function lotsOfGreetings(service msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
+    isolated remote function lotsOfGreetings(service object {} msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
         return self.grpcClient->streamingExecute("grpcservices.HelloWorld7/lotsOfGreetings", msgListener, headers);
     }
 }

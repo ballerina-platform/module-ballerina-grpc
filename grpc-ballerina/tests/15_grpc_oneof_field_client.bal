@@ -23,7 +23,7 @@ const string ERROR_MESSAGE = "Expected response value type not received";
 type Response1Typedesc typedesc<Response1>;
 type ZZZTypedesc typedesc<ZZZ>;
 
-@test:Config {}
+@test:Config {enable:false}
 function testOneofFieldValue() {
     Request1 request = {first_name:"Sam", age:31};
     var result = blockingEp->hello(request);
@@ -37,7 +37,7 @@ function testOneofFieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testDoubleFieldValue() {
     ZZZ zzz = {one_a:1.7976931348623157E308};
     var result = blockingEp->testOneofField(zzz);
@@ -50,7 +50,7 @@ function testDoubleFieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testFloatFieldValue() {
     ZZZ zzz = {one_b:3.4028235E38};
     var result = blockingEp->testOneofField(zzz);
@@ -63,7 +63,7 @@ function testFloatFieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testInt64FieldValue() {
     ZZZ zzz = {one_c:-9223372036854775808};
     var result = blockingEp->testOneofField(zzz);
@@ -76,7 +76,7 @@ function testInt64FieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testUInt64FieldValue() {
     ZZZ zzz = {one_d:9223372036854775807};
     var result = blockingEp->testOneofField(zzz);
@@ -89,7 +89,7 @@ function testUInt64FieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testInt32FieldValue() {
     ZZZ zzz = {one_e:-2147483648};
     var result = blockingEp->testOneofField(zzz);
@@ -102,7 +102,7 @@ function testInt32FieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testFixed64FieldValue() {
     ZZZ zzz = {one_f:9223372036854775807};
     var result = blockingEp->testOneofField(zzz);
@@ -115,7 +115,7 @@ function testFixed64FieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testFixed32FieldValue() {
     ZZZ zzz = {one_g:2147483647};
     var result = blockingEp->testOneofField(zzz);
@@ -128,7 +128,7 @@ function testFixed32FieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testBolFieldValue() {
     ZZZ zzz = {one_h:true};
     var result = blockingEp->testOneofField(zzz);
@@ -141,7 +141,7 @@ function testBolFieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testStringFieldValue() {
     ZZZ zzz = {one_i:"Testing"};
     var result = blockingEp->testOneofField(zzz);
@@ -154,7 +154,7 @@ function testStringFieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testMessageFieldValue() {
     AAA aaa = {aaa: "Testing"};
     ZZZ zzz = {one_j:aaa};
@@ -168,7 +168,7 @@ function testMessageFieldValue() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:false}
 function testBytesFieldValue() {
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();
@@ -196,7 +196,7 @@ public client class OneofFieldServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_15, getDescriptorMap15());
     }
 
-    public isolated remote function hello(Request1 req, Headers? headers = ()) returns ([Response1, Headers]|Error) {
+    isolated remote function hello(Request1 req, Headers? headers = ()) returns ([Response1, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("grpcservices.OneofFieldService/hello", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -210,7 +210,7 @@ public client class OneofFieldServiceBlockingClient {
         }
     }
 
-    public isolated remote function testOneofField(ZZZ req, Headers? headers = ()) returns ([ZZZ, Headers]|Error) {
+    isolated remote function testOneofField(ZZZ req, Headers? headers = ()) returns ([ZZZ, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("grpcservices.OneofFieldService/testOneofField", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -238,11 +238,11 @@ public client class OneofFieldServiceClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_15, getDescriptorMap15());
     }
 
-    public isolated remote function hello(Request1 req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(Request1 req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.OneofFieldService/hello", req, msgListener, headers);
     }
 
-    public isolated remote function testOneofField(ZZZ req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function testOneofField(ZZZ req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.OneofFieldService/testOneofField", req, msgListener, headers);
     }
 }
