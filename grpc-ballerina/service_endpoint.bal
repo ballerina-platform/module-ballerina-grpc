@@ -62,7 +62,7 @@ public class Listener {
     # + s - The type of the service to be registered
     # + name - Name of the service
     # + return - An `error` if encounters an error while attaching the service or else `()`
-    public isolated function attach(service object {} s, string[]|string? name = ()) returns error? {
+    public isolated function attach(Service s, string[]|string? name = ()) returns error? {
         return externRegister(self, s, name);
     }
 
@@ -74,7 +74,7 @@ public class Listener {
     #
     # + s - The service to be detached
     # + return - An `error` if occurred during detaching of a service or else `()`
-    public isolated function detach(service object {} s) returns error? {
+    public isolated function detach(Service s) returns error? {
     }
 
     # Gets called when the endpoint is being initialized during the module init time.
@@ -90,6 +90,11 @@ public class Listener {
         }
     }
 }
+
+# The gRPC service type
+public type Service service object {
+
+};
 
 # The stream iterator object that is used to iterate through the stream messages.
 #
