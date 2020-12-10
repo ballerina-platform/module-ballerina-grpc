@@ -44,10 +44,6 @@ service /RetryService on retryListener {
             var completeResult = caller->complete();
         }
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_22;
-    final map<string> descMap = getDescriptorMap22();
 }
 
 const string ROOT_DESCRIPTOR_22 =

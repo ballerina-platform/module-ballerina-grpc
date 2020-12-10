@@ -89,10 +89,6 @@ service /HelloWorld on ep {
         }
         checkpanic caller->complete();
     }
-
-    // Temp fix
-    final string descriptor = ROOT_DESCRIPTOR_1;
-    final map<string> descMap = getDescriptorMap1();
 }
 
 public type Person record {

@@ -111,10 +111,6 @@ service /HelloWorld100 on ep7 {
         }
         checkpanic caller->complete();
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_7;
-    final map<string> descMap = getDescriptorMap7();
 }
 
 

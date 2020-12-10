@@ -79,10 +79,6 @@ service /Negotiator on negotiatorep {
         error? complete = caller->complete();
         io:println(complete);
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_19;
-    final map<string> descMap = getDescriptorMap19();
 }
 
 public type HandshakeResponse record {|
