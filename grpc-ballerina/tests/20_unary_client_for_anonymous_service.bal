@@ -22,14 +22,12 @@ import ballerina/test;
 final HelloWorld20BlockingClient helloWorld20BlockingEp = new ("http://localhost:9110");
 
 // Server endpoint configuration
-listener Listener ep20 = new (9110, {
-    host:"localhost"
-});
+listener Listener ep20 = new (9110, { host:"localhost"});
 
 @test:BeforeSuite
 function beforeFunc() {
     log:printInfo("Starting beforeFunc to attach anonymous service");
-    error? attach = ep20.attach(helloService);
+    error? attach = ep20.attach(helloService, "HelloWorld101");
     if (attach is error) {
         log:printInfo("Error while attaching the service: " + attach.message());
     }
@@ -109,9 +107,6 @@ service object {} helloService =
         descriptor: ROOT_DESCRIPTOR_20,
         descMap: getDescriptorMap20()
     }
-    @ServiceConfig {
-        name: "HelloWorld101"
-    }
     service object {
         isolated remote function hello(Caller caller, string name) {
             log:printInfo("name: " + name);
@@ -124,6 +119,10 @@ service object {} helloService =
             }
             checkpanic caller->complete();
         }
+
+        // Temp fix till lang supports service annotations
+        final string descriptor = ROOT_DESCRIPTOR_20;
+        final map<string> descMap = getDescriptorMap20();
     };
 
 const string ROOT_DESCRIPTOR_20 = "0A1348656C6C6F576F726C643130312E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32540A0D48656C6C6F576F726C6431303112430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";

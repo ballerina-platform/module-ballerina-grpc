@@ -36,7 +36,6 @@ listener Listener ep3 = new (9093, {
 @tainted map<Caller> connectionsMap = {};
 boolean initialized = false;
 
-@ServiceConfig {name:"Chat"}
 @ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_3,
     descMap: getDescriptorMap3()

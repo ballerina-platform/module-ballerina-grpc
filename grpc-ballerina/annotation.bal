@@ -14,15 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Service configuration.
-#
-# + name - Service name. This applies only for the dynamic service registration.
-public type GrpcServiceConfig record {|
-    string name = "";
-|};
-
-# Service configuration annotation.
-public annotation GrpcServiceConfig ServiceConfig on service;
 
 # Service descriptor data generated at the compile time. This is for internal use.
 #
