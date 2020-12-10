@@ -19,7 +19,7 @@ import ballerina/test;
 
 
 
-@test:Config {}
+@test:Config {enable: false}
 isolated function testInvokeUnavailableService() {
     HelloWorld16BlockingClient helloWorld16BlockingEp = new ("http://localhost:9106");
     string name = "WSO2";

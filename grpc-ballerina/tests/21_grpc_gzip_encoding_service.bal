@@ -35,10 +35,6 @@ service /OrderManagement on ordermgtep {
         var send = caller->send('order);
         error? complete = caller->complete();
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_21;
-    final map<string> descMap = getDescriptorMap21();
 }
 
 public type Order record {|

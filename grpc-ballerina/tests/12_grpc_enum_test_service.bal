@@ -31,10 +31,6 @@ service /testEnumService on ep12 {
         checkpanic caller->send(permission);
         checkpanic caller->complete();
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_12;
-    final map<string> descMap = getDescriptorMap12();
 }
 
 public type orderInfo record {

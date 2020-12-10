@@ -96,10 +96,6 @@ service /Chat on ep3 {
             log:printError("Error from Connector: " + e.message());
         }
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_3;
-    final map<string> descMap = getDescriptorMap3();
 }
 
 public type ChatMessage record {

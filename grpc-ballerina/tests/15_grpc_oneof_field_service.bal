@@ -39,10 +39,6 @@ service /OneofFieldService on new Listener(9105) {
         checkpanic caller->send(req);
         checkpanic caller->complete();
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_15;
-    final map<string> descMap = getDescriptorMap15();
 }
 
 public type Request1 record {|

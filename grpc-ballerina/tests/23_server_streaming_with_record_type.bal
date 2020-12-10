@@ -45,10 +45,6 @@ service /helloWorldServerStreaming on helloWorldStreamingep {
                 err = result);
         }
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_23;
-    final map<string> descMap = getDescriptorMap23();
 }
 
 public type HelloRequest record {|

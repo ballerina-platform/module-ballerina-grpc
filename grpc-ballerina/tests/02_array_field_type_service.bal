@@ -162,10 +162,6 @@ service /HelloWorld3 on ep2 {
         }
         checkpanic caller->complete();
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_2;
-    final map<string> descMap = getDescriptorMap2();
 }
 
 public type TestInt record {

@@ -48,10 +48,6 @@ service /CheckoutService on checkoutep {
             log:printError("Error while completing the response.", complete);
         }
     }
-
-    // Temp fix till lang supports service annotations
-    final string descriptor = ROOT_DESCRIPTOR_18;
-    final map<string> descMap = getDescriptorMap18();
 }
 
 public type PlaceOrderRequest record {|
