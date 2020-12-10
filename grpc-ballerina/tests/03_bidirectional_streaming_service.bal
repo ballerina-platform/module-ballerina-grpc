@@ -36,14 +36,13 @@ listener Listener ep3 = new (9093, {
 @tainted map<Caller> connectionsMap = {};
 boolean initialized = false;
 
-@ServiceConfig {name:"Chat"}
 @ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_3,
     descMap: getDescriptorMap3()
 }
-service Chat on ep3 {
+service /Chat on ep3 {
 
-    resource function chat(Caller caller, stream<ChatMessage, error> clientStream) {
+    remote function chat(Caller caller, stream<ChatMessage, error> clientStream) {
         log:printInfo(string `${caller.getId()} connected to chat`);
         connectionsMap[caller.getId().toString()] = caller;
         log:printInfo("Client registration completed. Connection map status");
@@ -97,9 +96,13 @@ service Chat on ep3 {
             log:printError("Error from Connector: " + e.message());
         }
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_3;
+    final map<string> descMap = getDescriptorMap3();
 }
 
-type ChatMessage record {
+public type ChatMessage record {
     string name = "";
     string message = "";
 };

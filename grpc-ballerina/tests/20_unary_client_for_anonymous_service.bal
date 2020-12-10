@@ -22,18 +22,16 @@ import ballerina/test;
 final HelloWorld20BlockingClient helloWorld20BlockingEp = new ("http://localhost:9110");
 
 // Server endpoint configuration
-listener Listener ep20 = new (9110, {
-    host:"localhost"
-});
+listener Listener ep20 = new (9110, { host:"localhost"});
 
 @test:BeforeSuite
 function beforeFunc() {
     log:printInfo("Starting beforeFunc to attach anonymous service");
-    error? attach = ep20.__attach(helloService);
+    error? attach = ep20.attach(helloService, "HelloWorld101");
     if (attach is error) {
         log:printInfo("Error while attaching the service: " + attach.message());
     }
-    error? 'start = ep20.__start();
+    error? 'start = ep20.'start();
     if ('start is error) {
         log:printInfo("Error while starting the listener: " + 'start.message());
     }
@@ -57,7 +55,7 @@ function testAnonymousServiceWithBlockingClient() {
 
 @test:AfterSuite {}
 function afterFunc() {
-    error? 'stop = ep20.__immediateStop();
+    error? 'stop = ep20.immediateStop();
     if ('stop is error) {
         log:printInfo("Error while stopping the listener: " + 'stop.message());
     }
@@ -77,7 +75,7 @@ public client class HelloWorld20BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_20, getDescriptorMap20());
     }
 
-    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld101/hello", req, headers);
         anydata result = ();
         Headers resHeaders = new;
@@ -99,21 +97,18 @@ public client class HelloWorld20Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_20, getDescriptorMap20());
     }
 
-    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld101/hello", req, msgListener, headers);
     }
 }
 
-service helloService =
+service object {} helloService =
     @ServiceDescriptor {
         descriptor: ROOT_DESCRIPTOR_20,
         descMap: getDescriptorMap20()
     }
-    @ServiceConfig {
-        name: "HelloWorld101"
-    }
-    service {
-        isolated resource function hello(Caller caller, string name) {
+    service object {
+        isolated remote function hello(Caller caller, string name) {
             log:printInfo("name: " + name);
             string message = "Hello " + name;
             Error? err = caller->send(message);
@@ -124,6 +119,10 @@ service helloService =
             }
             checkpanic caller->complete();
         }
+
+        // Temp fix till lang supports service annotations
+        final string descriptor = ROOT_DESCRIPTOR_20;
+        final map<string> descMap = getDescriptorMap20();
     };
 
 const string ROOT_DESCRIPTOR_20 = "0A1348656C6C6F576F726C643130312E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32540A0D48656C6C6F576F726C6431303112430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";

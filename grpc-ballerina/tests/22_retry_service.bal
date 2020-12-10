@@ -27,8 +27,8 @@ listener Listener retryListener = new (9112);
     descriptor: ROOT_DESCRIPTOR_22,
     descMap: getDescriptorMap22()
 }
-service RetryService on retryListener {
-    resource function getResult(Caller caller, string value) {
+service /RetryService on retryListener {
+    remote function getResult(Caller caller, string value) {
         // Identifying the client to maintain state to track retry attempts.
         if (clientName != value) {
             requestCount = 0;
@@ -44,6 +44,10 @@ service RetryService on retryListener {
             var completeResult = caller->complete();
         }
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_22;
+    final map<string> descMap = getDescriptorMap22();
 }
 
 const string ROOT_DESCRIPTOR_22 =

@@ -48,7 +48,7 @@ public function testServerStreamingWithRecord() {
     test:assertEquals(count, 3);
 }
 
-service HelloWorldServerStreamingMessageListener = service {
+service object {} HelloWorldServerStreamingMessageListener = service object {
 
     // The `resource` registered to receive server messages
     function onMessage(HelloResponse message) {
@@ -80,7 +80,7 @@ public client class helloWorldServerStreamingClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_23, getDescriptorMap23());
     }
 
-    public isolated remote function lotsOfReplies(HelloRequest req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function lotsOfReplies(HelloRequest req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("helloWorldServerStreaming/lotsOfReplies", req, msgListener, headers);
     }
 

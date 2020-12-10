@@ -165,6 +165,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         }
         StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(responseObserver, context);
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
-                                                ON_MESSAGE_METADATA, callback, properties, requestParams);
+                                                ON_MESSAGE_METADATA, callback, properties, resource.getReturnType(),
+                requestParams);
     }
 }

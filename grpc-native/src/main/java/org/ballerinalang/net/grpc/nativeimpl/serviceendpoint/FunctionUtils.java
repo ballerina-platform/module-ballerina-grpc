@@ -95,11 +95,11 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
      *
      * @param listenerObject service listener instance.
      * @param service service instance.
-     * @param annotationData service annotation data.
+     * @param servicePath service path.
      * @return Error if there is an error while registering the service, else returns nil.
      */
     public static Object externRegister(BObject listenerObject, BObject service,
-                                        Object annotationData) {
+                                        Object servicePath) {
         ServicesRegistry.Builder servicesRegistryBuilder = getServiceRegistryBuilder(listenerObject);
         try {
             if (servicesRegistryBuilder == null) {
@@ -108,7 +108,7 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
                                 "initializing service register builder.")));
             } else {
                 servicesRegistryBuilder.addService(ServicesBuilderUtils.getServiceDefinition(
-                        Runtime.getCurrentRuntime(), service,
+                        Runtime.getCurrentRuntime(), service, servicePath,
                         service.getType().getAnnotation(StringUtils.fromString(ANN_SERVICE_DESCRIPTOR_FQN))));
                 return null;
             }

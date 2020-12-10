@@ -20,9 +20,9 @@ import ballerina/io;
     descriptor: ROOT_DESCRIPTOR_15,
     descMap: getDescriptorMap15()
 }
-service OneofFieldService on new Listener(9105) {
+service /OneofFieldService on new Listener(9105) {
 
-    isolated resource function hello(Caller caller, Request1 value) {
+    isolated remote function hello(Caller caller, Request1 value) {
         string? request = "";
         if (value?.first_name is string) {
             request = value?.first_name;
@@ -35,10 +35,14 @@ service OneofFieldService on new Listener(9105) {
         checkpanic caller->complete();
     }
 
-    isolated resource function testOneofField(Caller caller, ZZZ req) {
+    isolated remote function testOneofField(Caller caller, ZZZ req) {
         checkpanic caller->send(req);
         checkpanic caller->complete();
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_15;
+    final map<string> descMap = getDescriptorMap15();
 }
 
 public type Request1 record {|

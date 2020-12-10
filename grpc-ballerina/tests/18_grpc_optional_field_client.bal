@@ -55,7 +55,7 @@ public client class CheckoutServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_18, getDescriptorMap18());
     }
 
-    public isolated remote function PlaceOrder(PlaceOrderRequest req, Headers? headers = ()) returns
+    isolated remote function PlaceOrder(PlaceOrderRequest req, Headers? headers = ()) returns
                                                                     ([PlaceOrderResponse, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("grpcservices.CheckoutService/PlaceOrder", req, headers);
         Headers resHeaders = new;
@@ -78,7 +78,7 @@ public client class CheckoutServiceClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_18, getDescriptorMap18());
     }
 
-    public isolated remote function PlaceOrder(PlaceOrderRequest req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function PlaceOrder(PlaceOrderRequest req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.CheckoutService/PlaceOrder", req, msgListener, headers);
     }
 

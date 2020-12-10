@@ -46,7 +46,7 @@ public client class Caller {
     # + res - - The outbound response message
     # + headers - - Optional headers parameter. The header values are passed only if needed. The default value is `()`
     # + return - - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public isolated remote function send(anydata res, Headers? headers = ()) returns Error? {
+    isolated remote function send(anydata res, Headers? headers = ()) returns Error? {
         return externSend(self, res, headers);
     }
 
@@ -56,7 +56,7 @@ public client class Caller {
     # ```
     #
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public isolated remote function complete() returns Error? {
+    isolated remote function complete() returns Error? {
         return externComplete(self);
     }
 
@@ -79,7 +79,7 @@ public client class Caller {
     # + message - Error message
     # + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    public isolated remote function sendError(int statusCode, string message, Headers? headers = ()) returns Error? {
+    isolated remote function sendError(int statusCode, string message, Headers? headers = ()) returns Error? {
         return externSendError(self, statusCode, message, headers);
     }
 }

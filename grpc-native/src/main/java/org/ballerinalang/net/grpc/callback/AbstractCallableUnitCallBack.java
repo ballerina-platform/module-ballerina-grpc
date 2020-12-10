@@ -36,7 +36,7 @@ public class AbstractCallableUnitCallBack implements Callback {
     public final Semaphore available = new Semaphore(1, true);
 
     @Override
-    public void notifySuccess() {
+    public void notifySuccess(Object o) {
         available.release();
     }
 

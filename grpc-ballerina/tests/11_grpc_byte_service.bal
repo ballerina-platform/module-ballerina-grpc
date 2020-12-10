@@ -22,11 +22,15 @@ listener Listener ep11 = new (9101, {
     descriptor: ROOT_DESCRIPTOR_11,
     descMap: getDescriptorMap11()
 }
-service byteService on ep11 {
-    isolated resource function checkBytes(Caller caller, byte[] value) {
+service /byteService on ep11 {
+    isolated remote function checkBytes(Caller caller, byte[] value) {
         checkpanic caller->send(value);
         checkpanic caller->complete();
     }
+
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_11;
+    final map<string> descMap = getDescriptorMap11();
 }
 
 const string ROOT_DESCRIPTOR_11 = "0A1162797465536572766963652E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32550A0B627974655365727669636512460A0A636865636B4279746573121B2E676F6F676C652E70726F746F6275662E427974657356616C75651A1B2E676F6F676C652E70726F746F6275662E427974657356616C7565620670726F746F33";

@@ -26,7 +26,7 @@
 //        name: "HelloWorld101"
 //    }
 //    service {
-//        resource function hello(Caller caller, string name) {
+//        remote function hello(Caller caller, string name) {
 //            log:printInfo("name: " + name);
 //            string message = "Hello " + name;
 //            Error? err = caller->send(message);

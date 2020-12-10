@@ -24,9 +24,9 @@ listener Listener ep6 = new (9096);
     descriptor: ROOT_DESCRIPTOR_6,
     descMap: getDescriptorMap6()
 }
-service HelloWorld45 on ep6 {
+service /HelloWorld45 on ep6 {
 
-    isolated resource function lotsOfReplies(Caller caller, string name) {
+    isolated remote function lotsOfReplies(Caller caller, string name) {
         io:println("Server received hello from " + name);
         string[] greets = ["Hi", "Hey", "GM"];
         foreach var greet in greets {
@@ -42,6 +42,9 @@ service HelloWorld45 on ep6 {
         io:println("send all responses sucessfully.");
     }
 
+    // Temp fix till lang supports service annotations
+    final string descriptor = ROOT_DESCRIPTOR_6;
+    final map<string> descMap = getDescriptorMap6();
 }
 
 const string ROOT_DESCRIPTOR_6 = "0A1248656C6C6F576F726C6434352E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F325D0A0C48656C6C6F576F726C643435124D0A0D6C6F74734F665265706C696573121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75653001620670726F746F33";

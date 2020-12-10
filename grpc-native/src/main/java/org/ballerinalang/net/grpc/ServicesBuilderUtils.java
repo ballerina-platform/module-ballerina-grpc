@@ -26,10 +26,11 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.flags.TypeFlags;
-import io.ballerina.runtime.api.types.AttachedFunctionType;
+import io.ballerina.runtime.api.types.MemberFunctionType;
 import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
@@ -53,7 +54,6 @@ import static org.ballerinalang.net.grpc.GrpcConstants.WRAPPER_STRING_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.WRAPPER_UINT32_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.WRAPPER_UINT64_MESSAGE;
 import static org.ballerinalang.net.grpc.MessageUtils.setNestedMessages;
-import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.ANN_SERVICE_CONFIG_FQN;
 
 /**
  * This is the gRPC server implementation for registering service and start/stop server.
@@ -63,14 +63,17 @@ import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.ANN_SERVICE
 public class ServicesBuilderUtils {
 
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service,
-                                                               Object annotationData) throws
+                                                               Object servicePath, Object annotationData) throws
             GrpcServerException {
 
         Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
         if (fileDescriptor == null) {
+            fileDescriptor = getDescriptorFromService(service);
+        }
+        if (fileDescriptor == null) {
             throw new GrpcServerException("Couldn't find the service descriptor.");
         }
-        String serviceName = getServiceName(service);
+        String serviceName = getServiceName(servicePath);
         Descriptors.ServiceDescriptor serviceDescriptor = fileDescriptor.findServiceByName(serviceName);
         if (serviceDescriptor == null) {
             throw new GrpcServerException("Couldn't find the service descriptor for the service: " + serviceName);
@@ -78,19 +81,25 @@ public class ServicesBuilderUtils {
         return getServiceDefinition(runtime, service, serviceDescriptor);
     }
 
-    private static String getServiceName(BObject service) {
+    private static String getServiceName(Object servicePath) throws GrpcServerException {
 
-        Object serviceConfigData = service.getType().getAnnotation(StringUtils.fromString(ANN_SERVICE_CONFIG_FQN));
-        if (serviceConfigData != null) {
-            BMap configMap = (BMap) serviceConfigData;
-            BString providedName = configMap.getStringValue(StringUtils.fromString("name"));
-            if (providedName != null && !providedName.getValue().isEmpty()) {
-                return providedName.getValue();
-            }
+        String serviceName = null;
+        if (servicePath == null) {
+            throw new GrpcServerException("Invalid service path. Service path cannot be nil");
         }
-        String serviceTypeName = service.getType().getName(); // typeName format: <name>$$<type>$$<version>
-        String[] splitValues = serviceTypeName.split("\\$\\$");
-        return splitValues[0];
+        if (servicePath instanceof BArray) {
+            BArray servicePathArray = (BArray) servicePath;
+            if (servicePathArray.getLength() == 1) {
+                serviceName = ((BString) servicePathArray.get(0)).getValue();
+            } else {
+                throw new GrpcServerException("Invalid service path. Service path should not be hierarchical path");
+            }
+        } else if (servicePath instanceof BString) {
+            serviceName = ((BString) servicePath).getValue();
+        } else {
+            throw new GrpcServerException("Invalid service path. Couldn't derive the service path");
+        }
+        return serviceName;
     }
 
     private static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service,
@@ -120,7 +129,7 @@ public class ServicesBuilderUtils {
             MethodDescriptor.Marshaller reqMarshaller = null;
             ServiceResource mappedResource = null;
 
-            for (AttachedFunctionType function : service.getType().getAttachedFunctions()) {
+            for (MemberFunctionType function : service.getType().getAttachedFunctions()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
                     mappedResource = new ServiceResource(runtime, service, function);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
@@ -190,6 +199,29 @@ public class ServicesBuilderUtils {
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
+    }
+
+    private static com.google.protobuf.Descriptors.FileDescriptor getDescriptorFromService(BObject service)
+            throws GrpcServerException {
+        try {
+            BString descriptorData = null;
+            if (service.getType().getFields().containsKey("descriptor")) {
+                descriptorData = service.getStringValue(StringUtils.fromString("descriptor"));
+            }
+            BMap<BString, BString> descMap = null;
+            if (service.getType().getFields().containsKey("descMap")) {
+                descMap = (BMap<BString, BString>) service.getMapValue(
+                        StringUtils.fromString("descMap"));
+            }
+            if (descriptorData == null && descMap == null) {
+                return null;
+            }
+            return getFileDescriptor(descriptorData, descMap);
+        } catch (IOException | Descriptors.DescriptorValidationException e) {
+            throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
+                    "implementation. ", e);
+        }
+
     }
 
     private static Descriptors.FileDescriptor getFileDescriptor(
@@ -279,7 +311,7 @@ public class ServicesBuilderUtils {
         }
     }
 
-    private static Type getResourceInputParameterType(AttachedFunctionType attachedFunction) {
+    private static Type getResourceInputParameterType(MemberFunctionType attachedFunction) {
 
         Type[] inputParams = attachedFunction.getType().getParameterTypes();
         if (inputParams.length > 1) {

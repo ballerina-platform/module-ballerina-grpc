@@ -278,6 +278,10 @@ task ballerinaBuild {
             from targetNativeJar
             into file("$artifactLibParent/libs")
         }
+        copy {
+            from externalGoogleProtosCommonJar
+            into file("$artifactLibParent/libs")
+        }
     }
 
     outputs.dir artifactCacheParent

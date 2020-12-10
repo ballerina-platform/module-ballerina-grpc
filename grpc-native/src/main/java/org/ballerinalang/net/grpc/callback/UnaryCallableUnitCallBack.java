@@ -17,6 +17,7 @@
  */
 package org.ballerinalang.net.grpc.callback;
 
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.ballerinalang.net.grpc.Message;
@@ -44,8 +45,8 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
     }
 
     @Override
-    public void notifySuccess() {
-        super.notifySuccess();
+    public void notifySuccess(Object response) {
+        super.notifySuccess(response);
         // check whether connection is closed.
         if (requestSender instanceof ServerCallHandler.ServerCallStreamObserver) {
             ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
@@ -56,6 +57,14 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             if (serverCallStreamObserver.isCancelled()) {
                 return;
             }
+        }
+        if (response instanceof BError) {
+            handleFailure(requestSender, (BError) response);
+            if (observerContext != null) {
+                observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE,
+                        HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+            }
+            return;
         }
         // notify success only if response message is empty. Service impl doesn't send empty message. Empty response
         // scenarios handles here.
@@ -70,7 +79,7 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
     }
 
     @Override
-    public void notifyFailure(io.ballerina.runtime.api.values.BError error) {
+    public void notifyFailure(BError error) {
         handleFailure(requestSender, error);
         if (observerContext != null) {
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.INTERNAL_SERVER_ERROR.code());

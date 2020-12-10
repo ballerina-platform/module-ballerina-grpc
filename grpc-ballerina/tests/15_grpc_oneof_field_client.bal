@@ -196,7 +196,7 @@ public client class OneofFieldServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_15, getDescriptorMap15());
     }
 
-    public isolated remote function hello(Request1 req, Headers? headers = ()) returns ([Response1, Headers]|Error) {
+    isolated remote function hello(Request1 req, Headers? headers = ()) returns ([Response1, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("grpcservices.OneofFieldService/hello", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -210,7 +210,7 @@ public client class OneofFieldServiceBlockingClient {
         }
     }
 
-    public isolated remote function testOneofField(ZZZ req, Headers? headers = ()) returns ([ZZZ, Headers]|Error) {
+    isolated remote function testOneofField(ZZZ req, Headers? headers = ()) returns ([ZZZ, Headers]|Error) {
         var payload = check self.grpcClient->blockingExecute("grpcservices.OneofFieldService/testOneofField", req, headers);
         Headers resHeaders = new;
         anydata result = ();
@@ -238,11 +238,11 @@ public client class OneofFieldServiceClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_15, getDescriptorMap15());
     }
 
-    public isolated remote function hello(Request1 req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(Request1 req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.OneofFieldService/hello", req, msgListener, headers);
     }
 
-    public isolated remote function testOneofField(ZZZ req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function testOneofField(ZZZ req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.OneofFieldService/testOneofField", req, msgListener, headers);
     }
 }

@@ -53,7 +53,7 @@ public client class grpcMutualSslServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_10, getDescriptorMap10());
     }
 
-    public isolated remote function hello (string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello (string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.grpcMutualSslService/hello", req, headers);
         Headers resHeaders = new;
         any result = ();
@@ -74,7 +74,7 @@ public client class grpcMutualSslServiceClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_10, getDescriptorMap10());
     }
 
-    public isolated remote function hello (string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello (string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.grpcMutualSslService/hello", req, msgListener, headers);
     }
 }

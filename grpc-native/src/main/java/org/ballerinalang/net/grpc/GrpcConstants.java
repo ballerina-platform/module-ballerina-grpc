@@ -36,7 +36,7 @@ import static io.ballerina.runtime.api.constants.RuntimeConstants.ORG_NAME_SEPAR
 public class GrpcConstants {
     //gRPC package name.
     public static final String PROTOCOL_PACKAGE_GRPC = "grpc";
-    public static final String PROTOCOL_PACKAGE_VERSION_GRPC = "0.7.3";
+    public static final String PROTOCOL_PACKAGE_VERSION_GRPC = "0.7.4";
     public static final String ORG_NAME = "ballerina";
     public static final String PROTOCOL_STRUCT_PACKAGE_GRPC = ORG_NAME + ORG_NAME_SEPARATOR +
             "grpc:" + PROTOCOL_PACKAGE_VERSION_GRPC;

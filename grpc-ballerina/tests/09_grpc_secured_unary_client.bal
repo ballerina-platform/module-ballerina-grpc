@@ -64,7 +64,7 @@ public client class HelloWorld9BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_9, getDescriptorMap9());
     }
 
-    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld85/hello", req, headers);
         any result = ();
         Headers resHeaders = new;
@@ -85,7 +85,7 @@ public client class HelloWorld9Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_9, getDescriptorMap9());
     }
 
-    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld85/hello", req, msgListener, headers);
     }
 }

@@ -144,7 +144,7 @@ public client class HelloWorld1BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_1, getDescriptorMap1());
     }
 
-    public isolated remote function testInputNestedStruct(Person req, Headers? headers = ()) returns ([string,
+    isolated remote function testInputNestedStruct(Person req, Headers? headers = ()) returns ([string,
     Headers]|Error) {
         [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testInputNestedStruct", req, headers);
         anydata result = ();
@@ -154,7 +154,7 @@ public client class HelloWorld1BlockingClient {
         return [result.toString(), resHeaders];
     }
 
-    public isolated remote function testOutputNestedStruct(string req, Headers? headers = ()) returns ([Person,
+    isolated remote function testOutputNestedStruct(string req, Headers? headers = ()) returns ([Person,
     Headers]|Error) {
         [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testOutputNestedStruct", req, headers);
         anydata result = ();
@@ -168,7 +168,7 @@ public client class HelloWorld1BlockingClient {
         }
     }
 
-    public isolated remote function testInputStructOutputStruct(StockRequest req, Headers? headers = ()) returns
+    isolated remote function testInputStructOutputStruct(StockRequest req, Headers? headers = ()) returns
     ([StockQuote, Headers]|Error) {
         [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testInputStructOutputStruct", req, headers);
         anydata result = ();
@@ -182,7 +182,7 @@ public client class HelloWorld1BlockingClient {
         }
     }
 
-    public isolated remote function testInputStructNoOutput(StockQuote req, Headers? headers = ()) returns ((Headers)
+    isolated remote function testInputStructNoOutput(StockQuote req, Headers? headers = ()) returns ((Headers)
     |Error) {
         [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testInputStructNoOutput", req, headers);
         anydata result = ();
@@ -191,7 +191,7 @@ public client class HelloWorld1BlockingClient {
         return resHeaders;
     }
 
-    public isolated remote function testNoInputOutputStruct(Headers? headers = ()) returns ([StockQuotes,
+    isolated remote function testNoInputOutputStruct(Headers? headers = ()) returns ([StockQuotes,
     Headers]|Error) {
         Empty req = {};
         [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testNoInputOutputStruct", req, headers);
@@ -206,7 +206,7 @@ public client class HelloWorld1BlockingClient {
         }
     }
 
-    public isolated remote function testNoInputOutputArray(Headers? headers = ()) returns ([StockNames,
+    isolated remote function testNoInputOutputArray(Headers? headers = ()) returns ([StockNames,
     Headers]|Error) {
         Empty req = {};
         [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testNoInputOutputArray", req, headers);
@@ -234,37 +234,37 @@ public client class HelloWorldClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_1, getDescriptorMap1());
     }
 
-    public isolated remote function testInputNestedStruct(Person req, service msgListener, Headers? headers = ())
+    isolated remote function testInputNestedStruct(Person req, service object {} msgListener, Headers? headers = ())
     returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testInputNestedStruct", req, msgListener,
          headers);
     }
 
-    public isolated remote function testOutputNestedStruct(string req, service msgListener, Headers? headers = ())
+    isolated remote function testOutputNestedStruct(string req, service object {} msgListener, Headers? headers = ())
     returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testOutputNestedStruct", req, msgListener,
             headers);
     }
 
-    public isolated remote function testInputStructOutputStruct(StockRequest req, service msgListener, Headers?
+    isolated remote function testInputStructOutputStruct(StockRequest req, service object {} msgListener, Headers?
     headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testInputStructOutputStruct", req, msgListener,
             headers);
     }
 
-    public isolated remote function testInputStructNoOutput(StockQuote req, service msgListener, Headers? headers =
+    isolated remote function testInputStructNoOutput(StockQuote req, service object {} msgListener, Headers? headers =
     ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testInputStructNoOutput", req, msgListener,
             headers);
     }
 
-    public isolated remote function testNoInputOutputStruct(Empty req, service msgListener, Headers? headers = ())
+    isolated remote function testNoInputOutputStruct(Empty req, service object {} msgListener, Headers? headers = ())
     returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testNoInputOutputStruct", req, msgListener,
             headers);
     }
 
-    public isolated remote function testNoInputOutputArray(Empty req, service msgListener, Headers? headers = ())
+    isolated remote function testNoInputOutputArray(Empty req, service object {} msgListener, Headers? headers = ())
     returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testNoInputOutputArray", req, msgListener,
             headers);

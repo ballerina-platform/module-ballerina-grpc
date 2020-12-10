@@ -19,7 +19,7 @@ import ballerina/test;
 
 
 
-@test:Config {enable : false}
+@test:Config {}
 isolated function testInvokeUnavailableService() {
     HelloWorld16BlockingClient helloWorld16BlockingEp = new ("http://localhost:9106");
     string name = "WSO2";
@@ -48,7 +48,7 @@ public client class HelloWorld16BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_16, getDescriptorMap16());
     }
 
-    public isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("HelloWorld/hello", req, headers);
         anydata result;
         Headers resHeaders;
@@ -69,7 +69,7 @@ public client class HelloWorld16Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_16, getDescriptorMap16());
     }
 
-    public isolated remote function hello(string req, service msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("HelloWorld/hello", req, msgListener, headers);
     }
 }

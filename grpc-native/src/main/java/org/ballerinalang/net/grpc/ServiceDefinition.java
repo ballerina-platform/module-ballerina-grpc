@@ -23,7 +23,7 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
-import io.ballerina.runtime.api.types.AttachedFunctionType;
+import io.ballerina.runtime.api.types.MemberFunctionType;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
@@ -144,8 +144,8 @@ public final class ServiceDefinition {
             throws GrpcClientException {
         Map<String, MethodDescriptor> descriptorMap = new HashMap<>();
         Descriptors.ServiceDescriptor serviceDescriptor = getServiceDescriptor(clientEndpointType.getName());
-        AttachedFunctionType[] attachedFunctions = clientEndpointType.getAttachedFunctions();
-        for (AttachedFunctionType attachedFunction : attachedFunctions) {
+        MemberFunctionType[] attachedFunctions = clientEndpointType.getAttachedFunctions();
+        for (MemberFunctionType attachedFunction : attachedFunctions) {
             String methodName = attachedFunction.getName();
             Descriptors.MethodDescriptor methodDescriptor = serviceDescriptor.findMethodByName(methodName);
             if (methodDescriptor == null) {
@@ -181,7 +181,7 @@ public final class ServiceDefinition {
         return Collections.unmodifiableMap(descriptorMap);
     }
 
-    private Type getReturnParameterType(AttachedFunctionType attachedFunction) {
+    private Type getReturnParameterType(MemberFunctionType attachedFunction) {
         Type functionReturnType = attachedFunction.getType().getReturnParameterType();
         if (functionReturnType.getTag() == TypeTags.UNION_TAG) {
             UnionType unionReturnType = (UnionType) functionReturnType;
@@ -198,7 +198,7 @@ public final class ServiceDefinition {
         return null;
     }
 
-    private Type getInputParameterType(AttachedFunctionType attachedFunction) {
+    private Type getInputParameterType(MemberFunctionType attachedFunction) {
         Type[] inputParams = attachedFunction.getParameterTypes();
         if (inputParams.length > 0) {
             Type inputType = inputParams[0];
