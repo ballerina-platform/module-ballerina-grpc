@@ -21,7 +21,7 @@ import ballerina/test;
 
 string responseMsg = "";
 
-@test:Config {enable:false}
+@test:Config {}
 function testBidiStreaming() {
     StreamingClient ep = new;
     ChatClient chatEp = new ("https://localhost:9093", {

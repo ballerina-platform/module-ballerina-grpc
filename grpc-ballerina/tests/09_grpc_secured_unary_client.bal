@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {enable:false}
+@test:Config {}
 isolated function testUnarySecuredBlocking() {
     HelloWorld9BlockingClient helloWorld9BlockingEp = new ("https://localhost:9099", {
         secureSocket:{

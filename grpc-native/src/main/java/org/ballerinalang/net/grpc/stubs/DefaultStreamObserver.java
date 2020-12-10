@@ -95,8 +95,8 @@ public class DefaultStreamObserver implements StreamObserver {
             semaphore.acquire();
             Callback callback = new ClientCallableUnitCallBack(semaphore);
             resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
-                                                    ON_MESSAGE_METADATA, callback,
-                                                    null, paramValues);
+                                                    ON_MESSAGE_METADATA, callback, null, resource.getReturnType(),
+                    paramValues);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             String message = "Internal error occurred. The current thread got interrupted";

@@ -41,11 +41,13 @@ public class ServiceResource {
     private final Type[] paramTypes;
     private final boolean headerRequired;
     private final Runtime runtime;
+    private final Type returnType;
 
     public ServiceResource(Runtime runtime, BObject service, MemberFunctionType function) {
         this.service = service;
         this.functionName = function.getName();
-        paramTypes = function.getParameterTypes();
+        this.paramTypes = function.getParameterTypes();
+        this.returnType = function.getReturnType();
         this.headerRequired = headersRequired(function);
         this.runtime = runtime;
     }
@@ -68,5 +70,9 @@ public class ServiceResource {
 
     public Runtime getRuntime() {
         return runtime;
+    }
+
+    public Type getReturnType() {
+        return returnType;
     }
 }

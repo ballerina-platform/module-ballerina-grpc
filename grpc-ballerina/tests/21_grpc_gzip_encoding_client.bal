@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {enable:false}
+@test:Config {}
 isolated function testGzipEncoding() {
     OrderManagementBlockingClient OrderMgtBlockingEp = new("http://localhost:9111");
 

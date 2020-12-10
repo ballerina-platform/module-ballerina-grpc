@@ -21,7 +21,7 @@ import ballerina/test;
 boolean respReceived = false;
 boolean eofReceived = false;
 
-@test:Config {enable:false}
+@test:Config {}
 function testUnaryNonBlockingClient() {
     // Client endpoint configuration
     HelloWorld7Client helloWorldEp = new ("http://localhost:9097");

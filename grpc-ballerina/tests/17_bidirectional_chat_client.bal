@@ -21,7 +21,7 @@ import ballerina/test;
 
 string responseChatMsg = "";
 
-@test:Config {enable:false}
+@test:Config {}
 public function testBidiStreamingInChatClient() {
 
     //Client endpoint configuration.

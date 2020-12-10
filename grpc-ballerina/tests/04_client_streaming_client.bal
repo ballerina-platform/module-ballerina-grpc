@@ -21,7 +21,7 @@ import ballerina/test;
 string response = "";
 int total = 0;
 
-@test:Config {enable:false}
+@test:Config {}
 function testClientStreaming() {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
     // Client endpoint configuration
