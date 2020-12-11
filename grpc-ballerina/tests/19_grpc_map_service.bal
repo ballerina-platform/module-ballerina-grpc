@@ -26,7 +26,7 @@ listener Listener negotiatorep = new (9109);
 service /Negotiator on negotiatorep {
 
     isolated remote function handshake(Caller caller, HandshakeRequest value) {
-        log:printInfo(io:sprintf("Handshake request: %s", value.toString()));
+        log:print(io:sprintf("Handshake request: %s", value.toString()));
 
         if (value.jsonStr != "") {
             error? sendError = caller->sendError(INVALID_ARGUMENT, "jsonStr should be an empty string.");
@@ -51,21 +51,21 @@ service /Negotiator on negotiatorep {
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
         error? send = caller->send(response);
         if (send is error) {
-            log:printError("Error while sending the response.", send);
+            log:printError("Error while sending the response.", err = send);
         } else {
             error? complete = caller->complete();
         }
     }
 
     isolated remote function publishMetrics(Caller caller, MetricsPublishRequest value) {
-        log:printInfo(io:sprintf("publishMetrics request: %s", value.toString()));
+        log:print(io:sprintf("publishMetrics request: %s", value.toString()));
 
         if (value.metrics.length() < 0) {
             error? sendError = caller->sendError(INVALID_ARGUMENT, "metrics cannot be an empty array.");
             return;
         }
         foreach var metric in value.metrics {
-            log:printInfo(io:sprintf("metric value: %s", metric.toString()));
+            log:print(io:sprintf("metric value: %s", metric.toString()));
             if (metric.tags.length() < 0) {
                 error? sendError = caller->sendError(INVALID_ARGUMENT, "tags cannot be an empty array.");
                 return;
@@ -75,7 +75,7 @@ service /Negotiator on negotiatorep {
     }
 
     isolated remote function publishTraces(Caller caller, TracesPublishRequest value) {
-        log:printInfo(io:sprintf("publishTraces request: %s", value.toString()));
+        log:print(io:sprintf("publishTraces request: %s", value.toString()));
         error? complete = caller->complete();
         io:println(complete);
     }

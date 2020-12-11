@@ -34,7 +34,7 @@ isolated function testOptionalFieldMessage() {
     };
     var result = checkoutServiceBlockingEp->PlaceOrder(orderRequest);
     if (result is error) {
-        log:printError("Error response.", result);
+        log:printError("Error response.", err = result);
         test:assertFail("Error occurred while calling remote method, placeorder");
     } else {
         PlaceOrderResponse response;

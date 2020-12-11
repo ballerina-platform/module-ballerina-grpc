@@ -23,7 +23,7 @@ listener Listener ep5 = new (9095);
 }
 service /HelloWorld98 on ep5 {
     isolated remote function hello(Caller caller, string name) {
-        log:printInfo("name: " + name);
+        log:print("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
         if (name == "invalid") {
@@ -32,13 +32,13 @@ service /HelloWorld98 on ep5 {
             err = caller->send(message);
         }
         if (err is Error) {
-            log:printError(err.message(), err);
+            log:printError(err.message(), err = err);
         }
         checkpanic caller->complete();
     }
 
     isolated remote function testInt(Caller caller, string age) {
-        log:printInfo("age: " + age);
+        log:print("age: " + age);
         int displayAge = 0;
         if (age == "") {
             displayAge = -1;
@@ -47,21 +47,21 @@ service /HelloWorld98 on ep5 {
         }
         Error? err = caller->send(displayAge);
         if (err is Error) {
-            log:printError(err.message(), err);
+            log:printError(err.message(), err = err);
         } else {
-            log:printInfo("display age : " + displayAge.toString());
+            log:print("display age : " + displayAge.toString());
         }
         checkpanic caller->complete();
     }
 
     isolated remote function testFloat(Caller caller, float salary) {
-        log:printInfo("gross salary: " + salary.toString());
+        log:print("gross salary: " + salary.toString());
         string netSalary = "salary";
         Error? err = caller->send(netSalary);
         if (err is Error) {
-            log:printError(err.message(),err);
+            log:printError(err.message(), err = err);
         } else {
-            log:printInfo("net salary : " + netSalary);
+            log:print("net salary : " + netSalary);
         }
         checkpanic caller->complete();
     }
