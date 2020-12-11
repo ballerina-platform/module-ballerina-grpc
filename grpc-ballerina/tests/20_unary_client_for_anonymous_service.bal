@@ -26,16 +26,16 @@ listener Listener ep20 = new (9110, { host:"localhost"});
 
 @test:BeforeSuite
 function beforeFunc() {
-    log:printInfo("Starting beforeFunc to attach anonymous service");
+    log:print("Starting beforeFunc to attach anonymous service");
     error? attach = ep20.attach(helloService, "HelloWorld101");
     if (attach is error) {
-        log:printInfo("Error while attaching the service: " + attach.message());
+        log:print("Error while attaching the service: " + attach.message());
     }
     error? 'start = ep20.'start();
     if ('start is error) {
-        log:printInfo("Error while starting the listener: " + 'start.message());
+        log:print("Error while starting the listener: " + 'start.message());
     }
-    log:printInfo("beforeFunc ends execution");
+    log:print("beforeFunc ends execution");
 }
 
 @test:Config {
@@ -57,9 +57,9 @@ function testAnonymousServiceWithBlockingClient() {
 function afterFunc() {
     error? 'stop = ep20.immediateStop();
     if ('stop is error) {
-        log:printInfo("Error while stopping the listener: " + 'stop.message());
+        log:print("Error while stopping the listener: " + 'stop.message());
     }
-    log:printInfo("afterFunc ends execution");
+    log:print("afterFunc ends execution");
 }
 
 // Blocking endpoint.
@@ -109,13 +109,13 @@ service object {} helloService =
     }
     service object {
         isolated remote function hello(Caller caller, string name) {
-            log:printInfo("name: " + name);
+            log:print("name: " + name);
             string message = "Hello " + name;
             Error? err = caller->send(message);
             if (err is Error) {
-                log:printInfo("Error when sending the response: " + err.message());
+                log:print("Error when sending the response: " + err.message());
             } else {
-                log:printInfo("Server send response : " + message);
+                log:print("Server send response : " + message);
             }
             checkpanic caller->complete();
         }

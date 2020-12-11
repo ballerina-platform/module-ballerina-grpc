@@ -43,45 +43,45 @@ boolean initialized = false;
 service /Chat on ep3 {
 
     remote function chat(Caller caller, stream<ChatMessage, error> clientStream) {
-        log:printInfo(string `${caller.getId()} connected to chat`);
+        log:print(string `${caller.getId()} connected to chat`);
         connectionsMap[caller.getId().toString()] = caller;
-        log:printInfo("Client registration completed. Connection map status");
-        log:printInfo("Map length: " + connectionsMap.length().toString());
-        log:printInfo(connectionsMap.toString());
+        log:print("Client registration completed. Connection map status");
+        log:print("Map length: " + connectionsMap.length().toString());
+        log:print(connectionsMap.toString());
         initialized = true;
         error? e = clientStream.forEach(function(ChatMessage chatMsg) {
             Caller conn;
             string msg = string `${chatMsg.name}: ${chatMsg.message}`;
-            log:printInfo("Server received message: " + msg);
+            log:print("Server received message: " + msg);
             int waitCount = 0;
             while(!initialized) {
                 runtime:sleep(1000);
-                log:printInfo("Waiting till connection initialize. status: " + initialized.toString());
+                log:print("Waiting till connection initialize. status: " + initialized.toString());
                 if (waitCount > 10) {
                     break;
                 }
                 waitCount += 1;
             }
-            log:printInfo("Starting message broadcast. Connection map status");
-            log:printInfo("Map length: " + connectionsMap.length().toString());
-            log:printInfo(connectionsMap.toString());
+            log:print("Starting message broadcast. Connection map status");
+            log:print("Map length: " + connectionsMap.length().toString());
+            log:print(connectionsMap.toString());
             foreach var [callerId, connection] in connectionsMap.entries() {
                 conn = connection;
                 Error? err = conn->send(msg);
                 if (err is Error) {
                     log:printError("Error from Connector: " + err.message());
                 } else {
-                    log:printInfo("Server message to caller " + callerId + " sent successfully.");
+                    log:print("Server message to caller " + callerId + " sent successfully.");
                 }
             }
         });
         if (e is EOS) {
             string msg = string `${caller.getId()} left the chat`;
-            log:printInfo(msg);
+            log:print(msg);
             var v = connectionsMap.remove(caller.getId().toString());
-            log:printInfo("Starting client left broadcast. Connection map status");
-            log:printInfo("Map length: " + connectionsMap.length().toString());
-            log:printInfo(connectionsMap.toString());
+            log:print("Starting client left broadcast. Connection map status");
+            log:print("Map length: " + connectionsMap.length().toString());
+            log:print(connectionsMap.toString());
             foreach var [callerId, connection] in connectionsMap.entries() {
                 Caller conn;
                 conn = connection;
@@ -89,7 +89,7 @@ service /Chat on ep3 {
                 if (err is Error) {
                     log:printError("Error from Connector: " + err.message());
                 } else {
-                    log:printInfo("Server message to caller " + callerId + " sent successfully.");
+                    log:print("Server message to caller " + callerId + " sent successfully.");
                 }
             }
         } else if (e is error) {

@@ -47,13 +47,13 @@ listener Listener ep9 = new (9099, {
 }
 service /HelloWorld85 on ep9 {
     isolated remote function hello(Caller caller, string name) {
-        log:printInfo("name: " + name);
+        log:print("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->send(message);
         if (err is Error) {
-            log:printError(err.message(), err);
+            log:printError(err.message(), err = err);
         } else {
-            log:printInfo("Server send response : " + message);
+            log:print("Server send response : " + message);
         }
         checkpanic caller->complete();
     }
