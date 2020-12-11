@@ -10,7 +10,7 @@ public client class {{serviceName}}{{#equals stubType "blocking"}}Blocking{{/equ
         checkpanic self.grpcClient.initStub(self, "{{stubType}}", ROOT_DESCRIPTOR, getDescriptorMap());
     }
 {{#blockingFunctions}}
-    public isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req, {{/if}}grpc:Headers? headers = ()) returns ({{#if outputType}}[{{outputType}}, grpc:Headers]{{else}}grpc:Headers{{/if}}|grpc:Error) {
+    isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req, {{/if}}grpc:Headers? headers = ()) returns ({{#if outputType}}[{{outputType}}, grpc:Headers]{{else}}grpc:Headers{{/if}}|grpc:Error) {
         {{#unless inputType}}Empty req = {};{{/unless}}
         var payload = check self.grpcClient->blockingExecute("{{methodId}}", req, headers);
         grpc:Headers resHeaders = new;
@@ -22,12 +22,12 @@ public client class {{serviceName}}{{#equals stubType "blocking"}}Blocking{{/equ
         return resHeaders;{{/if}}
     }
 {{/blockingFunctions}}{{#nonBlockingFunctions}}
-    public isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req, {{/if}}service msgListener, grpc:Headers? headers = ()) returns (grpc:Error?) {
+    isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req, {{/if}}service object {} msgListener, grpc:Headers? headers = ()) returns (grpc:Error?) {
         {{#unless inputType}}Empty req = {};{{/unless}}
         return self.grpcClient->nonBlockingExecute("{{methodId}}", req, msgListener, headers);
     }
 {{/nonBlockingFunctions}}{{#streamingFunctions}}
-    public isolated remote function {{methodName}}(service msgListener, grpc:Headers? headers = ()) returns (grpc:StreamingClient|grpc:Error) {
+    isolated remote function {{methodName}}(service object {} msgListener, grpc:Headers? headers = ()) returns (grpc:StreamingClient|grpc:Error) {
         return self.grpcClient->streamingExecute("{{methodId}}", msgListener, headers);
     }{{/streamingFunctions}}
 }

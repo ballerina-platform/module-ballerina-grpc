@@ -6,17 +6,17 @@ public function main (string... args) {
 {{/if}}
 }
 {{#unless blockingEP}}
-service {{serviceName}}MessageListener = service {
+service object {} {{serviceName}}MessageListener = service object {
 
-    resource function onMessage(string message) {
+    function onMessage(string message) {
         // Implementation goes here.
     }
 
-    resource function onError(error err) {
+    function onError(error err) {
         // Implementation goes here.
     }
 
-    resource function onComplete() {
+    function onComplete() {
         // Implementation goes here.
     }
 };{{/unless}}
