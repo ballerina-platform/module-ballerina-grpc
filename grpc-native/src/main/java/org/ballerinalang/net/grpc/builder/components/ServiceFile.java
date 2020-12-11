@@ -18,7 +18,6 @@
 
 package org.ballerinalang.net.grpc.builder.components;
 
-import org.ballerinalang.net.grpc.ServerConnectorPortBindingListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +71,7 @@ public class ServiceFile extends AbstractStub {
         String serviceName;
         List<Method> methodList = new ArrayList<>();
 
-        private static final Logger log = LoggerFactory.getLogger(ServerConnectorPortBindingListener.class);
+        private static final Logger log = LoggerFactory.getLogger(ServiceFile.class);
         private static final PrintStream console = System.err;
 
         private Builder(String serviceName) {

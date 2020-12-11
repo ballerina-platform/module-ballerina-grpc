@@ -6,15 +6,15 @@ listener grpc:Listener ep = new (9090);
     descriptor: ROOT_DESCRIPTOR,
     descMap: getDescriptorMap()
 }
-service {{serviceName}} on ep {
+service /{{serviceName}} on ep {
 {{#streamingFunctions}}
-    resource function {{methodName}}(grpc:Caller caller, stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}
+    remote function {{methodName}}(grpc:Caller caller, stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}
     {{~#isNull inputType}}record {}{{/isNull}},error> clientStream) {
         // Implementation goes here.
 
         // You should return a {{outputType}}
     }{{/streamingFunctions}}{{#unaryFunctions}}
-    resource function {{methodName}}(grpc:Caller caller{{#isNotNull inputType}}, {{inputType}} value{{/isNotNull}}) {
+    remote function {{methodName}}(grpc:Caller caller{{#isNotNull inputType}}, {{inputType}} value{{/isNotNull}}) {
         // Implementation goes here.
 
         // You should return a {{outputType}}

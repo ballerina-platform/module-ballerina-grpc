@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GRPC_PROXY;
 import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.TMP_DIRECTORY_PATH;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.COMPONENT_IDENTIFIER;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.EMPTY_STRING;
@@ -118,6 +119,12 @@ public class GrpcCmd implements BLauncherCmd {
         if (!Files.isReadable(Paths.get(protoPath))) {
             String errorMessage = "Provided service proto file is not readable. Please input valid proto file " +
                     "location.";
+            outStream.println(errorMessage);
+            return;
+        }
+        // Temporary disabled due to new service changes.
+        if (GRPC_PROXY.equals(mode)) {
+            String errorMessage = "gRPC gateway proxy service generation is currently not supported.";
             outStream.println(errorMessage);
             return;
         }
