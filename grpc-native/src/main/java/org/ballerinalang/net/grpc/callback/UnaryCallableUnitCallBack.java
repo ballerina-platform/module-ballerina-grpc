@@ -17,6 +17,7 @@
  */
 package org.ballerinalang.net.grpc.callback;
 
+import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -36,11 +37,14 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
 
     private StreamObserver requestSender;
     private boolean emptyResponse;
+    private Descriptors.Descriptor outputType;
     private ObserverContext observerContext;
 
-    public UnaryCallableUnitCallBack(StreamObserver requestSender, boolean isEmptyResponse, ObserverContext context) {
+    public UnaryCallableUnitCallBack(StreamObserver requestSender, boolean isEmptyResponse,
+                                     Descriptors.Descriptor outputType, ObserverContext context) {
         this.requestSender = requestSender;
         this.emptyResponse = isEmptyResponse;
+        this.outputType = outputType;
         this.observerContext = context;
     }
 
@@ -70,7 +74,10 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         // scenarios handles here.
         if (emptyResponse) {
             requestSender.onNext(new Message(EMPTY_DATATYPE_NAME, null));
+        } else {
+            requestSender.onNext(new Message(this.outputType.getName(), response));
         }
+
         if (observerContext != null) {
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.OK.code());
         }

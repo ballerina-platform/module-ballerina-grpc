@@ -58,6 +58,7 @@ public abstract class ServerCallHandler {
 
     static final String TOO_MANY_REQUESTS = "Too many requests";
     static final String MISSING_REQUEST = "Half-closed without a request";
+    static final String CALLER_TYPE = "Caller";
     protected Descriptors.MethodDescriptor methodDescriptor;
 
     ServerCallHandler(Descriptors.MethodDescriptor methodDescriptor) {
@@ -162,7 +163,8 @@ public abstract class ServerCallHandler {
 
     void onMessageInvoke(ServiceResource resource, Message request, StreamObserver responseObserver,
                          ObserverContext context) {
-        Callback callback = new UnaryCallableUnitCallBack(responseObserver, isEmptyResponse(), context);
+        Callback callback = new UnaryCallableUnitCallBack(responseObserver, isEmptyResponse(),
+                this.methodDescriptor.getOutputType(), context);
         Object requestParam = request != null ? request.getbMessage() : null;
         HttpHeaders headers = request != null ? request.getHeaders() : null;
         Object[] requestParams = computeResourceParams(resource, requestParam, headers, responseObserver);
@@ -178,21 +180,29 @@ public abstract class ServerCallHandler {
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,
                                    StreamObserver responseObserver) {
         List<Type> signatureParams = resource.getParamTypes();
-        Object[] paramValues = new Object[signatureParams.size() * 2];
-        paramValues[0] = getConnectionParameter(responseObserver);
-        paramValues[1] = true;
+        Object[] paramValues;
+        int i = 0;
+        if (signatureParams.size() >= 1 && CALLER_TYPE.equals(signatureParams.get(0).getName())) {
+            paramValues = new Object[signatureParams.size() * 2];
+            paramValues[i] = getConnectionParameter(responseObserver);
+            paramValues[i + 1] = true;
+            i = i + 2;
+        } else {
+            paramValues = new Object[4];
+        }
         BObject headerStruct = null;
         if (resource.isHeaderRequired()) {
             headerStruct = getHeaderObject();
             headerStruct.addNativeData(MESSAGE_HEADERS, headers);
         }
         if (requestParam != null) {
-            paramValues[2] = requestParam;
-            paramValues[3] = true;
+            paramValues[i] = requestParam;
+            paramValues[i + 1] = true;
+            i = i + 2;
         }
         if (headerStruct != null && signatureParams.size() == 3) {
-            paramValues[4] = headerStruct;
-            paramValues[5] = true;
+            paramValues[i] = headerStruct;
+            paramValues[i + 1] = true;
         }
         return paramValues;
     }
