@@ -45,9 +45,9 @@ import java.util.Locale;
 import static org.ballerinalang.net.grpc.GrpcConstants.CONTENT_TYPE_GRPC;
 import static org.ballerinalang.net.grpc.GrpcConstants.GRPC_MESSAGE_KEY;
 import static org.ballerinalang.net.grpc.GrpcConstants.GRPC_STATUS_KEY;
-import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_GRPC_PKG_ID;
 import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
 import static org.ballerinalang.net.grpc.Status.Code.UNKNOWN;
+import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
  * Util methods to generate protobuf message.
@@ -63,7 +63,7 @@ public class MessageUtils {
     private static final String GOOGLE_PROTOBUF_EMPTY = "google.protobuf.Empty";
 
     public static BObject getHeaderObject() {
-        return ValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID, "Headers");
+        return ValueCreator.createObjectValue(getModule(), "Headers");
     }
 
     static boolean headersRequired(MemberFunctionType functionType) {
@@ -135,7 +135,7 @@ public class MessageUtils {
                 message = error.getMessage();
             }
         }
-        return ErrorCreator.createDistinctError(errorIdName, PROTOCOL_GRPC_PKG_ID, StringUtils.fromString(message));
+        return ErrorCreator.createDistinctError(errorIdName, getModule(), StringUtils.fromString(message));
     }
     
     /**

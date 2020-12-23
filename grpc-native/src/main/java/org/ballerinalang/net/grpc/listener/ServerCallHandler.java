@@ -45,6 +45,7 @@ import static org.ballerinalang.net.grpc.GrpcConstants.CALLER_ID;
 import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
 import static org.ballerinalang.net.grpc.GrpcConstants.ON_MESSAGE_METADATA;
 import static org.ballerinalang.net.grpc.MessageUtils.getHeaderObject;
+import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
  * Interface to initiate processing of incoming remote calls.
@@ -144,8 +145,7 @@ public abstract class ServerCallHandler {
      */
     BObject getConnectionParameter(StreamObserver responseObserver) {
         // generate client responder struct on request message with response observer and response msg type.
-        BObject clientEndpoint = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
-                GrpcConstants.CALLER);
+        BObject clientEndpoint = ValueCreator.createObjectValue(getModule(), GrpcConstants.CALLER);
         clientEndpoint.set(CALLER_ID, responseObserver.hashCode());
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_OBSERVER, responseObserver);
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_MESSAGE_DEFINITION, methodDescriptor.getOutputType());
