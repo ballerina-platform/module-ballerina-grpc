@@ -28,7 +28,6 @@ import io.ballerina.runtime.observability.ObservabilityConstants;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.ServerCall;
 import org.ballerinalang.net.grpc.ServiceResource;
@@ -46,6 +45,7 @@ import static org.ballerinalang.net.grpc.GrpcConstants.COMPLETED_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.ITERATOR_OBJECT_NAME;
 import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_QUEUE;
 import static org.ballerinalang.net.grpc.GrpcConstants.ON_MESSAGE_METADATA;
+import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
  * Interface to initiate processing of incoming remote calls for streaming services.
@@ -76,8 +76,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
 
     private StreamObserver invoke(StreamObserver responseObserver, ServerCall call) {
         ObserverContext context = call.getObserverContext();
-        BObject streamIterator = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
-                ITERATOR_OBJECT_NAME, new Object[1]);
+        BObject streamIterator = ValueCreator.createObjectValue(getModule(), ITERATOR_OBJECT_NAME, new Object[1]);
         BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
         streamIterator.addNativeData(MESSAGE_QUEUE, messageQueue);
         streamIterator.addNativeData(CLIENT_ENDPOINT_TYPE, getConnectionParameter(responseObserver));

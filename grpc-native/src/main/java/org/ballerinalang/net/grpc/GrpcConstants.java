@@ -16,7 +16,6 @@
 package org.ballerinalang.net.grpc;
 
 import com.google.protobuf.DescriptorProtos;
-import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.async.StrandMetadata;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BString;
@@ -27,6 +26,7 @@ import java.util.Map;
 
 import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_BUILTIN_PKG_PREFIX;
 import static io.ballerina.runtime.api.constants.RuntimeConstants.ORG_NAME_SEPARATOR;
+import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
  * Proto Message Constants Class.
@@ -36,12 +36,10 @@ import static io.ballerina.runtime.api.constants.RuntimeConstants.ORG_NAME_SEPAR
 public class GrpcConstants {
     //gRPC package name.
     public static final String PROTOCOL_PACKAGE_GRPC = "grpc";
-    public static final String PROTOCOL_PACKAGE_VERSION_GRPC = "0.7.4";
+    public static final String PROTOCOL_PACKAGE_VERSION_GRPC = getModule().getVersion();
     public static final String ORG_NAME = "ballerina";
     public static final String PROTOCOL_STRUCT_PACKAGE_GRPC = ORG_NAME + ORG_NAME_SEPARATOR +
             "grpc:" + PROTOCOL_PACKAGE_VERSION_GRPC;
-    public static final Module PROTOCOL_GRPC_PKG_ID = new Module(BALLERINA_BUILTIN_PKG_PREFIX, "grpc",
-                                                                     PROTOCOL_PACKAGE_VERSION_GRPC);
 
     public static final String HTTPS_ENDPOINT_STARTED = "[ballerina/grpc] started HTTPS/WSS listener ";
     public static final String HTTP_ENDPOINT_STARTED = "[ballerina/grpc] started HTTP/WS listener ";

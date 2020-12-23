@@ -59,7 +59,6 @@ import static org.ballerinalang.net.grpc.GrpcConstants.ENDPOINT_URL;
 import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
 import static org.ballerinalang.net.grpc.GrpcConstants.METHOD_DESCRIPTORS;
 import static org.ballerinalang.net.grpc.GrpcConstants.NON_BLOCKING_TYPE;
-import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_GRPC_PKG_ID;
 import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_MESSAGE_DEFINITION;
 import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_SENDER;
 import static org.ballerinalang.net.grpc.GrpcConstants.SERVICE_STUB;
@@ -68,6 +67,7 @@ import static org.ballerinalang.net.grpc.GrpcUtil.getConnectionManager;
 import static org.ballerinalang.net.grpc.GrpcUtil.populatePoolingConfig;
 import static org.ballerinalang.net.grpc.GrpcUtil.populateSenderConfigurations;
 import static org.ballerinalang.net.grpc.Status.Code.INTERNAL;
+import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
 
 /**
@@ -411,8 +411,7 @@ public class FunctionUtils extends AbstractExecute {
                     return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
                             methodType.name() + " not supported");
                 }
-                BObject streamingConnection = ValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID,
-                        STREAMING_CLIENT);
+                BObject streamingConnection = ValueCreator.createObjectValue(getModule(), STREAMING_CLIENT);
                 streamingConnection.addNativeData(REQUEST_SENDER, requestSender);
                 streamingConnection.addNativeData(REQUEST_MESSAGE_DEFINITION, methodDescriptor
                         .getInputType());
