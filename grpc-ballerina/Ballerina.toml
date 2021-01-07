@@ -3,6 +3,7 @@ org = "ballerina"
 name = "grpc"
 version = "@toml.version@"
 [[dependency]]
+
 org = "ballerina"
 name = "config"
 version = "@stdlib.config.version@"
