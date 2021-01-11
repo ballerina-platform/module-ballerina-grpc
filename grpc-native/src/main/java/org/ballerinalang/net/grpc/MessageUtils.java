@@ -19,7 +19,7 @@ import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.MemberFunctionType;
+import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
@@ -66,7 +66,7 @@ public class MessageUtils {
         return ValueCreator.createObjectValue(getModule(), "Headers");
     }
 
-    static boolean headersRequired(MemberFunctionType functionType) {
+    static boolean headersRequired(MethodType functionType) {
         if (functionType == null || functionType.getParameterTypes() == null) {
             throw new RuntimeException("Invalid resource input arguments");
         }
@@ -402,6 +402,17 @@ public class MessageUtils {
             return status.withDescription(trailers.get(GRPC_MESSAGE_KEY));
         } else {
             return Status.Code.UNKNOWN.toStatus().withDescription("missing GRPC status in response");
+        }
+    }
+
+    public static String getCallerTypeName(String serviceName, String returnType) {
+        if (returnType != null) {
+            returnType = returnType.replaceAll("[^a-zA-Z0-9]", "");
+            return serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1) +
+                    returnType.substring(0, 1).toUpperCase() + returnType.substring(1) +
+                    "Caller";
+        } else {
+            return serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1) + "NilCaller";
         }
     }
 

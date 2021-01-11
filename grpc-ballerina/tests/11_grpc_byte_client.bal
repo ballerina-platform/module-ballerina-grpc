@@ -19,7 +19,7 @@ import ballerina/test;
 
 type ByteArrayTypedesc typedesc<byte[]>;
 
-@test:Config {}
+@test:Config {enable:true}
 isolated function testByteArray() {
     byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
     string statement = "Lion in Town.";
@@ -35,7 +35,7 @@ isolated function testByteArray() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testLargeByteArray() {
     string filePath = "tests/resources/sample_bytes.txt";
     byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
@@ -81,7 +81,7 @@ public client class byteServiceBlockingClient {
         if (value is byte[]) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 }

@@ -22,13 +22,13 @@ listener Listener ep7 = new (9097);
     descriptor: ROOT_DESCRIPTOR_7,
     descMap: getDescriptorMap7()
 }
-service /HelloWorld100 on ep7 {
-    isolated remote function hello(Caller caller, string name) {
+service "HelloWorld100" on ep7 {
+    isolated remote function hello(HelloWorld100StringCaller caller, string name) {
         io:println("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
         if (name == "invalid") {
-            err = caller->sendError(ABORTED, "Operation aborted");
+            err = caller->sendError(error AbortedError("Operation aborted"));
         } else {
             err = caller->send(message);
         }
@@ -38,7 +38,7 @@ service /HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testInt(Caller caller, int age) {
+    isolated remote function testInt(HelloWorld100IntCaller caller, int age) {
         io:println("age: " + age.toString());
         int displayAge = age - 2;
         Error? err = caller->send(displayAge);
@@ -50,7 +50,7 @@ service /HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testFloat(Caller caller, float salary) {
+    isolated remote function testFloat(HelloWorld100FloatCaller caller, float salary) {
         io:println("gross salary: " + salary.toString());
         float netSalary = salary * 0.88;
         Error? err = caller->send(netSalary);
@@ -62,7 +62,7 @@ service /HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testBoolean(Caller caller, boolean available) {
+    isolated remote function testBoolean(HelloWorld100BooleanCaller caller, boolean available) {
         io:println("is available: " + available.toString());
         boolean aval = available || true;
         Error? err = caller->send(aval);
@@ -74,7 +74,7 @@ service /HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testStruct(Caller caller, Request msg) {
+    isolated remote function testStruct(HelloWorld100ResponseCaller caller, Request msg) {
         io:println(msg.name + " : " + msg.message);
         Response response = {resp:"Acknowledge " + msg.name};
         Error? err = caller->send(response);
@@ -86,7 +86,7 @@ service /HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testNoRequest(Caller caller) {
+    isolated remote function testNoRequest(HelloWorld100StringCaller caller) {
         string resp = "service invoked with no request";
         Error? err = caller->send(resp);
         if (err is Error) {
@@ -97,19 +97,159 @@ service /HelloWorld100 on ep7 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testNoResponse(Caller caller, string msg) {
+    isolated remote function testNoResponse(HelloWorld100NilCaller caller, string msg) {
         io:println("Request: " + msg);
     }
 
-    isolated remote function testResponseInsideMatch(Caller caller, string msg) {
+    isolated remote function testResponseInsideMatch(HelloWorld100ResponseCaller caller, string msg) {
         io:println("Request: " + msg);
         Response? res = {resp:"Acknowledge " + msg};
         if (res is Response) {
             checkpanic caller->send(res);
         } else {
-            checkpanic caller->sendError(NOT_FOUND, "No updates from that drone");
+            checkpanic caller->sendError(error NotFoundError("No updates from that drone"));
         }
         checkpanic caller->complete();
+    }
+}
+
+public client class HelloWorld100StringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld100IntCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(int response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld100FloatCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(float response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld100BooleanCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(boolean response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld100ResponseCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(Response response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld100NilCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

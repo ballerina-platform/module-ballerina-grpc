@@ -20,9 +20,9 @@ import ballerina/io;
     descriptor: ROOT_DESCRIPTOR_15,
     descMap: getDescriptorMap15()
 }
-service /OneofFieldService on new Listener(9105) {
+service "OneofFieldService" on new Listener(9105) {
 
-    isolated remote function hello(Caller caller, Request1 value) {
+    isolated remote function hello(OneofFieldServiceResponse1Caller caller, Request1 value) {
         string? request = "";
         if (value?.first_name is string) {
             request = value?.first_name;
@@ -35,9 +35,57 @@ service /OneofFieldService on new Listener(9105) {
         checkpanic caller->complete();
     }
 
-    isolated remote function testOneofField(Caller caller, ZZZ req) {
+    isolated remote function testOneofField(OneofFieldServiceZZZCaller caller, ZZZ req) {
         checkpanic caller->send(req);
         checkpanic caller->complete();
+    }
+}
+
+public client class OneofFieldServiceResponse1Caller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(Response1 response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class OneofFieldServiceZZZCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(ZZZ response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

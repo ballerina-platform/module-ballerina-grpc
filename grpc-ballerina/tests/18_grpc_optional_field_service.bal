@@ -22,9 +22,9 @@ listener Listener checkoutep = new (9108);
     descriptor: ROOT_DESCRIPTOR_18,
     descMap: getDescriptorMap18()
 }
-service /CheckoutService on checkoutep {
+service "CheckoutService" on checkoutep {
 
-    isolated remote function PlaceOrder(Caller caller, PlaceOrderRequest value) {
+    isolated remote function PlaceOrder(CheckoutServicePlaceOrderResponseCaller caller, PlaceOrderRequest value) {
         log:print("PlaceOrderRequest: " + value.toString());
 
         var addr = value.address;
@@ -47,6 +47,30 @@ service /CheckoutService on checkoutep {
         if (complete is error) {
             log:printError("Error while completing the response.", err = complete);
         }
+    }
+}
+
+public client class CheckoutServicePlaceOrderResponseCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(PlaceOrderResponse response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

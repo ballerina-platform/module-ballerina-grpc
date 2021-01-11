@@ -25,9 +25,9 @@ listener Listener ep4 = new (9094);
     descriptor: ROOT_DESCRIPTOR_4,
     descMap: getDescriptorMap4()
 }
-service /HelloWorld7 on ep4 {
+service "HelloWorld7" on ep4 {
 
-    remote function lotsOfGreetings(Caller caller, stream<string, error>clientStream) {
+    remote function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error>clientStream) {
         log:print("connected sucessfully.");
         error? e = clientStream.forEach(isolated function(string name) {
             log:print("greet received: " + name);
@@ -43,6 +43,30 @@ service /HelloWorld7 on ep4 {
         } else if (e is error) {
             log:printError("Something unexpected happens at server :: " + e.message());
         }
+    }
+}
+
+public client class HelloWorld7StringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

@@ -24,7 +24,7 @@ type StockQuoteTypedesc typedesc<StockQuote>;
 type StockQuotesTypedesc typedesc<StockQuotes>;
 type StockNamesTypedesc typedesc<StockNames>;
 
-@test:Config {}
+@test:Config {enable:true}
 function testSendNestedStruct() {
     Person p = {name:"Sam", address:{postalCode:10300, state:"Western", country:"Sri Lanka"}};
     io:println("testInputNestedStruct: input:");
@@ -42,7 +42,7 @@ function testSendNestedStruct() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testReceiveNestedStruct() {
     string name  = "WSO2";
     io:println("testOutputNestedStruct: input: " + name);
@@ -62,7 +62,7 @@ function testReceiveNestedStruct() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testSendStructReceiveStruct() {
     StockRequest request = {name: "WSO2"};
     io:println("testInputStructOutputStruct: input:");
@@ -84,7 +84,7 @@ function testSendStructReceiveStruct() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testSendNoReceiveStruct() {
     io:println("testNoInputOutputStruct: No input:");
     [StockQuotes, Headers]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputStruct();
@@ -102,7 +102,7 @@ function testSendNoReceiveStruct() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testSendNoReceiveArray() {
     io:println("testNoInputOutputStruct: No input:");
     [StockNames, Headers]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputArray();
@@ -120,7 +120,7 @@ function testSendNoReceiveArray() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testSendStructNoReceive() {
     StockQuote quote = {symbol: "Ballerina", name:"ballerina/io", last:1.0, low:0.5, high:2.0};
     io:println("testNoInputOutputStruct: input:");
@@ -164,7 +164,7 @@ public client class HelloWorld1BlockingClient {
         if (value is Person) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -178,7 +178,7 @@ public client class HelloWorld1BlockingClient {
         if (value is StockQuote) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -202,7 +202,7 @@ public client class HelloWorld1BlockingClient {
         if (value is StockQuotes) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -217,7 +217,7 @@ public client class HelloWorld1BlockingClient {
         if (value is StockNames) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 }

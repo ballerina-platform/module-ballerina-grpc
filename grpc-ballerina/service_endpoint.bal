@@ -103,13 +103,13 @@ class StreamIterator {
 
     public isolated function next() returns record {|anydata value;|}|error? {
         if (self.isClosed) {
-            return StreamClosedError("Stream is closed. Therefore, no operations are allowed further on the stream.");
+            return error StreamClosedError("Stream is closed. Therefore, no operations are allowed further on the stream.");
         }
         anydata|handle|error? result = nextResult(self);
         if (result is anydata) {
             if (result is ()) {
                 self.isClosed = true;
-                return EOS("End of stream reached");
+                return error EOS("End of stream reached");
             }
             return {value: result};
         } else if (result is handle) {
@@ -124,7 +124,7 @@ class StreamIterator {
             self.isClosed = true;
             return closeStream(self);
         } else {
-            return StreamClosedError("Stream is closed. Therefore, no operations are allowed further on the stream.");
+            return error StreamClosedError("Stream is closed. Therefore, no operations are allowed further on the stream.");
         }
     }
 }

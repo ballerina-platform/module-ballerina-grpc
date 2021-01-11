@@ -22,18 +22,66 @@ listener Listener ordermgtep = new (9111);
     descriptor: ROOT_DESCRIPTOR_21,
     descMap: getDescriptorMap21()
 }
-service /OrderManagement on ordermgtep {
+service "OrderManagement" on ordermgtep {
 
-    isolated remote function addOrder(Caller caller, Order value) {
+    isolated remote function addOrder(OrderManagementStringCaller caller, Order value) {
         io:println(value);
         var send = caller->send("Order is added " + value.id);
         error? complete = caller->complete();
     }
 
-    isolated remote function getOrder(Caller caller, string value) {
+    isolated remote function getOrder(OrderManagementOrderCaller caller, string value) {
         Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
         var send = caller->send('order);
         error? complete = caller->complete();
+    }
+}
+
+public client class OrderManagementStringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class OrderManagementOrderCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(Order response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

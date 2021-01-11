@@ -22,7 +22,11 @@ import org.ballerinalang.net.grpc.exception.CodeBuilderException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.ballerinalang.net.grpc.MessageUtils.getCallerTypeName;
 
 /**
  * Service stub definition bean class.
@@ -30,39 +34,35 @@ import java.util.List;
  * @since 0.982.0
  */
 public class ServiceStub {
-    private String stubType;
     private String serviceName;
-    private List<Method> blockingFunctions = new ArrayList<>();
-    private List<Method> nonBlockingFunctions = new ArrayList<>();
-    private List<Method> streamingFunctions = new ArrayList<>();
+    private List<Method> unaryFunctions = new ArrayList<>();
+    private List<Method> serverStreamingFunctions = new ArrayList<>();
+    //both client streaming and bidirectional streaming have same client side behaviour.
+    private List<Method> clientStreamingFunctions = new ArrayList<>();
+    private Map<String, String> callerMap = new HashMap<>();
 
-    private ServiceStub(String serviceName, String stubType) {
+    private ServiceStub(String serviceName) {
         this.serviceName = serviceName;
-        this.stubType = stubType;
     }
 
     public static ServiceStub.Builder newBuilder(String serviceName) {
         return new ServiceStub.Builder(serviceName);
     }
 
-    public String getStubType() {
-        return stubType;
-    }
-
     public String getServiceName() {
         return serviceName;
     }
 
-    public List<Method> getBlockingFunctions() {
-        return Collections.unmodifiableList(blockingFunctions);
+    public List<Method> getUnaryFunctions() {
+        return Collections.unmodifiableList(unaryFunctions);
     }
 
-    public List<Method> getNonBlockingFunctions() {
-        return Collections.unmodifiableList(nonBlockingFunctions);
+    public List<Method> getServerStreamingFunctions() {
+        return Collections.unmodifiableList(serverStreamingFunctions);
     }
 
-    public List<Method> getStreamingFunctions() {
-        return Collections.unmodifiableList(streamingFunctions);
+    public List<Method> getClientStreamingFunctions() {
+        return Collections.unmodifiableList(clientStreamingFunctions);
     }
 
     /**
@@ -76,28 +76,25 @@ public class ServiceStub {
             this.serviceName = serviceName;
         }
 
-        public Builder addMethod(Method method) {
+        public void addMethod(Method method) {
             methodList.add(method);
-            return this;
         }
 
-        public ServiceStub build(StubType stubType) throws CodeBuilderException {
-            ServiceStub serviceStub = new ServiceStub(serviceName, stubType.getType());
+        public ServiceStub build() throws CodeBuilderException {
+            ServiceStub serviceStub = new ServiceStub(serviceName);
             for (Method method : methodList) {
+                String callerTypeName = getCallerTypeName(serviceName, method.getOutputType());
+                serviceStub.callerMap.put(callerTypeName, method.getOutputType());
                 switch (method.getMethodType()) {
                     case UNARY:
-                        if (stubType == StubType.BLOCKING) {
-                            serviceStub.blockingFunctions.add(method);
-                        } else {
-                            serviceStub.nonBlockingFunctions.add(method);
-                        }
+                        serviceStub.unaryFunctions.add(method);
                         break;
                     case SERVER_STREAMING:
-                        serviceStub.nonBlockingFunctions.add(method);
+                        serviceStub.serverStreamingFunctions.add(method);
                         break;
                     case CLIENT_STREAMING:
                     case BIDI_STREAMING:
-                        serviceStub.streamingFunctions.add(method);
+                        serviceStub.clientStreamingFunctions.add(method);
                         break;
                     default:
                         throw new CodeBuilderException("Method type is unknown or not supported.");
@@ -107,21 +104,21 @@ public class ServiceStub {
         }
     }
 
-    /**
-     * Service stub type enum.
-     */
-    public enum StubType {
-        BLOCKING("blocking"),
-        NONBLOCKING("non-blocking");
-
-        private String type;
-
-        StubType(String type) {
-            this.type = type;
-        }
-
-        public String getType() {
-            return type;
-        }
-    }
+//    /**
+//     * Service stub type enum.
+//     */
+//    public enum StubType {
+//        BLOCKING("blocking"),
+//        NONBLOCKING("non-blocking");
+//
+//        private String type;
+//
+//        StubType(String type) {
+//            this.type = type;
+//        }
+//
+//        public String getType() {
+//            return type;
+//        }
+//    }
 }

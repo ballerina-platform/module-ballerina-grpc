@@ -22,9 +22,9 @@ listener Listener helloWorldStreamingep = new (9113);
     descriptor: ROOT_DESCRIPTOR_23,
     descMap: getDescriptorMap23()
 }
-service /helloWorldServerStreaming on helloWorldStreamingep {
+service "helloWorldServerStreaming" on helloWorldStreamingep {
 
-    isolated remote function lotsOfReplies(Caller caller, HelloRequest value) {
+    isolated remote function lotsOfReplies(HelloWorldServerStreamingHelloResponseCaller caller, HelloRequest value) {
         log:print("Server received hello from " + value.name);
         string[] greets = ["Hi", "Hey", "GM"];
 
@@ -44,6 +44,30 @@ service /helloWorldServerStreaming on helloWorldStreamingep {
             log:printError("Error in sending completed notification to caller",
                 err = result);
         }
+    }
+}
+
+public client class HelloWorldServerStreamingHelloResponseCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(HelloResponse response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

@@ -60,13 +60,14 @@ public class BalFileGenerationUtils {
         try {
             process = builder.start();
         } catch (IOException e) {
-            throw new CodeGeneratorException("Error in executing protoc command '" + command + "'.", e);
+            throw new CodeGeneratorException("Error in executing protoc command '" + command + "'. " + e.getMessage(),
+                    e);
         }
         try {
             process.waitFor();
         } catch (InterruptedException e) {
             throw new CodeGeneratorException("Process not successfully completed. Process is interrupted while" +
-                    " running the protoc executor.", e);
+                    " running the protoc executor. " + e.getMessage(), e);
         }
         if (process.exitValue() != 0) {
             try (BufferedReader bufferedReader = new BufferedReader(new
@@ -78,7 +79,7 @@ public class BalFileGenerationUtils {
                 }
                 throw new CodeGeneratorException(errMsg.toString());
             } catch (IOException e) {
-                throw new CodeGeneratorException("Invalid command syntax.", e);
+                throw new CodeGeneratorException("Invalid command syntax. " + e.getMessage(), e);
             }
         }
     }
@@ -149,7 +150,7 @@ public class BalFileGenerationUtils {
                 }
             }
         } catch (IOException e) {
-            String msg = "Error while downloading the file: " + file.getName() + ". " + e.getMessage();
+            String msg = "Couldn't download the executable file: " + file.getName() + ". " + e.getMessage();
             throw new CodeGeneratorException(msg, e);
         }
     }
@@ -167,7 +168,7 @@ public class BalFileGenerationUtils {
         if (isExecutable && isReadable && isWritable) {
             LOG.debug("Successfully granted permission for protoc exe file");
         } else {
-            String msg = "Error while providing execute permission to protoc executor file: " + file.getName();
+            String msg = "Couldn't grant permission to executable file: " + file.getName();
             throw new CodeGeneratorException(msg);
         }
     }

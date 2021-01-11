@@ -30,8 +30,8 @@ listener Listener ep10 = new (9100, {
     descriptor: ROOT_DESCRIPTOR_10,
     descMap: getDescriptorMap10()
 }
-service /grpcMutualSslService on ep10 {
-    isolated remote function hello(Caller caller, string name) {
+service "grpcMutualSslService" on ep10 {
+    isolated remote function hello(GrpcMutualSslServiceStringCaller caller, string name) {
         log:print("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->send(message);
@@ -41,6 +41,30 @@ service /grpcMutualSslService on ep10 {
             log:print("Server send response : " + message);
         }
         checkpanic caller->complete();
+    }
+}
+
+public client class GrpcMutualSslServiceStringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

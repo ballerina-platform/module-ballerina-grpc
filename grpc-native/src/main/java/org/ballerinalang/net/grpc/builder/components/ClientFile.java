@@ -24,11 +24,10 @@ package org.ballerinalang.net.grpc.builder.components;
  */
 public class ClientFile {
     private String serviceName;
-    private boolean blockingEP;
+    private boolean blockingEP = true;
     
-    public ClientFile(String serviceName, boolean blockingEP) {
+    public ClientFile(String serviceName) {
         this.serviceName = serviceName;
-        this.blockingEP = blockingEP;
     }
 
     public String getServiceName() {

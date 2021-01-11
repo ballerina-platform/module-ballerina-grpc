@@ -21,7 +21,7 @@ final HelloWorld7BlockingClient helloWorld7BlockingEp = new ("http://localhost:9
 
 //type ResponseTypedesc typedesc<Response>;
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryBlockingClient() {
     string name = "WSO2";
     [string, Headers]|Error unionResp = helloWorld7BlockingEp->hello(name);
@@ -36,7 +36,7 @@ function testUnaryBlockingClient() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryBlockingIntClient() {
     int age = 10;
     [int, Headers]|Error unionResp = helloWorld7BlockingEp->testInt(age);
@@ -51,7 +51,7 @@ function testUnaryBlockingIntClient() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryBlockingFloatClient() {
     float salary = 1000.5;
     [float, Headers]|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
@@ -66,7 +66,7 @@ function testUnaryBlockingFloatClient() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryBlockingBoolClient() {
     boolean isAvailable = false;
     [boolean, Headers]|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
@@ -81,7 +81,7 @@ function testUnaryBlockingBoolClient() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryBlockingReceiveRecord() {
     string msg = "WSO2";
     [Response, Headers]|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
@@ -96,7 +96,7 @@ function testUnaryBlockingReceiveRecord() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testUnaryBlockingStructClient() {
     Request req = {name:"Sam", age:10, message:"Testing."};
     [Response, Headers]|Error unionResp = helloWorld7BlockingEp->testStruct(req);
@@ -140,7 +140,7 @@ public client class HelloWorld7BlockingClient {
         if (value is int) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -153,7 +153,7 @@ public client class HelloWorld7BlockingClient {
         if (value is float) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -166,7 +166,7 @@ public client class HelloWorld7BlockingClient {
         if (value is boolean) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -179,7 +179,7 @@ public client class HelloWorld7BlockingClient {
         if (value is Response) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -192,7 +192,7 @@ public client class HelloWorld7BlockingClient {
         if (value is Response) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 }
