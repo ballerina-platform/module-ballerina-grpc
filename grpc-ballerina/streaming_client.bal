@@ -21,7 +21,7 @@ public client class StreamingClient {
 
     # Sends the request message to the server.
     # ```ballerina
-    # grpc:Error? err = caller->send(message);
+    # grpc:Error? err = sClient->send(message);
     # ```
     #
     # + res - The inbound request message
@@ -30,9 +30,19 @@ public client class StreamingClient {
         return streamSend(self, res);
     }
 
+    # Receives the response message from the server.
+    # ```ballerina
+    # anydata|grpc:Error response = sClient->receive();
+    # ```
+    # + return - The response message or a `grpc:Error` if an error occurred while receiving. `grpc:EOS` returns at
+    # the end of the stream.
+    isolated remote function receive() returns anydata|Error {
+        return streamReceive(self);
+    }
+
     # Informs the server when the caller has sent all the messages.
     # ```ballerina
-    # grpc:Error? result = caller->complete();
+    # grpc:Error? result = sClient->complete();
     # ```
     #
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
@@ -42,18 +52,22 @@ public client class StreamingClient {
 
     # Sends an error message to the server.
     # ```ballerina
-    # grpc:Error? result = streamingClient->sendError(grpc:ABORTED, "Operation aborted");
+    # grpc:Error? result = sClient->sendError(error grpc:AbortedError("Operation aborted"));
     # ```
     #
-    # + statusCode - Error status code
-    # + message - Error message
+    # + err - Error instance
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    isolated remote function sendError(int statusCode, string message) returns Error? {
-        return streamSendError(self, statusCode, message);
+    isolated remote function sendError(Error err) returns Error? {
+        return streamSendError(self, err);
     }
 }
 
 isolated function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
+@java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+} external;
+
+isolated function streamReceive(StreamingClient streamConnection) returns anydata|Error =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
@@ -63,7 +77,7 @@ isolated function streamComplete(StreamingClient streamConnection) returns Error
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
-isolated function streamSendError(StreamingClient streamConnection, int statusCode, string message) returns Error? =
+isolated function streamSendError(StreamingClient streamConnection, Error err) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;

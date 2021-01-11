@@ -136,6 +136,16 @@ isolated function retryBlockingExecute(Client grpcClient, string methodID, anyda
     }
 }
 
+isolated function generateMethodId(string? pkgName, string svcName, string rpcName) returns string {
+    string methodID;
+    if (pkgName is ()) {
+       methodID = svcName + "/" + rpcName;
+    } else {
+        methodID = pkgName + "." + svcName + "/" + rpcName;
+    }
+    return methodID;
+}
+
 isolated function externInit(Client clientEndpoint, string url, ClientConfiguration config, PoolConfiguration
 globalPoolConfig)
                 returns Error? = @java:Method {

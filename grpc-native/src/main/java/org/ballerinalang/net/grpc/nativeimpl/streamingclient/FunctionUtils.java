@@ -20,8 +20,8 @@ package org.ballerinalang.net.grpc.nativeimpl.streamingclient;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
 import org.ballerinalang.net.grpc.GrpcConstants;
@@ -34,7 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_SENDER;
+import static org.ballerinalang.net.grpc.GrpcConstants.STATUS_ERROR_MAP;
 import static org.ballerinalang.net.grpc.GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE;
+import static org.ballerinalang.net.grpc.GrpcConstants.getKeyByValue;
 import static org.ballerinalang.net.grpc.MessageUtils.getMappingHttpStatusCode;
 
 /**
@@ -73,16 +75,19 @@ public class FunctionUtils {
         return null;
     }
 
+    public static Object streamReceive(BObject streamConnection) {
+        // TODO: implement the logic.
+        return "";
+    }
+
     /**
      * Extern function to send a error message to the server.
      *
      * @param streamingConnection streaming connection instance.
-     * @param statusCode gRPC error status code.
-     * @param errorMsg error message.
+     * @param errorValue gRPC error instance.
      * @return Error if there is an error while sending error message to the server, else returns nil.
      */
-    public static Object streamSendError(Environment env, BObject streamingConnection, long statusCode,
-                                         BString errorMsg) {
+    public static Object streamSendError(Environment env, BObject streamingConnection, BError errorValue) {
         StreamObserver requestSender = (StreamObserver) streamingConnection.getNativeData(REQUEST_SENDER);
         if (requestSender == null) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
@@ -90,12 +95,16 @@ public class FunctionUtils {
                             "error. endpoint does not exist")));
         } else {
             try {
-                requestSender.onError(new Message(new StatusRuntimeException(Status.fromCodeValue((int) statusCode)
-                        .withDescription(errorMsg.getValue()))));
+                Integer statusCode = getKeyByValue(STATUS_ERROR_MAP, errorValue.getType().getName());
+                if (statusCode == null) {
+                    statusCode = Status.Code.INTERNAL.value();
+                }
+                requestSender.onError(new Message(new StatusRuntimeException(Status.fromCodeValue(statusCode)
+                        .withDescription(errorValue.getErrorMessage().getValue()))));
                 // Add message content to observer context.
                 ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
                 observerContext.addTag(TAG_KEY_GRPC_ERROR_MESSAGE,
-                        getMappingHttpStatusCode((int) statusCode) + " : " + errorMsg.getValue());
+                        getMappingHttpStatusCode(statusCode) + " : " + errorValue.getErrorMessage().getValue());
 
             } catch (Exception e) {
                 LOG.error("Error while sending error to server.", e);
