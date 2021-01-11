@@ -70,6 +70,18 @@ public client class Client {
         return externExecuteSimpleRPC(self, methodID, payload);
     }
 
+    # Calls when a server streamin call with a gRPC service.
+    # ```ballerina
+    # grpc:Error? result = grpcClient->executeServerStreaming("HelloWorld/hello", req);
+    # ```
+    #
+    # + methodID - Remote service method ID
+    # + payload - Request message. The message type varies with the remote service method parameter
+    # + return - A `stream<anydata>` or a `grpc:Error` when an error occurs while sending the request
+    isolated remote function executeServerStreaming(string methodID, anydata payload) returns stream<anydata>|Error {
+         return externExecuteServerStreaming(self, methodID, payload);
+    }
+
     # Calls when executing a non-blocking call with a gRPC service.
     # ```ballerina
     # grpc:Error? result = grpcClient->nonBlockingExecute("HelloWorld/hello", req, msgListener, headers);
@@ -147,6 +159,11 @@ isolated function externInitStub(Client genericEndpoint, AbstractClientEndpoint 
 
 isolated function externExecuteSimpleRPC(Client clientEndpoint, string methodID, anydata payload)
                 returns (anydata|Error) = @java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+} external;
+
+isolated function externExecuteServerStreaming(Client clientEndpoint, string methodID, anydata payload)
+                returns stream<anydata>|Error = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 

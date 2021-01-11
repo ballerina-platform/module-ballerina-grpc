@@ -245,6 +245,57 @@ public class FunctionUtils extends AbstractExecute {
      * @param clientEndpoint client endpoint instance.
      * @param methodName remote method name.
      * @param payload request payload.
+     * @return Error if there is an error while initializing the stub, else returns a BStream object.
+     */
+    @SuppressWarnings("unchecked")
+    public static Object externExecuteServerStreaming(Environment env, BObject clientEndpoint, BString methodName,
+                                                  Object payload) {
+        if (clientEndpoint == null) {
+            return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector is " +
+                    "not initialized properly");
+        }
+
+        Object connectionStub = clientEndpoint.getNativeData(SERVICE_STUB);
+        if (connectionStub == null) {
+            return notifyErrorReply(INTERNAL, "Error while getting connection stub. gRPC Client connector " +
+                    "is not initialized properly");
+        }
+
+        if (methodName == null) {
+            return notifyErrorReply(INTERNAL, "Error while processing the request. RPC endpoint doesn't " +
+                    "set properly");
+        }
+
+        Map<String, MethodDescriptor> methodDescriptors = (Map<String, MethodDescriptor>) clientEndpoint.getNativeData
+                (METHOD_DESCRIPTORS);
+        if (methodDescriptors == null) {
+            return notifyErrorReply(INTERNAL, "Error while processing the request. method descriptors " +
+                    "doesn't set properly");
+        }
+
+        com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
+                .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
+                : null;
+        if (methodDescriptor == null) {
+            return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
+        }
+
+        Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payload);
+        Stub stub = (Stub) connectionStub;
+        try {
+            DataContext context = new DataContext(env, null);
+            return stub.executeServerStreaming(requestMsg, methodDescriptors.get(methodName.getValue()), context);
+        } catch (Exception e) {
+            return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
+        }
+    }
+
+    /**
+     * Extern function to perform non blocking call for the gRPC client.
+     *
+     * @param clientEndpoint client endpoint instance.
+     * @param methodName remote method name.
+     * @param payload request payload.
      * @param callbackService response callback listener service.
      * @param headerValues custom metadata to send with the request.
      * @return Error if there is an error while initializing the stub, else returns nil

@@ -17,7 +17,11 @@
  */
 package org.ballerinalang.net.grpc.stubs;
 
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BObject;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.ClientCall;
 import org.ballerinalang.net.grpc.DataContext;
@@ -26,6 +30,11 @@ import org.ballerinalang.net.grpc.MethodDescriptor;
 import org.ballerinalang.net.grpc.MessageUtils;
 import org.ballerinalang.net.grpc.Status;
 import org.ballerinalang.net.transport.contract.HttpClientConnector;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.ballerinalang.net.grpc.GrpcConstants;
 
 /**
  * This class handles Blocking client connection.
@@ -60,7 +69,35 @@ public class Stub extends AbstractStub {
     }
 
     /**
-     *  Callbacks for receiving headers, response messages and completion status in blocking calls.
+     * Executes server streaming non blocking call.
+     *
+     * @param request  request message.
+     * @param methodDescriptor method descriptor.
+     * @param context Data Context.
+     * @throws Exception if an error occur while processing client call.
+     */
+    public Object executeServerStreaming(Message request, MethodDescriptor methodDescriptor,
+                                         DataContext context) throws Exception {
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
+                methodDescriptor, context);
+        Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(true);
+        call.start(streamingCallListener);
+        try {
+            call.sendMessage(request);
+            call.halfClose();
+        } catch (Exception e) {
+            cancelThrow(call, e);
+        }
+        BObject streamIterator = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+                GrpcConstants.ITERATOR_OBJECT_NAME, new Object[1]);
+        BlockingQueue<Message> messageQueue = streamingCallListener.getMessageQueue();
+        streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, messageQueue);
+        return ValueCreator.createStreamValue(TypeCreator.createStreamType(PredefinedTypes.TYPE_ANYDATA),
+                streamIterator);
+    }
+
+    /**
+     *  Callbacks for receiving headers, response messages and completion status in unary calls.
      */
     private static final class UnaryCallListener implements Listener {
 
@@ -106,6 +143,47 @@ public class Stub extends AbstractStub {
             } else {
                 dataContext.getFuture().complete(httpConnectorError);
             }
+        }
+    }
+
+    /**
+     *  Callbacks for receiving headers, response messages, and completion status in streaming calls.
+     */
+    private static final class StreamingCallListener implements Listener {
+
+        private final boolean streamingResponse;
+        BlockingQueue<Message> messageQueue;
+        private boolean firstResponseReceived;
+
+        // Non private to avoid synthetic class
+        StreamingCallListener(boolean streamingResponse) {
+            this.streamingResponse = streamingResponse;
+            this.messageQueue = new LinkedBlockingQueue<>();
+        }
+
+        @Override
+        public void onHeaders(HttpHeaders headers) {
+            // Headers are processed at client connector listener. Do not need to further process.
+        }
+
+        @Override
+        public void onMessage(Message message) {
+            if (firstResponseReceived && !streamingResponse) {
+                throw Status.Code.INTERNAL.toStatus()
+                        .withDescription("More than one responses received for unary or client-streaming call")
+                        .asRuntimeException();
+            }
+            firstResponseReceived = true;
+            messageQueue.add(message);
+        }
+
+        @Override
+        public void onClose(Status status, HttpHeaders trailers) {
+            messageQueue.add(new Message(GrpcConstants.COMPLETED_MESSAGE, null));
+        }
+
+        public BlockingQueue<Message> getMessageQueue() {
+            return messageQueue;
         }
     }
 }
