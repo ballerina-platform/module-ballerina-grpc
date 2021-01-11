@@ -35,6 +35,7 @@ import static org.ballerinalang.net.grpc.MessageUtils.getCallerTypeName;
  */
 public class ServiceStub {
     private String serviceName;
+    private String stubType = "blocking";
     private List<Method> unaryFunctions = new ArrayList<>();
     private List<Method> serverStreamingFunctions = new ArrayList<>();
     //both client streaming and bidirectional streaming have same client side behaviour.
@@ -63,6 +64,10 @@ public class ServiceStub {
 
     public List<Method> getClientStreamingFunctions() {
         return Collections.unmodifiableList(clientStreamingFunctions);
+    }
+
+    public Map<String, String> getCallerMap() {
+        return Collections.unmodifiableMap(callerMap);
     }
 
     /**
