@@ -35,9 +35,9 @@ import org.ballerinalang.net.grpc.Status;
 import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.exception.GrpcClientException;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
-import org.ballerinalang.net.grpc.stubs.Stub;
 import org.ballerinalang.net.grpc.stubs.DefaultStreamObserver;
 import org.ballerinalang.net.grpc.stubs.NonBlockingStub;
+import org.ballerinalang.net.grpc.stubs.Stub;
 import org.ballerinalang.net.http.HttpConnectionManager;
 import org.ballerinalang.net.http.HttpConstants;
 import org.ballerinalang.net.http.HttpUtil;
@@ -78,10 +78,11 @@ public class FunctionUtils extends AbstractExecute {
     /**
      * Extern function to initialize global connection pool.
      *
-     * @param endpointObject client endpoint instance.
+     * @param endpointObject   client endpoint instance.
      * @param globalPoolConfig global pool configuration.
      */
     public static void externInitGlobalPool(BObject endpointObject, BMap<BString, Long> globalPoolConfig) {
+
         PoolConfiguration globalPool = new PoolConfiguration();
         populatePoolingConfig(globalPoolConfig, globalPool);
         ConnectionManager connectionManager = new ConnectionManager(globalPool);
@@ -91,15 +92,16 @@ public class FunctionUtils extends AbstractExecute {
     /**
      * Extern function to initialize client endpoint.
      *
-     * @param clientEndpoint client endpoint instance.
-     * @param urlString service Url.
+     * @param clientEndpoint       client endpoint instance.
+     * @param urlString            service Url.
      * @param clientEndpointConfig endpoint configuration.
-     * @param globalPoolConfig global pool configuration.
+     * @param globalPoolConfig     global pool configuration.
      * @return Error if there is an error while initializing the client endpoint, else returns nil
      */
     @SuppressWarnings("unchecked")
     public static Object externInit(BObject clientEndpoint, BString urlString,
                                     BMap clientEndpointConfig, BMap globalPoolConfig) {
+
         HttpConnectionManager connectionManager = HttpConnectionManager.getInstance();
         URL url;
         try {
@@ -147,13 +149,14 @@ public class FunctionUtils extends AbstractExecute {
      * Extern function to initialize client stub.
      *
      * @param genericEndpoint generic client endpoint instance.
-     * @param clientEndpoint generated client endpoint instance.
-     * @param rootDescriptor service descriptor.
-     * @param descriptorMap dependent descriptor map.
+     * @param clientEndpoint  generated client endpoint instance.
+     * @param rootDescriptor  service descriptor.
+     * @param descriptorMap   dependent descriptor map.
      * @return Error if there is an error while initializing the stub, else returns nil
      */
     public static Object externInitStub(BObject genericEndpoint, BObject clientEndpoint, BString rootDescriptor,
                                         BMap<BString, Object> descriptorMap) {
+
         HttpClientConnector clientConnector = (HttpClientConnector) genericEndpoint.getNativeData(CLIENT_CONNECTOR);
         String urlString = (String) genericEndpoint.getNativeData(ENDPOINT_URL);
 
@@ -181,13 +184,14 @@ public class FunctionUtils extends AbstractExecute {
      * Extern function to perform blocking call for the gRPC client.
      *
      * @param clientEndpoint client endpoint instance.
-     * @param methodName remote method name.
-     * @param payloadBValue request payload.
+     * @param methodName     remote method name.
+     * @param payloadBValue  request payload.
      * @return Error if there is an error while calling remote method, else returns response message.
      */
     @SuppressWarnings("unchecked")
     public static Object externExecuteSimpleRPC(Environment env, BObject clientEndpoint, BString methodName,
-                                               Object payloadBValue) {
+                                                Object payloadBValue) {
+
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC client connector " +
                     "is not initialized properly");
@@ -212,7 +216,7 @@ public class FunctionUtils extends AbstractExecute {
 
         com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
                 .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
-                        : null;
+                : null;
         if (methodDescriptor == null) {
             return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
         }
@@ -240,16 +244,17 @@ public class FunctionUtils extends AbstractExecute {
     }
 
     /**
-     * Extern function to perform non blocking call for the gRPC client.
+     * Extern function to perform server streaming call for the gRPC client.
      *
      * @param clientEndpoint client endpoint instance.
-     * @param methodName remote method name.
-     * @param payload request payload.
+     * @param methodName     remote method name.
+     * @param payload        request payload.
      * @return Error if there is an error while initializing the stub, else returns a BStream object.
      */
     @SuppressWarnings("unchecked")
     public static Object externExecuteServerStreaming(Environment env, BObject clientEndpoint, BString methodName,
-                                                  Object payload) {
+                                                      Object payload) {
+
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector is " +
                     "not initialized properly");
@@ -291,13 +296,116 @@ public class FunctionUtils extends AbstractExecute {
     }
 
     /**
+     * Extern function to perform client streaming call for the gRPC client.
+     *
+     * @param env            Ballerina environment.
+     * @param clientEndpoint client endpoint instance.
+     * @param methodName     remote method name.
+     * @return Error if there is an error while initializing the stub, else returns nil
+     */
+    @SuppressWarnings("unchecked")
+    public static Object externExecuteClientStreaming(Environment env, BObject clientEndpoint, BString methodName) {
+
+        if (clientEndpoint == null) {
+            return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector " +
+                    "is not initialized properly");
+        }
+
+        Object connectionStub = clientEndpoint.getNativeData(SERVICE_STUB);
+        if (connectionStub == null) {
+            return notifyErrorReply(INTERNAL, "Error while getting connection stub. gRPC Client connector is " +
+                    "not initialized properly");
+        }
+
+        if (methodName == null) {
+            return notifyErrorReply(INTERNAL, "Error while processing the request. RPC endpoint doesn't " +
+                    "set properly");
+        }
+
+        Map<String, MethodDescriptor> methodDescriptors = (Map<String, MethodDescriptor>) clientEndpoint.getNativeData
+                (METHOD_DESCRIPTORS);
+        if (methodDescriptors == null) {
+            return notifyErrorReply(INTERNAL, "Error while processing the request. method descriptors " +
+                    "doesn't set properly");
+        }
+
+        com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
+                .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
+                : null;
+        if (methodDescriptor == null) {
+            return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
+        }
+
+        try {
+            Stub stub = (Stub) connectionStub;
+            DataContext context = new DataContext(env, null);
+            return stub.executeClientStreaming(methodDescriptors.get(methodName.getValue()), context);
+        } catch (Exception e) {
+            return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
+        }
+
+    }
+
+    /**
+     * Extern function to perform streaming call for the gRPC client.
+     *
+     * @param env            Ballerina environment.
+     * @param clientEndpoint client endpoint instance.
+     * @param methodName     remote method name.
+     * @return Error if there is an error while initializing the stub, else returns nil
+     */
+    @SuppressWarnings("unchecked")
+    public static Object externExecuteBidirectionalStreaming(Environment env, BObject clientEndpoint,
+                                                             BString methodName) {
+
+        if (clientEndpoint == null) {
+            return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector " +
+                    "is not initialized properly");
+        }
+
+        Object connectionStub = clientEndpoint.getNativeData(SERVICE_STUB);
+        if (connectionStub == null) {
+            return notifyErrorReply(INTERNAL, "Error while getting connection stub. gRPC Client connector is " +
+                    "not initialized properly");
+        }
+
+        if (methodName == null) {
+            return notifyErrorReply(INTERNAL, "Error while processing the request. RPC endpoint doesn't " +
+                    "set properly");
+        }
+
+        Map<String, MethodDescriptor> methodDescriptors = (Map<String, MethodDescriptor>) clientEndpoint.getNativeData
+                (METHOD_DESCRIPTORS);
+        if (methodDescriptors == null) {
+            return notifyErrorReply(INTERNAL, "Error while processing the request. method descriptors " +
+                    "doesn't set properly");
+        }
+
+        com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
+                .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
+                : null;
+        if (methodDescriptor == null) {
+            return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
+        }
+
+        try {
+            Stub stub = (Stub) connectionStub;
+            DataContext context = new DataContext(env, null);
+            return stub.executeBidirectionalStreaming(methodDescriptors.get(methodName.getValue()), context);
+        } catch (Exception e) {
+            return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
+        }
+
+    }
+
+    /**
      * Extern function to perform non blocking call for the gRPC client.
      *
-     * @param clientEndpoint client endpoint instance.
-     * @param methodName remote method name.
-     * @param payload request payload.
+     * @param clientEndpoint  client endpoint instance.
+     * @param methodName      remote method name.
+     * @param payload         request payload.
      * @param callbackService response callback listener service.
-     * @param headerValues custom metadata to send with the request.
+     * @param headerValues    custom metadata to send with the request.
      * @return Error if there is an error while initializing the stub, else returns nil
      */
     @SuppressWarnings("unchecked")
@@ -328,7 +436,7 @@ public class FunctionUtils extends AbstractExecute {
 
         com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
                 .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
-                        : null;
+                : null;
         if (methodDescriptor == null) {
             return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
         }
@@ -373,15 +481,16 @@ public class FunctionUtils extends AbstractExecute {
     /**
      * Extern function to perform streaming call for the gRPC client.
      *
-     * @param clientEndpoint client endpoint instance.
-     * @param methodName remote method name.
+     * @param clientEndpoint  client endpoint instance.
+     * @param methodName      remote method name.
      * @param callbackService response callback listener service.
-     * @param headerValues custom metadata to send with the request.
+     * @param headerValues    custom metadata to send with the request.
      * @return Error if there is an error while initializing the stub, else returns nil
      */
     @SuppressWarnings("unchecked")
     public static Object externStreamingExecute(Environment env, BObject clientEndpoint, BString methodName,
                                                 BObject callbackService, Object headerValues) {
+
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector " +
                     "is not initialized properly");
@@ -407,7 +516,7 @@ public class FunctionUtils extends AbstractExecute {
 
         com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
                 .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
-                        : null;
+                : null;
         if (methodDescriptor == null) {
             return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
         }

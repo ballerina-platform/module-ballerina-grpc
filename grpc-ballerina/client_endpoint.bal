@@ -70,9 +70,9 @@ public client class Client {
         return externExecuteSimpleRPC(self, methodID, payload);
     }
 
-    # Calls when a server streamin call with a gRPC service.
+    # Calls when executing a server streaming call with a gRPC service.
     # ```ballerina
-    # grpc:Error? result = grpcClient->executeServerStreaming("HelloWorld/hello", req);
+    # stream<anydata>|grpc:Error result = grpcClient->executeServerStreaming("HelloWorld/hello", req);
     # ```
     #
     # + methodID - Remote service method ID
@@ -80,6 +80,29 @@ public client class Client {
     # + return - A `stream<anydata>` or a `grpc:Error` when an error occurs while sending the request
     isolated remote function executeServerStreaming(string methodID, anydata payload) returns stream<anydata>|Error {
          return externExecuteServerStreaming(self, methodID, payload);
+    }
+
+    # Calls when executing a client streaming call with a gRPC service.
+    # ```ballerina
+    # grpc:StreamingClient|grpc:Error result = grpcClient->executeClientStreaming("HelloWorld/hello");
+    # ```
+    #
+    # + methodID - Remote service method ID
+    # + return - A `grpc:StreamingClient` object or a `grpc:Error` when an error occurs
+    isolated remote function executeClientStreaming(string methodID) returns StreamingClient|Error {
+        return externExecuteClientStreaming(self, methodID);
+    }
+
+
+    # Calls when executing a bi-directional streaming call with a gRPC service.
+    # ```ballerina
+    # grpc:StreamingClient|grpc:Error result = grpcClient->executeClientStreaming("HelloWorld/hello", req);
+    # ```
+    #
+    # + methodID - Remote service method ID
+    # + return - A `grpc:StreamingClient` object or a `grpc:Error` when an error occurs
+    isolated remote function executeBidirectionalStreaming(string methodID) returns StreamingClient|Error {
+        return externExecuteBidirectionalStreaming(self, methodID);
     }
 
     # Calls when executing a non-blocking call with a gRPC service.
@@ -164,6 +187,16 @@ isolated function externExecuteSimpleRPC(Client clientEndpoint, string methodID,
 
 isolated function externExecuteServerStreaming(Client clientEndpoint, string methodID, anydata payload)
                 returns stream<anydata>|Error = @java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+} external;
+
+isolated function externExecuteClientStreaming(Client clientEndpoint, string methodID)
+               returns StreamingClient|Error = @java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+} external;
+
+isolated function externExecuteBidirectionalStreaming(Client clientEndpoint, string methodID)
+               returns StreamingClient|Error = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 

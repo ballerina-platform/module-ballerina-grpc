@@ -51,6 +51,16 @@ public client class StreamingClient {
     isolated remote function sendError(int statusCode, string message) returns Error? {
         return streamSendError(self, statusCode, message);
     }
+
+    # Used to receive the server response only in client streaming and bidirectional streaming.
+    # ```ballerina
+    # anydata?|stream<anydata> result = streamingClient->receive();
+    # ```
+    #
+    # + return - An `anydata` value in client streaming and a `stream<anydata>` in bidirectional streaming
+    isolated remote function receive() returns anydata?|stream<anydata> {
+        return externReceive(self);
+    }
 }
 
 isolated function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
@@ -64,6 +74,11 @@ isolated function streamComplete(StreamingClient streamConnection) returns Error
 } external;
 
 isolated function streamSendError(StreamingClient streamConnection, int statusCode, string message) returns Error? =
+@java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+} external;
+
+isolated function externReceive(StreamingClient streamConnection) returns anydata?|stream<anydata> =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;

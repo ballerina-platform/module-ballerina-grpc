@@ -23,18 +23,18 @@ import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.netty.handler.codec.http.HttpHeaders;
+import org.ballerinalang.net.grpc.CallStreamObserver;
 import org.ballerinalang.net.grpc.ClientCall;
 import org.ballerinalang.net.grpc.DataContext;
+import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
-import org.ballerinalang.net.grpc.MethodDescriptor;
 import org.ballerinalang.net.grpc.MessageUtils;
+import org.ballerinalang.net.grpc.MethodDescriptor;
 import org.ballerinalang.net.grpc.Status;
 import org.ballerinalang.net.transport.contract.HttpClientConnector;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import org.ballerinalang.net.grpc.GrpcConstants;
 
 /**
  * This class handles Blocking client connection.
@@ -57,8 +57,7 @@ public class Stub extends AbstractStub {
      */
     public void executeUnary(Message request, MethodDescriptor methodDescriptor,
                              DataContext dataContext) throws Exception {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request
-                .getHeaders()), methodDescriptor, dataContext);
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor, dataContext);
         call.start(new UnaryCallListener(dataContext));
         try {
             call.sendMessage(request);
@@ -69,7 +68,7 @@ public class Stub extends AbstractStub {
     }
 
     /**
-     * Executes server streaming non blocking call.
+     * Executes server streaming blocking call.
      *
      * @param request  request message.
      * @param methodDescriptor method descriptor.
@@ -78,7 +77,7 @@ public class Stub extends AbstractStub {
      */
     public Object executeServerStreaming(Message request, MethodDescriptor methodDescriptor,
                                          DataContext context) throws Exception {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(),
                 methodDescriptor, context);
         Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(true);
         call.start(streamingCallListener);
@@ -94,6 +93,52 @@ public class Stub extends AbstractStub {
         streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, messageQueue);
         return ValueCreator.createStreamValue(TypeCreator.createStreamType(PredefinedTypes.TYPE_ANYDATA),
                 streamIterator);
+    }
+
+    /**
+     * Executes client streaming blocking call.
+     *
+     * @param methodDescriptor method descriptor.
+     * @param context Data Context.
+     */
+    public BObject executeClientStreaming(MethodDescriptor methodDescriptor, DataContext context) {
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor, context);
+        ClientCallStreamObserver streamObserver = new ClientCallStreamObserver(call);
+        Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(false);
+        call.start(streamingCallListener);
+
+        BObject streamingConnection = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+                GrpcConstants.STREAMING_CLIENT);
+        streamingConnection.addNativeData(GrpcConstants.REQUEST_SENDER, streamObserver);
+        streamingConnection.addNativeData(GrpcConstants.REQUEST_MESSAGE_DEFINITION,
+                methodDescriptor.getSchemaDescriptor().getInputType());
+
+        streamingConnection.addNativeData(GrpcConstants.MESSAGE_QUEUE, streamingCallListener.getMessageQueue());
+        streamingConnection.addNativeData(GrpcConstants.IS_BIDI_STREAMING, false);
+        return streamingConnection;
+    }
+
+    /**
+     * Executes bidirectional streaming blocking call.
+     *
+     * @param methodDescriptor method descriptor.
+     * @param context Data Context.
+     */
+    public BObject executeBidirectionalStreaming(MethodDescriptor methodDescriptor, DataContext context) {
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor, context);
+        ClientCallStreamObserver streamObserver = new ClientCallStreamObserver(call);
+        Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(true);
+        call.start(streamingCallListener);
+
+        BObject streamingConnection = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+                GrpcConstants.STREAMING_CLIENT);
+        streamingConnection.addNativeData(GrpcConstants.REQUEST_SENDER, streamObserver);
+        streamingConnection.addNativeData(GrpcConstants.REQUEST_MESSAGE_DEFINITION,
+                methodDescriptor.getSchemaDescriptor().getInputType());
+
+        streamingConnection.addNativeData(GrpcConstants.MESSAGE_QUEUE, streamingCallListener.getMessageQueue());
+        streamingConnection.addNativeData(GrpcConstants.IS_BIDI_STREAMING, true);
+        return streamingConnection;
     }
 
     /**
@@ -179,11 +224,51 @@ public class Stub extends AbstractStub {
 
         @Override
         public void onClose(Status status, HttpHeaders trailers) {
-            messageQueue.add(new Message(GrpcConstants.COMPLETED_MESSAGE, null));
+            if (status.isOk()) {
+                messageQueue.add(new Message(GrpcConstants.COMPLETED_MESSAGE, null));
+            } else {
+                messageQueue.add(new Message(status.asRuntimeException()));
+            }
         }
 
         public BlockingQueue<Message> getMessageQueue() {
             return messageQueue;
         }
+    }
+
+    private static final class ClientCallStreamObserver implements CallStreamObserver {
+
+        private final ClientCall call;
+
+        // Non private to avoid synthetic class
+        ClientCallStreamObserver(ClientCall call) {
+            this.call = call;
+        }
+
+        @Override
+        public void onNext(Message value) {
+            call.sendMessage(value);
+        }
+
+        @Override
+        public void onError(Message error) {
+            call.cancel("Cancelled by client with StreamObserver.onError()", error.getError());
+        }
+
+        @Override
+        public void onCompleted() {
+            call.halfClose();
+        }
+
+        @Override
+        public boolean isReady() {
+            return call.isReady();
+        }
+
+        @Override
+        public void setMessageCompression(boolean enable) {
+            call.setMessageCompression(enable);
+        }
+
     }
 }

@@ -49,8 +49,7 @@ public class NonBlockingStub extends AbstractStub {
      */
     public void executeServerStreaming(Message request, StreamObserver responseObserver,
                                        MethodDescriptor methodDescriptor, DataContext context) throws Exception {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
-                methodDescriptor, context);
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor, context);
         call.start(new NonblockingCallListener(responseObserver, true));
         try {
             call.sendMessage(request);
@@ -74,7 +73,7 @@ public class NonBlockingStub extends AbstractStub {
                                                  StreamObserver responseObserver,
                                                  MethodDescriptor methodDescriptor,
                                                  DataContext context) {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(requestHeaders), methodDescriptor,
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor,
                 context);
         ClientCallStreamObserver streamObserver = new ClientCallStreamObserver(call);
         call.start(new NonblockingCallListener(responseObserver, false));
@@ -92,7 +91,7 @@ public class NonBlockingStub extends AbstractStub {
      */
     public void executeUnary(Message request, StreamObserver responseObserver,
                                            MethodDescriptor methodDescriptor, DataContext context) throws Exception {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(),
                 methodDescriptor, context);
         call.start(new NonblockingCallListener(responseObserver, false));
         try {
@@ -115,7 +114,7 @@ public class NonBlockingStub extends AbstractStub {
      */
     public StreamObserver executeBidiStreaming(HttpHeaders requestHeaders, StreamObserver responseObserver,
                                                MethodDescriptor methodDescriptor, DataContext context) {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(requestHeaders), methodDescriptor,
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor,
                 context);
         ClientCallStreamObserver streamObserver = new ClientCallStreamObserver(call);
         call.start(new NonblockingCallListener(responseObserver, true));
