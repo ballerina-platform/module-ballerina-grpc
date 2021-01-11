@@ -23,7 +23,6 @@ import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +53,7 @@ public final class ServerServiceDefinition {
     private ServerServiceDefinition(
             ServiceDescriptor serviceDescriptor, Map<String, ServerMethodDefinition> methods) {
         this.serviceDescriptor = serviceDescriptor;
-        this.methods = Collections.unmodifiableMap(new HashMap<>(methods));
+        this.methods = Map.copyOf(methods);
     }
 
     /**

@@ -18,8 +18,10 @@
 package org.ballerinalang.net.grpc.listener;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObservabilityConstants;
@@ -44,6 +46,7 @@ import java.util.Map;
 import static org.ballerinalang.net.grpc.GrpcConstants.CALLER_ID;
 import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
 import static org.ballerinalang.net.grpc.GrpcConstants.ON_MESSAGE_METADATA;
+import static org.ballerinalang.net.grpc.MessageUtils.getCallerTypeName;
 import static org.ballerinalang.net.grpc.MessageUtils.getHeaderObject;
 import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -140,16 +143,22 @@ public abstract class ServerCallHandler {
     /**
      * Returns endpoint instance which is used to respond to the caller.
      *
+     * @param resource service resource.
      * @param responseObserver client responder instance.
      * @return instance of endpoint type.
      */
-    BObject getConnectionParameter(StreamObserver responseObserver) {
+    BObject getConnectionParameter(ServiceResource resource, StreamObserver responseObserver) {
         // generate client responder struct on request message with response observer and response msg type.
         BObject clientEndpoint = ValueCreator.createObjectValue(getModule(), GrpcConstants.CALLER);
         clientEndpoint.set(CALLER_ID, responseObserver.hashCode());
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_OBSERVER, responseObserver);
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_MESSAGE_DEFINITION, methodDescriptor.getOutputType());
-        return clientEndpoint;
+        String serviceName = resource.getServiceName();
+        Type returnType = resource.getCallerReturnType() instanceof ArrayType ?
+                ((ArrayType) resource.getCallerReturnType()).getElementType() : resource.getCallerReturnType();
+        String outputType = returnType != PredefinedTypes.TYPE_NULL ? returnType.getName() : null;
+        return ValueCreator.createObjectValue(resource.getService().getType().getPackage(),
+                getCallerTypeName(serviceName, outputType), clientEndpoint);
     }
 
     /**

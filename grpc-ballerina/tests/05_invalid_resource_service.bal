@@ -21,13 +21,13 @@ listener Listener ep5 = new (9095);
     descriptor: ROOT_DESCRIPTOR_5,
     descMap: getDescriptorMap5()
 }
-service /HelloWorld98 on ep5 {
-    isolated remote function hello(Caller caller, string name) {
+service "HelloWorld98" on ep5 {
+    isolated remote function hello(HelloWorld98StringCaller caller, string name) {
         log:print("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
         if (name == "invalid") {
-            err = caller->sendError(ABORTED, "Operation aborted");
+            err = caller->sendError(error AbortedError("Operation aborted"));
         } else {
             err = caller->send(message);
         }
@@ -37,7 +37,7 @@ service /HelloWorld98 on ep5 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testInt(Caller caller, string age) {
+    isolated remote function testInt(HelloWorld98IntCaller caller, string age) {
         log:print("age: " + age);
         int displayAge = 0;
         if (age == "") {
@@ -64,6 +64,54 @@ service /HelloWorld98 on ep5 {
             log:print("net salary : " + netSalary);
         }
         checkpanic caller->complete();
+    }
+}
+
+public client class HelloWorld98StringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld98IntCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(int response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

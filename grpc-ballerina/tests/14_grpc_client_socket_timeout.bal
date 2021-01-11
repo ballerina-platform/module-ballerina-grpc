@@ -21,9 +21,9 @@ import ballerina/runtime;
     descriptor: ROOT_DESCRIPTOR_14,
     descMap: getDescriptorMap14()
 }
-service /HelloWorld14 on new Listener(9104) {
+service "HelloWorld14" on new Listener(9104) {
 
-    isolated remote function hello (Caller caller, string name,
+    isolated remote function hello (HelloWorld14StringCaller caller, string name,
                              Headers headers) {
         string message = "Hello " + name;
         runtime:sleep(2000);
@@ -35,6 +35,30 @@ service /HelloWorld14 on new Listener(9104) {
 
         // Sends `completed` notification to caller.
         checkpanic caller->complete();
+    }
+}
+
+public client class HelloWorld14StringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

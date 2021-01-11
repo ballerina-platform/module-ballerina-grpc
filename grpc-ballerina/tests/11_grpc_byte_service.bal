@@ -22,10 +22,34 @@ listener Listener ep11 = new (9101, {
     descriptor: ROOT_DESCRIPTOR_11,
     descMap: getDescriptorMap11()
 }
-service /byteService on ep11 {
-    isolated remote function checkBytes(Caller caller, byte[] value) {
+service "byteService" on ep11 {
+    isolated remote function checkBytes(ByteServiceByteCaller caller, byte[] value) {
         checkpanic caller->send(value);
         checkpanic caller->complete();
+    }
+}
+
+public client class ByteServiceByteCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(byte[] response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

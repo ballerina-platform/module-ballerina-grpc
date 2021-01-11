@@ -1,7 +1,10 @@
+{{#if stubList}}import ballerina/grpc;{{/if}}
 {{#each messageMap}}
 {{> message}}{{/each}}
 {{#enumList}}
-{{> enum}}{{/enumList}}{{#if rootDescriptor}}
+{{> enum}}{{/enumList}}
+{{#stubList}}{{#each callerMap}}
+{{>caller}}{{/each}}{{/stubList}}{{#if rootDescriptor}}
 const string ROOT_DESCRIPTOR = "{{rootDescriptor}}";
 isolated function getDescriptorMap() returns map<string> {
     return {

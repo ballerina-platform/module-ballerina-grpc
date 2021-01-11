@@ -18,12 +18,36 @@
     descriptor: ROOT_DESCRIPTOR_13,
     descMap: getDescriptorMap13()
 }
-service /HelloWorld13 on new Listener(9103) {
+service "HelloWorld13" on new Listener(9103) {
 
-    isolated remote function hello (Caller caller, string name,
+    isolated remote function hello (HelloWorld13StringCaller caller, string name,
                              Headers headers) returns error? {
 
         return error("Details");
+    }
+}
+
+public client class HelloWorld13StringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

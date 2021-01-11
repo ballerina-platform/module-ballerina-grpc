@@ -24,9 +24,9 @@ listener Listener ep2 = new (9092, {
     descriptor: ROOT_DESCRIPTOR_2,
     descMap: getDescriptorMap2()
 }
-service /HelloWorld3 on ep2 {
+service "HelloWorld3" on ep2 {
 
-    isolated remote function testIntArrayInput(Caller caller, TestInt req) {
+    isolated remote function testIntArrayInput(HelloWorld3IntCaller caller, TestInt req) {
         io:println(req);
         int[] numbers = req.values;
         int result = 0;
@@ -42,7 +42,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testStringArrayInput(Caller caller, TestString req) {
+    isolated remote function testStringArrayInput(HelloWorld3StringCaller caller, TestString req) {
         io:println(req);
         string[] values = req.values;
         string result = "";
@@ -58,7 +58,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testFloatArrayInput(Caller caller, TestFloat req) {
+    isolated remote function testFloatArrayInput(HelloWorld3FloatCaller caller, TestFloat req) {
         io:println(req);
         float[] values = req.values;
         float result = 0.0;
@@ -74,7 +74,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testBooleanArrayInput(Caller caller, TestBoolean req) {
+    isolated remote function testBooleanArrayInput(HelloWorld3BooleanCaller caller, TestBoolean req) {
         io:println(req);
         boolean[] values = req.values;
         boolean result = false;
@@ -90,7 +90,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testStructArrayInput(Caller caller, TestStruct req) {
+    isolated remote function testStructArrayInput(HelloWorld3StringCaller caller, TestStruct req) {
         io:println(req);
         A[] values = req.values;
         string result = "";
@@ -106,7 +106,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testIntArrayOutput(Caller caller) {
+    isolated remote function testIntArrayOutput(HelloWorld3TestIntCaller caller) {
         TestInt intArray = {values:[1, 2, 3, 4, 5]};
         Error? err = caller->send(intArray);
         if (err is Error) {
@@ -117,7 +117,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testStringArrayOutput(Caller caller) {
+    isolated remote function testStringArrayOutput(HelloWorld3TestStringCaller caller) {
         TestString stringArray = {values:["A", "B", "C"]};
         Error? err = caller->send(stringArray);
         if (err is Error) {
@@ -128,7 +128,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testFloatArrayOutput(Caller caller) {
+    isolated remote function testFloatArrayOutput(HelloWorld3TestFloatCaller caller) {
         TestFloat floatArray = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
         Error? err = caller->send(floatArray);
         if (err is Error) {
@@ -139,7 +139,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testBooleanArrayOutput(Caller caller) {
+    isolated remote function testBooleanArrayOutput(HelloWorld3TestBooleanCaller caller) {
         TestBoolean booleanArray = {values:[true, false, true]};
         Error? err = caller->send(booleanArray);
         if (err is Error) {
@@ -150,7 +150,7 @@ service /HelloWorld3 on ep2 {
         checkpanic caller->complete();
     }
 
-    isolated remote function testStructArrayOutput(Caller caller) {
+    isolated remote function testStructArrayOutput(HelloWorld3TestStructCaller caller) {
         A a1 = {name:"Sam"};
         A a2 = {name:"John"};
         TestStruct structArray = {values:[a1, a2]};
@@ -161,6 +161,186 @@ service /HelloWorld3 on ep2 {
             io:println(structArray);
         }
         checkpanic caller->complete();
+    }
+}
+
+public client class HelloWorld3IntCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(int response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3StringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3FloatCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(float response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3BooleanCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(boolean response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3TestIntCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(TestInt response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3TestStringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(TestString response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3TestFloatCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(TestFloat response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3TestBooleanCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(TestBoolean response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3TestStructCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(TestStruct response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

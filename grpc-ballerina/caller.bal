@@ -75,12 +75,11 @@ public client class Caller {
     # grpc:Error? result = caller->sendError(grpc:ABORTED, "Operation aborted", headers);
     # ```
     #
-    # + statusCode - Error status code
-    # + message - Error message
+    # + err - Error instance.
     # + headers - Optional headers parameter. The header values are passed only if needed. The default value is `()`
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    isolated remote function sendError(int statusCode, string message, Headers? headers = ()) returns Error? {
-        return externSendError(self, statusCode, message, headers);
+    isolated remote function sendError(Error err, Headers? headers = ()) returns Error? {
+        return externSendError(self, err, headers);
     }
 }
 
@@ -99,7 +98,7 @@ isolated function externIsCancelled(Caller endpointClient) returns boolean =
     'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;
 
-isolated function externSendError(Caller endpointClient, int statusCode, string message, Headers? headers) returns Error? =
+isolated function externSendError(Caller endpointClient, Error err, Headers? headers) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;

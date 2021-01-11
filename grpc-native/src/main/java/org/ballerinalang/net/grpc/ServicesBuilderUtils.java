@@ -83,7 +83,7 @@ public class ServicesBuilderUtils {
 
     private static String getServiceName(Object servicePath) throws GrpcServerException {
 
-        String serviceName = null;
+        String serviceName;
         if (servicePath == null) {
             throw new GrpcServerException("Invalid service path. Service path cannot be nil");
         }
@@ -131,7 +131,8 @@ public class ServicesBuilderUtils {
 
             for (MethodType function : service.getType().getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
-                    mappedResource = new ServiceResource(runtime, service, function);
+                    mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
+                            getBallerinaValueType(service.getType().getPackage(), responseDescriptor.getName()));
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
                             getResourceInputParameterType(function)));
                 }
@@ -213,7 +214,7 @@ public class ServicesBuilderUtils {
                 descMap = (BMap<BString, BString>) service.getMapValue(
                         StringUtils.fromString("descMap"));
             }
-            if (descriptorData == null && descMap == null) {
+            if (descriptorData == null || descMap == null) {
                 return null;
             }
             return getFileDescriptor(descriptorData, descMap);
@@ -267,7 +268,7 @@ public class ServicesBuilderUtils {
      * @param sDescriptor hexadecimal string value
      * @return Byte array
      */
-    public static byte[] hexStringToByteArray(String sDescriptor) {
+    static byte[] hexStringToByteArray(String sDescriptor) {
 
         if (sDescriptor == null) {
             return new byte[0];

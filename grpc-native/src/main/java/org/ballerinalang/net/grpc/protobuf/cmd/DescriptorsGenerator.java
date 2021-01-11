@@ -110,11 +110,11 @@ class DescriptorsGenerator {
                     }
                     dependentDescSet.add(dependentDesc);
                 } catch (IOException e) {
-                    throw new CodeGeneratorException("Error extracting dependent bal.", e);
+                    throw new CodeGeneratorException("Error extracting dependent bal. " + e.getMessage(), e);
                 }
             }
         } catch (IOException e) {
-            throw new CodeGeneratorException("Error parsing descriptor file " + initialFile, e);
+            throw new CodeGeneratorException("Error parsing descriptor file " + initialFile + ". " + e.getMessage(), e);
         }
         return dependentDescSet;
     }
@@ -139,7 +139,8 @@ class DescriptorsGenerator {
                 return set.getFile(0).toByteArray();
             }
         } catch (IOException e) {
-            throw new CodeGeneratorException("Error reading generated descriptor file '" + descriptorPath + "'.", e);
+            throw new CodeGeneratorException("Error reading generated descriptor file '"
+                    + descriptorPath + "'. " + e.getMessage(), e);
         }
         return new byte[0];
     }

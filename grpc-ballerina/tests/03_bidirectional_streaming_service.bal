@@ -33,16 +33,16 @@ listener Listener ep3 = new (9093, {
       }
   });
 
-@tainted map<Caller> connectionsMap = {};
+@tainted map<ChatStringCaller> connectionsMap = {};
 boolean initialized = false;
 
 @ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_3,
     descMap: getDescriptorMap3()
 }
-service /Chat on ep3 {
+service "Chat" on ep3 {
 
-    remote function chat(Caller caller, stream<ChatMessage, error> clientStream) {
+    remote function chat(ChatStringCaller caller, stream<ChatMessage, error> clientStream) {
         log:print(string `${caller.getId()} connected to chat`);
         connectionsMap[caller.getId().toString()] = caller;
         log:print("Client registration completed. Connection map status");
@@ -50,7 +50,7 @@ service /Chat on ep3 {
         log:print(connectionsMap.toString());
         initialized = true;
         error? e = clientStream.forEach(function(ChatMessage chatMsg) {
-            Caller conn;
+            ChatStringCaller conn;
             string msg = string `${chatMsg.name}: ${chatMsg.message}`;
             log:print("Server received message: " + msg);
             int waitCount = 0;
@@ -83,7 +83,7 @@ service /Chat on ep3 {
             log:print("Map length: " + connectionsMap.length().toString());
             log:print(connectionsMap.toString());
             foreach var [callerId, connection] in connectionsMap.entries() {
-                Caller conn;
+                ChatStringCaller conn;
                 conn = connection;
                 Error? err = conn->send(msg);
                 if (err is Error) {
@@ -95,6 +95,30 @@ service /Chat on ep3 {
         } else if (e is error) {
             log:printError("Error from Connector: " + e.message());
         }
+    }
+}
+
+public client class ChatStringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

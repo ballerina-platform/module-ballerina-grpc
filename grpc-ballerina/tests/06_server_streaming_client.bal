@@ -22,7 +22,7 @@ import ballerina/test;
 int msgCount = 0;
 boolean eof = false;
 
-@test:Config {}
+@test:Config {enable:true}
 function testReceiveStreamingResponse() {
     string name = "WSO2";
     // Client endpoint configuration

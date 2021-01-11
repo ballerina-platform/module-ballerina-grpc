@@ -45,8 +45,8 @@ listener Listener ep9 = new (9099, {
     descriptor: ROOT_DESCRIPTOR_9,
     descMap: getDescriptorMap9()
 }
-service /HelloWorld85 on ep9 {
-    isolated remote function hello(Caller caller, string name) {
+service "HelloWorld85" on ep9 {
+    isolated remote function hello(HelloWorld85StringCaller caller, string name) {
         log:print("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->send(message);
@@ -56,6 +56,30 @@ service /HelloWorld85 on ep9 {
             log:print("Server send response : " + message);
         }
         checkpanic caller->complete();
+    }
+}
+
+public client class HelloWorld85StringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

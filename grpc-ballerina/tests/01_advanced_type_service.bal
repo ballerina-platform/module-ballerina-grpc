@@ -26,7 +26,7 @@ listener Listener ep = new (9091, {
 }
 service /HelloWorld on ep {
 
-    isolated remote function testInputNestedStruct(Caller caller, Person req) {
+    isolated remote function testInputNestedStruct(HelloWorldStringCaller caller, Person req) {
         io:println("name: " + req.name);
         string message = "Submitted name: " + req.name;
         io:println("Response message " + message);
@@ -37,7 +37,7 @@ service /HelloWorld on ep {
         checkpanic caller->complete();
     }
 
-    isolated remote function testOutputNestedStruct(Caller caller, string name) {
+    isolated remote function testOutputNestedStruct(HelloWorldPersonCaller caller, string name) {
         io:println("requested name: " + name);
         Person person = {name:"Sam", address:{postalCode:10300, state:"CA", country:"USA"}};
         io:println(person);
@@ -48,10 +48,9 @@ service /HelloWorld on ep {
         checkpanic caller->complete();
     }
 
-    isolated remote function testInputStructOutputStruct(Caller caller, StockRequest req) {
+    isolated remote function testInputStructOutputStruct(HelloWorldStockQuoteCaller caller, StockRequest req) {
         io:println("Getting stock details for symbol: " + req.name);
-        StockQuote res = {symbol:"WSO2", name:"WSO2.com", last:149.52, low:150.70, high:
-        149.18};
+        StockQuote res = {symbol:"WSO2", name:"WSO2.com", last:149.52, low:150.70, high:149.18};
         io:println(res);
         Error? err = caller->send(res);
         if (err is Error) {
@@ -60,7 +59,7 @@ service /HelloWorld on ep {
         checkpanic caller->complete();
     }
 
-    isolated remote function testInputStructNoOutput(Caller caller, StockQuote req) {
+    isolated remote function testInputStructNoOutput(HelloWorldNilCaller caller, StockQuote req) {
         io:println("Symbol: " + req.symbol);
         io:println("Name: " + req.name);
         io:println("Last: " + req.last.toString());
@@ -68,7 +67,7 @@ service /HelloWorld on ep {
         io:println("High: " + req.high.toString());
     }
 
-    isolated remote function testNoInputOutputStruct(Caller caller) {
+    isolated remote function testNoInputOutputStruct(HelloWorldStockQuotesCaller caller) {
         StockQuote res = {symbol:"WSO2", name:"WSO2 Inc.", last:14.0, low:15.0, high:16.0};
         StockQuote res1 = {symbol:"Google", name:"Google Inc.", last:100.0, low:101.0, high:102.0};
         StockQuotes quotes = {stock:[res, res1]};
@@ -80,7 +79,7 @@ service /HelloWorld on ep {
         checkpanic caller->complete();
     }
 
-    isolated remote function testNoInputOutputArray(Caller caller) {
+    isolated remote function testNoInputOutputArray(HelloWorldStockNamesCaller caller) {
         string[] names = ["WSO2", "Google"];
         StockNames stockNames = {names:names};
         Error? err = caller->send(stockNames);
@@ -88,6 +87,122 @@ service /HelloWorld on ep {
             io:println("Error from Connector: " + err.message());
         }
         checkpanic caller->complete();
+    }
+}
+
+public client class HelloWorldStringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorldPersonCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(Person response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorldStockQuoteCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(StockQuote response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorldNilCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorldStockQuotesCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(StockQuotes response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorldStockNamesCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    isolated remote function send(StockNames response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

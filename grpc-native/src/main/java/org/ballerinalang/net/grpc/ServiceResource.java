@@ -23,8 +23,6 @@ import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.ballerinalang.net.grpc.MessageUtils.headersRequired;
@@ -37,17 +35,22 @@ import static org.ballerinalang.net.grpc.MessageUtils.headersRequired;
 public class ServiceResource {
 
     private final BObject service;
+    private final String serviceName;
     private final String functionName;
     private final Type[] paramTypes;
     private final boolean headerRequired;
     private final Runtime runtime;
     private final Type returnType;
+    private final Type callerReturnType;
 
-    public ServiceResource(Runtime runtime, BObject service, MethodType function) {
+    public ServiceResource(Runtime runtime, BObject service, String serviceName, MethodType function,
+                           Type callerReturnType) {
         this.service = service;
+        this.serviceName = serviceName;
         this.functionName = function.getName();
         this.paramTypes = function.getParameterTypes();
         this.returnType = function.getReturnType();
+        this.callerReturnType = callerReturnType;
         this.headerRequired = headersRequired(function);
         this.runtime = runtime;
     }
@@ -57,7 +60,7 @@ public class ServiceResource {
     }
 
     public List<Type> getParamTypes() {
-        return Collections.unmodifiableList(Arrays.asList(paramTypes));
+        return List.of(paramTypes);
     }
 
     public boolean isHeaderRequired() {
@@ -74,5 +77,13 @@ public class ServiceResource {
 
     public Type getReturnType() {
         return returnType;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public Type getCallerReturnType() {
+        return callerReturnType;
     }
 }

@@ -27,8 +27,8 @@ listener Listener retryListener = new (9112);
     descriptor: ROOT_DESCRIPTOR_22,
     descMap: getDescriptorMap22()
 }
-service /RetryService on retryListener {
-    remote function getResult(Caller caller, string value) {
+service "RetryService" on retryListener {
+    remote function getResult(RetryServiceStringCaller caller, string value) {
         // Identifying the client to maintain state to track retry attempts.
         if (clientName != value) {
             requestCount = 0;
@@ -37,12 +37,36 @@ service /RetryService on retryListener {
         requestCount += 1;
         io:println(clientName + ": Attetmpt No. " + requestCount.toString());
         if (requestCount < 4) {
-            var sendResult = caller->sendError(13, "Mocking Internal Error");
+            var sendResult = caller->sendError(error InternalError("Mocking Internal Error"));
             var completeResult = caller->complete();
         } else {
             var sendResult = caller->send("Total Attempts: " + requestCount.toString());
             var completeResult = caller->complete();
         }
+    }
+}
+
+public client class RetryServiceStringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

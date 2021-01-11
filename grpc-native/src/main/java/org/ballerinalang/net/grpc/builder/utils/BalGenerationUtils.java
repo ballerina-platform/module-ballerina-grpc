@@ -56,10 +56,13 @@ public class BalGenerationUtils {
                 return "float";
             }
             case ".google.protobuf.Int32Value":
+                return "'int:Signed32";
             case ".google.protobuf.Int64Value":
-            case ".google.protobuf.UInt64Value":
-            case ".google.protobuf.UInt32Value": {
+            case ".google.protobuf.UInt64Value": {
                 return "int";
+            }
+            case ".google.protobuf.UInt32Value": {
+                return "'int:Unsigned32";
             }
             case ".google.protobuf.BoolValue": {
                 return "boolean";
@@ -100,6 +103,13 @@ public class BalGenerationUtils {
                     .toLowerCase(Locale.ENGLISH));
         }
         return camelCaseString.toString();
+    }
+
+    public static String toPascalCase(String name) {
+        if (name == null) {
+            return null;
+        }
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
     /**

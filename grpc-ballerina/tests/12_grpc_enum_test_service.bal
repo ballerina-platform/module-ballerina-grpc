@@ -22,14 +22,38 @@ listener Listener ep12 = new (9102, {
     descriptor: ROOT_DESCRIPTOR_12,
     descMap: getDescriptorMap12()
 }
-service /testEnumService on ep12 {
-    isolated remote function testEnum(Caller caller, orderInfo orderReq) {
+service "testEnumService" on ep12 {
+    isolated remote function testEnum(TestEnumServiceStringCaller caller, orderInfo orderReq) {
         string permission = "";
         if (orderReq.mode == r) {
             permission = "r";
         }
         checkpanic caller->send(permission);
         checkpanic caller->complete();
+    }
+}
+
+public client class TestEnumServiceStringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

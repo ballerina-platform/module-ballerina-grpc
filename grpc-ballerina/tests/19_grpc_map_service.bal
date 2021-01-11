@@ -23,29 +23,29 @@ listener Listener negotiatorep = new (9109);
     descriptor: ROOT_DESCRIPTOR_19,
     descMap: getDescriptorMap19()
 }
-service /Negotiator on negotiatorep {
+service "Negotiator" on negotiatorep {
 
-    isolated remote function handshake(Caller caller, HandshakeRequest value) {
+    isolated remote function handshake(NegotiatorHandshakeResponseCaller caller, HandshakeRequest value) {
         log:print(io:sprintf("Handshake request: %s", value.toString()));
 
         if (value.jsonStr != "") {
-            error? sendError = caller->sendError(INVALID_ARGUMENT, "jsonStr should be an empty string.");
+            error? sendError = caller->sendError(error InvalidArgumentError("jsonStr should be an empty string."));
             return;
         }
         if (value.programHash != "") {
-            error? sendError = caller->sendError(INVALID_ARGUMENT, "programHash should be an empty string.");
+            error? sendError = caller->sendError(error InvalidArgumentError("programHash should be an empty string."));
             return;
         }
         if (value.userId != "") {
-            error? sendError = caller->sendError(INVALID_ARGUMENT, "userId should be an empty string.");
+            error? sendError = caller->sendError(error InvalidArgumentError("userId should be an empty string."));
             return;
         }
         if (value.instanceId != "") {
-            error? sendError = caller->sendError(INVALID_ARGUMENT, "instanceId should be an empty string.");
+            error? sendError = caller->sendError(error InvalidArgumentError("instanceId should be an empty string."));
             return;
         }
         if (value.applicationId != "") {
-            error? sendError = caller->sendError(INVALID_ARGUMENT, "applicationId should be an empty string.");
+            error? sendError = caller->sendError(error InvalidArgumentError("applicationId should be an empty string."));
             return;
         }
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
@@ -57,27 +57,71 @@ service /Negotiator on negotiatorep {
         }
     }
 
-    isolated remote function publishMetrics(Caller caller, MetricsPublishRequest value) {
+    isolated remote function publishMetrics(NegotiatorNilCaller caller, MetricsPublishRequest value) {
         log:print(io:sprintf("publishMetrics request: %s", value.toString()));
 
         if (value.metrics.length() < 0) {
-            error? sendError = caller->sendError(INVALID_ARGUMENT, "metrics cannot be an empty array.");
+            error? sendError = caller->sendError(error InvalidArgumentError("metrics cannot be an empty array."));
             return;
         }
         foreach var metric in value.metrics {
             log:print(io:sprintf("metric value: %s", metric.toString()));
             if (metric.tags.length() < 0) {
-                error? sendError = caller->sendError(INVALID_ARGUMENT, "tags cannot be an empty array.");
+                error? sendError = caller->sendError(error InvalidArgumentError("tags cannot be an empty array."));
                 return;
             }
         }
         error? complete = caller->complete();
     }
 
-    isolated remote function publishTraces(Caller caller, TracesPublishRequest value) {
+    isolated remote function publishTraces(NegotiatorNilCaller caller, TracesPublishRequest value) {
         log:print(io:sprintf("publishTraces request: %s", value.toString()));
         error? complete = caller->complete();
         io:println(complete);
+    }
+}
+
+public client class NegotiatorHandshakeResponseCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(HandshakeResponse response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class NegotiatorNilCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 

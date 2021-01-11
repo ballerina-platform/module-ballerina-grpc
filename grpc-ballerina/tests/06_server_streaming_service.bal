@@ -24,9 +24,9 @@ listener Listener ep6 = new (9096);
     descriptor: ROOT_DESCRIPTOR_6,
     descMap: getDescriptorMap6()
 }
-service /HelloWorld45 on ep6 {
+service "HelloWorld45" on ep6 {
 
-    isolated remote function lotsOfReplies(Caller caller, string name) {
+    isolated remote function lotsOfReplies(HelloWorld45StringCaller caller, string name) {
         io:println("Server received hello from " + name);
         string[] greets = ["Hi", "Hey", "GM"];
         foreach var greet in greets {
@@ -40,6 +40,30 @@ service /HelloWorld45 on ep6 {
         // Once all messages are sent, server send complete message to notify the client, I’m done.
         checkpanic caller->complete();
         io:println("send all responses sucessfully.");
+    }
+}
+
+public client class HelloWorld45StringCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function send(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(Error err) returns Error? {
+        return self.caller->sendError(err);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
     }
 }
 
