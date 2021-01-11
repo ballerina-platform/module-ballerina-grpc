@@ -172,7 +172,7 @@ public abstract class ServerCallHandler {
 
     void onMessageInvoke(ServiceResource resource, Message request, StreamObserver responseObserver,
                          ObserverContext context) {
-        Callback callback = new UnaryCallableUnitCallBack(responseObserver, isEmptyResponse(),
+        Callback callback = new UnaryCallableUnitCallBack(resource.getRuntime(), responseObserver, isEmptyResponse(),
                 this.methodDescriptor.getOutputType(), context);
         Object requestParam = request != null ? request.getbMessage() : null;
         HttpHeaders headers = request != null ? request.getHeaders() : null;

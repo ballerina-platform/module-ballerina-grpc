@@ -18,7 +18,10 @@
 package org.ballerinalang.net.grpc.callback;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.ballerinalang.net.grpc.Message;
@@ -26,6 +29,7 @@ import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static org.ballerinalang.net.grpc.GrpcConstants.COMPLETED_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 
 /**
@@ -35,13 +39,16 @@ import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
  */
 public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
 
+    private Runtime runtime;
     private StreamObserver requestSender;
     private boolean emptyResponse;
     private Descriptors.Descriptor outputType;
     private ObserverContext observerContext;
 
-    public UnaryCallableUnitCallBack(StreamObserver requestSender, boolean isEmptyResponse,
+
+    public UnaryCallableUnitCallBack(Runtime runtime, StreamObserver requestSender, boolean isEmptyResponse,
                                      Descriptors.Descriptor outputType, ObserverContext context) {
+        this.runtime = runtime;
         this.requestSender = requestSender;
         this.emptyResponse = isEmptyResponse;
         this.outputType = outputType;
@@ -74,6 +81,11 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         // scenarios handles here.
         if (emptyResponse) {
             requestSender.onNext(new Message(EMPTY_DATATYPE_NAME, null));
+        } else if (response instanceof BStream) {
+            BObject bObject = (BObject) ((BStream) response).getIteratorObj();
+            ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
+                    runtime, requestSender, outputType, bObject);
+            runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
         } else {
             requestSender.onNext(new Message(this.outputType.getName(), response));
         }
@@ -82,7 +94,9 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.OK.code());
         }
         // Notify complete if service impl doesn't call complete;
-        requestSender.onCompleted();
+        if (!(response instanceof BStream)) {
+            requestSender.onCompleted();
+        }
     }
 
     @Override
@@ -92,5 +106,41 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
         super.notifyFailure(error);
+    }
+
+    /**
+     * Call back class registered to send returned stream from a remote function.
+     *
+     */
+    public class ReturnStreamUnitCallBack extends AbstractCallableUnitCallBack {
+        private StreamObserver requestSender;
+        private Descriptors.Descriptor outputType;
+        private Runtime runtime;
+        private BObject bObject;
+
+        public ReturnStreamUnitCallBack(Runtime runtime, StreamObserver requestSender,
+                                        Descriptors.Descriptor outputType, BObject bObject) {
+            this.runtime = runtime;
+            this.requestSender = requestSender;
+            this.outputType = outputType;
+            this.bObject = bObject;
+        }
+
+        @Override
+        public void notifySuccess(Object response) {
+            if (response != null) {
+                requestSender.onNext(new Message(this.outputType.getName(), response));
+                runtime.invokeMethodAsync(bObject, "next", null, null, this);
+            } else {
+                requestSender.onNext(new Message(COMPLETED_MESSAGE, null));
+                requestSender.onCompleted();
+            }
+
+        }
+
+        @Override
+        public void notifyFailure(BError error) {
+            super.notifyFailure(error);
+        }
     }
 }
