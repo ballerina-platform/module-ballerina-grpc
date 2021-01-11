@@ -35,7 +35,7 @@ import org.ballerinalang.net.grpc.Status;
 import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.exception.GrpcClientException;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
-import org.ballerinalang.net.grpc.stubs.BlockingStub;
+import org.ballerinalang.net.grpc.stubs.Stub;
 import org.ballerinalang.net.grpc.stubs.DefaultStreamObserver;
 import org.ballerinalang.net.grpc.stubs.NonBlockingStub;
 import org.ballerinalang.net.http.HttpConnectionManager;
@@ -53,12 +53,10 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
-import static org.ballerinalang.net.grpc.GrpcConstants.BLOCKING_TYPE;
 import static org.ballerinalang.net.grpc.GrpcConstants.CLIENT_CONNECTOR;
 import static org.ballerinalang.net.grpc.GrpcConstants.ENDPOINT_URL;
 import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
 import static org.ballerinalang.net.grpc.GrpcConstants.METHOD_DESCRIPTORS;
-import static org.ballerinalang.net.grpc.GrpcConstants.NON_BLOCKING_TYPE;
 import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_GRPC_PKG_ID;
 import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_MESSAGE_DEFINITION;
 import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_SENDER;
@@ -150,17 +148,16 @@ public class FunctionUtils extends AbstractExecute {
      *
      * @param genericEndpoint generic client endpoint instance.
      * @param clientEndpoint generated client endpoint instance.
-     * @param stubType stub type (blocking or non-blocking).
      * @param rootDescriptor service descriptor.
      * @param descriptorMap dependent descriptor map.
      * @return Error if there is an error while initializing the stub, else returns nil
      */
-    public static Object externInitStub(BObject genericEndpoint, BObject clientEndpoint, BString stubType,
-                                        BString rootDescriptor, BMap<BString, Object> descriptorMap) {
+    public static Object externInitStub(BObject genericEndpoint, BObject clientEndpoint, BString rootDescriptor,
+                                        BMap<BString, Object> descriptorMap) {
         HttpClientConnector clientConnector = (HttpClientConnector) genericEndpoint.getNativeData(CLIENT_CONNECTOR);
         String urlString = (String) genericEndpoint.getNativeData(ENDPOINT_URL);
 
-        if (stubType == null || rootDescriptor == null || descriptorMap == null) {
+        if (rootDescriptor == null || descriptorMap == null) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while initializing " +
                             "connector. message descriptor keys not exist. Please check the generated sub file")));
@@ -172,17 +169,8 @@ public class FunctionUtils extends AbstractExecute {
                     serviceDefinition.getMethodDescriptors(clientEndpoint.getType());
 
             genericEndpoint.addNativeData(METHOD_DESCRIPTORS, methodDescriptorMap);
-            if (BLOCKING_TYPE.equalsIgnoreCase(stubType.getValue())) {
-                BlockingStub blockingStub = new BlockingStub(clientConnector, urlString);
-                genericEndpoint.addNativeData(SERVICE_STUB, blockingStub);
-            } else if (NON_BLOCKING_TYPE.equalsIgnoreCase(stubType.getValue())) {
-                NonBlockingStub nonBlockingStub = new NonBlockingStub(clientConnector, urlString);
-                genericEndpoint.addNativeData(SERVICE_STUB, nonBlockingStub);
-            } else {
-                return MessageUtils.getConnectorError(new StatusRuntimeException(Status
-                        .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while " +
-                                "initializing connector. invalid connector type")));
-            }
+            Stub stub = new Stub(clientConnector, urlString);
+            genericEndpoint.addNativeData(SERVICE_STUB, stub);
         } catch (RuntimeException | GrpcClientException e) {
             return MessageUtils.getConnectorError(e);
         }
@@ -195,12 +183,11 @@ public class FunctionUtils extends AbstractExecute {
      * @param clientEndpoint client endpoint instance.
      * @param methodName remote method name.
      * @param payloadBValue request payload.
-     * @param headerValues custom metadata to send with the request.
      * @return Error if there is an error while calling remote method, else returns response message.
      */
     @SuppressWarnings("unchecked")
-    public static Object externBlockingExecute(Environment env, BObject clientEndpoint, BString methodName,
-                                               Object payloadBValue, Object headerValues) {
+    public static Object externExecuteSimpleRPC(Environment env, BObject clientEndpoint, BString methodName,
+                                               Object payloadBValue) {
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC client connector " +
                     "is not initialized properly");
@@ -230,37 +217,24 @@ public class FunctionUtils extends AbstractExecute {
             return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
         }
 
-        if (connectionStub instanceof BlockingStub) {
-            Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payloadBValue);
-            // Update request headers when request headers exists in the context.
-            HttpHeaders headers = null;
-            if (headerValues instanceof BObject) {
-                headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
-            }
-            if (headers != null) {
-                requestMsg.setHeaders(headers);
-            }
-            BlockingStub blockingStub = (BlockingStub) connectionStub;
-            DataContext dataContext = null;
-            try {
-                MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
-                if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
+        Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payloadBValue);
+        Stub stub = (Stub) connectionStub;
+        DataContext dataContext = null;
+        try {
+            MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
+            if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
 
-                    dataContext = new DataContext(env, env.markAsync());
-                    blockingStub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()), dataContext);
-                } else {
-                    return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
-                            methodType.name() + " not supported");
-                }
-            } catch (Exception e) {
-                if (dataContext != null) {
-                    dataContext.getFuture().complete(e);
-                }
-                return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
+                dataContext = new DataContext(env, env.markAsync());
+                stub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()), dataContext);
+            } else {
+                return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
+                        methodType.name() + " not supported");
             }
-        } else {
-            return notifyErrorReply(INTERNAL, "Error while processing the request message. Connection Sub " +
-                    "type not supported");
+        } catch (Exception e) {
+            if (dataContext != null) {
+                dataContext.getFuture().complete(e);
+            }
+            return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }
         return null;
     }

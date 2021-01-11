@@ -17,35 +17,24 @@
  */
 package org.ballerinalang.net.grpc.stubs;
 
-import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.creators.TypeCreator;
-import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
-import io.ballerina.runtime.api.values.BObject;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.ClientCall;
 import org.ballerinalang.net.grpc.DataContext;
 import org.ballerinalang.net.grpc.Message;
-import org.ballerinalang.net.grpc.MessageUtils;
 import org.ballerinalang.net.grpc.MethodDescriptor;
+import org.ballerinalang.net.grpc.MessageUtils;
 import org.ballerinalang.net.grpc.Status;
 import org.ballerinalang.net.transport.contract.HttpClientConnector;
-
-import java.util.Arrays;
-
-import static org.ballerinalang.net.grpc.GrpcConstants.HEADERS;
-import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
-import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_GRPC_PKG_ID;
 
 /**
  * This class handles Blocking client connection.
  *
  * @since 0.980.0
  */
-public class BlockingStub extends AbstractStub {
+public class Stub extends AbstractStub {
 
-    public BlockingStub(HttpClientConnector clientConnector, String url) {
+    public Stub(HttpClientConnector clientConnector, String url) {
         super(clientConnector, url);
     }
 
@@ -58,10 +47,10 @@ public class BlockingStub extends AbstractStub {
      * @throws Exception if an error occur while processing client call.
      */
     public void executeUnary(Message request, MethodDescriptor methodDescriptor,
-                                           DataContext dataContext) throws Exception {
+                             DataContext dataContext) throws Exception {
         ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request
                 .getHeaders()), methodDescriptor, dataContext);
-        call.start(new CallBlockingListener(dataContext));
+        call.start(new UnaryCallListener(dataContext));
         try {
             call.sendMessage(request);
             call.halfClose();
@@ -73,13 +62,13 @@ public class BlockingStub extends AbstractStub {
     /**
      *  Callbacks for receiving headers, response messages and completion status in blocking calls.
      */
-    private static final class CallBlockingListener implements Listener {
+    private static final class UnaryCallListener implements Listener {
 
         private final DataContext dataContext;
         private Message value;
 
         // Non private to avoid synthetic class
-        private CallBlockingListener(DataContext dataContext) {
+        private UnaryCallListener(DataContext dataContext) {
             this.dataContext = dataContext;
         }
 
@@ -100,23 +89,14 @@ public class BlockingStub extends AbstractStub {
         @Override
         public void onClose(Status status, HttpHeaders trailers) {
             BError httpConnectorError = null;
-            BArray inboundResponse = null;
+            Object inboundResponse = null;
             if (status.isOk()) {
                 if (value == null) {
                     // No value received so mark the future as an error
                     httpConnectorError = MessageUtils.getConnectorError(Status.Code.INTERNAL.toStatus()
                                     .withDescription("No value received for unary call").asRuntimeException());
                 } else {
-                    Object responseBValue = value.getbMessage();
-                    // Set response headers, when response headers exists in the message context.
-                    BObject headerObject = ValueCreator.createObjectValue(PROTOCOL_GRPC_PKG_ID, HEADERS);
-                    headerObject.addNativeData(MESSAGE_HEADERS, value.getHeaders());
-                    BArray contentTuple = ValueCreator.createTupleValue(
-                            TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_ANYDATA,
-                                    headerObject.getType())));
-                    contentTuple.add(0, responseBValue);
-                    contentTuple.add(1, headerObject);
-                    inboundResponse = contentTuple;
+                    inboundResponse = value.getbMessage();
                 }
             } else {
                 httpConnectorError = MessageUtils.getConnectorError(status.asRuntimeException());

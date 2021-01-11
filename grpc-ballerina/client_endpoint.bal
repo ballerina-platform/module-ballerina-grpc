@@ -41,35 +41,33 @@ public client class Client {
 
     # Calls when initializing the client endpoint with the service descriptor data extracted from the proto file.
     # ```ballerina
-    # grpc:Error? result = grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR, getDescriptorMap());
+    # grpc:Error? result = grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
     # ```
     #
     # + clientEndpoint -  Client endpoint
-    # + stubType - Service Stub type. Possible values: blocking, nonblocking
     # + descriptorKey - Key of the proto descriptor
     # + descriptorMap - Proto descriptor map with all the dependent descriptors
     # + return - A `grpc:Error` if an error occurs while initializing the stub or else `()`
-    public isolated function initStub(AbstractClientEndpoint clientEndpoint, string stubType, string descriptorKey,
+    public isolated function initStub(AbstractClientEndpoint clientEndpoint, string descriptorKey,
                              map<any> descriptorMap) returns Error? {
-        return externInitStub(self, clientEndpoint, stubType, descriptorKey, descriptorMap);
+        return externInitStub(self, clientEndpoint, descriptorKey, descriptorMap);
     }
 
-    # Calls when executing a blocking call with a gRPC service.
+    # Calls when executing an unary gRPC service.
     # ```ballerina
-    # [anydata, grpc:Headers]|grpc:Error result = grpcClient->blockingExecute("HelloWorld/hello", req, headers);
+    # anydata|grpc:Error result = grpcClient->executeSimpleRPC("HelloWorld/hello", req);
     # ```
     #
     # + methodID - Remote service method ID
     # + payload - Request message. The message type varies with the remote service method parameter
-    # + headers - Optional headers parameter. The header value are passed only if needed. The default value is `()`
-    # + return - The response message and headers if executed successfully or else a `grpc:Error`
-    isolated remote function blockingExecute(string methodID, anydata payload, Headers? headers = ())
-                                   returns ([anydata, Headers]|Error) {
+    # + return - The response as an `anydata` type value or else a `grpc:Error`
+    isolated remote function executeSimpleRPC(string methodID, anydata payload, Headers? headers = ())
+                                   returns (anydata|Error) {
         var retryConfig = self.config.retryConfiguration;
         if (retryConfig is RetryConfiguration) {
-            return retryBlockingExecute(self, methodID, payload, headers, retryConfig);
+            return retryBlockingExecute(self, methodID, payload, retryConfig);
         }
-        return externBlockingExecute(self, methodID, payload, headers);
+        return externExecuteSimpleRPC(self, methodID, payload);
     }
 
     # Calls when executing a non-blocking call with a gRPC service.
@@ -103,8 +101,8 @@ public client class Client {
     }
 }
 
-isolated function retryBlockingExecute(Client grpcClient, string methodID, anydata payload, Headers? headers,
-    RetryConfiguration retryConfig) returns ([anydata, Headers]|Error) {
+isolated function retryBlockingExecute(Client grpcClient, string methodID, anydata payload,
+    RetryConfiguration retryConfig) returns (anydata|Error) {
     int currentRetryCount = 0;
     int retryCount = retryConfig.retryCount;
     int interval = retryConfig.intervalInMillis;
@@ -114,8 +112,8 @@ isolated function retryBlockingExecute(Client grpcClient, string methodID, anyda
     error? cause = ();
 
     while (currentRetryCount <= retryCount) {
-        var result = externBlockingExecute(grpcClient, methodID, payload, headers);
-        if (result is [anydata, Headers]) {
+        var result = externExecuteSimpleRPC(grpcClient, methodID, payload);
+        if (result is anydata) {
             return result;
         } else {
             if (!(checkErrorForRetry(result, errorTypes))) {
@@ -142,13 +140,13 @@ globalPoolConfig)
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
-isolated function externInitStub(Client genericEndpoint, AbstractClientEndpoint clientEndpoint, string stubType,
-                        string descriptorKey, map<any> descriptorMap) returns Error? = @java:Method {
+isolated function externInitStub(Client genericEndpoint, AbstractClientEndpoint clientEndpoint, string descriptorKey,
+                                 map<any> descriptorMap) returns Error? = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
-isolated function externBlockingExecute(Client clientEndpoint, string methodID, anydata payload, Headers? headers)
-                returns ([anydata, Headers]|Error) = @java:Method {
+isolated function externExecuteSimpleRPC(Client clientEndpoint, string methodID, anydata payload)
+                returns (anydata|Error) = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
