@@ -81,17 +81,4 @@ public client class HelloWorld5BlockingClient {
             return error InternalError("Error while constructing the message", value);
         }
     }
-
-    isolated remote function testFloat(float req, Headers? headers = ()) returns ([float, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/testFloat", req, headers);
-        anydata result = ();
-        Headers resHeaders = new;
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(FloatTypedesc);
-        if (value is float) {
-            return [value, resHeaders];
-        } else {
-            return error InternalError("Error while constructing the message", value);
-        }
-    }
 }
