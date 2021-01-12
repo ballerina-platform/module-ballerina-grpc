@@ -186,11 +186,12 @@ public class FunctionUtils extends AbstractExecute {
      * @param clientEndpoint client endpoint instance.
      * @param methodName     remote method name.
      * @param payloadBValue  request payload.
+     * @param headerValues custom metadata to send with the request.
      * @return Error if there is an error while calling remote method, else returns response message.
      */
     @SuppressWarnings("unchecked")
     public static Object externExecuteSimpleRPC(Environment env, BObject clientEndpoint, BString methodName,
-                                                Object payloadBValue) {
+                                                Object payloadBValue, Object headerValues) {
 
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC client connector " +
@@ -222,6 +223,15 @@ public class FunctionUtils extends AbstractExecute {
         }
 
         Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payloadBValue);
+
+        // Update request headers when request headers exists in the context.
+        HttpHeaders headers = null;
+        if (headerValues instanceof BObject) {
+            headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
+        }
+        if (headers != null) {
+            requestMsg.setHeaders(headers);
+        }
         Stub stub = (Stub) connectionStub;
         DataContext dataContext = null;
         try {
@@ -249,11 +259,12 @@ public class FunctionUtils extends AbstractExecute {
      * @param clientEndpoint client endpoint instance.
      * @param methodName     remote method name.
      * @param payload        request payload.
+     * @param headerValues custom metadata to send with the request.
      * @return Error if there is an error while initializing the stub, else returns a BStream object.
      */
     @SuppressWarnings("unchecked")
     public static Object externExecuteServerStreaming(Environment env, BObject clientEndpoint, BString methodName,
-                                                      Object payload) {
+                                                      Object payload, Object headerValues) {
 
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector is " +
@@ -286,6 +297,15 @@ public class FunctionUtils extends AbstractExecute {
         }
 
         Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payload);
+
+        // Update request headers when request headers exists in the context.
+        HttpHeaders headers = null;
+        if (headerValues instanceof BObject) {
+            headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
+        }
+        if (headers != null) {
+            requestMsg.setHeaders(headers);
+        }
         Stub stub = (Stub) connectionStub;
         try {
             DataContext context = new DataContext(env, null);
@@ -301,10 +321,12 @@ public class FunctionUtils extends AbstractExecute {
      * @param env            Ballerina environment.
      * @param clientEndpoint client endpoint instance.
      * @param methodName     remote method name.
+     * @param headerValues custom metadata to send with the request.
      * @return Error if there is an error while initializing the stub, else returns nil
      */
     @SuppressWarnings("unchecked")
-    public static Object externExecuteClientStreaming(Environment env, BObject clientEndpoint, BString methodName) {
+    public static Object externExecuteClientStreaming(Environment env, BObject clientEndpoint, BString methodName,
+                                                      Object headerValues) {
 
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector " +
@@ -338,8 +360,12 @@ public class FunctionUtils extends AbstractExecute {
 
         try {
             Stub stub = (Stub) connectionStub;
+            HttpHeaders headers = null;
+            if (headerValues instanceof BObject) {
+                headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
+            }
             DataContext context = new DataContext(env, null);
-            return stub.executeClientStreaming(methodDescriptors.get(methodName.getValue()), context);
+            return stub.executeClientStreaming(headers, methodDescriptors.get(methodName.getValue()), context);
         } catch (Exception e) {
             return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }
@@ -352,11 +378,12 @@ public class FunctionUtils extends AbstractExecute {
      * @param env            Ballerina environment.
      * @param clientEndpoint client endpoint instance.
      * @param methodName     remote method name.
+     * @param headerValues custom metadata to send with the request.
      * @return Error if there is an error while initializing the stub, else returns nil
      */
     @SuppressWarnings("unchecked")
     public static Object externExecuteBidirectionalStreaming(Environment env, BObject clientEndpoint,
-                                                             BString methodName) {
+                                                             BString methodName, Object headerValues) {
 
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector " +
@@ -390,8 +417,12 @@ public class FunctionUtils extends AbstractExecute {
 
         try {
             Stub stub = (Stub) connectionStub;
+            HttpHeaders headers = null;
+            if (headerValues instanceof BObject) {
+                headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
+            }
             DataContext context = new DataContext(env, null);
-            return stub.executeBidirectionalStreaming(methodDescriptors.get(methodName.getValue()), context);
+            return stub.executeBidirectionalStreaming(headers, methodDescriptors.get(methodName.getValue()), context);
         } catch (Exception e) {
             return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }

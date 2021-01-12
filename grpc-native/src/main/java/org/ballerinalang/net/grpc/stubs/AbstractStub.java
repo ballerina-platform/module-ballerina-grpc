@@ -31,6 +31,7 @@ import org.ballerinalang.net.transport.message.HttpCarbonMessage;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,7 +78,7 @@ public abstract class AbstractStub {
         return connector;
     }
 
-    OutboundMessage createOutboundRequest() {
+    OutboundMessage createOutboundRequest(HttpHeaders httpHeaders) {
         try {
             HttpCarbonMessage carbonMessage = MessageUtils.createHttpCarbonMessage(true);
             URL url = new URL(this.urlString);
@@ -87,6 +88,11 @@ public abstract class AbstractStub {
             carbonMessage.setHeader(AUTHORITY, this.urlString);
             setOutboundReqProperties(carbonMessage, url, port, host);
             setOutboundReqHeaders(carbonMessage, port, host);
+            if (httpHeaders != null) {
+                for (Map.Entry<String, String> headerEntry : httpHeaders.entries()) {
+                    carbonMessage.setHeader(headerEntry.getKey(), headerEntry.getValue());
+                }
+            }
             return new OutboundMessage(carbonMessage);
         } catch (MalformedURLException e) {
             throw new RuntimeException("Malformed url specified. " + e.getMessage());

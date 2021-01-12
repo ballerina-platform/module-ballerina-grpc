@@ -20,6 +20,7 @@ package org.ballerinalang.net.grpc.stubs;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -33,6 +34,7 @@ import org.ballerinalang.net.grpc.MethodDescriptor;
 import org.ballerinalang.net.grpc.Status;
 import org.ballerinalang.net.transport.contract.HttpClientConnector;
 
+import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -57,7 +59,8 @@ public class Stub extends AbstractStub {
      */
     public void executeUnary(Message request, MethodDescriptor methodDescriptor,
                              DataContext dataContext) throws Exception {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor, dataContext);
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
+                methodDescriptor, dataContext);
         call.start(new UnaryCallListener(dataContext));
         try {
             call.sendMessage(request);
@@ -77,7 +80,7 @@ public class Stub extends AbstractStub {
      */
     public Object executeServerStreaming(Message request, MethodDescriptor methodDescriptor,
                                          DataContext context) throws Exception {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(),
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
                 methodDescriptor, context);
         Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(true);
         call.start(streamingCallListener);
@@ -98,11 +101,14 @@ public class Stub extends AbstractStub {
     /**
      * Executes client streaming blocking call.
      *
+     * @param requestHeaders request headers.
      * @param methodDescriptor method descriptor.
      * @param context Data Context.
      */
-    public BObject executeClientStreaming(MethodDescriptor methodDescriptor, DataContext context) {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor, context);
+    public BObject executeClientStreaming(HttpHeaders requestHeaders, MethodDescriptor methodDescriptor,
+                                          DataContext context) {
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(requestHeaders),
+                methodDescriptor, context);
         ClientCallStreamObserver streamObserver = new ClientCallStreamObserver(call);
         Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(false);
         call.start(streamingCallListener);
@@ -121,11 +127,14 @@ public class Stub extends AbstractStub {
     /**
      * Executes bidirectional streaming blocking call.
      *
+     * @param requestHeaders request headers.
      * @param methodDescriptor method descriptor.
      * @param context Data Context.
      */
-    public BObject executeBidirectionalStreaming(MethodDescriptor methodDescriptor, DataContext context) {
-        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(), methodDescriptor, context);
+    public BObject executeBidirectionalStreaming(HttpHeaders requestHeaders, MethodDescriptor methodDescriptor,
+                                                 DataContext context) {
+        ClientCall call = new ClientCall(getConnector(), createOutboundRequest(requestHeaders), methodDescriptor,
+                context);
         ClientCallStreamObserver streamObserver = new ClientCallStreamObserver(call);
         Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(true);
         call.start(streamingCallListener);
@@ -171,14 +180,24 @@ public class Stub extends AbstractStub {
         @Override
         public void onClose(Status status, HttpHeaders trailers) {
             BError httpConnectorError = null;
-            Object inboundResponse = null;
+            BArray inboundResponse = null;
             if (status.isOk()) {
                 if (value == null) {
                     // No value received so mark the future as an error
                     httpConnectorError = MessageUtils.getConnectorError(Status.Code.INTERNAL.toStatus()
                                     .withDescription("No value received for unary call").asRuntimeException());
                 } else {
-                    inboundResponse = value.getbMessage();
+                    Object responseBValue = value.getbMessage();
+                    // Set response headers, when response headers exists in the message context.
+                    BObject headerObject = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+                            GrpcConstants.HEADERS);
+                    headerObject.addNativeData(GrpcConstants.MESSAGE_HEADERS, value.getHeaders());
+                    BArray contentTuple = ValueCreator.createTupleValue(
+                            TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_ANYDATA,
+                                    headerObject.getType())));
+                    contentTuple.add(0, responseBValue);
+                    contentTuple.add(1, headerObject);
+                    inboundResponse = contentTuple;
                 }
             } else {
                 httpConnectorError = MessageUtils.getConnectorError(status.asRuntimeException());
