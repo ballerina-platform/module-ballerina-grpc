@@ -164,7 +164,7 @@ public client class HelloWorld1BlockingClient {
         if (value is Person) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -178,7 +178,7 @@ public client class HelloWorld1BlockingClient {
         if (value is StockQuote) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -202,7 +202,7 @@ public client class HelloWorld1BlockingClient {
         if (value is StockQuotes) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -217,7 +217,7 @@ public client class HelloWorld1BlockingClient {
         if (value is StockNames) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 }

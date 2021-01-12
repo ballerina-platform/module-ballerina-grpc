@@ -26,7 +26,7 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.flags.TypeFlags;
-import io.ballerina.runtime.api.types.MemberFunctionType;
+import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
@@ -129,7 +129,7 @@ public class ServicesBuilderUtils {
             MethodDescriptor.Marshaller reqMarshaller = null;
             ServiceResource mappedResource = null;
 
-            for (MemberFunctionType function : service.getType().getAttachedFunctions()) {
+            for (MethodType function : service.getType().getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
                     mappedResource = new ServiceResource(runtime, service, function);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
@@ -311,7 +311,7 @@ public class ServicesBuilderUtils {
         }
     }
 
-    private static Type getResourceInputParameterType(MemberFunctionType attachedFunction) {
+    private static Type getResourceInputParameterType(MethodType attachedFunction) {
 
         Type[] inputParams = attachedFunction.getType().getParameterTypes();
         if (inputParams.length > 1) {
