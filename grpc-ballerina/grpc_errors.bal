@@ -71,6 +71,9 @@ public type ResiliencyError AllRetryAttemptsFailed;
 # Represents an error when calling next when the stream has closed.
 public type StreamClosedError distinct error;
 
+# Represents an error when expected data type is not available.
+public type DataMismatchError distinct error;
+
 # Represents an error when reaching the end of the client stream.
 public type EOS distinct error;
 
@@ -78,7 +81,7 @@ public type EOS distinct error;
 public type Error CancelledError | UnKnownError | InvalidArgumentError | DeadlineExceededError | NotFoundError
 | AlreadyExistsError | PermissionDeniedError | UnauthenticatedError | ResourceExhaustedError | FailedPreconditionError
 | AbortedError | OutOfRangeError | UnimplementedError | InternalError | UnavailableError | DataLossError
-| ResiliencyError | StreamClosedError | EOS;
+| ResiliencyError | StreamClosedError | DataMismatchError | EOS;
 
 # Represents gRPC related error types.
 public type ErrorType typedesc<Error>;

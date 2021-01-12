@@ -135,6 +135,16 @@ public class FunctionUtils {
     }
 
     /**
+     * Extern function to check the streaming client is bidirectional or client streaming.
+     *
+     * @param streamingConnection streaming connection instance.
+     * @return In client streaming, return false and in bidi-streaming, return true.
+     */
+    public static Object externIsBidirectional(BObject streamingConnection) {
+        return (boolean) streamingConnection.getNativeData(GrpcConstants.IS_BIDI_STREAMING);
+    }
+
+    /**
      * Extern function to receive the server responses(either client streaming or bidi-streaming).
      *
      * @param streamingConnection streaming connection instance.

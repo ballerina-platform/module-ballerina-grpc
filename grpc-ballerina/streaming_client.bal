@@ -18,6 +18,7 @@ import ballerina/java;
 
 # Provides the gRPC streaming client actions for interacting with the gRPC server.
 public client class StreamingClient {
+    stream<anydata>? serverStream = ();
 
     # Sends the request message to the server.
     # ```ballerina
@@ -58,8 +59,28 @@ public client class StreamingClient {
     # ```
     #
     # + return - An `anydata` value in client streaming and a `stream<anydata>` in bidirectional streaming
-    isolated remote function receive() returns anydata?|stream<anydata> {
-        return externReceive(self);
+    isolated remote function receive() returns anydata|Error {
+        if (externIsBidirectional(self)) {
+            if (self.serverStream is stream<anydata>) {
+                return (<stream<anydata>>self.serverStream).next();
+            } else {
+                var result = externReceive(self);
+                if (result is stream<anydata>) {
+                    self.serverStream = result;
+                    return (<stream<anydata>>self.serverStream).next();
+                } else {
+                   typedesc<anydata> dataType = typeof result;
+                   return DataMismatchError("Expected a stream but found an anydata type/");
+                }
+            }
+        } else {
+           var result = externReceive(self);
+           if (result is anydata) {
+               return result;
+           } else {
+               return DataMismatchError("Expected an anydata type but found a stream.");
+           }
+        }
     }
 }
 
@@ -79,6 +100,11 @@ isolated function streamSendError(StreamingClient streamConnection, int statusCo
 } external;
 
 isolated function externReceive(StreamingClient streamConnection) returns anydata?|stream<anydata> =
+@java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+} external;
+
+isolated function externIsBidirectional(StreamingClient streamConnection) returns boolean =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
