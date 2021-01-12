@@ -15,11 +15,7 @@
 // under the License.
 
 import ballerina/io;
-import ballerina/runtime;
 import ballerina/test;
-
-string response = "";
-int total = 0;
 
 @test:Config {enable:true}
 function testClientStreaming() {
@@ -29,7 +25,7 @@ function testClientStreaming() {
 
     LotsOfGreetingsStreamingClient ep;
     // Executing unary non-blocking call registering server message listener.
-    var res = helloWorldEp->lotsOfGreetings(HelloWorldMessageListener);
+    var res = helloWorldEp->lotsOfGreetings();
     if (res is Error) {
         test:assertFail("Error from Connector: " + res.message());
         return;
@@ -45,41 +41,10 @@ function testClientStreaming() {
         }
     }
     checkpanic ep->complete();
-
-    int waitCount = 0;
-    while(total < 1) {
-        runtime:sleep(1000);
-        io:println("msg count: ", total);
-        if (waitCount > 10) {
-            break;
-        }
-        waitCount += 1;
-    }
     io:println("completed successfully");
-    test:assertEquals(response, "Ack");
+    anydata response = checkpanic ep->receive();
+    test:assertEquals(<string> response, "Ack");
 }
-
-// Server Message Listener.
-service object {} HelloWorldMessageListener = service object {
-
-    // Resource registered to receive server messages
-    function onMessage(string message) {
-        response = <@untainted> message;
-        io:println("Response received from server: " + response);
-        total = 1;
-    }
-
-    // Resource registered to receive server error messages
-    function onError(error err) {
-        io:println("Error from Connector: " + err.message());
-    }
-
-    // Resource registered to receive server completed message.
-    function onComplete() {
-        total = 1;
-        io:println("Server Complete Sending Responses.");
-    }
-};
 
 public client class LotsOfGreetingsStreamingClient {
     private StreamingClient sClient;
@@ -108,7 +73,6 @@ public client class LotsOfGreetingsStreamingClient {
     }
 }
 
-// Non-blocking client endpoint
 public client class HelloWorld4Client {
 
     *AbstractClientEndpoint;
@@ -118,12 +82,12 @@ public client class HelloWorld4Client {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_4, getDescriptorMap4());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_4, getDescriptorMap4());
     }
 
-    isolated remote function lotsOfGreetings(service object {} msgListener, Headers? headers = ()) returns (LotsOfGreetingsStreamingClient|Error) {
-        StreamingClient sClient = check self.grpcClient->streamingExecute("grpcservices.HelloWorld7/lotsOfGreetings",
-        msgListener, headers);
+    isolated remote function lotsOfGreetings(Headers? headers = ()) returns (LotsOfGreetingsStreamingClient|Error) {
+        StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.HelloWorld7/lotsOfGreetings",
+        headers);
         return new LotsOfGreetingsStreamingClient(sClient);
     }
 }

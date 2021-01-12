@@ -141,12 +141,12 @@ public client class HelloWorld1BlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_1, getDescriptorMap1());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_1, getDescriptorMap1());
     }
 
     isolated remote function testInputNestedStruct(Person req, Headers? headers = ()) returns ([string,
     Headers]|Error) {
-        [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testInputNestedStruct", req, headers);
+        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputNestedStruct", req, headers);
         anydata result = ();
         Headers resHeaders;
         io:println(payload);
@@ -156,7 +156,7 @@ public client class HelloWorld1BlockingClient {
 
     isolated remote function testOutputNestedStruct(string req, Headers? headers = ()) returns ([Person,
     Headers]|Error) {
-        [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testOutputNestedStruct", req, headers);
+        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testOutputNestedStruct", req, headers);
         anydata result = ();
         Headers resHeaders;
         [result, resHeaders] = payload;
@@ -170,7 +170,7 @@ public client class HelloWorld1BlockingClient {
 
     isolated remote function testInputStructOutputStruct(StockRequest req, Headers? headers = ()) returns
     ([StockQuote, Headers]|Error) {
-        [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testInputStructOutputStruct", req, headers);
+        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructOutputStruct", req, headers);
         anydata result = ();
         Headers resHeaders;
         [result, resHeaders] = payload;
@@ -184,7 +184,7 @@ public client class HelloWorld1BlockingClient {
 
     isolated remote function testInputStructNoOutput(StockQuote req, Headers? headers = ()) returns ((Headers)
     |Error) {
-        [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testInputStructNoOutput", req, headers);
+        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructNoOutput", req, headers);
         anydata result = ();
         Headers resHeaders;
         [_, resHeaders] = payload;
@@ -194,7 +194,7 @@ public client class HelloWorld1BlockingClient {
     isolated remote function testNoInputOutputStruct(Headers? headers = ()) returns ([StockQuotes,
     Headers]|Error) {
         Empty req = {};
-        [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testNoInputOutputStruct", req, headers);
+        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputStruct", req, headers);
         anydata result = ();
         Headers resHeaders;
         [result, resHeaders] = payload;
@@ -209,7 +209,7 @@ public client class HelloWorld1BlockingClient {
     isolated remote function testNoInputOutputArray(Headers? headers = ()) returns ([StockNames,
     Headers]|Error) {
         Empty req = {};
-        [anydata, Headers] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld/testNoInputOutputArray", req, headers);
+        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputArray", req, headers);
         anydata result = ();
         Headers resHeaders;
         [result, resHeaders] = payload;
@@ -222,51 +222,3 @@ public client class HelloWorld1BlockingClient {
     }
 }
 
-public client class HelloWorldClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_1, getDescriptorMap1());
-    }
-
-    isolated remote function testInputNestedStruct(Person req, service object {} msgListener, Headers? headers = ())
-    returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testInputNestedStruct", req, msgListener,
-         headers);
-    }
-
-    isolated remote function testOutputNestedStruct(string req, service object {} msgListener, Headers? headers = ())
-    returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testOutputNestedStruct", req, msgListener,
-            headers);
-    }
-
-    isolated remote function testInputStructOutputStruct(StockRequest req, service object {} msgListener, Headers?
-    headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testInputStructOutputStruct", req, msgListener,
-            headers);
-    }
-
-    isolated remote function testInputStructNoOutput(StockQuote req, service object {} msgListener, Headers? headers =
-    ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testInputStructNoOutput", req, msgListener,
-            headers);
-    }
-
-    isolated remote function testNoInputOutputStruct(Empty req, service object {} msgListener, Headers? headers = ())
-    returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testNoInputOutputStruct", req, msgListener,
-            headers);
-    }
-
-    isolated remote function testNoInputOutputArray(Empty req, service object {} msgListener, Headers? headers = ())
-    returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld/testNoInputOutputArray", req, msgListener,
-            headers);
-    }
-}
