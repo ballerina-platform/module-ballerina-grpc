@@ -28,7 +28,8 @@ public client class {{serviceName}}{{#equals stubType "blocking"}}Blocking{{/equ
     }
 {{/serverStreamingFunctions}}{{#clientStreamingFunctions}}
     isolated remote function {{methodName}}(grpc:Headers? headers = ()) returns ({{pascalcase methodName}}StreamingClient|grpc:Error) {
-        return self.grpcClient->streamingExecute("{{methodId}}", headers);
+        StreamingClient sClient = check self.grpcClient->streamingExecute("{{methodId}}", headers);
+        return new {{pascalcase methodName}}StreamingClient(sClient);
     }{{/clientStreamingFunctions}}
 }
 

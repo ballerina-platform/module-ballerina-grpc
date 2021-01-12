@@ -1,7 +1,7 @@
 public client class {{pascalcase methodName}}StreamingClient {
     private grpc:StreamingClient sClient;
 
-    public function init(grpc:StreamingClient sClient) {
+    isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
     }
 
@@ -12,7 +12,7 @@ public client class {{pascalcase methodName}}StreamingClient {
 
     isolated remote function receive() returns {{#if outputType}}{{outputType}}|grpc:Error{{else}}grpc:Error?{{/if}} {
         var payload = check self.sClient->receive();
-        {{#if outputType}}{{#not_equal outputType "string"}}return <{{outputType}}>result;{{/not_equal}}{{#equals outputType "string"}}return result.toString();{{/equals}}{{/if}}
+        {{#if outputType}}{{#not_equal outputType "string"}}return <{{outputType}}>payload;{{/not_equal}}{{#equals outputType "string"}}return payload.toString();{{/equals}}{{/if}}
     }
 
     isolated remote function sendError(grpc:Error response) returns grpc:Error? {

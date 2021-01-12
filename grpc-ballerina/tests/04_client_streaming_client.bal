@@ -27,11 +27,12 @@ function testClientStreaming() {
     // Client endpoint configuration
     HelloWorld4Client helloWorldEp = new ("http://localhost:9094");
 
-    StreamingClient ep = new;
+    LotsOfGreetingsStreamingClient ep;
     // Executing unary non-blocking call registering server message listener.
     var res = helloWorldEp->lotsOfGreetings(HelloWorldMessageListener);
     if (res is Error) {
         test:assertFail("Error from Connector: " + res.message());
+        return;
     } else {
         ep = res;
     }
@@ -80,6 +81,33 @@ service object {} HelloWorldMessageListener = service object {
     }
 };
 
+public client class LotsOfGreetingsStreamingClient {
+    private StreamingClient sClient;
+
+    isolated function init(StreamingClient sClient) {
+        self.sClient = sClient;
+    }
+
+
+    isolated remote function send(string message) returns Error? {
+        return self.sClient->send(message);
+    }
+
+
+    isolated remote function receive() returns string|Error {
+        var payload = check self.sClient->receive();
+        return payload.toString();
+    }
+
+    isolated remote function sendError(Error response) returns Error? {
+        return self.sClient->sendError(response);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.sClient->complete();
+    }
+}
+
 // Non-blocking client endpoint
 public client class HelloWorld4Client {
 
@@ -93,7 +121,9 @@ public client class HelloWorld4Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_4, getDescriptorMap4());
     }
 
-    isolated remote function lotsOfGreetings(service object {} msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
-        return self.grpcClient->streamingExecute("grpcservices.HelloWorld7/lotsOfGreetings", msgListener, headers);
+    isolated remote function lotsOfGreetings(service object {} msgListener, Headers? headers = ()) returns (LotsOfGreetingsStreamingClient|Error) {
+        StreamingClient sClient = check self.grpcClient->streamingExecute("grpcservices.HelloWorld7/lotsOfGreetings",
+        msgListener, headers);
+        return new LotsOfGreetingsStreamingClient(sClient);
     }
 }
