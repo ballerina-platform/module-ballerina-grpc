@@ -19,6 +19,7 @@ package org.ballerinalang.net.grpc.listener;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
@@ -191,7 +192,8 @@ public abstract class ServerCallHandler {
         List<Type> signatureParams = resource.getParamTypes();
         Object[] paramValues;
         int i = 0;
-        if (signatureParams.size() >= 1 && CALLER_TYPE.equals(signatureParams.get(0).getName())) {
+        if ((signatureParams.size() >= 1) && (signatureParams.get(0).getTag() == TypeTags.OBJECT_TYPE_TAG) &&
+                signatureParams.get(0).getName().contains(CALLER_TYPE)) {
             paramValues = new Object[signatureParams.size() * 2];
             paramValues[i] = getConnectionParameter(resource, responseObserver);
             paramValues[i + 1] = true;

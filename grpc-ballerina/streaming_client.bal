@@ -61,22 +61,37 @@ public client class StreamingClient {
     isolated remote function receive() returns anydata|Error {
         if (externIsBidirectional(self)) {
             if (self.serverStream is stream<anydata>) {
-                return (<stream<anydata>>self.serverStream).next();
+                var nextRecord = (<stream<anydata>>self.serverStream).next();
+                if (nextRecord is record {|anydata value;|}) {
+                    return nextRecord.value;
+                } else {
+                    return error DataMismatchError("Expected an anydata but found a null value");
+                }
             } else {
                 var result = externReceive(self);
                 if (result is stream<anydata>) {
                     self.serverStream = result;
-                    return (<stream<anydata>>self.serverStream).next();
-                } else {
+                    var nextRecord = (<stream<anydata>>self.serverStream).next();
+                    if (nextRecord is record {|anydata value;|}) {
+                        return nextRecord.value;
+                    } else {
+                        return error DataMismatchError("Expected an anydata but found a null value");
+                    }
+
+                } else if (result is anydata) {
                    return error DataMismatchError("Expected a stream but found an anydata type.");
+                } else {
+                    return result;
                 }
             }
         } else {
            var result = externReceive(self);
            if (result is anydata) {
                return result;
-           } else {
+           } else if (result is stream<anydata>) {
                return error DataMismatchError("Expected an anydata type but found a stream.");
+           } else {
+               return result;
            }
         }
     }
@@ -97,7 +112,7 @@ isolated function streamSendError(StreamingClient streamConnection, Error err) r
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
-isolated function externReceive(StreamingClient streamConnection) returns anydata?|stream<anydata> =
+isolated function externReceive(StreamingClient streamConnection) returns anydata|stream<anydata>|Error =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
