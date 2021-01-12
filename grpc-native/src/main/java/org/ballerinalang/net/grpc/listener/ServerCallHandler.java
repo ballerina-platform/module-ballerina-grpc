@@ -193,7 +193,7 @@ public abstract class ServerCallHandler {
         int i = 0;
         if (signatureParams.size() >= 1 && CALLER_TYPE.equals(signatureParams.get(0).getName())) {
             paramValues = new Object[signatureParams.size() * 2];
-            paramValues[i] = getConnectionParameter(responseObserver);
+            paramValues[i] = getConnectionParameter(resource, responseObserver);
             paramValues[i + 1] = true;
             i = i + 2;
         } else {

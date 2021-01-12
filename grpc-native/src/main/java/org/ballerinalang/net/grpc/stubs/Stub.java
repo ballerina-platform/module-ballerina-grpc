@@ -38,6 +38,8 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
+
 /**
  * This class handles Blocking client connection.
  *
@@ -90,7 +92,7 @@ public class Stub extends AbstractStub {
         } catch (Exception e) {
             cancelThrow(call, e);
         }
-        BObject streamIterator = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+        BObject streamIterator = ValueCreator.createObjectValue(getModule(),
                 GrpcConstants.ITERATOR_OBJECT_NAME, new Object[1]);
         BlockingQueue<Message> messageQueue = streamingCallListener.getMessageQueue();
         streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, messageQueue);
@@ -113,8 +115,7 @@ public class Stub extends AbstractStub {
         Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(false);
         call.start(streamingCallListener);
 
-        BObject streamingConnection = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
-                GrpcConstants.STREAMING_CLIENT);
+        BObject streamingConnection = ValueCreator.createObjectValue(getModule(), GrpcConstants.STREAMING_CLIENT);
         streamingConnection.addNativeData(GrpcConstants.REQUEST_SENDER, streamObserver);
         streamingConnection.addNativeData(GrpcConstants.REQUEST_MESSAGE_DEFINITION,
                 methodDescriptor.getSchemaDescriptor().getInputType());
@@ -139,8 +140,7 @@ public class Stub extends AbstractStub {
         Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(true);
         call.start(streamingCallListener);
 
-        BObject streamingConnection = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
-                GrpcConstants.STREAMING_CLIENT);
+        BObject streamingConnection = ValueCreator.createObjectValue(getModule(), GrpcConstants.STREAMING_CLIENT);
         streamingConnection.addNativeData(GrpcConstants.REQUEST_SENDER, streamObserver);
         streamingConnection.addNativeData(GrpcConstants.REQUEST_MESSAGE_DEFINITION,
                 methodDescriptor.getSchemaDescriptor().getInputType());
@@ -189,8 +189,7 @@ public class Stub extends AbstractStub {
                 } else {
                     Object responseBValue = value.getbMessage();
                     // Set response headers, when response headers exists in the message context.
-                    BObject headerObject = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
-                            GrpcConstants.HEADERS);
+                    BObject headerObject = ValueCreator.createObjectValue(getModule(), GrpcConstants.HEADERS);
                     headerObject.addNativeData(GrpcConstants.MESSAGE_HEADERS, value.getHeaders());
                     BArray contentTuple = ValueCreator.createTupleValue(
                             TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_ANYDATA,

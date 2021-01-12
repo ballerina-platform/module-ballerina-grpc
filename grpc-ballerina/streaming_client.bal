@@ -31,16 +31,6 @@ public client class StreamingClient {
         return streamSend(self, res);
     }
 
-    # Receives the response message from the server.
-    # ```ballerina
-    # anydata|grpc:Error response = sClient->receive();
-    # ```
-    # + return - The response message or a `grpc:Error` if an error occurred while receiving. `grpc:EOS` returns at
-    # the end of the stream.
-    isolated remote function receive() returns anydata|Error {
-        return streamReceive(self);
-    }
-
     # Informs the server when the caller has sent all the messages.
     # ```ballerina
     # grpc:Error? result = sClient->complete();
@@ -78,8 +68,7 @@ public client class StreamingClient {
                     self.serverStream = result;
                     return (<stream<anydata>>self.serverStream).next();
                 } else {
-                   typedesc<anydata> dataType = typeof result;
-                   return DataMismatchError("Expected a stream but found an anydata type/");
+                   return error DataMismatchError("Expected a stream but found an anydata type.");
                 }
             }
         } else {
@@ -87,18 +76,13 @@ public client class StreamingClient {
            if (result is anydata) {
                return result;
            } else {
-               return DataMismatchError("Expected an anydata type but found a stream.");
+               return error DataMismatchError("Expected an anydata type but found a stream.");
            }
         }
     }
 }
 
 isolated function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
-@java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
-} external;
-
-isolated function streamReceive(StreamingClient streamConnection) returns anydata|Error =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
