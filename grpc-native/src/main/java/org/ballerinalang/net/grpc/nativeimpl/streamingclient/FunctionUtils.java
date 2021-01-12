@@ -20,8 +20,11 @@ package org.ballerinalang.net.grpc.nativeimpl.streamingclient;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
 import org.ballerinalang.net.grpc.GrpcConstants;
@@ -32,6 +35,8 @@ import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.BlockingQueue;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_SENDER;
 import static org.ballerinalang.net.grpc.GrpcConstants.STATUS_ERROR_MAP;
@@ -52,10 +57,11 @@ public class FunctionUtils {
      * Extern function to send a streaming request messages to the server.
      *
      * @param streamConnection streaming connection instance.
-     * @param responseValue message.
+     * @param responseValue    message.
      * @return Error if there is an error while sending message to the server, else returns nil.
      */
     public static Object streamSend(BObject streamConnection, Object responseValue) {
+
         StreamObserver requestSender = (StreamObserver) streamConnection.getNativeData(REQUEST_SENDER);
         if (requestSender == null) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
@@ -75,16 +81,12 @@ public class FunctionUtils {
         return null;
     }
 
-    public static Object streamReceive(BObject streamConnection) {
-        // TODO: implement the logic.
-        return "";
-    }
-
     /**
      * Extern function to send a error message to the server.
      *
      * @param streamingConnection streaming connection instance.
-     * @param errorValue gRPC error instance.
+     * @param statusCode          gRPC error status code.
+     * @param errorMsg            error message.
      * @return Error if there is an error while sending error message to the server, else returns nil.
      */
     public static Object streamSendError(Environment env, BObject streamingConnection, BError errorValue) {
@@ -135,5 +137,53 @@ public class FunctionUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Extern function to check the streaming client is bidirectional or client streaming.
+     *
+     * @param streamingConnection streaming connection instance.
+     * @return In client streaming, return false and in bidi-streaming, return true.
+     */
+    public static Object externIsBidirectional(BObject streamingConnection) {
+        return (boolean) streamingConnection.getNativeData(GrpcConstants.IS_BIDI_STREAMING);
+    }
+
+    /**
+     * Extern function to receive the server responses(either client streaming or bidi-streaming).
+     *
+     * @param streamingConnection streaming connection instance.
+     * @return In client streaming, return an `anydata` and in bidi-streaming, return a `stream<anydata>`.
+     */
+    public static Object externReceive(BObject streamingConnection) {
+
+        BlockingQueue<?> messageQueue = (BlockingQueue<?>) streamingConnection.getNativeData(
+                GrpcConstants.MESSAGE_QUEUE);
+        boolean isBidiStream = (boolean) streamingConnection.getNativeData(GrpcConstants.IS_BIDI_STREAMING);
+        if (messageQueue == null) {
+            return MessageUtils.getConnectorError(new StatusRuntimeException(Status
+                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while sending the " +
+                            "message. endpoint does not exist")));
+        } else {
+            try {
+                if (isBidiStream) {
+                    BObject streamIterator = ValueCreator.createObjectValue(GrpcConstants.PROTOCOL_GRPC_PKG_ID,
+                            GrpcConstants.ITERATOR_OBJECT_NAME, new Object[1]);
+                    streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, messageQueue);
+                    return ValueCreator.createStreamValue(TypeCreator.createStreamType(PredefinedTypes.TYPE_ANYDATA),
+                            streamIterator);
+                } else {
+                    Message nextMessage = (Message) messageQueue.take();
+                    if (nextMessage.isError()) {
+                        return MessageUtils.getConnectorError(nextMessage.getError());
+                    } else {
+                        return nextMessage.getbMessage();
+                    }
+                }
+            } catch (Exception e) {
+                LOG.error("Error while sending request message to server.", e);
+                return MessageUtils.getConnectorError(e);
+            }
+        }
     }
 }
