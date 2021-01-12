@@ -140,7 +140,7 @@ public client class HelloWorld7BlockingClient {
         if (value is int) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -153,7 +153,7 @@ public client class HelloWorld7BlockingClient {
         if (value is float) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -166,7 +166,7 @@ public client class HelloWorld7BlockingClient {
         if (value is boolean) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -179,7 +179,7 @@ public client class HelloWorld7BlockingClient {
         if (value is Response) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -192,7 +192,7 @@ public client class HelloWorld7BlockingClient {
         if (value is Response) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 }

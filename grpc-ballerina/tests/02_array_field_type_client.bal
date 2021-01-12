@@ -225,7 +225,7 @@ public client class HelloWorld2BlockingClient {
         if (value is int) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -246,7 +246,7 @@ public client class HelloWorld2BlockingClient {
         if (value is float) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -259,7 +259,7 @@ public client class HelloWorld2BlockingClient {
         if (value is boolean) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -281,7 +281,7 @@ public client class HelloWorld2BlockingClient {
         if (value is TestInt) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -295,7 +295,7 @@ public client class HelloWorld2BlockingClient {
         if (value is TestString) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -309,7 +309,7 @@ public client class HelloWorld2BlockingClient {
         if (value is TestFloat) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -323,7 +323,7 @@ public client class HelloWorld2BlockingClient {
         if (value is TestBoolean) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 
@@ -337,7 +337,7 @@ public client class HelloWorld2BlockingClient {
         if (value is TestStruct) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 }

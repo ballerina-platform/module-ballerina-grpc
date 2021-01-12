@@ -81,7 +81,7 @@ public client class byteServiceBlockingClient {
         if (value is byte[]) {
             return [value, resHeaders];
         } else {
-            return InternalError("Error while constructing the message", value);
+            return error InternalError("Error while constructing the message", value);
         }
     }
 }

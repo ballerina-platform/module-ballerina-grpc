@@ -19,7 +19,7 @@
 package org.ballerinalang.net.grpc;
 
 import io.ballerina.runtime.api.Runtime;
-import io.ballerina.runtime.api.types.MemberFunctionType;
+import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
 
@@ -43,7 +43,7 @@ public class ServiceResource {
     private final Runtime runtime;
     private final Type returnType;
 
-    public ServiceResource(Runtime runtime, BObject service, MemberFunctionType function) {
+    public ServiceResource(Runtime runtime, BObject service, MethodType function) {
         this.service = service;
         this.functionName = function.getName();
         this.paramTypes = function.getParameterTypes();

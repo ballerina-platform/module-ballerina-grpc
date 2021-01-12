@@ -130,9 +130,9 @@ isolated function retryBlockingExecute(Client grpcClient, string methodID, anyda
         currentRetryCount += 1;
     }
     if (cause is error) {
-        return AllRetryAttemptsFailed("Maximum retry attempts completed without getting a result", cause);
+        return error AllRetryAttemptsFailed("Maximum retry attempts completed without getting a result", cause);
     } else {
-        return AllRetryAttemptsFailed("Maximum retry attempts completed without getting a result");
+        return error AllRetryAttemptsFailed("Maximum retry attempts completed without getting a result");
     }
 }
 

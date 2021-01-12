@@ -19,7 +19,7 @@ import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.MemberFunctionType;
+import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
@@ -66,7 +66,7 @@ public class MessageUtils {
         return ValueCreator.createObjectValue(getModule(), "Headers");
     }
 
-    static boolean headersRequired(MemberFunctionType functionType) {
+    static boolean headersRequired(MethodType functionType) {
         if (functionType == null || functionType.getParameterTypes() == null) {
             throw new RuntimeException("Invalid resource input arguments");
         }

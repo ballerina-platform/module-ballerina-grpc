@@ -205,7 +205,7 @@ public client class OneofFieldServiceBlockingClient {
         if (value is Response1) {
             return [value, resHeaders];
         } else {
-            Error err = InternalError("Error while constructing the message", value);
+            Error err = error InternalError("Error while constructing the message", value);
             return err;
         }
     }
@@ -219,7 +219,7 @@ public client class OneofFieldServiceBlockingClient {
         if (value is ZZZ) {
             return [value, resHeaders];
         } else {
-            Error err = InternalError("Error while constructing the message", value);
+            Error err = error InternalError("Error while constructing the message", value);
             return err;
         }
     }
