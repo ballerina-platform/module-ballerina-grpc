@@ -19,7 +19,7 @@ import ballerina/test;
 
 @test:Config {enable:true}
 isolated function testOptionalFieldMessage() {
-    CheckoutServiceBlockingClient checkoutServiceBlockingEp = new("http://localhost:9108");
+    CheckoutServiceClient checkoutServiceBlockingEp = new("http://localhost:9108");
 
     PlaceOrderRequest orderRequest = {
         user_id: "2e8f27b9-b966-45b0-b51f-dcccea697d01",
@@ -43,29 +43,6 @@ isolated function testOptionalFieldMessage() {
     }
 }
 
-public client class CheckoutServiceBlockingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_18, getDescriptorMap18());
-    }
-
-    isolated remote function PlaceOrder(PlaceOrderRequest req, Headers? headers = ()) returns
-                                                                    ([PlaceOrderResponse, Headers]|Error) {
-        var payload = check self.grpcClient->blockingExecute("grpcservices.CheckoutService/PlaceOrder", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        return [<PlaceOrderResponse>result, resHeaders];
-    }
-
-}
-
 public client class CheckoutServiceClient {
 
     *AbstractClientEndpoint;
@@ -75,11 +52,16 @@ public client class CheckoutServiceClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_18, getDescriptorMap18());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_18, getDescriptorMap18());
     }
 
-    isolated remote function PlaceOrder(PlaceOrderRequest req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.CheckoutService/PlaceOrder", req, msgListener, headers);
+    isolated remote function PlaceOrder(PlaceOrderRequest req, Headers? headers = ()) returns
+                                                                    ([PlaceOrderResponse, Headers]|Error) {
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.CheckoutService/PlaceOrder", req, headers);
+        Headers resHeaders = new;
+        anydata result = ();
+        [result, resHeaders] = payload;
+        return [<PlaceOrderResponse>result, resHeaders];
     }
 
 }

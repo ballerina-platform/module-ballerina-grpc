@@ -21,7 +21,7 @@ import ballerina/test;
     enable: false
 }
 isolated function testUnarySecuredBlockingWithCerts() {
-    grpcMutualSslServiceBlockingClient helloWorldBlockingEp = new ("https://localhost:9100", {
+    grpcMutualSslServiceClient helloWorldBlockingEp = new ("https://localhost:9100", {
         secureSocket:{
             keyFile: PRIVATE_KEY_PATH,
             certFile: PUBLIC_CRT_PATH,
@@ -41,27 +41,6 @@ isolated function testUnarySecuredBlockingWithCerts() {
     }
 }
 
-public client class grpcMutualSslServiceBlockingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_10, getDescriptorMap10());
-    }
-
-    isolated remote function hello (string req, Headers? headers = ()) returns ([string, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.grpcMutualSslService/hello", req, headers);
-        Headers resHeaders = new;
-        any result = ();
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
-    }
-}
-
 public client class grpcMutualSslServiceClient {
 
     *AbstractClientEndpoint;
@@ -71,10 +50,14 @@ public client class grpcMutualSslServiceClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_10, getDescriptorMap10());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_10, getDescriptorMap10());
     }
 
-    isolated remote function hello (string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.grpcMutualSslService/hello", req, msgListener, headers);
+    isolated remote function hello (string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.grpcMutualSslService/hello", req, headers);
+        Headers resHeaders = new;
+        any result = ();
+        [result, resHeaders] = unionResp;
+        return [result.toString(), resHeaders];
     }
 }

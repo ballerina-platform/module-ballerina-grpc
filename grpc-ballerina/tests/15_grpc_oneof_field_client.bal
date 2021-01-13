@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-final OneofFieldServiceBlockingClient blockingEp = new("http://localhost:9105");
+final OneofFieldServiceClient blockingEp = new("http://localhost:9105");
 const string ERROR_MESSAGE = "Expected response value type not received";
 
 type Response1Typedesc typedesc<Response1>;
@@ -184,7 +184,7 @@ function testBytesFieldValue() {
     }
 }
 
-public client class OneofFieldServiceBlockingClient {
+public client class OneofFieldServiceClient {
 
     *AbstractClientEndpoint;
 
@@ -193,11 +193,11 @@ public client class OneofFieldServiceBlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_15, getDescriptorMap15());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_15, getDescriptorMap15());
     }
 
     isolated remote function hello(Request1 req, Headers? headers = ()) returns ([Response1, Headers]|Error) {
-        var payload = check self.grpcClient->blockingExecute("grpcservices.OneofFieldService/hello", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -211,7 +211,7 @@ public client class OneofFieldServiceBlockingClient {
     }
 
     isolated remote function testOneofField(ZZZ req, Headers? headers = ()) returns ([ZZZ, Headers]|Error) {
-        var payload = check self.grpcClient->blockingExecute("grpcservices.OneofFieldService/testOneofField", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -224,25 +224,4 @@ public client class OneofFieldServiceBlockingClient {
         }
     }
 
-}
-
-public client class OneofFieldServiceClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_15, getDescriptorMap15());
-    }
-
-    isolated remote function hello(Request1 req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.OneofFieldService/hello", req, msgListener, headers);
-    }
-
-    isolated remote function testOneofField(ZZZ req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.OneofFieldService/testOneofField", req, msgListener, headers);
-    }
 }

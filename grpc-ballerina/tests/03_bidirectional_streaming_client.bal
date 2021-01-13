@@ -71,8 +71,6 @@ function testBidiStreaming() {
     checkpanic ep->complete();
 }
 
-
-// Non-blocking client endpoint
 public client class ChatClient {
 
     *AbstractClientEndpoint;

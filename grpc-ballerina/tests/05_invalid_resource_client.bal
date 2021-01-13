@@ -58,11 +58,11 @@ public client class HelloWorld5BlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_5, getDescriptorMap5());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_5, getDescriptorMap5());
     }
 
     isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/hello1", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/hello1", req, headers);
         anydata result = ();
         Headers resHeaders = new;
         [result, resHeaders] = unionResp;
@@ -70,7 +70,7 @@ public client class HelloWorld5BlockingClient {
     }
 
     isolated remote function testInt(int req, Headers? headers = ()) returns ([int, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/testInt", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/testInt", req, headers);
         anydata result = ();
         Headers resHeaders = new;
         [result, resHeaders] = unionResp;

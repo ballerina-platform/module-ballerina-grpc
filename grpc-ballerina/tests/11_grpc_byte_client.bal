@@ -21,7 +21,7 @@ type ByteArrayTypedesc typedesc<byte[]>;
 
 @test:Config {enable:true}
 isolated function testByteArray() {
-    byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
+    byteServiceClient blockingEp  = new ("http://localhost:9101");
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();
     var addResponse = blockingEp->checkBytes(bytes);
@@ -38,7 +38,7 @@ isolated function testByteArray() {
 @test:Config {enable:true}
 function testLargeByteArray() {
     string filePath = "tests/resources/sample_bytes.txt";
-    byteServiceBlockingClient blockingEp  = new ("http://localhost:9101");
+    byteServiceClient blockingEp  = new ("http://localhost:9101");
     var rch = <@untainted> io:openReadableFile(filePath);
     if (rch is error) {
         test:assertFail("Error while reading the file.");
@@ -60,7 +60,7 @@ function testLargeByteArray() {
     }
 }
 
-public client class byteServiceBlockingClient {
+public client class byteServiceClient {
 
     *AbstractClientEndpoint;
 
@@ -69,11 +69,11 @@ public client class byteServiceBlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_11, getDescriptorMap11());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
     isolated remote function checkBytes (byte[] req, Headers? headers = ()) returns ([byte[], Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.byteService/checkBytes", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.byteService/checkBytes", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = unionResp;
@@ -86,19 +86,3 @@ public client class byteServiceBlockingClient {
     }
 }
 
-public client class byteServiceClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_11, getDescriptorMap11());
-    }
-
-    isolated remote function checkBytes (byte[] req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.byteService/checkBytes", req, msgListener, headers);
-    }
-}
