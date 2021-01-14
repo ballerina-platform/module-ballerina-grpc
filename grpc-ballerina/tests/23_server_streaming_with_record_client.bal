@@ -80,7 +80,7 @@ public client class helloWorldServerStreamingClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_23, getDescriptorMap23());
     }
 
-    isolated remote function lotsOfReplies(HelloRequest req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function lotsOfReplies(HelloRequest req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("helloWorldServerStreaming/lotsOfReplies", req, msgListener, headers);
     }
 

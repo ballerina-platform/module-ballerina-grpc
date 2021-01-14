@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObservabilityConstants;
 import io.ballerina.runtime.observability.ObserveUtils;
@@ -43,11 +44,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Map.entry;
 import static org.ballerinalang.net.grpc.GrpcConstants.CALLER_ID;
-import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
 import static org.ballerinalang.net.grpc.GrpcConstants.ON_MESSAGE_METADATA;
+import static org.ballerinalang.net.grpc.MessageUtils.createHeaderMap;
 import static org.ballerinalang.net.grpc.MessageUtils.getCallerTypeName;
-import static org.ballerinalang.net.grpc.MessageUtils.getHeaderObject;
+import static org.ballerinalang.net.grpc.MessageUtils.getContextTypeName;
 import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
@@ -153,8 +155,8 @@ public abstract class ServerCallHandler {
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_OBSERVER, responseObserver);
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_MESSAGE_DEFINITION, methodDescriptor.getOutputType());
         String serviceName = resource.getServiceName();
-        Type returnType = resource.getCallerReturnType() instanceof ArrayType ?
-                ((ArrayType) resource.getCallerReturnType()).getElementType() : resource.getCallerReturnType();
+        Type returnType = resource.getRpcOutputType() instanceof ArrayType ?
+                ((ArrayType) resource.getRpcOutputType()).getElementType() : resource.getRpcOutputType();
         String outputType = returnType != PredefinedTypes.TYPE_NULL ? returnType.getName() : null;
         return ValueCreator.createObjectValue(resource.getService().getType().getPackage(),
                 getCallerTypeName(serviceName, outputType), clientEndpoint);
@@ -190,18 +192,27 @@ public abstract class ServerCallHandler {
         Object[] paramValues = new Object[signatureParams.size() * 2];
         paramValues[0] = getConnectionParameter(resource, responseObserver);
         paramValues[1] = true;
-        BObject headerStruct = null;
+
         if (resource.isHeaderRequired()) {
-            headerStruct = getHeaderObject();
-            headerStruct.addNativeData(MESSAGE_HEADERS, headers);
-        }
-        if (requestParam != null) {
+            BMap headerValues = createHeaderMap(headers);
+            Map<String, Object> valueMap;
+            if (requestParam != null) {
+                valueMap = Map.ofEntries(
+                        entry("content", requestParam),
+                        entry("headers", headerValues)
+                );
+            } else {
+                valueMap = Map.ofEntries(
+                        entry("headers", headerValues)
+                );
+            }
+            BMap contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
+                    getContextTypeName(resource.getRpcInputType()), valueMap);
+            paramValues[2] = contentContext;
+            paramValues[3] = true;
+        } else if (requestParam != null) {
             paramValues[2] = requestParam;
             paramValues[3] = true;
-        }
-        if (headerStruct != null && signatureParams.size() == 3) {
-            paramValues[4] = headerStruct;
-            paramValues[5] = true;
         }
         return paramValues;
     }

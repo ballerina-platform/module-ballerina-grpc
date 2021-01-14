@@ -17,12 +17,15 @@ package org.ballerinalang.net.grpc;
 
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.ErrorCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.Type;
-import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.DefaultHttpResponse;
@@ -42,10 +45,11 @@ import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
+import static io.ballerina.runtime.api.utils.StringUtils.fromStringArray;
 import static org.ballerinalang.net.grpc.GrpcConstants.CONTENT_TYPE_GRPC;
 import static org.ballerinalang.net.grpc.GrpcConstants.GRPC_MESSAGE_KEY;
 import static org.ballerinalang.net.grpc.GrpcConstants.GRPC_STATUS_KEY;
-import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
 import static org.ballerinalang.net.grpc.Status.Code.UNKNOWN;
 import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -62,18 +66,20 @@ public class MessageUtils {
     private static final int MAX_BUFFER_LENGTH = 16384;
     private static final String GOOGLE_PROTOBUF_EMPTY = "google.protobuf.Empty";
 
+    private static final Type HEADER_MAP_TYPE =
+                TypeCreator.createMapType(TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING));
+
     public static BObject getHeaderObject() {
         return ValueCreator.createObjectValue(getModule(), "Headers");
     }
 
-    static boolean headersRequired(MethodType functionType) {
+    static boolean headersRequired(MethodType functionType, Type rpcInputType) {
         if (functionType == null || functionType.getParameterTypes() == null) {
             throw new RuntimeException("Invalid resource input arguments");
         }
         boolean headersRequired = false;
         for (Type paramType : functionType.getParameterTypes()) {
-            if (paramType != null && "Headers".equals(paramType.getName()) &&
-                    paramType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(paramType.getPackage().getName())) {
+            if (paramType != null && getContextTypeName(rpcInputType).equals(paramType.getName())) {
                 headersRequired = true;
                 break;
             }
@@ -135,7 +141,7 @@ public class MessageUtils {
                 message = error.getMessage();
             }
         }
-        return ErrorCreator.createDistinctError(errorIdName, getModule(), StringUtils.fromString(message));
+        return ErrorCreator.createDistinctError(errorIdName, getModule(), fromString(message));
     }
     
     /**
@@ -405,6 +411,13 @@ public class MessageUtils {
         }
     }
 
+    /**
+     * Returns Custom Caller Type name using service name and return type.
+     *
+     * @param serviceName Service name defined in the contract.
+     * @param returnType output type.
+     * @return Caller type name.
+     */
     public static String getCallerTypeName(String serviceName, String returnType) {
         if (returnType != null) {
             returnType = returnType.replaceAll("[^a-zA-Z0-9]", "");
@@ -414,6 +427,37 @@ public class MessageUtils {
         } else {
             return serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1) + "NilCaller";
         }
+    }
+
+    public static String getContextTypeName(Type inputType) {
+        inputType = inputType instanceof ArrayType ?
+                ((ArrayType) inputType).getElementType() : inputType;
+        String sInputType = inputType != PredefinedTypes.TYPE_NULL ? inputType.getName() : null;
+        if (sInputType != null) {
+            sInputType = sInputType.replaceAll("[^a-zA-Z0-9]", "");
+            return "Context" + sInputType.substring(0, 1).toUpperCase() + sInputType.substring(1);
+        } else {
+            return "ContextNil";
+        }
+    }
+
+    /**
+     * Returns Ballerina Header Map using HttpHeaders instance.
+     *
+     * @param httpHeaders Header instance at transport level.
+     * @return Ballerina Header Map.
+     */
+    public static BMap createHeaderMap(HttpHeaders httpHeaders) {
+        BMap headerMap = ValueCreator.createMapValue(HEADER_MAP_TYPE);
+        for (String key : httpHeaders.names()) {
+            String[] values = httpHeaders.getAll(key).toArray(new String[0]);
+            if (values.length == 1) {
+                headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromString(values[0]));
+            } else {
+                headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromStringArray(values));
+            }
+        }
+        return headerMap;
     }
 
     private MessageUtils() {

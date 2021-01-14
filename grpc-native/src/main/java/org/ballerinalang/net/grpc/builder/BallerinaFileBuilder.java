@@ -195,9 +195,7 @@ public class BallerinaFileBuilder {
                             setMessageMap(stubFileObject.getMessageMap()).build();
                     serviceStubBuilder.addMethod(method);
                     sampleServiceBuilder.addMethod(method);
-//                    if (MethodDescriptor.MethodType.UNARY.equals(method.getMethodType())) {
-//                        isUnaryContains = true;
-//                    }
+
                     if (method.containsEmptyType() && !(stubFileObject.isMessageExists(EMPTY_DATA_TYPE))
                             && !hasEmptyMessage) {
                         Message message = Message.newBuilder(EmptyMessage.newBuilder().getDescriptor().toProto())
@@ -242,19 +240,6 @@ public class BallerinaFileBuilder {
                     writeOutputFile(stubFileObject, STUB_TEMPLATE_FILE_NAME, stubFilePath);
                 }
             }
-
-//            if (!GRPC_SERVICE.equals(mode)) {
-//                String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-//                writeOutputFile(stubFileObject, SKELETON_TEMPLATE_NAME, stubFilePath);
-//            } else if (needStubFile) {
-//                String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-//                writeOutputFile(stubFileObject, SERVICE_STUB_TEMPLATE_FILE_NAME, stubFilePath);
-//            }
-//            if (GRPC_PROXY.equals(mode)) {
-//                String proxyPath = generateOutputFile(this.balOutPath, filename +
-//                        SAMPLE_PROXY_FILE_PREFIX);
-//                writeOutputFile(stubFileObject, SAMPLE_PROXY_TEMPLATE_NAME, proxyPath);
-//            }
         } catch (GrpcServerException e) {
             throw new CodeBuilderException("Message descriptor error. " + e.getMessage());
         } catch (IOException e) {

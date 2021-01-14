@@ -18,6 +18,7 @@
 
 package org.ballerinalang.net.grpc;
 
+import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.Type;
@@ -26,6 +27,7 @@ import io.ballerina.runtime.api.values.BObject;
 import java.util.List;
 
 import static org.ballerinalang.net.grpc.MessageUtils.headersRequired;
+import static org.ballerinalang.net.grpc.ServicesBuilderUtils.getBallerinaValueType;
 
 /**
  * gRPC service resource class containing metadata to dispatch service request.
@@ -41,17 +43,21 @@ public class ServiceResource {
     private final boolean headerRequired;
     private final Runtime runtime;
     private final Type returnType;
-    private final Type callerReturnType;
+    private final Type rpcOutputType;
+    private final Type rpcInputType;
 
     public ServiceResource(Runtime runtime, BObject service, String serviceName, MethodType function,
-                           Type callerReturnType) {
+                           Descriptors.MethodDescriptor methodDescriptor) {
         this.service = service;
         this.serviceName = serviceName;
         this.functionName = function.getName();
         this.paramTypes = function.getParameterTypes();
         this.returnType = function.getReturnType();
-        this.callerReturnType = callerReturnType;
-        this.headerRequired = headersRequired(function);
+        this.rpcOutputType = getBallerinaValueType(service.getType().getPackage(),
+                methodDescriptor.getOutputType().getName());
+        this.rpcInputType = getBallerinaValueType(service.getType().getPackage(),
+                methodDescriptor.getInputType().getName());
+        this.headerRequired = headersRequired(function, rpcInputType);
         this.runtime = runtime;
     }
 
@@ -83,7 +89,11 @@ public class ServiceResource {
         return serviceName;
     }
 
-    public Type getCallerReturnType() {
-        return callerReturnType;
+    public Type getRpcOutputType() {
+        return rpcOutputType;
+    }
+
+    public Type getRpcInputType() {
+        return rpcInputType;
     }
 }

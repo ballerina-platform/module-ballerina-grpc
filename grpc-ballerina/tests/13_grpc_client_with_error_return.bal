@@ -44,9 +44,9 @@ public client class HelloWorld13BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
-    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var payload = check self.grpcClient->blockingExecute("HelloWorld13/hello", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         any result = ();
         [result, resHeaders] = payload;
         return [result.toString(), resHeaders];
@@ -66,7 +66,7 @@ public client class HelloWorld13Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
-    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("HelloWorld13/hello", req, msgListener, headers);
     }
 

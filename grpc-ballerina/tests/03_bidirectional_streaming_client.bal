@@ -108,7 +108,7 @@ public client class ChatClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_3, getDescriptorMap3());
     }
 
-    isolated remote function chat(service object {} msgListener, Headers? headers = ()) returns
+    isolated remote function chat(service object {} msgListener, map<string[]> headers = {}) returns
     (StreamingClient|Error) {
         return self.grpcClient->streamingExecute("Chat/chat", msgListener, headers);
     }

@@ -29,7 +29,7 @@ isolated function testByteArray() {
         test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
     } else {
         byte[] result = [];
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [result, resHeaders] = addResponse;
         test:assertEquals(result, bytes);
     }
@@ -72,9 +72,9 @@ public client class byteServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
-    isolated remote function checkBytes (byte[] req, Headers? headers = ()) returns ([byte[], Headers]|Error) {
+    isolated remote function checkBytes (byte[] req, map<string[]> headers = {}) returns ([byte[], map<string[]>]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.byteService/checkBytes", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = unionResp;
         var value = result.cloneWithType(ByteArrayTypedesc);
@@ -98,7 +98,7 @@ public client class byteServiceClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
-    isolated remote function checkBytes (byte[] req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function checkBytes (byte[] req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.byteService/checkBytes", req, msgListener, headers);
     }
 }

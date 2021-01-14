@@ -19,9 +19,11 @@ package org.ballerinalang.net.grpc.nativeimpl.caller;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.ballerinalang.net.grpc.GrpcConstants;
@@ -35,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
-import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
 import static org.ballerinalang.net.grpc.GrpcConstants.STATUS_ERROR_MAP;
 import static org.ballerinalang.net.grpc.GrpcConstants.getKeyByValue;
 import static org.ballerinalang.net.grpc.MessageUtils.getMappingHttpStatusCode;
@@ -107,7 +108,7 @@ public class FunctionUtils {
      * @return Error if there is an error while responding the caller, else returns nil
      */
     public static Object externSend(Environment env, BObject endpointClient, Object responseValue,
-                                    Object headerValues) {
+                                    BMap headerValues) {
         StreamObserver responseObserver = MessageUtils.getResponseObserver(endpointClient);
         Descriptors.Descriptor outputType = (Descriptors.Descriptor) endpointClient.getNativeData(GrpcConstants
                 .RESPONSE_MESSAGE_DEFINITION);
@@ -125,8 +126,12 @@ public class FunctionUtils {
                     Message responseMessage = new Message(outputType.getName(), responseValue);
                     // Update response headers when request headers exists in the context.
                     HttpHeaders headers = null;
-                    if ((headerValues instanceof BObject)) {
-                        headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
+                    if (headerValues != null) {
+                        headers = new DefaultHttpHeaders();
+                        for (Object key : headerValues.getKeys()) {
+                            Object headerValue = headerValues.get(key);
+                            headers.add((String) key, headerValue);
+                        }
                     }
                     if (headers != null) {
                         responseMessage.setHeaders(headers);
@@ -150,11 +155,9 @@ public class FunctionUtils {
      *
      * @param endpointClient caller instance.
      * @param errorValue gRPC error instance.
-     * @param headerValues custom metadata to pass with response.
      * @return Error if there is an error while responding the caller, else returns nil
      */
-    public static Object externSendError(Environment env, BObject endpointClient, BError errorValue,
-                                         Object headerValues) {
+    public static Object externSendError(Environment env, BObject endpointClient, BError errorValue) {
         StreamObserver responseObserver = MessageUtils.getResponseObserver(endpointClient);
         ObserverContext observerContext =
                 ObserveUtils.getObserverContextOfCurrentFrame(env);
@@ -168,20 +171,9 @@ public class FunctionUtils {
                 if (statusCode == null) {
                     statusCode = Status.Code.INTERNAL.value();
                 }
-                // Update response headers when request headers exists in the context.
-                HttpHeaders headers = null;
                 Message errorMessage = new Message(new StatusRuntimeException(Status.fromCodeValue(statusCode)
                         .withDescription(errorValue.getErrorMessage().getValue())));
-                if (headerValues instanceof BObject) {
-                    headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
-                }
-                if (headers != null) {
-                    errorMessage.setHeaders(headers);
-                    if (observerContext != null) {
-                        headers.entries().forEach(
-                                x -> observerContext.addTag(x.getKey(), x.getValue()));
-                    }
-                }
+
                 int mappedStatusCode = getMappingHttpStatusCode(statusCode);
                 if (observerContext != null) {
                     observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, mappedStatusCode);

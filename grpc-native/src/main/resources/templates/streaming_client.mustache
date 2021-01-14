@@ -15,6 +15,10 @@ public client class {{pascalcase methodName}}StreamingClient {
         {{#if outputType}}{{#not_equal outputType "string"}}return <{{outputType}}>payload;{{/not_equal}}{{#equals outputType "string"}}return payload.toString();{{/equals}}{{/if}}
     }
 
+    isolated remote function receiveHeaders() returns map<string[]>|grpc:Error {
+        return check self.sClient->receiveHeaders();
+    }
+
     isolated remote function sendError(grpc:Error response) returns grpc:Error? {
         return self.sClient->sendError(response);
     }

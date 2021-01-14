@@ -24,7 +24,7 @@ import ballerina/runtime;
 service "HelloWorld14" on new Listener(9104) {
 
     isolated remote function hello (HelloWorld14StringCaller caller, string name,
-                             Headers headers) {
+                             map<string[]> headers) {
         string message = "Hello " + name;
         runtime:sleep(2000);
         // Sends response message with headers.

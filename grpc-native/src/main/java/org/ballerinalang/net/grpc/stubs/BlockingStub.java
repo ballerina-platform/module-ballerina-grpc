@@ -22,7 +22,7 @@ import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
-import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BMap;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.ClientCall;
 import org.ballerinalang.net.grpc.DataContext;
@@ -34,9 +34,7 @@ import org.ballerinalang.net.transport.contract.HttpClientConnector;
 
 import java.util.Arrays;
 
-import static org.ballerinalang.net.grpc.GrpcConstants.HEADERS;
-import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
-import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
+import static org.ballerinalang.net.grpc.MessageUtils.createHeaderMap;
 
 /**
  * This class handles Blocking client connection.
@@ -109,13 +107,12 @@ public class BlockingStub extends AbstractStub {
                 } else {
                     Object responseBValue = value.getbMessage();
                     // Set response headers, when response headers exists in the message context.
-                    BObject headerObject = ValueCreator.createObjectValue(getModule(), HEADERS);
-                    headerObject.addNativeData(MESSAGE_HEADERS, value.getHeaders());
+                    BMap headerMap = createHeaderMap(value.getHeaders());
                     BArray contentTuple = ValueCreator.createTupleValue(
                             TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_ANYDATA,
-                                    headerObject.getType())));
+                                    headerMap.getType())));
                     contentTuple.add(0, responseBValue);
-                    contentTuple.add(1, headerObject);
+                    contentTuple.add(1, headerMap);
                     inboundResponse = contentTuple;
                 }
             } else {

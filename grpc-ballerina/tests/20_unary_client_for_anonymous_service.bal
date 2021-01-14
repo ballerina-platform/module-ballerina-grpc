@@ -43,7 +43,7 @@ function beforeFunc() {
 }
 function testAnonymousServiceWithBlockingClient() {
     // Executing unary blocking call
-    [string, Headers]|Error unionResp = helloWorld20BlockingEp->hello("WSO2");
+    [string, map<string[]>]|Error unionResp = helloWorld20BlockingEp->hello("WSO2");
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
@@ -75,10 +75,10 @@ public client class HelloWorld20BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_20, getDescriptorMap20());
     }
 
-    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld101/hello", req, headers);
         anydata result = ();
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
@@ -97,7 +97,7 @@ public client class HelloWorld20Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_20, getDescriptorMap20());
     }
 
-    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld101/hello", req, msgListener, headers);
     }
 }

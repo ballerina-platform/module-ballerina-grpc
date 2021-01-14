@@ -18,6 +18,7 @@
 
 package org.ballerinalang.net.grpc.nativeimpl.client;
 
+import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -25,6 +26,7 @@ import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.DataContext;
 import org.ballerinalang.net.grpc.Message;
@@ -56,7 +58,6 @@ import java.util.concurrent.Semaphore;
 import static org.ballerinalang.net.grpc.GrpcConstants.BLOCKING_TYPE;
 import static org.ballerinalang.net.grpc.GrpcConstants.CLIENT_CONNECTOR;
 import static org.ballerinalang.net.grpc.GrpcConstants.ENDPOINT_URL;
-import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_HEADERS;
 import static org.ballerinalang.net.grpc.GrpcConstants.METHOD_DESCRIPTORS;
 import static org.ballerinalang.net.grpc.GrpcConstants.NON_BLOCKING_TYPE;
 import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_MESSAGE_DEFINITION;
@@ -200,7 +201,7 @@ public class FunctionUtils extends AbstractExecute {
      */
     @SuppressWarnings("unchecked")
     public static Object externBlockingExecute(Environment env, BObject clientEndpoint, BString methodName,
-                                               Object payloadBValue, Object headerValues) {
+                                               Object payloadBValue, BMap headerValues) {
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC client connector " +
                     "is not initialized properly");
@@ -223,7 +224,7 @@ public class FunctionUtils extends AbstractExecute {
                     "doesn't set properly");
         }
 
-        com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
+        Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
                 .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
                         : null;
         if (methodDescriptor == null) {
@@ -233,11 +234,12 @@ public class FunctionUtils extends AbstractExecute {
         if (connectionStub instanceof BlockingStub) {
             Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payloadBValue);
             // Update request headers when request headers exists in the context.
-            HttpHeaders headers = null;
-            if (headerValues instanceof BObject) {
-                headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
-            }
-            if (headers != null) {
+            if (headerValues != null) {
+                HttpHeaders headers = new DefaultHttpHeaders();
+                for (Object key : headerValues.getKeys()) {
+                    Object headerValue = headerValues.get(key);
+                    headers.add(((BString) key).getValue(), headerValue);
+                }
                 requestMsg.setHeaders(headers);
             }
             BlockingStub blockingStub = (BlockingStub) connectionStub;
@@ -277,7 +279,7 @@ public class FunctionUtils extends AbstractExecute {
      */
     @SuppressWarnings("unchecked")
     public static Object externNonBlockingExecute(Environment env, BObject clientEndpoint, BString methodName,
-                                                  Object payload, BObject callbackService, Object headerValues) {
+                                                  Object payload, BObject callbackService, BMap headerValues) {
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector is " +
                     "not initialized properly");
@@ -311,11 +313,12 @@ public class FunctionUtils extends AbstractExecute {
         if (connectionStub instanceof NonBlockingStub) {
             Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payload);
             // Update request headers when request headers exists in the context.
-            HttpHeaders headers = null;
-            if (headerValues instanceof BObject) {
-                headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
-            }
-            if (headers != null) {
+            if (headerValues != null) {
+                HttpHeaders headers = new DefaultHttpHeaders();
+                for (Object key : headerValues.getKeys()) {
+                    Object headerValue = headerValues.get(key);
+                    headers.add((String) key, headerValue);
+                }
                 requestMsg.setHeaders(headers);
             }
 
@@ -356,7 +359,7 @@ public class FunctionUtils extends AbstractExecute {
      */
     @SuppressWarnings("unchecked")
     public static Object externStreamingExecute(Environment env, BObject clientEndpoint, BString methodName,
-                                                BObject callbackService, Object headerValues) {
+                                                BObject callbackService, BMap headerValues) {
         if (clientEndpoint == null) {
             return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector " +
                     "is not initialized properly");
@@ -389,9 +392,14 @@ public class FunctionUtils extends AbstractExecute {
 
         if (connectionStub instanceof NonBlockingStub) {
             NonBlockingStub nonBlockingStub = (NonBlockingStub) connectionStub;
+            // Update request headers when request headers exists in the context.
             HttpHeaders headers = null;
-            if (headerValues instanceof BObject) {
-                headers = (HttpHeaders) ((BObject) headerValues).getNativeData(MESSAGE_HEADERS);
+            if (headerValues != null) {
+                headers = new DefaultHttpHeaders();
+                for (Object key : headerValues.getKeys()) {
+                    Object headerValue = headerValues.get(key);
+                    headers.add((String) key, headerValue);
+                }
             }
 
             try {

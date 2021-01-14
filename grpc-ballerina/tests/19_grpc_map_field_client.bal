@@ -30,7 +30,7 @@ function testMapFields() {
             tags: [{key: "action", value: "respond"}]
         }]
     };
-    Headers | error publishMetrics = negotiatorEp->publishMetrics(request);
+    map<string[]> | error publishMetrics = negotiatorEp->publishMetrics(request);
     if (publishMetrics is error) {
         test:assertFail(io:sprintf("Metrics publish failed: %s", publishMetrics.message()));
     }
@@ -39,7 +39,7 @@ function testMapFields() {
 @test:Config {enable:true}
 function testOptionalFields() {
     HandshakeRequest request = {};
-    [HandshakeResponse, Headers] | Error result = negotiatorEp->handshake(request);
+    [HandshakeResponse, map<string[]>] | Error result = negotiatorEp->handshake(request);
     if (result is error) {
         test:assertFail(io:sprintf("Handshake failed: %s", result.message()));
     } else {
@@ -61,27 +61,27 @@ public client class NegotiatorBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
-    isolated remote function handshake(HandshakeRequest req, Headers? headers = ())
-                                                returns ([HandshakeResponse, Headers] | Error) {
+    isolated remote function handshake(HandshakeRequest req, map<string[]> headers = {})
+                                                returns ([HandshakeResponse, map<string[]>] | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/handshake", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = payload;
         return [<HandshakeResponse>result, resHeaders];
     }
 
-    isolated remote function publishMetrics(MetricsPublishRequest req, Headers? headers = ())
-                                                returns (Headers | Error) {
+    isolated remote function publishMetrics(MetricsPublishRequest req, map<string[]> headers = {})
+                                                returns (map<string[]> | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/publishMetrics", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [_, resHeaders] = payload;
         return resHeaders;
     }
 
-    isolated remote function publishTraces(TracesPublishRequest req, Headers? headers = ())
-                                                returns (Headers | Error) {
+    isolated remote function publishTraces(TracesPublishRequest req, map<string[]> headers = {})
+                                                returns (map<string[]> | Error) {
         var payload = check self.grpcClient->blockingExecute("Negotiator/publishTraces", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [_, resHeaders] = payload;
         return resHeaders;
     }
@@ -99,17 +99,17 @@ public client class NegotiatorClient {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
-    isolated remote function handshake(HandshakeRequest req, service object {} msgListener, Headers? headers = ())
+    isolated remote function handshake(HandshakeRequest req, service object {} msgListener, map<string[]> headers = {})
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/handshake", req, msgListener, headers);
     }
 
-    isolated remote function publishMetrics(MetricsPublishRequest req, service object {} msgListener, Headers? headers = ())
+    isolated remote function publishMetrics(MetricsPublishRequest req, service object {} msgListener, map<string[]> headers = {})
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/publishMetrics", req, msgListener, headers);
     }
 
-    isolated remote function publishTraces(TracesPublishRequest req, service object {} msgListener, Headers? headers = ())
+    isolated remote function publishTraces(TracesPublishRequest req, service object {} msgListener, map<string[]> headers = {})
                                                                                         returns (Error?) {
         return self.grpcClient->nonBlockingExecute("Negotiator/publishTraces", req, msgListener, headers);
     }

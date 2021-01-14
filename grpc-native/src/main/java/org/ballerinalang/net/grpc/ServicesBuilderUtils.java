@@ -112,10 +112,8 @@ public class ServicesBuilderUtils {
 
         for (Descriptors.MethodDescriptor methodDescriptor : serviceDescriptor.getMethods()) {
             final String methodName = serviceName + "/" + methodDescriptor.getName();
-            Descriptors.Descriptor requestDescriptor = serviceDescriptor.findMethodByName(methodDescriptor.getName())
-                    .getInputType();
-            Descriptors.Descriptor responseDescriptor = serviceDescriptor.findMethodByName(methodDescriptor.getName())
-                    .getOutputType();
+            Descriptors.Descriptor requestDescriptor = methodDescriptor.getInputType();
+            Descriptors.Descriptor responseDescriptor = methodDescriptor.getOutputType();
             MessageRegistry messageRegistry = MessageRegistry.getInstance();
             // update request message descriptors.
             messageRegistry.addMessageDescriptor(requestDescriptor.getName(), requestDescriptor);
@@ -132,7 +130,7 @@ public class ServicesBuilderUtils {
             for (MethodType function : service.getType().getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
                     mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
-                            getBallerinaValueType(service.getType().getPackage(), responseDescriptor.getName()));
+                            methodDescriptor);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
                             getResourceInputParameterType(function)));
                 }

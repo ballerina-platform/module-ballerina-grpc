@@ -86,7 +86,7 @@ public client class HelloWorld6Client {
         Error? result = self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 
-    isolated remote function lotsOfReplies(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function lotsOfReplies(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld45/lotsOfReplies", req, msgListener, headers);
     }
 }

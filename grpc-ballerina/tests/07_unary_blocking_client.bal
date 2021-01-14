@@ -24,7 +24,7 @@ final HelloWorld7BlockingClient helloWorld7BlockingEp = new ("http://localhost:9
 @test:Config {enable:true}
 function testUnaryBlockingClient() {
     string name = "WSO2";
-    [string, Headers]|Error unionResp = helloWorld7BlockingEp->hello(name);
+    [string, map<string[]>]|Error unionResp = helloWorld7BlockingEp->hello(name);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
@@ -39,7 +39,7 @@ function testUnaryBlockingClient() {
 @test:Config {enable:true}
 function testUnaryBlockingIntClient() {
     int age = 10;
-    [int, Headers]|Error unionResp = helloWorld7BlockingEp->testInt(age);
+    [int, map<string[]>]|Error unionResp = helloWorld7BlockingEp->testInt(age);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
@@ -54,7 +54,7 @@ function testUnaryBlockingIntClient() {
 @test:Config {enable:true}
 function testUnaryBlockingFloatClient() {
     float salary = 1000.5;
-    [float, Headers]|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
+    [float, map<string[]>]|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
@@ -69,7 +69,7 @@ function testUnaryBlockingFloatClient() {
 @test:Config {enable:true}
 function testUnaryBlockingBoolClient() {
     boolean isAvailable = false;
-    [boolean, Headers]|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
+    [boolean, map<string[]>]|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
@@ -84,7 +84,7 @@ function testUnaryBlockingBoolClient() {
 @test:Config {enable:true}
 function testUnaryBlockingReceiveRecord() {
     string msg = "WSO2";
-    [Response, Headers]|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
+    [Response, map<string[]>]|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
@@ -99,7 +99,7 @@ function testUnaryBlockingReceiveRecord() {
 @test:Config {enable:true}
 function testUnaryBlockingStructClient() {
     Request req = {name:"Sam", age:10, message:"Testing."};
-    [Response, Headers]|Error unionResp = helloWorld7BlockingEp->testStruct(req);
+    [Response, map<string[]>]|Error unionResp = helloWorld7BlockingEp->testStruct(req);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
@@ -123,18 +123,18 @@ public client class HelloWorld7BlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_7, getDescriptorMap7());
     }
 
-    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/hello", req, headers);
         any result = ();
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
 
-    isolated remote function testInt(int req, Headers? headers = ()) returns ([int, Headers]|Error) {
+    isolated remote function testInt(int req, map<string[]> headers = {}) returns ([int, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testInt", req, headers);
         anydata result = ();
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
         var value = result.cloneWithType(IntTypedesc);
         if (value is int) {
@@ -144,10 +144,10 @@ public client class HelloWorld7BlockingClient {
         }
     }
 
-    isolated remote function testFloat(float req, Headers? headers = ()) returns ([float, Headers]|Error) {
+    isolated remote function testFloat(float req, map<string[]> headers = {}) returns ([float, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testFloat", req, headers);
         anydata result = ();
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
         var value = result.cloneWithType(FloatTypedesc);
         if (value is float) {
@@ -157,10 +157,10 @@ public client class HelloWorld7BlockingClient {
         }
     }
 
-    isolated remote function testBoolean(boolean req, Headers? headers = ()) returns ([boolean, Headers]|Error) {
+    isolated remote function testBoolean(boolean req, map<string[]> headers = {}) returns ([boolean, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testBoolean", req, headers);
         anydata result = ();
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
         var value = result.cloneWithType(BooleanTypedesc);
         if (value is boolean) {
@@ -170,10 +170,10 @@ public client class HelloWorld7BlockingClient {
         }
     }
 
-    isolated remote function testStruct(Request req, Headers? headers = ()) returns ([Response, Headers]|Error) {
+    isolated remote function testStruct(Request req, map<string[]> headers = {}) returns ([Response, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testStruct", req, headers);
         anydata result = ();
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
         var value = result.cloneWithType(ResponseTypedesc);
         if (value is Response) {
@@ -183,10 +183,10 @@ public client class HelloWorld7BlockingClient {
         }
     }
 
-    isolated remote function testResponseInsideMatch(string req, Headers? headers = ()) returns [Response, Headers]|Error {
+    isolated remote function testResponseInsideMatch(string req, map<string[]> headers = {}) returns [Response, map<string[]>]|Error {
         var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testResponseInsideMatch", req, headers);
         anydata result = ();
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
         var value = result.cloneWithType(ResponseTypedesc);
         if (value is Response) {

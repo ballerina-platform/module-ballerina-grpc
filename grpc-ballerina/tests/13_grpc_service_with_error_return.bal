@@ -21,7 +21,7 @@
 service "HelloWorld13" on new Listener(9103) {
 
     isolated remote function hello (HelloWorld13StringCaller caller, string name,
-                             Headers headers) returns error? {
+                             map<string[]> headers) returns error? {
 
         return error("Details");
     }

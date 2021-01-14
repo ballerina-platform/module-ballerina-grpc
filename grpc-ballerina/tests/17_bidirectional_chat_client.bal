@@ -108,7 +108,7 @@ public client class Chat17Client {
     }
 
 
-    isolated remote function chat(service object {} msgListener, Headers? headers = ()) returns (StreamingClient|Error) {
+    isolated remote function chat(service object {} msgListener, map<string[]> headers = {}) returns (StreamingClient|Error) {
         return self.grpcClient->streamingExecute("Chat/chat", msgListener, headers);
     }
 }

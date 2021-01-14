@@ -85,23 +85,23 @@ public client class HelloWorld7Client {
         checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_7, getDescriptorMap7());
     }
 
-    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function hello(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/hello", req, msgListener, headers);
     }
 
-    isolated remote function testInt(int req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function testInt(int req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testInt", req, msgListener, headers);
     }
 
-    isolated remote function testFloat(float req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function testFloat(float req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testFloat", req, msgListener, headers);
     }
 
-    isolated remote function testBoolean(boolean req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function testBoolean(boolean req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testBoolean", req, msgListener, headers);
     }
 
-    isolated remote function testStruct(Request req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
+    isolated remote function testStruct(Request req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
         return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld100/testStruct", req, msgListener, headers);
     }
 }

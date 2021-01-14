@@ -147,6 +147,9 @@ public final class ServiceDefinition {
         MethodType[] attachedFunctions = clientEndpointType.getMethods();
         for (MethodType attachedFunction : attachedFunctions) {
             String methodName = attachedFunction.getName();
+            if (methodName.endsWith("Context")) {
+                continue;
+            }
             Descriptors.MethodDescriptor methodDescriptor = serviceDescriptor.findMethodByName(methodName);
             if (methodDescriptor == null) {
                 throw new GrpcClientException("Error while initializing client stub. Couldn't find method descriptor " +

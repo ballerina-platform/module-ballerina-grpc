@@ -79,9 +79,9 @@ public client class RetryServiceBlockingClient {
         checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
-    isolated remote function getResult(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function getResult(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var payload = check self.grpcClient->blockingExecute("RetryService/getResult", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = payload;
         return [result.toString(), resHeaders];
