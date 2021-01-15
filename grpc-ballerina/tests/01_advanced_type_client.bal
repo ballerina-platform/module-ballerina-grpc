@@ -29,7 +29,7 @@ function testSendNestedStruct() {
     Person p = {name:"Sam", address:{postalCode:10300, state:"Western", country:"Sri Lanka"}};
     io:println("testInputNestedStruct: input:");
     io:println(p);
-    [string, Headers]|error unionResp = HelloWorld1BlockingEp->testInputNestedStruct(p);
+    [string, map<string[]>]|error unionResp = HelloWorld1BlockingEp->testInputNestedStruct(p);
     io:println(unionResp);
     if (unionResp is error) {
         test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
@@ -46,7 +46,7 @@ function testSendNestedStruct() {
 function testReceiveNestedStruct() {
     string name  = "WSO2";
     io:println("testOutputNestedStruct: input: " + name);
-    [Person, Headers]|Error unionResp = HelloWorld1BlockingEp->testOutputNestedStruct(name);
+    [Person, map<string[]>]|Error unionResp = HelloWorld1BlockingEp->testOutputNestedStruct(name);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
@@ -67,7 +67,7 @@ function testSendStructReceiveStruct() {
     StockRequest request = {name: "WSO2"};
     io:println("testInputStructOutputStruct: input:");
     io:println(request);
-    [StockQuote, Headers]|Error unionResp = HelloWorld1BlockingEp->testInputStructOutputStruct(request);
+    [StockQuote, map<string[]>]|Error unionResp = HelloWorld1BlockingEp->testInputStructOutputStruct(request);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
@@ -87,7 +87,7 @@ function testSendStructReceiveStruct() {
 @test:Config {enable:true}
 function testSendNoReceiveStruct() {
     io:println("testNoInputOutputStruct: No input:");
-    [StockQuotes, Headers]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputStruct();
+    [StockQuotes, map<string[]>]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputStruct();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
@@ -105,7 +105,7 @@ function testSendNoReceiveStruct() {
 @test:Config {enable:true}
 function testSendNoReceiveArray() {
     io:println("testNoInputOutputStruct: No input:");
-    [StockNames, Headers]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputArray();
+    [StockNames, map<string[]>]|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputArray();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
@@ -125,7 +125,7 @@ function testSendStructNoReceive() {
     StockQuote quote = {symbol: "Ballerina", name:"ballerina/io", last:1.0, low:0.5, high:2.0};
     io:println("testNoInputOutputStruct: input:");
     io:println(quote);
-    (Headers)|Error unionResp = HelloWorld1BlockingEp->testInputStructNoOutput(quote);
+    (map<string[]>)|Error unionResp = HelloWorld1BlockingEp->testInputStructNoOutput(quote);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
@@ -144,21 +144,21 @@ public client class HelloWorld1BlockingClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_1, getDescriptorMap1());
     }
 
-    isolated remote function testInputNestedStruct(Person req, Headers? headers = ()) returns ([string,
-    Headers]|Error) {
-        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputNestedStruct", req, headers);
+    isolated remote function testInputNestedStruct(Person req, map<string[]> headers = {}) returns ([string,
+    map<string[]>]|Error) {
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputNestedStruct", req, headers);
         anydata result = ();
-        Headers resHeaders;
+        map<string[]> resHeaders;
         io:println(payload);
         [result, resHeaders] = payload;
         return [result.toString(), resHeaders];
     }
 
-    isolated remote function testOutputNestedStruct(string req, Headers? headers = ()) returns ([Person,
-    Headers]|Error) {
-        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testOutputNestedStruct", req, headers);
+    isolated remote function testOutputNestedStruct(string req, map<string[]> headers = {}) returns ([Person,
+    map<string[]>]|Error) {
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testOutputNestedStruct", req, headers);
         anydata result = ();
-        Headers resHeaders;
+        map<string[]> resHeaders;
         [result, resHeaders] = payload;
         var value = result.cloneWithType(PersonTypedesc);
         if (value is Person) {
@@ -168,11 +168,11 @@ public client class HelloWorld1BlockingClient {
         }
     }
 
-    isolated remote function testInputStructOutputStruct(StockRequest req, Headers? headers = ()) returns
-    ([StockQuote, Headers]|Error) {
-        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructOutputStruct", req, headers);
+    isolated remote function testInputStructOutputStruct(StockRequest req, map<string[]> headers = {}) returns
+    ([StockQuote, map<string[]>]|Error) {
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructOutputStruct", req, headers);
         anydata result = ();
-        Headers resHeaders;
+        map<string[]> resHeaders;
         [result, resHeaders] = payload;
         var value = result.cloneWithType(StockQuoteTypedesc);
         if (value is StockQuote) {
@@ -182,21 +182,21 @@ public client class HelloWorld1BlockingClient {
         }
     }
 
-    isolated remote function testInputStructNoOutput(StockQuote req, Headers? headers = ()) returns ((Headers)
+    isolated remote function testInputStructNoOutput(StockQuote req, map<string[]> headers = {}) returns ((map<string[]>)
     |Error) {
-        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructNoOutput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructNoOutput", req, headers);
         anydata result = ();
-        Headers resHeaders;
+        map<string[]> resHeaders;
         [_, resHeaders] = payload;
         return resHeaders;
     }
 
-    isolated remote function testNoInputOutputStruct(Headers? headers = ()) returns ([StockQuotes,
-    Headers]|Error) {
+    isolated remote function testNoInputOutputStruct(map<string[]> headers = {}) returns ([StockQuotes,
+    map<string[]>]|Error) {
         Empty req = {};
-        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputStruct", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputStruct", req, headers);
         anydata result = ();
-        Headers resHeaders;
+        map<string[]> resHeaders;
         [result, resHeaders] = payload;
         var value = result.cloneWithType(StockQuotesTypedesc);
         if (value is StockQuotes) {
@@ -206,12 +206,12 @@ public client class HelloWorld1BlockingClient {
         }
     }
 
-    isolated remote function testNoInputOutputArray(Headers? headers = ()) returns ([StockNames,
-    Headers]|Error) {
+    isolated remote function testNoInputOutputArray(map<string[]> headers = {}) returns ([StockNames,
+    map<string[]>]|Error) {
         Empty req = {};
-        [anydata, Headers] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputArray", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputArray", req, headers);
         anydata result = ();
-        Headers resHeaders;
+        map<string[]> resHeaders;
         [result, resHeaders] = payload;
         var value = result.cloneWithType(StockNamesTypedesc);
         if (value is StockNames) {

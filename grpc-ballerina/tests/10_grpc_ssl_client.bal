@@ -29,7 +29,7 @@ isolated function testUnarySecuredBlockingWithCerts() {
         }
     });
 
-    [string, Headers]|Error unionResp = helloWorldBlockingEp->hello("WSO2");
+    [string, map<string[]>]|Error unionResp = helloWorldBlockingEp->hello("WSO2");
     if (unionResp is Error) {
         test:assertFail(io:sprintf("Error from Connector: %s", unionResp.message()));
     } else {
@@ -53,9 +53,9 @@ public client class grpcMutualSslServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_10, getDescriptorMap10());
     }
 
-    isolated remote function hello (string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello (string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.grpcMutualSslService/hello", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         any result = ();
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];

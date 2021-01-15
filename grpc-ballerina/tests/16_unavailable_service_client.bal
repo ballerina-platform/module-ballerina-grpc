@@ -19,11 +19,11 @@ import ballerina/test;
 
 
 
-@test:Config {enable: true}
+@test:Config {enable:true}
 isolated function testInvokeUnavailableService() {
     HelloWorld16Client helloWorld16BlockingEp = new ("http://localhost:9106");
     string name = "WSO2";
-    [string, Headers]|Error unionResp16 = helloWorld16BlockingEp->hello(name);
+    [string, map<string[]>]|Error unionResp16 = helloWorld16BlockingEp->hello(name);
     if (unionResp16 is Error) {
         test:assertTrue(unionResp16.message().startsWith("Connection refused:"), msg = "Failed with error: " +
         unionResp16.message());
@@ -48,10 +48,10 @@ public client class HelloWorld16Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_16, getDescriptorMap16());
     }
 
-    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->executeSimpleRPC("HelloWorld/hello", req, headers);
         anydata result;
-        Headers resHeaders;
+        map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }

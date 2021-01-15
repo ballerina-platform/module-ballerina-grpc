@@ -44,9 +44,9 @@ public client class HelloWorld13Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
-    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld13/hello", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         any result = ();
         [result, resHeaders] = payload;
         return [result.toString(), resHeaders];

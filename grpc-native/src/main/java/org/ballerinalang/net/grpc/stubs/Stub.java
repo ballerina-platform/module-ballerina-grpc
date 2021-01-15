@@ -22,6 +22,7 @@ import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.CallStreamObserver;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static org.ballerinalang.net.grpc.MessageUtils.createHeaderMap;
 import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
@@ -185,17 +187,16 @@ public class Stub extends AbstractStub {
                 if (value == null) {
                     // No value received so mark the future as an error
                     httpConnectorError = MessageUtils.getConnectorError(Status.Code.INTERNAL.toStatus()
-                                    .withDescription("No value received for unary call").asRuntimeException());
+                            .withDescription("No value received for unary call").asRuntimeException());
                 } else {
                     Object responseBValue = value.getbMessage();
                     // Set response headers, when response headers exists in the message context.
-                    BObject headerObject = ValueCreator.createObjectValue(getModule(), GrpcConstants.HEADERS);
-                    headerObject.addNativeData(GrpcConstants.MESSAGE_HEADERS, value.getHeaders());
+                    BMap headerMap = createHeaderMap(value.getHeaders());
                     BArray contentTuple = ValueCreator.createTupleValue(
                             TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_ANYDATA,
-                                    headerObject.getType())));
+                                    headerMap.getType())));
                     contentTuple.add(0, responseBValue);
-                    contentTuple.add(1, headerObject);
+                    contentTuple.add(1, headerMap);
                     inboundResponse = contentTuple;
                 }
             } else {

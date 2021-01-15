@@ -4,7 +4,9 @@
 {{#enumList}}
 {{> enum}}{{/enumList}}
 {{#stubList}}{{#each callerMap}}
-{{>caller}}{{/each}}{{/stubList}}{{#if rootDescriptor}}
+{{>caller}}{{/each}}
+{{#each valueTypeMap}}
+{{> content_context}}{{/each}}{{/stubList}}{{#if rootDescriptor}}
 const string ROOT_DESCRIPTOR = "{{rootDescriptor}}";
 isolated function getDescriptorMap() returns map<string> {
     return {

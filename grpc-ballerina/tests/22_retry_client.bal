@@ -19,8 +19,8 @@ import ballerina/test;
 
 RetryConfiguration retryConfig = {
     retryCount: 3,
-    intervalInMillis: 2000,
-    maxIntervalInMillis: 10000,
+    intervalInMillis: 2,
+    maxIntervalInMillis: 10,
     backoffFactor: 2,
     errorTypes: [UnavailableError, InternalError]
 };
@@ -31,8 +31,8 @@ ClientConfiguration clientConfig = {
 
 RetryConfiguration failingRetryConfig = {
     retryCount: 2,
-    intervalInMillis: 2000,
-    maxIntervalInMillis: 10000,
+    intervalInMillis: 2,
+    maxIntervalInMillis: 10,
     backoffFactor: 2,
     errorTypes: [UnavailableError, InternalError]
 };
@@ -79,9 +79,9 @@ public client class RetryServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
-    isolated remote function getResult(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function getResult(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var payload = check self.grpcClient->executeSimpleRPC("RetryService/getResult", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = payload;
         return [result.toString(), resHeaders];

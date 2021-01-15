@@ -16,7 +16,7 @@
 // This is client implementation for bidirectional streaming scenario
 
 import ballerina/io;
-import ballerina/runtime;
+import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -41,7 +41,7 @@ public function testBidiStreamingInChatClient() {
     } else {
         ep = res;
     }
-    runtime:sleep(1000);
+    runtime:sleep(1);
     // Produces a message to the specified subject.
     ChatMessage mes = {name: "Sam", message: "Hi"};
     Error? result = ep->send(mes);
@@ -74,7 +74,7 @@ public client class Chat17Client {
     }
 
 
-    isolated remote function chat(Headers? headers = ()) returns (StreamingClient|Error) {
+    isolated remote function chat(map<string[]> headers = {}) returns (StreamingClient|Error) {
         return self.grpcClient->executeBidirectionalStreaming("Chat/chat", headers);
     }
 }

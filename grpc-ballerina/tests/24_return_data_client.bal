@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 import ballerina/lang.'string as langstring;
 
-@test:Config {}
+@test:Config {enable:true}
 public function testStringValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testStringValueReturn("WSO2");
@@ -31,7 +31,7 @@ public function testStringValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testFloatValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     float n = 4.5;
@@ -45,7 +45,7 @@ public function testFloatValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testDoubleValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     float n = 4.5;
@@ -59,7 +59,7 @@ public function testDoubleValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testInt64ValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     int n = 45;
@@ -73,7 +73,7 @@ public function testInt64ValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testBoolValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     boolean b = true;
@@ -87,7 +87,7 @@ public function testBoolValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testBytesValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     string s = "Ballerina";
@@ -106,7 +106,7 @@ public function testBytesValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testRecordValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testRecordValueReturn("WSO2");
@@ -120,7 +120,7 @@ public function testRecordValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testRecordValueReturnStream() {
     HelloWorld24BlockingClient helloWorldEp = new ("http://localhost:9114");
     var unionResp = helloWorldEp->testRecordValueReturnStream("WSO2");
@@ -141,89 +141,71 @@ public client class HelloWorld24BlockingClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_24, getDescriptorMap24());
     }
 
-    isolated remote function testStringValueReturn(string req, Headers? headers = ()) returns ([string,
-    Headers]|Error) {
+    isolated remote function testStringValueReturn(string req, map<string[]> headers = {}) returns ([string,
+    map<string[]>]|Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testStringValueReturn", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = payload;
+        [anydata, map<string[]>][result, resHeaders] = payload;
         return [result.toString(), resHeaders];
     }
 
-    isolated remote function testFloatValueReturn(float req, Headers? headers = ()) returns ([float, Headers]|
+    isolated remote function testFloatValueReturn(float req, map<string[]> headers = {}) returns ([float, map<string[]>]|
     Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testFloatValueReturn", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = payload;
-
+        [anydata, map<string[]>][result, resHeaders] = payload;
         return [<float>result, resHeaders];
 
     }
 
-    isolated remote function testDoubleValueReturn(float req, Headers? headers = ()) returns ([float, Headers]|
+    isolated remote function testDoubleValueReturn(float req, map<string[]> headers = {}) returns ([float, map<string[]>]|
     Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testDoubleValueReturn", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = payload;
-
+        [anydata, map<string[]>][result, resHeaders] = payload;
         return [<float>result, resHeaders];
 
     }
 
-    isolated remote function testInt64ValueReturn(int req, Headers? headers = ()) returns ([int, Headers]|
+    isolated remote function testInt64ValueReturn(int req, map<string[]> headers = {}) returns ([int, map<string[]>]|
     Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testInt64ValueReturn", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = payload;
-
+        [anydata, map<string[]>][result, resHeaders] = payload;
         return [<int>result, resHeaders];
 
     }
 
-    isolated remote function testBoolValueReturn(boolean req, Headers? headers = ()) returns ([boolean,
-    Headers]|Error) {
+    isolated remote function testBoolValueReturn(boolean req, map<string[]> headers = {}) returns ([boolean,
+    map<string[]>]|Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBoolValueReturn", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = payload;
+        [anydata, map<string[]>][result, resHeaders] = payload;
 
         return [<boolean>result, resHeaders];
 
     }
 
-    isolated remote function testBytesValueReturn(byte[] req, Headers? headers = ()) returns ([byte[], Headers]|
+    isolated remote function testBytesValueReturn(byte[] req, map<string[]> headers = {}) returns ([byte[], map<string[]>]|
     Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBytesValueReturn", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = payload;
+        [anydata, map<string[]>][result, resHeaders] = payload;
 
         return [<byte[]>result, resHeaders];
 
     }
 
-    isolated remote function testRecordValueReturn(string req, Headers? headers = ()) returns ([SampleMsg24,
-    Headers]|Error) {
+    isolated remote function testRecordValueReturn(string req, map<string[]> headers = {}) returns ([SampleMsg24,
+    map<string[]>]|Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testRecordValueReturn", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = payload;
-
+        [anydata, map<string[]>][result, resHeaders] = payload;
         return [<SampleMsg24>result, resHeaders];
 
     }
 
-    isolated remote function testRecordValueReturnStream(string req, Headers? headers = ()) returns stream<anydata>|Error {
+    isolated remote function testRecordValueReturnStream(string req, map<string[]> headers = {}) returns stream<anydata>|Error {
 
         return self.grpcClient->executeServerStreaming("HelloWorld24/testRecordValueReturnStream", req, headers);
     }

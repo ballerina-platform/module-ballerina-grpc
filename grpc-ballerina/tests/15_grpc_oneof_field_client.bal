@@ -196,9 +196,9 @@ public client class OneofFieldServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_15, getDescriptorMap15());
     }
 
-    isolated remote function hello(Request1 req, Headers? headers = ()) returns ([Response1, Headers]|Error) {
+    isolated remote function hello(Request1 req, map<string[]> headers = {}) returns ([Response1, map<string[]>]|Error) {
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = payload;
         var value = result.cloneWithType(Response1Typedesc);
@@ -210,9 +210,9 @@ public client class OneofFieldServiceClient {
         }
     }
 
-    isolated remote function testOneofField(ZZZ req, Headers? headers = ()) returns ([ZZZ, Headers]|Error) {
+    isolated remote function testOneofField(ZZZ req, map<string[]> headers = {}) returns ([ZZZ, map<string[]>]|Error) {
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = payload;
         var value = result.cloneWithType(ZZZTypedesc);

@@ -40,7 +40,12 @@ public class ServiceStub {
     private List<Method> serverStreamingFunctions = new ArrayList<>();
     //both client streaming and bidirectional streaming have same client side behaviour.
     private List<Method> clientStreamingFunctions = new ArrayList<>();
+
+    private List<Method> bidiStreamingFunctions = new ArrayList<>();
     private Map<String, String> callerMap = new HashMap<>();
+    // this map uses to generate content context record types. Boolean value contains whether the content is stream
+    // type or not.
+    private Map<String, Boolean> valueTypeMap = new HashMap<>();
 
     private ServiceStub(String serviceName) {
         this.serviceName = serviceName;
@@ -64,6 +69,14 @@ public class ServiceStub {
 
     public List<Method> getClientStreamingFunctions() {
         return Collections.unmodifiableList(clientStreamingFunctions);
+    }
+
+    public List<Method> getBidiStreamingFunctions() {
+        return Collections.unmodifiableList(bidiStreamingFunctions);
+    }
+
+    public Map<String, Boolean> getValueTypeMap() {
+        return Collections.unmodifiableMap(valueTypeMap);
     }
 
     public Map<String, String> getCallerMap() {
@@ -92,14 +105,24 @@ public class ServiceStub {
                 serviceStub.callerMap.put(callerTypeName, method.getOutputType());
                 switch (method.getMethodType()) {
                     case UNARY:
+                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.FALSE);
+                        serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.FALSE);
                         serviceStub.unaryFunctions.add(method);
                         break;
                     case SERVER_STREAMING:
+                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.FALSE);
+                        serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.TRUE);
                         serviceStub.serverStreamingFunctions.add(method);
                         break;
                     case CLIENT_STREAMING:
-                    case BIDI_STREAMING:
+                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.TRUE);
+                        serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.FALSE);
                         serviceStub.clientStreamingFunctions.add(method);
+                        break;
+                    case BIDI_STREAMING:
+                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.TRUE);
+                        serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.TRUE);
+                        serviceStub.bidiStreamingFunctions.add(method);
                         break;
                     default:
                         throw new CodeBuilderException("Method type is unknown or not supported.");
@@ -108,22 +131,4 @@ public class ServiceStub {
             return serviceStub;
         }
     }
-
-//    /**
-//     * Service stub type enum.
-//     */
-//    public enum StubType {
-//        BLOCKING("blocking"),
-//        NONBLOCKING("non-blocking");
-//
-//        private String type;
-//
-//        StubType(String type) {
-//            this.type = type;
-//        }
-//
-//        public String getType() {
-//            return type;
-//        }
-//    }
 }

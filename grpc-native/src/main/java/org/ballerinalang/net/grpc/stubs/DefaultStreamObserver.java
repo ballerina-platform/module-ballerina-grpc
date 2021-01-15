@@ -15,7 +15,6 @@
  */
 package org.ballerinalang.net.grpc.stubs;
 
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.types.MethodType;
@@ -62,7 +61,7 @@ public class DefaultStreamObserver implements StreamObserver {
         }
         for (MethodType function : callbackService.getType().getMethods()) {
             resourceMap.put(function.getName(), new ServiceResource(runtime, callbackService, "ListenerService",
-                    function, PredefinedTypes.TYPE_NULL));
+                    function, null));
         }
         this.semaphore = semaphore;
     }

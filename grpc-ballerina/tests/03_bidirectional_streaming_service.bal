@@ -15,8 +15,8 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
+import ballerina/lang.runtime as runtime;
 import ballerina/log;
-import ballerina/runtime;
 
 // Server endpoint configuration
 listener Listener ep3 = new (9093, {
@@ -55,7 +55,7 @@ service "Chat" on ep3 {
             log:print("Server received message: " + msg);
             int waitCount = 0;
             while(!initialized) {
-                runtime:sleep(1000);
+                runtime:sleep(1);
                 log:print("Waiting till connection initialize. status: " + initialized.toString());
                 if (waitCount > 10) {
                     break;

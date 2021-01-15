@@ -27,6 +27,7 @@ import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.flags.TypeFlags;
 import io.ballerina.runtime.api.types.MethodType;
+import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
@@ -112,10 +113,8 @@ public class ServicesBuilderUtils {
 
         for (Descriptors.MethodDescriptor methodDescriptor : serviceDescriptor.getMethods()) {
             final String methodName = serviceName + "/" + methodDescriptor.getName();
-            Descriptors.Descriptor requestDescriptor = serviceDescriptor.findMethodByName(methodDescriptor.getName())
-                    .getInputType();
-            Descriptors.Descriptor responseDescriptor = serviceDescriptor.findMethodByName(methodDescriptor.getName())
-                    .getOutputType();
+            Descriptors.Descriptor requestDescriptor = methodDescriptor.getInputType();
+            Descriptors.Descriptor responseDescriptor = methodDescriptor.getOutputType();
             MessageRegistry messageRegistry = MessageRegistry.getInstance();
             // update request message descriptors.
             messageRegistry.addMessageDescriptor(requestDescriptor.getName(), requestDescriptor);
@@ -132,7 +131,7 @@ public class ServicesBuilderUtils {
             for (MethodType function : service.getType().getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
                     mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
-                            getBallerinaValueType(service.getType().getPackage(), responseDescriptor.getName()));
+                            methodDescriptor);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
                             getResourceInputParameterType(function)));
                 }
@@ -322,6 +321,9 @@ public class ServicesBuilderUtils {
                 return PredefinedTypes.TYPE_NULL;
             } else if (inputType instanceof StreamType) {
                 return ((StreamType) inputType).getConstrainedType();
+            } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
+                    ((RecordType) inputType).getFields().size() == 2) {
+                return ((RecordType) inputType).getFields().get("content").getFieldType();
             } else {
                 return inputParams[1];
             }

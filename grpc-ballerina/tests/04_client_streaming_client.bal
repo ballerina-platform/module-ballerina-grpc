@@ -85,7 +85,7 @@ public client class HelloWorld4Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_4, getDescriptorMap4());
     }
 
-    isolated remote function lotsOfGreetings(Headers? headers = ()) returns (LotsOfGreetingsStreamingClient|Error) {
+    isolated remote function lotsOfGreetings(map<string[]> headers = {}) returns (LotsOfGreetingsStreamingClient|Error) {
         StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.HelloWorld7/lotsOfGreetings",
         headers);
         return new LotsOfGreetingsStreamingClient(sClient);

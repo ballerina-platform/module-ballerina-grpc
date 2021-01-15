@@ -44,9 +44,9 @@ public client class testEnumServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_12, getDescriptorMap12());
     }
 
-    isolated remote function testEnum (orderInfo req, Headers? headers = ()) returns ([string, Headers]|Error) {
+    isolated remote function testEnum (orderInfo req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
         var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.testEnumService/testEnum", req, headers);
-        Headers resHeaders = new;
+        map<string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];

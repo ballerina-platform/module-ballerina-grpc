@@ -38,6 +38,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 
+import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_SENDER;
+import static org.ballerinalang.net.grpc.GrpcConstants.STATUS_ERROR_MAP;
+import static org.ballerinalang.net.grpc.GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE;
+import static org.ballerinalang.net.grpc.GrpcConstants.getKeyByValue;
 import static org.ballerinalang.net.grpc.MessageUtils.getMappingHttpStatusCode;
 import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -83,20 +87,18 @@ public class FunctionUtils {
      *
      * @param env                 environment.
      * @param streamingConnection streaming connection instance.
-     * @param errorValue          error value.
+     * @param errorValue gRPC error instance.
      * @return Error if there is an error while sending error message to the server, else returns nil.
      */
     public static Object streamSendError(Environment env, BObject streamingConnection, BError errorValue) {
-
-        StreamObserver requestSender = (StreamObserver) streamingConnection.getNativeData(GrpcConstants.REQUEST_SENDER);
+        StreamObserver requestSender = (StreamObserver) streamingConnection.getNativeData(REQUEST_SENDER);
         if (requestSender == null) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while sending the " +
                             "error. endpoint does not exist")));
         } else {
             try {
-                Integer statusCode = GrpcConstants.getKeyByValue(GrpcConstants.STATUS_ERROR_MAP,
-                        errorValue.getType().getName());
+                Integer statusCode = getKeyByValue(STATUS_ERROR_MAP, errorValue.getType().getName());
                 if (statusCode == null) {
                     statusCode = Status.Code.INTERNAL.value();
                 }
@@ -104,7 +106,7 @@ public class FunctionUtils {
                         .withDescription(errorValue.getErrorMessage().getValue()))));
                 // Add message content to observer context.
                 ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
-                observerContext.addTag(GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE,
+                observerContext.addTag(TAG_KEY_GRPC_ERROR_MESSAGE,
                         getMappingHttpStatusCode(statusCode) + " : " + errorValue.getErrorMessage().getValue());
 
             } catch (Exception e) {
