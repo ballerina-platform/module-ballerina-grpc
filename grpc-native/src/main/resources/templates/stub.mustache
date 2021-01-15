@@ -1,0 +1,64 @@
+public client class {{serviceName}}Client {
+
+    *grpc:AbstractClientEndpoint;
+
+    private grpc:Client grpcClient;
+
+    public isolated function init(string url, grpc:ClientConfiguration? config = ()) {
+        // initialize client endpoint.
+        self.grpcClient = new(url, config);
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
+    }
+{{#unaryFunctions}}
+    isolated remote function {{methodName}}({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns ({{#if outputType}}{{outputType}}|{{/if}}grpc:Error) {
+        {{#unless inputType}}Empty req = {};{{/unless}}
+        map<string[]> headers = {};
+        {{#if inputType}}{{inputType}} message;
+        if (req is Context{{removeSpecialCharacters inputType}}) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }{{/if}}
+        var payload = check self.grpcClient->executeSimpleRPC("{{methodId}}", message, headers);
+        {{#if outputType}}
+        [anydata, map<string[]>][result, _] = payload;
+        {{#not_equal outputType "string"}}
+        return <{{outputType}}>result;
+        {{/not_equal}}{{#equals outputType "string"}}return result.toString();{{/equals}}{{/if}}
+    }
+    isolated remote function {{methodName}}Context({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns ({{#if outputType}}Context{{removeSpecialCharacters outputType}}|{{/if}}grpc:Error) {
+        {{#unless inputType}}Empty req = {};{{/unless}}
+        map<string[]> headers = {};
+        {{#if inputType}}{{inputType}} message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }{{/if}}
+        var payload = check self.grpcClient->executeSimpleRPC("{{methodId}}", message, headers);
+        {{#if outputType}}anydata result = ();
+        [{{outputType}}, map<string[]>][result, respHeaders] = payload;
+        {{#not_equal outputType "string"}}
+        return {content: <{{outputType}}>result, headers: respHeaders};
+        {{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: respHeaders};{{/equals}}{{/if}}
+    }
+{{/unaryFunctions}}{{#serverStreamingFunctions}}
+    isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req{{/if}}) returns stream<anydata>|Error {
+        {{#unless inputType}}Empty req = {};{{/unless}}
+        return self.grpcClient->nonBlockingExecute("{{methodId}}", req);
+    }
+{{/serverStreamingFunctions}}{{#clientStreamingFunctions}}
+    isolated remote function {{methodName}}() returns ({{pascalcase methodName}}StreamingClient|grpc:Error) {
+        StreamingClient sClient = check self.grpcClient->streamingExecute("{{methodId}}");
+        return new {{pascalcase methodName}}StreamingClient(sClient);
+    }{{/clientStreamingFunctions}}{{#bidiStreamingFunctions}}
+    isolated remote function {{methodName}}() returns ({{pascalcase methodName}}StreamingClient|grpc:Error) {
+        StreamingClient sClient = check self.grpcClient->streamingExecute("{{methodId}}");
+        return new {{pascalcase methodName}}StreamingClient(sClient);
+    }{{/bidiStreamingFunctions}}
+}
+
+{{#clientStreamingFunctions}}
+{{>streaming_client}}{{/clientStreamingFunctions}}
