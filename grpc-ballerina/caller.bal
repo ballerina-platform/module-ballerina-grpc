@@ -46,8 +46,8 @@ public client class Caller {
     # + res - - The outbound response message
     # + headers - - Optional headers parameter. The header values are passed only if needed. The default value is `()`
     # + return - - A `grpc:Error` if an error occurs while sending the response or else `()`
-    isolated remote function send(anydata res, map<string[]> headers = {}) returns Error? {
-        return externSend(self, res, headers);
+    isolated remote function send(anydata res) returns Error? {
+        return externSend(self, res);
     }
 
     # Informs the caller, when the server has sent all the messages.
@@ -83,7 +83,7 @@ public client class Caller {
     }
 }
 
-isolated function externSend(Caller endpointClient, anydata res, map<string[]> headers) returns Error? =
+isolated function externSend(Caller endpointClient, anydata res) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils"
 } external;

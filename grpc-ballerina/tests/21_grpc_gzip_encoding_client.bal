@@ -56,7 +56,7 @@ public client class OrderManagementClient {
 
     isolated remote function getOrder(string req, map<string[]> headers = {}) returns ([Order,map<string[]>]|Error) {
         var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", req, headers);
-       map<string[]> resHeaders;
+        map<string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = payload;
         return [<Order>result, resHeaders];

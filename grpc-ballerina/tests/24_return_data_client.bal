@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 import ballerina/lang.'string as langstring;
 
-@test:Config {}
+@test:Config {enable:true}
 public function testStringValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testStringValueReturn("WSO2");
@@ -31,7 +31,7 @@ public function testStringValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testFloatValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     float n = 4.5;
@@ -45,7 +45,7 @@ public function testFloatValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testDoubleValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     float n = 4.5;
@@ -59,7 +59,7 @@ public function testDoubleValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testInt64ValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     int n = 45;
@@ -73,7 +73,7 @@ public function testInt64ValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testBoolValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     boolean b = true;
@@ -87,7 +87,7 @@ public function testBoolValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testBytesValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     string s = "Ballerina";
@@ -106,7 +106,7 @@ public function testBytesValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testRecordValueReturn() {
     HelloWorld24BlockingClient helloWorldBlockingEp = new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testRecordValueReturn("WSO2");
@@ -120,7 +120,7 @@ public function testRecordValueReturn() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 public function testRecordValueReturnStream() {
     HelloWorld24BlockingClient helloWorldEp = new ("http://localhost:9114");
     var unionResp = helloWorldEp->testRecordValueReturnStream("WSO2");

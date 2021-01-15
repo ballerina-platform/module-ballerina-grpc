@@ -441,6 +441,12 @@ public class MessageUtils {
         }
     }
 
+
+    public static boolean isContextRecordType(Object responseValue) {
+        return responseValue instanceof BMap && ((BMap) responseValue).getType().getName().startsWith("Context")
+                && ((BMap) responseValue).size() == 2;
+    }
+
     /**
      * Returns Ballerina Header Map using HttpHeaders instance.
      *

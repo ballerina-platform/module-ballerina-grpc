@@ -22,6 +22,7 @@ import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -229,7 +230,11 @@ public class FunctionUtils extends AbstractExecute {
             HttpHeaders headers = new DefaultHttpHeaders();
             for (Object key : headerValues.getKeys()) {
                 Object headerValue = headerValues.get(key);
-                headers.add(((BString) key).getValue(), headerValue);
+                if (headerValue instanceof BArray) {
+                    for (String value : ((BArray) headerValue).getStringArray()) {
+                        headers.set(key.toString(), value);
+                    }
+                }
             }
             requestMsg.setHeaders(headers);
         }
@@ -304,7 +309,11 @@ public class FunctionUtils extends AbstractExecute {
             HttpHeaders headers = new DefaultHttpHeaders();
             for (Object key : headerValues.getKeys()) {
                 Object headerValue = headerValues.get(key);
-                headers.add(((BString) key).getValue(), headerValue);
+                if (headerValue instanceof BArray) {
+                    for (String value : ((BArray) headerValue).getStringArray()) {
+                        headers.set(key.toString(), value);
+                    }
+                }
             }
             requestMsg.setHeaders(headers);
         }
@@ -367,7 +376,11 @@ public class FunctionUtils extends AbstractExecute {
             if (headerValues != null) {
                 for (Object key : headerValues.getKeys()) {
                     Object headerValue = headerValues.get(key);
-                    headers.add(((BString) key).getValue(), headerValue);
+                    if (headerValue instanceof BArray) {
+                        for (String value : ((BArray) headerValue).getStringArray()) {
+                            headers.set(key.toString(), value);
+                        }
+                    }
                 }
             }
             DataContext context = new DataContext(env, null);
@@ -428,7 +441,11 @@ public class FunctionUtils extends AbstractExecute {
             if (headerValues != null) {
                 for (Object key : headerValues.getKeys()) {
                     Object headerValue = headerValues.get(key);
-                    headers.add(((BString) key).getValue(), headerValue);
+                    if (headerValue instanceof BArray) {
+                        for (String value : ((BArray) headerValue).getStringArray()) {
+                            headers.set(key.toString(), value);
+                        }
+                    }
                 }
             }
             DataContext context = new DataContext(env, null);
