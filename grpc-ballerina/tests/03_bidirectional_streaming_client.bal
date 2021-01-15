@@ -22,7 +22,7 @@ import ballerina/test;
 
 @test:Config {enable:true}
 function testBidiStreaming() {
-    StreamingClient ep = new;
+    ChatStreamingClient ep;
     ChatClient chatEp = new ("https://localhost:9093", {
         secureSocket: {
             trustStore: {
@@ -36,6 +36,7 @@ function testBidiStreaming() {
     if (res is Error) {
         string msg = io:sprintf(ERROR_MSG_FORMAT, res.message());
         io:println(msg);
+        return;
     } else {
         ep = res;
     }
@@ -83,7 +84,33 @@ public client class ChatClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_3, getDescriptorMap3());
     }
 
-    isolated remote function chat(map<string[]> headers = {}) returns (StreamingClient|Error) {
-        return self.grpcClient->executeBidirectionalStreaming("Chat/chat", headers);
+    isolated remote function chat() returns (ChatStreamingClient|Error) {
+        StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("Chat/chat");
+        return new ChatStreamingClient(sClient);
+    }
+}
+
+public client class ChatStreamingClient {
+    private StreamingClient sClient;
+
+    isolated function init(StreamingClient sClient) {
+        self.sClient = sClient;
+    }
+
+    isolated remote function send(ChatMessage message) returns Error? {
+        return self.sClient->send(message);
+    }
+
+    isolated remote function receive() returns string|Error {
+        var payload = check self.sClient->receive();
+        return payload.toString();
+    }
+
+    isolated remote function sendError(Error response) returns Error? {
+        return self.sClient->sendError(response);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.sClient->complete();
     }
 }

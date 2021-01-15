@@ -53,11 +53,9 @@ public client class LotsOfGreetingsStreamingClient {
         self.sClient = sClient;
     }
 
-
     isolated remote function send(string message) returns Error? {
         return self.sClient->send(message);
     }
-
 
     isolated remote function receive() returns string|Error {
         var payload = check self.sClient->receive();
@@ -85,9 +83,8 @@ public client class HelloWorld4Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_4, getDescriptorMap4());
     }
 
-    isolated remote function lotsOfGreetings(map<string[]> headers = {}) returns (LotsOfGreetingsStreamingClient|Error) {
-        StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.HelloWorld7/lotsOfGreetings",
-        headers);
+    isolated remote function lotsOfGreetings() returns (LotsOfGreetingsStreamingClient|Error) {
+        StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.HelloWorld7/lotsOfGreetings");
         return new LotsOfGreetingsStreamingClient(sClient);
     }
 }

@@ -25,7 +25,7 @@ boolean eof = false;
 function testReceiveStreamingResponse() {
     string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld6Client helloWorldEp = new("http://localhost:9096");
+    HelloWorld45Client helloWorldEp = new("http://localhost:9096");
 
     var result = helloWorldEp->lotsOfReplies(name);
     if (result is Error) {
@@ -41,7 +41,7 @@ function testReceiveStreamingResponse() {
     }
 }
 
-public client class HelloWorld6Client {
+public client class HelloWorld45Client {
 
     *AbstractClientEndpoint;
 
@@ -50,10 +50,11 @@ public client class HelloWorld6Client {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_6, getDescriptorMap6());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 
-    isolated remote function lotsOfReplies(string req, map<string[]> headers = {}) returns stream<anydata>|Error {
-        return self.grpcClient->executeServerStreaming("grpcservices.HelloWorld45/lotsOfReplies", req, headers);
+    isolated remote function lotsOfReplies(string req) returns stream<anydata>|Error {
+
+        return self.grpcClient->executeServerStreaming("grpcservices.HelloWorld45/lotsOfReplies", req);
     }
 }
