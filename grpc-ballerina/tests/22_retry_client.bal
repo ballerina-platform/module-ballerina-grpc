@@ -19,8 +19,8 @@ import ballerina/test;
 
 RetryConfiguration retryConfig = {
     retryCount: 3,
-    intervalInMillis: 2000,
-    maxIntervalInMillis: 10000,
+    intervalInMillis: 2,
+    maxIntervalInMillis: 10,
     backoffFactor: 2,
     errorTypes: [UnavailableError, InternalError]
 };
@@ -31,8 +31,8 @@ ClientConfiguration clientConfig = {
 
 RetryConfiguration failingRetryConfig = {
     retryCount: 2,
-    intervalInMillis: 2000,
-    maxIntervalInMillis: 10000,
+    intervalInMillis: 2,
+    maxIntervalInMillis: 10,
     backoffFactor: 2,
     errorTypes: [UnavailableError, InternalError]
 };

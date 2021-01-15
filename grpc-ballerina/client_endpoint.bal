@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/runtime;
 import ballerina/crypto;
+import ballerina/lang.runtime as runtime;
 import ballerina/java;
 
 # The gRPC client endpoint provides the capability for initiating contact with a remote gRPC service. The API it
@@ -145,9 +145,9 @@ isolated function retryBlockingExecute(Client grpcClient, string methodID, anyda
 headers, RetryConfiguration retryConfig) returns ([anydata, map<string[]>]|Error) {
     int currentRetryCount = 0;
     int retryCount = retryConfig.retryCount;
-    int interval = retryConfig.intervalInMillis;
-    int maxInterval = retryConfig.maxIntervalInMillis;
-    int backoffFactor = retryConfig.backoffFactor;
+    decimal interval = retryConfig.intervalInMillis;
+    decimal maxInterval = retryConfig.maxIntervalInMillis;
+    decimal backoffFactor = retryConfig.backoffFactor;
     ErrorType[] errorTypes = retryConfig.errorTypes;
     error? cause = ();
 
@@ -163,7 +163,7 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string[]>]|Error
             }
         }
         runtime:sleep(interval);
-        int newInterval = interval * backoffFactor;
+        decimal newInterval = interval * backoffFactor;
         interval = (newInterval > maxInterval) ? maxInterval : newInterval;
         currentRetryCount += 1;
     }
@@ -242,9 +242,9 @@ final ErrorType[] & readonly defaultErrorTypes = [InternalError];
 # + errorTypes - Error types which should be considered as failure scenarios to retry
 public type RetryConfiguration record {|
    int retryCount;
-   int intervalInMillis;
-   int maxIntervalInMillis;
-   int backoffFactor;
+   decimal intervalInMillis;
+   decimal maxIntervalInMillis;
+   decimal backoffFactor;
    ErrorType[] errorTypes = defaultErrorTypes;
 |};
 

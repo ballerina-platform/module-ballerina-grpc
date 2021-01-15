@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/io;
-import ballerina/runtime;
+import ballerina/lang.runtime as runtime;
 
 @ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_14,
@@ -26,7 +26,7 @@ service "HelloWorld14" on new Listener(9104) {
     isolated remote function hello (HelloWorld14StringCaller caller, string name,
                              map<string[]> headers) {
         string message = "Hello " + name;
-        runtime:sleep(2000);
+        runtime:sleep(2);
         // Sends response message with headers.
         Error? err = caller->send(message);
         if (err is Error) {
