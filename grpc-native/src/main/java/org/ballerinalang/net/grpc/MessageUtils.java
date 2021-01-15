@@ -451,11 +451,7 @@ public class MessageUtils {
         BMap headerMap = ValueCreator.createMapValue(HEADER_MAP_TYPE);
         for (String key : httpHeaders.names()) {
             String[] values = httpHeaders.getAll(key).toArray(new String[0]);
-            if (values.length == 1) {
-                headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromString(values[0]));
-            } else {
-                headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromStringArray(values));
-            }
+            headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromStringArray(values));
         }
         return headerMap;
     }

@@ -131,22 +131,4 @@ public class ServiceStub {
             return serviceStub;
         }
     }
-
-//    /**
-//     * Service stub type enum.
-//     */
-//    public enum StubType {
-//        BLOCKING("blocking"),
-//        NONBLOCKING("non-blocking");
-//
-//        private String type;
-//
-//        StubType(String type) {
-//            this.type = type;
-//        }
-//
-//        public String getType() {
-//            return type;
-//        }
-//    }
 }

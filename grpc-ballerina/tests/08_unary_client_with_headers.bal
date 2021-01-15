@@ -72,7 +72,7 @@ public client class HelloWorld8BlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_8, getDescriptorMap8());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_8, getDescriptorMap8());
     }
 
     isolated remote function hello(string|ContextString req) returns string|Error {
@@ -84,7 +84,7 @@ public client class HelloWorld8BlockingClient {
         } else {
             message = req;
         }
-        [anydata, map<string[]>][result, requestHeaders] = check self.grpcClient->blockingExecute("HelloWorld101/hello", message, headers);
+        [anydata, map<string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
         return result.toString();
     }
 
@@ -97,25 +97,7 @@ public client class HelloWorld8BlockingClient {
         } else {
             message = req;
         }
-        [anydata, map<string[]>][result, requestHeaders] = check self.grpcClient->blockingExecute("HelloWorld101/hello", message, headers);
+        [anydata, map<string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
         return  {content: result.toString(), headers: requestHeaders};
-    }
-}
-
-//Non-blocking endpoint
-public client class HelloWorld8Client {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_8, getDescriptorMap8());
-    }
-
-    isolated remote function hello(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld101/hello", req, msgListener, headers);
     }
 }

@@ -19,7 +19,6 @@ import ballerina/io;
 import ballerina/runtime;
 import ballerina/test;
 
-string responseMsg = "";
 
 @test:Config {enable:true}
 function testBidiStreaming() {
@@ -33,7 +32,7 @@ function testBidiStreaming() {
         }
     });
     // Executing unary non-blocking call registering server message listener.
-    var res = chatEp->chat(ChatMessageListener);
+    var res = chatEp->chat();
     if (res is Error) {
         string msg = io:sprintf(ERROR_MSG_FORMAT, res.message());
         io:println(msg);
@@ -46,10 +45,13 @@ function testBidiStreaming() {
     if (connErr is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
     }
-    if (!responseReceived("Sam: Hi")) {
-        test:assertFail(io:sprintf(RESP_MSG_FORMAT, "Sam: Hi", responseMsg));
+
+    var responseMsg = ep->receive();
+    if (responseMsg is anydata) {
+        string receivedMsg = <string> responseMsg;
+        test:assertEquals(receivedMsg, "Sam: Hi");
     } else {
-        responseMsg = "";
+        test:assertFail(msg = responseMsg.message());
     }
 
     ChatMessage mes2 = {name:"Sam", message:"GM"};
@@ -57,45 +59,18 @@ function testBidiStreaming() {
     if (connErr is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
     }
-    if (!responseReceived("Sam: GM")) {
-        test:assertFail(io:sprintf(RESP_MSG_FORMAT, "Sam: GM", responseMsg));
+
+    responseMsg = ep->receive();
+    if (responseMsg is anydata) {
+        string receivedMsg = <string> responseMsg;
+        test:assertEquals(receivedMsg, "Sam: GM");
+    } else {
+        test:assertFail(msg = responseMsg.message());
     }
 
     checkpanic ep->complete();
 }
 
-function responseReceived(string expectedMsg) returns boolean {
-    int waitCount = 0;
-    while(responseMsg == "") {
-        runtime:sleep(1000);
-        io:println("response message: ", responseMsg);
-        if (waitCount > 10) {
-            break;
-        }
-        waitCount += 1;
-    }
-    return responseMsg == expectedMsg;
-}
-
-service object {} ChatMessageListener = service object {
-
-    function onMessage(string message) {
-        responseMsg = <@untainted> message;
-        io:println("Response received from server: " + responseMsg);
-    }
-
-    function onError(error err) {
-        responseMsg = io:sprintf(ERROR_MSG_FORMAT, err.message());
-        io:println(responseMsg);
-    }
-
-    remote function onComplete() {
-        io:println("Server Complete Sending Responses.");
-    }
-};
-
-
-// Non-blocking client endpoint
 public client class ChatClient {
 
     *AbstractClientEndpoint;
@@ -105,11 +80,10 @@ public client class ChatClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_3, getDescriptorMap3());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_3, getDescriptorMap3());
     }
 
-    isolated remote function chat(service object {} msgListener, map<string[]> headers = {}) returns
-    (StreamingClient|Error) {
-        return self.grpcClient->streamingExecute("Chat/chat", msgListener, headers);
+    isolated remote function chat(map<string[]> headers = {}) returns (StreamingClient|Error) {
+        return self.grpcClient->executeBidirectionalStreaming("Chat/chat", headers);
     }
 }

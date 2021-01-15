@@ -19,7 +19,7 @@ import ballerina/test;
 
 @test:Config {enable:true}
 isolated function testGzipEncoding() {
-    OrderManagementBlockingClient OrderMgtBlockingEp = new("http://localhost:9111");
+    OrderManagementClient OrderMgtBlockingEp = new("http://localhost:9111");
 
     Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
     map<string[]> headers = {};
@@ -34,36 +34,6 @@ isolated function testGzipEncoding() {
     }
 }
 
-public client class OrderManagementBlockingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_21, getDescriptorMap21());
-    }
-
-    isolated remote function addOrder(Order req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var payload = check self.grpcClient->blockingExecute("ecommerce.OrderManagement/addOrder", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        return [result.toString(), resHeaders];
-    }
-
-    isolated remote function getOrder(string req, map<string[]> headers = {}) returns ([Order,map<string[]>]|Error) {
-        var payload = check self.grpcClient->blockingExecute("ecommerce.OrderManagement/getOrder", req, headers);
-       map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        return [<Order>result, resHeaders];
-    }
-
-}
-
 public client class OrderManagementClient {
 
     *AbstractClientEndpoint;
@@ -73,14 +43,23 @@ public client class OrderManagementClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_21, getDescriptorMap21());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_21, getDescriptorMap21());
     }
 
-    isolated remote function addOrder(Order req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("ecommerce.OrderManagement/addOrder", req, msgListener, headers);
+    isolated remote function addOrder(Order req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
+        var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/addOrder", req, headers);
+        map<string[]> resHeaders;
+        anydata result = ();
+        [result, resHeaders] = payload;
+        return [result.toString(), resHeaders];
     }
 
-    isolated remote function getOrder(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("ecommerce.OrderManagement/getOrder", req, msgListener, headers);
+    isolated remote function getOrder(string req, map<string[]> headers = {}) returns ([Order,map<string[]>]|Error) {
+        var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", req, headers);
+       map<string[]> resHeaders;
+        anydata result = ();
+        [result, resHeaders] = payload;
+        return [<Order>result, resHeaders];
     }
+
 }

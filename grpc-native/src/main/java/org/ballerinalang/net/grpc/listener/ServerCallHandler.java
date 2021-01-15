@@ -19,6 +19,7 @@ package org.ballerinalang.net.grpc.listener;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
@@ -64,6 +65,7 @@ public abstract class ServerCallHandler {
 
     static final String TOO_MANY_REQUESTS = "Too many requests";
     static final String MISSING_REQUEST = "Half-closed without a request";
+    static final String CALLER_TYPE = "Caller";
     protected Descriptors.MethodDescriptor methodDescriptor;
 
     ServerCallHandler(Descriptors.MethodDescriptor methodDescriptor) {
@@ -173,7 +175,8 @@ public abstract class ServerCallHandler {
 
     void onMessageInvoke(ServiceResource resource, Message request, StreamObserver responseObserver,
                          ObserverContext context) {
-        Callback callback = new UnaryCallableUnitCallBack(responseObserver, isEmptyResponse(), context);
+        Callback callback = new UnaryCallableUnitCallBack(resource.getRuntime(), responseObserver, isEmptyResponse(),
+                this.methodDescriptor.getOutputType(), context);
         Object requestParam = request != null ? request.getbMessage() : null;
         HttpHeaders headers = request != null ? request.getHeaders() : null;
         Object[] requestParams = computeResourceParams(resource, requestParam, headers, responseObserver);
@@ -189,10 +192,17 @@ public abstract class ServerCallHandler {
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,
                                    StreamObserver responseObserver) {
         List<Type> signatureParams = resource.getParamTypes();
-        Object[] paramValues = new Object[signatureParams.size() * 2];
-        paramValues[0] = getConnectionParameter(resource, responseObserver);
-        paramValues[1] = true;
-
+        Object[] paramValues;
+        int i = 0;
+        if ((signatureParams.size() >= 1) && (signatureParams.get(0).getTag() == TypeTags.OBJECT_TYPE_TAG) &&
+                signatureParams.get(0).getName().contains(CALLER_TYPE)) {
+            paramValues = new Object[signatureParams.size() * 2];
+            paramValues[i] = getConnectionParameter(resource, responseObserver);
+            paramValues[i + 1] = true;
+            i = i + 2;
+        } else {
+            paramValues = new Object[2];
+        }
         if (resource.isHeaderRequired()) {
             BMap headerValues = createHeaderMap(headers);
             Map<String, Object> valueMap;
@@ -208,11 +218,11 @@ public abstract class ServerCallHandler {
             }
             BMap contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
                     getContextTypeName(resource.getRpcInputType()), valueMap);
-            paramValues[2] = contentContext;
-            paramValues[3] = true;
+            paramValues[i] = contentContext;
+            paramValues[i + 1] = true;
         } else if (requestParam != null) {
-            paramValues[2] = requestParam;
-            paramValues[3] = true;
+            paramValues[i] = requestParam;
+            paramValues[i + 1] = true;
         }
         return paramValues;
     }

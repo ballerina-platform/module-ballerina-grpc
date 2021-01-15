@@ -21,7 +21,7 @@ import ballerina/test;
 
 @test:Config {enable: true}
 isolated function testInvokeUnavailableService() {
-    HelloWorld16BlockingClient helloWorld16BlockingEp = new ("http://localhost:9106");
+    HelloWorld16Client helloWorld16BlockingEp = new ("http://localhost:9106");
     string name = "WSO2";
     [string, map<string[]>]|Error unionResp16 = helloWorld16BlockingEp->hello(name);
     if (unionResp16 is Error) {
@@ -36,27 +36,6 @@ isolated function testInvokeUnavailableService() {
     }
 }
 
-public client class HelloWorld16BlockingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_16, getDescriptorMap16());
-    }
-
-    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("HelloWorld/hello", req, headers);
-        anydata result;
-        map<string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
-    }
-}
-
 public client class HelloWorld16Client {
 
     *AbstractClientEndpoint;
@@ -66,11 +45,15 @@ public client class HelloWorld16Client {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_16, getDescriptorMap16());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_16, getDescriptorMap16());
     }
 
-    isolated remote function hello(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("HelloWorld/hello", req, msgListener, headers);
+    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
+        var unionResp = check self.grpcClient->executeSimpleRPC("HelloWorld/hello", req, headers);
+        anydata result;
+        map<string[]> resHeaders;
+        [result, resHeaders] = unionResp;
+        return [result.toString(), resHeaders];
     }
 }
 

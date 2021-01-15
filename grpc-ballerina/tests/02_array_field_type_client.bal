@@ -213,11 +213,11 @@ public client class HelloWorld2BlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_2, getDescriptorMap2());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_2, getDescriptorMap2());
     }
 
     isolated remote function testIntArrayInput(TestInt req, map<string[]> headers = {}) returns ([int, map<string[]>]|Error) {
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testIntArrayInput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testIntArrayInput", req, headers);
         anydata result;
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -230,7 +230,7 @@ public client class HelloWorld2BlockingClient {
     }
 
     isolated remote function testStringArrayInput(TestString req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testStringArrayInput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStringArrayInput", req, headers);
         anydata result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -238,7 +238,7 @@ public client class HelloWorld2BlockingClient {
     }
 
     isolated remote function testFloatArrayInput(TestFloat req, map<string[]> headers = {}) returns ([float, map<string[]>]|Error) {
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testFloatArrayInput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testFloatArrayInput", req, headers);
         anydata result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -251,7 +251,7 @@ public client class HelloWorld2BlockingClient {
     }
 
     isolated remote function testBooleanArrayInput(TestBoolean req, map<string[]> headers = {}) returns ([boolean, map<string[]>]|Error) {
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testBooleanArrayInput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testBooleanArrayInput", req, headers);
         anydata result;
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -264,7 +264,7 @@ public client class HelloWorld2BlockingClient {
     }
 
     isolated remote function testStructArrayInput(TestStruct req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testStructArrayInput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStructArrayInput", req, headers);
         anydata result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -273,7 +273,7 @@ public client class HelloWorld2BlockingClient {
 
     isolated remote function testIntArrayOutput(map<string[]> headers = {}) returns ([TestInt, map<string[]>]|Error) {
         Empty req = {};
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testIntArrayOutput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testIntArrayOutput", req, headers);
         anydata result;
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -287,7 +287,7 @@ public client class HelloWorld2BlockingClient {
 
     isolated remote function testStringArrayOutput(map<string[]> headers = {}) returns ([TestString, map<string[]>]|Error) {
         Empty req = {};
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testStringArrayOutput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStringArrayOutput", req, headers);
         anydata result;
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -301,7 +301,7 @@ public client class HelloWorld2BlockingClient {
 
     isolated remote function testFloatArrayOutput(map<string[]> headers = {}) returns ([TestFloat, map<string[]>]|Error) {
         Empty req = {};
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testFloatArrayOutput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testFloatArrayOutput", req, headers);
         anydata result;
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -315,7 +315,7 @@ public client class HelloWorld2BlockingClient {
 
     isolated remote function testBooleanArrayOutput(map<string[]> headers = {}) returns ([TestBoolean, map<string[]>]|Error) {
         Empty req = {};
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testBooleanArrayOutput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testBooleanArrayOutput", req, headers);
         anydata result;
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -329,7 +329,7 @@ public client class HelloWorld2BlockingClient {
 
     isolated remote function testStructArrayOutput(map<string[]> headers = {}) returns ([TestStruct, map<string[]>]|Error) {
         Empty req = {};
-        [anydata, map<string[]>] payload = check self.grpcClient->blockingExecute("grpcservices.HelloWorld3/testStructArrayOutput", req, headers);
+        [anydata, map<string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStructArrayOutput", req, headers);
         anydata result;
         map<string[]> resHeaders;
         [result, resHeaders] = payload;
@@ -339,63 +339,5 @@ public client class HelloWorld2BlockingClient {
         } else {
             return error InternalError("Error while constructing the message", value);
         }
-    }
-}
-
-public client class HelloWorld2Client {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_2, getDescriptorMap2());
-    }
-
-    isolated remote function testIntArrayInput(TestInt req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testIntArrayInput", req, msgListener, headers);
-    }
-
-    isolated remote function testStringArrayInput(TestString req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testStringArrayInput", req, msgListener, headers);
-    }
-
-    isolated remote function testFloatArrayInput(TestFloat req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testFloatArrayInput", req, msgListener, headers);
-    }
-
-    isolated remote function testBooleanArrayInput(TestBoolean req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testBooleanArrayInput", req, msgListener, headers);
-    }
-
-    isolated remote function testStructArrayInput(TestStruct req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testStructArrayInput", req, msgListener, headers);
-    }
-
-    isolated remote function testIntArrayOutput(service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        Empty req = {};
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testIntArrayOutput", req, msgListener, headers);
-    }
-
-    isolated remote function testStringArrayOutput(service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        Empty req = {};
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testStringArrayOutput", req, msgListener, headers);
-    }
-
-    isolated remote function testFloatArrayOutput(service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        Empty req = {};
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testFloatArrayOutput", req, msgListener, headers);
-    }
-
-    isolated remote function testBooleanArrayOutput(service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        Empty req = {};
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testBooleanArrayOutput", req, msgListener, headers);
-    }
-
-    isolated remote function testStructArrayOutput(service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        Empty req = {};
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld3/testStructArrayOutput", req, msgListener, headers);
     }
 }

@@ -16,7 +16,6 @@
 
 // This is client implementation for server streaming scenario
 import ballerina/io;
-import ballerina/runtime;
 import ballerina/test;
 
 int msgCount = 0;
@@ -28,52 +27,20 @@ function testReceiveStreamingResponse() {
     // Client endpoint configuration
     HelloWorld6Client helloWorldEp = new("http://localhost:9096");
 
-    // Executing unary non-blocking call registering server message listener.
-    Error? result = helloWorldEp->lotsOfReplies(name, HelloWorld6MessageListener);
+    var result = helloWorldEp->lotsOfReplies(name);
     if (result is Error) {
         test:assertFail("Error from Connector: " + result.message());
     } else {
         io:println("Connected successfully");
+        string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
+        int waitCount = 0;
+        error? e = result.forEach(function(anydata str) {
+            test:assertEquals(str, expectedResults[waitCount]);
+            waitCount += 1;
+        });
     }
-
-    int waitCount = 0;
-    while(msgCount < 3 || !eof) {
-        runtime:sleep(1000);
-        io:println("msg count: " + msgCount.toString());
-        if (waitCount > 10) {
-            break;
-        }
-        waitCount += 1;
-    }
-
-    io:println("responses count: " + msgCount.toString());
-    test:assertEquals(msgCount, 3);
 }
 
-// Server Message Listener.
-service object {} HelloWorld6MessageListener = service object {
-
-    // Resource registered to receive server messages
-    remote function onMessage(string message) {
-        lock {
-            io:println("Response received from server: " + message);
-            msgCount = msgCount + 1;
-        }
-    }
-
-    // Resource registered to receive server error messages
-    remote function onError(error err) {
-        io:println("Error from Connector: " + err.message());
-    }
-
-    // Resource registered to receive server completed message.
-    remote function onComplete() {
-        io:println("Server Complete Sending Response.");
-        eof = true;
-    }
-};
-
-// Non-blocking client endpoint
 public client class HelloWorld6Client {
 
     *AbstractClientEndpoint;
@@ -83,10 +50,10 @@ public client class HelloWorld6Client {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        Error? result = self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_6, getDescriptorMap6());
+        Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 
-    isolated remote function lotsOfReplies(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld45/lotsOfReplies", req, msgListener, headers);
+    isolated remote function lotsOfReplies(string req, map<string[]> headers = {}) returns stream<anydata>|Error {
+        return self.grpcClient->executeServerStreaming("grpcservices.HelloWorld45/lotsOfReplies", req, headers);
     }
 }

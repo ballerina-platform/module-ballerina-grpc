@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorld7BlockingClient helloWorld7BlockingEp = new ("http://localhost:9097");
+final HelloWorld7Client helloWorld7BlockingEp = new ("http://localhost:9097");
 
 //type ResponseTypedesc typedesc<Response>;
 
@@ -111,7 +111,7 @@ function testUnaryBlockingStructClient() {
     }
 }
 
-public client class HelloWorld7BlockingClient {
+public client class HelloWorld7Client {
 
     *AbstractClientEndpoint;
 
@@ -120,11 +120,11 @@ public client class HelloWorld7BlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_7, getDescriptorMap7());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_7, getDescriptorMap7());
     }
 
     isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/hello", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/hello", req, headers);
         any result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
@@ -132,7 +132,7 @@ public client class HelloWorld7BlockingClient {
     }
 
     isolated remote function testInt(int req, map<string[]> headers = {}) returns ([int, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testInt", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testInt", req, headers);
         anydata result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
@@ -145,7 +145,7 @@ public client class HelloWorld7BlockingClient {
     }
 
     isolated remote function testFloat(float req, map<string[]> headers = {}) returns ([float, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testFloat", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testFloat", req, headers);
         anydata result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
@@ -158,7 +158,7 @@ public client class HelloWorld7BlockingClient {
     }
 
     isolated remote function testBoolean(boolean req, map<string[]> headers = {}) returns ([boolean, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testBoolean", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testBoolean", req, headers);
         anydata result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
@@ -171,7 +171,7 @@ public client class HelloWorld7BlockingClient {
     }
 
     isolated remote function testStruct(Request req, map<string[]> headers = {}) returns ([Response, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testStruct", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testStruct", req, headers);
         anydata result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = unionResp;
@@ -184,7 +184,7 @@ public client class HelloWorld7BlockingClient {
     }
 
     isolated remote function testResponseInsideMatch(string req, map<string[]> headers = {}) returns [Response, map<string[]>]|Error {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld100/testResponseInsideMatch", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testResponseInsideMatch", req, headers);
         anydata result = ();
         map<string[]> resHeaders;
         [result, resHeaders] = unionResp;

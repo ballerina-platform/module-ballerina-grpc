@@ -27,7 +27,7 @@ listener Listener ep8 = new (9098, {
     descMap: getDescriptorMap8()
 }
 service "HelloWorld101" on ep8 {
-    isolated remote function hello(HelloServiceStringCaller caller, ContextString request) {
+    isolated remote function hello(HelloWorld101StringCaller caller, ContextString request) {
         io:println("name: " + request.content);
         string message = "Hello " + request.content;
         map<string[]> responseHeaders = {};

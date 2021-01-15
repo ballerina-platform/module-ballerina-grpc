@@ -162,7 +162,8 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         if (ObserveUtils.isObservabilityEnabled()) {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
-        StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(responseObserver, context);
+        StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(resource.getRuntime(),
+                responseObserver, this.methodDescriptor.getOutputType(), context);
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
                                                 ON_MESSAGE_METADATA, callback, properties, resource.getReturnType(),
                 requestParams);

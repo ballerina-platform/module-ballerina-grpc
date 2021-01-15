@@ -20,7 +20,7 @@ import ballerina/test;
 isolated function testErrorResponse() {
     string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld13BlockingClient helloWorld13BlockingEp = new("http://localhost:9103");
+    HelloWorld13Client helloWorld13BlockingEp = new("http://localhost:9103");
     var unionResp = helloWorld13BlockingEp->hello(name);
 
     if (unionResp is Error) {
@@ -32,28 +32,6 @@ isolated function testErrorResponse() {
     }
 }
 
-public client class HelloWorld13BlockingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_13, getDescriptorMap13());
-    }
-
-    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var payload = check self.grpcClient->blockingExecute("HelloWorld13/hello", req, headers);
-        map<string[]> resHeaders;
-        any result = ();
-        [result, resHeaders] = payload;
-        return [result.toString(), resHeaders];
-    }
-
-}
-
 public client class HelloWorld13Client {
 
     *AbstractClientEndpoint;
@@ -63,11 +41,15 @@ public client class HelloWorld13Client {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_13, getDescriptorMap13());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
-    isolated remote function hello(string req, service object {} msgListener, map<string[]> headers = {}) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("HelloWorld13/hello", req, msgListener, headers);
+    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld13/hello", req, headers);
+        map<string[]> resHeaders;
+        any result = ();
+        [result, resHeaders] = payload;
+        return [result.toString(), resHeaders];
     }
 
 }
