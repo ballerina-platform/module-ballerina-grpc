@@ -16,7 +16,7 @@
 // This is client implementation for bidirectional streaming scenario
 
 import ballerina/io;
-import ballerina/runtime;
+import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -31,7 +31,7 @@ function testBidiStreamingFromReturn() {
     } else {
         streamingClient = res;
     }
-    runtime:sleep(1000);
+    runtime:sleep(1);
     ChatMessage27 msg1 = {name:"Sam", message:"Hi"};
     ChatMessage27 msg2 = {name:"Ann", message:"Hi"};
     ChatMessage27 msg3 = {name:"John", message:"Hi"};
@@ -69,7 +69,7 @@ public client class ChatClientFromReturn {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_27, getDescriptorMap27());
     }
 
-    isolated remote function chat(Headers? headers = ()) returns (StreamingClient|Error) {
+    isolated remote function chat(map<string[]> headers = {}) returns (StreamingClient|Error) {
         return self.grpcClient->executeBidirectionalStreaming("ChatFromReturn/chat", headers);
     }
 }
