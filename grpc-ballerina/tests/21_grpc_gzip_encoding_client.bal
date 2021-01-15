@@ -24,13 +24,12 @@ isolated function testGzipEncoding() {
     Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
     map<string[]> headers = {};
     headers["grpc-encoding"] = ["gzip"];
-    [string, map<string[]>]|error result = OrderMgtBlockingEp->addOrder('order, headers);
+    ContextOrder reqOrder = {content: 'order, headers: headers};
+    string|error result = OrderMgtBlockingEp->addOrder(reqOrder);
     if (result is error) {
         test:assertFail(io:sprintf("gzip encoding failed: %s", result.message()));
     } else {
-        string orderId;
-        [orderId, _] = result;
-        test:assertEquals(orderId, "Order is added 101");
+        test:assertEquals(result, "Order is added 101");
     }
 }
 
@@ -46,20 +45,62 @@ public client class OrderManagementClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_21, getDescriptorMap21());
     }
 
-    isolated remote function addOrder(Order req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/addOrder", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        return [result.toString(), resHeaders];
+    isolated remote function addOrder(Order|ContextOrder req) returns (string|Error) {
+        map<string[]> headers = {};
+        Order message;
+        if (req is ContextOrder) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/addOrder", message, headers);
+        [anydata, map<string[]>][result, _] = payload;
+        return result.toString();
+    }
+    isolated remote function addOrderContext(Order|ContextOrder req) returns (ContextString|Error) {
+        
+        map<string[]> headers = {};
+        Order message;
+        if (req is ContextOrder) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/addOrder", message, headers);
+        [anydata, map<string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function getOrder(string req, map<string[]> headers = {}) returns ([Order,map<string[]>]|Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        return [<Order>result, resHeaders];
+    isolated remote function getOrder(string|ContextString req) returns (Order|Error) {
+        
+        map<string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", message, headers);
+        [anydata, map<string[]>][result, _] = payload;
+        return <Order>result;
+        
+    }
+    isolated remote function getOrderContext(string|ContextString req) returns (ContextOrder|Error) {
+        
+        map<string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", message, headers);
+        [anydata, map<string[]>][result, respHeaders] = payload;
+        return {content: <Order>result, headers: respHeaders};
     }
 
 }

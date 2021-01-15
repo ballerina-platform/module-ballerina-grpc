@@ -6,10 +6,10 @@ public client class {{@key}} {
     }
 
     public isolated function getId() returns int {
-        return self.instanceId;
+        return self.caller.getId();
     }
     {{#if this}}
-    isolated remote function send({{this}} response) returns grpc:Error? {
+    isolated remote function send({{this}}|Context{{removeSpecialCharacters this}} response) returns grpc:Error? {
         return self.caller->send(response);
     }
     {{/if}}

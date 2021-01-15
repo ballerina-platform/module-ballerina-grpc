@@ -19,10 +19,15 @@ package org.ballerinalang.net.grpc.callback;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.observability.ObserverContext;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.StreamObserver;
@@ -31,6 +36,7 @@ import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 import static org.ballerinalang.net.grpc.GrpcConstants.COMPLETED_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
+import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordType;
 
 /**
  * Call back class registered for streaming gRPC service in B7a executor.
@@ -87,7 +93,37 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                     runtime, requestSender, outputType, bObject);
             runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
         } else {
-            requestSender.onNext(new Message(this.outputType.getName(), response));
+            Object content;
+            BMap headerValues = null;
+            if (isContextRecordType(response)) {
+                content = ((BMap) response).get(StringUtils.fromString("content"));
+                headerValues = ((BMap) response).getMapValue(StringUtils.fromString("headers"));
+            } else {
+                content = response;
+            }
+            //Message responseMessage = MessageUtils.generateProtoMessage(responseValue, outputType);
+            Message responseMessage = new Message(outputType.getName(), content);
+            // Update response headers when request headers exists in the context.
+            HttpHeaders headers = null;
+            if (headerValues != null) {
+                headers = new DefaultHttpHeaders();
+                for (Object key : headerValues.getKeys()) {
+                    Object headerValue = headerValues.get(key);
+                    if (headerValue instanceof BArray) {
+                        for (String value : ((BArray) headerValue).getStringArray()) {
+                            headers.set(key.toString(), value);
+                        }
+                    }
+                }
+            }
+            if (headers != null) {
+                responseMessage.setHeaders(headers);
+                if (observerContext != null) {
+                    headers.entries().forEach(
+                            x -> observerContext.addTag(x.getKey(), x.getValue()));
+                }
+            }
+            requestSender.onNext(responseMessage);
         }
 
         if (observerContext != null) {
