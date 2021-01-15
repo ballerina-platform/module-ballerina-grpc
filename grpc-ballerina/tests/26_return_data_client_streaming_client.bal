@@ -83,9 +83,9 @@ public client class HelloWorld26Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_26, getDescriptorMap26());
     }
 
-    isolated remote function lotsOfGreetings(map<string[]> headers = {}) returns (LotsOfGreetingsStreamingClientFromReturn|Error) {
-        StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.HelloWorld26/lotsOfGreetings",
-        headers);
+    isolated remote function lotsOfGreetings() returns (LotsOfGreetingsStreamingClientFromReturn|Error) {
+        StreamingClient sClient = check self.grpcClient->executeClientStreaming(
+        "grpcservices.HelloWorld26/lotsOfGreetings");
         return new LotsOfGreetingsStreamingClientFromReturn(sClient);
     }
 }

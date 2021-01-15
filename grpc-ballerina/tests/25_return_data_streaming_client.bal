@@ -52,7 +52,7 @@ public client class HelloWorld25Client {
         Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_25, getDescriptorMap25());
     }
 
-    isolated remote function lotsOfReplies(string req, map<string[]> headers = {}) returns stream<anydata>|Error {
-        return self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req, headers);
+    isolated remote function lotsOfReplies(string req) returns stream<anydata>|Error {
+        return self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req);
     }
 }

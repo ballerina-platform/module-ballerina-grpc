@@ -69,7 +69,7 @@ public client class ChatClientFromReturn {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_27, getDescriptorMap27());
     }
 
-    isolated remote function chat(map<string[]> headers = {}) returns (StreamingClient|Error) {
-        return self.grpcClient->executeBidirectionalStreaming("ChatFromReturn/chat", headers);
+    isolated remote function chat() returns (StreamingClient|Error) {
+        return self.grpcClient->executeBidirectionalStreaming("ChatFromReturn/chat");
     }
 }
