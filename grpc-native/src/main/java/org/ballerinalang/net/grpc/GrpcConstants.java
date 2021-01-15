@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.values.BString;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_BUILTIN_PKG_PREFIX;
 import static io.ballerina.runtime.api.constants.RuntimeConstants.ORG_NAME_SEPARATOR;
@@ -125,6 +126,7 @@ public class GrpcConstants {
     public static final String WRAPPER_BOOL_MESSAGE = "BoolValue";
     public static final String WRAPPER_STRING_MESSAGE = "StringValue";
     public static final String WRAPPER_BYTES_MESSAGE = "BytesValue";
+    public static final String IS_BIDI_STREAMING = "isBidiStreaming";
 
     // Server Streaming method resources.
     public static final String ON_COMPLETE_RESOURCE = "onComplete";
@@ -199,24 +201,31 @@ public class GrpcConstants {
     public static final Map<Integer, String> STATUS_ERROR_MAP;
 
     static {
-        Map<Integer, String> statusErrorMap = new HashMap<>();
-        statusErrorMap.put(Status.Code.CANCELLED.value(), CANCELLED_ERROR);
-        statusErrorMap.put(Status.Code.UNKNOWN.value(), UNKNOWN_ERROR);
-        statusErrorMap.put(Status.Code.INVALID_ARGUMENT.value(), INVALID_ARGUMENT_ERROR);
-        statusErrorMap.put(Status.Code.DEADLINE_EXCEEDED.value(), DEADLINE_EXCEEDED_ERROR);
-        statusErrorMap.put(Status.Code.NOT_FOUND.value(), NOT_FOUND_ERROR);
-        statusErrorMap.put(Status.Code.ALREADY_EXISTS.value(), ALREADY_EXISTS_ERROR);
-        statusErrorMap.put(Status.Code.PERMISSION_DENIED.value(), PERMISSION_DENIED_ERROR);
-        statusErrorMap.put(Status.Code.RESOURCE_EXHAUSTED.value(), RESOURCE_EXHAUSTED_ERROR);
-        statusErrorMap.put(Status.Code.FAILED_PRECONDITION.value(), FAILED_PRECONDITION_ERROR);
-        statusErrorMap.put(Status.Code.ABORTED.value(), ABORTED_ERROR);
-        statusErrorMap.put(Status.Code.OUT_OF_RANGE.value(), OUT_OF_RANGE_ERROR);
-        statusErrorMap.put(Status.Code.UNIMPLEMENTED.value(), UNIMPLEMENTED_ERROR);
-        statusErrorMap.put(Status.Code.INTERNAL.value(), INTERNAL_ERROR);
-        statusErrorMap.put(Status.Code.UNAVAILABLE.value(), UNAVAILABLE_ERROR);
-        statusErrorMap.put(Status.Code.DATA_LOSS.value(), DATA_LOSS_ERROR);
-        statusErrorMap.put(Status.Code.UNAUTHENTICATED.value(), UNAUTHENTICATED_ERROR);
-        STATUS_ERROR_MAP = Collections.unmodifiableMap(statusErrorMap);
+        STATUS_ERROR_MAP = Map.ofEntries(Map.entry(Status.Code.CANCELLED.value(), CANCELLED_ERROR),
+                Map.entry(Status.Code.UNKNOWN.value(), UNKNOWN_ERROR),
+                Map.entry(Status.Code.INVALID_ARGUMENT.value(), INVALID_ARGUMENT_ERROR),
+                Map.entry(Status.Code.DEADLINE_EXCEEDED.value(), DEADLINE_EXCEEDED_ERROR),
+                Map.entry(Status.Code.NOT_FOUND.value(), NOT_FOUND_ERROR),
+                Map.entry(Status.Code.ALREADY_EXISTS.value(), ALREADY_EXISTS_ERROR),
+                Map.entry(Status.Code.PERMISSION_DENIED.value(), PERMISSION_DENIED_ERROR),
+                Map.entry(Status.Code.RESOURCE_EXHAUSTED.value(), RESOURCE_EXHAUSTED_ERROR),
+                Map.entry(Status.Code.FAILED_PRECONDITION.value(), FAILED_PRECONDITION_ERROR),
+                Map.entry(Status.Code.ABORTED.value(), ABORTED_ERROR),
+                Map.entry(Status.Code.OUT_OF_RANGE.value(), OUT_OF_RANGE_ERROR),
+                Map.entry(Status.Code.UNIMPLEMENTED.value(), UNIMPLEMENTED_ERROR),
+                Map.entry(Status.Code.INTERNAL.value(), INTERNAL_ERROR),
+                Map.entry(Status.Code.UNAVAILABLE.value(), UNAVAILABLE_ERROR),
+                Map.entry(Status.Code.DATA_LOSS.value(), DATA_LOSS_ERROR),
+                Map.entry(Status.Code.UNAUTHENTICATED.value(), UNAUTHENTICATED_ERROR));
+    }
+
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     //Observability tag keys

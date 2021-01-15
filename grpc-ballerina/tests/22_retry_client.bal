@@ -41,10 +41,10 @@ ClientConfiguration failingClientConfig = {
     retryConfiguration: failingRetryConfig
 };
 
-final RetryServiceBlockingClient retryClient = new("http://localhost:9112", clientConfig);
-final RetryServiceBlockingClient failingRetryClient = new("http://localhost:9112", failingClientConfig);
+final RetryServiceClient retryClient = new("http://localhost:9112", clientConfig);
+final RetryServiceClient failingRetryClient = new("http://localhost:9112", failingClientConfig);
 
-@test:Config {}
+@test:Config {enable:true}
 function testRetry() {
     var result = retryClient->getResult("RetryClient");
     if (result is Error) {
@@ -56,7 +56,7 @@ function testRetry() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testRetryFailingClient() {
     var result = failingRetryClient->getResult("FailingRetryClient");
     if (result is Error) {
@@ -68,7 +68,7 @@ function testRetryFailingClient() {
     }
 }
 
-public client class RetryServiceBlockingClient {
+public client class RetryServiceClient {
 
     *AbstractClientEndpoint;
 
@@ -76,11 +76,11 @@ public client class RetryServiceBlockingClient {
 
     public isolated function init(string url, ClientConfiguration? config = ()) {
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_22, getDescriptorMap22());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
     isolated remote function getResult(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
-        var payload = check self.grpcClient->blockingExecute("RetryService/getResult", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("RetryService/getResult", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;

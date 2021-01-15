@@ -18,10 +18,11 @@ import ballerina/java;
 
 # Provides the gRPC streaming client actions for interacting with the gRPC server.
 public client class StreamingClient {
+    stream<anydata>? serverStream = ();
 
     # Sends the request message to the server.
     # ```ballerina
-    # grpc:Error? err = caller->send(message);
+    # grpc:Error? err = sClient->send(message);
     # ```
     #
     # + res - The inbound request message
@@ -32,7 +33,7 @@ public client class StreamingClient {
 
     # Informs the server when the caller has sent all the messages.
     # ```ballerina
-    # grpc:Error? result = caller->complete();
+    # grpc:Error? result = sClient->complete();
     # ```
     #
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
@@ -42,14 +43,57 @@ public client class StreamingClient {
 
     # Sends an error message to the server.
     # ```ballerina
-    # grpc:Error? result = streamingClient->sendError(grpc:ABORTED, "Operation aborted");
+    # grpc:Error? result = sClient->sendError(error grpc:AbortedError("Operation aborted"));
     # ```
     #
-    # + statusCode - Error status code
-    # + message - Error message
+    # + err - Error instance
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    isolated remote function sendError(int statusCode, string message) returns Error? {
-        return streamSendError(self, statusCode, message);
+    isolated remote function sendError(Error err) returns Error? {
+        return streamSendError(self, err);
+    }
+
+    # Used to receive the server response only in client streaming and bidirectional streaming.
+    # ```ballerina
+    # anydata?|stream<anydata> result = streamingClient->receive();
+    # ```
+    #
+    # + return - An `anydata` value in client streaming and a `stream<anydata>` in bidirectional streaming
+    isolated remote function receive() returns anydata|Error {
+        if (externIsBidirectional(self)) {
+            if (self.serverStream is stream<anydata>) {
+                var nextRecord = (<stream<anydata>>self.serverStream).next();
+                if (nextRecord is record {|anydata value;|}) {
+                    return nextRecord.value;
+                } else {
+                    return error DataMismatchError("Expected an anydata but found a null value");
+                }
+            } else {
+                var result = externReceive(self);
+                if (result is stream<anydata>) {
+                    self.serverStream = result;
+                    var nextRecord = (<stream<anydata>>self.serverStream).next();
+                    if (nextRecord is record {|anydata value;|}) {
+                        return nextRecord.value;
+                    } else {
+                        return error DataMismatchError("Expected an anydata but found a null value");
+                    }
+
+                } else if (result is anydata) {
+                   return error DataMismatchError("Expected a stream but found an anydata type.");
+                } else {
+                    return result;
+                }
+            }
+        } else {
+           var result = externReceive(self);
+           if (result is anydata) {
+               return result;
+           } else if (result is stream<anydata>) {
+               return error DataMismatchError("Expected an anydata type but found a stream.");
+           } else {
+               return result;
+           }
+        }
     }
 }
 
@@ -63,7 +107,17 @@ isolated function streamComplete(StreamingClient streamConnection) returns Error
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
-isolated function streamSendError(StreamingClient streamConnection, int statusCode, string message) returns Error? =
+isolated function streamSendError(StreamingClient streamConnection, Error err) returns Error? =
+@java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+} external;
+
+isolated function externReceive(StreamingClient streamConnection) returns anydata|stream<anydata>|Error =
+@java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+} external;
+
+isolated function externIsBidirectional(StreamingClient streamConnection) returns boolean =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;

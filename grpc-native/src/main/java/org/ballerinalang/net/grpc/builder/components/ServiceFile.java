@@ -33,8 +33,10 @@ public class ServiceFile extends AbstractStub {
     private boolean enableEp = true;
     private String serviceName;
     private List<Method> unaryFunctions = new ArrayList<>();
-    private List<Method> streamingFunctions = new ArrayList<>();
 
+    private List<Method> serverStreamingFunctions = new ArrayList<>();
+    private List<Method> clientStreamingFunctions = new ArrayList<>();
+    private List<Method> bidiStreamingFunctions = new ArrayList<>();
 
     private ServiceFile(String serviceName) {
         this.serviceName = serviceName;
@@ -52,8 +54,16 @@ public class ServiceFile extends AbstractStub {
         return Collections.unmodifiableList(unaryFunctions);
     }
 
-    public List<Method> getStreamingFunctions() {
-        return Collections.unmodifiableList(streamingFunctions);
+    public List<Method> getServerStreamingFunctions() {
+        return Collections.unmodifiableList(serverStreamingFunctions);
+    }
+
+    public List<Method> getClientStreamingFunctions() {
+        return Collections.unmodifiableList(clientStreamingFunctions);
+    }
+
+    public List<Method> getBidiStreamingFunctions() {
+        return Collections.unmodifiableList(bidiStreamingFunctions);
     }
 
     public void setEnableEp(boolean enableEp) {
@@ -88,12 +98,16 @@ public class ServiceFile extends AbstractStub {
             for (Method method : methodList) {
                 switch (method.getMethodType()) {
                 case UNARY:
-                case SERVER_STREAMING:
                     serviceFile.unaryFunctions.add(method);
                     break;
+                case SERVER_STREAMING:
+                    serviceFile.serverStreamingFunctions.add(method);
+                    break;
                 case CLIENT_STREAMING:
+                    serviceFile.clientStreamingFunctions.add(method);
+                    break;
                 case BIDI_STREAMING:
-                    serviceFile.streamingFunctions.add(method);
+                    serviceFile.bidiStreamingFunctions.add(method);
                     break;
                 default:
                     String message = serviceName + "/" + method.getMethodName() + " is not implemented. Method type " +

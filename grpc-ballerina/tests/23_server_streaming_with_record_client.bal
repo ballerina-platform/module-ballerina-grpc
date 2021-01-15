@@ -15,58 +15,27 @@
 // under the License.
 
 import ballerina/io;
-import ballerina/runtime;
 import ballerina/test;
 
-int count = 0;
-boolean eos = false;
-
-@test:Config {}
+@test:Config {enable:true}
 public function testServerStreamingWithRecord() {
     string name = "WSO2";
     helloWorldServerStreamingClient helloWorldEp = new("http://localhost:9113");
     HelloRequest newreq = {name: name};
-    Error? result = helloWorldEp->lotsOfReplies(newreq,
-                                                    HelloWorldServerStreamingMessageListener);
+    var result = helloWorldEp->lotsOfReplies(newreq);
     if (result is Error) {
         test:assertFail("Error from Connector: " + result.message());
     } else {
         io:println("Connected successfully");
+        string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
+        int waitCount = 0;
+        error? e = result.forEach(function(anydata response) {
+            HelloResponse helloResponse = <HelloResponse> response;
+            test:assertEquals(helloResponse.message, expectedResults[waitCount]);
+            waitCount += 1;
+        });
     }
-
-    int waitCount = 0;
-    while(count < 3 || !eos) {
-        runtime:sleep(1000);
-        io:println("msg count: " + count.toString());
-        if (waitCount > 10) {
-            break;
-        }
-        waitCount += 1;
-    }
-    io:println("Client got response successfully.");
-    io:println("responses count: " + count.toString());
-    test:assertEquals(count, 3);
 }
-
-service object {} HelloWorldServerStreamingMessageListener = service object {
-
-    // The `resource` registered to receive server messages
-    function onMessage(HelloResponse message) {
-        io:println("Response received from server: " + message.toString());
-        count = count + 1;
-    }
-
-    // The `resource` registered to receive server error messages
-    function onError(error err) {
-        io:println("Error from Connector: " + err.message());
-    }
-
-    // The `resource` registered to receive server completed messages.
-    function onComplete() {
-        io:println("Server Complete Sending Responses.");
-        eos = true;
-    }
-};
 
 public client class helloWorldServerStreamingClient {
 
@@ -77,11 +46,11 @@ public client class helloWorldServerStreamingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_23, getDescriptorMap23());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_23, getDescriptorMap23());
     }
 
-    isolated remote function lotsOfReplies(HelloRequest req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("helloWorldServerStreaming/lotsOfReplies", req, msgListener, headers);
+    isolated remote function lotsOfReplies(HelloRequest req, Headers? headers = ()) returns stream<anydata>|Error {
+        return self.grpcClient->executeServerStreaming("helloWorldServerStreaming/lotsOfReplies", req, headers);
     }
 
 }

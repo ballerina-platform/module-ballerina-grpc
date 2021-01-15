@@ -1,0 +1,23 @@
+public client class {{@key}} {
+    private grpc:Caller caller;
+
+    public function init(grpc:Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.instanceId;
+    }
+    {{#if this}}
+    isolated remote function send({{this}} response) returns grpc:Error? {
+        return self.caller->send(response);
+    }
+    {{/if}}
+    isolated remote function sendError(grpc:Error response) returns grpc:Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns grpc:Error? {
+        return self.caller->complete();
+    }
+}

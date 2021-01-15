@@ -17,9 +17,9 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable:true}
 isolated function testUnarySecuredBlocking() {
-    HelloWorld9BlockingClient helloWorld9BlockingEp = new ("https://localhost:9099", {
+    HelloWorld9Client helloWorld9BlockingEp = new ("https://localhost:9099", {
         secureSocket:{
             trustStore:{
                path: TRUSTSTORE_PATH,
@@ -52,27 +52,6 @@ isolated function testUnarySecuredBlocking() {
     }
 }
 
-public client class HelloWorld9BlockingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_9, getDescriptorMap9());
-    }
-
-    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld85/hello", req, headers);
-        any result = ();
-        Headers resHeaders = new;
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
-    }
-}
-
 public client class HelloWorld9Client {
 
     *AbstractClientEndpoint;
@@ -82,10 +61,15 @@ public client class HelloWorld9Client {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_9, getDescriptorMap9());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_9, getDescriptorMap9());
     }
 
-    isolated remote function hello(string req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.HelloWorld85/hello", req, msgListener, headers);
+    isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld85/hello", req, headers);
+        any result = ();
+        Headers resHeaders = new;
+        [result, resHeaders] = unionResp;
+        return [result.toString(), resHeaders];
     }
 }
+

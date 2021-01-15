@@ -79,7 +79,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         BObject streamIterator = ValueCreator.createObjectValue(getModule(), ITERATOR_OBJECT_NAME, new Object[1]);
         BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
         streamIterator.addNativeData(MESSAGE_QUEUE, messageQueue);
-        streamIterator.addNativeData(CLIENT_ENDPOINT_TYPE, getConnectionParameter(responseObserver));
+        streamIterator.addNativeData(CLIENT_ENDPOINT_TYPE, getConnectionParameter(resource, responseObserver));
         BStream requestStream = ValueCreator.createStreamValue(TypeCreator.createStreamType(inputType),
                 streamIterator);
         onStreamInvoke(resource, requestStream, call.getHeaders(), responseObserver, context);
@@ -162,7 +162,8 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         if (ObserveUtils.isObservabilityEnabled()) {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
-        StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(responseObserver, context);
+        StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(resource.getRuntime(),
+                responseObserver, this.methodDescriptor.getOutputType(), context);
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
                                                 ON_MESSAGE_METADATA, callback, properties, resource.getReturnType(),
                 requestParams);

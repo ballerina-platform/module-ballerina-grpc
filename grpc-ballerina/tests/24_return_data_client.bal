@@ -16,7 +16,6 @@
 
 import ballerina/io;
 import ballerina/test;
-import ballerina/log;
 import ballerina/lang.'string as langstring;
 
 @test:Config {}
@@ -123,27 +122,12 @@ public function testRecordValueReturn() {
 
 @test:Config {}
 public function testRecordValueReturnStream() {
-    HelloWorld24Client helloWorldEp = new ("http://localhost:9114");
-    var unionResp = helloWorldEp->testRecordValueReturnStream("WSO2", messageListener24);
+    HelloWorld24BlockingClient helloWorldEp = new ("http://localhost:9114");
+    var unionResp = helloWorldEp->testRecordValueReturnStream("WSO2");
     if (unionResp is Error) {
         test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     }
 }
-
-service object {} messageListener24 = service object {
-
-    function onMessage(SampleMsg24 msg) {
-        log:print("Response received from server: " + msg.name);
-    }
-
-    function onError(error err) {
-        log:printError("Error from Connector: " + err.message());
-    }
-
-    function onComplete() {
-        log:print("Server Complete Sending Responses.");
-    }
-};
 
 public client class HelloWorld24BlockingClient {
 
@@ -154,13 +138,13 @@ public client class HelloWorld24BlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new (url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_24, getDescriptorMap24());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_24, getDescriptorMap24());
     }
 
-    isolated remote function testStringValueReturn(string req, Headers? headers = ()) returns ([string, 
+    isolated remote function testStringValueReturn(string req, Headers? headers = ()) returns ([string,
     Headers]|Error) {
 
-        var payload = check self.grpcClient->blockingExecute("HelloWorld24/testStringValueReturn", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testStringValueReturn", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -170,7 +154,7 @@ public client class HelloWorld24BlockingClient {
     isolated remote function testFloatValueReturn(float req, Headers? headers = ()) returns ([float, Headers]|
     Error) {
 
-        var payload = check self.grpcClient->blockingExecute("HelloWorld24/testFloatValueReturn", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testFloatValueReturn", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -182,7 +166,7 @@ public client class HelloWorld24BlockingClient {
     isolated remote function testDoubleValueReturn(float req, Headers? headers = ()) returns ([float, Headers]|
     Error) {
 
-        var payload = check self.grpcClient->blockingExecute("HelloWorld24/testDoubleValueReturn", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testDoubleValueReturn", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -194,7 +178,7 @@ public client class HelloWorld24BlockingClient {
     isolated remote function testInt64ValueReturn(int req, Headers? headers = ()) returns ([int, Headers]|
     Error) {
 
-        var payload = check self.grpcClient->blockingExecute("HelloWorld24/testInt64ValueReturn", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testInt64ValueReturn", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -203,10 +187,10 @@ public client class HelloWorld24BlockingClient {
 
     }
 
-    isolated remote function testBoolValueReturn(boolean req, Headers? headers = ()) returns ([boolean, 
+    isolated remote function testBoolValueReturn(boolean req, Headers? headers = ()) returns ([boolean,
     Headers]|Error) {
 
-        var payload = check self.grpcClient->blockingExecute("HelloWorld24/testBoolValueReturn", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBoolValueReturn", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -218,7 +202,7 @@ public client class HelloWorld24BlockingClient {
     isolated remote function testBytesValueReturn(byte[] req, Headers? headers = ()) returns ([byte[], Headers]|
     Error) {
 
-        var payload = check self.grpcClient->blockingExecute("HelloWorld24/testBytesValueReturn", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBytesValueReturn", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -227,10 +211,10 @@ public client class HelloWorld24BlockingClient {
 
     }
 
-    isolated remote function testRecordValueReturn(string req, Headers? headers = ()) returns ([SampleMsg24, 
+    isolated remote function testRecordValueReturn(string req, Headers? headers = ()) returns ([SampleMsg24,
     Headers]|Error) {
 
-        var payload = check self.grpcClient->blockingExecute("HelloWorld24/testRecordValueReturn", req, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testRecordValueReturn", req, headers);
         Headers resHeaders = new;
         anydata result = ();
         [result, resHeaders] = payload;
@@ -239,72 +223,12 @@ public client class HelloWorld24BlockingClient {
 
     }
 
-    isolated remote function testRecordValueReturnStream(string req, service object {} msgListener, 
-                                                         Headers? headers = ()) returns (Error?) {
+    isolated remote function testRecordValueReturnStream(string req, Headers? headers = ()) returns stream<anydata>|Error {
 
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testRecordValueReturnStream", req, msgListener, headers);
+        return self.grpcClient->executeServerStreaming("HelloWorld24/testRecordValueReturnStream", req, headers);
     }
 }
 
-public client class HelloWorld24Client {
 
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new (url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_24, getDescriptorMap24());
-    }
-
-    isolated remote function testStringValueReturn(string req, service object {} msgListener, Headers? headers = ()) returns (
-    Error?) {
-
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testStringValueReturn", req, msgListener, headers);
-    }
-
-    isolated remote function testFloatValueReturn(float req, service object {} msgListener, Headers? headers = ()) returns (
-    Error?) {
-
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testFloatValueReturn", req, msgListener, headers);
-    }
-
-    isolated remote function testDoubleValueReturn(float req, service object {} msgListener, Headers? headers = ()) returns (
-    Error?) {
-
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testDoubleValueReturn", req, msgListener, headers);
-    }
-
-    isolated remote function testInt64ValueReturn(int req, service object {} msgListener, Headers? headers = ()) returns (
-    Error?) {
-
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testInt64ValueReturn", req, msgListener, headers);
-    }
-
-    isolated remote function testBoolValueReturn(boolean req, service object {} msgListener, Headers? headers = ()) returns (
-    Error?) {
-
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testBoolValueReturn", req, msgListener, headers);
-    }
-
-    isolated remote function testBytesValueReturn(byte[] req, service object {} msgListener, Headers? headers = ()) returns (
-    Error?) {
-
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testBytesValueReturn", req, msgListener, headers);
-    }
-
-    isolated remote function testRecordValueReturn(string req, service object {} msgListener, Headers? headers = ()) returns (
-    Error?) {
-
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testRecordValueReturn", req, msgListener, headers);
-    }
-
-    isolated remote function testRecordValueReturnStream(string req, service object {} msgListener, 
-                                                         Headers? headers = ()) returns (Error?) {
-
-        return self.grpcClient->nonBlockingExecute("HelloWorld24/testRecordValueReturnStream", req, msgListener, headers);
-    }
-}
 
 

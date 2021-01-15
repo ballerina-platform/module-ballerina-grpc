@@ -19,7 +19,7 @@ import ballerina/test;
 
 final HelloWorld5BlockingClient helloWorld5BlockingEp = new ("http://localhost:9095");
 
-@test:Config {}
+@test:Config {enable:true}
 function testInvalidRemoteMethod() {
     string name = "WSO2";
     [string, Headers]|Error unionResp = helloWorld5BlockingEp->hello(name);
@@ -35,7 +35,7 @@ function testInvalidRemoteMethod() {
     }
 }
 
-@test:Config {}
+@test:Config {enable:true}
 function testInvalidInputParameter() {
     int age = 10;
     [int, Headers]|Error unionResp = helloWorld5BlockingEp->testInt(age);
@@ -49,21 +49,6 @@ function testInvalidInputParameter() {
     }
 }
 
-@test:Config {}
-function testInvalidOutputResponse() {
-    float salary = 1000.5;
-    [float, Headers]|Error unionResp = helloWorld5BlockingEp->testFloat(salary);
-    if (unionResp is Error) {
-        test:assertEquals(unionResp.message(), "Error while constructing the message");
-    } else {
-        io:println("Client got response : ");
-        float result = 0.0;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertFail(result.toString());
-    }
-}
-
 public client class HelloWorld5BlockingClient {
 
     *AbstractClientEndpoint;
@@ -73,11 +58,11 @@ public client class HelloWorld5BlockingClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_5, getDescriptorMap5());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_5, getDescriptorMap5());
     }
 
     isolated remote function hello(string req, Headers? headers = ()) returns ([string, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/hello1", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/hello1", req, headers);
         anydata result = ();
         Headers resHeaders = new;
         [result, resHeaders] = unionResp;
@@ -85,25 +70,12 @@ public client class HelloWorld5BlockingClient {
     }
 
     isolated remote function testInt(int req, Headers? headers = ()) returns ([int, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/testInt", req, headers);
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/testInt", req, headers);
         anydata result = ();
         Headers resHeaders = new;
         [result, resHeaders] = unionResp;
         var value = result.cloneWithType(IntTypedesc);
         if (value is int) {
-            return [value, resHeaders];
-        } else {
-            return error InternalError("Error while constructing the message", value);
-        }
-    }
-
-    isolated remote function testFloat(float req, Headers? headers = ()) returns ([float, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.HelloWorld98/testFloat", req, headers);
-        anydata result = ();
-        Headers resHeaders = new;
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(FloatTypedesc);
-        if (value is float) {
             return [value, resHeaders];
         } else {
             return error InternalError("Error while constructing the message", value);

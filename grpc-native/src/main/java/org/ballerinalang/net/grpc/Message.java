@@ -58,6 +58,8 @@ public class Message {
     private static final ArrayType stringArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
     private static final ArrayType booleanArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
     private static final ArrayType intArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
+    private static final ArrayType int32ArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT_UNSIGNED_32);
+    private static final ArrayType sint32ArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT_SIGNED_32);
     private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
 
     private boolean isError = false;
@@ -277,13 +279,13 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray intArray = ValueCreator.createArrayValue(intArrayType);
+                                BArray int32Array = ValueCreator.createArrayValue(int32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
-                                    intArray = (BArray) bBMap.get(bFieldName);
+                                    int32Array = (BArray) bBMap.get(bFieldName);
                                 } else {
-                                    bBMap.put(bFieldName, intArray);
+                                    bBMap.put(bFieldName, int32Array);
                                 }
-                                intArray.add(intArray.size(), input.readInt32());
+                                int32Array.add(int32Array.size(), input.readInt32());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readInt32());
                             } else {
@@ -317,13 +319,13 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray intArray = ValueCreator.createArrayValue(intArrayType);
+                                BArray int32Array = ValueCreator.createArrayValue(int32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
-                                    intArray = (BArray) bBMap.get(bFieldName);
+                                    int32Array = (BArray) bBMap.get(bFieldName);
                                 } else {
-                                    bBMap.put(bFieldName, intArray);
+                                    bBMap.put(bFieldName, int32Array);
                                 }
-                                intArray.add(intArray.size(), input.readFixed32());
+                                int32Array.add(int32Array.size(), input.readFixed32());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readFixed32());
                             } else {

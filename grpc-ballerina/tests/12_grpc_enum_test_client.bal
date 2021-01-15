@@ -17,9 +17,9 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable:true}
 isolated function testSendAndReceiveEnum() {
-    testEnumServiceBlockingClient blockingEp = new ("http://localhost:9102");
+    testEnumServiceClient blockingEp = new ("http://localhost:9102");
 
     orderInfo orderReq = { id:"100500", mode:r };
     var addResponse = blockingEp->testEnum(orderReq);
@@ -32,27 +32,6 @@ isolated function testSendAndReceiveEnum() {
     }
 }
 
-public client class testEnumServiceBlockingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "blocking", ROOT_DESCRIPTOR_12, getDescriptorMap12());
-    }
-
-    isolated remote function testEnum (orderInfo req, Headers? headers = ()) returns ([string, Headers]|Error) {
-        var unionResp = check self.grpcClient->blockingExecute("grpcservices.testEnumService/testEnum", req, headers);
-        Headers resHeaders = new;
-        anydata result = ();
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
-    }
-}
-
 public client class testEnumServiceClient {
 
     *AbstractClientEndpoint;
@@ -62,10 +41,15 @@ public client class testEnumServiceClient {
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
         self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, "non-blocking", ROOT_DESCRIPTOR_12, getDescriptorMap12());
+        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_12, getDescriptorMap12());
     }
 
-    isolated remote function testEnum (orderInfo req, service object {} msgListener, Headers? headers = ()) returns (Error?) {
-        return self.grpcClient->nonBlockingExecute("grpcservices.testEnumService/testEnum", req, msgListener, headers);
+    isolated remote function testEnum (orderInfo req, Headers? headers = ()) returns ([string, Headers]|Error) {
+        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.testEnumService/testEnum", req, headers);
+        Headers resHeaders = new;
+        anydata result = ();
+        [result, resHeaders] = unionResp;
+        return [result.toString(), resHeaders];
     }
 }
+
