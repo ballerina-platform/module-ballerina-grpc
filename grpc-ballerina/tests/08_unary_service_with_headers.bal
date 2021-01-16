@@ -51,12 +51,6 @@ service "HelloWorld101" on ep8 {
     }
 }
 
-# Context record includes message payload and headers.
-public type ContextString record {|
-    string content;
-    map<string[]> headers;
-|};
-
 public client class HelloWorld101StringCaller {
     private Caller caller;
 
