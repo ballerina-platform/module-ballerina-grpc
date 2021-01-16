@@ -42,7 +42,7 @@ import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY
 import static org.ballerinalang.net.grpc.GrpcConstants.STATUS_ERROR_MAP;
 import static org.ballerinalang.net.grpc.GrpcConstants.getKeyByValue;
 import static org.ballerinalang.net.grpc.MessageUtils.getMappingHttpStatusCode;
-import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordType;
+import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
 
 /**
  * Utility methods represents actions for the caller.
@@ -125,7 +125,7 @@ public class FunctionUtils {
                 if (!MessageUtils.isEmptyResponse(outputType)) {
                     Object content;
                     BMap headerValues = null;
-                    if (isContextRecordType(responseValue)) {
+                    if (isContextRecordByValue(responseValue)) {
                         content = ((BMap) responseValue).get(StringUtils.fromString("content"));
                         headerValues = ((BMap) responseValue).getMapValue(StringUtils.fromString("headers"));
                     } else {

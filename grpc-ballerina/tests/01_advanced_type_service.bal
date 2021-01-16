@@ -97,52 +97,16 @@ public client class HelloWorldStringCaller {
         self.caller = caller;
     }
 
-    isolated remote function send(string response) returns Error? {
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function send(string|ContextString response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorldPersonCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    isolated remote function send(Person response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorldStockQuoteCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    isolated remote function send(StockQuote response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -157,8 +121,12 @@ public client class HelloWorldNilCaller {
         self.caller = caller;
     }
 
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -166,19 +134,23 @@ public client class HelloWorldNilCaller {
     }
 }
 
-public client class HelloWorldStockQuotesCaller {
+public client class HelloWorldPersonCaller {
     private Caller caller;
 
     public function init(Caller caller) {
         self.caller = caller;
     }
 
-    isolated remote function send(StockQuotes response) returns Error? {
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function send(Person|ContextPerson response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -193,12 +165,64 @@ public client class HelloWorldStockNamesCaller {
         self.caller = caller;
     }
 
-    isolated remote function send(StockNames response) returns Error? {
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function send(StockNames|ContextStockNames response) returns Error? {
         return self.caller->send(response);
     }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
 
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorldStockQuotesCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function send(StockQuotes|ContextStockQuotes response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorldStockQuoteCaller {
+    private Caller caller;
+
+    public function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function send(StockQuote|ContextStockQuote response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -236,6 +260,42 @@ public type StockQuotes record {
 public type StockNames record {
     string[] names = [];
 };
+
+# Context record includes message payload and headers.
+public type ContextNil record {|
+
+    map<string[]> headers;
+|};
+
+# Context record includes message payload and headers.
+public type ContextStockRequest record {|
+    StockRequest content;
+    map<string[]> headers;
+|};
+
+# Context record includes message payload and headers.
+public type ContextStockQuote record {|
+    StockQuote content;
+    map<string[]> headers;
+|};
+
+# Context record includes message payload and headers.
+public type ContextStockQuotes record {|
+    StockQuotes content;
+    map<string[]> headers;
+|};
+
+# Context record includes message payload and headers.
+public type ContextPerson record {|
+    Person content;
+    map<string[]> headers;
+|};
+
+# Context record includes message payload and headers.
+public type ContextStockNames record {|
+    StockNames content;
+    map<string[]> headers;
+|};
 
 const string ROOT_DESCRIPTOR_1 = "0A1E30315F616476616E6365645F747970655F736572766963652E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F224D0A06506572736F6E12120A046E616D6518012001280952046E616D65122F0A076164647265737318022001280B32152E6772706373657276696365732E4164647265737352076164647265737322590A0741646472657373121E0A0A706F7374616C436F6465180120012805520A706F7374616C436F646512140A0573746174651802200128095205737461746512180A07636F756E7472791803200128095207636F756E74727922720A0A53746F636B51756F746512160A0673796D626F6C180120012809520673796D626F6C12120A046E616D6518022001280952046E616D6512120A046C61737418032001280252046C61737412100A036C6F7718042001280252036C6F7712120A046869676818052001280252046869676822220A0C53746F636B5265717565737412120A046E616D6518012001280952046E616D65223D0A0B53746F636B51756F746573122E0A0573746F636B18012003280B32182E6772706373657276696365732E53746F636B51756F7465520573746F636B22220A0A53746F636B4E616D657312140A056E616D657318012003280952056E616D657332E3030A0A48656C6C6F576F726C64124B0A1574657374496E7075744E657374656453747275637412142E6772706373657276696365732E506572736F6E1A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565124C0A16746573744F75747075744E6573746564537472756374121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A142E6772706373657276696365732E506572736F6E12530A1B74657374496E7075745374727563744F7574707574537472756374121A2E6772706373657276696365732E53746F636B526571756573741A182E6772706373657276696365732E53746F636B51756F7465124B0A1774657374496E7075745374727563744E6F4F757470757412182E6772706373657276696365732E53746F636B51756F74651A162E676F6F676C652E70726F746F6275662E456D707479124C0A17746573744E6F496E7075744F757470757453747275637412162E676F6F676C652E70726F746F6275662E456D7074791A192E6772706373657276696365732E53746F636B51756F746573124A0A16746573744E6F496E7075744F7574707574417272617912162E676F6F676C652E70726F746F6275662E456D7074791A182E6772706373657276696365732E53746F636B4E616D6573620670726F746F33";
 isolated function getDescriptorMap1() returns map<string> {
