@@ -54,6 +54,10 @@ ext.stdlibMimeVersion = project.stdlibMimeVersion
 ext.stdlibCacheVersion = project.stdlibCacheVersion
 ext.stdlibTaskVersion = project.stdlibTaskVersion
 ext.stdlibReflectVersion = project.stdlibReflectVersion
+ext.stdlibJwtVersion = project.stdlibJwtVersion
+ext.stdlibUuidVersion = project.stdlibUuidVersion
+ext.stdlibEncodingVersion = project.stdlibEncodingVersion
+ext.stdlibOAuth2Version = project.stdlibOAuth2Version
 
 allprojects {
     group = 'org.ballerinalang'
@@ -218,6 +222,10 @@ subprojects {
         ballerinaStdLibs "org.ballerinalang:mime-ballerina:${stdlibMimeVersion}"
         ballerinaStdLibs "org.ballerinalang:task-ballerina:${stdlibTaskVersion}"
         ballerinaStdLibs "org.ballerinalang:reflect-ballerina:${stdlibReflectVersion}"
+        ballerinaStdLibs "org.ballerinalang:jwt-ballerina:${stdlibJwtVersion}"
+        ballerinaStdLibs "org.ballerinalang:uuid-ballerina:${stdlibUuidVersion}"
+        ballerinaStdLibs "org.ballerinalang:encoding-ballerina:${stdlibEncodingVersion}"
+        ballerinaStdLibs "org.ballerinalang:oauth2-ballerina:${stdlibOAuth2Version}"
     }
 }
 
