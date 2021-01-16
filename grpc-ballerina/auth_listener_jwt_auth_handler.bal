@@ -40,14 +40,13 @@ public class ListenerJwtAuthHandler {
 
     # Authenticates with the relevant authentication requirements.
     #
-    # + data - The JWT as a `string` authorization header
-    # + return - The `jwt:Payload` instance or else `Unauthorized` type in case of an error
-    public isolated function authenticate(string data) returns jwt:Payload|Unauthorized {
-        string credential = extractCredential(data);
+    # + headers - The headers map `map<string[]>` as an input
+    # + return - The `jwt:Payload` instance or else an `UnauthenticatedError` error
+    public isolated function authenticate(map<string[]> headers) returns jwt:Payload|UnauthenticatedError {
+        string credential = extractCredential(headers);
         jwt:Payload|jwt:Error details = self.provider.authenticate(credential);
         if (details is jwt:Error) {
-            Unauthorized unauthorized = {};
-            return unauthorized;
+            return error UnauthenticatedError(details.message());
         }
         return checkpanic details;
     }
@@ -56,8 +55,8 @@ public class ListenerJwtAuthHandler {
     #
     # + jwtPayload - The `jwt:Payload` instance which is received from authentication results
     # + expectedScopes - The expected scopes as `string` or `string[]`
-    # + return - `()`, if it is successful or else `Forbidden` type in case of an error
-    public isolated function authorize(jwt:Payload jwtPayload, string|string[] expectedScopes) returns Forbidden? {
+    # + return - `()`, if it is successful or else a `PermissionDeniedError` error
+    public isolated function authorize(jwt:Payload jwtPayload, string|string[] expectedScopes) returns PermissionDeniedError? {
         string scopeKey = self.scopeKey;
         var actualScope = jwtPayload[scopeKey];
         if (actualScope is string) {
@@ -66,7 +65,6 @@ public class ListenerJwtAuthHandler {
                 return;
             }
         }
-        Forbidden forbidden = {};
-        return forbidden;
+        return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
     }
 }

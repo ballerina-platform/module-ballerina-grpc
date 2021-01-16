@@ -48,13 +48,15 @@ public client class ClientOAuth2Handler {
 
     # Enrich the request with the relevant authentication requirements.
     #
-    # + return - The OAuth2 token as a `string` or else an `grpc:ClientAuthError` in case of an error
-    remote isolated function enrich() returns string|ClientAuthError {
+    # + headers - The headers map `map<string[]>` as an input
+    # + return - The updated headers map `map<string[]>` instance or else an `grpc:ClientAuthError` in case of an error
+    remote isolated function enrich(map<string[]> headers) returns map<string[]>|ClientAuthError {
         string|oauth2:Error result = self.provider.generateToken();
         if (result is oauth2:Error) {
             return prepareClientAuthError("Failed to enrich request with OAuth2 token.", result);
         }
         string token = AUTH_SCHEME_BEARER + " " + checkpanic result;
-        return token;
+        headers[AUTH_HEADER] = [token];
+        return headers;
     }
 }

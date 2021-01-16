@@ -26,25 +26,17 @@ public const string AUTH_SCHEME_BASIC = "Basic";
 # The prefix used to denote the Bearer authentication scheme.
 public const string AUTH_SCHEME_BEARER = "Bearer";
 
-//# Defines the authentication configurations for the HTTP client.
-//public type ClientAuthConfig CredentialsConfig|BearerTokenConfig|JwtIssuerConfig|OAuth2GrantConfig;
-//
-//// Defines the client authentication handlers.
-//type ClientAuthHandler ClientBasicAuthHandler|ClientBearerTokenAuthHandler|ClientSelfSignedJwtAuthHandler|ClientOAuth2Handler;
+# The permission denied error message.
+public const string PERMISSION_DENIED_ERROR_MSG = "Permission denied";
 
-public enum AuthStatus {
-    UNAUTHORIZED = "UNAUTHORIZED",
-    FORBIDDEN = "UNAUTHORIZED"
-}
+# The permission denied error message.
+public const string UNAUTHENTICATED_ERROR_MSG = "Unauthenticated";
 
-public type Unauthorized record {
-    readonly AuthStatus status = UNAUTHORIZED;
-};
+# Defines the authentication configurations for the HTTP client.
+public type ClientAuthConfig CredentialsConfig|BearerTokenConfig|JwtIssuerConfig|OAuth2GrantConfig;
 
-public type Forbidden record {
-    readonly AuthStatus status = FORBIDDEN;
-};
-
+// Defines the client authentication handlers.
+type ClientAuthHandler ClientBasicAuthHandler|ClientBearerTokenAuthHandler|ClientSelfSignedJwtAuthHandler|ClientOAuth2Handler;
 
 // Logs and prepares the `error` as an `http:ClientAuthError`.
 isolated function prepareClientAuthError(string message, error? err = ()) returns ClientAuthError {
@@ -55,9 +47,15 @@ isolated function prepareClientAuthError(string message, error? err = ()) return
     return error ClientAuthError(message);
 }
 
-// Extract the credential from `http:Request` or `string` header.
-isolated function extractCredential(string data) returns string {
-    return stringutils:split(<string>data, " ")[1];
+// Extract the credential from `map<string[]>`
+isolated function extractCredential(map<string[]> headers) returns string {
+    string[] authHeader = headers.get(AUTH_HEADER);
+    if (authHeader.length() > 0) {
+        return stringutils:split(<string>authHeader[0], " ")[1];
+    } else {
+        return "";
+    }
+
 }
 
 // Match the expectedScopes with actualScopes and return if there is a match.

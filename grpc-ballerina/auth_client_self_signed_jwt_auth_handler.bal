@@ -35,13 +35,15 @@ public class ClientSelfSignedJwtAuthHandler {
 
     # Enrich the request with the relevant authentication requirements.
     #
-    # + return - The JWT as a `string` or else an `grpc:ClientAuthError` in case of an error
-    public isolated function enrich() returns string|ClientAuthError {
+    # + headers - The headers map `map<string[]>` as an input
+    # + return - The updated headers map `map<string[]>` instance or else an `grpc:ClientAuthError` in case of an error
+    public isolated function enrich(map<string[]> headers) returns map<string[]>|ClientAuthError {
         string|jwt:Error result = self.provider.generateToken();
         if (result is jwt:Error) {
             return prepareClientAuthError("Failed to enrich request with JWT.", result);
         }
         string token = AUTH_SCHEME_BEARER + " " + checkpanic result;
-        return token;
+        headers[AUTH_HEADER] = [token];
+        return headers;
     }
 }

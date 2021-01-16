@@ -35,14 +35,13 @@ public class ListenerFileUserStoreBasicAuthHandler {
 
     # Authenticates with the relevant authentication requirements.
     #
-    # + data - The `http:Request` instance or `string` Authorization header
-    # + return - The `auth:UserDetails` instance or else `Unauthorized` type in case of an error
-    public isolated function authenticate(string data) returns auth:UserDetails|Unauthorized {
-        string credential = extractCredential(data);
+    # + headers - The headers map `map<string[]>` as an input
+    # + return - The `auth:UserDetails` instance or else an `UnauthenticatedError` error
+    public isolated function authenticate(map<string[]> headers) returns auth:UserDetails|UnauthenticatedError {
+        string credential = extractCredential(headers);
         auth:UserDetails|auth:Error details = self.provider.authenticate(credential);
         if (details is auth:Error) {
-            Unauthorized unauthorized = {};
-            return unauthorized;
+            return error UnauthenticatedError(details.message());
         }
         return checkpanic details;
     }
@@ -51,13 +50,12 @@ public class ListenerFileUserStoreBasicAuthHandler {
     #
     # + userDetails - The `auth:UserDetails` instance which is received from authentication results
     # + expectedScopes - The expected scopes as `string` or `string[]`
-    # + return - `()`, if it is successful or else `Forbidden` type in case of an error
-    public isolated function authorize(auth:UserDetails userDetails, string|string[] expectedScopes) returns Forbidden? {
+    # + return - `()`, if it is successful or else a `PermissionDeniedError` error
+    public isolated function authorize(auth:UserDetails userDetails, string|string[] expectedScopes) returns PermissionDeniedError? {
         string[] actualScopes = userDetails.scopes;
         boolean matched = matchScopes(actualScopes, expectedScopes);
         if (!matched) {
-            Forbidden forbidden = {};
-            return forbidden;
+            return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
         }
     }
 }

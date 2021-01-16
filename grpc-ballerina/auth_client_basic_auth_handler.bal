@@ -35,14 +35,15 @@ public class ClientBasicAuthHandler {
 
     # Enrich the request with the relevant authentication requirements.
     #
-    # + req - The `http:Request` instance
-    # + return - The updated `http:Request` instance or else an `http:ClientAuthError` in case of an error
-    public isolated function enrich() returns string|ClientAuthError {
+    # + headers - The headers map `map<string[]>` as an input
+    # + return - The updated headers map `map<string[]>` instance or else an `grpc:ClientAuthError` in case of an error
+    public isolated function enrich(map<string[]> headers) returns map<string[]>|ClientAuthError {
         string|auth:Error result = self.provider.generateToken();
         if (result is auth:Error) {
             return prepareClientAuthError("Failed to enrich request with Basic Auth token.", result);
         }
         string token = AUTH_SCHEME_BASIC + " " + checkpanic result;
-        return token;
+        headers[AUTH_HEADER] = [token];
+        return headers;
     }
 }

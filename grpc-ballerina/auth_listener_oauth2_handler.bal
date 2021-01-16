@@ -40,18 +40,17 @@ public client class ListenerOAuth2Handler {
 
     # Authorizes with the relevant authentication & authorization requirements.
     #
-    # + data - The OAuth2 token as a `string`
+    # + headers - The headers map `map<string[]>` as an input
     # + expectedScopes - The expected scopes as `string` or `string[]`
     # + customParams - Map of custom parameters that need to be sent to introspection endpoint
-    # + return - The `oauth2:IntrospectionResponse` instance or else `Unauthorized` or `Forbidden` type in case of an error
-    remote isolated function authorize(string data, string|string[]? expectedScopes = (),
+    # + return - The `oauth2:IntrospectionResponse` instance or else `UnauthenticatedError` or `PermissionDeniedError` type error
+    remote isolated function authorize(map<string[]> headers, string|string[]? expectedScopes = (),
                                        map<string>? customParams = ())
-                                       returns oauth2:IntrospectionResponse|Unauthorized|Forbidden {
-        string credential = extractCredential(data);
+                                       returns oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError {
+        string credential = extractCredential(headers);
         oauth2:IntrospectionResponse|oauth2:Error details = self.provider.authorize(credential);
         if (details is oauth2:Error || !details.active) {
-            Unauthorized unauthorized = {};
-            return unauthorized;
+            return error UnauthenticatedError(UNAUTHENTICATED_ERROR_MSG);
         }
         oauth2:IntrospectionResponse introspectionResponse = checkpanic details;
         if (expectedScopes is ()) {
@@ -66,7 +65,6 @@ public client class ListenerOAuth2Handler {
                 return introspectionResponse;
             }
         }
-        Forbidden forbidden = {};
-        return forbidden;
+        return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
     }
 }
