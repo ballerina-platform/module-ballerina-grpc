@@ -165,6 +165,7 @@ task updateTomlFile {
         def stdlibDependentAuthVersion = project.stdlibOAuth2Version.split("-")[0]
         def stdlibDependentJwtVersion = project.stdlibJwtVersion.split("-")[0]
         def stdlibDependentOAuth2Version = project.stdlibOAuth2Version.split("-")[0]
+        def stdlibDependentRegexVersion = project.stdlibRegexVersion.split("-")[0]
         def stdlibDependentNettyVersion = project.nettyVersion
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
@@ -175,6 +176,7 @@ task updateTomlFile {
         newConfig = newConfig.replace("@stdlib.auth.version@", stdlibDependentAuthVersion)
         newConfig = newConfig.replace("@stdlib.jwt.version@", stdlibDependentJwtVersion)
         newConfig = newConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
+        newConfig = newConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
         newConfig = newConfig.replace("@http.native.version@", project.stdlibHttpVersion)
         newConfig = newConfig.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
         newConfig = newConfig.replace("@netty.version@", stdlibDependentNettyVersion)
