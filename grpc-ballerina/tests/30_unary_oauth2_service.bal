@@ -30,7 +30,7 @@ service /HelloWorld30 on ep30 {
         string message = "Hello " + request.content;
         map<string[]> responseHeaders = {};
         OAuth2IntrospectionConfig config = {
-            url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect/success",
+            url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect",
             tokenTypeHint: "access_token",
             scopeKey: "scp",
             clientConfig: {
