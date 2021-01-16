@@ -239,8 +239,8 @@ public final class ClientCall {
         } catch (StatusRuntimeException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw Status.Code.CANCELLED.toStatus().withCause(ex).withDescription("Failed to send the message")
-                    .asRuntimeException();
+            throw Status.Code.CANCELLED.toStatus().withCause(ex)
+                    .withDescription("Failed to send the message. " + ex.getMessage()).asRuntimeException();
         }
         // For unary requests, halfClose call should be coming soon.
         if (!unaryRequest) {
@@ -290,8 +290,8 @@ public final class ClientCall {
                 responseHeaders = headers;
                 observer.onHeaders(headers);
             } catch (Exception ex) {
-                Status status =
-                        Status.Code.CANCELLED.toStatus().withCause(ex).withDescription("Failed to read headers");
+                Status status = Status.Code.CANCELLED.toStatus().withCause(ex).withDescription("Failed to read " +
+                        "headers. " + ex.getMessage());
                 close(status, new DefaultHttpHeaders());
             }
         }
@@ -309,8 +309,8 @@ public final class ClientCall {
                 message.close();
             } catch (Exception ex) {
                 MessageUtils.closeQuietly(message);
-                Status status =
-                        Status.Code.CANCELLED.toStatus().withCause(ex).withDescription("Failed to read message.");
+                Status status = Status.Code.CANCELLED.toStatus().withCause(ex).withDescription("Failed to read " +
+                        "message. " + ex.getMessage());
                 close(status, new DefaultHttpHeaders());
             }
         }

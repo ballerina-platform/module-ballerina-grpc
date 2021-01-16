@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
+import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordType;
 import static org.ballerinalang.net.grpc.MessageUtils.setNestedMessages;
 import static org.ballerinalang.net.grpc.MethodDescriptor.generateFullMethodName;
 import static org.ballerinalang.net.grpc.ServicesBuilderUtils.getBallerinaValueType;
@@ -165,8 +166,8 @@ public final class ServiceDefinition {
             messageRegistry.addMessageDescriptor(resMessage.getName(), resMessage);
             setNestedMessages(resMessage, messageRegistry);
             String fullMethodName = generateFullMethodName(serviceDescriptor.getFullName(), methodName);
-            Type requestType = getInputParameterType(attachedFunction);
-            Type responseType = getReturnParameterType(attachedFunction);
+            Type requestType = getInputParameterType(methodDescriptor, attachedFunction);
+            Type responseType = getReturnParameterType(methodDescriptor, attachedFunction);
             MethodDescriptor descriptor =
                     MethodDescriptor.newBuilder()
                             .setType(MessageUtils.getMethodType(methodDescriptor.toProto()))
@@ -184,7 +185,11 @@ public final class ServiceDefinition {
         return Collections.unmodifiableMap(descriptorMap);
     }
 
-    private Type getReturnParameterType(MethodType attachedFunction) {
+    private Type getReturnParameterType(Descriptors.MethodDescriptor methodDescriptor, MethodType attachedFunction) {
+        if (methodDescriptor.isClientStreaming() || methodDescriptor.isServerStreaming()) {
+            // For all streaming patterns, we can't derive the type from the function.
+            return null;
+        }
         Type functionReturnType = attachedFunction.getType().getReturnParameterType();
         if (functionReturnType.getTag() == TypeTags.UNION_TAG) {
             UnionType unionReturnType = (UnionType) functionReturnType;
@@ -196,17 +201,31 @@ public final class ServiceDefinition {
                     firstParamType.getPackage() != null &&
                     PROTOCOL_PACKAGE_GRPC.equals(firstParamType.getPackage().getName())) {
                 return PredefinedTypes.TYPE_NULL;
+            } else {
+                return firstParamType;
             }
         }
         return null;
     }
 
-    private Type getInputParameterType(MethodType attachedFunction) {
+    private Type getInputParameterType(Descriptors.MethodDescriptor methodDescriptor, MethodType attachedFunction) {
+        if (methodDescriptor.isClientStreaming()) {
+            // For client streaming and bidirectional streaming, we can't derive the type from the function.
+            return null;
+        }
         Type[] inputParams = attachedFunction.getParameterTypes();
         if (inputParams.length > 0) {
             Type inputType = inputParams[0];
-            if (inputType != null && "Headers".equals(inputType.getName()) &&
-                    inputType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
+            if (inputType.getTag() == TypeTags.UNION_TAG) {
+                UnionType unionInputType = (UnionType) inputType;
+                for (Type paramType : unionInputType.getMemberTypes()) {
+                    if (!isContextRecordType(paramType)) {
+                        return paramType;
+                    }
+                }
+            }
+            if ("Headers".equals(inputType.getName()) && inputType.getPackage() != null &&
+                    PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
                 return PredefinedTypes.TYPE_NULL;
             } else {
                 return inputParams[0];
