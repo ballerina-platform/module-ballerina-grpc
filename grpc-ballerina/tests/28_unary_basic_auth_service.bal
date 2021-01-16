@@ -33,27 +33,23 @@ service /HelloWorld28 on ep28 {
         if (!request.headers.hasKey(AUTH_HEADER)) {
             Error? err = caller->sendError(error AbortedError("AUTH_HEADER header is missing"));
         } else {
-            io:println(typeof request.headers.get(AUTH_HEADER));
-            string[] authHeader = request.headers.get(AUTH_HEADER);
-            if (authHeader.length() > 0) {
-                ListenerFileUserStoreBasicAuthHandler handler = new;
-                auth:UserDetails|Unauthorized authResult = handler.authenticate(authHeader[0]);
-                if (authResult is Unauthorized) {
-                    Error? err = caller->sendError(error AbortedError("Unauthorized"));
-                } else {
-                    Forbidden? authrzResult = handler.authorize(<auth:UserDetails>authResult, "write");
-                    if (authrzResult is ()) {
-                        responseHeaders["x-id"] = ["1234567890", "2233445677"];
-                        ContextString responseMessage = {content: message, headers: responseHeaders};
-                        Error? err = caller->send(responseMessage);
-                        if (err is Error) {
-                            io:println("Error from Connector: " + err.message());
-                        } else {
-                            io:println("Server send response : " + message);
-                        }
+            ListenerFileUserStoreBasicAuthHandler handler = new;
+            auth:UserDetails|UnauthenticatedError authResult = handler.authenticate(request.headers);
+            if (authResult is UnauthenticatedError) {
+                Error? err = caller->sendError(authResult);
+            } else {
+                PermissionDeniedError? authrzResult = handler.authorize(<auth:UserDetails>authResult, "write");
+                if (authrzResult is ()) {
+                    responseHeaders["x-id"] = ["1234567890", "2233445677"];
+                    ContextString responseMessage = {content: message, headers: responseHeaders};
+                    Error? err = caller->send(responseMessage);
+                    if (err is Error) {
+                        io:println("Error from Connector: " + err.message());
                     } else {
-                        Error? err = caller->sendError(error AbortedError("Forbidden"));
+                        io:println("Server send response : " + message);
                     }
+                } else {
+                    Error? err = caller->sendError(authrzResult);
                 }
             }
         }

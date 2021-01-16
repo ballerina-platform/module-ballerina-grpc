@@ -26,11 +26,11 @@ public function testStringValueReturnWithBasicAUth() {
         password: "xxx"
     };
     ClientBasicAuthHandler handler = new(config);
-    string|ClientAuthError result = handler.enrich();
-    if (result is string) {
-        requestHeaders[AUTH_HEADER] = [result];
-    } else {
+    map<string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+    if (result is ClientAuthError) {
         test:assertFail(msg = "Test Failed! " + result.message());
+    } else {
+        requestHeaders = result;
     }
 
     requestHeaders["x-id"] = ["0987654321"];

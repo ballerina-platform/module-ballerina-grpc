@@ -45,23 +45,19 @@ service /HelloWorld30 on ep30 {
         if (!request.headers.hasKey(AUTH_HEADER)) {
             Error? err = caller->sendError(error AbortedError("AUTH_HEADER header is missing"));
         } else {
-            io:println(typeof request.headers.get(AUTH_HEADER));
-            string[] authHeader = request.headers.get(AUTH_HEADER);
-            if (authHeader.length() > 0) {
-                ListenerOAuth2Handler handler = new(config);
-                oauth2:IntrospectionResponse|Unauthorized|Forbidden authResult = handler->authorize(authHeader[0], "read");
-                if (authResult is oauth2:IntrospectionResponse) {
-                    responseHeaders["x-id"] = ["1234567890", "2233445677"];
-                    ContextString responseMessage = {content: message, headers: responseHeaders};
-                    Error? err = caller->send(responseMessage);
-                    if (err is Error) {
-                        io:println("Error from Connector: " + err.message());
-                    } else {
-                        io:println("Server send response : " + message);
-                    }
+            ListenerOAuth2Handler handler = new(config);
+            oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError authResult = handler->authorize(request.headers, "read");
+            if (authResult is oauth2:IntrospectionResponse) {
+                responseHeaders["x-id"] = ["1234567890", "2233445677"];
+                ContextString responseMessage = {content: message, headers: responseHeaders};
+                Error? err = caller->send(responseMessage);
+                if (err is Error) {
+                    io:println("Error from Connector: " + err.message());
                 } else {
-                    Error? err = caller->sendError(error AbortedError("Unauthorized"));
+                    io:println("Server send response : " + message);
                 }
+            } else {
+                Error? err = caller->sendError(error AbortedError("Unauthorized"));
             }
         }
         checkpanic caller->complete();
