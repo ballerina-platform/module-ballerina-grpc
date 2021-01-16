@@ -46,13 +46,13 @@ public class ListenerJwtAuthHandler {
         string? credential = extractCredential(headers);
         if (credential is ()) {
             return error UnauthenticatedError("Empty authentication header.");
-        } else {
-            jwt:Payload|jwt:Error details = self.provider.authenticate(credential);
-            if (details is jwt:Error) {
-                return error UnauthenticatedError(details.message());
-            }
-            return checkpanic details;
         }
+
+        jwt:Payload|jwt:Error details = self.provider.authenticate(<string>credential);
+        if (details is jwt:Error) {
+            return error UnauthenticatedError(details.message());
+        }
+        return checkpanic details;
 
     }
 

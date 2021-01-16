@@ -50,25 +50,25 @@ public client class ListenerOAuth2Handler {
         string? credential = extractCredential(headers);
         if (credential is ()) {
             return error UnauthenticatedError("Empty authentication header.");
-        } else {
-            oauth2:IntrospectionResponse|oauth2:Error details = self.provider.authorize(credential);
-            if (details is oauth2:Error || !details.active) {
-                return error UnauthenticatedError(UNAUTHENTICATED_ERROR_MSG);
-            }
-            oauth2:IntrospectionResponse introspectionResponse = checkpanic details;
-            if (expectedScopes is ()) {
+        }
+
+        oauth2:IntrospectionResponse|oauth2:Error details = self.provider.authorize(<string>credential);
+        if (details is oauth2:Error || !details.active) {
+            return error UnauthenticatedError(UNAUTHENTICATED_ERROR_MSG);
+        }
+        oauth2:IntrospectionResponse introspectionResponse = checkpanic details;
+        if (expectedScopes is ()) {
+            return introspectionResponse;
+        }
+
+        string scopeKey = self.scopeKey;
+        var actualScope = introspectionResponse[scopeKey];
+        if (actualScope is string) {
+            boolean matched = matchScopes(convertToArray(actualScope), <string|string[]>expectedScopes);
+            if (matched) {
                 return introspectionResponse;
             }
-
-            string scopeKey = self.scopeKey;
-            var actualScope = introspectionResponse[scopeKey];
-            if (actualScope is string) {
-                boolean matched = matchScopes(convertToArray(actualScope), <string|string[]>expectedScopes);
-                if (matched) {
-                    return introspectionResponse;
-                }
-            }
-            return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
         }
+        return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
     }
 }

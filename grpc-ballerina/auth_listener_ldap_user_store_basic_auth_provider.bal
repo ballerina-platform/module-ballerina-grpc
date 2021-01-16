@@ -41,13 +41,12 @@ public client class ListenerLdapUserStoreBasicAuthProvider {
         string? credential = extractCredential(headers);
         if (credential is ()) {
             return error UnauthenticatedError("Empty authentication header.");
-        } else {
-            auth:UserDetails|auth:Error details = self.provider.authenticate(credential);
-            if (details is auth:Error) {
-                return error UnauthenticatedError(details.message());
-            }
-            return checkpanic details;
         }
+        auth:UserDetails|auth:Error details = self.provider.authenticate(<string>credential);
+        if (details is auth:Error) {
+            return error UnauthenticatedError(details.message());
+        }
+        return checkpanic details;
     }
 
     # Authorizes with the relevant authorization requirements.
