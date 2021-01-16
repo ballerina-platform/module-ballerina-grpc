@@ -43,12 +43,17 @@ public class ListenerJwtAuthHandler {
     # + headers - The headers map `map<string[]>` as an input
     # + return - The `jwt:Payload` instance or else an `UnauthenticatedError` error
     public isolated function authenticate(map<string[]> headers) returns jwt:Payload|UnauthenticatedError {
-        string credential = extractCredential(headers);
-        jwt:Payload|jwt:Error details = self.provider.authenticate(credential);
-        if (details is jwt:Error) {
-            return error UnauthenticatedError(details.message());
+        string? credential = extractCredential(headers);
+        if (credential is ()) {
+            return error UnauthenticatedError("Empty authentication header.");
+        } else {
+            jwt:Payload|jwt:Error details = self.provider.authenticate(credential);
+            if (details is jwt:Error) {
+                return error UnauthenticatedError(details.message());
+            }
+            return checkpanic details;
         }
-        return checkpanic details;
+
     }
 
     # Authorizes with the relevant authorization requirements.
