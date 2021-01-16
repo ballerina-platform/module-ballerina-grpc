@@ -33,7 +33,7 @@ public class ClientBearerTokenAuthHandler {
         self.config = config;
     }
 
-    # Enrich the request with the relevant authentication requirements.
+    # Enrich the headers with the relevant authentication requirements.
     #
     # + headers - The headers map `map<string[]>` as an input
     # + return - The Bearer tokes as a `string` or else an `grpc:ClientAuthError` in case of an error
