@@ -25,6 +25,7 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.ObjectType;
+import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
@@ -40,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
-import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordType;
+import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByType;
 import static org.ballerinalang.net.grpc.MessageUtils.setNestedMessages;
 import static org.ballerinalang.net.grpc.MethodDescriptor.generateFullMethodName;
 import static org.ballerinalang.net.grpc.ServicesBuilderUtils.getBallerinaValueType;
@@ -202,6 +203,10 @@ public final class ServiceDefinition {
                     PROTOCOL_PACKAGE_GRPC.equals(firstParamType.getPackage().getName())) {
                 return PredefinedTypes.TYPE_NULL;
             } else {
+                if (isContextRecordByType(firstParamType)) {
+                    RecordType recordParamType = (RecordType) firstParamType;
+                    return recordParamType.getFields().get("content").getFieldType();
+                }
                 return firstParamType;
             }
         }
@@ -219,7 +224,7 @@ public final class ServiceDefinition {
             if (inputType.getTag() == TypeTags.UNION_TAG) {
                 UnionType unionInputType = (UnionType) inputType;
                 for (Type paramType : unionInputType.getMemberTypes()) {
-                    if (!isContextRecordType(paramType)) {
+                    if (!isContextRecordByType(paramType)) {
                         return paramType;
                     }
                 }

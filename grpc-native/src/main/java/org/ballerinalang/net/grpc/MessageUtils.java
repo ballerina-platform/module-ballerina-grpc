@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.MethodType;
+import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
@@ -442,9 +443,15 @@ public class MessageUtils {
     }
 
 
-    public static boolean isContextRecordType(Object responseValue) {
-        return responseValue instanceof BMap && ((BMap) responseValue).getType().getName().startsWith("Context")
-                && ((BMap) responseValue).size() == 2;
+    public static boolean isContextRecordByValue(Object value) {
+        return value instanceof BMap && ((BMap) value).getType().getName().startsWith("Context")
+                && ((BMap) value).size() == 2;
+    }
+
+    public static boolean isContextRecordByType(Type type) {
+        return type instanceof RecordType && type.getName().startsWith("Context")
+                && ((RecordType) type).getFields().size() == 2 && ((RecordType) type).getFields().containsKey(
+                        "content") && ((RecordType) type).getFields().containsKey("headers");
     }
 
     /**
