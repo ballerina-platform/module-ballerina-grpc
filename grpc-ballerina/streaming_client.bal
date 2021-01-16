@@ -65,7 +65,7 @@ public client class StreamingClient {
                 if (nextRecord is record {|anydata value;|}) {
                     return nextRecord.value;
                 } else {
-                    return error DataMismatchError("Expected an anydata but found a null value");
+                    return error EOS("End of stream reached");
                 }
             } else {
                 var result = externReceive(self);
@@ -75,7 +75,7 @@ public client class StreamingClient {
                     if (nextRecord is record {|anydata value;|}) {
                         return nextRecord.value;
                     } else {
-                        return error DataMismatchError("Expected an anydata but found a null value");
+                        return error EOS("End of stream reached");
                     }
 
                 } else if (result is anydata) {

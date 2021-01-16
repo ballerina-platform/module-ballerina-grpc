@@ -59,6 +59,8 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                     runtime, responseSender, outputType, bObject);
             runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
+        } else {
+            responseSender.onNext(new Message(this.outputType.getName(), response));
         }
     }
 
