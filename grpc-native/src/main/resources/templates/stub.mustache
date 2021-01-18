@@ -4,10 +4,10 @@ public client class {{serviceName}}Client {
 
     private grpc:Client grpcClient;
 
-    public isolated function init(string url, grpc:ClientConfiguration? config = ()) {
+    public isolated function init(string url, grpc:ClientConfiguration? config = ()) returns grpc:Error? {
         // initialize client endpoint.
-        self.grpcClient = new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
     }
 {{#unaryFunctions}}
     isolated remote function {{methodName}}({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns ({{#if outputType}}{{outputType}}|grpc:Error{{else}}grpc:Error?{{/if}}) {
