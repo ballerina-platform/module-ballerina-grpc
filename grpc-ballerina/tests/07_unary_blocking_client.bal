@@ -17,101 +17,89 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorld7Client helloWorld7BlockingEp = new ("http://localhost:9097");
+final HelloWorld100Client helloWorld7BlockingEp = new ("http://localhost:9097");
 
 //type ResponseTypedesc typedesc<Response>;
 
 @test:Config {enable:true}
 function testUnaryBlockingClient() {
     string name = "WSO2";
-    [string, map<string|string[]>]|Error unionResp = helloWorld7BlockingEp->hello(name);
+    string|Error unionResp = helloWorld7BlockingEp->hello(name);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        string result = "";
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result, "Hello WSO2");
+        io:println(unionResp);
+        test:assertEquals(unionResp, "Hello WSO2");
     }
 }
 
 @test:Config {enable:true}
 function testUnaryBlockingIntClient() {
     int age = 10;
-    [int, map<string|string[]>]|Error unionResp = helloWorld7BlockingEp->testInt(age);
+    int|Error unionResp = helloWorld7BlockingEp->testInt(age);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client got response : ");
-        int result = 0;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result, 8);
+        io:println(unionResp);
+        test:assertEquals(unionResp, 8);
     }
 }
 
 @test:Config {enable:true}
 function testUnaryBlockingFloatClient() {
     float salary = 1000.5;
-    [float, map<string|string[]>]|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
+    float|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client got response : ");
-        float result = 0.0;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result, 880.44);
+        io:println(unionResp);
+        test:assertEquals(unionResp, 880.44);
     }
 }
 
 @test:Config {enable:true}
 function testUnaryBlockingBoolClient() {
     boolean isAvailable = false;
-    [boolean, map<string|string[]>]|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
+    boolean|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client got response : ");
-        boolean result = false;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertTrue(result);
+        io:println(unionResp);
+        test:assertTrue(unionResp);
     }
 }
 
 @test:Config {enable:true}
 function testUnaryBlockingReceiveRecord() {
     string msg = "WSO2";
-    [Response, map<string|string[]>]|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
+    Response|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client got response : ");
-        Response result = {};
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result.resp, "Acknowledge WSO2");
+        io:println(unionResp);
+        test:assertEquals(unionResp.resp, "Acknowledge WSO2");
     }
 }
 
 @test:Config {enable:true}
 function testUnaryBlockingStructClient() {
     Request req = {name:"Sam", age:10, message:"Testing."};
-    [Response, map<string|string[]>]|Error unionResp = helloWorld7BlockingEp->testStruct(req);
+    Response|Error unionResp = helloWorld7BlockingEp->testStruct(req);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client got response : ");
-        Response result = {};
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result.resp, "Acknowledge Sam");
+        io:println(unionResp);
+        test:assertEquals(unionResp.resp, "Acknowledge Sam");
     }
 }
 
-public client class HelloWorld7Client {
+public client class HelloWorld100Client {
 
     *AbstractClientEndpoint;
 
@@ -123,76 +111,238 @@ public client class HelloWorld7Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_7, getDescriptorMap7());
     }
 
-    isolated remote function hello(string req, map<string|string[]> headers = {}) returns ([string, map<string|string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/hello", req, headers);
-        any result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
+    isolated remote function hello(string|ContextString req) returns (string|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/hello", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
+    }
+    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function testInt(int req, map<string|string[]> headers = {}) returns ([int, map<string|string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testInt", req, headers);
-        anydata result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(IntTypedesc);
-        if (value is int) {
-            return [value, resHeaders];
+    isolated remote function testInt(int|ContextInt req) returns (int|Error) {
+        
+        map<string|string[]> headers = {};
+        int message;
+        if (req is ContextInt) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testInt", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <int>result;
+        
+    }
+    isolated remote function testIntContext(int|ContextInt req) returns (ContextInt|Error) {
+        
+        map<string|string[]> headers = {};
+        int message;
+        if (req is ContextInt) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testInt", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <int>result, headers: respHeaders};
     }
 
-    isolated remote function testFloat(float req, map<string|string[]> headers = {}) returns ([float, map<string|string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testFloat", req, headers);
-        anydata result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(FloatTypedesc);
-        if (value is float) {
-            return [value, resHeaders];
+    isolated remote function testFloat(float|ContextFloat req) returns (float|Error) {
+        
+        map<string|string[]> headers = {};
+        float message;
+        if (req is ContextFloat) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testFloat", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <float>result;
+        
+    }
+    isolated remote function testFloatContext(float|ContextFloat req) returns (ContextFloat|Error) {
+        
+        map<string|string[]> headers = {};
+        float message;
+        if (req is ContextFloat) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testFloat", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <float>result, headers: respHeaders};
     }
 
-    isolated remote function testBoolean(boolean req, map<string|string[]> headers = {}) returns ([boolean, map<string|string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testBoolean", req, headers);
-        anydata result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(BooleanTypedesc);
-        if (value is boolean) {
-            return [value, resHeaders];
+    isolated remote function testBoolean(boolean|ContextBoolean req) returns (boolean|Error) {
+        
+        map<string|string[]> headers = {};
+        boolean message;
+        if (req is ContextBoolean) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testBoolean", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <boolean>result;
+        
+    }
+    isolated remote function testBooleanContext(boolean|ContextBoolean req) returns (ContextBoolean|Error) {
+        
+        map<string|string[]> headers = {};
+        boolean message;
+        if (req is ContextBoolean) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testBoolean", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <boolean>result, headers: respHeaders};
     }
 
-    isolated remote function testStruct(Request req, map<string|string[]> headers = {}) returns ([Response, map<string|string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testStruct", req, headers);
-        anydata result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(ResponseTypedesc);
-        if (value is Response) {
-            return [value, resHeaders];
+    isolated remote function testStruct(Request|ContextRequest req) returns (Response|Error) {
+        
+        map<string|string[]> headers = {};
+        Request message;
+        if (req is ContextRequest) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testStruct", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <Response>result;
+        
+    }
+    isolated remote function testStructContext(Request|ContextRequest req) returns (ContextResponse|Error) {
+        
+        map<string|string[]> headers = {};
+        Request message;
+        if (req is ContextRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testStruct", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <Response>result, headers: respHeaders};
     }
 
-    isolated remote function testResponseInsideMatch(string req, map<string|string[]> headers = {}) returns [Response, map<string|string[]>]|Error {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testResponseInsideMatch", req, headers);
-        anydata result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(ResponseTypedesc);
-        if (value is Response) {
-            return [value, resHeaders];
-        } else {
-            return error InternalError("Error while constructing the message", value);
-        }
+    isolated remote function testNoRequest() returns (string|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoRequest", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
+    isolated remote function testNoRequestContext() returns (ContextString|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoRequest", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
+    }
+
+    isolated remote function testNoResponse(string|ContextString req) returns (Error?) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoResponse", message, headers);
+        
+    }
+    isolated remote function testNoResponseContext(string|ContextString req) returns (ContextNil|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoResponse", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {headers: respHeaders};
+    }
+
+    isolated remote function testResponseInsideMatch(string|ContextString req) returns (Response|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testResponseInsideMatch", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <Response>result;
+        
+    }
+    isolated remote function testResponseInsideMatchContext(string|ContextString req) returns (ContextResponse|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testResponseInsideMatch", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <Response>result, headers: respHeaders};
+    }
+
 }

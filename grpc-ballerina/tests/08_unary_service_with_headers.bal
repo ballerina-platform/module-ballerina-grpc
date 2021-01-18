@@ -55,22 +55,21 @@ service "HelloWorld101" on ep8 {
 public client class HelloWorld101StringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
+    
     isolated remote function sendString(string response) returns Error? {
         return self.caller->send(response);
     }
-
     isolated remote function sendContextString(ContextString response) returns Error? {
         return self.caller->send(response);
     }
-
+    
     isolated remote function sendError(Error response) returns Error? {
         return self.caller->sendError(response);
     }

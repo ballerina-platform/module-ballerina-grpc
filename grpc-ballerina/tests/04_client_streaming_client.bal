@@ -35,14 +35,14 @@ function testClientStreaming() {
     io:println("Initialized connection sucessfully.");
 
     foreach var greet in requests {
-        Error? err = ep->send(greet);
+        Error? err = ep->sendstring(greet);
         if (err is Error) {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
     checkpanic ep->complete();
     io:println("completed successfully");
-    anydata response = checkpanic ep->receive();
+    anydata response = checkpanic ep->receiveString();
     test:assertEquals(<string> response, "Ack");
 }
 
@@ -53,13 +53,23 @@ public client class LotsOfGreetingsStreamingClient {
         self.sClient = sClient;
     }
 
-    isolated remote function send(string message) returns Error? {
+    isolated remote function sendstring(string message) returns Error? {
+        
         return self.sClient->send(message);
     }
 
-    isolated remote function receive() returns string|Error {
+    isolated remote function sendContextString(ContextString message) returns Error? {
+        return self.sClient->send(message);
+    }
+
+    isolated remote function receiveString() returns string|Error {
         var payload = check self.sClient->receive();
         return payload.toString();
+    }
+
+    isolated remote function receiveContextString() returns ContextString|Error {
+        var result = check self.sClient->receive();
+        return {content: result.toString(), headers: {}};
     }
 
     isolated remote function sendError(Error response) returns Error? {

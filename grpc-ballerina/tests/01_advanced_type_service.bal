@@ -93,7 +93,7 @@ service "HelloWorld" on ep {
 public client class HelloWorldStringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
@@ -104,7 +104,6 @@ public client class HelloWorldStringCaller {
     isolated remote function sendString(string response) returns Error? {
         return self.caller->send(response);
     }
-
     isolated remote function sendContextString(ContextString response) returns Error? {
         return self.caller->send(response);
     }
@@ -121,7 +120,7 @@ public client class HelloWorldStringCaller {
 public client class HelloWorldNilCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
@@ -141,7 +140,7 @@ public client class HelloWorldNilCaller {
 public client class HelloWorldPersonCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
@@ -152,7 +151,6 @@ public client class HelloWorldPersonCaller {
     isolated remote function sendPerson(Person response) returns Error? {
         return self.caller->send(response);
     }
-
     isolated remote function sendContextPerson(ContextPerson response) returns Error? {
         return self.caller->send(response);
     }
@@ -169,7 +167,7 @@ public client class HelloWorldPersonCaller {
 public client class HelloWorldStockNamesCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
@@ -180,7 +178,6 @@ public client class HelloWorldStockNamesCaller {
     isolated remote function sendStockNames(StockNames response) returns Error? {
         return self.caller->send(response);
     }
-
     isolated remote function sendContextStockNames(ContextStockNames response) returns Error? {
         return self.caller->send(response);
     }
@@ -197,7 +194,7 @@ public client class HelloWorldStockNamesCaller {
 public client class HelloWorldStockQuotesCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
@@ -208,7 +205,6 @@ public client class HelloWorldStockQuotesCaller {
     isolated remote function sendStockQuotes(StockQuotes response) returns Error? {
         return self.caller->send(response);
     }
-
     isolated remote function sendContextStockQuotes(ContextStockQuotes response) returns Error? {
         return self.caller->send(response);
     }
@@ -236,7 +232,6 @@ public client class HelloWorldStockQuoteCaller {
     isolated remote function sendStockQuote(StockQuote response) returns Error? {
         return self.caller->send(response);
     }
-
     isolated remote function sendContextStockQuote(ContextStockQuote response) returns Error? {
         return self.caller->send(response);
     }
@@ -280,11 +275,6 @@ public type StockQuotes record {
 public type StockNames record {
     string[] names = [];
 };
-
-public type ContextNil record {|
-
-    map<string|string[]> headers;
-|};
 
 public type ContextStockRequest record {|
     StockRequest content;

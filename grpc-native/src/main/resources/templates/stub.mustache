@@ -10,7 +10,7 @@ public client class {{serviceName}}Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
     }
 {{#unaryFunctions}}
-    isolated remote function {{methodName}}({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns ({{#if outputType}}{{outputType}}|{{/if}}grpc:Error?) {
+    isolated remote function {{methodName}}({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns ({{#if outputType}}{{outputType}}|grpc:Error{{else}}grpc:Error?{{/if}}) {
         {{#unless inputType}}Empty message = {};{{/unless}}
         map<string|string[]> headers = {};
         {{#if inputType}}{{inputType}} message;
@@ -26,7 +26,7 @@ public client class {{serviceName}}Client {
         return <{{outputType}}>result;
         {{/not_equal}}{{#equals outputType "string"}}return result.toString();{{/equals}}{{/if}}
     }
-    isolated remote function {{methodName}}Context({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns ({{#if outputType}}Context{{removeSpecialCharacters outputType}}|{{/if}}grpc:Error?) {
+    isolated remote function {{methodName}}Context({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns (Context{{#if outputType}}{{removeSpecialCharacters outputType}}{{else}}Nil{{/if}}|grpc:Error) {
         {{#unless inputType}}Empty message = {};{{/unless}}
         map<string|string[]> headers = {};
         {{#if inputType}}{{inputType}} message;
@@ -38,10 +38,8 @@ public client class {{serviceName}}Client {
         }{{/if}}
         var payload = check self.grpcClient->executeSimpleRPC("{{methodId}}", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
-        {{#if outputType}}
-        {{#not_equal outputType "string"}}
-        return {content: <{{outputType}}>result, headers: respHeaders};
-        {{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: respHeaders};{{/equals}}{{else}}return {headers: respHeaders};{{/if}}
+        {{#if outputType}}{{#not_equal outputType "string"}}
+        return {content: <{{outputType}}>result, headers: respHeaders};{{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: respHeaders};{{/equals}}{{else}}return {headers: respHeaders};{{/if}}
     }
 {{/unaryFunctions}}{{#serverStreamingFunctions}}
     isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req{{/if}}) returns stream<anydata>|Error {
@@ -50,8 +48,8 @@ public client class {{serviceName}}Client {
     }
 {{/serverStreamingFunctions}}{{#clientStreamingFunctions}}
     isolated remote function {{methodName}}() returns ({{pascalcase methodName}}StreamingClient|grpc:Error) {
-        StreamingClient sClient = check self.grpcClient->streamingExecute("{{methodId}}");
-        return new {{pascalcase methodName}}executeClientStreaming(sClient);
+        StreamingClient sClient = check self.grpcClient->executeClientStreaming("{{methodId}}");
+        return new {{pascalcase methodName}}StreamingClient(sClient);
     }{{/clientStreamingFunctions}}{{#bidiStreamingFunctions}}
     isolated remote function {{methodName}}() returns ({{pascalcase methodName}}StreamingClient|grpc:Error) {
         StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("{{methodId}}");

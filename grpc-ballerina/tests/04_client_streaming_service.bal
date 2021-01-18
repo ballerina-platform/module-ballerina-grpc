@@ -34,7 +34,7 @@ service "HelloWorld7" on ep4 {
         });
         if (e is EOS) {
             log:print("Server Response");
-            Error? err = caller->send("Ack");
+            Error? err = caller->sendString("Ack");
             if (err is Error) {
                 log:printError("Error from Connector: " + err.message());
             } else {
@@ -49,18 +49,21 @@ service "HelloWorld7" on ep4 {
 public client class HelloWorld7StringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(string|ContextString response) returns Error? {
+    
+    isolated remote function sendString(string response) returns Error? {
         return self.caller->send(response);
     }
-
+    isolated remote function sendContextString(ContextString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
     isolated remote function sendError(Error response) returns Error? {
         return self.caller->sendError(response);
     }

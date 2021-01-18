@@ -20,7 +20,7 @@ public client class {{pascalcase methodName}}StreamingClient {
     }
 
     isolated remote function receiveContext{{#if outputType}}{{removeSpecialCharacters outputType}}{{else}}Nil{{/if}}() returns Context{{#if outputType}}{{removeSpecialCharacters outputType}}{{else}}Nil{{/if}}|grpc:Error {
-        var payload = check self.sClient->receive();
+        var result = check self.sClient->receive();
         {{#if outputType}}{{#not_equal outputType "string"}}
         return {content: <{{outputType}}>result, headers: {}};
         {{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: {}};{{/equals}}{{else}}return {headers: {}};{{/if}}

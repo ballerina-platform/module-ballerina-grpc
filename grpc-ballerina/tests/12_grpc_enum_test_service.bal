@@ -23,12 +23,12 @@ listener Listener ep12 = new (9102, {
     descMap: getDescriptorMap12()
 }
 service "testEnumService" on ep12 {
-    isolated remote function testEnum(TestEnumServiceStringCaller caller, orderInfo orderReq) {
+    isolated remote function testEnum(TestEnumServiceStringCaller caller, OrderInfo orderReq) {
         string permission = "";
         if (orderReq.mode == r) {
             permission = "r";
         }
-        checkpanic caller->send(permission);
+        checkpanic caller->sendString(permission);
         checkpanic caller->complete();
     }
 }
@@ -36,20 +36,23 @@ service "testEnumService" on ep12 {
 public client class TestEnumServiceStringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(string response) returns Error? {
+    
+    isolated remote function sendString(string response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextString(ContextString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -57,7 +60,12 @@ public client class TestEnumServiceStringCaller {
     }
 }
 
-public type orderInfo record {
+public type ContextOrderInfo record {|
+    OrderInfo content;
+    map<string|string[]> headers;
+|};
+
+public type OrderInfo record {
     string id = "";
     Mode mode = r;
 };

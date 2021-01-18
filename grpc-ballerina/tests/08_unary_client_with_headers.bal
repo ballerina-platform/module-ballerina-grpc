@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 
 // Client endpoint configuration
-final HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9098");
+final HelloWorld101Client helloWorld8BlockingEp = new ("http://localhost:9098");
 
 @test:Config {enable:true}
 function testHeadersInUnaryClient() {
@@ -58,7 +58,7 @@ function testHeadersInBlockingClient() returns Error? {
 }
 
 // Blocking endpoint.
-public client class HelloWorld8BlockingClient {
+public client class HelloWorld101Client {
 
     *AbstractClientEndpoint;
 
@@ -70,29 +70,33 @@ public client class HelloWorld8BlockingClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_8, getDescriptorMap8());
     }
 
-    isolated remote function hello(string|ContextString req) returns string|Error {
-        string message;
+    isolated remote function hello(string|ContextString req) returns (string|Error) {
+        
         map<string|string[]> headers = {};
+        string message;
         if (req is ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
             message = req;
         }
-        [anydata, map<string|string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
         return result.toString();
     }
-
-    isolated remote function helloContext(string|ContextString req) returns ContextString|Error {
-        string message;
+    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+        
         map<string|string[]> headers = {};
+        string message;
         if (req is ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
             message = req;
         }
-        [anydata, map<string|string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
-        return  {content: result.toString(), headers: requestHeaders};
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
     }
+
 }

@@ -1,7 +1,7 @@
 public client class {{@key}} {
     private grpc:Caller caller;
 
-    public function init(grpc:Caller caller) {
+    public isolated function init(grpc:Caller caller) {
         self.caller = caller;
     }
 

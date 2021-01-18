@@ -49,7 +49,7 @@ service "Negotiator" on negotiatorep {
             return;
         }
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
-        error? send = caller->send(response);
+        error? send = caller->sendHandshakeResponse(response);
         if (send is error) {
             log:printError("Error while sending the response.", err = send);
         } else {
@@ -81,75 +81,76 @@ service "Negotiator" on negotiatorep {
     }
 }
 
-public client class NegotiatorHandshakeResponseCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function send(HandshakeResponse response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
 public client class NegotiatorNilCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
 }
+
+public client class NegotiatorHandshakeResponseCaller {
+    private Caller caller;
+
+    public isolated function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendHandshakeResponse(HandshakeResponse response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextHandshakeResponse(ContextHandshakeResponse response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public type ContextHandshakeResponse record {|
+    HandshakeResponse content;
+    map<string|string[]> headers;
+|};
+
+public type ContextTracesPublishRequest record {|
+    TracesPublishRequest content;
+    map<string|string[]> headers;
+|};
+
+public type ContextMetricsPublishRequest record {|
+    MetricsPublishRequest content;
+    map<string|string[]> headers;
+|};
+
+public type ContextHandshakeRequest record {|
+    HandshakeRequest content;
+    map<string|string[]> headers;
+|};
 
 public type HandshakeResponse record {|
     string id = "";
     string[] protocols = [];
-|};
-
-public type MetricsPublishRequest record {|
-    string id = "";
-    Metric[] metrics = [];
-|};
-
-public type Metric record {|
-    int timestamp = 0;
-    string name = "";
-    float value = 0.0;
-    record {|string key; string value;|}[] tags = [];
-|};
-
-public type TagsEntry record {|
-    string key = "";
-    string value = "";
-|};
-
-public type TracesPublishRequest record {|
-    string id = "";
-    TraceSpan[] spans = [];
 |};
 
 public type TraceSpan record {|
@@ -160,7 +161,27 @@ public type TraceSpan record {|
     string operationName = "";
     int timestamp = 0;
     int duration = 0;
-    record {|string key; string value;|}[] tags = [];
+    record {| string key; string value; |}[] tags = [];
+|};
+
+public type TracesPublishRequest record {|
+    string id = "";
+    TraceSpan[] spans = [];
+
+|};
+
+public type Metric record {|
+    int timestamp = 0;
+    string name = "";
+    float value = 0.0;
+    record {| string key; string value; |}[] tags = [];
+|};
+
+
+public type MetricsPublishRequest record {|
+    string id = "";
+    Metric[] metrics = [];
+
 |};
 
 public type HandshakeRequest record {|

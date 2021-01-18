@@ -31,7 +31,7 @@ service "helloWorldServerStreaming" on helloWorldStreamingep {
         foreach string greet in greets {
             string message = greet + " " + value.name;
             HelloResponse msg = {message: message};
-            Error? err = caller->send(msg);
+            Error? err = caller->sendHelloResponse(msg);
             if (err is Error) {
                 log:printError("Error from Connector: " + err.message());
             } else {
@@ -50,20 +50,23 @@ service "helloWorldServerStreaming" on helloWorldStreamingep {
 public client class HelloWorldServerStreamingHelloResponseCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(HelloResponse response) returns Error? {
+    
+    isolated remote function sendHelloResponse(HelloResponse response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextHelloResponse(ContextHelloResponse response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -71,12 +74,30 @@ public client class HelloWorldServerStreamingHelloResponseCaller {
     }
 }
 
-public type HelloRequest record {|
-    string name = "";
+
+public type ContextHelloResponseStream record {|
+    stream<HelloResponse> content;
+    map<string|string[]> headers;
 |};
 
+public type ContextHelloResponse record {|
+    HelloResponse content;
+    map<string|string[]> headers;
+|};
+
+
+public type ContextHelloRequest record {|
+    HelloRequest content;
+    map<string|string[]> headers;
+|};
 public type HelloResponse record {|
     string message = "";
+
+|};
+
+public type HelloRequest record {|
+    string name = "";
+
 |};
 
 const string ROOT_DESCRIPTOR_23 = "0A2D32335F7365727665725F73747265616D696E675F776974685F7265636F72645F736572766963652E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F22220A0C48656C6C6F5265717565737412120A046E616D6518012001280952046E616D6522290A0D48656C6C6F526573706F6E736512180A076D65737361676518012001280952076D657373616765324D0A1968656C6C6F576F726C6453657276657253747265616D696E6712300A0D6C6F74734F665265706C696573120D2E48656C6C6F526571756573741A0E2E48656C6C6F526573706F6E73653001620670726F746F33";

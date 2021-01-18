@@ -67,7 +67,7 @@ service "Chat" on ep3 {
             log:print(connectionsMap.toString());
             foreach var [callerId, connection] in connectionsMap.entries() {
                 conn = connection;
-                Error? err = conn->send(msg);
+                Error? err = conn->sendString(msg);
                 if (err is Error) {
                     log:printError("Error from Connector: " + err.message());
                 } else {
@@ -85,7 +85,7 @@ service "Chat" on ep3 {
             foreach var [callerId, connection] in connectionsMap.entries() {
                 ChatStringCaller conn;
                 conn = connection;
-                Error? err = conn->send(msg);
+                Error? err = conn->sendString(msg);
                 if (err is Error) {
                     log:printError("Error from Connector: " + err.message());
                 } else {
@@ -101,18 +101,21 @@ service "Chat" on ep3 {
 public client class ChatStringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(string|ContextString response) returns Error? {
+    
+    isolated remote function sendString(string response) returns Error? {
         return self.caller->send(response);
     }
-
+    isolated remote function sendContextString(ContextString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
     isolated remote function sendError(Error response) returns Error? {
         return self.caller->sendError(response);
     }
@@ -122,10 +125,21 @@ public client class ChatStringCaller {
     }
 }
 
-public type ChatMessage record {
+public type ContextChatMessage record {|
+    ChatMessage content;
+    map<string|string[]> headers;
+|};
+
+public type ContextChatMessageStream record {|
+    stream<ChatMessage> content;
+    map<string|string[]> headers;
+|};
+
+public type ChatMessage record {|
     string name = "";
     string message = "";
-};
+
+|};
 
 const string ROOT_DESCRIPTOR_3 = "0A2830335F6269646972656374696F6E616C5F73747265616D696E675F736572766963652E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F223B0A0B436861744D65737361676512120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765323E0A044368617412360A0463686174120C2E436861744D6573736167651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756528013001620670726F746F33";
 isolated function getDescriptorMap3() returns map<string> {

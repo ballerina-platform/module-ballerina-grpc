@@ -17,23 +17,21 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorld2BlockingClient HelloWorld2BlockingEp = new ("http://localhost:9092");
+final HelloWorld3Client HelloWorld2BlockingEp = new ("http://localhost:9092");
 
 @test:Config {enable:true}
 function testSendIntArray() {
     TestInt req = {values: [1, 2, 3, 4, 5]};
     io:println("testIntArrayInput: input:");
     io:println(req);
-    [int, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testIntArrayInput(req);
+    int|Error unionResp = HelloWorld2BlockingEp->testIntArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        int result = 0;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result, 15);
+        io:println(unionResp);
+        test:assertEquals(unionResp, 15);
     }
 }
 
@@ -42,16 +40,14 @@ function testSendStringArray() {
     TestString req = {values:["A", "B", "C"]};
     io:println("testStringArrayInput: input:");
     io:println(req);
-    [string, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testStringArrayInput(req);
+    string|Error unionResp = HelloWorld2BlockingEp->testStringArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        string result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result, ",A,B,C");
+        io:println(unionResp);
+        test:assertEquals(unionResp, ",A,B,C");
     }
 }
 
@@ -60,16 +56,14 @@ function testSendFloatArray() {
     TestFloat req = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
     io:println("testFloatArrayInput: input:");
     io:println(req);
-    [float, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testFloatArrayInput(req);
+    float|Error unionResp = HelloWorld2BlockingEp->testFloatArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        float result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result, 6.5);
+        io:println(unionResp);
+        test:assertEquals(unionResp, 6.5);
     }
 }
 
@@ -78,16 +72,14 @@ function testSendBooleanArray() {
     TestBoolean req = {values:[true, false, true]};
     io:println("testBooleanArrayInput: input:");
     io:println(req);
-    [boolean, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayInput(req);
+    boolean|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        boolean result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertTrue(result);
+        io:println(unionResp);
+        test:assertTrue(unionResp);
     }
 }
 
@@ -96,115 +88,101 @@ function testSendStructArray() {
     TestStruct testStruct = {values: [{name: "Sam"}, {name: "John"}]};
     io:println("testStructArrayInput: input:");
     io:println(testStruct);
-    [string, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testStructArrayInput(testStruct);
-    io:println(unionResp);
+    string|Error unionResp = HelloWorld2BlockingEp->testStructArrayInput(testStruct);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        string result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result, ",Sam,John");
+        io:println(unionResp);
+        test:assertEquals(unionResp, ",Sam,John");
     }
 }
 
 @test:Config {enable:true}
 function testReceiveIntArray() {
     io:println("testIntArrayOutput: No input:");
-    [TestInt, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testIntArrayOutput();
+    TestInt|Error unionResp = HelloWorld2BlockingEp->testIntArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        TestInt result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result.values.length(), 5);
-        test:assertEquals(result.values[0], 1);
-        test:assertEquals(result.values[1], 2);
-        test:assertEquals(result.values[2], 3);
-        test:assertEquals(result.values[3], 4);
-        test:assertEquals(result.values[4], 5);
+        io:println(unionResp);
+        test:assertEquals(unionResp.values.length(), 5);
+        test:assertEquals(unionResp.values[0], 1);
+        test:assertEquals(unionResp.values[1], 2);
+        test:assertEquals(unionResp.values[2], 3);
+        test:assertEquals(unionResp.values[3], 4);
+        test:assertEquals(unionResp.values[4], 5);
     }
 }
 
 @test:Config {enable:true}
 function testReceiveStringArray() {
     io:println("testStringArrayOutput: No input:");
-    [TestString, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testStringArrayOutput();
-    io:println(unionResp);
+    TestString|Error unionResp = HelloWorld2BlockingEp->testStringArrayOutput();
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        TestString result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result.values.length(), 3);
-        test:assertEquals(result.values[0], "A");
-        test:assertEquals(result.values[1], "B");
-        test:assertEquals(result.values[2], "C");
+        io:println(unionResp);
+        test:assertEquals(unionResp.values.length(), 3);
+        test:assertEquals(unionResp.values[0], "A");
+        test:assertEquals(unionResp.values[1], "B");
+        test:assertEquals(unionResp.values[2], "C");
     }
 }
 
 @test:Config {enable:true}
 function testReceiveFloatArray() {
     io:println("testFloatArrayOutput: No input:");
-    [TestFloat, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testFloatArrayOutput();
+    TestFloat|Error unionResp = HelloWorld2BlockingEp->testFloatArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        TestFloat result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result.values.length(), 5);
-        test:assertEquals(result.values[0], 1.1);
-        test:assertEquals(result.values[1], 1.2);
-        test:assertEquals(result.values[2], 1.3);
+        io:println(unionResp);
+        test:assertEquals(unionResp.values.length(), 5);
+        test:assertEquals(unionResp.values[0], 1.1);
+        test:assertEquals(unionResp.values[1], 1.2);
+        test:assertEquals(unionResp.values[2], 1.3);
     }
 }
 
 @test:Config {enable:true}
 function testReceiveBooleanArray() {
     io:println("testBooleanArrayOutput: No input:");
-    [TestBoolean, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayOutput();
+    TestBoolean|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        TestBoolean result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result.values.length(), 3);
-        test:assertTrue(result.values[0]);
-        test:assertFalse(result.values[1]);
-        test:assertTrue(result.values[2]);
+        io:println(unionResp);
+        test:assertEquals(unionResp.values.length(), 3);
+        test:assertTrue(unionResp.values[0]);
+        test:assertFalse(unionResp.values[1]);
+        test:assertTrue(unionResp.values[2]);
     }
 }
 
 @test:Config {enable:true}
 function testReceiveStructArray() {
     io:println("testStructArrayOutput: No input:");
-    [TestStruct, map<string|string[]>]|Error unionResp = HelloWorld2BlockingEp->testStructArrayOutput();
+    TestStruct|Error unionResp = HelloWorld2BlockingEp->testStructArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         io:println("Client Got Response : ");
-        TestStruct result;
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertEquals(result.values.length(), 2);
-        test:assertEquals(result.values[0].name, "Sam");
+        io:println(unionResp);
+        test:assertEquals(unionResp.values.length(), 2);
+        test:assertEquals(unionResp.values[0].name, "Sam");
     }
 }
 
-public client class HelloWorld2BlockingClient {
+public client class HelloWorld3Client {
 
     *AbstractClientEndpoint;
 
@@ -216,128 +194,258 @@ public client class HelloWorld2BlockingClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_2, getDescriptorMap2());
     }
 
-    isolated remote function testIntArrayInput(TestInt req, map<string|string[]> headers = {}) returns ([int, map<string|string[]>]|Error) {
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testIntArrayInput", req, headers);
-        anydata result;
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(IntTypedesc);
-        if (value is int) {
-            return [value, resHeaders];
+    isolated remote function testIntArrayInput(TestInt|ContextTestInt req) returns (int|Error) {
+        
+        map<string|string[]> headers = {};
+        TestInt message;
+        if (req is ContextTestInt) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testIntArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <int>result;
+        
     }
-
-    isolated remote function testStringArrayInput(TestString req, map<string|string[]> headers = {}) returns ([string, map<string|string[]>]|Error) {
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStringArrayInput", req, headers);
-        anydata result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        return [result.toString(), resHeaders];
-    }
-
-    isolated remote function testFloatArrayInput(TestFloat req, map<string|string[]> headers = {}) returns ([float, map<string|string[]>]|Error) {
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testFloatArrayInput", req, headers);
-        anydata result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(FloatTypedesc);
-        if (value is float) {
-            return [value, resHeaders];
+    isolated remote function testIntArrayInputContext(TestInt|ContextTestInt req) returns (ContextInt|Error) {
+        
+        map<string|string[]> headers = {};
+        TestInt message;
+        if (req is ContextTestInt) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testIntArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <int>result, headers: respHeaders};
     }
 
-    isolated remote function testBooleanArrayInput(TestBoolean req, map<string|string[]> headers = {}) returns ([boolean, map<string|string[]>]|Error) {
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testBooleanArrayInput", req, headers);
-        anydata result;
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(BooleanTypedesc);
-        if (value is boolean) {
-            return [value, resHeaders];
+    isolated remote function testStringArrayInput(TestString|ContextTestString req) returns (string|Error) {
+        
+        map<string|string[]> headers = {};
+        TestString message;
+        if (req is ContextTestString) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStringArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
-
-    isolated remote function testStructArrayInput(TestStruct req, map<string|string[]> headers = {}) returns ([string, map<string|string[]>]|Error) {
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStructArrayInput", req, headers);
-        anydata result = ();
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        return [result.toString(), resHeaders];
-    }
-
-    isolated remote function testIntArrayOutput(map<string|string[]> headers = {}) returns ([TestInt, map<string|string[]>]|Error) {
-        Empty req = {};
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testIntArrayOutput", req, headers);
-        anydata result;
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(TestIntTypedesc);
-        if (value is TestInt) {
-            return [value, resHeaders];
+    isolated remote function testStringArrayInputContext(TestString|ContextTestString req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        TestString message;
+        if (req is ContextTestString) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStringArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function testStringArrayOutput(map<string|string[]> headers = {}) returns ([TestString, map<string|string[]>]|Error) {
-        Empty req = {};
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStringArrayOutput", req, headers);
-        anydata result;
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(TestStringTypedesc);
-        if (value is TestString) {
-            return [value, resHeaders];
+    isolated remote function testFloatArrayInput(TestFloat|ContextTestFloat req) returns (float|Error) {
+        
+        map<string|string[]> headers = {};
+        TestFloat message;
+        if (req is ContextTestFloat) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testFloatArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <float>result;
+        
+    }
+    isolated remote function testFloatArrayInputContext(TestFloat|ContextTestFloat req) returns (ContextFloat|Error) {
+        
+        map<string|string[]> headers = {};
+        TestFloat message;
+        if (req is ContextTestFloat) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testFloatArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <float>result, headers: respHeaders};
     }
 
-    isolated remote function testFloatArrayOutput(map<string|string[]> headers = {}) returns ([TestFloat, map<string|string[]>]|Error) {
-        Empty req = {};
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testFloatArrayOutput", req, headers);
-        anydata result;
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(TestFloatTypedesc);
-        if (value is TestFloat) {
-            return [value, resHeaders];
+    isolated remote function testBooleanArrayInput(TestBoolean|ContextTestBoolean req) returns (boolean|Error) {
+        
+        map<string|string[]> headers = {};
+        TestBoolean message;
+        if (req is ContextTestBoolean) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testBooleanArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <boolean>result;
+        
+    }
+    isolated remote function testBooleanArrayInputContext(TestBoolean|ContextTestBoolean req) returns (ContextBoolean|Error) {
+        
+        map<string|string[]> headers = {};
+        TestBoolean message;
+        if (req is ContextTestBoolean) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testBooleanArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <boolean>result, headers: respHeaders};
     }
 
-    isolated remote function testBooleanArrayOutput(map<string|string[]> headers = {}) returns ([TestBoolean, map<string|string[]>]|Error) {
-        Empty req = {};
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testBooleanArrayOutput", req, headers);
-        anydata result;
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(TestBooleanTypedesc);
-        if (value is TestBoolean) {
-            return [value, resHeaders];
+    isolated remote function testStructArrayInput(TestStruct|ContextTestStruct req) returns (string|Error) {
+        
+        map<string|string[]> headers = {};
+        TestStruct message;
+        if (req is ContextTestStruct) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStructArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
+    }
+    isolated remote function testStructArrayInputContext(TestStruct|ContextTestStruct req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        TestStruct message;
+        if (req is ContextTestStruct) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStructArrayInput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function testStructArrayOutput(map<string|string[]> headers = {}) returns ([TestStruct, map<string|string[]>]|Error) {
-        Empty req = {};
-        [anydata, map<string|string[]>] payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStructArrayOutput", req, headers);
-        anydata result;
-        map<string|string[]> resHeaders;
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(TestStructTypedesc);
-        if (value is TestStruct) {
-            return [value, resHeaders];
-        } else {
-            return error InternalError("Error while constructing the message", value);
-        }
+    isolated remote function testIntArrayOutput() returns (TestInt|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testIntArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <TestInt>result;
+        
     }
+    isolated remote function testIntArrayOutputContext() returns (ContextTestInt|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testIntArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <TestInt>result, headers: respHeaders};
+    }
+
+    isolated remote function testStringArrayOutput() returns (TestString|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStringArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <TestString>result;
+        
+    }
+    isolated remote function testStringArrayOutputContext() returns (ContextTestString|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStringArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <TestString>result, headers: respHeaders};
+    }
+
+    isolated remote function testFloatArrayOutput() returns (TestFloat|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testFloatArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <TestFloat>result;
+        
+    }
+    isolated remote function testFloatArrayOutputContext() returns (ContextTestFloat|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testFloatArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <TestFloat>result, headers: respHeaders};
+    }
+
+    isolated remote function testBooleanArrayOutput() returns (TestBoolean|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testBooleanArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <TestBoolean>result;
+        
+    }
+    isolated remote function testBooleanArrayOutputContext() returns (ContextTestBoolean|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testBooleanArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <TestBoolean>result, headers: respHeaders};
+    }
+
+    isolated remote function testStructArrayOutput() returns (TestStruct|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStructArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <TestStruct>result;
+        
+    }
+    isolated remote function testStructArrayOutputContext() returns (ContextTestStruct|Error) {
+        Empty message = {};
+        map<string|string[]> headers = {};
+        
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld3/testStructArrayOutput", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <TestStruct>result, headers: respHeaders};
+    }
+
 }

@@ -30,7 +30,7 @@ service "HelloWorld100" on ep7 {
         if (name == "invalid") {
             err = caller->sendError(error AbortedError("Operation aborted"));
         } else {
-            err = caller->send(message);
+            err = caller->sendString(message);
         }
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
@@ -41,7 +41,7 @@ service "HelloWorld100" on ep7 {
     isolated remote function testInt(HelloWorld100IntCaller caller, int age) {
         io:println("age: " + age.toString());
         int displayAge = age - 2;
-        Error? err = caller->send(displayAge);
+        Error? err = caller->sendInt(displayAge);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -53,7 +53,7 @@ service "HelloWorld100" on ep7 {
     isolated remote function testFloat(HelloWorld100FloatCaller caller, float salary) {
         io:println("gross salary: " + salary.toString());
         float netSalary = salary * 0.88;
-        Error? err = caller->send(netSalary);
+        Error? err = caller->sendFloat(netSalary);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -65,7 +65,7 @@ service "HelloWorld100" on ep7 {
     isolated remote function testBoolean(HelloWorld100BooleanCaller caller, boolean available) {
         io:println("is available: " + available.toString());
         boolean aval = available || true;
-        Error? err = caller->send(aval);
+        Error? err = caller->sendBoolean(aval);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -77,7 +77,7 @@ service "HelloWorld100" on ep7 {
     isolated remote function testStruct(HelloWorld100ResponseCaller caller, Request msg) {
         io:println(msg.name + " : " + msg.message);
         Response response = {resp:"Acknowledge " + msg.name};
-        Error? err = caller->send(response);
+        Error? err = caller->sendResponse(response);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -88,7 +88,7 @@ service "HelloWorld100" on ep7 {
 
     isolated remote function testNoRequest(HelloWorld100StringCaller caller) {
         string resp = "service invoked with no request";
-        Error? err = caller->send(resp);
+        Error? err = caller->sendString(resp);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -105,7 +105,7 @@ service "HelloWorld100" on ep7 {
         io:println("Request: " + msg);
         Response? res = {resp:"Acknowledge " + msg};
         if (res is Response) {
-            checkpanic caller->send(res);
+            checkpanic caller->sendResponse(res);
         } else {
             checkpanic caller->sendError(error NotFoundError("No updates from that drone"));
         }
@@ -113,23 +113,53 @@ service "HelloWorld100" on ep7 {
     }
 }
 
-public client class HelloWorld100StringCaller {
+public client class HelloWorld100BooleanCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(string response) returns Error? {
+    
+    isolated remote function sendBoolean(boolean response) returns Error? {
         return self.caller->send(response);
     }
+    isolated remote function sendContextBoolean(ContextBoolean response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
 
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld100StringCaller {
+    private Caller caller;
+
+    public isolated function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendString(string response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextString(ContextString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -140,92 +170,23 @@ public client class HelloWorld100StringCaller {
 public client class HelloWorld100IntCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(int response) returns Error? {
+    
+    isolated remote function sendInt(int response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorld100FloatCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function send(float response) returns Error? {
+    isolated remote function sendContextInt(ContextInt response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorld100BooleanCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function send(boolean response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorld100ResponseCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function send(Response response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -236,22 +197,86 @@ public client class HelloWorld100ResponseCaller {
 public client class HelloWorld100NilCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
 }
+
+public client class HelloWorld100FloatCaller {
+    private Caller caller;
+
+    public isolated function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendFloat(float response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextFloat(ContextFloat response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld100ResponseCaller {
+    private Caller caller;
+
+    public isolated function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendResponse(Response response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextResponse(ContextResponse response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public type ContextResponse record {|
+    Response content;
+    map<string|string[]> headers;
+|};
+
+public type ContextRequest record {|
+    Request content;
+    map<string|string[]> headers;
+|};
 
 const string ROOT_DESCRIPTOR_7 = "0A1530375F756E6172795F7365727665722E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F22370A075265717565737412120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765221E0A08526573706F6E736512120A047265737018012001280952047265737032C4040A0D48656C6C6F576F726C6431303012430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512430A0774657374496E74121B2E676F6F676C652E70726F746F6275662E496E74333256616C75651A1B2E676F6F676C652E70726F746F6275662E496E74333256616C756512450A0974657374466C6F6174121B2E676F6F676C652E70726F746F6275662E466C6F617456616C75651A1B2E676F6F676C652E70726F746F6275662E466C6F617456616C756512450A0B74657374426F6F6C65616E121A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75651A1A2E676F6F676C652E70726F746F6275662E426F6F6C56616C7565123B0A0A7465737453747275637412152E6772706373657276696365732E526571756573741A162E6772706373657276696365732E526573706F6E736512450A0D746573744E6F5265717565737412162E676F6F676C652E70726F746F6275662E456D7074791A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512460A0E746573744E6F526573706F6E7365121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E676F6F676C652E70726F746F6275662E456D707479124F0A1774657374526573706F6E7365496E736964654D61746368121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E6772706373657276696365732E526573706F6E7365620670726F746F33";
 isolated function getDescriptorMap7() returns map<string> {

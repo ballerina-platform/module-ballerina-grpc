@@ -23,7 +23,7 @@ isolated function testGzipEncoding() {
 
     Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
     map<string|string[]> headers = {};
-    headers["grpc-encoding"] = ["gzip"];
+    headers["grpc-encoding"] = "gzip";
     ContextOrder reqOrder = {content: 'order, headers: headers};
     string|error result = OrderMgtBlockingEp->addOrder(reqOrder);
     if (result is error) {
@@ -46,6 +46,7 @@ public client class OrderManagementClient {
     }
 
     isolated remote function addOrder(Order|ContextOrder req) returns (string|Error) {
+        
         map<string|string[]> headers = {};
         Order message;
         if (req is ContextOrder) {
@@ -85,6 +86,7 @@ public client class OrderManagementClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
+        
         return <Order>result;
         
     }
@@ -100,6 +102,7 @@ public client class OrderManagementClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
         return {content: <Order>result, headers: respHeaders};
     }
 

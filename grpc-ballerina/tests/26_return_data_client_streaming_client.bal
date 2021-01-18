@@ -33,15 +33,15 @@ function testClientStreamingFromReturn() {
     io:println("Initialized connection sucessfully.");
 
     foreach var greet in requests {
-        Error? err = streamingClient->send(greet);
+        Error? err = streamingClient->sendstring(greet);
         if (err is Error) {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
     checkpanic streamingClient->complete();
     io:println("completed successfully");
-    anydata response = checkpanic streamingClient->receive();
-    test:assertEquals(<string> response, "Ack");
+    string response = checkpanic streamingClient->receiveString();
+    test:assertEquals(response, "Ack");
 }
 
 public client class LotsOfGreetingsStreamingClientFromReturn {
@@ -51,15 +51,23 @@ public client class LotsOfGreetingsStreamingClientFromReturn {
         self.sClient = sClient;
     }
 
-
-    isolated remote function send(string message) returns Error? {
+    isolated remote function sendstring(string message) returns Error? {
+        
         return self.sClient->send(message);
     }
 
+    isolated remote function sendContextString(ContextString message) returns Error? {
+        return self.sClient->send(message);
+    }
 
-    isolated remote function receive() returns string|Error {
+    isolated remote function receiveString() returns string|Error {
         var payload = check self.sClient->receive();
         return payload.toString();
+    }
+
+    isolated remote function receiveContextString() returns ContextString|Error {
+        var result = check self.sClient->receive();
+        return {content: result.toString(), headers: {}};
     }
 
     isolated remote function sendError(Error response) returns Error? {
@@ -84,8 +92,7 @@ public client class HelloWorld26Client {
     }
 
     isolated remote function lotsOfGreetings() returns (LotsOfGreetingsStreamingClientFromReturn|Error) {
-        StreamingClient sClient = check self.grpcClient->executeClientStreaming(
-        "grpcservices.HelloWorld26/lotsOfGreetings");
+        StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.HelloWorld26/lotsOfGreetings");
         return new LotsOfGreetingsStreamingClientFromReturn(sClient);
     }
 }

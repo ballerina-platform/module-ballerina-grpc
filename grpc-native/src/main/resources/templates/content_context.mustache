@@ -1,11 +1,14 @@
-# Context record includes message payload and headers.{{#if this}}
-public type Context{{#if @key}}{{pascalcase @key}}{{else}}Nil{{/if}} record {|
+{{#if this}}
+public type Context{{#if @key}}{{removeSpecialCharacters @key}}{{else}}Nil{{/if}}Stream record {|
     {{#if @key}}stream<{{@key}}> content;{{/if}}
     map<string|string[]> headers;
 |};
-{{else}}
-public type Context{{#if @key}}{{pascalcase @key}}{{else}}Nil{{/if}} record {|
+public type Context{{#if @key}}{{removeSpecialCharacters @key}}{{else}}Nil{{/if}} record {|
     {{#if @key}}{{@key}} content;{{/if}}
     map<string|string[]> headers;
 |};
-{{/if}}
+{{else}}
+public type Context{{#if @key}}{{removeSpecialCharacters @key}}{{else}}Nil{{/if}} record {|
+    {{#if @key}}{{@key}} content;{{/if}}
+    map<string|string[]> headers;
+|};{{/if}}

@@ -30,8 +30,8 @@ function testMapFields() {
             tags: [{key: "action", value: "respond"}]
         }]
     };
-    map<string|string[]> | error publishMetrics = negotiatorEp->publishMetrics(request);
-    if (publishMetrics is error) {
+    Error? publishMetrics = negotiatorEp->publishMetrics(request);
+    if (publishMetrics is Error) {
         test:assertFail(io:sprintf("Metrics publish failed: %s", publishMetrics.message()));
     }
 }
@@ -39,13 +39,11 @@ function testMapFields() {
 @test:Config {enable:true}
 function testOptionalFields() {
     HandshakeRequest request = {};
-    [HandshakeResponse, map<string|string[]>] | Error result = negotiatorEp->handshake(request);
-    if (result is error) {
+    HandshakeResponse|Error result = negotiatorEp->handshake(request);
+    if (result is Error) {
         test:assertFail(io:sprintf("Handshake failed: %s", result.message()));
     } else {
-        HandshakeResponse handshakeResponse;
-        [handshakeResponse, _] = result;
-        test:assertEquals(handshakeResponse.id, "123456");
+        test:assertEquals(result.id, "123456");
     }
 }
 
@@ -57,32 +55,96 @@ public client class NegotiatorClient {
 
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
-        self.grpcClient = new (url, config);
+        self.grpcClient = new(url, config);
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
-    isolated remote function handshake(HandshakeRequest req, map<string|string[]> headers = {})
-                                                returns ([HandshakeResponse, map<string|string[]>] | Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/handshake", req, headers);
-        map<string|string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        return [<HandshakeResponse>result, resHeaders];
+    isolated remote function handshake(HandshakeRequest|ContextHandshakeRequest req) returns (HandshakeResponse|Error) {
+        
+        map<string|string[]> headers = {};
+        HandshakeRequest message;
+        if (req is ContextHandshakeRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/handshake", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <HandshakeResponse>result;
+        
+    }
+    isolated remote function handshakeContext(HandshakeRequest|ContextHandshakeRequest req) returns (ContextHandshakeResponse|Error) {
+        
+        map<string|string[]> headers = {};
+        HandshakeRequest message;
+        if (req is ContextHandshakeRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/handshake", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <HandshakeResponse>result, headers: respHeaders};
     }
 
-    isolated remote function publishMetrics(MetricsPublishRequest req, map<string|string[]> headers = {})
-                                                returns (map<string|string[]> | Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", req, headers);
-        map<string|string[]> resHeaders;
-        [_, resHeaders] = payload;
-        return resHeaders;
+    isolated remote function publishMetrics(MetricsPublishRequest|ContextMetricsPublishRequest req) returns (Error?) {
+        
+        map<string|string[]> headers = {};
+        MetricsPublishRequest message;
+        if (req is ContextMetricsPublishRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", message, headers);
+        
+    }
+    isolated remote function publishMetricsContext(MetricsPublishRequest|ContextMetricsPublishRequest req) returns (ContextNil|Error) {
+        
+        map<string|string[]> headers = {};
+        MetricsPublishRequest message;
+        if (req is ContextMetricsPublishRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {headers: respHeaders};
     }
 
-    isolated remote function publishTraces(TracesPublishRequest req, map<string|string[]> headers = {})
-                                                returns (map<string|string[]> | Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", req, headers);
-        map<string|string[]> resHeaders;
-        [_, resHeaders] = payload;
-        return resHeaders;
+    isolated remote function publishTraces(TracesPublishRequest|ContextTracesPublishRequest req) returns (Error?) {
+        
+        map<string|string[]> headers = {};
+        TracesPublishRequest message;
+        if (req is ContextTracesPublishRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", message, headers);
+        
     }
+    isolated remote function publishTracesContext(TracesPublishRequest|ContextTracesPublishRequest req) returns (ContextNil|Error) {
+        
+        map<string|string[]> headers = {};
+        TracesPublishRequest message;
+        if (req is ContextTracesPublishRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {headers: respHeaders};
+    }
+
 }

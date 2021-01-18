@@ -29,15 +29,13 @@ isolated function testUnarySecuredBlockingWithCerts() {
         }
     });
 
-    [string, map<string|string[]>]|Error unionResp = helloWorldBlockingEp->hello("WSO2");
+    string|Error unionResp = helloWorldBlockingEp->hello("WSO2");
     if (unionResp is Error) {
         test:assertFail(io:sprintf("Error from Connector: %s", unionResp.message()));
     } else {
-        string result;
-        [result, _] = unionResp;
         io:println("Client Got Response : ");
-        io:println(result);
-        test:assertEquals(result, "Hello WSO2");
+        io:println(unionResp);
+        test:assertEquals(unionResp, "Hello WSO2");
     }
 }
 
@@ -53,11 +51,33 @@ public client class grpcMutualSslServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_10, getDescriptorMap10());
     }
 
-    isolated remote function hello (string req, map<string|string[]> headers = {}) returns ([string, map<string|string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.grpcMutualSslService/hello", req, headers);
-        map<string|string[]> resHeaders;
-        any result = ();
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
+    isolated remote function hello(string|ContextString req) returns (string|Error) {
+
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.grpcMutualSslService/hello", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
+    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.grpcMutualSslService/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
+    }
+
 }
