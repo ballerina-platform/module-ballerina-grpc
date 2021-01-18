@@ -35,9 +35,9 @@ public class ClientBearerTokenAuthHandler {
 
     # Enrich the headers with the relevant authentication requirements.
     #
-    # + headers - The headers map `map<string[]>` as an input
+    # + headers - The headers map `map<string|string[]>` as an input
     # + return - The Bearer tokes as a `string` or else an `grpc:ClientAuthError` in case of an error
-    public isolated function enrich(map<string[]> headers) returns map<string[]>|ClientAuthError {
+    public isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string token = AUTH_SCHEME_BEARER + " " + self.config.token;
         headers[AUTH_HEADER] = [token];
         return headers;

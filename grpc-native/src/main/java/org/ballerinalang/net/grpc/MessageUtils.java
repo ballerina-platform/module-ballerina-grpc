@@ -25,9 +25,12 @@ import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
@@ -44,6 +47,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Locale;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
@@ -68,7 +72,8 @@ public class MessageUtils {
     private static final String GOOGLE_PROTOBUF_EMPTY = "google.protobuf.Empty";
 
     private static final Type HEADER_MAP_TYPE =
-                TypeCreator.createMapType(TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING));
+                TypeCreator.createMapType(TypeCreator.createUnionType(Arrays.asList(PredefinedTypes.TYPE_STRING,
+                        TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING))));
 
     public static BObject getHeaderObject() {
         return ValueCreator.createObjectValue(getModule(), "Headers");
@@ -464,9 +469,35 @@ public class MessageUtils {
         BMap headerMap = ValueCreator.createMapValue(HEADER_MAP_TYPE);
         for (String key : httpHeaders.names()) {
             String[] values = httpHeaders.getAll(key).toArray(new String[0]);
-            headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromStringArray(values));
+            if (values.length == 1) {
+                headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromString(values[0]));
+            } else {
+                headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromStringArray(values));
+            }
         }
         return headerMap;
+    }
+
+    /**
+     * Returns HttpHeaders instance using Ballerina Header Map.
+     * @param headerValues Ballerina Header Map instance.
+     * @return HttpHeader instance.
+     */
+    public static HttpHeaders convertToHttpHeaders(BMap headerValues) {
+        HttpHeaders headers = new DefaultHttpHeaders();
+        if (headerValues != null) {
+            for (Object key : headerValues.getKeys()) {
+                Object headerValue = headerValues.get(key);
+                if (headerValue instanceof BString) {
+                    headers.set(key.toString(), headerValue.toString());
+                } else if (headerValue instanceof BArray) {
+                    for (String value : ((BArray) headerValue).getStringArray()) {
+                        headers.set(key.toString(), value);
+                    }
+                }
+            }
+        }
+        return headers;
     }
 
     private MessageUtils() {

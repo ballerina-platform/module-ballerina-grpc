@@ -28,7 +28,7 @@ service /HelloWorld28 on ep28 {
     remote function testStringValueReturn(HelloWorld28StringCaller caller, ContextString request) {
         io:println("name: " + request.content);
         string message = "Hello " + request.content;
-        map<string[]> responseHeaders = {};
+        map<string|string[]> responseHeaders = {};
 
         if (!request.headers.hasKey(AUTH_HEADER)) {
             Error? err = caller->sendError(error AbortedError("AUTH_HEADER header is missing"));

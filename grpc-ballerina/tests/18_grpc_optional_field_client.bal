@@ -55,10 +55,10 @@ public client class CheckoutServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_18, getDescriptorMap18());
     }
 
-    isolated remote function PlaceOrder(PlaceOrderRequest req, map<string[]> headers = {}) returns
-                                                                    ([PlaceOrderResponse, map<string[]>]|Error) {
+    isolated remote function PlaceOrder(PlaceOrderRequest req, map<string|string[]> headers = {}) returns
+                                                                    ([PlaceOrderResponse, map<string|string[]>]|Error) {
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.CheckoutService/PlaceOrder", req, headers);
-        map<string[]> resHeaders;
+        map<string|string[]> resHeaders;
         anydata result = ();
         [result, resHeaders] = payload;
         return [<PlaceOrderResponse>result, resHeaders];

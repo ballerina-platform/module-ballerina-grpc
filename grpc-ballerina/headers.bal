@@ -14,123 +14,45 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/java;
-
-# Provides the actions to read/write header values in a gRPC request/response message.
-public class Headers {
-
-    # Checks whether the requested header exists.
-    # ```ballerina
-    # boolean result = headers.exists("content-type");
-    # ```
-    #
-    # + headerName - The header name
-    # + return - True if header exists or else false
-    public isolated function exists(string headerName) returns boolean {
-        return externExists(self, headerName);
+# Returns the header value with the specified header name. If there are more than one header values for the
+# specified header name, the first value is returned.
+# ```ballerina
+# string? result = grpc:getHeader("content-type");
+# ```
+#
+# + headerMap - The header map instance.
+# + headerName - The header name
+# + return - First header value if exists or else error
+public isolated function getHeader(map<string|string[]> headerMap, string headerName) returns string|Error {
+    if (!headerMap.hasKey(headerName)) {
+        return error NotFoundError("Header does not exist for " + headerName);
     }
-
-    # Returns the header value with the specified header name. If there are more than one header values for the
-    # specified header name, the first value is returned.
-    # ```ballerina
-    # string? result = headers.get("content-type");
-    # ```
-    #
-    # + headerName - The header name
-    # + return - First header value if exists or else `()`
-    public isolated function get(string headerName) returns string? {
-        string? result = externGet(self, headerName);
-        if (result is ()) {
-            return result;
-        } else {
-            return result;
-        }
-    }
-
-    # Gets all the transport headers with the specified header name.
-    # ```ballerina
-    # string[] result = headers.getAll("content-type");
-    # ```
-    #
-    # + headerName - The header name
-    # + return - Header value array
-    public isolated function getAll(string headerName) returns string[] {
-        return externGetAll(self, headerName);
-    }
-
-    # Sets the value of a transport header.
-    # ```ballerina
-    # headers.setEntry("content-type", "application/grpc")
-    # ```
-    #
-    # + headerName - The header name
-    # + headerValue - The header value
-    public isolated function setEntry(string headerName, string headerValue) {
-        return externSetEntry(self, headerName, headerValue);
-    }
-
-    # Adds the specified key/value pair as an HTTP header to the request.
-    # ```ballerina
-    # headers.addEntry("content-type", "application/grpc")
-    # ```
-    #
-    # + headerName - The header name
-    # + headerValue - The header value
-    public isolated function addEntry(string headerName, string headerValue) {
-        return externAddEntry(self, headerName, headerValue);
-    }
-
-    # Removes a transport header from the request.
-    # ```ballerina
-    # headers.remove("content-type")
-    # ```
-    #
-    # + headerName - The header name
-    public isolated function remove(string headerName) {
-        return externRemove(self, headerName);
-    }
-
-    # Removes all the transport headers from the message.
-    # ```ballerina
-    # headers.removeAll()
-    # ```
-    #
-    public isolated function removeAll() {
-        return externRemoveAll(self);
+    string|string[] headerValue = headerMap.get(headerName);
+    if (headerValue is string) {
+        return headerValue;
+    } else if (headerValue.length() > 0) {
+        return headerValue[0];
+    } else {
+        return error NotFoundError("Header value does not exist for " + headerName);
     }
 }
 
-isolated function externExists(Headers headerValues, string headerName) returns boolean =
-@java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
-} external;
-
-isolated function externGet(Headers headerValues, string headerName) returns string? =
-@java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
-} external;
-
-isolated function externGetAll(Headers headerValues, string headerName) returns string[] =
-@java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
-} external;
-
-isolated function externSetEntry(Headers headerValues, string headerName, string headerValue) =
-@java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
-} external;
-
-isolated function externAddEntry(Headers headerValues, string headerName, string headerValue) =
-@java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
-} external;
-
-isolated function externRemove(Headers headerValues, string headerName) =
-@java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
-} external;
-
-isolated function externRemoveAll(Headers headerValues) =
-@java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.headers.FunctionUtils"
-} external;
+# Gets all the transport headers with the specified header name.
+# ```ballerina
+# string[] result = grpc:getHeaders(map<string|string[]> headerMap, "content-type");
+# ```
+#
+# + headerMap - The header map instance.
+# + headerName - The header name
+# + return - Header value array
+public isolated function getHeaders(map<string|string[]> headerMap, string headerName) returns string[]|Error {
+    if (!headerMap.hasKey(headerName)) {
+        return error NotFoundError("Header does not exist for " + headerName);
+    }
+    string|string[] headerValue = headerMap.get(headerName);
+    if (headerValue is string) {
+        return [headerValue];
+    } else {
+        return headerValue;
+    }
+}

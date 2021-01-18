@@ -24,16 +24,14 @@ final HelloWorld8BlockingClient helloWorld8BlockingEp = new ("http://localhost:9
 function testHeadersInUnaryClient() {
 
     //Working with custom headers
-    map<string[]> requestHeaders = {};
-    requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    ContextString requestMessage = {content: "WSO2", headers:  {"x-id": "0987654321"}};
     // Executing unary blocking call
     ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         string result = unionResp.content;
-        map<string[]> resHeaders = unionResp.headers;
+        map<string|string[]> resHeaders = unionResp.headers;
         io:println("Client Got Response : ");
         io:println(result);
         if (resHeaders.hasKey("x-id")) {
@@ -44,21 +42,18 @@ function testHeadersInUnaryClient() {
 }
 
 @test:Config {enable:true}
-function testHeadersInBlockingClient() {
-    map<string[]> requestHeaders = {};
-    requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+function testHeadersInBlockingClient() returns Error? {
+    ContextString requestMessage = {content: "WSO2", headers: {"x-id": "0987654321"}};
     // Executing unary blocking call
     ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
     if (unionResp is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
         string result = unionResp.content;
-        map<string[]> resHeaders = unionResp.headers;
+        map<string|string[]> resHeaders = unionResp.headers;
         io:println("Client Got Response : ");
         io:println(result);
-        string[] headerValues = resHeaders.get("x-id");
-        test:assertEquals(headerValues[0], "2233445677");
+        test:assertEquals(check getHeader(resHeaders, "x-id"), "2233445677");
     }
 }
 
@@ -77,27 +72,27 @@ public client class HelloWorld8BlockingClient {
 
     isolated remote function hello(string|ContextString req) returns string|Error {
         string message;
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         if (req is ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
             message = req;
         }
-        [anydata, map<string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
+        [anydata, map<string|string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
         return result.toString();
     }
 
     isolated remote function helloContext(string|ContextString req) returns ContextString|Error {
         string message;
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         if (req is ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
             message = req;
         }
-        [anydata, map<string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
+        [anydata, map<string|string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld101/hello", message, headers);
         return  {content: result.toString(), headers: requestHeaders};
     }
 }

@@ -28,7 +28,7 @@ service /HelloWorld29 on ep29 {
     remote function testStringValueReturn(HelloWorld29StringCaller caller, ContextString request) {
         io:println("name: " + request.content);
         string message = "Hello " + request.content;
-        map<string[]> responseHeaders = {};
+        map<string|string[]> responseHeaders = {};
         JwtValidatorConfig config = {
             issuer: "wso2",
             audience: "ballerina",

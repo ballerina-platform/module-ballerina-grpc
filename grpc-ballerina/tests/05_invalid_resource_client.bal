@@ -22,7 +22,7 @@ final HelloWorld5BlockingClient helloWorld5BlockingEp = new ("http://localhost:9
 @test:Config {enable:true}
 function testInvalidRemoteMethod() {
     string name = "WSO2";
-    [string, map<string[]>]|Error unionResp = helloWorld5BlockingEp->hello(name);
+    [string, map<string|string[]>]|Error unionResp = helloWorld5BlockingEp->hello(name);
     if (unionResp is Error) {
         test:assertEquals(unionResp.message(), "No registered method descriptor for " +
                                                                "'grpcservices.HelloWorld98/hello1'");
@@ -38,7 +38,7 @@ function testInvalidRemoteMethod() {
 @test:Config {enable:true}
 function testInvalidInputParameter() {
     int age = 10;
-    [int, map<string[]>]|Error unionResp = helloWorld5BlockingEp->testInt(age);
+    [int, map<string|string[]>]|Error unionResp = helloWorld5BlockingEp->testInt(age);
     if (unionResp is Error) {
         test:assertFail(io:sprintf("Error from Connector: %s", unionResp.message()));
     } else {
@@ -61,18 +61,18 @@ public client class HelloWorld5BlockingClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_5, getDescriptorMap5());
     }
 
-    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
+    isolated remote function hello(string req, map<string|string[]> headers = {}) returns ([string, map<string|string[]>]|Error) {
         var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/hello1", req, headers);
         anydata result;
-        map<string[]> resHeaders;
+        map<string|string[]> resHeaders;
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }
 
-    isolated remote function testInt(int req, map<string[]> headers = {}) returns ([int, map<string[]>]|Error) {
+    isolated remote function testInt(int req, map<string|string[]> headers = {}) returns ([int, map<string|string[]>]|Error) {
         var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/testInt", req, headers);
         anydata result;
-        map<string[]> resHeaders;
+        map<string|string[]> resHeaders;
         [result, resHeaders] = unionResp;
         var value = result.cloneWithType(IntTypedesc);
         if (value is int) {

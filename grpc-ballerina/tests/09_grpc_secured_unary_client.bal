@@ -40,7 +40,7 @@ isolated function testUnarySecuredBlocking() {
         }
     });
 
-    [string, map<string[]>]|Error unionResp = helloWorld9BlockingEp->hello("WSO2");
+    [string, map<string|string[]>]|Error unionResp = helloWorld9BlockingEp->hello("WSO2");
     if (unionResp is Error) {
         test:assertFail(io:sprintf("Error from Connector: %s", unionResp.message()));
     } else {
@@ -64,10 +64,10 @@ public client class HelloWorld9Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_9, getDescriptorMap9());
     }
 
-    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
+    isolated remote function hello(string req, map<string|string[]> headers = {}) returns ([string, map<string|string[]>]|Error) {
         var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld85/hello", req, headers);
         any result = ();
-        map<string[]> resHeaders;
+        map<string|string[]> resHeaders;
         [result, resHeaders] = unionResp;
         return [result.toString(), resHeaders];
     }

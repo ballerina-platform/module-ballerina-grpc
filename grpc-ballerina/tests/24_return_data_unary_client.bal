@@ -141,71 +141,71 @@ public client class HelloWorld24BlockingClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_24, getDescriptorMap24());
     }
 
-    isolated remote function testStringValueReturn(string req, map<string[]> headers = {}) returns ([string,
-    map<string[]>]|Error) {
+    isolated remote function testStringValueReturn(string req, map<string|string[]> headers = {}) returns ([string,
+    map<string|string[]>]|Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testStringValueReturn", req, headers);
-        [anydata, map<string[]>][result, resHeaders] = payload;
+        [anydata, map<string|string[]>][result, resHeaders] = payload;
         return [result.toString(), resHeaders];
     }
 
-    isolated remote function testFloatValueReturn(float req, map<string[]> headers = {}) returns ([float, map<string[]>]|
+    isolated remote function testFloatValueReturn(float req, map<string|string[]> headers = {}) returns ([float, map<string|string[]>]|
     Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testFloatValueReturn", req, headers);
-        [anydata, map<string[]>][result, resHeaders] = payload;
+        [anydata, map<string|string[]>][result, resHeaders] = payload;
         return [<float>result, resHeaders];
 
     }
 
-    isolated remote function testDoubleValueReturn(float req, map<string[]> headers = {}) returns ([float, map<string[]>]|
+    isolated remote function testDoubleValueReturn(float req, map<string|string[]> headers = {}) returns ([float, map<string|string[]>]|
     Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testDoubleValueReturn", req, headers);
-        [anydata, map<string[]>][result, resHeaders] = payload;
+        [anydata, map<string|string[]>][result, resHeaders] = payload;
         return [<float>result, resHeaders];
 
     }
 
-    isolated remote function testInt64ValueReturn(int req, map<string[]> headers = {}) returns ([int, map<string[]>]|
+    isolated remote function testInt64ValueReturn(int req, map<string|string[]> headers = {}) returns ([int, map<string|string[]>]|
     Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testInt64ValueReturn", req, headers);
-        [anydata, map<string[]>][result, resHeaders] = payload;
+        [anydata, map<string|string[]>][result, resHeaders] = payload;
         return [<int>result, resHeaders];
 
     }
 
-    isolated remote function testBoolValueReturn(boolean req, map<string[]> headers = {}) returns ([boolean,
-    map<string[]>]|Error) {
+    isolated remote function testBoolValueReturn(boolean req, map<string|string[]> headers = {}) returns ([boolean,
+    map<string|string[]>]|Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBoolValueReturn", req, headers);
-        [anydata, map<string[]>][result, resHeaders] = payload;
+        [anydata, map<string|string[]>][result, resHeaders] = payload;
 
         return [<boolean>result, resHeaders];
 
     }
 
-    isolated remote function testBytesValueReturn(byte[] req, map<string[]> headers = {}) returns ([byte[], map<string[]>]|
+    isolated remote function testBytesValueReturn(byte[] req, map<string|string[]> headers = {}) returns ([byte[], map<string|string[]>]|
     Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBytesValueReturn", req, headers);
-        [anydata, map<string[]>][result, resHeaders] = payload;
+        [anydata, map<string|string[]>][result, resHeaders] = payload;
 
         return [<byte[]>result, resHeaders];
 
     }
 
-    isolated remote function testRecordValueReturn(string req, map<string[]> headers = {}) returns ([SampleMsg24,
-    map<string[]>]|Error) {
+    isolated remote function testRecordValueReturn(string req, map<string|string[]> headers = {}) returns ([SampleMsg24,
+    map<string|string[]>]|Error) {
 
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testRecordValueReturn", req, headers);
-        [anydata, map<string[]>][result, resHeaders] = payload;
+        [anydata, map<string|string[]>][result, resHeaders] = payload;
         return [<SampleMsg24>result, resHeaders];
 
     }
 
-    isolated remote function testRecordValueReturnStream(string req, map<string[]> headers = {}) returns stream<anydata>|Error {
+    isolated remote function testRecordValueReturnStream(string req, map<string|string[]> headers = {}) returns stream<anydata>|Error {
 
         return self.grpcClient->executeServerStreaming("HelloWorld24/testRecordValueReturnStream", req, headers);
     }

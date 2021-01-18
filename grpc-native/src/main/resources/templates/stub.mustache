@@ -12,7 +12,7 @@ public client class {{serviceName}}Client {
 {{#unaryFunctions}}
     isolated remote function {{methodName}}({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns ({{#if outputType}}{{outputType}}|{{/if}}grpc:Error?) {
         {{#unless inputType}}Empty message = {};{{/unless}}
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         {{#if inputType}}{{inputType}} message;
         if (req is Context{{removeSpecialCharacters inputType}}) {
             message = req.content;
@@ -21,14 +21,14 @@ public client class {{serviceName}}Client {
             message = req;
         }{{/if}}
         var payload = check self.grpcClient->executeSimpleRPC("{{methodId}}", message, headers);
-        {{#if outputType}}[anydata, map<string[]>][result, _] = payload;
+        {{#if outputType}}[anydata, map<string|string[]>][result, _] = payload;
         {{#not_equal outputType "string"}}
         return <{{outputType}}>result;
         {{/not_equal}}{{#equals outputType "string"}}return result.toString();{{/equals}}{{/if}}
     }
     isolated remote function {{methodName}}Context({{#if inputType}}{{inputType}}|Context{{removeSpecialCharacters inputType}} req{{/if}}) returns ({{#if outputType}}Context{{removeSpecialCharacters outputType}}|{{/if}}grpc:Error?) {
         {{#unless inputType}}Empty message = {};{{/unless}}
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         {{#if inputType}}{{inputType}} message;
         if (req is Context{{removeSpecialCharacters inputType}}) {
             message = req.content;
@@ -37,10 +37,11 @@ public client class {{serviceName}}Client {
             message = req;
         }{{/if}}
         var payload = check self.grpcClient->executeSimpleRPC("{{methodId}}", message, headers);
-        {{#if outputType}}[anydata, map<string[]>][result, respHeaders] = payload;
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        {{#if outputType}}
         {{#not_equal outputType "string"}}
         return {content: <{{outputType}}>result, headers: respHeaders};
-        {{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: respHeaders};{{/equals}}{{/if}}
+        {{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: respHeaders};{{/equals}}{{else}}return {headers: respHeaders};{{/if}}
     }
 {{/unaryFunctions}}{{#serverStreamingFunctions}}
     isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req{{/if}}) returns stream<anydata>|Error {

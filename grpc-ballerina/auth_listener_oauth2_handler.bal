@@ -40,35 +40,35 @@ public client class ListenerOAuth2Handler {
 
     # Authorizes with the relevant authentication & authorization requirements.
     #
-    # + headers - The headers map `map<string[]>` as an input
+    # + headers - The headers map `map<string|string[]>` as an input
     # + expectedScopes - The expected scopes as `string` or `string[]`
     # + optionalParams - Map of optionalParams parameters that need to be sent to introspection endpoint
     # + return - The `oauth2:IntrospectionResponse` instance or else `UnauthenticatedError` or `PermissionDeniedError` type error
-    remote isolated function authorize(map<string[]> headers, string|string[]? expectedScopes = (),
+    remote isolated function authorize(map<string|string[]> headers, string|string[]? expectedScopes = (),
                                        map<string>? optionalParams = ())
                                        returns oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError {
-        string? credential = extractCredential(headers);
-        if (credential is ()) {
-            return error UnauthenticatedError("Empty authentication header.");
-        }
-
-        oauth2:IntrospectionResponse|oauth2:Error details = self.provider.authorize(<string>credential);
-        if (details is oauth2:Error || !details.active) {
-            return error UnauthenticatedError(UNAUTHENTICATED_ERROR_MSG);
-        }
-        oauth2:IntrospectionResponse introspectionResponse = checkpanic details;
-        if (expectedScopes is ()) {
-            return introspectionResponse;
-        }
-
-        string scopeKey = self.scopeKey;
-        var actualScope = introspectionResponse[scopeKey];
-        if (actualScope is string) {
-            boolean matched = matchScopes(convertToArray(actualScope), <string|string[]>expectedScopes);
-            if (matched) {
+        string|Error credential = extractCredential(headers);
+        if (credential is Error) {
+            return error UnauthenticatedError(credential.message());
+        } else {
+            oauth2:IntrospectionResponse|oauth2:Error details = self.provider.authorize(<string>credential);
+            if (details is oauth2:Error || !details.active) {
+                return error UnauthenticatedError(UNAUTHENTICATED_ERROR_MSG);
+            }
+            oauth2:IntrospectionResponse introspectionResponse = checkpanic details;
+            if (expectedScopes is ()) {
                 return introspectionResponse;
             }
+
+            string scopeKey = self.scopeKey;
+            var actualScope = introspectionResponse[scopeKey];
+            if (actualScope is string) {
+                boolean matched = matchScopes(convertToArray(actualScope), <string|string[]>expectedScopes);
+                if (matched) {
+                    return introspectionResponse;
+                }
+            }
+            return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
         }
-        return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
     }
 }

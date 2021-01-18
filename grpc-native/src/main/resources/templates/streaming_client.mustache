@@ -5,14 +5,25 @@ public client class {{pascalcase methodName}}StreamingClient {
         self.sClient = sClient;
     }
 
-    {{#if inputType}}isolated remote function send({{inputType}} message) returns grpc:Error? {
+    isolated remote function send{{#if inputType}}{{inputType}}{{/if}}({{#if inputType}}{{inputType}} message{{/if}}) returns grpc:Error? {
         {{#unless inputType}}Empty message = {};{{/unless}}
         return self.sClient->send(message);
-    }{{/if}}
+    }
 
-    isolated remote function receive() returns {{#if outputType}}{{outputType}}|grpc:Error{{else}}grpc:Error?{{/if}} {
+    isolated remote function sendContext{{#if inputType}}{{removeSpecialCharacters inputType}}{{else}}Nil{{/if}}(Context{{#if inputType}}{{removeSpecialCharacters inputType}}{{else}}Nil{{/if}} message) returns grpc:Error? {
+        return self.sClient->send(message);
+    }
+
+    isolated remote function receive{{#if outputType}}{{removeSpecialCharacters outputType}}{{/if}}() returns {{#if outputType}}{{outputType}}|grpc:Error{{else}}grpc:Error?{{/if}} {
         var payload = check self.sClient->receive();
         {{#if outputType}}{{#not_equal outputType "string"}}return <{{outputType}}>payload;{{/not_equal}}{{#equals outputType "string"}}return payload.toString();{{/equals}}{{/if}}
+    }
+
+    isolated remote function receiveContext{{#if outputType}}{{removeSpecialCharacters outputType}}{{else}}Nil{{/if}}() returns Context{{#if outputType}}{{removeSpecialCharacters outputType}}{{else}}Nil{{/if}}|grpc:Error {
+        var payload = check self.sClient->receive();
+        {{#if outputType}}{{#not_equal outputType "string"}}
+        return {content: <{{outputType}}>result, headers: {}};
+        {{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: {}};{{/equals}}{{else}}return {headers: {}};{{/if}}
     }
 
     isolated remote function sendError(grpc:Error response) returns grpc:Error? {

@@ -22,7 +22,7 @@ isolated function testGzipEncoding() {
     OrderManagementClient OrderMgtBlockingEp = new("http://localhost:9111");
 
     Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
-    map<string[]> headers = {};
+    map<string|string[]> headers = {};
     headers["grpc-encoding"] = ["gzip"];
     ContextOrder reqOrder = {content: 'order, headers: headers};
     string|error result = OrderMgtBlockingEp->addOrder(reqOrder);
@@ -46,7 +46,7 @@ public client class OrderManagementClient {
     }
 
     isolated remote function addOrder(Order|ContextOrder req) returns (string|Error) {
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         Order message;
         if (req is ContextOrder) {
             message = req.content;
@@ -55,12 +55,12 @@ public client class OrderManagementClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/addOrder", message, headers);
-        [anydata, map<string[]>][result, _] = payload;
+        [anydata, map<string|string[]>][result, _] = payload;
         return result.toString();
     }
     isolated remote function addOrderContext(Order|ContextOrder req) returns (ContextString|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         Order message;
         if (req is ContextOrder) {
             message = req.content;
@@ -69,13 +69,13 @@ public client class OrderManagementClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/addOrder", message, headers);
-        [anydata, map<string[]>][result, respHeaders] = payload;
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
     isolated remote function getOrder(string|ContextString req) returns (Order|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
             message = req.content;
@@ -84,13 +84,13 @@ public client class OrderManagementClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", message, headers);
-        [anydata, map<string[]>][result, _] = payload;
+        [anydata, map<string|string[]>][result, _] = payload;
         return <Order>result;
         
     }
     isolated remote function getOrderContext(string|ContextString req) returns (ContextOrder|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
             message = req.content;
@@ -99,7 +99,7 @@ public client class OrderManagementClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("ecommerce.OrderManagement/getOrder", message, headers);
-        [anydata, map<string[]>][result, respHeaders] = payload;
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
         return {content: <Order>result, headers: respHeaders};
     }
 

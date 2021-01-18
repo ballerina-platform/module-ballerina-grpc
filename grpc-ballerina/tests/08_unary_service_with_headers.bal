@@ -27,21 +27,22 @@ listener Listener ep8 = new (9098, {
     descMap: getDescriptorMap8()
 }
 service "HelloWorld101" on ep8 {
-    isolated remote function hello(HelloWorld101StringCaller caller, ContextString request) {
+    isolated remote function hello(HelloWorld101StringCaller caller, ContextString request) returns error? {
         io:println("name: " + request.content);
         string message = "Hello " + request.content;
-        map<string[]> responseHeaders = {};
+        map<string|string[]> responseHeaders = {};
 
         if (!request.headers.hasKey("x-id")) {
             Error? err = caller->sendError(error AbortedError("x-id header is missing"));
         } else {
-            io:println("Request Header: " + (request.headers.get("x-id").toString()));
+            string headerValue = check getHeader(request.headers, "x-id");
+            io:println("Request Header: " +  headerValue);
             responseHeaders["x-id"] = ["1234567890", "2233445677"];
             io:print("Response headers: ");
-            io:println(responseHeaders.get("x-id"));
+            io:println(getHeaders(request.headers, "x-id"));
         }
         ContextString responseMessage = {content: message, headers: responseHeaders};
-        Error? err = caller->send(responseMessage);
+        Error? err = caller->sendContextString(responseMessage);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -62,7 +63,11 @@ public client class HelloWorld101StringCaller {
         return self.caller.getId();
     }
 
-    isolated remote function send(string|ContextString response) returns Error? {
+    isolated remote function sendString(string response) returns Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendContextString(ContextString response) returns Error? {
         return self.caller->send(response);
     }
 

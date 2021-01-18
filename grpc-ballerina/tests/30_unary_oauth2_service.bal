@@ -28,7 +28,7 @@ service /HelloWorld30 on ep30 {
     remote function testStringValueReturn(HelloWorld30StringCaller caller, ContextString request) {
         io:println("name: " + request.content);
         string message = "Hello " + request.content;
-        map<string[]> responseHeaders = {};
+        map<string|string[]> responseHeaders = {};
         OAuth2IntrospectionConfig config = {
             url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect",
             tokenTypeHint: "access_token",

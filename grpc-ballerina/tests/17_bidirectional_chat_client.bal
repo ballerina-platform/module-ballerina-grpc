@@ -74,7 +74,7 @@ public client class Chat17Client {
     }
 
 
-    isolated remote function chat(map<string[]> headers = {}) returns (StreamingClient|Error) {
+    isolated remote function chat(map<string|string[]> headers = {}) returns (StreamingClient|Error) {
         return self.grpcClient->executeBidirectionalStreaming("Chat/chat", headers);
     }
 }
