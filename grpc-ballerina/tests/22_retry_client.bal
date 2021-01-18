@@ -73,13 +73,12 @@ public client class RetryServiceClient {
     private Client grpcClient;
 
     public isolated function init(string url, ClientConfiguration? config = ()) {
-        // initialize client endpoint.
-        self.grpcClient = new(url, config);
+        self.grpcClient = checkpanic new(url, config);
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
     isolated remote function getResult(string|ContextString req) returns (string|Error) {
-        
+
         map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
@@ -93,7 +92,7 @@ public client class RetryServiceClient {
         return result.toString();
     }
     isolated remote function getResultContext(string|ContextString req) returns (ContextString|Error) {
-        
+
         map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {

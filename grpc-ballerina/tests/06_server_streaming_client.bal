@@ -49,7 +49,7 @@ public client class HelloWorld45Client {
 
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
-        self.grpcClient = new(url, config);
+        self.grpcClient = checkpanic new(url, config);
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 

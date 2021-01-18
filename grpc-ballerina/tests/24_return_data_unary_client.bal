@@ -123,12 +123,12 @@ public client class HelloWorld24Client {
 
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
-        self.grpcClient = new(url, config);
+        self.grpcClient = checkpanic new(url, config);
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_24, getDescriptorMap24());
     }
 
     isolated remote function testStringValueReturn(string|ContextString req) returns (string|Error) {
-        
+
         map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
@@ -142,7 +142,7 @@ public client class HelloWorld24Client {
         return result.toString();
     }
     isolated remote function testStringValueReturnContext(string|ContextString req) returns (ContextString|Error) {
-        
+
         map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
@@ -157,7 +157,7 @@ public client class HelloWorld24Client {
     }
 
     isolated remote function testFloatValueReturn(float|ContextFloat req) returns (float|Error) {
-        
+
         map<string|string[]> headers = {};
         float message;
         if (req is ContextFloat) {
@@ -168,12 +168,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testFloatValueReturn", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
-        
+
         return <float>result;
-        
+
     }
     isolated remote function testFloatValueReturnContext(float|ContextFloat req) returns (ContextFloat|Error) {
-        
+
         map<string|string[]> headers = {};
         float message;
         if (req is ContextFloat) {
@@ -184,12 +184,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testFloatValueReturn", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
-        
+
         return {content: <float>result, headers: respHeaders};
     }
 
     isolated remote function testDoubleValueReturn(float|ContextFloat req) returns (float|Error) {
-        
+
         map<string|string[]> headers = {};
         float message;
         if (req is ContextFloat) {
@@ -200,12 +200,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testDoubleValueReturn", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
-        
+
         return <float>result;
-        
+
     }
     isolated remote function testDoubleValueReturnContext(float|ContextFloat req) returns (ContextFloat|Error) {
-        
+
         map<string|string[]> headers = {};
         float message;
         if (req is ContextFloat) {
@@ -216,12 +216,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testDoubleValueReturn", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
-        
+
         return {content: <float>result, headers: respHeaders};
     }
 
     isolated remote function testInt64ValueReturn(int|ContextInt req) returns (int|Error) {
-        
+
         map<string|string[]> headers = {};
         int message;
         if (req is ContextInt) {
@@ -232,12 +232,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testInt64ValueReturn", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
-        
+
         return <int>result;
-        
+
     }
     isolated remote function testInt64ValueReturnContext(int|ContextInt req) returns (ContextInt|Error) {
-        
+
         map<string|string[]> headers = {};
         int message;
         if (req is ContextInt) {
@@ -248,12 +248,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testInt64ValueReturn", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
-        
+
         return {content: <int>result, headers: respHeaders};
     }
 
     isolated remote function testBoolValueReturn(boolean|ContextBoolean req) returns (boolean|Error) {
-        
+
         map<string|string[]> headers = {};
         boolean message;
         if (req is ContextBoolean) {
@@ -264,12 +264,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBoolValueReturn", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
-        
+
         return <boolean>result;
-        
+
     }
     isolated remote function testBoolValueReturnContext(boolean|ContextBoolean req) returns (ContextBoolean|Error) {
-        
+
         map<string|string[]> headers = {};
         boolean message;
         if (req is ContextBoolean) {
@@ -280,12 +280,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBoolValueReturn", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
-        
+
         return {content: <boolean>result, headers: respHeaders};
     }
 
     isolated remote function testBytesValueReturn(byte[]|ContextByte req) returns (byte[]|Error) {
-        
+
         map<string|string[]> headers = {};
         byte[] message;
         if (req is ContextByte) {
@@ -296,12 +296,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBytesValueReturn", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
-        
+
         return <byte[]>result;
-        
+
     }
     isolated remote function testBytesValueReturnContext(byte[]|ContextByte req) returns (ContextByte|Error) {
-        
+
         map<string|string[]> headers = {};
         byte[] message;
         if (req is ContextByte) {
@@ -312,12 +312,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testBytesValueReturn", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
-        
+
         return {content: <byte[]>result, headers: respHeaders};
     }
 
     isolated remote function testRecordValueReturn(string|ContextString req) returns (SampleMsg24|Error) {
-        
+
         map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
@@ -328,12 +328,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testRecordValueReturn", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
-        
+
         return <SampleMsg24>result;
-        
+
     }
     isolated remote function testRecordValueReturnContext(string|ContextString req) returns (ContextSampleMsg24|Error) {
-        
+
         map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
@@ -344,12 +344,12 @@ public client class HelloWorld24Client {
         }
         var payload = check self.grpcClient->executeSimpleRPC("HelloWorld24/testRecordValueReturn", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
-        
+
         return {content: <SampleMsg24>result, headers: respHeaders};
     }
 
     isolated remote function testRecordValueReturnStream(string req) returns stream<anydata>|Error {
-        
+
         return self.grpcClient->executeServerStreaming("HelloWorld24/testRecordValueReturnStream", req);
     }
 

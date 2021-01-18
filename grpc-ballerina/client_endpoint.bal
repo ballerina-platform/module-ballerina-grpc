@@ -30,13 +30,10 @@ public client class Client {
     #
     # + url - The server URL
     # + config - - The `grpc:ClientConfiguration` of the endpoint
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
         self.config = config ?: {};
         self.url = url;
-        error? err = externInit(self, self.url, self.config, globalGrpcClientConnPool);
-        if (err is error) {
-            panic err;
-        }
+        return externInit(self, self.url, self.config, globalGrpcClientConnPool);
     }
 
     # Calls when initializing the client endpoint with the service descriptor data extracted from the proto file.

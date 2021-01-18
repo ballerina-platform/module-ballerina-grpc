@@ -55,12 +55,12 @@ public client class NegotiatorClient {
 
     public isolated function init(string url, ClientConfiguration? config = ()) {
         // initialize client endpoint.
-        self.grpcClient = new(url, config);
+        self.grpcClient = checkpanic new (url, config);
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
     isolated remote function handshake(HandshakeRequest|ContextHandshakeRequest req) returns (HandshakeResponse|Error) {
-        
+
         map<string|string[]> headers = {};
         HandshakeRequest message;
         if (req is ContextHandshakeRequest) {
@@ -71,12 +71,12 @@ public client class NegotiatorClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("Negotiator/handshake", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
-        
+
         return <HandshakeResponse>result;
-        
+
     }
     isolated remote function handshakeContext(HandshakeRequest|ContextHandshakeRequest req) returns (ContextHandshakeResponse|Error) {
-        
+
         map<string|string[]> headers = {};
         HandshakeRequest message;
         if (req is ContextHandshakeRequest) {
@@ -87,12 +87,12 @@ public client class NegotiatorClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("Negotiator/handshake", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
-        
+
         return {content: <HandshakeResponse>result, headers: respHeaders};
     }
 
     isolated remote function publishMetrics(MetricsPublishRequest|ContextMetricsPublishRequest req) returns (Error?) {
-        
+
         map<string|string[]> headers = {};
         MetricsPublishRequest message;
         if (req is ContextMetricsPublishRequest) {
@@ -102,10 +102,10 @@ public client class NegotiatorClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", message, headers);
-        
+
     }
     isolated remote function publishMetricsContext(MetricsPublishRequest|ContextMetricsPublishRequest req) returns (ContextNil|Error) {
-        
+
         map<string|string[]> headers = {};
         MetricsPublishRequest message;
         if (req is ContextMetricsPublishRequest) {
@@ -120,7 +120,7 @@ public client class NegotiatorClient {
     }
 
     isolated remote function publishTraces(TracesPublishRequest|ContextTracesPublishRequest req) returns (Error?) {
-        
+
         map<string|string[]> headers = {};
         TracesPublishRequest message;
         if (req is ContextTracesPublishRequest) {
@@ -130,10 +130,10 @@ public client class NegotiatorClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", message, headers);
-        
+
     }
     isolated remote function publishTracesContext(TracesPublishRequest|ContextTracesPublishRequest req) returns (ContextNil|Error) {
-        
+
         map<string|string[]> headers = {};
         TracesPublishRequest message;
         if (req is ContextTracesPublishRequest) {
