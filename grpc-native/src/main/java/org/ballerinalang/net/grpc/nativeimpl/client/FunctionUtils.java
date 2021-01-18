@@ -20,8 +20,6 @@ package org.ballerinalang.net.grpc.nativeimpl.client;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.Runtime;
-import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
@@ -35,11 +33,8 @@ import org.ballerinalang.net.grpc.MessageUtils;
 import org.ballerinalang.net.grpc.MethodDescriptor;
 import org.ballerinalang.net.grpc.ServiceDefinition;
 import org.ballerinalang.net.grpc.Status;
-import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.exception.GrpcClientException;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
-import org.ballerinalang.net.grpc.stubs.DefaultStreamObserver;
-import org.ballerinalang.net.grpc.stubs.NonBlockingStub;
 import org.ballerinalang.net.grpc.stubs.Stub;
 import org.ballerinalang.net.http.HttpConnectionManager;
 import org.ballerinalang.net.http.HttpConstants;
@@ -54,20 +49,15 @@ import org.ballerinalang.net.transport.message.HttpConnectorUtil;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.CLIENT_CONNECTOR;
 import static org.ballerinalang.net.grpc.GrpcConstants.ENDPOINT_URL;
 import static org.ballerinalang.net.grpc.GrpcConstants.METHOD_DESCRIPTORS;
-import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_MESSAGE_DEFINITION;
-import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_SENDER;
 import static org.ballerinalang.net.grpc.GrpcConstants.SERVICE_STUB;
-import static org.ballerinalang.net.grpc.GrpcConstants.STREAMING_CLIENT;
 import static org.ballerinalang.net.grpc.GrpcUtil.getConnectionManager;
 import static org.ballerinalang.net.grpc.GrpcUtil.populatePoolingConfig;
 import static org.ballerinalang.net.grpc.GrpcUtil.populateSenderConfigurations;
 import static org.ballerinalang.net.grpc.Status.Code.INTERNAL;
-import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
 
 /**
@@ -454,172 +444,6 @@ public class FunctionUtils extends AbstractExecute {
             return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }
 
-    }
-
-    /**
-     * Extern function to perform non blocking call for the gRPC client.
-     *
-     * @param clientEndpoint  client endpoint instance.
-     * @param methodName      remote method name.
-     * @param payload         request payload.
-     * @param callbackService response callback listener service.
-     * @param headerValues    custom metadata to send with the request.
-     * @return Error if there is an error while initializing the stub, else returns nil
-     */
-    @SuppressWarnings("unchecked")
-    public static Object externNonBlockingExecute(Environment env, BObject clientEndpoint, BString methodName,
-                                                  Object payload, BObject callbackService, BMap headerValues) {
-        if (clientEndpoint == null) {
-            return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector is " +
-                    "not initialized properly");
-        }
-
-        Object connectionStub = clientEndpoint.getNativeData(SERVICE_STUB);
-        if (connectionStub == null) {
-            return notifyErrorReply(INTERNAL, "Error while getting connection stub. gRPC Client connector " +
-                    "is not initialized properly");
-        }
-
-        if (methodName == null) {
-            return notifyErrorReply(INTERNAL, "Error while processing the request. RPC endpoint doesn't " +
-                    "set properly");
-        }
-
-        Map<String, MethodDescriptor> methodDescriptors = (Map<String, MethodDescriptor>) clientEndpoint.getNativeData
-                (METHOD_DESCRIPTORS);
-        if (methodDescriptors == null) {
-            return notifyErrorReply(INTERNAL, "Error while processing the request. method descriptors " +
-                    "doesn't set properly");
-        }
-
-        com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
-                .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
-                : null;
-        if (methodDescriptor == null) {
-            return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
-        }
-
-        if (connectionStub instanceof NonBlockingStub) {
-            Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payload);
-            // Update request headers when request headers exists in the context.
-            if (headerValues != null) {
-                HttpHeaders headers = new DefaultHttpHeaders();
-                for (Object key : headerValues.getKeys()) {
-                    Object headerValue = headerValues.get(key);
-                    headers.add((String) key, headerValue);
-                }
-                requestMsg.setHeaders(headers);
-            }
-
-            NonBlockingStub nonBlockingStub = (NonBlockingStub) connectionStub;
-            try {
-                MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
-                DataContext context = new DataContext(env, null);
-                Semaphore semaphore = new Semaphore(1, true);
-                if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
-                    nonBlockingStub.executeUnary(requestMsg, new DefaultStreamObserver(Runtime.getCurrentRuntime(),
-                            callbackService, semaphore), methodDescriptors.get(methodName.getValue()), context);
-                } else if (methodType.equals(MethodDescriptor.MethodType.SERVER_STREAMING)) {
-                    nonBlockingStub.executeServerStreaming(requestMsg,
-                            new DefaultStreamObserver(Runtime.getCurrentRuntime(), callbackService, semaphore),
-                            methodDescriptors.get(methodName.getValue()), context);
-                } else {
-                    return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
-                            methodType.name() + " not supported");
-                }
-                return null;
-            } catch (Exception e) {
-                return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
-            }
-        } else {
-            return notifyErrorReply(INTERNAL, "Error while processing the request message. Connection Sub " +
-                    "type not supported");
-        }
-    }
-
-    /**
-     * Extern function to perform streaming call for the gRPC client.
-     *
-     * @param clientEndpoint  client endpoint instance.
-     * @param methodName      remote method name.
-     * @param callbackService response callback listener service.
-     * @param headerValues    custom metadata to send with the request.
-     * @return Error if there is an error while initializing the stub, else returns nil
-     */
-    @SuppressWarnings("unchecked")
-    public static Object externStreamingExecute(Environment env, BObject clientEndpoint, BString methodName,
-                                                BObject callbackService, BMap headerValues) {
-        if (clientEndpoint == null) {
-            return notifyErrorReply(INTERNAL, "Error while getting connector. gRPC Client connector " +
-                    "is not initialized properly");
-        }
-
-        Object connectionStub = clientEndpoint.getNativeData(SERVICE_STUB);
-        if (connectionStub == null) {
-            return notifyErrorReply(INTERNAL, "Error while getting connection stub. gRPC Client connector is " +
-                    "not initialized properly");
-        }
-
-        if (methodName == null) {
-            return notifyErrorReply(INTERNAL, "Error while processing the request. RPC endpoint doesn't " +
-                    "set properly");
-        }
-
-        Map<String, MethodDescriptor> methodDescriptors = (Map<String, MethodDescriptor>) clientEndpoint.getNativeData
-                (METHOD_DESCRIPTORS);
-        if (methodDescriptors == null) {
-            return notifyErrorReply(INTERNAL, "Error while processing the request. method descriptors " +
-                    "doesn't set properly");
-        }
-
-        com.google.protobuf.Descriptors.MethodDescriptor methodDescriptor = methodDescriptors
-                .get(methodName.getValue()) != null ? methodDescriptors.get(methodName.getValue()).getSchemaDescriptor()
-                : null;
-        if (methodDescriptor == null) {
-            return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
-        }
-
-        if (connectionStub instanceof NonBlockingStub) {
-            NonBlockingStub nonBlockingStub = (NonBlockingStub) connectionStub;
-            // Update request headers when request headers exists in the context.
-            HttpHeaders headers = null;
-            if (headerValues != null) {
-                headers = new DefaultHttpHeaders();
-                for (Object key : headerValues.getKeys()) {
-                    Object headerValue = headerValues.get(key);
-                    headers.add((String) key, headerValue);
-                }
-            }
-
-            try {
-                MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
-                Semaphore semaphore = new Semaphore(1, true);
-                DefaultStreamObserver responseObserver = new DefaultStreamObserver(Runtime.getCurrentRuntime(),
-                        callbackService, semaphore);
-                StreamObserver requestSender;
-                DataContext context = new DataContext(env, null);
-                if (methodType.equals(MethodDescriptor.MethodType.CLIENT_STREAMING)) {
-                    requestSender = nonBlockingStub.executeClientStreaming(headers, responseObserver,
-                            methodDescriptors.get(methodName.getValue()), context);
-                } else if (methodType.equals(MethodDescriptor.MethodType.BIDI_STREAMING)) {
-                    requestSender = nonBlockingStub.executeBidiStreaming(headers, responseObserver, methodDescriptors
-                            .get(methodName.getValue()), context);
-                } else {
-                    return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
-                            methodType.name() + " not supported");
-                }
-                BObject streamingConnection = ValueCreator.createObjectValue(getModule(), STREAMING_CLIENT);
-                streamingConnection.addNativeData(REQUEST_SENDER, requestSender);
-                streamingConnection.addNativeData(REQUEST_MESSAGE_DEFINITION, methodDescriptor
-                        .getInputType());
-                return streamingConnection;
-            } catch (RuntimeException | GrpcClientException e) {
-                return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
-            }
-        } else {
-            return notifyErrorReply(INTERNAL, "Error while processing the request message. Connection Sub " +
-                    "type not supported");
-        }
     }
 
 }
