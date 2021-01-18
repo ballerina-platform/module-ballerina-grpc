@@ -46,7 +46,6 @@ ext.stdlibConfigVersion = project.stdlibConfigVersion
 ext.stdlibIoVersion = project.stdlibIoVersion
 ext.stdlibLogVersion = project.stdlibLogVersion
 ext.stdlibFileVersion = project.stdlibFileVersion
-ext.stdlibStringUtilsVersion = project.stdlibStringUtilsVersion
 ext.stdlibTimeVersion = project.stdlibTimeVersion
 ext.stdlibOsVersion = project.stdlibOsVersion
 ext.stdlibAuthVersion = project.stdlibAuthVersion
@@ -114,13 +113,6 @@ allprojects {
         }
         maven {
             url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-time'
-            credentials {
-                username System.getenv("packageUser")
-                password System.getenv("packagePAT")
-            }
-        }
-        maven {
-            url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-stringutils'
             credentials {
                 username System.getenv("packageUser")
                 password System.getenv("packagePAT")
@@ -221,7 +213,6 @@ subprojects {
         ballerinaStdLibs "org.ballerinalang:crypto-ballerina:${stdlibCryptoVersion}"
         ballerinaStdLibs "org.ballerinalang:time-ballerina:${stdlibTimeVersion}"
         ballerinaStdLibs "org.ballerinalang:http-ballerina:${stdlibHttpVersion}"
-        ballerinaStdLibs "org.ballerinalang:stringutils-ballerina:${stdlibStringUtilsVersion}"
         ballerinaStdLibs "org.ballerinalang:log-ballerina:${stdlibLogVersion}"
         ballerinaStdLibs "org.ballerinalang:os-ballerina:${stdlibOsVersion}"
         ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
