@@ -81,13 +81,10 @@ public class Listener {
     #
     # + port - Listener port
     # + config - The `grpc:ListenerConfiguration` of the endpoint
-    public isolated function init(int port, ListenerConfiguration? config = ()) {
+    public isolated function init(int port, ListenerConfiguration? config = ()) returns error? {
         self.config = config ?: {};
         self.port = port;
-        error? err = externInitEndpoint(self);
-        if (err is error) {
-            panic err;
-        }
+        return externInitEndpoint(self);
     }
 }
 

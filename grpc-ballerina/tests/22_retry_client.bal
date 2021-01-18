@@ -75,7 +75,7 @@ public client class RetryServiceClient {
     private Client grpcClient;
 
     public isolated function init(string url, ClientConfiguration? config = ()) {
-        self.grpcClient = new(url, config);
+        self.grpcClient = checkpanic new(url, config);
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
