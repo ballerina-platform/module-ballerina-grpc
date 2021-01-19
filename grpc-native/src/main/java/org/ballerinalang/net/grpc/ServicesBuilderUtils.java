@@ -133,7 +133,7 @@ public class ServicesBuilderUtils {
                     mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
                             methodDescriptor);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
-                            getResourceInputParameterType(function)));
+                            getRemoteInputParameterType(function)));
                 }
             }
             if (methodDescriptor.toProto().getServerStreaming() && methodDescriptor.toProto().getClientStreaming()) {
@@ -311,24 +311,32 @@ public class ServicesBuilderUtils {
         }
     }
 
-    private static Type getResourceInputParameterType(MethodType attachedFunction) {
+    private static Type getRemoteInputParameterType(MethodType attachedFunction) {
 
         Type[] inputParams = attachedFunction.getType().getParameterTypes();
-        if (inputParams.length > 1) {
-            Type inputType = inputParams[1];
-            if (inputType != null && "Headers".equals(inputType.getName()) &&
-                    inputType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
-                return PredefinedTypes.TYPE_NULL;
-            } else if (inputType instanceof StreamType) {
-                return ((StreamType) inputType).getConstrainedType();
-            } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
-                    ((RecordType) inputType).getFields().size() == 2) {
-                return ((RecordType) inputType).getFields().get("content").getFieldType();
-            } else {
-                return inputParams[1];
-            }
+        Type inputType;
+
+        // length == 1 when remote function returns a value HelloWorld100ResponseCaller
+        // length == 2 when remote function uses a caller
+        if (inputParams.length == 1) {
+            inputType = inputParams[0];
+        } else if (inputParams.length >= 2) {
+            inputType = inputParams[1];
+        } else {
+            return PredefinedTypes.TYPE_NULL;
         }
-        return PredefinedTypes.TYPE_NULL;
+
+        if (inputType != null && "Headers".equals(inputType.getName()) &&
+                inputType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
+            return PredefinedTypes.TYPE_NULL;
+        } else if (inputType instanceof StreamType) {
+            return ((StreamType) inputType).getConstrainedType();
+        } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
+                ((RecordType) inputType).getFields().size() == 2) {
+            return ((RecordType) inputType).getFields().get("content").getFieldType();
+        } else {
+            return inputType;
+        }
     }
 
 }

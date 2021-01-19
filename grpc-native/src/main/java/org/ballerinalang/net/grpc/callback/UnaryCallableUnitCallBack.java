@@ -32,7 +32,6 @@ import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
-import static org.ballerinalang.net.grpc.GrpcConstants.COMPLETED_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
 import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
@@ -154,7 +153,6 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                 requestSender.onNext(new Message(this.outputType.getName(), response));
                 runtime.invokeMethodAsync(bObject, "next", null, null, this);
             } else {
-                requestSender.onNext(new Message(COMPLETED_MESSAGE, null));
                 requestSender.onCompleted();
             }
 

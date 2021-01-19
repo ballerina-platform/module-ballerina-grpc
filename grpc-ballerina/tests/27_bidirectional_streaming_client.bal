@@ -16,7 +16,6 @@
 // This is client implementation for bidirectional streaming scenario
 
 import ballerina/io;
-import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -31,30 +30,31 @@ function testBidiStreamingFromReturn() {
     } else {
         streamingClient = res;
     }
-    runtime:sleep(1);
-    ChatMessage27 msg1 = {name:"Sam", message:"Hi"};
-    ChatMessage27 msg2 = {name:"Ann", message:"Hi"};
-    ChatMessage27 msg3 = {name:"John", message:"Hi"};
-    ChatMessage27[] messages = [msg1, msg2, msg3];
+
+    ChatMessage27[] messages = [
+        {name:"Sam", message:"Hi"},
+        {name:"Ann", message:"Hey"},
+        {name:"John", message:"Hello"},
+        {name:"Jack", message:"How are you"}
+    ];
     foreach ChatMessage27 msg in messages {
         var r = streamingClient->send(msg);
     }
     var r = streamingClient->complete();
-
-    var result = streamingClient->receive();
     int i = 0;
-    string[] expectedOutput = ["Hi WSO2", "Hi Ballerina", "Hey WSO2", "Hey Ballerina"];
+    string[] expectedOutput = ["Hi Sam", "Hey Ann", "Hello John", "How are you Jack"];
+    var result = streamingClient->receive();
     while !(result is EOS) {
         io:println(result);
-        result = streamingClient->receive();
         if (result is anydata) {
             test:assertEquals(<string> result, expectedOutput[i]);
         } else {
             test:assertFail("Unexpected output in the stream");
         }
+        result = streamingClient->receive();
         i += 1;
     }
-
+    test:assertEquals(i, 4);
 }
 
 public client class ChatClientFromReturn {
