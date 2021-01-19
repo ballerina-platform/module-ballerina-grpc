@@ -30,13 +30,14 @@ function testReceiveStreamingResponseFromReturn() {
     } else {
         io:println("Connected successfully");
         string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
-        int waitCount = 0;
+        int count = 0;
         error? e = result.forEach(function(anydata value) {
             if (value != "") {
-                test:assertEquals(value, expectedResults[waitCount]);
-                waitCount += 1;
+                test:assertEquals(value, expectedResults[count]);
+                count += 1;
             }
         });
+        test:assertEquals(count, 3);
     }
 }
 
@@ -53,7 +54,7 @@ public client class HelloWorld25Client {
     }
 
     isolated remote function lotsOfReplies(string req) returns stream<anydata>|Error {
-        
+
         return self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req);
     }
 
