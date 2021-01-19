@@ -53,7 +53,6 @@ public class ObservableClientConnectorListener extends ClientConnectorListener {
                     ObserveUtils.getObserverContextOfCurrentFrame(context.getEnvironment());
             if (observerContext != null) {
                 observerContext.addTag(ObservabilityConstants.TAG_KEY_ERROR, ObservabilityConstants.TAG_TRUE_VALUE);
-                observerContext.addProperty(ObservabilityConstants.PROPERTY_ERROR_MESSAGE, throwable.getMessage());
             }
 
         }
