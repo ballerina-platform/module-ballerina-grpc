@@ -24,7 +24,6 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.StreamObserver;
 
@@ -99,7 +98,6 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
                 requestSender.onNext(new Message(this.outputType.getName(), response));
                 runtime.invokeMethodAsync(bObject, "next", null, null, this);
             } else {
-                requestSender.onNext(new Message(GrpcConstants.COMPLETED_MESSAGE, null));
                 requestSender.onCompleted();
             }
 
