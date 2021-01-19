@@ -132,7 +132,7 @@ public client class HelloWorldClient {
 
     isolated remote function testInputNestedStruct(Person|ContextPerson req) returns (string|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         Person message;
         if (req is ContextPerson) {
             message = req.content;
@@ -141,13 +141,12 @@ public client class HelloWorldClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputNestedStruct", message, headers);
-        
-        [anydata, map<string[]>][result, _] = payload;
+        [anydata, map<string|string[]>][result, _] = payload;
         return result.toString();
     }
     isolated remote function testInputNestedStructContext(Person|ContextPerson req) returns (ContextString|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         Person message;
         if (req is ContextPerson) {
             message = req.content;
@@ -156,13 +155,13 @@ public client class HelloWorldClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputNestedStruct", message, headers);
-        [anydata, map<string[]>][result, respHeaders] = payload;
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
     isolated remote function testOutputNestedStruct(string|ContextString req) returns (Person|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
             message = req.content;
@@ -171,15 +170,14 @@ public client class HelloWorldClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testOutputNestedStruct", message, headers);
-        
-        [anydata, map<string[]>][result, _] = payload;
+        [anydata, map<string|string[]>][result, _] = payload;
         
         return <Person>result;
         
     }
     isolated remote function testOutputNestedStructContext(string|ContextString req) returns (ContextPerson|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         string message;
         if (req is ContextString) {
             message = req.content;
@@ -188,15 +186,14 @@ public client class HelloWorldClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testOutputNestedStruct", message, headers);
-        [anydata, map<string[]>][result, respHeaders] = payload;
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
         
         return {content: <Person>result, headers: respHeaders};
-        
     }
 
     isolated remote function testInputStructOutputStruct(StockRequest|ContextStockRequest req) returns (StockQuote|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         StockRequest message;
         if (req is ContextStockRequest) {
             message = req.content;
@@ -205,15 +202,14 @@ public client class HelloWorldClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructOutputStruct", message, headers);
-        
-        [anydata, map<string[]>][result, _] = payload;
+        [anydata, map<string|string[]>][result, _] = payload;
         
         return <StockQuote>result;
         
     }
     isolated remote function testInputStructOutputStructContext(StockRequest|ContextStockRequest req) returns (ContextStockQuote|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         StockRequest message;
         if (req is ContextStockRequest) {
             message = req.content;
@@ -222,15 +218,14 @@ public client class HelloWorldClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructOutputStruct", message, headers);
-        [anydata, map<string[]>][result, respHeaders] = payload;
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
         
         return {content: <StockQuote>result, headers: respHeaders};
-        
     }
 
     isolated remote function testInputStructNoOutput(StockQuote|ContextStockQuote req) returns (Error?) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         StockQuote message;
         if (req is ContextStockQuote) {
             message = req.content;
@@ -241,9 +236,9 @@ public client class HelloWorldClient {
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructNoOutput", message, headers);
         
     }
-    isolated remote function testInputStructNoOutputContext(StockQuote|ContextStockQuote req) returns (Error?) {
+    isolated remote function testInputStructNoOutputContext(StockQuote|ContextStockQuote req) returns (ContextNil|Error) {
         
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         StockQuote message;
         if (req is ContextStockQuote) {
             message = req.content;
@@ -252,51 +247,49 @@ public client class HelloWorldClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructNoOutput", message, headers);
-        
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {headers: respHeaders};
     }
 
     isolated remote function testNoInputOutputStruct() returns (StockQuotes|Error) {
         Empty message = {};
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputStruct", message, headers);
-        
-        [anydata, map<string[]>][result, _] = payload;
+        [anydata, map<string|string[]>][result, _] = payload;
         
         return <StockQuotes>result;
         
     }
     isolated remote function testNoInputOutputStructContext() returns (ContextStockQuotes|Error) {
         Empty message = {};
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputStruct", message, headers);
-        [anydata, map<string[]>][result, respHeaders] = payload;
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
         
         return {content: <StockQuotes>result, headers: respHeaders};
-        
     }
 
     isolated remote function testNoInputOutputArray() returns (StockNames|Error) {
         Empty message = {};
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputArray", message, headers);
-        
-        [anydata, map<string[]>][result, _] = payload;
+        [anydata, map<string|string[]>][result, _] = payload;
         
         return <StockNames>result;
         
     }
     isolated remote function testNoInputOutputArrayContext() returns (ContextStockNames|Error) {
         Empty message = {};
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputArray", message, headers);
-        [anydata, map<string[]>][result, respHeaders] = payload;
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
         
         return {content: <StockNames>result, headers: respHeaders};
-        
     }
+
 }
 

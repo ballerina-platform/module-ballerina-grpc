@@ -1,22 +1,3 @@
 public function main (string... args) {
-{{#if blockingEP}}
-    {{serviceName}}BlockingClient blockingEp = new("http://localhost:9090");
-{{else}}
     {{serviceName}}Client ep = new("http://localhost:9090");
-{{/if}}
 }
-{{#unless blockingEP}}
-service object {} {{serviceName}}MessageListener = service object {
-
-    function onMessage(string message) {
-        // Implementation goes here.
-    }
-
-    function onError(error err) {
-        // Implementation goes here.
-    }
-
-    function onComplete() {
-        // Implementation goes here.
-    }
-};{{/unless}}

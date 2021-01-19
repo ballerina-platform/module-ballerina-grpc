@@ -42,29 +42,27 @@ function testBidiStreaming() {
     }
     runtime:sleep(1);
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
-    Error? connErr = ep->send(mes1);
+    Error? connErr = ep->sendChatMessage(mes1);
     if (connErr is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
     }
 
-    var responseMsg = ep->receive();
-    if (responseMsg is anydata) {
-        string receivedMsg = <string> responseMsg;
-        test:assertEquals(receivedMsg, "Sam: Hi");
+    var responseMsg = ep->receiveString();
+    if (responseMsg is string) {
+        test:assertEquals(responseMsg, "Sam: Hi");
     } else {
         test:assertFail(msg = responseMsg.message());
     }
 
     ChatMessage mes2 = {name:"Sam", message:"GM"};
-    connErr = ep->send(mes2);
+    connErr = ep->sendChatMessage(mes2);
     if (connErr is Error) {
         test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
     }
 
-    responseMsg = ep->receive();
-    if (responseMsg is anydata) {
-        string receivedMsg = <string> responseMsg;
-        test:assertEquals(receivedMsg, "Sam: GM");
+    responseMsg = ep->receiveString();
+    if (responseMsg is string) {
+        test:assertEquals(responseMsg, "Sam: GM");
     } else {
         test:assertFail(msg = responseMsg.message());
     }
@@ -97,13 +95,22 @@ public client class ChatStreamingClient {
         self.sClient = sClient;
     }
 
-    isolated remote function send(ChatMessage message) returns Error? {
+    isolated remote function sendChatMessage(ChatMessage message) returns Error? {
         return self.sClient->send(message);
     }
 
-    isolated remote function receive() returns string|Error {
+    isolated remote function sendContextChatMessage(ContextChatMessage message) returns Error? {
+        return self.sClient->send(message);
+    }
+
+    isolated remote function receiveString() returns string|Error {
         var payload = check self.sClient->receive();
         return payload.toString();
+    }
+
+    isolated remote function receiveContextString() returns ContextString|Error {
+        var result = check self.sClient->receive();
+        return {content: result.toString(), headers: {}};
     }
 
     isolated remote function sendError(Error response) returns Error? {

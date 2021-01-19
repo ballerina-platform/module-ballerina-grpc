@@ -47,16 +47,15 @@ isolated function prepareClientAuthError(string message, error? err = ()) return
     return error ClientAuthError(message);
 }
 
-// Extract the credential from `map<string[]>`
-isolated function extractCredential(map<string[]> headers) returns string? {
-    string[] authHeader = headers.get(AUTH_HEADER);
-    if (authHeader.length() > 0) {
-        string[] splittedHeader = regex:split(<string>authHeader[0], " ");
-        if (splittedHeader.length() > 1) {
-            return splittedHeader[1];
-        }
+// Extract the credential from `map<string|string[]>`
+isolated function extractCredential(map<string|string[]> headers) returns string|Error {
+    string authHeader = check getHeader(headers, AUTH_HEADER);
+    string[] splittedHeader = regex:split(<string>authHeader, " ");
+    if (splittedHeader.length() > 1) {
+        return splittedHeader[1];
+    } else {
+        return error UnauthenticatedError("Empty authentication header.");
     }
-    return ();
 }
 
 // Match the expectedScopes with actualScopes and return if there is a match.

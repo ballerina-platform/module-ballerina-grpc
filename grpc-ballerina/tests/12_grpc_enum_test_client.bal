@@ -21,14 +21,12 @@ import ballerina/test;
 isolated function testSendAndReceiveEnum() {
     testEnumServiceClient blockingEp = new ("http://localhost:9102");
 
-    orderInfo orderReq = { id:"100500", mode:r };
+    OrderInfo orderReq = { id:"100500", mode:r };
     var addResponse = blockingEp->testEnum(orderReq);
     if (addResponse is Error) {
         test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
     } else {
-        string result = "";
-        [result, _] = addResponse;
-        test:assertEquals(result, "r");
+        test:assertEquals(addResponse, "r");
     }
 }
 
@@ -44,12 +42,33 @@ public client class testEnumServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_12, getDescriptorMap12());
     }
 
-    isolated remote function testEnum (orderInfo req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.testEnumService/testEnum", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
+    isolated remote function testEnum(OrderInfo|ContextOrderInfo req) returns (string|Error) {
+        
+        map<string|string[]> headers = {};
+        OrderInfo message;
+        if (req is ContextOrderInfo) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.testEnumService/testEnum", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
-}
+    isolated remote function testEnumContext(OrderInfo|ContextOrderInfo req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        OrderInfo message;
+        if (req is ContextOrderInfo) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.testEnumService/testEnum", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
+    }
 
+}

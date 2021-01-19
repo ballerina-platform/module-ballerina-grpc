@@ -331,6 +331,9 @@ public class BallerinaFileBuilder {
         handlebars.registerHelper("removeSpecialCharacters", (object, options) -> {
             if (object instanceof String) {
                 String outputType = ((String) object).replaceAll("[^a-zA-Z0-9]", "");
+                if ("byte".equalsIgnoreCase(outputType)) {
+                    outputType = "Bytes";
+                }
                 return BalGenerationUtils.toPascalCase(outputType);
             }
             return "";

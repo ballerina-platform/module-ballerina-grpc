@@ -29,7 +29,7 @@ service "HelloWorld98" on ep5 {
         if (name == "invalid") {
             err = caller->sendError(error AbortedError("Operation aborted"));
         } else {
-            err = caller->send(message);
+            err = caller->sendString(message);
         }
         if (err is Error) {
             log:printError(err.message(), err = err);
@@ -45,7 +45,7 @@ service "HelloWorld98" on ep5 {
         } else {
             displayAge = 1;
         }
-        Error? err = caller->send(displayAge);
+        Error? err = caller->sendInt(displayAge);
         if (err is Error) {
             log:printError(err.message(), err = err);
         } else {
@@ -55,23 +55,26 @@ service "HelloWorld98" on ep5 {
     }
 }
 
-public client class HelloWorld98StringCaller {
+public client class HelloWorld98IntCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(string response) returns Error? {
+    
+    isolated remote function sendInt(int response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextInt(ContextInt response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -79,23 +82,26 @@ public client class HelloWorld98StringCaller {
     }
 }
 
-public client class HelloWorld98IntCaller {
+public client class HelloWorld98StringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(int response) returns Error? {
+    
+    isolated remote function sendString(string response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextString(ContextString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {

@@ -47,8 +47,11 @@ type TestStructTypedesc typedesc<TestStruct>;
 type ResponseTypedesc typedesc<Response>;
 type RequestTypedesc typedesc<Request>;
 
-# Context record includes message payload and headers.
 public type ContextString record {|
     string content;
-    map<string[]> headers;
+    map<string|string[]> headers;
+|};
+
+public type ContextNil record {|
+    map<string|string[]> headers;
 |};

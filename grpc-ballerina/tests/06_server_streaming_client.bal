@@ -54,7 +54,8 @@ public client class HelloWorld45Client {
     }
 
     isolated remote function lotsOfReplies(string req) returns stream<anydata>|Error {
-
+        
         return self.grpcClient->executeServerStreaming("grpcservices.HelloWorld45/lotsOfReplies", req);
     }
+
 }

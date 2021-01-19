@@ -23,16 +23,14 @@ import ballerina/test;
 isolated function testInvokeUnavailableService() {
     HelloWorld16Client helloWorld16BlockingEp = new ("http://localhost:9106");
     string name = "WSO2";
-    [string, map<string[]>]|Error unionResp16 = helloWorld16BlockingEp->hello(name);
+    string|Error unionResp16 = helloWorld16BlockingEp->hello(name);
     if (unionResp16 is Error) {
         test:assertTrue(unionResp16.message().startsWith("Connection refused:"), msg = "Failed with error: " +
         unionResp16.message());
     } else {
         io:println("Client Got Response : ");
-        string result;
-        [result, _] = unionResp16;
-        io:println(result);
-        test:assertFail(result);
+        io:println(unionResp16);
+        test:assertFail(unionResp16);
     }
 }
 
@@ -48,13 +46,35 @@ public client class HelloWorld16Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_16, getDescriptorMap16());
     }
 
-    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("HelloWorld/hello", req, headers);
-        anydata result;
-        map<string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
+    isolated remote function hello(string|ContextString req) returns (string|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld/hello", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
+    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
+    }
+
 }
 
 const string ROOT_DESCRIPTOR_16 = "0A2331365F756E617661696C61626C655F736572766963655F636C69656E742E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32510A0A48656C6C6F576F726C6412430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";

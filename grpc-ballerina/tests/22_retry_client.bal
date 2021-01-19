@@ -51,8 +51,7 @@ function testRetry() {
         io:println(result);
         test:assertFail(result.toString());
     } else {
-        var [message, headers] = result;
-        test:assertEquals(message, "Total Attempts: 4");
+        test:assertEquals(result, "Total Attempts: 4");
     }
 }
 
@@ -63,8 +62,7 @@ function testRetryFailingClient() {
         io:println(result);
         test:assertEquals(result.message(), "Maximum retry attempts completed without getting a result");
     } else {
-        var [message, headers] = result;
-        test:assertFail(message);
+        test:assertFail(result);
     }
 }
 
@@ -79,11 +77,33 @@ public client class RetryServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
-    isolated remote function getResult(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("RetryService/getResult", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        return [result.toString(), resHeaders];
+    isolated remote function getResult(string|ContextString req) returns (string|Error) {
+
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("RetryService/getResult", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
+    isolated remote function getResultContext(string|ContextString req) returns (ContextString|Error) {
+
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("RetryService/getResult", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
+    }
+
 }

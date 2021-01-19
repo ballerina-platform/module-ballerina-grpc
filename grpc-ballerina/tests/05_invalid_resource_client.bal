@@ -17,39 +17,35 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorld5BlockingClient helloWorld5BlockingEp = new ("http://localhost:9095");
+final HelloWorld98Client helloWorld5BlockingEp = new ("http://localhost:9095");
 
 @test:Config {enable:true}
 function testInvalidRemoteMethod() {
     string name = "WSO2";
-    [string, map<string[]>]|Error unionResp = helloWorld5BlockingEp->hello(name);
+    string|Error unionResp = helloWorld5BlockingEp->hello(name);
     if (unionResp is Error) {
         test:assertEquals(unionResp.message(), "No registered method descriptor for " +
                                                                "'grpcservices.HelloWorld98/hello1'");
     } else {
         io:println("Client Got Response : ");
-        string result = "";
-        [result, _] = unionResp;
-        io:println(result);
-        test:assertFail("Client got response: " + result);
+        io:println(unionResp);
+        test:assertFail("Client got response: " + unionResp);
     }
 }
 
 @test:Config {enable:true}
 function testInvalidInputParameter() {
-    int age = 10;
-    [int, map<string[]>]|Error unionResp = helloWorld5BlockingEp->testInt(age);
+    string age = "";
+    int|Error unionResp = helloWorld5BlockingEp->testInt(age);
     if (unionResp is Error) {
         test:assertFail(io:sprintf("Error from Connector: %s", unionResp.message()));
     } else {
         io:println("Client got response : ");
-        int result = 0;
-        [result, _] = unionResp;
-        test:assertEquals(result, -1);
+        test:assertEquals(unionResp, -1);
     }
 }
 
-public client class HelloWorld5BlockingClient {
+public client class HelloWorld98Client {
 
     *AbstractClientEndpoint;
 
@@ -61,24 +57,65 @@ public client class HelloWorld5BlockingClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_5, getDescriptorMap5());
     }
 
-    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/hello1", req, headers);
-        anydata result;
-        map<string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
+    isolated remote function hello(string|ContextString req) returns (string|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/hello1", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
+    }
+    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function testInt(int req, map<string[]> headers = {}) returns ([int, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/testInt", req, headers);
-        anydata result;
-        map<string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(IntTypedesc);
-        if (value is int) {
-            return [value, resHeaders];
+    isolated remote function testInt(string|ContextString req) returns (int|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/testInt", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <int>result;
+        
     }
+    isolated remote function testIntContext(string|ContextString req) returns (ContextInt|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/testInt", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <int>result, headers: respHeaders};
+    }
+
 }

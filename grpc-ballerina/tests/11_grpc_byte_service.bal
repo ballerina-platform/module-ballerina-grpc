@@ -24,7 +24,7 @@ listener Listener ep11 = new (9101, {
 }
 service "byteService" on ep11 {
     isolated remote function checkBytes(ByteServiceByteCaller caller, byte[] value) {
-        checkpanic caller->send(value);
+        checkpanic caller->sendBytes(value);
         checkpanic caller->complete();
     }
 }
@@ -32,26 +32,34 @@ service "byteService" on ep11 {
 public client class ByteServiceByteCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(byte[] response) returns Error? {
+    
+    isolated remote function sendBytes(byte[] response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextBytes(ContextBytes response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
 }
+
+public type ContextBytes record {|
+    byte[] content;
+    map<string|string[]> headers;
+|};
 
 const string ROOT_DESCRIPTOR_11 = "0A1A31315F677270635F627974655F736572766963652E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32550A0B627974655365727669636512460A0A636865636B4279746573121B2E676F6F676C652E70726F746F6275662E427974657356616C75651A1B2E676F6F676C652E70726F746F6275662E427974657356616C7565620670726F746F33";
 isolated function getDescriptorMap11() returns map<string> {

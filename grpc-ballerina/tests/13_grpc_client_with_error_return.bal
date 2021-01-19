@@ -26,9 +26,7 @@ isolated function testErrorResponse() {
     if (unionResp is Error) {
         test:assertEquals(unionResp.message(), "error(\"Details\")");
     } else {
-        string result = "";
-        [result, _] = unionResp;
-        test:assertFail(result);
+        test:assertFail(unionResp);
     }
 }
 
@@ -44,12 +42,32 @@ public client class HelloWorld13Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
-    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld13/hello", req, headers);
-        map<string[]> resHeaders;
-        any result = ();
-        [result, resHeaders] = payload;
-        return [result.toString(), resHeaders];
+    isolated remote function hello(string|ContextString req) returns (string|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld13/hello", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
-
+    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld13/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
+    }
 }

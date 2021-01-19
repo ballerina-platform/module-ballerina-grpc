@@ -30,7 +30,7 @@ service "HelloWorld45" on ep6 {
         io:println("Server received hello from " + name);
         string[] greets = ["Hi", "Hey", "GM"];
         foreach var greet in greets {
-            Error? err = caller->send(greet + " " + name);
+            Error? err = caller->sendString(greet + " " + name);
             if (err is Error) {
                 io:println("Error from Connector: " + err.message());
             } else {
@@ -46,18 +46,21 @@ service "HelloWorld45" on ep6 {
 public client class HelloWorld45StringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(string|ContextString response) returns Error? {
+    
+    isolated remote function sendString(string response) returns Error? {
         return self.caller->send(response);
     }
-
+    isolated remote function sendContextString(ContextString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
     isolated remote function sendError(Error response) returns Error? {
         return self.caller->sendError(response);
     }

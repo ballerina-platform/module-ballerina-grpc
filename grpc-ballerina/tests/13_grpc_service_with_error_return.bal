@@ -29,20 +29,23 @@ service "HelloWorld13" on new Listener(9103) {
 public client class HelloWorld13StringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
     public isolated function getId() returns int {
         return self.caller.getId();
     }
-
-    isolated remote function send(string response) returns Error? {
+    
+    isolated remote function sendString(string response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextString(ContextString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {

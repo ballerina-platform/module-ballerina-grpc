@@ -19,7 +19,7 @@ import ballerina/test;
 @test:Config {enable:true}
 public function testStringValueReturnWithOauth2() {
     HelloWorld30BlockingClient helloWorldEp = new ("http://localhost:9120");
-    map<string[]> requestHeaders = {};
+    map<string|string[]> requestHeaders = {};
 
     OAuth2ClientCredentialsGrantConfig config = {
         tokenUrl: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token",
@@ -36,7 +36,7 @@ public function testStringValueReturnWithOauth2() {
         }
     };
     ClientOAuth2Handler handler = new(config);
-    map<string[]>|ClientAuthError result = handler->enrich(requestHeaders);
+    map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
     if (result is ClientAuthError) {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
@@ -67,14 +67,14 @@ public client class HelloWorld30BlockingClient {
 
     isolated remote function testStringValueReturn(string|ContextString req) returns ContextString|Error {
         string message;
-        map<string[]> headers = {};
+        map<string|string[]> headers = {};
         if (req is ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
             message = req;
         }
-        [anydata, map<string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld30/testStringValueReturn", message, headers);
+        [anydata, map<string|string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld30/testStringValueReturn", message, headers);
         return  {content: result.toString(), headers: requestHeaders};
     }
 

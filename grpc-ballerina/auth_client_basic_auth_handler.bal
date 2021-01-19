@@ -35,9 +35,9 @@ public class ClientBasicAuthHandler {
 
     # Enrich the headers with the relevant authentication requirements.
     #
-    # + headers - The headers map `map<string[]>` as an input
-    # + return - The updated headers map `map<string[]>` instance or else an `grpc:ClientAuthError` in case of an error
-    public isolated function enrich(map<string[]> headers) returns map<string[]>|ClientAuthError {
+    # + headers - The headers map `map<string|string[]>` as an input
+    # + return - The updated headers map `map<string|string[]>` instance or else an `grpc:ClientAuthError` in case of an error
+    public isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|auth:Error result = self.provider.generateToken();
         if (result is auth:Error) {
             return prepareClientAuthError("Failed to enrich request with Basic Auth token.", result);

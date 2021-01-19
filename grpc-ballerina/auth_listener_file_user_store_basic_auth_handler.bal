@@ -35,18 +35,19 @@ public class ListenerFileUserStoreBasicAuthHandler {
 
     # Authenticates with the relevant authentication requirements.
     #
-    # + headers - The headers map `map<string[]>` as an input
+    # + headers - The headers map `map<string|string[]>` as an input
     # + return - The `auth:UserDetails` instance or else an `UnauthenticatedError` error
-    public isolated function authenticate(map<string[]> headers) returns auth:UserDetails|UnauthenticatedError {
-        string? credential = extractCredential(headers);
-        if (credential is ()) {
-            return error UnauthenticatedError("Empty authentication header.");
+    public isolated function authenticate(map<string|string[]> headers) returns auth:UserDetails|UnauthenticatedError {
+        string|Error credential = extractCredential(headers);
+        if (credential is Error) {
+            return error UnauthenticatedError(credential.message());
+        } else {
+            auth:UserDetails|auth:Error details = self.provider.authenticate(credential);
+            if (details is auth:Error) {
+                return error UnauthenticatedError(details.message());
+            }
+            return checkpanic details;
         }
-        auth:UserDetails|auth:Error details = self.provider.authenticate(<string>credential);
-        if (details is auth:Error) {
-            return error UnauthenticatedError(details.message());
-        }
-        return checkpanic details;
     }
 
     # Authorizes with the relevant authorization requirements.

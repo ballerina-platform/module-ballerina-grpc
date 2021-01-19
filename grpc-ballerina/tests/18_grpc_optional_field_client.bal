@@ -37,9 +37,7 @@ isolated function testOptionalFieldMessage() {
         log:printError("Error response.", err = result);
         test:assertFail("Error occurred while calling remote method, placeorder");
     } else {
-        PlaceOrderResponse response;
-        [response, _] = result;
-        test:assertEquals(response.'order, "This is a address");
+        test:assertEquals(result.'order, "This is a address");
     }
 }
 
@@ -55,13 +53,36 @@ public client class CheckoutServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_18, getDescriptorMap18());
     }
 
-    isolated remote function PlaceOrder(PlaceOrderRequest req, map<string[]> headers = {}) returns
-                                                                    ([PlaceOrderResponse, map<string[]>]|Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.CheckoutService/PlaceOrder", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        return [<PlaceOrderResponse>result, resHeaders];
+    isolated remote function PlaceOrder(PlaceOrderRequest|ContextPlaceOrderRequest req) returns (PlaceOrderResponse|Error) {
+        
+        map<string|string[]> headers = {};
+        PlaceOrderRequest message;
+        if (req is ContextPlaceOrderRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.CheckoutService/PlaceOrder", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <PlaceOrderResponse>result;
+        
+    }
+    isolated remote function PlaceOrderContext(PlaceOrderRequest|ContextPlaceOrderRequest req) returns (ContextPlaceOrderResponse|Error) {
+        
+        map<string|string[]> headers = {};
+        PlaceOrderRequest message;
+        if (req is ContextPlaceOrderRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.CheckoutService/PlaceOrder", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <PlaceOrderResponse>result, headers: respHeaders};
     }
 
 }

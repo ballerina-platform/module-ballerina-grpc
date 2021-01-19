@@ -26,13 +26,13 @@ service "OrderManagement" on ordermgtep {
 
     isolated remote function addOrder(OrderManagementStringCaller caller, Order value) {
         io:println(value);
-        var send = caller->send("Order is added " + value.id);
+        var send = caller->sendString("Order is added " + value.id);
         error? complete = caller->complete();
     }
 
     isolated remote function getOrder(OrderManagementOrderCaller caller, string value) {
         Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
-        var send = caller->send('order);
+        var send = caller->sendOrder('order);
         error? complete = caller->complete();
     }
 }
@@ -40,7 +40,7 @@ service "OrderManagement" on ordermgtep {
 public client class OrderManagementOrderCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
@@ -48,7 +48,10 @@ public client class OrderManagementOrderCaller {
         return self.caller.getId();
     }
     
-    isolated remote function send(Order response) returns Error? {
+    isolated remote function sendOrder(Order response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextOrder(ContextOrder response) returns Error? {
         return self.caller->send(response);
     }
     
@@ -64,7 +67,7 @@ public client class OrderManagementOrderCaller {
 public client class OrderManagementStringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
@@ -72,7 +75,10 @@ public client class OrderManagementStringCaller {
         return self.caller.getId();
     }
     
-    isolated remote function send(string response) returns Error? {
+    isolated remote function sendString(string response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextString(ContextString response) returns Error? {
         return self.caller->send(response);
     }
     
@@ -84,6 +90,11 @@ public client class OrderManagementStringCaller {
         return self.caller->complete();
     }
 }
+
+public type ContextOrder record {|
+    Order content;
+    map<string|string[]> headers;
+|};
 
 public type Order record {|
     string id = "";
@@ -100,18 +111,6 @@ public type CombinedShipment record {|
     Order[] ordersList = [];
 
 |};
-
-# Context record includes message payload and headers.
-public type ContextOrder record {|
-    Order content;
-    map<string[]> headers;
-|};
-
-# Context record includes message payload and headers.
-//public type ContextString record {|
-//    string content;
-//    map<string[]> headers;
-//|};
 
 const string ROOT_DESCRIPTOR_21 = "0A2332315F677270635F677A69705F656E636F64696E675F736572766963652E70726F746F120965636F6D6D657263651A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F2287010A054F72646572120E0A0269641801200128095202696412140A056974656D7318022003280952056974656D7312200A0B6465736372697074696F6E180320012809520B6465736372697074696F6E12140A0570726963651804200128025205707269636512200A0B64657374696E6174696F6E180520012809520B64657374696E6174696F6E226C0A10436F6D62696E6564536869706D656E74120E0A0269641801200128095202696412160A06737461747573180220012809520673746174757312300A0A6F72646572734C69737418032003280B32102E65636F6D6D657263652E4F72646572520A6F72646572734C6973743289010A0F4F726465724D616E6167656D656E74123A0A086164644F7264657212102E65636F6D6D657263652E4F726465721A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565123A0A086765744F72646572121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A102E65636F6D6D657263652E4F72646572620670726F746F33";
 isolated function getDescriptorMap21() returns map<string> {

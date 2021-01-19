@@ -28,10 +28,7 @@ isolated function testByteArray() {
     if (addResponse is Error) {
         test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
     } else {
-        byte[] result = [];
-        map<string[]> resHeaders;
-        [result, resHeaders] = addResponse;
-        test:assertEquals(result, bytes);
+        test:assertEquals(addResponse, bytes);
     }
 }
 
@@ -49,9 +46,7 @@ function testLargeByteArray() {
             if (addResponse is Error) {
                 test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
             } else {
-                byte[] result = [];
-                [result, _] = addResponse;
-                test:assertEquals(result, resultBytes);
+                test:assertEquals(addResponse, resultBytes);
             }
         } else {
             error err = resultBytes;
@@ -72,17 +67,36 @@ public client class byteServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
-    isolated remote function checkBytes (byte[] req, map<string[]> headers = {}) returns ([byte[], map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.byteService/checkBytes", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = unionResp;
-        var value = result.cloneWithType(ByteArrayTypedesc);
-        if (value is byte[]) {
-            return [value, resHeaders];
+    isolated remote function checkBytes(byte[]|ContextBytes req) returns (byte[]|Error) {
+        
+        map<string|string[]> headers = {};
+        byte[] message;
+        if (req is ContextBytes) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            return error InternalError("Error while constructing the message", value);
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.byteService/checkBytes", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <byte[]>result;
+        
     }
-}
+    isolated remote function checkBytesContext(byte[]|ContextBytes req) returns (ContextBytes|Error) {
+        
+        map<string|string[]> headers = {};
+        byte[] message;
+        if (req is ContextBytes) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.byteService/checkBytes", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <byte[]>result, headers: respHeaders};
+    }
 
+}

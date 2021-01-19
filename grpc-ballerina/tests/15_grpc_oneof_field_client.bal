@@ -30,10 +30,7 @@ function testOneofFieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        Response1 resp = {message:""};
-        [resp, _] = result;
-
-        test:assertEquals(resp.message, "Hello Sam");
+        test:assertEquals(result.message, "Hello Sam");
     }
 }
 
@@ -44,9 +41,7 @@ function testDoubleFieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_a.toString(), "1.7976931348623157E308");
+        test:assertEquals(result?.one_a.toString(), "1.7976931348623157E308");
     }
 }
 
@@ -57,9 +52,7 @@ function testFloatFieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_b.toString(), "3.4028235E38");
+        test:assertEquals(result?.one_b.toString(), "3.4028235E38");
     }
 }
 
@@ -70,9 +63,7 @@ function testInt64FieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_c.toString(), "-9223372036854775808");
+        test:assertEquals(result?.one_c.toString(), "-9223372036854775808");
     }
 }
 
@@ -83,9 +74,7 @@ function testUInt64FieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_d.toString(), "9223372036854775807");
+        test:assertEquals(result?.one_d.toString(), "9223372036854775807");
     }
 }
 
@@ -96,9 +85,7 @@ function testInt32FieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_e.toString(), "-2147483648");
+        test:assertEquals(result?.one_e.toString(), "-2147483648");
     }
 }
 
@@ -109,9 +96,7 @@ function testFixed64FieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_f.toString(), "9223372036854775807");
+        test:assertEquals(result?.one_f.toString(), "9223372036854775807");
     }
 }
 
@@ -122,9 +107,7 @@ function testFixed32FieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_g.toString(), "2147483647");
+        test:assertEquals(result?.one_g.toString(), "2147483647");
     }
 }
 
@@ -135,9 +118,7 @@ function testBolFieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_h.toString(), "true");
+        test:assertEquals(result?.one_h.toString(), "true");
     }
 }
 
@@ -148,9 +129,7 @@ function testStringFieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_i.toString(), "Testing");
+        test:assertEquals(result?.one_i.toString(), "Testing");
     }
 }
 
@@ -162,9 +141,7 @@ function testMessageFieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        test:assertEquals(resp?.one_j?.aaa.toString(), "Testing");
+        test:assertEquals(result?.one_j?.aaa.toString(), "Testing");
     }
 }
 
@@ -177,9 +154,7 @@ function testBytesFieldValue() {
     if (result is Error) {
          test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
     } else {
-        ZZZ resp;
-        [resp, _] = result;
-        boolean bResp = resp?.one_k == bytes;
+        boolean bResp = result?.one_k == bytes;
         test:assertEquals(bResp.toString(), "true");
     }
 }
@@ -196,32 +171,68 @@ public client class OneofFieldServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_15, getDescriptorMap15());
     }
 
-    isolated remote function hello(Request1 req, map<string[]> headers = {}) returns ([Response1, map<string[]>]|Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(Response1Typedesc);
-        if (value is Response1) {
-            return [value, resHeaders];
+    isolated remote function hello(Request1|ContextRequest1 req) returns (Response1|Error) {
+        
+        map<string|string[]> headers = {};
+        Request1 message;
+        if (req is ContextRequest1) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            Error err = error InternalError("Error while constructing the message", value);
-            return err;
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <Response1>result;
+        
+    }
+    isolated remote function helloContext(Request1|ContextRequest1 req) returns (ContextResponse1|Error) {
+        
+        map<string|string[]> headers = {};
+        Request1 message;
+        if (req is ContextRequest1) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <Response1>result, headers: respHeaders};
     }
 
-    isolated remote function testOneofField(ZZZ req, map<string[]> headers = {}) returns ([ZZZ, map<string[]>]|Error) {
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", req, headers);
-        map<string[]> resHeaders;
-        anydata result = ();
-        [result, resHeaders] = payload;
-        var value = result.cloneWithType(ZZZTypedesc);
-        if (value is ZZZ) {
-            return [value, resHeaders];
+    isolated remote function testOneofField(ZZZ|ContextZZZ req) returns (ZZZ|Error) {
+        
+        map<string|string[]> headers = {};
+        ZZZ message;
+        if (req is ContextZZZ) {
+            message = req.content;
+            headers = req.headers;
         } else {
-            Error err = error InternalError("Error while constructing the message", value);
-            return err;
+            message = req;
         }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        
+        return <ZZZ>result;
+        
+    }
+    isolated remote function testOneofFieldContext(ZZZ|ContextZZZ req) returns (ContextZZZ|Error) {
+        
+        map<string|string[]> headers = {};
+        ZZZ message;
+        if (req is ContextZZZ) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        
+        return {content: <ZZZ>result, headers: respHeaders};
     }
 
 }

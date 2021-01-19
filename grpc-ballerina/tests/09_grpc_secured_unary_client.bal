@@ -19,7 +19,7 @@ import ballerina/test;
 
 @test:Config {enable:true}
 isolated function testUnarySecuredBlocking() {
-    HelloWorld9Client helloWorld9BlockingEp = new ("https://localhost:9099", {
+    HelloWorld85Client helloWorld9BlockingEp = new ("https://localhost:9099", {
         secureSocket:{
             trustStore:{
                path: TRUSTSTORE_PATH,
@@ -40,19 +40,17 @@ isolated function testUnarySecuredBlocking() {
         }
     });
 
-    [string, map<string[]>]|Error unionResp = helloWorld9BlockingEp->hello("WSO2");
+    string|Error unionResp = helloWorld9BlockingEp->hello("WSO2");
     if (unionResp is Error) {
         test:assertFail(io:sprintf("Error from Connector: %s", unionResp.message()));
     } else {
-        string result;
-        [result, _] = unionResp;
         io:println("Client Got Response : ");
-        io:println(result);
-        test:assertEquals(result, "Hello WSO2");
+        io:println(unionResp);
+        test:assertEquals(unionResp, "Hello WSO2");
     }
 }
 
-public client class HelloWorld9Client {
+public client class HelloWorld85Client {
 
     *AbstractClientEndpoint;
 
@@ -64,12 +62,34 @@ public client class HelloWorld9Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_9, getDescriptorMap9());
     }
 
-    isolated remote function hello(string req, map<string[]> headers = {}) returns ([string, map<string[]>]|Error) {
-        var unionResp = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld85/hello", req, headers);
-        any result = ();
-        map<string[]> resHeaders;
-        [result, resHeaders] = unionResp;
-        return [result.toString(), resHeaders];
+    isolated remote function hello(string|ContextString req) returns (string|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld85/hello", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
+    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld85/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
+    }
+
 }
 

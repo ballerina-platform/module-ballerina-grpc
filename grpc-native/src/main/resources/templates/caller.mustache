@@ -1,7 +1,7 @@
 public client class {{@key}} {
     private grpc:Caller caller;
 
-    public function init(grpc:Caller caller) {
+    public isolated function init(grpc:Caller caller) {
         self.caller = caller;
     }
 
@@ -9,7 +9,10 @@ public client class {{@key}} {
         return self.caller.getId();
     }
     {{#if this}}
-    isolated remote function send({{this}}|Context{{removeSpecialCharacters this}} response) returns grpc:Error? {
+    isolated remote function send{{removeSpecialCharacters this}}({{this}} response) returns grpc:Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContext{{removeSpecialCharacters this}}(Context{{removeSpecialCharacters this}} response) returns grpc:Error? {
         return self.caller->send(response);
     }
     {{/if}}

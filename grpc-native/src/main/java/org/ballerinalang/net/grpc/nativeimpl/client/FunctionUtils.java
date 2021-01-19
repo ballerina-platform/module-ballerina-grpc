@@ -20,12 +20,10 @@ package org.ballerinalang.net.grpc.nativeimpl.client;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.DataContext;
 import org.ballerinalang.net.grpc.Message;
@@ -57,6 +55,7 @@ import static org.ballerinalang.net.grpc.GrpcConstants.SERVICE_STUB;
 import static org.ballerinalang.net.grpc.GrpcUtil.getConnectionManager;
 import static org.ballerinalang.net.grpc.GrpcUtil.populatePoolingConfig;
 import static org.ballerinalang.net.grpc.GrpcUtil.populateSenderConfigurations;
+import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
 import static org.ballerinalang.net.grpc.Status.Code.INTERNAL;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
 
@@ -216,18 +215,8 @@ public class FunctionUtils extends AbstractExecute {
         Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payloadBValue);
 
         // Update request headers when request headers exists in the context.
-        if (headerValues != null) {
-            HttpHeaders headers = new DefaultHttpHeaders();
-            for (Object key : headerValues.getKeys()) {
-                Object headerValue = headerValues.get(key);
-                if (headerValue instanceof BArray) {
-                    for (String value : ((BArray) headerValue).getStringArray()) {
-                        headers.set(key.toString(), value);
-                    }
-                }
-            }
-            requestMsg.setHeaders(headers);
-        }
+        HttpHeaders headers = convertToHttpHeaders(headerValues);
+        requestMsg.setHeaders(headers);
         Stub stub = (Stub) connectionStub;
         DataContext dataContext = null;
         try {
@@ -295,18 +284,8 @@ public class FunctionUtils extends AbstractExecute {
         Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payload);
 
         // Update request headers when request headers exists in the context.
-        if (headerValues != null) {
-            HttpHeaders headers = new DefaultHttpHeaders();
-            for (Object key : headerValues.getKeys()) {
-                Object headerValue = headerValues.get(key);
-                if (headerValue instanceof BArray) {
-                    for (String value : ((BArray) headerValue).getStringArray()) {
-                        headers.set(key.toString(), value);
-                    }
-                }
-            }
-            requestMsg.setHeaders(headers);
-        }
+        HttpHeaders headers = convertToHttpHeaders(headerValues);
+        requestMsg.setHeaders(headers);
         Stub stub = (Stub) connectionStub;
         try {
             DataContext context = new DataContext(env, null);
@@ -361,18 +340,8 @@ public class FunctionUtils extends AbstractExecute {
 
         try {
             Stub stub = (Stub) connectionStub;
-            HttpHeaders headers = new DefaultHttpHeaders();
             // Update request headers when request headers exists in the context.
-            if (headerValues != null) {
-                for (Object key : headerValues.getKeys()) {
-                    Object headerValue = headerValues.get(key);
-                    if (headerValue instanceof BArray) {
-                        for (String value : ((BArray) headerValue).getStringArray()) {
-                            headers.set(key.toString(), value);
-                        }
-                    }
-                }
-            }
+            HttpHeaders headers = convertToHttpHeaders(headerValues);
             DataContext context = new DataContext(env, null);
             return stub.executeClientStreaming(headers, methodDescriptors.get(methodName.getValue()), context);
         } catch (Exception e) {
@@ -426,18 +395,8 @@ public class FunctionUtils extends AbstractExecute {
 
         try {
             Stub stub = (Stub) connectionStub;
-            HttpHeaders headers = new DefaultHttpHeaders();
             // Update request headers when request headers exists in the context.
-            if (headerValues != null) {
-                for (Object key : headerValues.getKeys()) {
-                    Object headerValue = headerValues.get(key);
-                    if (headerValue instanceof BArray) {
-                        for (String value : ((BArray) headerValue).getStringArray()) {
-                            headers.set(key.toString(), value);
-                        }
-                    }
-                }
-            }
+            HttpHeaders headers = convertToHttpHeaders(headerValues);
             DataContext context = new DataContext(env, null);
             return stub.executeBidirectionalStreaming(headers, methodDescriptors.get(methodName.getValue()), context);
         } catch (Exception e) {

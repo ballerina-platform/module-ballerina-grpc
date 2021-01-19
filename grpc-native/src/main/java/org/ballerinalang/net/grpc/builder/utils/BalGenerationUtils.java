@@ -56,13 +56,13 @@ public class BalGenerationUtils {
                 return "float";
             }
             case ".google.protobuf.Int32Value":
-                return "'int:Signed32";
+                return "int";
             case ".google.protobuf.Int64Value":
             case ".google.protobuf.UInt64Value": {
                 return "int";
             }
             case ".google.protobuf.UInt32Value": {
-                return "'int:Unsigned32";
+                return "int";
             }
             case ".google.protobuf.BoolValue": {
                 return "boolean";

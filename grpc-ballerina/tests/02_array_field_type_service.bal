@@ -33,7 +33,7 @@ service "HelloWorld3" on ep2 {
         foreach var number in numbers {
             result = result + number;
         }
-        Error? err = caller->send(result);
+        Error? err = caller->sendInt(result);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -49,7 +49,7 @@ service "HelloWorld3" on ep2 {
         foreach var value in values {
             result = result + "," + value;
         }
-        Error? err = caller->send(result);
+        Error? err = caller->sendString(result);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -65,7 +65,7 @@ service "HelloWorld3" on ep2 {
         foreach var value in values {
             result = result + value;
         }
-        Error? err = caller->send(result);
+        Error? err = caller->sendFloat(result);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -81,7 +81,7 @@ service "HelloWorld3" on ep2 {
         foreach var value in values {
             result = result || value;
         }
-        Error? err = caller->send(result);
+        Error? err = caller->sendBoolean(result);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -97,7 +97,7 @@ service "HelloWorld3" on ep2 {
         foreach var value in values {
             result = result + "," + <string> value.name;
         }
-        Error? err = caller->send(result);
+        Error? err = caller->sendString(result);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -108,7 +108,7 @@ service "HelloWorld3" on ep2 {
 
     isolated remote function testIntArrayOutput(HelloWorld3TestIntCaller caller) {
         TestInt intArray = {values:[1, 2, 3, 4, 5]};
-        Error? err = caller->send(intArray);
+        Error? err = caller->sendTestInt(intArray);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -119,7 +119,7 @@ service "HelloWorld3" on ep2 {
 
     isolated remote function testStringArrayOutput(HelloWorld3TestStringCaller caller) {
         TestString stringArray = {values:["A", "B", "C"]};
-        Error? err = caller->send(stringArray);
+        Error? err = caller->sendTestString(stringArray);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -130,7 +130,7 @@ service "HelloWorld3" on ep2 {
 
     isolated remote function testFloatArrayOutput(HelloWorld3TestFloatCaller caller) {
         TestFloat floatArray = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
-        Error? err = caller->send(floatArray);
+        Error? err = caller->sendTestFloat(floatArray);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -141,7 +141,7 @@ service "HelloWorld3" on ep2 {
 
     isolated remote function testBooleanArrayOutput(HelloWorld3TestBooleanCaller caller) {
         TestBoolean booleanArray = {values:[true, false, true]};
-        Error? err = caller->send(booleanArray);
+        Error? err = caller->sendTestBoolean(booleanArray);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -154,7 +154,7 @@ service "HelloWorld3" on ep2 {
         A a1 = {name:"Sam"};
         A a2 = {name:"John"};
         TestStruct structArray = {values:[a1, a2]};
-        Error? err = caller->send(structArray);
+        Error? err = caller->sendTestStruct(structArray);
         if (err is Error) {
             io:println("Error from Connector: " + err.message());
         } else {
@@ -164,59 +164,26 @@ service "HelloWorld3" on ep2 {
     }
 }
 
-public client class HelloWorld3IntCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    isolated remote function send(int response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorld3StringCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    isolated remote function send(string response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
 public client class HelloWorld3FloatCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
-    isolated remote function send(float response) returns Error? {
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendFloat(float response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextFloat(ContextFloat response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -224,59 +191,26 @@ public client class HelloWorld3FloatCaller {
     }
 }
 
-public client class HelloWorld3BooleanCaller {
+public client class HelloWorld3IntCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
-    isolated remote function send(boolean response) returns Error? {
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendInt(int response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorld3TestIntCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    isolated remote function send(TestInt response) returns Error? {
+    isolated remote function sendContextInt(ContextInt response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorld3TestStringCaller {
-    private Caller caller;
-
-    public function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    isolated remote function send(TestString response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -287,16 +221,23 @@ public client class HelloWorld3TestStringCaller {
 public client class HelloWorld3TestFloatCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
-    isolated remote function send(TestFloat response) returns Error? {
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendTestFloat(TestFloat response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextTestFloat(ContextTestFloat response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -307,16 +248,104 @@ public client class HelloWorld3TestFloatCaller {
 public client class HelloWorld3TestBooleanCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
-    isolated remote function send(TestBoolean response) returns Error? {
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendTestBoolean(TestBoolean response) returns Error? {
         return self.caller->send(response);
     }
+    isolated remote function sendContextTestBoolean(ContextTestBoolean response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
 
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3BooleanCaller {
+    private Caller caller;
+
+    public isolated function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendBoolean(boolean response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextBoolean(ContextBoolean response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3TestIntCaller {
+    private Caller caller;
+
+    public isolated function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendTestInt(TestInt response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextTestInt(ContextTestInt response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorld3StringCaller {
+    private Caller caller;
+
+    public isolated function init(Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendString(string response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextString(ContextString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -327,16 +356,23 @@ public client class HelloWorld3TestBooleanCaller {
 public client class HelloWorld3TestStructCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 
-    isolated remote function send(TestStruct response) returns Error? {
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendTestStruct(TestStruct response) returns Error? {
         return self.caller->send(response);
     }
-
-    isolated remote function sendError(Error err) returns Error? {
-        return self.caller->sendError(err);
+    isolated remote function sendContextTestStruct(ContextTestStruct response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
     }
 
     isolated remote function complete() returns Error? {
@@ -344,29 +380,102 @@ public client class HelloWorld3TestStructCaller {
     }
 }
 
-public type TestInt record {
-    int[] values = [];
-};
+public client class HelloWorld3TestStringCaller {
+    private Caller caller;
 
-public type TestString record {
-    string[] values = [];
-};
+    public isolated function init(Caller caller) {
+        self.caller = caller;
+    }
 
-public type TestFloat record {
-    float[] values = [];
-};
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+    
+    isolated remote function sendTestString(TestString response) returns Error? {
+        return self.caller->send(response);
+    }
+    isolated remote function sendContextTestString(ContextTestString response) returns Error? {
+        return self.caller->send(response);
+    }
+    
+    isolated remote function sendError(Error response) returns Error? {
+        return self.caller->sendError(response);
+    }
 
-public type TestBoolean record {
-    boolean[] values = [];
-};
+    isolated remote function complete() returns Error? {
+        return self.caller->complete();
+    }
+}
 
-public type TestStruct record {
-    A[] values = [];
-};
+public type ContextTestInt record {|
+    TestInt content;
+    map<string|string[]> headers;
+|};
 
-public type A record {
+public type ContextBoolean record {|
+    boolean content;
+    map<string|string[]> headers;
+|};
+
+public type ContextTestBoolean record {|
+    TestBoolean content;
+    map<string|string[]> headers;
+|};
+
+public type ContextTestStruct record {|
+    TestStruct content;
+    map<string|string[]> headers;
+|};
+
+public type ContextFloat record {|
+    float content;
+    map<string|string[]> headers;
+|};
+
+public type ContextTestFloat record {|
+    TestFloat content;
+    map<string|string[]> headers;
+|};
+
+public type ContextInt record {|
+    int content;
+    map<string|string[]> headers;
+|};
+
+public type ContextTestString record {|
+    TestString content;
+    map<string|string[]> headers;
+|};
+public type A record {|
     string name = "";
-};
+
+|};
+
+public type TestInt record {|
+    int[] values = [];
+
+|};
+
+public type TestBoolean record {|
+    boolean[] values = [];
+
+|};
+
+
+public type TestStruct record {|
+    A[] values = [];
+|};
+
+
+public type TestFloat record {|
+    float[] values = [];
+|};
+
+
+public type TestString record {|
+    string[] values = [];
+
+|};
 
 const string ROOT_DESCRIPTOR_2 = "0A2130325F61727261795F6669656C645F747970655F736572766963652E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F22210A0754657374496E7412160A0676616C756573180120032803520676616C75657322240A0A54657374537472696E6712160A0676616C756573180120032809520676616C75657322230A0954657374466C6F617412160A0676616C756573180120032802520676616C75657322250A0B54657374426F6F6C65616E12160A0676616C756573180120032808520676616C75657322350A0A5465737453747275637412270A0676616C75657318012003280B320F2E6772706373657276696365732E41520676616C75657322170A014112120A046E616D6518012001280952046E616D653284060A0B48656C6C6F576F726C643312470A1174657374496E744172726179496E70757412152E6772706373657276696365732E54657374496E741A1B2E676F6F676C652E70726F746F6275662E496E74333256616C7565124E0A1474657374537472696E674172726179496E70757412182E6772706373657276696365732E54657374537472696E671A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565124B0A1374657374466C6F61744172726179496E70757412172E6772706373657276696365732E54657374466C6F61741A1B2E676F6F676C652E70726F746F6275662E466C6F617456616C7565124E0A1574657374426F6F6C65616E4172726179496E70757412192E6772706373657276696365732E54657374426F6F6C65616E1A1A2E676F6F676C652E70726F746F6275662E426F6F6C56616C7565124E0A14746573745374727563744172726179496E70757412182E6772706373657276696365732E546573745374727563741A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512430A1274657374496E7441727261794F757470757412162E676F6F676C652E70726F746F6275662E456D7074791A152E6772706373657276696365732E54657374496E7412490A1574657374537472696E6741727261794F757470757412162E676F6F676C652E70726F746F6275662E456D7074791A182E6772706373657276696365732E54657374537472696E6712470A1474657374466C6F617441727261794F757470757412162E676F6F676C652E70726F746F6275662E456D7074791A172E6772706373657276696365732E54657374466C6F6174124B0A1674657374426F6F6C65616E41727261794F757470757412162E676F6F676C652E70726F746F6275662E456D7074791A192E6772706373657276696365732E54657374426F6F6C65616E12490A157465737453747275637441727261794F757470757412162E676F6F676C652E70726F746F6275662E456D7074791A182E6772706373657276696365732E54657374537472756374620670726F746F33";
 isolated function getDescriptorMap2() returns map<string> {
