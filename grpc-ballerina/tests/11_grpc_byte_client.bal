@@ -67,11 +67,11 @@ public client class byteServiceClient {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
-    isolated remote function checkBytes(byte[]|ContextByte req) returns (byte[]|Error) {
+    isolated remote function checkBytes(byte[]|ContextBytes req) returns (byte[]|Error) {
         
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is ContextByte) {
+        if (req is ContextBytes) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -83,11 +83,11 @@ public client class byteServiceClient {
         return <byte[]>result;
         
     }
-    isolated remote function checkBytesContext(byte[]|ContextByte req) returns (ContextByte|Error) {
+    isolated remote function checkBytesContext(byte[]|ContextBytes req) returns (ContextBytes|Error) {
         
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is ContextByte) {
+        if (req is ContextBytes) {
             message = req.content;
             headers = req.headers;
         } else {

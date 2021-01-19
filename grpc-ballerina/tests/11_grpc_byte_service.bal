@@ -24,7 +24,7 @@ listener Listener ep11 = new (9101, {
 }
 service "byteService" on ep11 {
     isolated remote function checkBytes(ByteServiceByteCaller caller, byte[] value) {
-        checkpanic caller->sendByte(value);
+        checkpanic caller->sendBytes(value);
         checkpanic caller->complete();
     }
 }
@@ -40,10 +40,10 @@ public client class ByteServiceByteCaller {
         return self.caller.getId();
     }
     
-    isolated remote function sendByte(byte[] response) returns Error? {
+    isolated remote function sendBytes(byte[] response) returns Error? {
         return self.caller->send(response);
     }
-    isolated remote function sendContextByte(ContextByte response) returns Error? {
+    isolated remote function sendContextBytes(ContextBytes response) returns Error? {
         return self.caller->send(response);
     }
     
@@ -56,7 +56,7 @@ public client class ByteServiceByteCaller {
     }
 }
 
-public type ContextByte record {|
+public type ContextBytes record {|
     byte[] content;
     map<string|string[]> headers;
 |};

@@ -284,11 +284,11 @@ public client class HelloWorld24Client {
         return {content: <boolean>result, headers: respHeaders};
     }
 
-    isolated remote function testBytesValueReturn(byte[]|ContextByte req) returns (byte[]|Error) {
+    isolated remote function testBytesValueReturn(byte[]|ContextBytes req) returns (byte[]|Error) {
 
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is ContextByte) {
+        if (req is ContextBytes) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -300,11 +300,11 @@ public client class HelloWorld24Client {
         return <byte[]>result;
 
     }
-    isolated remote function testBytesValueReturnContext(byte[]|ContextByte req) returns (ContextByte|Error) {
+    isolated remote function testBytesValueReturnContext(byte[]|ContextBytes req) returns (ContextBytes|Error) {
 
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is ContextByte) {
+        if (req is ContextBytes) {
             message = req.content;
             headers = req.headers;
         } else {
