@@ -17,7 +17,6 @@
 import ballerina/io;
 import ballerina/test;
 
-
 @test:Config {enable:true}
 public function testUnaryRecordValueReturn() {
     HelloWorld31Client ep = new ("http://localhost:9121");
@@ -26,7 +25,9 @@ public function testUnaryRecordValueReturn() {
     if (unionResp is Error) {
         test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
     } else {
-        io:println(unionResp);
+        SampleMsg31 resMsg = <SampleMsg31>unionResp.content;
+        test:assertEquals(resMsg.name, "Ballerina Lang");
+        test:assertEquals(resMsg.id, 7);
     }
 }
 

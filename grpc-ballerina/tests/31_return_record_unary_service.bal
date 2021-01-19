@@ -24,8 +24,6 @@ listener Listener ep31 = new (9121);
     descMap: getDescriptorMap31()
 }
 service /HelloWorld31 on ep31 {
-
-    //remote function sayHello(HelloWorld31SampleMsg31Caller caller, SampleMsg31 reqMsg) {
     remote function sayHello(SampleMsg31 reqMsg) returns SampleMsg31 {
         io:print("Received input for testRecordValueReturn: ");
         io:println(reqMsg);
@@ -34,34 +32,9 @@ service /HelloWorld31 on ep31 {
             id: 7
         };
         return respMsg;
-        //var r1 = caller->sendSampleMsg31(respMsg);
-        //var r2 = caller->complete();
     }
 }
 
-public client class HelloWorld31SampleMsg31Caller {
-    private Caller caller;
-
-    public isolated function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function sendSampleMsg31(SampleMsg31 response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error response) returns Error? {
-        return self.caller->sendError(response);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
 
 public type ContextSampleMsg31 record {|
     SampleMsg31 content;
