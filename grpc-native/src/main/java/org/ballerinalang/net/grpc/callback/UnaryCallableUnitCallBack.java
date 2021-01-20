@@ -35,6 +35,7 @@ import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY
 import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
 import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
+import static org.ballerinalang.net.grpc.MessageUtils.isRecordMapValue;
 
 /**
  * Call back class registered for streaming gRPC service in B7a executor.
@@ -150,7 +151,13 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         @Override
         public void notifySuccess(Object response) {
             if (response != null) {
-                requestSender.onNext(new Message(this.outputType.getName(), response));
+                if (isRecordMapValue(response)) {
+                    requestSender.onNext(new Message(this.outputType.getName(),
+                            ((BMap) response).get(StringUtils.fromString("value"))));
+                } else {
+                    requestSender.onNext(new Message(this.outputType.getName(), response));
+                }
+
                 runtime.invokeMethodAsync(bObject, "next", null, null, this);
             } else {
                 requestSender.onCompleted();

@@ -19,7 +19,9 @@ package org.ballerinalang.net.grpc.callback;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.observability.ObserverContext;
@@ -28,6 +30,7 @@ import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.StreamObserver;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static org.ballerinalang.net.grpc.MessageUtils.isRecordMapValue;
 
 /**
  * Call back class registered for streaming gRPC service in B7a executor.
@@ -95,7 +98,12 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
         @Override
         public void notifySuccess(Object response) {
             if (response != null) {
-                requestSender.onNext(new Message(this.outputType.getName(), response));
+                if (isRecordMapValue(response)) {
+                    requestSender.onNext(new Message(this.outputType.getName(),
+                            ((BMap) response).get(StringUtils.fromString("value"))));
+                } else {
+                    requestSender.onNext(new Message(this.outputType.getName(), response));
+                }
                 runtime.invokeMethodAsync(bObject, "next", null, null, this);
             } else {
                 requestSender.onCompleted();
