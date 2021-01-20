@@ -18,6 +18,7 @@ package org.ballerinalang.net.grpc;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -451,6 +452,10 @@ public class MessageUtils {
     public static boolean isContextRecordByValue(Object value) {
         return value instanceof BMap && ((BMap) value).getType().getName().startsWith("Context")
                 && ((BMap) value).size() == 2;
+    }
+
+    public static boolean isRecordMapValue(Object value) {
+        return value instanceof BMap && ((BMap) value).getType().getTag() == TypeTags.RECORD_TYPE_TAG;
     }
 
     public static boolean isContextRecordByType(Type type) {
