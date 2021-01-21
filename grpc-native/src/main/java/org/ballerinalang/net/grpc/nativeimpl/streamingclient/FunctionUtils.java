@@ -156,7 +156,7 @@ public class FunctionUtils {
      * Extern function to receive the server responses(either client streaming or bidi-streaming).
      *
      * @param streamingConnection streaming connection instance.
-     * @return In client streaming, return an `anydata` and in bidi-streaming, return a `stream<anydata>`.
+     * @return In streaming scenarios, return an `anydata`.
      */
     public static Object externReceive(BObject streamingConnection) {
 
