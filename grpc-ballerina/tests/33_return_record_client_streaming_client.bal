@@ -43,8 +43,8 @@ function testClientStreamingFromReturnRecord() {
     }
     checkpanic streamingClient->complete();
     io:println("Completed successfully");
-    var response = checkpanic streamingClient->receiveSampleMsg33();
-    test:assertEquals(<SampleMsg33>response, {name: "WSO2", id: 1});
+    var response = checkpanic streamingClient->receiveContextSampleMsg33();
+    test:assertEquals(<SampleMsg33>response.content, {name: "WSO2", id: 1});
 }
 
 public client class SayHelloStreamingClientFromReturn {
@@ -59,9 +59,18 @@ public client class SayHelloStreamingClientFromReturn {
         return self.sClient->send(message);
     }
 
+    isolated remote function sendContextSampleMsg33(ContextSampleMsg33 message) returns Error? {
+        return self.sClient->send(message);
+    }
+
     isolated remote function receiveSampleMsg33() returns SampleMsg33|Error {
-        anydata payload = check self.sClient->receive();
-        return <SampleMsg33>payload;
+        [anydata, map<string|string[]>] [result, headers] = check self.sClient->receive();
+        return <SampleMsg33>result;
+    }
+
+    isolated remote function receiveContextSampleMsg33() returns ContextSampleMsg33|Error {
+        [anydata, map<string|string[]>] [result, headers] = check self.sClient->receive();
+        return {content: <SampleMsg33>result, headers: headers};
     }
 
     isolated remote function sendError(Error response) returns Error? {

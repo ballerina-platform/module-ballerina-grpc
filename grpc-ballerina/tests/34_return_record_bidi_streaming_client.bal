@@ -71,7 +71,7 @@ public client class SayHelloBidiStreamingClientFromReturn {
     }
 
     isolated remote function receiveSampleMsg34() returns anydata|Error {
-        var payload = self.sClient->receive();
+        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
         return payload;
     }
 

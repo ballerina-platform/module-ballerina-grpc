@@ -104,13 +104,13 @@ public client class ChatStreamingClient {
     }
 
     isolated remote function receiveString() returns string|Error {
-        var payload = check self.sClient->receive();
+        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
         return payload.toString();
     }
 
     isolated remote function receiveContextString() returns ContextString|Error {
-        var result = check self.sClient->receive();
-        return {content: result.toString(), headers: {}};
+        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
+        return {content: payload.toString(), headers: headers};
     }
 
     isolated remote function sendError(Error response) returns Error? {

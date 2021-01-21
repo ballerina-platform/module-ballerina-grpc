@@ -15,15 +15,15 @@ public client class {{pascalcase methodName}}StreamingClient {
     }
 
     isolated remote function receive{{#if outputType}}{{removeSpecialCharacters outputType}}{{/if}}() returns {{#if outputType}}{{outputType}}|grpc:Error{{else}}grpc:Error?{{/if}} {
-        var payload = check self.sClient->receive();
+        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
         {{#if outputType}}{{#not_equal outputType "string"}}return <{{outputType}}>payload;{{/not_equal}}{{#equals outputType "string"}}return payload.toString();{{/equals}}{{/if}}
     }
 
     isolated remote function receiveContext{{#if outputType}}{{removeSpecialCharacters outputType}}{{else}}Nil{{/if}}() returns Context{{#if outputType}}{{removeSpecialCharacters outputType}}{{else}}Nil{{/if}}|grpc:Error {
-        var result = check self.sClient->receive();
+        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
         {{#if outputType}}{{#not_equal outputType "string"}}
-        return {content: <{{outputType}}>result, headers: {}};
-        {{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: {}};{{/equals}}{{else}}return {headers: {}};{{/if}}
+        return {content: <{{outputType}}>payload, headers: headers};
+        {{/not_equal}}{{#equals outputType "string"}}return {content: payload.toString(), headers: headers};{{/equals}}{{else}}return {headers: headers};{{/if}}
     }
 
     isolated remote function sendError(grpc:Error response) returns grpc:Error? {

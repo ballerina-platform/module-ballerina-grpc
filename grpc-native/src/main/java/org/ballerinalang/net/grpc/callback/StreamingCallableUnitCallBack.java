@@ -25,11 +25,14 @@ import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.observability.ObserverContext;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.StreamObserver;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
+import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
 import static org.ballerinalang.net.grpc.MessageUtils.isRecordMapValue;
 
 /**
@@ -56,13 +59,28 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
     @Override
     public void notifySuccess(Object response) {
         super.notifySuccess(response);
-        if (response instanceof BStream) {
-            BObject bObject = (BObject) ((BStream) response).getIteratorObj();
+        Object content;
+        BMap headerValues = null;
+        if (isContextRecordByValue(response)) {
+            content = ((BMap) response).get(StringUtils.fromString("content"));
+            headerValues = ((BMap) response).getMapValue(StringUtils.fromString("headers"));
+        } else {
+            content = response;
+        }
+        // Update response headers when request headers exists in the context.
+        HttpHeaders headers = convertToHttpHeaders(headerValues);
+
+        if (content instanceof BStream) {
+            BObject bObject = (BObject) ((BStream) content).getIteratorObj();
             ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
-                    runtime, responseSender, outputType, bObject);
+                    runtime, responseSender, outputType, bObject, headers);
             runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
         } else {
-            responseSender.onNext(new Message(this.outputType.getName(), response));
+            //Message responseMessage = MessageUtils.generateProtoMessage(responseValue, outputType);
+            Message responseMessage = new Message(outputType.getName(), content);
+            responseMessage.setHeaders(headers);
+            responseSender.onNext(responseMessage);
+            responseSender.onCompleted();
         }
     }
 
@@ -86,24 +104,32 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
         private Descriptors.Descriptor outputType;
         private Runtime runtime;
         private BObject bObject;
+        private HttpHeaders headers;
 
         public ReturnStreamUnitCallBack(Runtime runtime, StreamObserver requestSender,
-                                        Descriptors.Descriptor outputType, BObject bObject) {
+                                        Descriptors.Descriptor outputType, BObject bObject, HttpHeaders headers) {
             this.runtime = runtime;
             this.requestSender = requestSender;
             this.outputType = outputType;
             this.bObject = bObject;
+            this.headers = headers;
         }
 
         @Override
         public void notifySuccess(Object response) {
             if (response != null) {
+                Message msg;
                 if (isRecordMapValue(response)) {
-                    requestSender.onNext(new Message(this.outputType.getName(),
-                            ((BMap) response).get(StringUtils.fromString("value"))));
+                    msg = new Message(this.outputType.getName(),
+                            ((BMap) response).get(StringUtils.fromString("value")));
                 } else {
-                    requestSender.onNext(new Message(this.outputType.getName(), response));
+                    msg = new Message(this.outputType.getName(), response);
                 }
+                if (headers != null) {
+                    msg.setHeaders(headers);
+                    headers = null;
+                }
+                requestSender.onNext(msg);
                 runtime.invokeMethodAsync(bObject, "next", null, null, this);
             } else {
                 requestSender.onCompleted();

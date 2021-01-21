@@ -46,10 +46,11 @@ function testBidiStreamingFromReturn() {
     var result = streamingClient->receive();
     while !(result is EOS) {
         io:println(result);
-        if (result is anydata) {
-            test:assertEquals(<string> result, expectedOutput[i]);
-        } else {
+        if (result is Error) {
             test:assertFail("Unexpected output in the stream");
+        } else {
+            [anydata, map<string|string[]>][content, headers] = result;
+            test:assertEquals(content.toString(), expectedOutput[i]);
         }
         result = streamingClient->receive();
         i += 1;
