@@ -87,11 +87,6 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         if (emptyResponse) {
             requestSender.onNext(new Message(EMPTY_DATATYPE_NAME, null));
             requestSender.onCompleted();
-//        } else if (response instanceof BStream) {
-//            BObject bObject = (BObject) ((BStream) response).getIteratorObj();
-//            ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
-//                    runtime, requestSender, outputType, bObject, null);
-//            runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
         } else {
             Object content;
             BMap headerValues = null;
@@ -125,12 +120,6 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                 requestSender.onCompleted();
             }
         }
-
-
-        // Notify complete if service impl doesn't call complete;
-//        if (!(response instanceof BStream)) {
-//            requestSender.onCompleted();
-//        }
     }
 
     @Override
