@@ -41,7 +41,6 @@ ext.wso2CommonsPoolVersion = project.wso2CommonsPoolVersion
 ext.stdlibRuntimeVersion = project.stdlibRuntimeVersion
 ext.stdlibCryptoVersion = project.stdlibCryptoVersion
 ext.stdlibHttpVersion = project.stdlibHttpVersion
-ext.stdlibConfigVersion = project.stdlibConfigVersion
 
 ext.stdlibIoVersion = project.stdlibIoVersion
 ext.stdlibLogVersion = project.stdlibLogVersion
@@ -215,7 +214,6 @@ subprojects {
         ballerinaStdLibs "org.ballerinalang:http-ballerina:${stdlibHttpVersion}"
         ballerinaStdLibs "org.ballerinalang:log-ballerina:${stdlibLogVersion}"
         ballerinaStdLibs "org.ballerinalang:os-ballerina:${stdlibOsVersion}"
-        ballerinaStdLibs "org.ballerinalang:config-ballerina:${stdlibConfigVersion}"
         ballerinaStdLibs "org.ballerinalang:file-ballerina:${stdlibFileVersion}"
         ballerinaStdLibs "org.ballerinalang:auth-ballerina:${stdlibAuthVersion}"
         ballerinaStdLibs "org.ballerinalang:cache-ballerina:${stdlibCacheVersion}"
