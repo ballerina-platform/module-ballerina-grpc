@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/java;
+import ballerina/jballerina.java;
 
 # Provides the gRPC streaming client actions for interacting with the gRPC server.
 public client class StreamingClient {
