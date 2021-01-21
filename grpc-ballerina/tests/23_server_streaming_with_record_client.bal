@@ -51,7 +51,10 @@ public client class helloWorldServerStreamingClient {
 
     isolated remote function lotsOfReplies(HelloRequest req) returns stream<anydata>|Error {
         
-        return self.grpcClient->executeServerStreaming("helloWorldServerStreaming/lotsOfReplies", req);
+        var payload = check self.grpcClient->executeServerStreaming("helloWorldServerStreaming/lotsOfReplies", req);
+        [stream<anydata>, map<string|string[]>][result, _] = payload;
+
+        return result;
     }
 
 }

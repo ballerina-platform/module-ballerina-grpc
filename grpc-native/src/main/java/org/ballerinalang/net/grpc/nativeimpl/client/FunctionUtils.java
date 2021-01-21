@@ -287,12 +287,17 @@ public class FunctionUtils extends AbstractExecute {
         HttpHeaders headers = convertToHttpHeaders(headerValues);
         requestMsg.setHeaders(headers);
         Stub stub = (Stub) connectionStub;
+        DataContext dataContext = null;
         try {
-            DataContext context = new DataContext(env, null);
-            return stub.executeServerStreaming(requestMsg, methodDescriptors.get(methodName.getValue()), context);
+            dataContext = new DataContext(env, env.markAsync());
+            stub.executeServerStreaming(requestMsg, methodDescriptors.get(methodName.getValue()), dataContext);
         } catch (Exception e) {
+            if (dataContext != null) {
+                dataContext.getFuture().complete(e);
+            }
             return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }
+        return null;
     }
 
     /**

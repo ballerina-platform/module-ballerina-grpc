@@ -58,12 +58,17 @@ public client class StreamingClient {
     # ```
     #
     # + return - An `anydata` value in client streaming and a `stream<anydata>` in bidirectional streaming
-    isolated remote function receive() returns anydata|Error {
+    isolated remote function receive() returns [anydata, map<string|string[]>]|Error {
+        map<string|string[]> headers = {};
         if (externIsBidirectional(self)) {
             if (self.serverStream is stream<anydata>) {
                 var nextRecord = (<stream<anydata>>self.serverStream).next();
+                var headerMap = externGetHeaderMap(self);
+                if (headerMap is map<string|string[]>) {
+                    headers = headerMap;
+                }
                 if (nextRecord is record {|anydata value;|}) {
-                    return nextRecord.value;
+                    return [nextRecord.value, headers];
                 } else {
                     return error EOS("End of stream reached");
                 }
@@ -72,8 +77,12 @@ public client class StreamingClient {
                 if (result is stream<anydata>) {
                     self.serverStream = result;
                     var nextRecord = (<stream<anydata>>self.serverStream).next();
+                    var headerMap = externGetHeaderMap(self);
+                    if (headerMap is map<string|string[]>) {
+                        headers = headerMap;
+                    }
                     if (nextRecord is record {|anydata value;|}) {
-                        return nextRecord.value;
+                        return [nextRecord.value, headers];
                     } else {
                         return error EOS("End of stream reached");
                     }
@@ -86,8 +95,12 @@ public client class StreamingClient {
             }
         } else {
            var result = externReceive(self);
+           var headerMap = externGetHeaderMap(self);
+           if (headerMap is map<string|string[]>) {
+               headers = headerMap;
+           }
            if (result is anydata) {
-               return result;
+               return [result, headers];
            } else if (result is stream<anydata>) {
                return error DataMismatchError("Expected an anydata type but found a stream.");
            } else {
@@ -118,6 +131,11 @@ isolated function externReceive(StreamingClient streamConnection) returns anydat
 } external;
 
 isolated function externIsBidirectional(StreamingClient streamConnection) returns boolean =
+@java:Method {
+    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+} external;
+
+isolated function externGetHeaderMap(StreamingClient streamConnection) returns map<string|string[]>? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;

@@ -189,4 +189,15 @@ public class FunctionUtils {
             }
         }
     }
+
+    /**
+     * Extern function to get response header values of streaming clientg.
+     *
+     * @param streamingConnection streaming connection instance.
+     * @return In client streaming, return false and in bidi-streaming, return true.
+     */
+    public static Object externGetHeaderMap(BObject streamingConnection) {
+
+        return streamingConnection.getNativeData(GrpcConstants.HEADERS);
+    }
 }

@@ -350,7 +350,10 @@ public client class HelloWorld24Client {
 
     isolated remote function testRecordValueReturnStream(string req) returns stream<anydata>|Error {
 
-        return self.grpcClient->executeServerStreaming("HelloWorld24/testRecordValueReturnStream", req);
+        var payload = check self.grpcClient->executeServerStreaming("HelloWorld24/testRecordValueReturnStream", req);
+        [stream<anydata>, map<string|string[]>][result, _] = payload;
+
+        return result;
     }
 
 }

@@ -20,6 +20,7 @@ package org.ballerinalang.net.grpc.stubs;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
@@ -82,11 +83,11 @@ public class Stub extends AbstractStub {
      * @param context Data Context.
      * @throws Exception if an error occur while processing client call.
      */
-    public Object executeServerStreaming(Message request, MethodDescriptor methodDescriptor,
+    public void executeServerStreaming(Message request, MethodDescriptor methodDescriptor,
                                          DataContext context) throws Exception {
         ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
                 methodDescriptor, context);
-        Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(true);
+        Stub.ServerStreamingCallListener streamingCallListener = new Stub.ServerStreamingCallListener(context);
         call.start(streamingCallListener);
         try {
             call.sendMessage(request);
@@ -94,12 +95,6 @@ public class Stub extends AbstractStub {
         } catch (Exception e) {
             cancelThrow(call, e);
         }
-        BObject streamIterator = ValueCreator.createObjectValue(getModule(),
-                GrpcConstants.ITERATOR_OBJECT_NAME, new Object[1]);
-        BlockingQueue<Message> messageQueue = streamingCallListener.getMessageQueue();
-        streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, messageQueue);
-        return ValueCreator.createStreamValue(TypeCreator.createStreamType(PredefinedTypes.TYPE_ANYDATA),
-                streamIterator);
     }
 
     /**
@@ -123,6 +118,7 @@ public class Stub extends AbstractStub {
                 methodDescriptor.getSchemaDescriptor().getInputType());
 
         streamingConnection.addNativeData(GrpcConstants.MESSAGE_QUEUE, streamingCallListener.getMessageQueue());
+        streamingConnection.addNativeData(GrpcConstants.HEADERS, streamingCallListener.getHeaderMap());
         streamingConnection.addNativeData(GrpcConstants.IS_BIDI_STREAMING, false);
         return streamingConnection;
     }
@@ -148,6 +144,7 @@ public class Stub extends AbstractStub {
                 methodDescriptor.getSchemaDescriptor().getInputType());
 
         streamingConnection.addNativeData(GrpcConstants.MESSAGE_QUEUE, streamingCallListener.getMessageQueue());
+        streamingConnection.addNativeData(GrpcConstants.HEADERS, streamingCallListener.getHeaderMap());
         streamingConnection.addNativeData(GrpcConstants.IS_BIDI_STREAMING, true);
         return streamingConnection;
     }
@@ -217,6 +214,7 @@ public class Stub extends AbstractStub {
 
         private final boolean streamingResponse;
         BlockingQueue<Message> messageQueue;
+        BMap headerMap = null;
         private boolean firstResponseReceived;
 
         // Non private to avoid synthetic class
@@ -237,7 +235,12 @@ public class Stub extends AbstractStub {
                         .withDescription("More than one responses received for unary or client-streaming call")
                         .asRuntimeException();
             }
-            firstResponseReceived = true;
+
+            if (!firstResponseReceived) {
+                // Set response headers, when response headers exists in the message context.
+                headerMap = createHeaderMap(message.getHeaders());
+                firstResponseReceived = true;
+            }
             messageQueue.add(message);
         }
 
@@ -250,8 +253,77 @@ public class Stub extends AbstractStub {
             }
         }
 
-        public BlockingQueue<Message> getMessageQueue() {
+        BlockingQueue<Message> getMessageQueue() {
             return messageQueue;
+        }
+
+        BMap getHeaderMap() {
+            return headerMap;
+        }
+    }
+
+    /**
+     *  Callbacks for receiving headers, response messages, and completion status in streaming calls.
+     */
+    private static final class ServerStreamingCallListener implements Listener {
+
+        private final DataContext dataContext;
+        BlockingQueue<Message> messageQueue;
+        private boolean firstResponseReceived;
+        Object responseBValue;
+        Type streamType = TypeCreator.createStreamType(PredefinedTypes.TYPE_ANYDATA);
+
+        // Non private to avoid synthetic class
+        ServerStreamingCallListener(DataContext dataContext) {
+            this.messageQueue = new LinkedBlockingQueue<>();
+            this.dataContext = dataContext;
+
+            BObject streamIterator = ValueCreator.createObjectValue(getModule(),
+                    GrpcConstants.ITERATOR_OBJECT_NAME, new Object[1]);
+            streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, messageQueue);
+            responseBValue = ValueCreator.createStreamValue(
+                    TypeCreator.createStreamType(PredefinedTypes.TYPE_ANYDATA), streamIterator);
+        }
+
+        @Override
+        public void onHeaders(HttpHeaders headers) {
+            // Headers are processed at client connector listener. Do not need to further process.
+        }
+
+        @Override
+        public void onMessage(Message message) {
+            messageQueue.add(message);
+            if (!firstResponseReceived) {
+                // Set response headers, when response headers exists in the message context.
+                BMap headerMap = createHeaderMap(message.getHeaders());
+
+                BArray contentTuple = ValueCreator.createTupleValue(
+                        TypeCreator.createTupleType(Arrays.asList(streamType,
+                                headerMap.getType())));
+                contentTuple.add(0, responseBValue);
+                contentTuple.add(1, headerMap);
+                dataContext.getFuture().complete(contentTuple);
+                firstResponseReceived = true;
+            }
+        }
+
+        @Override
+        public void onClose(Status status, HttpHeaders trailers) {
+            if (status.isOk()) {
+                messageQueue.add(new Message(GrpcConstants.COMPLETED_MESSAGE, null));
+            } else {
+                messageQueue.add(new Message(status.asRuntimeException()));
+            }
+            if (!firstResponseReceived) {
+                // Set response headers, when response headers exists in the message context.
+                BMap headerMap = createHeaderMap(trailers);
+                BArray contentTuple = ValueCreator.createTupleValue(
+                        TypeCreator.createTupleType(Arrays.asList(streamType,
+                                headerMap.getType())));
+                contentTuple.add(0, responseBValue);
+                contentTuple.add(1, headerMap);
+                dataContext.getFuture().complete(contentTuple);
+            }
         }
     }
 

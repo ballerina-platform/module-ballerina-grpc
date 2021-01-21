@@ -24,14 +24,14 @@ listener Listener ep31 = new (9121);
     descMap: getDescriptorMap31()
 }
 service /HelloWorld31 on ep31 {
-    remote function sayHello(SampleMsg31 reqMsg) returns SampleMsg31 {
+    remote function sayHello(SampleMsg31 reqMsg) returns ContextSampleMsg31 {
         io:print("Received input for testRecordValueReturn: ");
         io:println(reqMsg);
         SampleMsg31 respMsg = {
             name: "Ballerina Lang",
             id: 7
         };
-        return respMsg;
+        return {content:respMsg, headers: {xxx: "yyy"}};
     }
 }
 

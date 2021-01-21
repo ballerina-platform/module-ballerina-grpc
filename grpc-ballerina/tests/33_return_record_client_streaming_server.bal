@@ -23,17 +23,18 @@ listener Listener ep33 = new (9123);
     descMap: getDescriptorMap33()
 }
 service "HelloWorld33" on ep33 {
-    remote function sayHello(stream<SampleMsg33,error> clientStream) returns SampleMsg33 {
+    remote function sayHello(stream<SampleMsg33,error> clientStream) returns ContextSampleMsg33 {
         io:println("Connected sucessfully.");
         error? e = clientStream.forEach(isolated function(SampleMsg33 val) {
             io:println(val);
         });
         if (e is EOS) {
             SampleMsg33 response = {name: "WSO2", id: 1};
-            return response;
+            return {content: response, headers: {zzz: "yyy"}};
+        } else {
+            SampleMsg33 errResponse = {name: "", id: 0};
+            return {content: errResponse, headers: {zzz: "yyy"}};
         }
-        SampleMsg33 errResponse = {name: "", id: 0};
-        return errResponse;
     }
 }
 
@@ -64,6 +65,11 @@ public client class HelloWorld33SampleMsg33Caller {
 public type SampleMsg33 record {|
     string name = "";
     int id = 0;
+|};
+
+public type ContextSampleMsg33 record {|
+    SampleMsg33 content;
+    map<string|string[]> headers;
 |};
 
 

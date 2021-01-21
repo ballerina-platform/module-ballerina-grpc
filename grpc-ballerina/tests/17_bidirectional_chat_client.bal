@@ -50,11 +50,11 @@ public function testBidiStreamingInChatClient() {
     }
 
     var responseMsg = ep->receive();
-    if (responseMsg is anydata) {
-        string receivedMsg = <string> responseMsg;
-        test:assertEquals(receivedMsg, "Sam: Hi");
-    } else {
+    if (responseMsg is error) {
         test:assertFail(msg = responseMsg.message());
+    } else {
+        [anydata, map<string|string[]>][content, headers] = responseMsg;
+        test:assertEquals(content.toString(), "Sam: Hi");
     }
 
     // Once all messages are sent, client send complete message to notify the server, I’m done.
