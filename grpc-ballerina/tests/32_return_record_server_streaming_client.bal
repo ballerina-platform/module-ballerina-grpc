@@ -42,6 +42,37 @@ function testReceiveStreamingResponseFromReturnWithBasicAuth() {
     }
 }
 
+@test:Config {enable:true}
+function testReceiveStreamingResponseWithHeaders() {
+    SampleMsg32 reqMsg = {name:"WSO2", id:2};
+    HelloWorld32Client helloWorldEp = new("http://localhost:9222");
+
+    var result = helloWorldEp->sayHelloContext(reqMsg);
+    if (result is Error) {
+        test:assertFail("Error from Connector: " + result.message());
+    } else {
+        io:println("Connected successfully");
+        SampleMsg32[] expectedResults = [
+            {name: "WSO2", id: 0},
+            {name: "Microsoft", id: 1},
+            {name: "Facebook", id: 2},
+            {name: "Google", id: 3}
+        ];
+        int count = 0;
+        error? e = result.content.forEach(function(anydata value) {
+            test:assertEquals(<SampleMsg32>value, expectedResults[count]);
+            count += 1;
+        });
+        test:assertEquals(count, 4);
+        var resHeaderValue = getHeader(result.headers, "zzz");
+        if (resHeaderValue is Error) {
+            test:assertFail("Error reading response headers: " + resHeaderValue.message());
+        } else {
+            test:assertEquals(resHeaderValue, "yyy");
+        }
+    }
+}
+
 public client class HelloWorld32Client {
 
     *AbstractClientEndpoint;
@@ -55,8 +86,14 @@ public client class HelloWorld32Client {
     }
 
     isolated remote function sayHello(SampleMsg32 req) returns stream<anydata>|Error {
-
-        return self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
+        var payload = check self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
+        [stream<anydata>, map<string|string[]>][result, _] = payload;
+        return result;
     }
 
+    isolated remote function sayHelloContext(SampleMsg32 req) returns ContextSampleMsg32Stream|Error {
+        var payload = check self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
+        [stream<anydata>, map<string|string[]>][result, headers] = payload;
+        return {content: result, headers: headers};
+    }
 }

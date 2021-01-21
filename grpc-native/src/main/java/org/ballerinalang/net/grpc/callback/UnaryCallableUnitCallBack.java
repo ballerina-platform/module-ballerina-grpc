@@ -86,11 +86,12 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         // scenarios handles here.
         if (emptyResponse) {
             requestSender.onNext(new Message(EMPTY_DATATYPE_NAME, null));
-        } else if (response instanceof BStream) {
-            BObject bObject = (BObject) ((BStream) response).getIteratorObj();
-            ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
-                    runtime, requestSender, outputType, bObject);
-            runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
+            requestSender.onCompleted();
+//        } else if (response instanceof BStream) {
+//            BObject bObject = (BObject) ((BStream) response).getIteratorObj();
+//            ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
+//                    runtime, requestSender, outputType, bObject, null);
+//            runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
         } else {
             Object content;
             BMap headerValues = null;
@@ -100,25 +101,36 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             } else {
                 content = response;
             }
-            //Message responseMessage = MessageUtils.generateProtoMessage(responseValue, outputType);
-            Message responseMessage = new Message(outputType.getName(), content);
             // Update response headers when request headers exists in the context.
             HttpHeaders headers = convertToHttpHeaders(headerValues);
-            responseMessage.setHeaders(headers);
-            if (observerContext != null) {
-                headers.entries().forEach(
-                        x -> observerContext.addTag(x.getKey(), x.getValue()));
+
+            if (content instanceof BStream) {
+                BObject bObject = (BObject) ((BStream) content).getIteratorObj();
+                ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
+                        runtime, requestSender, outputType, bObject, headers);
+                runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
+            } else {
+                //Message responseMessage = MessageUtils.generateProtoMessage(responseValue, outputType);
+                Message responseMessage = new Message(outputType.getName(), content);
+                responseMessage.setHeaders(headers);
+                if (observerContext != null) {
+                    headers.entries().forEach(
+                            x -> observerContext.addTag(x.getKey(), x.getValue()));
+                }
+                requestSender.onNext(responseMessage);
+
+                if (observerContext != null) {
+                    observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.OK.code());
+                }
+                requestSender.onCompleted();
             }
-            requestSender.onNext(responseMessage);
         }
 
-        if (observerContext != null) {
-            observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.OK.code());
-        }
+
         // Notify complete if service impl doesn't call complete;
-        if (!(response instanceof BStream)) {
-            requestSender.onCompleted();
-        }
+//        if (!(response instanceof BStream)) {
+//            requestSender.onCompleted();
+//        }
     }
 
     @Override
@@ -139,25 +151,32 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         private Descriptors.Descriptor outputType;
         private Runtime runtime;
         private BObject bObject;
+        private HttpHeaders headers;
 
         public ReturnStreamUnitCallBack(Runtime runtime, StreamObserver requestSender,
-                                        Descriptors.Descriptor outputType, BObject bObject) {
+                                        Descriptors.Descriptor outputType, BObject bObject, HttpHeaders headers) {
             this.runtime = runtime;
             this.requestSender = requestSender;
             this.outputType = outputType;
             this.bObject = bObject;
+            this.headers = headers;
         }
 
         @Override
         public void notifySuccess(Object response) {
             if (response != null) {
+                Message msg;
                 if (isRecordMapValue(response)) {
-                    requestSender.onNext(new Message(this.outputType.getName(),
-                            ((BMap) response).get(StringUtils.fromString("value"))));
+                    msg = new Message(this.outputType.getName(),
+                            ((BMap) response).get(StringUtils.fromString("value")));
                 } else {
-                    requestSender.onNext(new Message(this.outputType.getName(), response));
+                    msg = new Message(this.outputType.getName(), response);
                 }
-
+                if (headers != null) {
+                    msg.setHeaders(headers);
+                    headers = null;
+                }
+                requestSender.onNext(msg);
                 runtime.invokeMethodAsync(bObject, "next", null, null, this);
             } else {
                 requestSender.onCompleted();

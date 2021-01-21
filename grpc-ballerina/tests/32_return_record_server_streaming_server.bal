@@ -24,7 +24,7 @@ listener Listener ep32 = new (9122);
 }
 service "HelloWorld32" on ep32 {
 
-    remote function sayHello(SampleMsg32 value) returns stream<SampleMsg32> {
+    remote function sayHello(SampleMsg32 value) returns ContextSampleMsg32Stream {
         io:println(value);
         SampleMsg32[] respArr = [
             {name: "WSO2", id: 0},
@@ -32,7 +32,7 @@ service "HelloWorld32" on ep32 {
             {name: "Facebook", id: 2},
             {name: "Google", id: 3}
         ];
-        return respArr.toStream();
+        return {content: respArr.toStream(), headers: {xxx: "yyy"}};
     }
 }
 
@@ -40,6 +40,11 @@ public type SampleMsg32 record {|
     string name = "";
     int id = 0;
 
+|};
+
+public type ContextSampleMsg32Stream record {|
+    stream<anydata> content;
+    map<string|string[]> headers;
 |};
 
 

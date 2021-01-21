@@ -44,7 +44,16 @@ public client class {{serviceName}}Client {
 {{/unaryFunctions}}{{#serverStreamingFunctions}}
     isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req{{/if}}) returns stream<anydata>|Error {
         {{#unless inputType}}Empty message = {};{{/unless}}
-        return self.grpcClient->executeServerStreaming("{{methodId}}", req);
+        var payload = check self.grpcClient->executeServerStreaming("{{methodId}}", req);
+        [stream<anydata>, map<string|string[]>][result, _] = payload;
+        return result;
+    }
+
+    isolated remote function {{methodName}}Context({{#if inputType}}{{inputType}} req{{/if}}) returns Context{{removeSpecialCharacters inputType}}Stream|Error {
+    {{#unless inputType}}Empty message = {};{{/unless}}
+        var payload = check self.grpcClient->executeServerStreaming("{{methodId}}", req);
+        [stream<anydata>, map<string|string[]>][result, headers] = payload;
+        return {content: result, headers: headers};
     }
 {{/serverStreamingFunctions}}{{#clientStreamingFunctions}}
     isolated remote function {{methodName}}() returns ({{pascalcase methodName}}StreamingClient|grpc:Error) {
