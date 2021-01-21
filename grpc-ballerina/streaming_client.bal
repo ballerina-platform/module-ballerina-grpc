@@ -59,14 +59,14 @@ public client class StreamingClient {
     #
     # + return - An `anydata` value in client streaming and a `stream<anydata>` in bidirectional streaming
     isolated remote function receive() returns [anydata, map<string|string[]>]|Error {
-        var headerMap = externGetHeaderMap(self);
         map<string|string[]> headers = {};
-        if (headerMap is map<string|string[]>) {
-            headers = headerMap;
-        }
         if (externIsBidirectional(self)) {
             if (self.serverStream is stream<anydata>) {
                 var nextRecord = (<stream<anydata>>self.serverStream).next();
+                var headerMap = externGetHeaderMap(self);
+                if (headerMap is map<string|string[]>) {
+                    headers = headerMap;
+                }
                 if (nextRecord is record {|anydata value;|}) {
                     return [nextRecord.value, headers];
                 } else {
@@ -77,6 +77,10 @@ public client class StreamingClient {
                 if (result is stream<anydata>) {
                     self.serverStream = result;
                     var nextRecord = (<stream<anydata>>self.serverStream).next();
+                    var headerMap = externGetHeaderMap(self);
+                    if (headerMap is map<string|string[]>) {
+                        headers = headerMap;
+                    }
                     if (nextRecord is record {|anydata value;|}) {
                         return [nextRecord.value, headers];
                     } else {
@@ -91,6 +95,10 @@ public client class StreamingClient {
             }
         } else {
            var result = externReceive(self);
+           var headerMap = externGetHeaderMap(self);
+           if (headerMap is map<string|string[]>) {
+               headers = headerMap;
+           }
            if (result is anydata) {
                return [result, headers];
            } else if (result is stream<anydata>) {
