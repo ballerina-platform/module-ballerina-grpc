@@ -22,7 +22,7 @@ import ballerina/test;
 function testReceiveStreamingResponseFromReturn() {
     string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld25Client helloWorldEp = new("http://localhost:9115");
+    HelloWorld25Client helloWorldEp = checkpanic new("http://localhost:9115");
 
     var result = helloWorldEp->lotsOfReplies(name);
     if (result is Error) {
@@ -45,18 +45,26 @@ public client class HelloWorld25Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_25, getDescriptorMap25());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_25, getDescriptorMap25());
     }
 
     isolated remote function lotsOfReplies(string req) returns stream<string, Error?>|Error {
 
         var payload = check self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req);
         [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
-        StringStream stringStream = new StringStream(result);
-        return new stream<string, Error?>(stringStream);
+        StringStream outputStream = new StringStream(result);
+        return new stream<string, Error?>(outputStream);
+    }
+
+    isolated remote function lotsOfRepliesContext(string req) returns ContextStringStream|Error {
+
+        var payload = check self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req);
+        [stream<anydata, Error?>, map<string|string[]>][result, headers] = payload;
+        StringStream outputStream = new StringStream(result);
+        return {content: new stream<string, Error?>(outputStream), headers: headers};
     }
 
 }
