@@ -55,7 +55,7 @@ public client class HelloWorld25Client {
 
         var payload = check self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req);
         [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
-        StringStream stringStream = new StringStream(anydataStream);
+        StringStream stringStream = new StringStream(result);
         return new stream<string, Error?>(stringStream);
     }
 
