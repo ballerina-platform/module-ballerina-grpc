@@ -32,10 +32,8 @@ function testReceiveStreamingResponseFromReturn() {
         string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
         int count = 0;
         error? e = result.forEach(function(anydata value) {
-            if (value != "") {
-                test:assertEquals(value, expectedResults[count]);
-                count += 1;
-            }
+            test:assertEquals(value, expectedResults[count]);
+            count += 1;
         });
         test:assertEquals(count, 3);
     }
@@ -53,12 +51,36 @@ public client class HelloWorld25Client {
         Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_25, getDescriptorMap25());
     }
 
-    isolated remote function lotsOfReplies(string req) returns stream<anydata>|Error {
+    isolated remote function lotsOfReplies(string req) returns stream<string, Error?>|Error {
 
         var payload = check self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req);
-        [stream<anydata>, map<string|string[]>][result, _] = payload;
-
-        return result;
+        [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
+        StringStream stringStream = new StringStream(anydataStream);
+        return new stream<string, Error?>(stringStream);
     }
 
+}
+
+public class StringStream {
+    private stream<anydata, Error?> anydataStream;
+
+    public isolated function init(stream<anydata, Error?> anydataStream) {
+        self.anydataStream = anydataStream;
+    }
+
+    public isolated function next() returns record {| string value; |}|Error? {
+        var streamValue = self.anydataStream.next();
+        if (streamValue is ()) {
+            return streamValue;
+        } else if (streamValue is Error) {
+            return streamValue;
+        } else {
+            record {| string value; |} nextRecord = {value: <string>streamValue.value};
+            return nextRecord;
+        }
+    }
+
+    public isolated function close() returns Error? {
+        return self.anydataStream.close();
+    }
 }
