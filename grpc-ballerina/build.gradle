@@ -161,7 +161,6 @@ task updateTomlFile {
         def stdlibDependentRuntimeVersion = project.stdlibRuntimeVersion.split("-")[0]
         def stdlibDependentCryptoVersion = project.stdlibCryptoVersion.split("-")[0]
         def stdlibDependentHttpVersion = project.stdlibHttpVersion.split("-")[0]
-        def stdlibDependentConfigVersion = project.stdlibConfigVersion.split("-")[0]
         def stdlibDependentAuthVersion = project.stdlibOAuth2Version.split("-")[0]
         def stdlibDependentJwtVersion = project.stdlibJwtVersion.split("-")[0]
         def stdlibDependentOAuth2Version = project.stdlibOAuth2Version.split("-")[0]
@@ -178,7 +177,6 @@ task updateTomlFile {
         newConfig = newConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
         newConfig = newConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
         newConfig = newConfig.replace("@http.native.version@", project.stdlibHttpVersion)
-        newConfig = newConfig.replace("@stdlib.config.version@", stdlibDependentConfigVersion)
         newConfig = newConfig.replace("@netty.version@", stdlibDependentNettyVersion)
         ballerinaConfigFile.text = newConfig
     }
@@ -222,9 +220,9 @@ task ballerinaTest {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test ${debugParams} --b7a.config.file=tests/datafiles/service_config.conf ${certsAndKeys} && exit %%ERRORLEVEL%%"
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test ${debugParams} ${certsAndKeys} && exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test ${debugParams} --b7a.config.file=tests/datafiles/service_config.conf ${certsAndKeys}"
+                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test ${debugParams} ${certsAndKeys}"
             }
         }
     }

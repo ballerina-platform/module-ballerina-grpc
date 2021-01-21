@@ -16,6 +16,11 @@
 
 import ballerina/java;
 
+final configurable int maxActiveConnections = -1;
+final configurable int maxIdleConnections = 1000;
+final configurable int waitTimeInMillis = 60000;
+final configurable int maxActiveStreamsPerConnection = 50;
+
 # Configurations for managing the gRPC client connection pool.
 #
 # + maxActiveConnections - Max active connections per route(host:port). The default value is -1, which indicates unlimited
@@ -23,10 +28,10 @@ import ballerina/java;
 # + waitTimeInMillis - Maximum amount of time the client should wait for an idle connection before it sends an error when the pool is exhausted
 # + maxActiveStreamsPerConnection - Maximum active streams per connection. This only applies to HTTP/2
 public type PoolConfiguration record {|
-    int maxActiveConnections = -1;
-    int maxIdleConnections = 1000;
-    int waitTimeInMillis = 60000;
-    int maxActiveStreamsPerConnection = 50;
+    int maxActiveConnections = maxActiveConnections;
+    int maxIdleConnections = maxIdleConnections;
+    int waitTimeInMillis = waitTimeInMillis;
+    int maxActiveStreamsPerConnection = maxActiveStreamsPerConnection;
 |};
 
 //This is a hack to get the global map initialized, without involving locking.
