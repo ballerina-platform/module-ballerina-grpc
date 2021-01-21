@@ -53,7 +53,7 @@ public client class HelloWorld45Client {
         checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 
-    isolated remote function lotsOfReplies(string req) returns stream<anydata>|Error {
+    isolated remote function lotsOfReplies(string req) returns stream<anydata, Error?>|Error {
         
         var payload = check self.grpcClient->executeServerStreaming("grpcservices.HelloWorld45/lotsOfReplies", req);
         [stream<anydata>, map<string|string[]>][result, _] = payload;
