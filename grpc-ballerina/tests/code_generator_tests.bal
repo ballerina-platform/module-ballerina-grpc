@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/file;
-import ballerina/java;
+import ballerina/jballerina.java;
 import ballerina/test;
 
 @test:Config {enable:true}
