@@ -28,7 +28,6 @@ module io.ballerina.stdlib.grpc {
     requires io.ballerina.config;
     requires java.logging;
     requires io.ballerina.lang;
-    requires io.ballerina.tool;
     requires io.ballerina.tools.api;
     requires info.picocli;
     requires handlebars;
