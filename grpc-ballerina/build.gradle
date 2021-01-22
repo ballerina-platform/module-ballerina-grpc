@@ -145,6 +145,7 @@ task copyStdlibs(type: Copy) {
 def packageName = "grpc"
 def packageOrg = "ballerina"
 def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
+def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
 def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
 def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
@@ -155,6 +156,7 @@ def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-c
 def targetNativeJar = file("$project.rootDir/${packageName}-native/build/libs/${packageName}-native-${project.version}.jar")
 def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 def originalConfig = ballerinaConfigFile.text
+def originalDependencyConfig = ballerinaDependencyFile.text
 
 task updateTomlFile {
     doLast {
@@ -169,22 +171,25 @@ task updateTomlFile {
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
-        newConfig = newConfig.replace("@stdlib.runtime.version@", stdlibDependentRuntimeVersion)
-        newConfig = newConfig.replace("@stdlib.crypto.version@", stdlibDependentCryptoVersion)
-        newConfig = newConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
-        newConfig = newConfig.replace("@stdlib.auth.version@", stdlibDependentAuthVersion)
-        newConfig = newConfig.replace("@stdlib.jwt.version@", stdlibDependentJwtVersion)
-        newConfig = newConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
-        newConfig = newConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
         newConfig = newConfig.replace("@http.native.version@", project.stdlibHttpVersion)
         newConfig = newConfig.replace("@netty.version@", stdlibDependentNettyVersion)
         ballerinaConfigFile.text = newConfig
+
+        def newDependencyConfig = ballerinaDependencyFile.text.replace("@stdlib.runtime.version@", stdlibDependentRuntimeVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.crypto.version@", stdlibDependentCryptoVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.auth.version@", stdlibDependentAuthVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.jwt.version@", stdlibDependentJwtVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
+        ballerinaDependencyFile.text = newDependencyConfig
     }
 }
 
 task revertTomlFile {
     doLast {
         ballerinaConfigFile.text = originalConfig
+        ballerinaDependencyFile.text = originalDependencyConfig
     }
 }
 
