@@ -46,7 +46,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.ANN_SERVICE_DESCRIPTOR_FQN;
-import static org.ballerinalang.net.grpc.GrpcConstants.CLIENT_ENDPOINT_TYPE;
+import static org.ballerinalang.net.grpc.GrpcConstants.CLIENT_ENDPOINT_RESPONSE_OBSERVER;
 import static org.ballerinalang.net.grpc.GrpcConstants.ERROR_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_QUEUE;
 import static org.ballerinalang.net.grpc.GrpcConstants.SERVER_CONNECTOR;
@@ -183,7 +183,7 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
 
     public static Object closeStream(Environment env, BObject streamIterator) {
         Semaphore listenerSemaphore = (Semaphore) streamIterator.getNativeData(MESSAGE_QUEUE);
-        BObject clientEndpoint = (BObject) streamIterator.getNativeData(CLIENT_ENDPOINT_TYPE);
+        BObject clientEndpoint = (BObject) streamIterator.getNativeData(CLIENT_ENDPOINT_RESPONSE_OBSERVER);
         Object errorVal = streamIterator.getNativeData(ERROR_MESSAGE);
         BError returnError;
         if (errorVal instanceof BError) {

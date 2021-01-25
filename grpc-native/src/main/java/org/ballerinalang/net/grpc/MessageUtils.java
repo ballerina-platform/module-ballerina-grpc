@@ -109,6 +109,9 @@ public class MessageUtils {
     }
 
     public static StreamObserver getResponseObserver(BObject refType) {
+        if (refType instanceof StreamObserver) {
+            return ((StreamObserver) refType);
+        }
         Object observerObject = refType.getNativeData(GrpcConstants.RESPONSE_OBSERVER);
         if (observerObject instanceof StreamObserver) {
             return ((StreamObserver) observerObject);
