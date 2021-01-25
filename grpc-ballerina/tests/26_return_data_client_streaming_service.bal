@@ -36,32 +36,6 @@ service "HelloWorld26" on ep26 {
     }
 }
 
-public client class HelloWorld26StringCaller {
-    private Caller caller;
-
-    public isolated function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-    
-    isolated remote function sendString(string response) returns Error? {
-        return self.caller->send(response);
-    }
-    isolated remote function sendContextString(ContextString response) returns Error? {
-        return self.caller->send(response);
-    }
-    
-    isolated remote function sendError(Error response) returns Error? {
-        return self.caller->sendError(response);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
 
 const string ROOT_DESCRIPTOR_26 = "0A2532365F72657475726E5F646174615F636C69656E745F73747265616D696E672E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F325F0A0C48656C6C6F576F726C643236124F0A0F6C6F74734F664772656574696E6773121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75652801620670726F746F33";
 isolated function getDescriptorMap26() returns map<string> {

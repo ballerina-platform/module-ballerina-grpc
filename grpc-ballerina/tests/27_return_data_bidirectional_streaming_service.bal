@@ -42,30 +42,6 @@ public type ChatMessage27 record {|
 
 |};
 
-public client class ChatFromReturnStringCaller {
-    private Caller caller;
-
-    public isolated function init(Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function sendChatMessage27(ChatMessage27 response) returns Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(Error response) returns Error? {
-        return self.caller->sendError(response);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.caller->complete();
-    }
-}
-
 const string ROOT_DESCRIPTOR_27 = "0A2832375F6269646972656374696F6E616C5F73747265616D696E675F736572766963652E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F223D0A0D436861744D657373616765323712120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765324A0A0E4368617446726F6D52657475726E12380A0463686174120E2E436861744D65737361676532371A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756528013001620670726F746F33";
 isolated function getDescriptorMap27() returns map<string> {
     return {
