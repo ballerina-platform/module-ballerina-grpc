@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static org.ballerinalang.net.grpc.GrpcConstants.CLIENT_ENDPOINT_TYPE;
+import static org.ballerinalang.net.grpc.GrpcConstants.CLIENT_ENDPOINT_RESPONSE_OBSERVER;
 import static org.ballerinalang.net.grpc.GrpcConstants.COMPLETED_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.ITERATOR_OBJECT_NAME;
 import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_QUEUE;
@@ -79,7 +79,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         BObject streamIterator = ValueCreator.createObjectValue(getModule(), ITERATOR_OBJECT_NAME, new Object[1]);
         BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
         streamIterator.addNativeData(MESSAGE_QUEUE, messageQueue);
-        streamIterator.addNativeData(CLIENT_ENDPOINT_TYPE, getConnectionParameter(resource, responseObserver));
+        streamIterator.addNativeData(CLIENT_ENDPOINT_RESPONSE_OBSERVER, responseObserver);
         BStream requestStream = ValueCreator.createStreamValue(TypeCreator.createStreamType(inputType),
                 streamIterator);
         onStreamInvoke(resource, requestStream, call.getHeaders(), responseObserver, context);
