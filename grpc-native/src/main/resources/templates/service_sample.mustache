@@ -17,7 +17,7 @@ service "{{serviceName}}" on ep {
     remote function {{methodName}}({{#isNotNull inputType}}{{inputType}} value{{/isNotNull}}) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}},error>|error {
     // Implementation goes here.
     }{{/serverStreamingFunctions}}{{#bidiStreamingFunctions}}
-    remote function {{methodName}}({{#isNotNull inputType}}{{inputType}} value{{/isNotNull}}) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}},error>|error {
+    remote function {{methodName}}(stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}{{~#isNull inputType}}record {}{{/isNull}},error> clientStream) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}},error>|error {
     // Implementation goes here.
     }{{/bidiStreamingFunctions}}
 }
