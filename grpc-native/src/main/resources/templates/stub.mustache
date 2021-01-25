@@ -63,7 +63,7 @@ public client class {{serviceName}}Client {
         return new {{pascalcase methodName}}StreamingClient(sClient);
     }{{/clientStreamingFunctions}}{{#bidiStreamingFunctions}}
     isolated remote function {{methodName}}() returns ({{pascalcase methodName}}StreamingClient|grpc:Error) {
-        StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("{{methodId}}");
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("{{methodId}}");
         return new {{pascalcase methodName}}StreamingClient(sClient);
     }{{/bidiStreamingFunctions}}
 }
