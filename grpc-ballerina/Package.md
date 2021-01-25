@@ -47,28 +47,24 @@ The code snippet given below contains a service that sends a response to each re
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090)  {
    // A resource that accepts a string message.
-   remote function hello(grpc:Caller caller, string name) {
+   remote function hello(string name) returns string|error {
        // Send the response to the client.
-       grpc:Error? err = caller->send("Hi " + name + "! Greetings from gRPC service!");
-
-       // After sending the response, call ‘complete()’ to indicate that the response was completely sent.
-       grpc:Error? result = caller->complete();
+       return "Hi " + name + "! Greetings from gRPC service!");
    }
 }
 ```
 ##### Creating the client
-The code snippet given below calls the above service in a blocking manner using an auto-generated Ballerina stub.
+The code snippet given below calls the above service in a synchronized manner using an auto-generated Ballerina stub.
 
 ```ballerina
 // Use ‘BlockingClient’ to execute the call in the blocking mode.
-HelloWorldBlockingClient blockingClient = new("http://localhost:9090");
+HelloWorldClient blockingClient = new("http://localhost:9090");
 
 // Create gRPC headers.
-grpc:Headers headers = new;
-headers.setEntry("id", "newrequest1");
+map<string|string[]> headers = {id: "newrequest1"};
 
 // Call the method in the service using a client stub.
-[string, grpc:Headers]|grpc:Error responseFromServer = blockingClient->hello("Ballerina", headers);
+ContextString|grpc:Error responseFromServer = blockingClient->hello({content: "Ballerina", headers: headers);
 ```
 For examples on the usage of the operation, see [Unary Ballerina Example](https://ballerina.io/swan-lake/learn/by-example/grpc-unary-blocking.html) and [Unary Non-Ballerina Example](https://ballerina.io/swan-lake/learn/by-example/grpc-unary-non-blocking.html)
 
@@ -86,14 +82,10 @@ The code snippet given below contains a service that sends a sequence of respons
 ```ballerina
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090) {
-   remote function lotsOfReplies(grpc:Caller caller, string name) {
-       string[] greets = ["Hi", "Welcome"];
+   remote function lotsOfReplies(string name) returns stream<string, grpc:Error?> {
+       string[] greets = ["Hi " + name, "Welcome " + name];
        // Send multiple responses to the client.
-       foreach string greet in greets {
-           grpc:Error? err = caller->send(greet + " " + name + "! Greetings from Ballerina service");
-       }
-       // Once the messages are sent to the server, call ‘complete()’ to indicate that the request was completely sent.
-       grpc:Error? result = caller->complete();
+       return greets.toStream();
    }
 }
 ```
@@ -106,24 +98,7 @@ The code snippet given below calls the above service using the auto-generated Ba
     HelloWorldClient helloworldClient = new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
-    grpc:Error? result = helloworldClient->lotsOfReplies
-("Ballerina", HelloWorldMessageListener);
-
-// Define a listener service to receive the messages from the server.
-service HelloWorldMessageListener = service {
-
-   // This resource method is invoked when the service receives a message.
-   remote function onMessage(string message) {
-   }
-   
-   // This resource method is invoked if an error is returned.
-   remote function onError(error err) {
-   }
-
-   // Invoke this resource when the server sends all the responses to the request.
-    remote function onComplete() {
-   }
-}
+    stream<string, grpc:Error?>|grpc:Error result = helloworldClient->lotsOfReplies("Ballerina");
 ```
 For examples on the usage of the operation, see the [Server Streaming Example](https://ballerina.io/swan-lake/learn/by-example/grpc-server-streaming.html).
 
@@ -142,15 +117,15 @@ The code snippet given below contains a service that receives a sequence of requ
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090) {
 
-    //This `resource` is triggered when a new caller connection is initialized.
-    remote function lotsOfGreetings(grpc:Caller caller, stream<string,error> clientStream) {
+    //This `resource` is triggered when a new client connection is initialized.
+    remote function lotsOfGreetings(stream<string, grpc:Error?> clientStream) returns string|error {
         //Iterate through the client stream
         error? e = clientStream.forEach(function(string name) {
             // Handle the message sent from the stream here
         });
         //A grpc:EOS is returned once the client stream is completed
         if (e is grpc:EOS) {
-            grpc:Error? err = caller->send("Ack");
+            return "Ack";
         } else if (e is error) {
             // Handle the error sent by the client here
         }
@@ -162,37 +137,23 @@ service HelloWorld on new grpc:Listener(9090) {
 The code snippet given below calls the above service using the auto-generated Ballerina client stub and sends multiple request messages from the server.
 
 ```ballerina
-   // Client endpoint configurations.
+    // Client endpoint configurations.
     HelloWorldClient helloworldClient = new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
-    grpc:StreamingClient|grpc:Error ep = helloworldClient->lotsOfGreetings(HelloWorldMessageListener);
+    LotsOfGreetingsStreamingClient|grpc:Error streamingClient = helloworldClient->lotsOfGreetings();
 
-// Send multiple messages to the server.
-string[] greets = ["Hi", "Hey", "GM"];
-foreach string greet in greets {
-    grpc:Error? connErr = ep->send(greet + " " + "Ballerina");
-}
+    // Send multiple messages to the server.
+    string[] greets = ["Hi", "Hey", "GM"];
+    foreach string greet in greets {
+        grpc:Error? connErr = streamingClient->sendstring(greet + " " + "Ballerina");
+    }
 
-// Once all the messages are sent, the server notifies the caller with a `complete` message.
-grpc:Error? result = ep->complete();
+    // Once all the messages are sent, the server notifies the caller with a `complete` message.
+    grpc:Error? result = streamingClient->complete();
+    
+    string|grpc:Error response = streamingClient->receiveString();
 ...
-
-// Define a listener service to receive the messages from the server.
-service HelloWorldMessageListener = service {
-
-   // This resource method is invoked when the service receives a message.
-   remote function onMessage(string message) {
-   }
-   
-   // This resource method is invoked if an error is returned.
-   remote function onError(error err) {
-   }
-
-   // Invoke this resource when the server sends all the responses to the request.
-    remote function onComplete() {
-   }
-}
 ```
 For examples on the usage of the operation, see the [Client Streaming Example](https://ballerina.io/swan-lake/learn/by-example/grpc-client-streaming.html).
 
@@ -211,7 +172,7 @@ The code snippet given below includes a service that handles bidirectional strea
 service Chat on new grpc:Listener(9090) {
 
     //This `resource` is triggered when a new caller connection is initialized.
-    remote function chat(grpc:Caller caller, stream<ChatMessage, error> clientStream) {
+    remote function chat(ChatStringCaller caller, stream<ChatMessage, grpc:Error?> clientStream) {
         //Iterate through the client stream
         error? e = clientStream.forEach(function(ChatMessage chatMsg) {
             // Handle the streamed messages sent from the client here
@@ -234,34 +195,27 @@ The code snippet given below calls the above service using the auto-generated Ba
     ChatClient chatClient = new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
-    grpc:StreamingClient|grpc:Error ep = = chatClient->chat(ChatMessageListener);
+    ChatStreamingClient|grpc:Error streamingClient = = chatClient->chat();
 
-// Send multiple messages to the server.
-string[] greets = ["Hi", "Hey", "GM"];
-foreach string greet in greets {
-    ChatMessage mes = {name: "Ballerina", message: greet};
-    grpc:Error? connErr = ep->send(mes);
-}
+    // Send multiple messages to the server.
+    string[] greets = ["Hi", "Hey", "GM"];
+    foreach string greet in greets {
+        ChatMessage mes = {name: "Ballerina", message: greet};
+        grpc:Error? connErr = streamingClient->sendChatMessage(mes);
+    }
 
-// Once all the messages are sent, the server notifies the caller with a `complete` message.
-grpc:Error? result = ep->complete();
-...
+    // Once all the messages are sent, the server notifies the caller with a `complete` message.
+    grpc:Error? result = streamingClient->complete();
+    ...
 
-// Define a listener service to receive the messages from the server.
-service ChatMessageListener = service {
-
-   // This resource method is invoked when the service receives a message.
-   remote function onMessage(string message) {
-   }
-   
-   // This resource method is invoked if an error is returned.
-   remote function onError(error err) {
-   }
-
-   // Invoke this resource when the server sends all the responses to the request.
-    remote function onComplete() {
-   }
-}
+    // Receives the server stream response iteratively.
+    string|grpc:Error result = streamingClient->receiveString();
+    while !(result is grpc:EOS) {
+        if !(result is grpc:Error) {
+            io:println(result);
+        }
+        result = streamingClient->receiveString();
+    }
 ```
 For examples on the usage of the operation, see the [Bidirectional Streaming Example](https://ballerina.io/swan-lake/learn/by-example/grpc-bidirectional-streaming.html).
 
@@ -280,7 +234,7 @@ listener grpc:Listener ep = new (9090, {
     host: "localhost",
     secureSocket: {
         keyStore: {
-            path: config:getAsString("b7a.home") + "bre/security/ballerinaKeystore.p12",
+            path: "bre/security/ballerinaKeystore.p12",
             password: "ballerina"
         }
     }
@@ -295,10 +249,10 @@ service HelloWorld on ep {
 
 ```ballerina
     // Client endpoint configuration with SSL configurations.
-    HelloWorldBlockingClient helloWorldClient = new ("https://localhost:9090", {
+    HelloWorldClient helloWorldClient = new ("https://localhost:9090", {
             secureSocket: {
                 trustStore: {
-                    path: config:getAsString("b7a.home") + "/bre/security/ballerinaTruststore.p12",
+                    path: "/bre/security/ballerinaTruststore.p12",
                     password: "ballerina"
                 }
             }
