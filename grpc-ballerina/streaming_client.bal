@@ -18,7 +18,7 @@ import ballerina/jballerina.java;
 
 # Provides the gRPC streaming client actions for interacting with the gRPC server.
 public client class StreamingClient {
-    stream<anydata, Error?>? serverStream = ();
+    stream<anydata, Error>? serverStream = ();
 
     # Sends the request message to the server.
     # ```ballerina
@@ -61,8 +61,8 @@ public client class StreamingClient {
     isolated remote function receive() returns [anydata, map<string|string[]>]|Error {
         map<string|string[]> headers = {};
         if (externIsBidirectional(self)) {
-            if (self.serverStream is stream<anydata, Error?>) {
-                var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
+            if (self.serverStream is stream<anydata, Error>) {
+                var nextRecord = (<stream<anydata, Error>>self.serverStream).next();
                 var headerMap = externGetHeaderMap(self);
                 if (headerMap is map<string|string[]>) {
                     headers = headerMap;
@@ -74,9 +74,9 @@ public client class StreamingClient {
                 }
             } else {
                 var result = externReceive(self);
-                if (result is stream<anydata, Error?>) {
+                if (result is stream<anydata, Error>) {
                     self.serverStream = result;
-                    var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
+                    var nextRecord = (<stream<anydata, Error>>self.serverStream).next();
                     var headerMap = externGetHeaderMap(self);
                     if (headerMap is map<string|string[]>) {
                         headers = headerMap;
@@ -101,7 +101,7 @@ public client class StreamingClient {
            }
            if (result is anydata) {
                return [result, headers];
-           } else if (result is stream<anydata, Error?>) {
+           } else if (result is stream<anydata, Error>) {
                return error DataMismatchError("Expected an anydata type but found a stream.");
            } else {
                return result;
@@ -125,7 +125,7 @@ isolated function streamSendError(StreamingClient streamConnection, Error err) r
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
-isolated function externReceive(StreamingClient streamConnection) returns anydata|stream<anydata, Error?>|Error =
+isolated function externReceive(StreamingClient streamConnection) returns anydata|stream<anydata, Error>|Error =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
