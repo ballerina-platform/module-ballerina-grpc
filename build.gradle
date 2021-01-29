@@ -17,46 +17,11 @@
  */
 
 plugins {
-    id "com.github.spotbugs" version "4.0.5"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
-    id "de.undercouch.download" version "4.0.4"
-    id "net.researchgate.release" version "2.8.0"
+    id "com.github.spotbugs" version "${githubSpotbugsVersion}"
+    id "com.github.johnrengelman.shadow" version "${githubJohnrengelmanShadowVersion}"
+    id "de.undercouch.download" version "${underCouchDownloadVersion}"
+    id "net.researchgate.release" version "${researchgateReleaseVersion}"
 }
-
-ext.ballerinaLangVersion = project.ballerinaLangVersion
-ext.ballerinaTomlParserVersion = project.ballerinaTomlParserVersion
-ext.puppycrawlCheckstyleVersion = project.puppycrawlCheckstyleVersion
-ext.commonsLang3Version = project.commonsLang3Version
-ext.slf4jVersion = project.slf4jVersion
-ext.protoGoogleCommonsVersion = project.protoGoogleCommonsVersion
-ext.protobufJavaVersion = project.protobufJavaVersion
-ext.jknackHandlebarsVersion = project.jknackHandlebarsVersion
-ext.nettyVersion = project.nettyVersion
-ext.picocliVersion = project.picocliVersion
-ext.testngVersion = project.testngVersion
-ext.wso2SnakeYamlVersion = project.wso2SnakeYamlVersion
-ext.nettyTcnativeVersion = project.nettyTcnativeVersion
-ext.bouncycastleVersion = project.bouncycastleVersion
-ext.wso2CommonsPoolVersion = project.wso2CommonsPoolVersion
-ext.stdlibRuntimeVersion = project.stdlibRuntimeVersion
-ext.stdlibCryptoVersion = project.stdlibCryptoVersion
-ext.stdlibHttpVersion = project.stdlibHttpVersion
-
-ext.stdlibIoVersion = project.stdlibIoVersion
-ext.stdlibLogVersion = project.stdlibLogVersion
-ext.stdlibFileVersion = project.stdlibFileVersion
-ext.stdlibTimeVersion = project.stdlibTimeVersion
-ext.stdlibOsVersion = project.stdlibOsVersion
-ext.stdlibAuthVersion = project.stdlibAuthVersion
-ext.stdlibMimeVersion = project.stdlibMimeVersion
-ext.stdlibCacheVersion = project.stdlibCacheVersion
-ext.stdlibTaskVersion = project.stdlibTaskVersion
-ext.stdlibReflectVersion = project.stdlibReflectVersion
-ext.stdlibJwtVersion = project.stdlibJwtVersion
-ext.stdlibUuidVersion = project.stdlibUuidVersion
-ext.stdlibEncodingVersion = project.stdlibEncodingVersion
-ext.stdlibOAuth2Version = project.stdlibOAuth2Version
-ext.stdlibRegexVersion = project.stdlibRegexVersion
 
 allprojects {
     group = 'org.ballerinalang'
