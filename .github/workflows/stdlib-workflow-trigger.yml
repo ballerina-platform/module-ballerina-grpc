@@ -20,5 +20,5 @@ jobs:
                     -H 'Accept: application/vnd.github.v3+json' \
                     -H 'Authorization: token ${{ secrets.BALLERINA_BOT_TOKEN }}' \
                     --data '{
-                      "event_type": "dependency-update"
+                        "event_type": "dependency-update"
                     }'

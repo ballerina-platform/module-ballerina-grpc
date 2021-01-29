@@ -10,8 +10,8 @@ on:
 
 jobs:
     build:
-
         runs-on: ubuntu-latest
+        if: github.repository_owner == 'ballerina-platform'
         steps:
             -   uses: actions/checkout@v2
             -   name: Set up JDK 11
@@ -25,7 +25,20 @@ jobs:
                     packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
                     packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
                 run: |
-                    ./gradlew publish
+                    ./gradlew publish --scan --no-daemon
+            -   name: Archive Error Log
+                uses: actions/upload-artifact@v2
+                if: failure()
+                with:
+                    name: Ballerina Internal Log
+                    path: grpc-ballerina/ballerina-internal.log
+                    if-no-files-found: ignore
+            -   name: Archive Code Coverage JSON
+                uses: actions/upload-artifact@v2
+                with:
+                    name: Code Coverage JSON
+                    path: grpc-ballerina/target/report/test_results.json
+                    if-no-files-found: ignore
             -   name: Dispatch Dependent Module Builds
                 if: github.event.action != 'stdlib-publish-snapshot'
                 run: |
@@ -35,8 +48,8 @@ jobs:
                     -H 'Accept: application/vnd.github.v3+json' \
                     -H 'Authorization: token ${{ secrets.BALLERINA_BOT_TOKEN }}' \
                     --data '{
-                      "event_type": "stdlib-module-push",
-                      "client_payload": {
-                        "module": "${{ github.repository }}"
-                      }
+                        "event_type": "stdlib-module-push",
+                        "client_payload": {
+                            "module": "${{ github.repository }}"
+                        }
                     }'
