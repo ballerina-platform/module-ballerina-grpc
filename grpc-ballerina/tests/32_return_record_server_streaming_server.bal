@@ -43,7 +43,7 @@ public type SampleMsg32 record {|
 |};
 
 public type ContextSampleMsg32Stream record {|
-    stream<anydata> content;
+    stream<anydata, Error> content;
     map<string|string[]> headers;
 |};
 

@@ -24,7 +24,7 @@ listener Listener ep34 = new (9124);
 }
 service "HelloWorld34" on ep34 {
 
-    remote function sayHello(stream<SampleMsg34, error?> clientStream) returns stream<SampleMsg34> {
+    remote function sayHello(stream<SampleMsg34, error> clientStream) returns stream<SampleMsg34> {
         io:println("Connected sucessfully.");
         error? e = clientStream.forEach(function(SampleMsg34 val) {
             io:println(val);

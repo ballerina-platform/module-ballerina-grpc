@@ -85,15 +85,15 @@ public client class HelloWorld32Client {
         Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_32, getDescriptorMap32());
     }
 
-    isolated remote function sayHello(SampleMsg32 req) returns stream<anydata, Error?>|Error {
+    isolated remote function sayHello(SampleMsg32 req) returns stream<anydata, Error>|Error {
         var payload = check self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
-        [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
+        [stream<anydata, Error>, map<string|string[]>][result, _] = payload;
         return result;
     }
 
     isolated remote function sayHelloContext(SampleMsg32 req) returns ContextSampleMsg32Stream|Error {
         var payload = check self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
-        [stream<anydata, Error?>, map<string|string[]>][result, headers] = payload;
+        [stream<anydata, Error>, map<string|string[]>][result, headers] = payload;
         return {content: result, headers: headers};
     }
 }
