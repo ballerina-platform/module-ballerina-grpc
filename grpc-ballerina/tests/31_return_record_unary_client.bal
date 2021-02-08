@@ -31,6 +31,18 @@ public function testUnaryRecordValueReturn() {
     }
 }
 
+@test:Config {enable:true}
+public function testUnaryErrorReturn() {
+    HelloWorld31Client ep = new ("http://localhost:9121");
+    SampleMsg31 reqMsg = {id: 8};
+    var unionResp = ep->sayHello(reqMsg);
+    if (unionResp is InvalidArgumentError) {
+        test:assertEquals(unionResp.message(), "Name must not be empty.");
+    } else {
+        test:assertFail("RPC call should return an InvalidArgumentError");
+    }
+}
+
 
 public client class HelloWorld31Client {
     *AbstractClientEndpoint;

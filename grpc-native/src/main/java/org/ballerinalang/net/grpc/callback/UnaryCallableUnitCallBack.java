@@ -96,6 +96,13 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             } else {
                 content = response;
             }
+            // If content is null and remote function doesn't return empty response means. response is already sent
+            // to client via caller object, but connection is not closed already by calling complete function.
+            // Hence closing the connection.
+            if (content == null) {
+                requestSender.onCompleted();
+            }
+
             // Update response headers when request headers exists in the context.
             HttpHeaders headers = convertToHttpHeaders(headerValues);
 
