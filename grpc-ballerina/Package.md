@@ -1,6 +1,6 @@
-## Module Overview
+## Package Overview
 
-This module provides support for the gRPC messaging protocol. gRPC is an inter-process communication technology that allows you to connect, invoke and operate distributed heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and It uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC, highly efficient on wire and a simple service definition framework.
+This package provides support for the gRPC messaging protocol. gRPC is an inter-process communication technology that allows you to connect, invoke and operate distributed heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and It uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC, highly efficient on wire and a simple service definition framework.
 
 When you develop a gRPC application the first thing you do is define a service definition using Protocol Buffers.
 
@@ -30,7 +30,7 @@ For examples on the usage of the operation, see the [Proto to Ballerina Example]
 
 ### gRPC Communication Patterns
 The common communication pattern between client and server is simple request-response style communication. However, with gRPC, you can leverage different inter-process communication patterns other than the simple request-response pattern.
-This module supports four fundamental communication patterns used in gRPC-based applications: simple RPC(unary RPC), server-side streaming, client-side streaming, and bidirectional streaming.
+This package supports four fundamental communication patterns used in gRPC-based applications: simple RPC(unary RPC), server-side streaming, client-side streaming, and bidirectional streaming.
 
 #### Simple RPC (Unary RPC) 
 In this pattern, the client invokes a remote function of a server and sends a single request to the server. The server sends a single response in return to the client along with status details.
@@ -223,7 +223,7 @@ For examples on the usage of the operation, see the [Bidirectional Streaming Exa
 
 #### Using the TLS protocol
 
-The Ballerina gRPC module allows the use TLS in communication. This setting expects a secure socket to be 
+The Ballerina gRPC package allows the use TLS in communication. This setting expects a secure socket to be 
 set in the connection configuration as shown below.
 
 ##### Configuring TLS in server side
