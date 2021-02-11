@@ -1,7 +1,7 @@
 [[dependency]]
 org = "ballerina"
 name = "runtime"
-version = "@stdlib.runtime.version@
+version = "@stdlib.runtime.version@"
 
 [[dependency]]
 org = "ballerina"
