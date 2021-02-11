@@ -32,12 +32,14 @@ service /HelloWorld29 on ep29 {
         JwtValidatorConfig config = {
             issuer: "wso2",
             audience: "ballerina",
-            trustStoreConfig: {
-                trustStore: {
-                    path: TRUSTSTORE_PATH,
-                    password: "ballerina"
-                },
-                certificateAlias: "ballerina"
+            signatureConfig: {
+                trustStoreConfig: {
+                    trustStore: {
+                        path: TRUSTSTORE_PATH,
+                        password: "ballerina"
+                    },
+                    certAlias: "ballerina"
+                }
             },
             scopeKey: "scope"
         };

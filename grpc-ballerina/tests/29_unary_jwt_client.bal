@@ -26,13 +26,15 @@ public function testStringValueReturnWithJwt() {
         issuer: "wso2",
         audience: ["ballerina"],
         customClaims: { "scope": "write" },
-        keyStoreConfig: {
-            keyStore: {
-                path: KEYSTORE_PATH,
-                password: "ballerina"
-            },
-            keyAlias: "ballerina",
-            keyPassword: "ballerina"
+        signatureConfig: {
+            config: {
+                keyStore: {
+                    path: KEYSTORE_PATH,
+                    password: "ballerina"
+                },
+                keyAlias: "ballerina",
+                keyPassword: "ballerina"
+            }
         }
     };
     ClientSelfSignedJwtAuthHandler handler = new(config);
