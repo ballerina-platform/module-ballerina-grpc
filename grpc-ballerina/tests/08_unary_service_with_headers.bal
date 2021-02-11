@@ -48,7 +48,6 @@ service "HelloWorld101" on ep8 {
         } else {
             io:println("Server send response : " + message);
         }
-        checkpanic caller->complete();
     }
 }
 

@@ -1,6 +1,6 @@
-## Module Overview
+## Package Overview
 
-This module provides support for the gRPC messaging protocol. gRPC is an inter-process communication technology that allows you to connect, invoke and operate distributed heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and It uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC, highly efficient on wire and a simple service definition framework.
+This package provides support for the gRPC messaging protocol. gRPC is an inter-process communication technology that allows you to connect, invoke and operate distributed heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and It uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC, highly efficient on wire and a simple service definition framework.
 
 When you develop a gRPC application the first thing you do is define a service definition using Protocol Buffers.
 
@@ -25,12 +25,12 @@ message HelloResponse {
 
 gRPC allows client applications to directly call the server-side methods using the auto-generated stubs. Protocol Buffer compiler is used to generate the stubs for the specified language. In Ballerina, the stubs are generated using the built-in proto compiler. 
 
-For the guide on how to generate Ballerina code for Protocol Buffers definition, see [how to guide](https://ballerina.io/swan-lake/learn/how-to-generate-code-for-protocol-buffers/).
-For examples on the usage of the operation, see the [Proto to Ballerina Example](https://ballerina.io/swan-lake/learn/by-example/proto-to-ballerina.html).
+For the guide on how to generate Ballerina code for Protocol Buffers definition, see [how to guide](https://ballerina.io/learn/how-to-generate-code-for-protocol-buffers/).
+For examples on the usage of the operation, see the [Proto to Ballerina Example](https://ballerina.io/learn/by-example/proto-to-ballerina.html).
 
 ### gRPC Communication Patterns
 The common communication pattern between client and server is simple request-response style communication. However, with gRPC, you can leverage different inter-process communication patterns other than the simple request-response pattern.
-This module supports four fundamental communication patterns used in gRPC-based applications: simple RPC(unary RPC), server-side streaming, client-side streaming, and bidirectional streaming.
+This package supports four fundamental communication patterns used in gRPC-based applications: simple RPC(unary RPC), server-side streaming, client-side streaming, and bidirectional streaming.
 
 #### Simple RPC (Unary RPC) 
 In this pattern, the client invokes a remote function of a server and sends a single request to the server. The server sends a single response in return to the client along with status details.
@@ -66,7 +66,7 @@ map<string|string[]> headers = {id: "newrequest1"};
 // Call the method in the service using a client stub.
 ContextString|grpc:Error responseFromServer = blockingClient->hello({content: "Ballerina", headers: headers);
 ```
-For examples on the usage of the operation, see [Unary Ballerina Example](https://ballerina.io/swan-lake/learn/by-example/grpc-unary-blocking.html) and [Unary Non-Ballerina Example](https://ballerina.io/swan-lake/learn/by-example/grpc-unary-non-blocking.html)
+For examples on the usage of the operation, see [Unary Ballerina Example](https://ballerina.io/learn/by-example/grpc-unary-blocking.html) and [Unary Non-Ballerina Example](https://ballerina.io/learn/by-example/grpc-unary-non-blocking.html)
 
 #### Server streaming RPC
 In server-side streaming RPC, the sends back a sequence of responses after getting the client's request message. After sending all the server responses, the server marks the end of the stream by sending the server status details.
@@ -100,7 +100,7 @@ The code snippet given below calls the above service using the auto-generated Ba
     // Execute the service streaming call by registering a message listener.
     stream<string, grpc:Error?>|grpc:Error result = helloworldClient->lotsOfReplies("Ballerina");
 ```
-For examples on the usage of the operation, see the [Server Streaming Example](https://ballerina.io/swan-lake/learn/by-example/grpc-server-streaming.html).
+For examples on the usage of the operation, see the [Server Streaming Example](https://ballerina.io/learn/by-example/grpc-server-streaming.html).
 
 #### Client streaming RPC
 In client streaming RPC, the client sends multiple messages to the server instead of a single request. The server sends back a single response to the client.
@@ -155,7 +155,7 @@ The code snippet given below calls the above service using the auto-generated Ba
     string|grpc:Error response = streamingClient->receiveString();
 ...
 ```
-For examples on the usage of the operation, see the [Client Streaming Example](https://ballerina.io/swan-lake/learn/by-example/grpc-client-streaming.html).
+For examples on the usage of the operation, see the [Client Streaming Example](https://ballerina.io/learn/by-example/grpc-client-streaming.html).
 
 #### Bidirectional Streaming RPC
 In bidirectional streaming RPC, the client is sending a request to the server as a stream of messages. The server also responds with a stream of messages.
@@ -217,13 +217,13 @@ The code snippet given below calls the above service using the auto-generated Ba
         result = streamingClient->receiveString();
     }
 ```
-For examples on the usage of the operation, see the [Bidirectional Streaming Example](https://ballerina.io/swan-lake/learn/by-example/grpc-bidirectional-streaming.html).
+For examples on the usage of the operation, see the [Bidirectional Streaming Example](https://ballerina.io/learn/by-example/grpc-bidirectional-streaming.html).
 
 ### Advanced Use cases
 
 #### Using the TLS protocol
 
-The Ballerina gRPC module allows the use TLS in communication. This setting expects a secure socket to be 
+The Ballerina gRPC package allows the use TLS in communication. This setting expects a secure socket to be 
 set in the connection configuration as shown below.
 
 ##### Configuring TLS in server side
@@ -259,4 +259,4 @@ service HelloWorld on ep {
     });
 ```
 
-For examples on the usage of the operation, see the [Secured Unary Example](https://ballerina.io/swan-lake/learn/by-example/grpc-secured-unary.html).
+For examples on the usage of the operation, see the [Secured Unary Example](https://ballerina.io/learn/by-example/grpc-secured-unary.html).

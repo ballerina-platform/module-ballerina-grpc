@@ -1,7 +1,7 @@
 public class {{removeSpecialCharacters outputType}}Stream {
-    private stream<anydata, grpc:Error?> anydataStream;
+    private stream<anydata, grpc:Error> anydataStream;
 
-    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
+    public isolated function init(stream<anydata, grpc:Error> anydataStream) {
         self.anydataStream = anydataStream;
     }
 

@@ -21,10 +21,14 @@ package org.ballerinalang.net.grpc.callback;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.values.BError;
 import org.ballerinalang.net.grpc.Message;
+import org.ballerinalang.net.grpc.Status;
 import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
 
 import java.util.concurrent.Semaphore;
+
+import static org.ballerinalang.net.grpc.GrpcConstants.STATUS_ERROR_MAP;
+import static org.ballerinalang.net.grpc.GrpcConstants.getKeyByValue;
 
 /**
  * Abstract call back class registered for gRPC service in B7a executor.
@@ -52,12 +56,13 @@ public class AbstractCallableUnitCallBack implements Callback {
      * @param error          error message struct
      */
     static void handleFailure(StreamObserver streamObserver, BError error) {
-        String errorMsg = error.stringValue(null);
+        Integer statusCode = getKeyByValue(STATUS_ERROR_MAP, error.getType().getName());
+        if (statusCode == null) {
+            statusCode = Status.Code.INTERNAL.value();
+        }
         if (streamObserver != null) {
-            streamObserver.onError(new Message(
-                    new StatusRuntimeException(org.ballerinalang.net.grpc.Status.fromCodeValue(
-                                    org.ballerinalang.net.grpc.Status.Code.INTERNAL.value())
-                                    .withDescription(errorMsg))));
+            streamObserver.onError(new Message(new StatusRuntimeException(Status.fromCodeValue(statusCode)
+                    .withDescription(error.getErrorMessage().getValue()))));
         }
     }
 }
