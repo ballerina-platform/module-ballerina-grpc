@@ -27,3 +27,8 @@ version = "@stdlib.crypto.version@"
 org = "ballerina"
 name = "regex"
 version = "@stdlib.regex.version@"
+
+[[dependency]]
+org = "ballerina"
+name = "time"
+version = "@stdlib.time.version@"
