@@ -54,7 +54,7 @@ public isolated function isCancelled(map<string|string[]> headerMap) returns boo
 
 # Return the deadline value as `time:Time`. This can be used to get the deadline and propagate the deadline to the subsequest internal calls.
 # ```ballerina
-# boolean|time:Error isCancelled = grpc:getDeadline(map<string|string[]> headerMap);
+# time:Time?|time:Error deadline = grpc:getDeadline(map<string|string[]> headerMap);
 # ```
 #
 # + headerMap - Optional header map sent by the client
