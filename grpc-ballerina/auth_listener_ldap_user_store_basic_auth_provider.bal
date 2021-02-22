@@ -59,8 +59,8 @@ public client class ListenerLdapUserStoreBasicAuthProvider {
         string[]? actualScopes = userDetails?.scopes;
         if (actualScopes is string[]) {
             boolean matched = matchScopes(actualScopes, expectedScopes);
-            if (!matched) {
-                return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
+            if (matched) {
+                return;
             }
         }
         return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
