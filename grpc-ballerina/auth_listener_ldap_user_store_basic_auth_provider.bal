@@ -56,10 +56,13 @@ public client class ListenerLdapUserStoreBasicAuthProvider {
     # + expectedScopes - The expected scopes as `string` or `string[]`
     # + return - `()`, if it is successful or else a `PermissionDeniedError` error
     remote isolated function authorize(auth:UserDetails userDetails, string|string[] expectedScopes) returns PermissionDeniedError? {
-        string[] actualScopes = userDetails.scopes;
-        boolean matched = matchScopes(actualScopes, expectedScopes);
-        if (!matched) {
-            return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
+        string[]? actualScopes = userDetails?.scopes;
+        if (actualScopes is string[]) {
+            boolean matched = matchScopes(actualScopes, expectedScopes);
+            if (!matched) {
+                return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
+            }
         }
+        return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
     }
 }
