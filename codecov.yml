@@ -1,3 +1,2 @@
 fixes:
-
-ignore:
+  - "ballerina/grpc/*/::grpc-ballerina/"
