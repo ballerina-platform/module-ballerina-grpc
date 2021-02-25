@@ -1,3 +1,2 @@
 fixes:
   - "ballerina/grpc/*/::grpc-ballerina/"
-
