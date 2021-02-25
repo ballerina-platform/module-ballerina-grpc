@@ -7,4 +7,3 @@ ignore:
 
 codecov:
   require_ci_to_pass: no
-  
