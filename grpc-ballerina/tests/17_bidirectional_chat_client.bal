@@ -15,7 +15,6 @@
 // under the License.
 // This is client implementation for bidirectional streaming scenario
 
-import ballerina/io;
 import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
@@ -36,7 +35,7 @@ public function testBidiStreamingInChatClient() {
     // Executes unary non-blocking call registering server message listener.
     var res = chatEp->chat();
     if (res is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, res.message()));
+        test:assertFail(string `Error from Connector: ${res.message()}`);
         return;
     } else {
         ep = res;
@@ -46,7 +45,7 @@ public function testBidiStreamingInChatClient() {
     ChatMessage mes = {name: "Sam", message: "Hi"};
     Error? result = ep->send(mes);
     if (result is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, result.message()));
+        test:assertFail(string `Error from Connector: ${result.message()}`);
     }
 
     var responseMsg = ep->receive();

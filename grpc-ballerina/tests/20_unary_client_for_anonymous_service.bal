@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/log;
 import ballerina/test;
 
@@ -45,7 +44,7 @@ function testAnonymousServiceWithBlockingClient() {
     // Executing unary blocking call
     [string, map<string|string[]>]|Error unionResp = helloWorld20BlockingEp->hello("WSO2");
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         string result = "";
         [result, _] = unionResp;

@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -27,7 +26,7 @@ isolated function testGzipEncoding() {
     ContextOrder reqOrder = {content: 'order, headers: headers};
     string|error result = OrderMgtBlockingEp->addOrder(reqOrder);
     if (result is error) {
-        test:assertFail(io:sprintf("gzip encoding failed: %s", result.message()));
+        test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result, "Order is added 101");
     }

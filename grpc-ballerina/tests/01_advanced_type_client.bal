@@ -32,7 +32,7 @@ function testSendNestedStruct() {
     string|error unionResp = HelloWorld1BlockingEp->testInputNestedStruct(p);
     io:println(unionResp);
     if (unionResp is error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp);
         test:assertEquals(unionResp, "Submitted name: Sam");
@@ -46,7 +46,7 @@ function testReceiveNestedStruct() {
     Person|Error unionResp = HelloWorld1BlockingEp->testOutputNestedStruct(name);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp.toString());
         test:assertEquals(unionResp.name, "Sam");
@@ -64,7 +64,7 @@ function testSendStructReceiveStruct() {
     StockQuote|Error unionResp = HelloWorld1BlockingEp->testInputStructOutputStruct(request);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         test:assertEquals(unionResp.symbol, "WSO2");
@@ -81,7 +81,7 @@ function testSendNoReceiveStruct() {
     StockQuotes|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputStruct();
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp);
         test:assertEquals(unionResp.stock.length(), 2);
@@ -96,7 +96,7 @@ function testSendNoReceiveArray() {
     StockNames|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputArray();
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -114,7 +114,7 @@ function testSendStructNoReceive() {
     Error? unionResp = HelloWorld1BlockingEp->testInputStructNoOutput(quote);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     }
 }
 

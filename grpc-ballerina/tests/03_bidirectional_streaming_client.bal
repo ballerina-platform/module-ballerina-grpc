@@ -34,8 +34,7 @@ function testBidiStreaming() {
     // Executing unary non-blocking call registering server message listener.
     var res = chatEp->chat();
     if (res is Error) {
-        string msg = io:sprintf(ERROR_MSG_FORMAT, res.message());
-        io:println(msg);
+        io:println(string `Error from Connector: ${res.message()}`);
         return;
     } else {
         ep = res;
@@ -44,7 +43,7 @@ function testBidiStreaming() {
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
     Error? connErr = ep->sendChatMessage(mes1);
     if (connErr is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
+        test:assertFail(string `Error from Connector: ${connErr.message()}`);
     }
 
     var responseMsg = ep->receiveString();
@@ -57,7 +56,7 @@ function testBidiStreaming() {
     ChatMessage mes2 = {name:"Sam", message:"GM"};
     connErr = ep->sendChatMessage(mes2);
     if (connErr is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
+        test:assertFail(string `Error from Connector: ${connErr.message()}`);
     }
 
     responseMsg = ep->receiveString();

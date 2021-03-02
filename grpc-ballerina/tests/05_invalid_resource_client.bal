@@ -38,7 +38,7 @@ function testInvalidInputParameter() {
     string age = "";
     int|Error unionResp = helloWorld5BlockingEp->testInt(age);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf("Error from Connector: %s", unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
         test:assertEquals(unionResp, -1);

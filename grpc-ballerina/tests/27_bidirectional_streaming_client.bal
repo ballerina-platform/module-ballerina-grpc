@@ -25,8 +25,7 @@ function testBidiStreamingFromReturn() {
     // Executing unary non-blocking call registering server message listener.
     var res = chatEp->chat();
     if (res is Error) {
-        string msg = io:sprintf(ERROR_MSG_FORMAT, res.message());
-        io:println(msg);
+        io:println(string `Error from Connector: ${res.message()}`);
     } else {
         streamingClient = res;
     }

@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -24,7 +23,7 @@ isolated function testSendAndReceiveEnum() {
     OrderInfo orderReq = { id:"100500", mode:r };
     var addResponse = blockingEp->testEnum(orderReq);
     if (addResponse is Error) {
-        test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
+        test:assertFail(string `Error from Connector: ${addResponse.message()}`);
     } else {
         test:assertEquals(addResponse, "r");
     }
