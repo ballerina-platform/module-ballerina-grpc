@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -23,7 +22,7 @@ public function testUnaryRecordValueReturn() {
     SampleMsg31 reqMsg = {name: "WSO2", id: 8};
     var unionResp = ep->sayHello(reqMsg);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         SampleMsg31 resMsg = <SampleMsg31>unionResp.content;
         test:assertEquals(resMsg.name, "Ballerina Lang");

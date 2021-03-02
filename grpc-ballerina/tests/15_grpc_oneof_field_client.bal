@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
 final OneofFieldServiceClient blockingEp = new("http://localhost:9105");
@@ -28,7 +27,7 @@ function testOneofFieldValue() {
     Request1 request = {first_name:"Sam", age:31};
     var result = blockingEp->hello(request);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result.message, "Hello Sam");
     }
@@ -39,7 +38,7 @@ function testDoubleFieldValue() {
     ZZZ zzz = {one_a:1.7976931348623157E308};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_a.toString(), "1.7976931348623157E308");
     }
@@ -50,7 +49,7 @@ function testFloatFieldValue() {
     ZZZ zzz = {one_b:3.4028235E38};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_b.toString(), "3.4028235E38");
     }
@@ -61,7 +60,7 @@ function testInt64FieldValue() {
     ZZZ zzz = {one_c:-9223372036854775808};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_c.toString(), "-9223372036854775808");
     }
@@ -72,7 +71,7 @@ function testUInt64FieldValue() {
     ZZZ zzz = {one_d:9223372036854775807};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_d.toString(), "9223372036854775807");
     }
@@ -83,7 +82,7 @@ function testInt32FieldValue() {
     ZZZ zzz = {one_e:-2147483648};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_e.toString(), "-2147483648");
     }
@@ -94,7 +93,7 @@ function testFixed64FieldValue() {
     ZZZ zzz = {one_f:9223372036854775807};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_f.toString(), "9223372036854775807");
     }
@@ -105,7 +104,7 @@ function testFixed32FieldValue() {
     ZZZ zzz = {one_g:2147483647};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_g.toString(), "2147483647");
     }
@@ -116,7 +115,7 @@ function testBolFieldValue() {
     ZZZ zzz = {one_h:true};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_h.toString(), "true");
     }
@@ -127,7 +126,7 @@ function testStringFieldValue() {
     ZZZ zzz = {one_i:"Testing"};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_i.toString(), "Testing");
     }
@@ -139,7 +138,7 @@ function testMessageFieldValue() {
     ZZZ zzz = {one_j:aaa};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result?.one_j?.aaa.toString(), "Testing");
     }
@@ -152,7 +151,7 @@ function testBytesFieldValue() {
     ZZZ zzz = {one_k:bytes};
     var result = blockingEp->testOneofField(zzz);
     if (result is Error) {
-         test:assertFail(io:sprintf("Error from Connector: %s ", result.message()));
+         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         boolean bResp = result?.one_k == bytes;
         test:assertEquals(bResp.toString(), "true");

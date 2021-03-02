@@ -26,7 +26,7 @@ isolated function testByteArray() {
     byte[] bytes = statement.toBytes();
     var addResponse = blockingEp->checkBytes(bytes);
     if (addResponse is Error) {
-        test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
+        test:assertFail(string `Error from Connector: ${addResponse.message()}`);
     } else {
         test:assertEquals(addResponse, bytes);
     }
@@ -44,13 +44,12 @@ function testLargeByteArray() {
         if (resultBytes is byte[]) {
             var addResponse = blockingEp->checkBytes(resultBytes);
             if (addResponse is Error) {
-                test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
+                test:assertFail(string `Error from Connector: ${addResponse.message()}`);
             } else {
                 test:assertEquals(addResponse, resultBytes);
             }
         } else {
-            error err = resultBytes;
-            test:assertFail(io:sprintf("File read error: %s", err.message()));
+            test:assertFail(string `File read error: ${resultBytes.message()}`);
         }
     }
 }

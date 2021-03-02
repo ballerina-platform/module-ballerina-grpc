@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 import ballerina/lang.'string as langstring;
 
@@ -23,7 +22,7 @@ public function testStringValueReturn() {
     HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testStringValueReturn("WSO2");
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         test:assertEquals(unionResp, "WSO2");
     }
@@ -35,7 +34,7 @@ public function testFloatValueReturn() {
     float n = 4.5;
     var unionResp = helloWorldBlockingEp->testFloatValueReturn(n);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         test:assertEquals(unionResp, n);
     }
@@ -47,7 +46,7 @@ public function testDoubleValueReturn() {
     float n = 4.5;
     var unionResp = helloWorldBlockingEp->testDoubleValueReturn(n);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         test:assertEquals(unionResp, n);
     }
@@ -59,7 +58,7 @@ public function testInt64ValueReturn() {
     int n = 45;
     var unionResp = helloWorldBlockingEp->testInt64ValueReturn(n);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         test:assertEquals(unionResp, n);
     }
@@ -71,7 +70,7 @@ public function testBoolValueReturn() {
     boolean b = true;
     var unionResp = helloWorldBlockingEp->testBoolValueReturn(b);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         test:assertTrue(unionResp);
     }
@@ -83,7 +82,7 @@ public function testBytesValueReturn() {
     string s = "Ballerina";
     var unionResp = helloWorldBlockingEp->testBytesValueReturn(s.toBytes());
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         string|error returnedString = langstring:fromBytes(unionResp);
         if (returnedString is string) {
@@ -99,7 +98,7 @@ public function testRecordValueReturn() {
     HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testRecordValueReturn("WSO2");
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         test:assertEquals(unionResp.name, "Ballerina Language");
         test:assertEquals(unionResp.id, 0);
@@ -111,7 +110,7 @@ public function testRecordValueReturnStream() {
     HelloWorld24Client helloWorldEp = new ("http://localhost:9114");
     var unionResp = helloWorldEp->testRecordValueReturnStream("WSO2");
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     }
 }
 

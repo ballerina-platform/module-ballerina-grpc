@@ -26,7 +26,7 @@ function testUnaryBlockingClient() {
     string name = "WSO2";
     string|Error unionResp = helloWorld7BlockingEp->hello(name);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -39,7 +39,7 @@ function testUnaryBlockingIntClient() {
     int age = 10;
     int|Error unionResp = helloWorld7BlockingEp->testInt(age);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
         io:println(unionResp);
@@ -52,7 +52,7 @@ function testUnaryBlockingFloatClient() {
     float salary = 1000.5;
     float|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
         io:println(unionResp);
@@ -65,7 +65,7 @@ function testUnaryBlockingBoolClient() {
     boolean isAvailable = false;
     boolean|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
         io:println(unionResp);
@@ -78,7 +78,7 @@ function testUnaryBlockingReceiveRecord() {
     string msg = "WSO2";
     Response|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
         io:println(unionResp);
@@ -91,7 +91,7 @@ function testUnaryBlockingStructClient() {
     Request req = {name:"Sam", age:10, message:"Testing."};
     Response|Error unionResp = helloWorld7BlockingEp->testStruct(req);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
         io:println(unionResp);

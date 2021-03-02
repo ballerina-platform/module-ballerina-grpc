@@ -27,7 +27,7 @@ function testSendIntArray() {
     int|Error unionResp = HelloWorld2BlockingEp->testIntArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -43,7 +43,7 @@ function testSendStringArray() {
     string|Error unionResp = HelloWorld2BlockingEp->testStringArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -59,7 +59,7 @@ function testSendFloatArray() {
     float|Error unionResp = HelloWorld2BlockingEp->testFloatArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -75,7 +75,7 @@ function testSendBooleanArray() {
     boolean|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -90,7 +90,7 @@ function testSendStructArray() {
     io:println(testStruct);
     string|Error unionResp = HelloWorld2BlockingEp->testStructArrayInput(testStruct);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -104,7 +104,7 @@ function testReceiveIntArray() {
     TestInt|Error unionResp = HelloWorld2BlockingEp->testIntArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -122,7 +122,7 @@ function testReceiveStringArray() {
     io:println("testStringArrayOutput: No input:");
     TestString|Error unionResp = HelloWorld2BlockingEp->testStringArrayOutput();
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -139,7 +139,7 @@ function testReceiveFloatArray() {
     TestFloat|Error unionResp = HelloWorld2BlockingEp->testFloatArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -156,7 +156,7 @@ function testReceiveBooleanArray() {
     TestBoolean|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -173,7 +173,7 @@ function testReceiveStructArray() {
     TestStruct|Error unionResp = HelloWorld2BlockingEp->testStructArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);

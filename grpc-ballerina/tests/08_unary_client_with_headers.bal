@@ -28,7 +28,7 @@ function testHeadersInUnaryClient() {
     // Executing unary blocking call
     ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         string result = unionResp.content;
         map<string|string[]> resHeaders = unionResp.headers;
@@ -47,7 +47,7 @@ function testHeadersInBlockingClient() returns Error? {
     // Executing unary blocking call
     ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         string result = unionResp.content;
         map<string|string[]> resHeaders = unionResp.headers;

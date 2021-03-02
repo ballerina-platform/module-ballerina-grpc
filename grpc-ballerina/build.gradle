@@ -27,8 +27,6 @@ def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
 def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
 def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
-def artifactCodeCoverageReport = file("$project.projectDir/target/cache/tests_cache/coverage/ballerina.exec")
-def artifactTestableJar = file("${project.projectDir}/target/cache/${packageOrg}/${packageName}/${tomlVersion}/java11/")
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 // external jar file which need to pack to distribution
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
@@ -333,16 +331,10 @@ task createArtifactZip(type: Zip) {
     from ballerinaBuild
 }
 
-
-def getCheckedOutGitCommitHash() {
-    'git rev-parse --verify --short HEAD'.execute().text.trim()
-}
-
 publishing {
     publications {
         maven(MavenPublication) {
             artifact source: createArtifactZip, extension: 'zip'
-            artifact source: artifactCodeCoverageReport, classifier: 'jacoco'
         }
     }
 

@@ -26,7 +26,7 @@ listener Listener negotiatorep = new (9109);
 service "Negotiator" on negotiatorep {
 
     isolated remote function handshake(NegotiatorHandshakeResponseCaller caller, HandshakeRequest value) {
-        log:print(io:sprintf("Handshake request: %s", value.toString()));
+        log:print(string `Handshake request: ${value.toString()}`);
 
         if (value.jsonStr != "") {
             error? sendError = caller->sendError(error InvalidArgumentError("jsonStr should be an empty string."));
@@ -58,14 +58,14 @@ service "Negotiator" on negotiatorep {
     }
 
     isolated remote function publishMetrics(NegotiatorNilCaller caller, MetricsPublishRequest value) {
-        log:print(io:sprintf("publishMetrics request: %s", value.toString()));
+        log:print(string `publishMetrics request: ${value.toString()}`);
 
         if (value.metrics.length() < 0) {
             error? sendError = caller->sendError(error InvalidArgumentError("metrics cannot be an empty array."));
             return;
         }
         foreach var metric in value.metrics {
-            log:print(io:sprintf("metric value: %s", metric.toString()));
+            log:print(string `metric value: ${metric.toString()}`);
             if (metric.tags.length() < 0) {
                 error? sendError = caller->sendError(error InvalidArgumentError("tags cannot be an empty array."));
                 return;
@@ -75,7 +75,7 @@ service "Negotiator" on negotiatorep {
     }
 
     isolated remote function publishTraces(NegotiatorNilCaller caller, TracesPublishRequest value) {
-        log:print(io:sprintf("publishTraces request: %s", value.toString()));
+        log:print(string `publishTraces request: ${value.toString()}`);
         error? complete = caller->complete();
         io:println(complete);
     }
