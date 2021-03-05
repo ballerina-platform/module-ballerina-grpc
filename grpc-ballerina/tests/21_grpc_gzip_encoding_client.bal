@@ -17,8 +17,8 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-isolated function testGzipEncoding() {
-    OrderManagementClient OrderMgtBlockingEp = new("http://localhost:9111");
+isolated function testGzipEncoding() returns Error? {
+    OrderManagementClient OrderMgtBlockingEp = check new("http://localhost:9111");
 
     Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
     map<string|string[]> headers = {};
@@ -38,10 +38,10 @@ public client class OrderManagementClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_21, getDescriptorMap21());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_21, getDescriptorMap21());
     }
 
     isolated remote function addOrder(Order|ContextOrder req) returns (string|Error) {

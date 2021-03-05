@@ -18,7 +18,7 @@ import ballerina/log;
 import ballerina/test;
 
 // Client endpoint configuration
-final HelloWorld20Client helloWorld20BlockingEp = new ("http://localhost:9110");
+final HelloWorld20Client helloWorld20BlockingEp = check new ("http://localhost:9110");
 
 // Server endpoint configuration
 listener Listener ep20 = new (9110, { host:"localhost"});
@@ -68,10 +68,10 @@ public client class HelloWorld20Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_20, getDescriptorMap20());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_20, getDescriptorMap20());
     }
 
     isolated remote function hello(string req, map<string|string[]> headers = {}) returns ([string, map<string|string[]>]|Error) {

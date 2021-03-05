@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorld100Client helloWorld7BlockingEp = new ("http://localhost:9097");
+final HelloWorld100Client helloWorld7BlockingEp = check new ("http://localhost:9097");
 
 //type ResponseTypedesc typedesc<Response>;
 
@@ -105,10 +105,10 @@ public client class HelloWorld100Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_7, getDescriptorMap7());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_7, getDescriptorMap7());
     }
 
     isolated remote function hello(string|ContextString req) returns (string|Error) {

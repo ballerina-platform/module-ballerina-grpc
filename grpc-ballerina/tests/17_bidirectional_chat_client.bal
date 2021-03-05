@@ -19,17 +19,16 @@ import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
 @test:Config {enable:true}
-public function testBidiStreamingInChatClient() {
+public function testBidiStreamingInChatClient() returns Error? {
 
     //Client endpoint configuration.
-    Chat17Client chatEp = new("https://localhost:9093", {
-        secureSocket: {
+    Chat17Client chatEp = check new("https://localhost:9093",
+        secureSocket = {
             trustStore: {
                 path: TRUSTSTORE_PATH,
                 password: "ballerina"
             }
-        }
-    });
+        });
 
     StreamingClient ep;
     // Executes unary non-blocking call registering server message listener.
@@ -66,10 +65,10 @@ public client class Chat17Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_17, getDescriptorMap17());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_17, getDescriptorMap17());
     }
 
 

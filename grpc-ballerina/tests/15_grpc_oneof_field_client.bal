@@ -16,7 +16,7 @@
 
 import ballerina/test;
 
-final OneofFieldServiceClient blockingEp = new("http://localhost:9105");
+final OneofFieldServiceClient blockingEp = check new("http://localhost:9105");
 const string ERROR_MESSAGE = "Expected response value type not received";
 
 type Response1Typedesc typedesc<Response1>;
@@ -164,10 +164,10 @@ public client class OneofFieldServiceClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_15, getDescriptorMap15());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_15, getDescriptorMap15());
     }
 
     isolated remote function hello(Request1|ContextRequest1 req) returns (Response1|Error) {

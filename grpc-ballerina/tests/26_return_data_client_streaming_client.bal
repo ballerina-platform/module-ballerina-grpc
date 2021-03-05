@@ -18,9 +18,9 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testClientStreamingFromReturn() {
+function testClientStreamingFromReturn() returns Error? {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
-    HelloWorld26Client helloWorldEp = new ("http://localhost:9116");
+    HelloWorld26Client helloWorldEp = check new ("http://localhost:9116");
 
     LotsOfGreetingsStreamingClientFromReturn streamingClient;
     var res = helloWorldEp->lotsOfGreetings();
@@ -85,10 +85,10 @@ public client class HelloWorld26Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_26, getDescriptorMap26());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_26, getDescriptorMap26());
     }
 
     isolated remote function lotsOfGreetings() returns (LotsOfGreetingsStreamingClientFromReturn|Error) {

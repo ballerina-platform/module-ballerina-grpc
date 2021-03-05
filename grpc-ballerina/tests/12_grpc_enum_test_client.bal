@@ -17,8 +17,8 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-isolated function testSendAndReceiveEnum() {
-    testEnumServiceClient blockingEp = new ("http://localhost:9102");
+isolated function testSendAndReceiveEnum() returns Error? {
+    testEnumServiceClient blockingEp = check new ("http://localhost:9102");
 
     OrderInfo orderReq = { id:"100500", mode:r };
     var addResponse = blockingEp->testEnum(orderReq);
@@ -35,10 +35,10 @@ public client class testEnumServiceClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_12, getDescriptorMap12());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_12, getDescriptorMap12());
     }
 
     isolated remote function testEnum(OrderInfo|ContextOrderInfo req) returns (string|Error) {
