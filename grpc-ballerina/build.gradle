@@ -34,7 +34,7 @@ def targetNativeJar = file("$project.rootDir/${packageName}-native/build/libs/${
 def distributionBinPath = project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 def originalConfig = ballerinaConfigFile.text
 def originalDependencyConfig = ballerinaDependencyFile.text
-def testCoverageParam = "--code-coverage --includes=org.ballerinalang.net.grpc*"
+def testCoverageParam = "--code-coverage --includes=org.ballerinalang.net.grpc.*:ballerina.*"
 
 configurations {
     jbalTools
