@@ -20,8 +20,8 @@ import ballerina/test;
 @test:Config {
     enable: false
 }
-isolated function testUnarySecuredBlockingWithCerts() {
-    grpcMutualSslServiceClient helloWorldBlockingEp = new ("https://localhost:9100", {
+isolated function testUnarySecuredBlockingWithCerts() returns Error? {
+    grpcMutualSslServiceClient helloWorldBlockingEp = check new ("https://localhost:9100", {
         secureSocket:{
             keyFile: PRIVATE_KEY_PATH,
             certFile: PUBLIC_CRT_PATH,
@@ -45,10 +45,10 @@ public client class grpcMutualSslServiceClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_10, getDescriptorMap10());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_10, getDescriptorMap10());
     }
 
     isolated remote function hello(string|ContextString req) returns (string|Error) {

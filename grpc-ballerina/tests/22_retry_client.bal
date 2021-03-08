@@ -19,30 +19,30 @@ import ballerina/test;
 
 RetryConfiguration retryConfig = {
     retryCount: 3,
-    intervalInMillis: 2,
-    maxIntervalInMillis: 10,
+    interval: 0.002,
+    maxInterval: 0.01,
     backoffFactor: 2,
     errorTypes: [UnavailableError, InternalError]
 };
 ClientConfiguration clientConfig = {
-    timeoutInMillis: 1000,
+    timeout: 1,
     retryConfiguration: retryConfig
 };
 
 RetryConfiguration failingRetryConfig = {
     retryCount: 2,
-    intervalInMillis: 2,
-    maxIntervalInMillis: 10,
+    interval: 0.002,
+    maxInterval: 0.01,
     backoffFactor: 2,
     errorTypes: [UnavailableError, InternalError]
 };
 ClientConfiguration failingClientConfig = {
-    timeoutInMillis: 1000,
+    timeout: 1,
     retryConfiguration: failingRetryConfig
 };
 
-final RetryServiceClient retryClient = new("http://localhost:9112", clientConfig);
-final RetryServiceClient failingRetryClient = new("http://localhost:9112", failingClientConfig);
+final RetryServiceClient retryClient = check new("http://localhost:9112", timeout = 1, retryConfiguration = retryConfig);
+final RetryServiceClient failingRetryClient = check new("http://localhost:9112", timeout = 1, retryConfiguration = failingRetryConfig);
 
 @test:Config {enable:true}
 function testRetry() {
@@ -72,9 +72,9 @@ public client class RetryServiceClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_22, getDescriptorMap22());
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_22, getDescriptorMap22());
     }
 
     isolated remote function getResult(string|ContextString req) returns (string|Error) {

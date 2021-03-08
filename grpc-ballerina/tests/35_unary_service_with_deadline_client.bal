@@ -18,8 +18,8 @@ import ballerina/test;
 import ballerina/time;
 
 @test:Config {enable:true}
-function testCallWithingDeadline() {
-    HelloWorld35Client helloWorldClient = checkpanic new ("http://localhost:9125");
+function testCallWithingDeadline() returns Error? {
+    HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
     time:Duration duration = {
         minutes: 5
     };
@@ -34,8 +34,8 @@ function testCallWithingDeadline() {
 }
 
 @test:Config {enable:true}
-function testCallExceededDeadline() {
-    HelloWorld35Client helloWorldClient = checkpanic new ("http://localhost:9125");
+function testCallExceededDeadline() returns Error? {
+    HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
     time:Duration duration = {
         minutes: 5
     };
@@ -55,7 +55,7 @@ public client class HelloWorld35Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
         self.grpcClient = check new(url, config);
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_35, getDescriptorMap35());

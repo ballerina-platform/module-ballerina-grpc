@@ -30,8 +30,8 @@ public client class Client {
     #
     # + url - The server URL
     # + config - - The `grpc:ClientConfiguration` of the endpoint
-    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
-        self.config = config ?: {};
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
+        self.config = config;
         self.url = url;
         return externInit(self, self.url, self.config, globalGrpcClientConnPool);
     }
@@ -112,8 +112,8 @@ isolated function retryBlockingExecute(Client grpcClient, string methodID, anyda
 headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>]|Error) {
     int currentRetryCount = 0;
     int retryCount = retryConfig.retryCount;
-    decimal interval = retryConfig.intervalInMillis;
-    decimal maxInterval = retryConfig.maxIntervalInMillis;
+    decimal interval = retryConfig.interval * 1000;
+    decimal maxInterval = retryConfig.maxInterval * 1000;
     decimal backoffFactor = retryConfig.backoffFactor;
     ErrorType[] errorTypes = retryConfig.errorTypes;
     error? cause = ();
@@ -192,27 +192,27 @@ final ErrorType[] & readonly defaultErrorTypes = [InternalError];
 # Represents grpc client retry functionality configurations.
 #
 # + retryCount - Maximum number of retry attempts in an failure scenario
-# + intervalInMillis - Initial interval between retry attempts
-# + maxIntervalInMillis - Maximum interval between two retry attempts
+# + interval - Initial interval(in seconds) between retry attempts
+# + maxInterval - Maximum interval(in seconds) between two retry attempts
 # + backoffFactor - Retry interval will be multiplied by this factor, in between retry attempts
 # + errorTypes - Error types which should be considered as failure scenarios to retry
 public type RetryConfiguration record {|
    int retryCount;
-   decimal intervalInMillis;
-   decimal maxIntervalInMillis;
+   decimal interval;
+   decimal maxInterval;
    decimal backoffFactor;
    ErrorType[] errorTypes = defaultErrorTypes;
 |};
 
 # Represents client endpoint configuration.
 #
-# + timeoutInMillis - The maximum time to wait (in milliseconds) for a response before closing the connection
+# + timeout - The maximum time to wait(in seconds) for a response before closing the connection
 # + poolConfig - Connection pool configuration
 # + secureSocket - SSL/TLS related options
 # + compression - Specifies the way of handling compression (`accept-encoding`) header
 # + retryConfiguration - Configures the retry functionality
 public type ClientConfiguration record {|
-    int timeoutInMillis = 60000;
+    decimal timeout = 60;
     PoolConfiguration? poolConfig = ();
     SecureSocket? secureSocket = ();
     Compression compression = COMPRESSION_AUTO;
@@ -235,8 +235,8 @@ public type ClientConfiguration record {|
 # + verifyHostname - Enable/disable host name verification
 # + shareSession - Enable/disable new SSL session creation
 # + ocspStapling - Enable/disable OCSP stapling
-# + handshakeTimeoutInSeconds - SSL handshake time out
-# + sessionTimeoutInSeconds - SSL session time out
+# + handshakeTimeout - SSL handshake time out(in seconds)
+# + sessionTimeout - SSL session time out(in seconds)
 public type SecureSocket record {|
     boolean disable = false;
     crypto:TrustStore? trustStore = ();
@@ -251,6 +251,6 @@ public type SecureSocket record {|
     boolean verifyHostname = true;
     boolean shareSession = true;
     boolean ocspStapling = false;
-    int handshakeTimeoutInSeconds?;
-    int sessionTimeoutInSeconds?;
+    decimal handshakeTimeout?;
+    decimal sessionTimeout?;
 |};

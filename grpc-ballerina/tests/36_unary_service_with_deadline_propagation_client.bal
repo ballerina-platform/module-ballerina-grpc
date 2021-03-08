@@ -18,13 +18,13 @@ import ballerina/test;
 import ballerina/time;
 
 @test:Config {enable:true}
-function testCallWithDeadlinePropergation() {
-    HelloWorld36S1Client helloWorldClient = checkpanic new ("http://localhost:9126");
+function testCallWithDeadlinePropergation() returns error? {
+    HelloWorld36S1Client helloWorldClient = check new ("http://localhost:9126");
     time:Duration duration = {
         minutes: 5
     };
-    time:Time deadline = checkpanic time:addDuration(time:currentTime(), duration);
-    map<string|string[]> headers = checkpanic setDeadline(deadline);
+    time:Time deadline = check time:addDuration(time:currentTime(), duration);
+    map<string|string[]> headers = check setDeadline(deadline);
     var context = helloWorldClient->call1Context({content: "WSO2", headers: headers});
     if (context is ContextString) {
         test:assertEquals(context.content, "Ack");
@@ -39,7 +39,7 @@ public client class HelloWorld36S1Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
         self.grpcClient = check new(url, config);
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_36, getDescriptorMap36());
@@ -82,7 +82,7 @@ public client class HelloWorld36S2Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
         self.grpcClient = check new(url, config);
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_36, getDescriptorMap36());

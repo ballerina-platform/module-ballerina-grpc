@@ -19,13 +19,13 @@ import ballerina/time;
 import ballerina/io;
 
 @test:Config {enable:true}
-function testBidiStreamingFromReturnRecordWithDeadline() {
-    HelloWorld37Client helloWorldCaller = checkpanic new ("http://localhost:9127");
+function testBidiStreamingFromReturnRecordWithDeadline() returns error? {
+    HelloWorld37Client helloWorldCaller = check new ("http://localhost:9127");
     time:Duration duration = {
         minutes: 5
     };
-    time:Time deadline = checkpanic time:addDuration(time:currentTime(), duration);
-    map<string|string[]> headers = checkpanic setDeadline(deadline);
+    time:Time deadline = check time:addDuration(time:currentTime(), duration);
+    map<string|string[]> headers = check setDeadline(deadline);
 
     CallWithDeadlineStreamingClient streamingClient;
     var res = helloWorldCaller->callWithDeadline();
@@ -48,7 +48,7 @@ function testBidiStreamingFromReturnRecordWithDeadline() {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
-    checkpanic streamingClient->complete();
+    check streamingClient->complete();
     io:println("Completed successfully");
     var result = streamingClient->receiveString();
     int i = 0;
@@ -70,7 +70,7 @@ public client class HelloWorld37Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
         self.grpcClient = check new(url, config);
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_37, getDescriptorMap37());

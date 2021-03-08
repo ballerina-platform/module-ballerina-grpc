@@ -19,10 +19,10 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testReceiveStreamingResponseFromReturn() {
+function testReceiveStreamingResponseFromReturn() returns Error? {
     string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld25Client helloWorldEp = checkpanic new("http://localhost:9115");
+    HelloWorld25Client helloWorldEp = check new("http://localhost:9115");
 
     var result = helloWorldEp->lotsOfReplies(name);
     if (result is Error) {
@@ -45,7 +45,7 @@ public client class HelloWorld25Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
         self.grpcClient = check new(url, config);
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_25, getDescriptorMap25());

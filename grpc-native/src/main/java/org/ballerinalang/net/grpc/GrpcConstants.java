@@ -242,4 +242,5 @@ public class GrpcConstants {
     public static final StrandMetadata ON_COMPLETE_METADATA =
             new StrandMetadata(BALLERINA_BUILTIN_PKG_PREFIX, PROTOCOL_PACKAGE_GRPC, PROTOCOL_PACKAGE_VERSION_GRPC,
                                ON_COMPLETE_RESOURCE);
+
 }

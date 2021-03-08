@@ -21,9 +21,9 @@ import ballerina/test;
 
 
 @test:Config {enable:true}
-function testBidiStreaming() {
+function testBidiStreaming() returns Error? {
     ChatStreamingClient ep;
-    ChatClient chatEp = new ("https://localhost:9093", {
+    ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {
             trustStore: {
                 path: TRUSTSTORE_PATH,
@@ -75,10 +75,10 @@ public client class ChatClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_3, getDescriptorMap3());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_3, getDescriptorMap3());
     }
 
     isolated remote function chat() returns (ChatStreamingClient|Error) {

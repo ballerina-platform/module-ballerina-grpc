@@ -81,8 +81,8 @@ public class Listener {
     #
     # + port - Listener port
     # + config - The `grpc:ListenerConfiguration` of the endpoint
-    public isolated function init(int port, ListenerConfiguration? config = ()) returns error? {
-        self.config = config ?: {};
+    public isolated function init(int port, *ListenerConfiguration config) returns error? {
+        self.config = config;
         self.port = port;
         return externInitEndpoint(self);
     }
@@ -160,18 +160,18 @@ isolated function closeStream(StreamIterator iterator) returns error? =
 const int MAX_PIPELINED_REQUESTS = 10;
 
 # Constant for the default listener endpoint timeout
-const int DEFAULT_LISTENER_TIMEOUT = 120000; //2 mins
+const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 
 # Represents the gRPC server endpoint configuration.
 #
 # + host - The server hostname
 # + secureSocket - The SSL configurations for the client endpoint
-# + timeoutInMillis - Period of time in milliseconds that a connection waits for a read/write operation. Use value 0 to
+# + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
 #                   disable the timeout
 public type ListenerConfiguration record {|
     string host = "0.0.0.0";
     ListenerSecureSocket? secureSocket = ();
-    int timeoutInMillis = DEFAULT_LISTENER_TIMEOUT;
+    decimal timeout = DEFAULT_LISTENER_TIMEOUT;
 |};
 
 # Configures the SSL/TLS options to be used for HTTP service.
@@ -189,8 +189,8 @@ public type ListenerConfiguration record {|
 # + sslVerifyClient - The type of client certificate verification. (e.g.: "require" or "optional")
 # + shareSession - Enable/disable new SSL session creation
 # + ocspStapling - Enable/disable OCSP stapling
-# + handshakeTimeoutInSeconds - SSL handshake time out
-# + sessionTimeoutInSeconds - SSL session time out
+# + handshakeTimeout - SSL handshake time out(in seconds)
+# + sessionTimeout - SSL session time out(in seconds)
 public type ListenerSecureSocket record {|
     crypto:TrustStore? trustStore = ();
     crypto:KeyStore? keyStore = ();
@@ -208,6 +208,6 @@ public type ListenerSecureSocket record {|
     string sslVerifyClient = "";
     boolean shareSession = true;
     ListenerOcspStapling? ocspStapling = ();
-    int handshakeTimeoutInSeconds?;
-    int sessionTimeoutInSeconds?;
+    decimal handshakeTimeout?;
+    decimal sessionTimeout?;
 |};

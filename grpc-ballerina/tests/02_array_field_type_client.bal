@@ -17,14 +17,14 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorld3Client HelloWorld2BlockingEp = new ("http://localhost:9092");
+final HelloWorld3Client helloWorld3Client = check new ("http://localhost:9092");
 
 @test:Config {enable:true}
 function testSendIntArray() {
     TestInt req = {values: [1, 2, 3, 4, 5]};
     io:println("testIntArrayInput: input:");
     io:println(req);
-    int|Error unionResp = HelloWorld2BlockingEp->testIntArrayInput(req);
+    int|Error unionResp = helloWorld3Client->testIntArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
@@ -40,7 +40,7 @@ function testSendStringArray() {
     TestString req = {values:["A", "B", "C"]};
     io:println("testStringArrayInput: input:");
     io:println(req);
-    string|Error unionResp = HelloWorld2BlockingEp->testStringArrayInput(req);
+    string|Error unionResp = helloWorld3Client->testStringArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
@@ -56,7 +56,7 @@ function testSendFloatArray() {
     TestFloat req = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
     io:println("testFloatArrayInput: input:");
     io:println(req);
-    float|Error unionResp = HelloWorld2BlockingEp->testFloatArrayInput(req);
+    float|Error unionResp = helloWorld3Client->testFloatArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
@@ -72,7 +72,7 @@ function testSendBooleanArray() {
     TestBoolean req = {values:[true, false, true]};
     io:println("testBooleanArrayInput: input:");
     io:println(req);
-    boolean|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayInput(req);
+    boolean|Error unionResp = helloWorld3Client->testBooleanArrayInput(req);
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
@@ -88,7 +88,7 @@ function testSendStructArray() {
     TestStruct testStruct = {values: [{name: "Sam"}, {name: "John"}]};
     io:println("testStructArrayInput: input:");
     io:println(testStruct);
-    string|Error unionResp = HelloWorld2BlockingEp->testStructArrayInput(testStruct);
+    string|Error unionResp = helloWorld3Client->testStructArrayInput(testStruct);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
@@ -101,7 +101,7 @@ function testSendStructArray() {
 @test:Config {enable:true}
 function testReceiveIntArray() {
     io:println("testIntArrayOutput: No input:");
-    TestInt|Error unionResp = HelloWorld2BlockingEp->testIntArrayOutput();
+    TestInt|Error unionResp = helloWorld3Client->testIntArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
@@ -120,7 +120,7 @@ function testReceiveIntArray() {
 @test:Config {enable:true}
 function testReceiveStringArray() {
     io:println("testStringArrayOutput: No input:");
-    TestString|Error unionResp = HelloWorld2BlockingEp->testStringArrayOutput();
+    TestString|Error unionResp = helloWorld3Client->testStringArrayOutput();
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
@@ -136,7 +136,7 @@ function testReceiveStringArray() {
 @test:Config {enable:true}
 function testReceiveFloatArray() {
     io:println("testFloatArrayOutput: No input:");
-    TestFloat|Error unionResp = HelloWorld2BlockingEp->testFloatArrayOutput();
+    TestFloat|Error unionResp = helloWorld3Client->testFloatArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
@@ -153,7 +153,7 @@ function testReceiveFloatArray() {
 @test:Config {enable:true}
 function testReceiveBooleanArray() {
     io:println("testBooleanArrayOutput: No input:");
-    TestBoolean|Error unionResp = HelloWorld2BlockingEp->testBooleanArrayOutput();
+    TestBoolean|Error unionResp = helloWorld3Client->testBooleanArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
@@ -170,7 +170,7 @@ function testReceiveBooleanArray() {
 @test:Config {enable:true}
 function testReceiveStructArray() {
     io:println("testStructArrayOutput: No input:");
-    TestStruct|Error unionResp = HelloWorld2BlockingEp->testStructArrayOutput();
+    TestStruct|Error unionResp = helloWorld3Client->testStructArrayOutput();
     io:println(unionResp);
     if (unionResp is Error) {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
@@ -188,10 +188,10 @@ public client class HelloWorld3Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_2, getDescriptorMap2());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_2, getDescriptorMap2());
     }
 
     isolated remote function testIntArrayInput(TestInt|ContextTestInt req) returns (int|Error) {

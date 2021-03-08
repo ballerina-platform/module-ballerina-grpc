@@ -31,7 +31,7 @@ public type Protocols record {|
 public type ValidateCert record {|
     boolean enable = false;
     int cacheSize = 0;
-    int cacheValidityPeriod = 0;
+    decimal cacheValidityPeriod = 0;
 |};
 
 # OcspStapling record represents options related to check whether a certificate is revoked or not.
@@ -42,7 +42,7 @@ public type ValidateCert record {|
 public type ListenerOcspStapling record {|
     boolean enable = false;
     int cacheSize = 0;
-    int cacheValidityPeriod = 0;
+    decimal cacheValidityPeriod = 0;
 |};
 
 # Options to compress using gzip or deflate.

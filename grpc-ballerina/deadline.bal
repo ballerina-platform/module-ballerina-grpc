@@ -22,7 +22,7 @@ public const string DEALINE_HEADER = "deadline";
 # Enable the deadline by adding the `deadline` header to the given headers.
 # ```ballerina
 # time:Duration duration = { minutes: 5};
-# time:Time deadline = checkpanic time:addDuration(time:currentTime(), duration);
+# time:Time deadline = check time:addDuration(time:currentTime(), duration);
 # string? result = grpc:setDeadline(deadline);
 # ```
 #

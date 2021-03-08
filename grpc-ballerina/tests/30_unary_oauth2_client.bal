@@ -17,8 +17,8 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public function testStringValueReturnWithOauth2() {
-    HelloWorld30BlockingClient helloWorldEp = new ("http://localhost:9120");
+public function testStringValueReturnWithOauth2() returns Error? {
+    HelloWorld30BlockingClient helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};
 
     OAuth2ClientCredentialsGrantConfig config = {
@@ -59,10 +59,10 @@ public client class HelloWorld30BlockingClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_30, getDescriptorMap30());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_30, getDescriptorMap30());
     }
 
     isolated remote function testStringValueReturn(string|ContextString req) returns ContextString|Error {

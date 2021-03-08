@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorld98Client helloWorld5BlockingEp = new ("http://localhost:9095");
+final HelloWorld98Client helloWorld5BlockingEp = check new ("http://localhost:9095");
 
 @test:Config {enable:true}
 function testInvalidRemoteMethod() {
@@ -51,10 +51,10 @@ public client class HelloWorld98Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_5, getDescriptorMap5());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_5, getDescriptorMap5());
     }
 
     isolated remote function hello(string|ContextString req) returns (string|Error) {

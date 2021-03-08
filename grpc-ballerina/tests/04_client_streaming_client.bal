@@ -18,10 +18,10 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testClientStreaming() {
+function testClientStreaming() returns Error? {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
     // Client endpoint configuration
-    HelloWorld4Client helloWorldEp = new ("http://localhost:9094");
+    HelloWorld4Client helloWorldEp = check new ("http://localhost:9094");
 
     LotsOfGreetingsStreamingClient ep;
     // Executing unary non-blocking call registering server message listener.
@@ -87,10 +87,10 @@ public client class HelloWorld4Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_4, getDescriptorMap4());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_4, getDescriptorMap4());
     }
 
     isolated remote function lotsOfGreetings() returns (LotsOfGreetingsStreamingClient|Error) {
