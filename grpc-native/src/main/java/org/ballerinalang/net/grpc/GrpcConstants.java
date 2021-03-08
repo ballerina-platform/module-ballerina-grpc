@@ -243,9 +243,4 @@ public class GrpcConstants {
             new StrandMetadata(BALLERINA_BUILTIN_PKG_PREFIX, PROTOCOL_PACKAGE_GRPC, PROTOCOL_PACKAGE_VERSION_GRPC,
                                ON_COMPLETE_RESOURCE);
 
-    public static final BString ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT = StringUtils.fromString("handshakeTimeout");
-    public static final BString ENDPOINT_CONFIG_SESSION_TIMEOUT = StringUtils.fromString("sessionTimeout");
-    public static final BString ENDPOINT_CONFIG_TIMEOUT = StringUtils.fromString("timeout");
-    public static final BString CONNECTION_POOLING_WAIT_TIME = StringUtils.fromString("waitTime");
-
 }

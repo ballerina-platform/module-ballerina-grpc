@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_VERSION;
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.net.http.HttpConstants.ANN_CONFIG_ATTR_SSL_ENABLED_PROTOCOLS;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION;
@@ -101,8 +102,7 @@ public class GrpcUtil {
         poolConfiguration.setMaxIdlePerPool(
                 validateConfig(maxIdleConnections, HttpConstants.CONNECTION_POOLING_MAX_IDLE_CONNECTIONS));
 
-        double waitTime = ((BDecimal) poolRecord.get(
-                io.ballerina.runtime.api.utils.StringUtils.fromString("waitTime"))).floatValue();
+        double waitTime = ((BDecimal) poolRecord.get(fromString("waitTime"))).floatValue();
         poolConfiguration.setMaxWaitTime((long) waitTime);
 
         long maxActiveStreamsPerConnection =
@@ -124,8 +124,7 @@ public class GrpcUtil {
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("To enable https you need to" +
                             " configure secureSocket record")));
         }
-        double timeoutSeconds = ((BDecimal) clientEndpointConfig.get(
-                        io.ballerina.runtime.api.utils.StringUtils.fromString("timeout"))).floatValue();
+        double timeoutSeconds = ((BDecimal) clientEndpointConfig.get(fromString("timeout"))).floatValue();
         if (timeoutSeconds < 0) {
             senderConfiguration.setSocketIdleTimeout(0);
         } else {
@@ -235,12 +234,10 @@ public class GrpcUtil {
         sslConfiguration.setOcspStaplingEnabled(ocspStaplingEnabled);
         sslConfiguration.setHostNameVerificationEnabled(hostNameVerificationEnabled);
 
-        double dSessionTimeout = getDefaultableDecimalValue(secureSocket.get(
-                io.ballerina.runtime.api.utils.StringUtils.fromString("sessionTimeout")));
+        double dSessionTimeout = getDefaultableDecimalValue(secureSocket.get(fromString("sessionTimeout")));
         sslConfiguration.setSslSessionTimeOut((int) dSessionTimeout);
 
-        double dHandshakeTimeout = getDefaultableDecimalValue(secureSocket.get(
-                io.ballerina.runtime.api.utils.StringUtils.fromString("handshakeTimeout")));
+        double dHandshakeTimeout = getDefaultableDecimalValue(secureSocket.get(fromString("handshakeTimeout")));
         sslConfiguration.setSslHandshakeTimeOut((long) dHandshakeTimeout);
 
         Object[] cipherConfigs = secureSocket.getArrayValue(HttpConstants.SSL_CONFIG_CIPHERS).getStringArray();
@@ -274,8 +271,7 @@ public class GrpcUtil {
 
         BString host = endpointConfig.getStringValue(HttpConstants.ENDPOINT_CONFIG_HOST);
         BMap sslConfig = endpointConfig.getMapValue(HttpConstants.ENDPOINT_CONFIG_SECURE_SOCKET);
-        double idleTimeout = ((BDecimal) endpointConfig.get(io.ballerina.runtime.api.utils.StringUtils.fromString(
-                "timeout"))).floatValue();
+        double idleTimeout = ((BDecimal) endpointConfig.get(fromString("timeout"))).floatValue();
 
         ListenerConfiguration listenerConfiguration = new ListenerConfiguration();
 
@@ -383,11 +379,10 @@ public class GrpcUtil {
         listenerConfiguration.setVerifyClient(sslVerifyClient);
 
         listenerConfiguration
-                .setSslSessionTimeOut((int) getDefaultableDecimalValue((sslConfig)
-                        .get(io.ballerina.runtime.api.utils.StringUtils.fromString("sessionTimeout"))));
+                .setSslSessionTimeOut((int) getDefaultableDecimalValue((sslConfig).get(fromString("sessionTimeout"))));
         listenerConfiguration
                 .setSslHandshakeTimeOut((long) getDefaultableDecimalValue((sslConfig)
-                        .get(io.ballerina.runtime.api.utils.StringUtils.fromString("handshakeTimeout"))));
+                        .get(fromString("handshakeTimeout"))));
         if (trustStore == null && StringUtils.isNotBlank(sslVerifyClient) && StringUtils.isBlank(trustCerts)) {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Truststore location or " +
