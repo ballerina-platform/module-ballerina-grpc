@@ -103,7 +103,7 @@ public class GrpcUtil {
                 validateConfig(maxIdleConnections, HttpConstants.CONNECTION_POOLING_MAX_IDLE_CONNECTIONS));
 
         double waitTime = ((BDecimal) poolRecord.get(fromString("waitTime"))).floatValue();
-        poolConfiguration.setMaxWaitTime((long) waitTime);
+        poolConfiguration.setMaxWaitTime((long) (waitTime * 1000));
 
         long maxActiveStreamsPerConnection =
                 (Long) poolRecord.get(CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION);
