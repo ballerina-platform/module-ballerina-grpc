@@ -19,14 +19,13 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testBidiStreamingFromReturn() {
+function testBidiStreamingFromReturn() returns Error? {
     StreamingClient streamingClient = new;
-    ChatClientFromReturn chatEp = new ("http://localhost:9117");
+    ChatClientFromReturn chatEp = check new ("http://localhost:9117");
     // Executing unary non-blocking call registering server message listener.
     var res = chatEp->chat();
     if (res is Error) {
-        string msg = io:sprintf(ERROR_MSG_FORMAT, res.message());
-        io:println(msg);
+        io:println(string `Error from Connector: ${res.message()}`);
     } else {
         streamingClient = res;
     }
@@ -64,10 +63,10 @@ public client class ChatClientFromReturn {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_27, getDescriptorMap27());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_27, getDescriptorMap27());
     }
 
     isolated remote function chat() returns (StreamingClient|Error) {

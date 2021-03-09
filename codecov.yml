@@ -1,0 +1,9 @@
+fixes:
+  - "ballerina/grpc/*/::grpc-ballerina/"
+
+ignore:
+  - "**/tests"
+  - "grpc-test-utils"
+
+codecov:
+  require_ci_to_pass: no

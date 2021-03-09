@@ -90,6 +90,10 @@ public class MessageUtils {
                 headersRequired = true;
                 break;
             }
+            if (paramType != null && getContextStreamTypeName(rpcInputType).equals(paramType.getName())) {
+                headersRequired = true;
+                break;
+            }
         }
         return headersRequired;
     }
@@ -446,6 +450,18 @@ public class MessageUtils {
         if (sInputType != null) {
             sInputType = sInputType.replaceAll("[^a-zA-Z0-9]", "");
             return "Context" + sInputType.substring(0, 1).toUpperCase() + sInputType.substring(1);
+        } else {
+            return "ContextNil";
+        }
+    }
+
+    public static String getContextStreamTypeName(Type inputType) {
+        inputType = inputType instanceof ArrayType ?
+                ((ArrayType) inputType).getElementType() : inputType;
+        String sInputType = inputType != PredefinedTypes.TYPE_NULL ? inputType.getName() : null;
+        if (sInputType != null) {
+            sInputType = sInputType.replaceAll("[^a-zA-Z0-9]", "");
+            return "Context" + sInputType.substring(0, 1).toUpperCase() + sInputType.substring(1) + "Stream";
         } else {
             return "ContextNil";
         }

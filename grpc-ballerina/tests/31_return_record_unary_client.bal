@@ -14,16 +14,15 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-public function testUnaryRecordValueReturn() {
-    HelloWorld31Client ep = new ("http://localhost:9121");
+public function testUnaryRecordValueReturn() returns Error? {
+    HelloWorld31Client ep = check new ("http://localhost:9121");
     SampleMsg31 reqMsg = {name: "WSO2", id: 8};
     var unionResp = ep->sayHello(reqMsg);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         SampleMsg31 resMsg = <SampleMsg31>unionResp.content;
         test:assertEquals(resMsg.name, "Ballerina Lang");
@@ -32,8 +31,8 @@ public function testUnaryRecordValueReturn() {
 }
 
 @test:Config {enable:true}
-public function testUnaryErrorReturn() {
-    HelloWorld31Client ep = new ("http://localhost:9121");
+public function testUnaryErrorReturn() returns Error? {
+    HelloWorld31Client ep = check new ("http://localhost:9121");
     SampleMsg31 reqMsg = {id: 8};
     var unionResp = ep->sayHello(reqMsg);
     if (unionResp is InvalidArgumentError) {
@@ -48,10 +47,10 @@ public client class HelloWorld31Client {
     *AbstractClientEndpoint;
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_31, getDescriptorMap31());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_31, getDescriptorMap31());
     }
 
     isolated remote function sayHello(SampleMsg31|ContextSampleMsg31 req) returns (ContextSampleMsg31|Error) {

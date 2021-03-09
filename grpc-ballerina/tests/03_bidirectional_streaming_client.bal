@@ -21,9 +21,9 @@ import ballerina/test;
 
 
 @test:Config {enable:true}
-function testBidiStreaming() {
+function testBidiStreaming() returns Error? {
     ChatStreamingClient ep;
-    ChatClient chatEp = new ("https://localhost:9093", {
+    ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {
             trustStore: {
                 path: TRUSTSTORE_PATH,
@@ -34,8 +34,7 @@ function testBidiStreaming() {
     // Executing unary non-blocking call registering server message listener.
     var res = chatEp->chat();
     if (res is Error) {
-        string msg = io:sprintf(ERROR_MSG_FORMAT, res.message());
-        io:println(msg);
+        io:println(string `Error from Connector: ${res.message()}`);
         return;
     } else {
         ep = res;
@@ -44,7 +43,7 @@ function testBidiStreaming() {
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
     Error? connErr = ep->sendChatMessage(mes1);
     if (connErr is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
+        test:assertFail(string `Error from Connector: ${connErr.message()}`);
     }
 
     var responseMsg = ep->receiveString();
@@ -57,7 +56,7 @@ function testBidiStreaming() {
     ChatMessage mes2 = {name:"Sam", message:"GM"};
     connErr = ep->sendChatMessage(mes2);
     if (connErr is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, connErr.message()));
+        test:assertFail(string `Error from Connector: ${connErr.message()}`);
     }
 
     responseMsg = ep->receiveString();
@@ -76,10 +75,10 @@ public client class ChatClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_3, getDescriptorMap3());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_3, getDescriptorMap3());
     }
 
     isolated remote function chat() returns (ChatStreamingClient|Error) {

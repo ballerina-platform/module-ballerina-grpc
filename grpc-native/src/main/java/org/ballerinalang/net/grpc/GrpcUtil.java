@@ -18,6 +18,7 @@
 
 package org.ballerinalang.net.grpc;
 
+import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
 import org.apache.commons.lang3.StringUtils;
@@ -41,19 +42,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_VERSION;
+import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static org.ballerinalang.net.http.HttpConstants.ANN_CONFIG_ATTR_SSL_ENABLED_PROTOCOLS;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
 import static org.ballerinalang.net.http.HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION;
 import static org.ballerinalang.net.http.HttpConstants.ENABLED_PROTOCOLS;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_CERTIFICATE;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_DISABLE_SSL;
-import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_KEY;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_KEY_PASSWORD;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_KEY_STORE;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_OCSP_STAPLING;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_PROTOCOLS;
-import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_SESSION_TIMEOUT;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_TRUST_CERTIFICATES;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_TRUST_STORE;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_VALIDATE_CERT;
@@ -92,20 +92,21 @@ public class GrpcUtil {
         return poolManager;
     }
 
-    public static void populatePoolingConfig(BMap<BString, Long> poolRecord, PoolConfiguration poolConfiguration) {
+    public static void populatePoolingConfig(BMap poolRecord, PoolConfiguration poolConfiguration) {
 
-        long maxActiveConnections = poolRecord.get(HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_CONNECTIONS);
+        long maxActiveConnections = (Long) poolRecord.get(HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_CONNECTIONS);
         poolConfiguration.setMaxActivePerPool(
                 validateConfig(maxActiveConnections, HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_CONNECTIONS));
 
-        long maxIdleConnections = poolRecord.get(HttpConstants.CONNECTION_POOLING_MAX_IDLE_CONNECTIONS);
+        long maxIdleConnections = (Long) poolRecord.get(HttpConstants.CONNECTION_POOLING_MAX_IDLE_CONNECTIONS);
         poolConfiguration.setMaxIdlePerPool(
                 validateConfig(maxIdleConnections, HttpConstants.CONNECTION_POOLING_MAX_IDLE_CONNECTIONS));
 
-        long waitTime = poolRecord.get(HttpConstants.CONNECTION_POOLING_WAIT_TIME);
-        poolConfiguration.setMaxWaitTime(waitTime);
+        double waitTime = ((BDecimal) poolRecord.get(fromString("waitTime"))).floatValue();
+        poolConfiguration.setMaxWaitTime((long) (waitTime * 1000));
 
-        long maxActiveStreamsPerConnection = poolRecord.get(CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION);
+        long maxActiveStreamsPerConnection =
+                (Long) poolRecord.get(CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION);
         poolConfiguration.setHttp2MaxActiveStreamsPerConnection(
                 maxActiveStreamsPerConnection == -1 ? Integer.MAX_VALUE : validateConfig(maxActiveStreamsPerConnection,
                         CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION));
@@ -123,12 +124,12 @@ public class GrpcUtil {
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("To enable https you need to" +
                             " configure secureSocket record")));
         }
-        long timeoutMillis = clientEndpointConfig.getIntValue(HttpConstants.CLIENT_EP_ENDPOINT_TIMEOUT);
-        if (timeoutMillis < 0) {
+        double timeoutSeconds = ((BDecimal) clientEndpointConfig.get(fromString("timeout"))).floatValue();
+        if (timeoutSeconds < 0) {
             senderConfiguration.setSocketIdleTimeout(0);
         } else {
             senderConfiguration.setSocketIdleTimeout(
-                    validateConfig(timeoutMillis, HttpConstants.CLIENT_EP_ENDPOINT_TIMEOUT));
+                    validateConfig((long) (timeoutSeconds * 1000), HttpConstants.CLIENT_EP_ENDPOINT_TIMEOUT));
         }
     }
 
@@ -216,8 +217,9 @@ public class GrpcUtil {
         if (validateCert != null) {
             boolean validateCertEnabled = validateCert.getBooleanValue(HttpConstants.ENABLE);
             int cacheSize = validateCert.getIntValue(HttpConstants.SSL_CONFIG_CACHE_SIZE).intValue();
-            int cacheValidityPeriod = validateCert.getIntValue(HttpConstants.SSL_CONFIG_CACHE_VALIDITY_PERIOD)
-                    .intValue();
+            double dCacheValidityPeriod =
+                    ((BDecimal) validateCert.get(HttpConstants.SSL_CONFIG_CACHE_VALIDITY_PERIOD)).floatValue();
+            int cacheValidityPeriod = (int) dCacheValidityPeriod;
             sslConfiguration.setValidateCertEnabled(validateCertEnabled);
             if (cacheValidityPeriod != 0) {
                 sslConfiguration.setCacheValidityPeriod(cacheValidityPeriod);
@@ -232,12 +234,11 @@ public class GrpcUtil {
         sslConfiguration.setOcspStaplingEnabled(ocspStaplingEnabled);
         sslConfiguration.setHostNameVerificationEnabled(hostNameVerificationEnabled);
 
-        sslConfiguration
-                .setSslSessionTimeOut((int) (secureSocket)
-                        .getDefaultableIntValue(ENDPOINT_CONFIG_SESSION_TIMEOUT));
+        double dSessionTimeout = getDefaultableDecimalValue(secureSocket.get(fromString("sessionTimeout")));
+        sslConfiguration.setSslSessionTimeOut((int) dSessionTimeout);
 
-        sslConfiguration.setSslHandshakeTimeOut((secureSocket)
-                .getDefaultableIntValue(ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT));
+        double dHandshakeTimeout = getDefaultableDecimalValue(secureSocket.get(fromString("handshakeTimeout")));
+        sslConfiguration.setSslHandshakeTimeOut((long) dHandshakeTimeout);
 
         Object[] cipherConfigs = secureSocket.getArrayValue(HttpConstants.SSL_CONFIG_CIPHERS).getStringArray();
         if (cipherConfigs != null) {
@@ -270,7 +271,7 @@ public class GrpcUtil {
 
         BString host = endpointConfig.getStringValue(HttpConstants.ENDPOINT_CONFIG_HOST);
         BMap sslConfig = endpointConfig.getMapValue(HttpConstants.ENDPOINT_CONFIG_SECURE_SOCKET);
-        long idleTimeout = endpointConfig.getIntValue(HttpConstants.ENDPOINT_CONFIG_TIMEOUT);
+        double idleTimeout = ((BDecimal) endpointConfig.get(fromString("timeout"))).floatValue();
 
         ListenerConfiguration listenerConfiguration = new ListenerConfiguration();
 
@@ -290,7 +291,7 @@ public class GrpcUtil {
             throw new RuntimeException("Idle timeout cannot be negative. If you want to disable the " +
                     "timeout please use value 0");
         }
-        listenerConfiguration.setSocketIdleTimeout(Math.toIntExact(idleTimeout));
+        listenerConfiguration.setSocketIdleTimeout(Math.toIntExact((long) (idleTimeout * 1000)));
 
         // Set HTTP version
         listenerConfiguration.setVersion(Constants.HTTP_2_0);
@@ -376,12 +377,12 @@ public class GrpcUtil {
         String sslVerifyClient = sslConfig.getStringValue(SSL_CONFIG_SSL_VERIFY_CLIENT) != null
                 ? sslConfig.getStringValue(SSL_CONFIG_SSL_VERIFY_CLIENT).getValue() : null;
         listenerConfiguration.setVerifyClient(sslVerifyClient);
+
         listenerConfiguration
-                .setSslSessionTimeOut((int) (sslConfig)
-                        .getDefaultableIntValue(ENDPOINT_CONFIG_SESSION_TIMEOUT));
+                .setSslSessionTimeOut((int) getDefaultableDecimalValue((sslConfig).get(fromString("sessionTimeout"))));
         listenerConfiguration
-                .setSslHandshakeTimeOut((sslConfig)
-                        .getDefaultableIntValue(ENDPOINT_CONFIG_HANDSHAKE_TIMEOUT));
+                .setSslHandshakeTimeOut((long) getDefaultableDecimalValue((sslConfig)
+                        .get(fromString("handshakeTimeout"))));
         if (trustStore == null && StringUtils.isNotBlank(sslVerifyClient) && StringUtils.isBlank(trustCerts)) {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Truststore location or " +
@@ -436,7 +437,9 @@ public class GrpcUtil {
         if (validateCert != null) {
             boolean validateCertificateEnabled = validateCert.getBooleanValue(HttpConstants.ENABLE);
             long cacheSize = validateCert.getIntValue(HttpConstants.SSL_CONFIG_CACHE_SIZE);
-            long cacheValidationPeriod = validateCert.getIntValue(HttpConstants.SSL_CONFIG_CACHE_VALIDITY_PERIOD);
+            double dCacheValidityPeriod =
+                    ((BDecimal) validateCert.get(HttpConstants.SSL_CONFIG_CACHE_VALIDITY_PERIOD)).floatValue();
+            long cacheValidationPeriod = (long) dCacheValidityPeriod;
             listenerConfiguration.setValidateCertEnabled(validateCertificateEnabled);
             if (validateCertificateEnabled) {
                 if (cacheSize != 0) {
@@ -451,7 +454,9 @@ public class GrpcUtil {
             boolean ocspStaplingEnabled = ocspStapling.getBooleanValue(HttpConstants.ENABLE);
             listenerConfiguration.setOcspStaplingEnabled(ocspStaplingEnabled);
             long cacheSize = ocspStapling.getIntValue(HttpConstants.SSL_CONFIG_CACHE_SIZE);
-            long cacheValidationPeriod = ocspStapling.getIntValue(HttpConstants.SSL_CONFIG_CACHE_VALIDITY_PERIOD);
+            double dCacheValidityPeriod =
+                    ((BDecimal) ocspStapling.get(HttpConstants.SSL_CONFIG_CACHE_VALIDITY_PERIOD)).floatValue();
+            long cacheValidationPeriod = (long) dCacheValidityPeriod;
             listenerConfiguration.setValidateCertEnabled(ocspStaplingEnabled);
             if (ocspStaplingEnabled) {
                 if (cacheSize != 0) {
@@ -476,6 +481,10 @@ public class GrpcUtil {
                 .setId(HttpUtil.getListenerInterface(listenerConfiguration.getHost(), listenerConfiguration.getPort()));
 
         return listenerConfiguration;
+    }
+
+    private static double getDefaultableDecimalValue(Object value) {
+        return value != null ? ((BDecimal) value).floatValue() : 0D;
     }
 
     private static int validateConfig(long value, BString configName) {

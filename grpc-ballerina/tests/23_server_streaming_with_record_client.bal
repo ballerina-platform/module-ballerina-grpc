@@ -18,9 +18,9 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-public function testServerStreamingWithRecord() {
+public function testServerStreamingWithRecord() returns Error? {
     string name = "WSO2";
-    helloWorldServerStreamingClient helloWorldEp = new("http://localhost:9113");
+    helloWorldServerStreamingClient helloWorldEp = check new("http://localhost:9113");
     HelloRequest newreq = {name: name};
     var result = helloWorldEp->lotsOfReplies(newreq);
     if (result is Error) {
@@ -43,10 +43,10 @@ public client class helloWorldServerStreamingClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_23, getDescriptorMap23());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_23, getDescriptorMap23());
     }
 
     isolated remote function lotsOfReplies(HelloRequest req) returns stream<anydata, Error>|Error {

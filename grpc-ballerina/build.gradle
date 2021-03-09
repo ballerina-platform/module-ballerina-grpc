@@ -21,14 +21,13 @@ description = 'Ballerina - gRPC Ballerina Generator'
 
 def packageName = "grpc"
 def packageOrg = "ballerina"
+def platform = "java11"
 def tomlVersion = project.version.replace("-SNAPSHOT", "")
 def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
 def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
 def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
 def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
-def artifactCodeCoverageReport = file("$project.projectDir/target/cache/tests_cache/coverage/ballerina.exec")
-def artifactTestableJar = file("${project.projectDir}/target/cache/${packageOrg}/${packageName}/${tomlVersion}/java11/")
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 // external jar file which need to pack to distribution
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
@@ -166,6 +165,7 @@ task updateTomlVersions {
         def stdlibDependentJwtVersion = project.stdlibJwtVersion.replace("-SNAPSHOT", "")
         def stdlibDependentOAuth2Version = project.stdlibOAuth2Version.replace("-SNAPSHOT", "")
         def stdlibDependentRegexVersion = project.stdlibRegexVersion.replace("-SNAPSHOT", "")
+        def stdlibDependentTimeVersion = project.stdlibTimeVersion.replace("-SNAPSHOT", "")
         def stdlibDependentNettyVersion = project.nettyVersion
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
@@ -181,6 +181,7 @@ task updateTomlVersions {
         newDependencyConfig = newDependencyConfig.replace("@stdlib.jwt.version@", stdlibDependentJwtVersion)
         newDependencyConfig = newDependencyConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
         newDependencyConfig = newDependencyConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.time.version@", stdlibDependentTimeVersion)
         ballerinaDependencyFile.text = newDependencyConfig
     }
 }
@@ -266,9 +267,12 @@ task ballerinaBuild {
                 commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal build ${testParams} ${debugParams}"
             }
         }
-        copy {
-            from file("$project.projectDir/target/bala")
-            into file("$artifactCacheParent/bala/${packageOrg}/${packageName}/${tomlVersion}")
+        // extract bala file to artifact cache directory
+        file("$project.projectDir/target/bala").eachFileMatch(~/.*.bala/) { balaFile ->
+            copy {
+                from zipTree(balaFile)
+                into file("$artifactCacheParent/bala/${packageOrg}/${packageName}/${tomlVersion}/${platform}")
+            }
         }
         copy {
             from file("$project.projectDir/target/cache")
@@ -333,16 +337,10 @@ task createArtifactZip(type: Zip) {
     from ballerinaBuild
 }
 
-
-def getCheckedOutGitCommitHash() {
-    'git rev-parse --verify --short HEAD'.execute().text.trim()
-}
-
 publishing {
     publications {
         maven(MavenPublication) {
             artifact source: createArtifactZip, extension: 'zip'
-            artifact source: artifactCodeCoverageReport, classifier: 'jacoco'
         }
     }
 

@@ -20,22 +20,22 @@ import ballerina/test;
 type ByteArrayTypedesc typedesc<byte[]>;
 
 @test:Config {enable:true}
-isolated function testByteArray() {
-    byteServiceClient blockingEp  = new ("http://localhost:9101");
+isolated function testByteArray() returns Error? {
+    byteServiceClient blockingEp  = check new ("http://localhost:9101");
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();
     var addResponse = blockingEp->checkBytes(bytes);
     if (addResponse is Error) {
-        test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
+        test:assertFail(string `Error from Connector: ${addResponse.message()}`);
     } else {
         test:assertEquals(addResponse, bytes);
     }
 }
 
 @test:Config {enable:true}
-function testLargeByteArray() {
+function testLargeByteArray() returns Error? {
     string filePath = "tests/resources/sample_bytes.txt";
-    byteServiceClient blockingEp  = new ("http://localhost:9101");
+    byteServiceClient blockingEp  = check new ("http://localhost:9101");
     var rch = <@untainted> io:openReadableFile(filePath);
     if (rch is error) {
         test:assertFail("Error while reading the file.");
@@ -44,13 +44,12 @@ function testLargeByteArray() {
         if (resultBytes is byte[]) {
             var addResponse = blockingEp->checkBytes(resultBytes);
             if (addResponse is Error) {
-                test:assertFail(io:sprintf("Error from Connector: %s", addResponse.message()));
+                test:assertFail(string `Error from Connector: ${addResponse.message()}`);
             } else {
                 test:assertEquals(addResponse, resultBytes);
             }
         } else {
-            error err = resultBytes;
-            test:assertFail(io:sprintf("File read error: %s", err.message()));
+            test:assertFail(string `File read error: ${resultBytes.message()}`);
         }
     }
 }
@@ -61,10 +60,10 @@ public client class byteServiceClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_11, getDescriptorMap11());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_11, getDescriptorMap11());
     }
 
     isolated remote function checkBytes(byte[]|ContextBytes req) returns (byte[]|Error) {

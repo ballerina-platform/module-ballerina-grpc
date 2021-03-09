@@ -14,10 +14,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
-final NegotiatorClient negotiatorEp = new ("http://localhost:9109");
+final NegotiatorClient negotiatorEp = check new ("http://localhost:9109");
 
 @test:Config {enable:true}
 function testMapFields() {
@@ -32,7 +31,7 @@ function testMapFields() {
     };
     Error? publishMetrics = negotiatorEp->publishMetrics(request);
     if (publishMetrics is Error) {
-        test:assertFail(io:sprintf("Metrics publish failed: %s", publishMetrics.message()));
+        test:assertFail(string `Metrics publish failed: ${publishMetrics.message()}`);
     }
 }
 
@@ -41,7 +40,7 @@ function testOptionalFields() {
     HandshakeRequest request = {};
     HandshakeResponse|Error result = negotiatorEp->handshake(request);
     if (result is Error) {
-        test:assertFail(io:sprintf("Handshake failed: %s", result.message()));
+        test:assertFail(string `Handshake failed: ${result.message()}`);
     } else {
         test:assertEquals(result.id, "123456");
     }
@@ -53,10 +52,10 @@ public client class NegotiatorClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new (url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_19, getDescriptorMap19());
+        self.grpcClient = check new (url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
     isolated remote function handshake(HandshakeRequest|ContextHandshakeRequest req) returns (HandshakeResponse|Error) {

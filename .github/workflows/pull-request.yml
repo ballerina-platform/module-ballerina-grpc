@@ -27,13 +27,10 @@ jobs:
                     name: Ballerina Internal Log
                     path: grpc-ballerina/ballerina-internal.log
                     if-no-files-found: ignore
-            -   name: Archive Code Coverage JSON
-                uses: actions/upload-artifact@v2
-                with:
-                    name: Code Coverage JSON
-                    path: grpc-ballerina/target/report/test_results.json
-                    if-no-files-found: ignore
-
+            -   name: Generate CodeCov Report
+                if: github.event_name == 'pull_request'
+                uses: codecov/codecov-action@v1
+                
     windows-build:
         runs-on: windows-latest
 

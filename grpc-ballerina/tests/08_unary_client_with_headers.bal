@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 
 // Client endpoint configuration
-final HelloWorld101Client helloWorld8BlockingEp = new ("http://localhost:9098");
+final HelloWorld101Client helloWorld8BlockingEp = check new ("http://localhost:9098");
 
 @test:Config {enable:true}
 function testHeadersInUnaryClient() {
@@ -28,7 +28,7 @@ function testHeadersInUnaryClient() {
     // Executing unary blocking call
     ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         string result = unionResp.content;
         map<string|string[]> resHeaders = unionResp.headers;
@@ -47,7 +47,7 @@ function testHeadersInBlockingClient() returns Error? {
     // Executing unary blocking call
     ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         string result = unionResp.content;
         map<string|string[]> resHeaders = unionResp.headers;
@@ -64,10 +64,10 @@ public client class HelloWorld101Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_8, getDescriptorMap8());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_8, getDescriptorMap8());
     }
 
     isolated remote function hello(string|ContextString req) returns (string|Error) {

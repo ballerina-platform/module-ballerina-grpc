@@ -14,16 +14,21 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
+import ballerina/time;
+import ballerina/io;
 
 @test:Config {enable:true}
-function testClientStreamingFromReturn() returns Error? {
-    string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
-    HelloWorld26Client helloWorldEp = check new ("http://localhost:9116");
+function testBidiStreamingFromReturnRecordWithDeadline() returns error? {
+    HelloWorld37Client helloWorldCaller = check new ("http://localhost:9127");
+    time:Duration duration = {
+        minutes: 5
+    };
+    time:Time deadline = check time:addDuration(time:currentTime(), duration);
+    map<string|string[]> headers = check setDeadline(deadline);
 
-    LotsOfGreetingsStreamingClientFromReturn streamingClient;
-    var res = helloWorldEp->lotsOfGreetings();
+    CallWithDeadlineStreamingClient streamingClient;
+    var res = helloWorldCaller->callWithDeadline();
     if (res is Error) {
         test:assertFail("Error from Connector: " + res.message());
         return;
@@ -31,27 +36,61 @@ function testClientStreamingFromReturn() returns Error? {
         streamingClient = res;
     }
     io:println("Initialized connection sucessfully.");
-
-    foreach var greet in requests {
-        Error? err = streamingClient->sendstring(greet);
+    string[] requests = [
+        "WSO2",
+        "Microsoft",
+        "Facebook",
+        "Google"
+    ];
+    foreach string s in requests {
+        Error? err = streamingClient->sendContextString({content: s, headers: headers});
         if (err is Error) {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
-    checkpanic streamingClient->complete();
-    io:println("completed successfully");
-    string response = checkpanic streamingClient->receiveString();
-    test:assertEquals(response, "Ack");
+    check streamingClient->complete();
+    io:println("Completed successfully");
+    var result = streamingClient->receiveString();
+    int i = 0;
+    while !(result is EOS) {
+        if (result is string) {
+            test:assertEquals(result, requests[i]);
+        } else {
+            test:assertFail("Unexpected output in the stream");
+        }
+        result = streamingClient->receiveString();
+        i += 1;
+    }
+    test:assertEquals(i, 4);
 }
 
-public client class LotsOfGreetingsStreamingClientFromReturn {
+public client class HelloWorld37Client {
+
+    *AbstractClientEndpoint;
+
+    private Client grpcClient;
+
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
+        // initialize client endpoint.
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_37, getDescriptorMap37());
+    }
+
+    isolated remote function callWithDeadline() returns (CallWithDeadlineStreamingClient|Error) {
+        StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("HelloWorld37/callWithDeadline");
+        return new CallWithDeadlineStreamingClient(sClient);
+    }
+}
+
+
+public client class CallWithDeadlineStreamingClient {
     private StreamingClient sClient;
 
     isolated function init(StreamingClient sClient) {
         self.sClient = sClient;
     }
 
-    isolated remote function sendstring(string message) returns Error? {
+    isolated remote function sendString(string message) returns Error? {
         
         return self.sClient->send(message);
     }
@@ -79,20 +118,3 @@ public client class LotsOfGreetingsStreamingClientFromReturn {
     }
 }
 
-public client class HelloWorld26Client {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_26, getDescriptorMap26());
-    }
-
-    isolated remote function lotsOfGreetings() returns (LotsOfGreetingsStreamingClientFromReturn|Error) {
-        StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.HelloWorld26/lotsOfGreetings");
-        return new LotsOfGreetingsStreamingClientFromReturn(sClient);
-    }
-}

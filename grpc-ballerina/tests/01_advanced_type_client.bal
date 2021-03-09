@@ -17,7 +17,7 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorldClient HelloWorld1BlockingEp = new("http://localhost:9091");
+final HelloWorldClient helloWorldClient = check new("http://localhost:9091");
 
 type PersonTypedesc typedesc<Person>;
 type StockQuoteTypedesc typedesc<StockQuote>;
@@ -29,10 +29,10 @@ function testSendNestedStruct() {
     Person p = {name:"Sam", address:{postalCode:10300, state:"Western", country:"Sri Lanka"}};
     io:println("testInputNestedStruct: input:");
     io:println(p);
-    string|error unionResp = HelloWorld1BlockingEp->testInputNestedStruct(p);
+    string|error unionResp = helloWorldClient->testInputNestedStruct(p);
     io:println(unionResp);
     if (unionResp is error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp);
         test:assertEquals(unionResp, "Submitted name: Sam");
@@ -43,10 +43,10 @@ function testSendNestedStruct() {
 function testReceiveNestedStruct() {
     string name  = "WSO2";
     io:println("testOutputNestedStruct: input: " + name);
-    Person|Error unionResp = HelloWorld1BlockingEp->testOutputNestedStruct(name);
+    Person|Error unionResp = helloWorldClient->testOutputNestedStruct(name);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp.toString());
         test:assertEquals(unionResp.name, "Sam");
@@ -61,10 +61,10 @@ function testSendStructReceiveStruct() {
     StockRequest request = {name: "WSO2"};
     io:println("testInputStructOutputStruct: input:");
     io:println(request);
-    StockQuote|Error unionResp = HelloWorld1BlockingEp->testInputStructOutputStruct(request);
+    StockQuote|Error unionResp = helloWorldClient->testInputStructOutputStruct(request);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(msg = io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         test:assertEquals(unionResp.symbol, "WSO2");
@@ -78,10 +78,10 @@ function testSendStructReceiveStruct() {
 @test:Config {enable:true}
 function testSendNoReceiveStruct() {
     io:println("testNoInputOutputStruct: No input:");
-    StockQuotes|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputStruct();
+    StockQuotes|Error unionResp = helloWorldClient->testNoInputOutputStruct();
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp);
         test:assertEquals(unionResp.stock.length(), 2);
@@ -93,10 +93,10 @@ function testSendNoReceiveStruct() {
 @test:Config {enable:true}
 function testSendNoReceiveArray() {
     io:println("testNoInputOutputStruct: No input:");
-    StockNames|Error unionResp = HelloWorld1BlockingEp->testNoInputOutputArray();
+    StockNames|Error unionResp = helloWorldClient->testNoInputOutputArray();
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
         io:println(unionResp);
@@ -111,10 +111,10 @@ function testSendStructNoReceive() {
     StockQuote quote = {symbol: "Ballerina", name:"ballerina/io", last:1.0, low:0.5, high:2.0};
     io:println("testNoInputOutputStruct: input:");
     io:println(quote);
-    Error? unionResp = HelloWorld1BlockingEp->testInputStructNoOutput(quote);
+    Error? unionResp = helloWorldClient->testInputStructNoOutput(quote);
     io:println(unionResp);
     if (unionResp is Error) {
-        test:assertFail(io:sprintf(ERROR_MSG_FORMAT, unionResp.message()));
+        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     }
 }
 
@@ -124,10 +124,10 @@ public client class HelloWorldClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_1, getDescriptorMap1());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_1, getDescriptorMap1());
     }
 
     isolated remote function testInputNestedStruct(Person|ContextPerson req) returns (string|Error) {
