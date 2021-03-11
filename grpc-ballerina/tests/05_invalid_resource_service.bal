@@ -23,7 +23,7 @@ listener Listener ep5 = new (9095);
 }
 service "HelloWorld98" on ep5 {
     isolated remote function hello(HelloWorld98StringCaller caller, string name) {
-        log:printInfo"name: " + name);
+        log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
         if (name == "invalid") {
@@ -38,7 +38,7 @@ service "HelloWorld98" on ep5 {
     }
 
     isolated remote function testInt(HelloWorld98IntCaller caller, string age) {
-        log:printInfo"age: " + age);
+        log:printInfo("age: " + age);
         int displayAge = 0;
         if (age == "") {
             displayAge = -1;
@@ -49,7 +49,7 @@ service "HelloWorld98" on ep5 {
         if (err is Error) {
             log:printError(err.message(), 'error = err);
         } else {
-            log:printInfo"display age : " + displayAge.toString());
+            log:printInfo("display age : " + displayAge.toString());
         }
         checkpanic caller->complete();
     }

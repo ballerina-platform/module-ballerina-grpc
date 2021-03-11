@@ -35,14 +35,14 @@ service "helloWorldServerStreaming" on helloWorldStreamingep {
             if (err is Error) {
                 log:printError("Error from Connector: " + err.message());
             } else {
-                log:printInfoInfo("Send reply: " + msg.toString());
+                log:printInfo("Send reply: " + msg.toString());
             }
         }
 
         Error? result = caller->complete();
         if (result is Error) {
             log:printError("Error in sending completed notification to caller",
-                err = result);
+                'error = result);
         }
     }
 }

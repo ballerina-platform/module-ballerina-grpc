@@ -25,9 +25,9 @@ listener Listener ep26 = new (9116);
 service "HelloWorld26" on ep26 {
 
     remote function lotsOfGreetings(stream<string,error> clientStream) returns string {
-        log:printInfo"connected sucessfully.");
+        log:printInfo("connected sucessfully.");
         error? e = clientStream.forEach(isolated function(string name) {
-            log:printInfo"greet received: " + name);
+            log:printInfo("greet received: " + name);
         });
         if (e is EOS) {
             return "Ack";

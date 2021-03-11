@@ -51,7 +51,7 @@ service "Negotiator" on negotiatorep {
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
         error? send = caller->sendHandshakeResponse(response);
         if (send is error) {
-            log:printInfoError("Error while sending the response.", err = send);
+            log:printError("Error while sending the response.", 'error = send);
         } else {
             error? complete = caller->complete();
         }
