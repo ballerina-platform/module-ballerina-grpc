@@ -25,7 +25,7 @@ listener Listener ep30 = new (9120);
 }
 service /HelloWorld30 on ep30 {
 
-    remote function testStringValueReturn(HelloWorld30StringCaller caller, ContextString request) {
+    remote isolated function testStringValueReturn(HelloWorld30StringCaller caller, ContextString request) {
         io:println("name: " + request.content);
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
@@ -67,7 +67,7 @@ service /HelloWorld30 on ep30 {
 public client class HelloWorld30StringCaller {
     private Caller caller;
 
-    public function init(Caller caller) {
+    public isolated function init(Caller caller) {
         self.caller = caller;
     }
 

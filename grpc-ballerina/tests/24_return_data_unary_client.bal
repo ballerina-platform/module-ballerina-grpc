@@ -18,7 +18,7 @@ import ballerina/test;
 import ballerina/lang.'string as langstring;
 
 @test:Config {enable:true}
-public function testStringValueReturn() returns Error? {
+public isolated function testStringValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testStringValueReturn("WSO2");
     if (unionResp is Error) {
@@ -29,7 +29,7 @@ public function testStringValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public function testFloatValueReturn() returns Error? {
+public isolated function testFloatValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     float n = 4.5;
     var unionResp = helloWorldBlockingEp->testFloatValueReturn(n);
@@ -41,7 +41,7 @@ public function testFloatValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public function testDoubleValueReturn() returns Error? {
+public isolated function testDoubleValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     float n = 4.5;
     var unionResp = helloWorldBlockingEp->testDoubleValueReturn(n);
@@ -53,7 +53,7 @@ public function testDoubleValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public function testInt64ValueReturn() returns Error? {
+public isolated function testInt64ValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     int n = 45;
     var unionResp = helloWorldBlockingEp->testInt64ValueReturn(n);
@@ -65,7 +65,7 @@ public function testInt64ValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public function testBoolValueReturn() returns Error? {
+public isolated function testBoolValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     boolean b = true;
     var unionResp = helloWorldBlockingEp->testBoolValueReturn(b);
@@ -77,7 +77,7 @@ public function testBoolValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public function testBytesValueReturn() returns Error? {
+public isolated function testBytesValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     string s = "Ballerina";
     var unionResp = helloWorldBlockingEp->testBytesValueReturn(s.toBytes());
@@ -94,7 +94,7 @@ public function testBytesValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public function testRecordValueReturn() returns Error? {
+public isolated function testRecordValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testRecordValueReturn("WSO2");
     if (unionResp is Error) {
@@ -106,7 +106,7 @@ public function testRecordValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public function testRecordValueReturnStream() returns Error? {
+public isolated function testRecordValueReturnStream() returns Error? {
     HelloWorld24Client helloWorldEp = check new ("http://localhost:9114");
     var unionResp = helloWorldEp->testRecordValueReturnStream("WSO2");
     if (unionResp is Error) {

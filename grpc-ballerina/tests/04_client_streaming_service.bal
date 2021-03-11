@@ -27,7 +27,7 @@ listener Listener ep4 = new (9094);
 }
 service "HelloWorld7" on ep4 {
 
-    remote function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error>clientStream) {
+    remote isolated function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error>clientStream) {
         log:printInfo("connected sucessfully.");
         error? e = clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);

@@ -17,7 +17,7 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public function testStringValueReturnWithOauth2() returns Error? {
+public isolated function testStringValueReturnWithOauth2() returns Error? {
     HelloWorld30BlockingClient helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};
 

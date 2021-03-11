@@ -19,7 +19,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testBidiStreamingFromReturn() returns Error? {
+isolated function testBidiStreamingFromReturn() returns Error? {
     StreamingClient streamingClient = new;
     ChatClientFromReturn chatEp = check new ("http://localhost:9117");
     // Executing unary non-blocking call registering server message listener.

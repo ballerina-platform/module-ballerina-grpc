@@ -186,7 +186,7 @@ isolated function setRequest1_LastName(Request1 r, string last_name) {
     _ = r.removeIfHasKey("version");
 }
 
-function setRequest1_Version(Request1 r, string 'version) {
+isolated function setRequest1_Version(Request1 r, string 'version) {
     r.'version = 'version;
     _ = r.removeIfHasKey("first_name");
     _ = r.removeIfHasKey("last_name");
@@ -307,7 +307,7 @@ isolated function setZZZ_OneA(ZZZ r, float one_a) {
     _ = r.removeIfHasKey("one_k");
 }
 
-function setZZZ_OneB(ZZZ r, float one_b) {
+isolated function setZZZ_OneB(ZZZ r, float one_b) {
     r.one_b = one_b;
     _ = r.removeIfHasKey("one_a");
     _ = r.removeIfHasKey("one_c");

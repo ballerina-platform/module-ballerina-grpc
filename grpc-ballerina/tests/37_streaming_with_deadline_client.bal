@@ -19,7 +19,7 @@ import ballerina/time;
 import ballerina/io;
 
 @test:Config {enable:true}
-function testBidiStreamingFromReturnRecordWithDeadline() returns error? {
+isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error? {
     HelloWorld37Client helloWorldCaller = check new ("http://localhost:9127");
     time:Utc current = time:utcNow();
     time:Utc deadline = time:utcAddSeconds(current, 300);

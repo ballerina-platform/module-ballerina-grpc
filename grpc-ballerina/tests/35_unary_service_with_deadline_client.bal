@@ -18,7 +18,7 @@ import ballerina/test;
 import ballerina/time;
 
 @test:Config {enable:true}
-function testCallWithingDeadline() returns Error? {
+isolated function testCallWithingDeadline() returns Error? {
     HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
     time:Utc current = time:utcNow();
     time:Utc deadline = time:utcAddSeconds(current, 300);
@@ -32,7 +32,7 @@ function testCallWithingDeadline() returns Error? {
 }
 
 @test:Config {enable:true}
-function testCallExceededDeadline() returns Error? {
+isolated function testCallExceededDeadline() returns Error? {
     HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
     time:Utc current = time:utcNow();
     time:Utc deadline = time:utcAddSeconds(current, 5);

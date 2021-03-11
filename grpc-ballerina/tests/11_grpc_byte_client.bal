@@ -33,7 +33,7 @@ isolated function testByteArray() returns Error? {
 }
 
 @test:Config {enable:true}
-function testLargeByteArray() returns Error? {
+isolated function testLargeByteArray() returns Error? {
     string filePath = "tests/resources/sample_bytes.txt";
     byteServiceClient blockingEp  = check new ("http://localhost:9101");
     var rch = <@untainted> io:openReadableFile(filePath);

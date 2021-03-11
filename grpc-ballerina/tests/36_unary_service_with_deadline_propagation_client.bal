@@ -18,7 +18,7 @@ import ballerina/test;
 import ballerina/time;
 
 @test:Config {enable:true}
-function testCallWithDeadlinePropergation() returns error? {
+isolated function testCallWithDeadlinePropergation() returns error? {
     HelloWorld36S1Client helloWorldClient = check new ("http://localhost:9126");
     time:Utc current = time:utcNow();
     time:Utc deadline = time:utcAddSeconds(current, 300);

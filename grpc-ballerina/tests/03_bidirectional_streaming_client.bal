@@ -21,7 +21,7 @@ import ballerina/test;
 
 
 @test:Config {enable:true}
-function testBidiStreaming() returns Error? {
+isolated function testBidiStreaming() returns Error? {
     ChatStreamingClient ep;
     ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {

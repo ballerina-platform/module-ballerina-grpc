@@ -27,7 +27,7 @@ const string TEST_DEADLINE_HEADER = "testdeadline";
 }
 service "HelloWorld36S1" on ep36 {
     
-    remote function call1(ContextString request) returns ContextString|Error {
+    remote isolated function call1(ContextString request) returns ContextString|Error {
         log:printInfo("Invoked call1");
         var cancel = isCancelled(request.headers);
         if (cancel is boolean) {
@@ -57,7 +57,7 @@ service "HelloWorld36S1" on ep36 {
     descMap: getDescriptorMap36()
 }
 service "HelloWorld36S2" on ep36 {
-    remote function call2(ContextString request) returns ContextString|error {
+    remote isolated function call2(ContextString request) returns ContextString|error {
         log:printInfo("Invoked call2");
         if (request.headers[TEST_DEADLINE_HEADER] != ()) {
             string|string[]? deadlineStringValue = request.headers[TEST_DEADLINE_HEADER];
