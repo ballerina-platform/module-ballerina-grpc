@@ -228,7 +228,7 @@ public type ClientConfiguration record {|
 # + certValidation - Certificate validation against OCSP_CRL, OCSP_STAPLING related options
 # + ciphers - List of ciphers to be used
 #             eg: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
-# + verifyHostname - Enable/disable host name verification
+# + verifyHostName - Enable/disable host name verification
 # + shareSession - Enable/disable new SSL session creation
 # + handshakeTimeout - SSL handshake time out(in seconds)
 # + sessionTimeout - SSL session time out(in seconds)

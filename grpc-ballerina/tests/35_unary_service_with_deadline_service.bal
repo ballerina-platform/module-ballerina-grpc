@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/log;
+import ballerina/lang.runtime;
 import ballerina/io;
 
 listener Listener ep35 = new (9125);
@@ -41,6 +42,7 @@ service "HelloWorld35" on ep35 {
     remote function callExceededDeadline(ContextString request) returns ContextString|Error {
         log:printInfo("Invoked callExceededDeadline");
         io:println(request);
+        runtime:sleep(10);
         var cancel = isCancelled(request.headers);
         if (cancel is boolean) {
             if (cancel) {

@@ -35,7 +35,7 @@ function testCallWithingDeadline() returns Error? {
 function testCallExceededDeadline() returns Error? {
     HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
     time:Utc current = time:utcNow();
-    time:Utc deadline = time:utcAddSeconds(current, 300);
+    time:Utc deadline = time:utcAddSeconds(current, 5);
     map<string|string[]> headers = setDeadline(deadline);
     var context = helloWorldClient->callExceededDeadlineContext({content: "WSO2", headers: headers});
     if (context is DeadlineExceededError) {
