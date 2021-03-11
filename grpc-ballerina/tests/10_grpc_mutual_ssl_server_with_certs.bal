@@ -19,10 +19,14 @@ import ballerina/log;
 listener Listener ep10 = new (9100, {
     host:"localhost",
     secureSocket:{
-        keyFile: PRIVATE_KEY_PATH,
-        certFile: PUBLIC_CRT_PATH,
-        trustedCertFile: PUBLIC_CRT_PATH,
-        sslVerifyClient: "require"
+        key: {
+            keyFile: PRIVATE_KEY_PATH,
+            certFile: PUBLIC_CRT_PATH
+        },
+        mutualSsl: {
+            verifyClient: REQUIRE,
+            cert: PUBLIC_CRT_PATH
+        }
     }
 });
 
@@ -32,13 +36,13 @@ listener Listener ep10 = new (9100, {
 }
 service "grpcMutualSslService" on ep10 {
     isolated remote function hello(GrpcMutualSslServiceStringCaller caller, string name) {
-        log:print("name: " + name);
+        log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->sendString(message);
         if (err is Error) {
-            log:printError(err.message(), err = err);
+            log:printError(err.message(), 'error = err);
         } else {
-            log:print("Server send response : " + message);
+            log:printInfo("Server send response : " + message);
         }
         checkpanic caller->complete();
     }

@@ -35,7 +35,7 @@ service /HelloWorld30 on ep30 {
             scopeKey: "scp",
             clientConfig: {
                 secureSocket: {
-                   trustStore: {
+                   cert: {
                        path: TRUSTSTORE_PATH,
                        password: "ballerina"
                    }

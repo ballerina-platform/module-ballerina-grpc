@@ -23,9 +23,11 @@ import ballerina/test;
 isolated function testUnarySecuredBlockingWithCerts() returns Error? {
     grpcMutualSslServiceClient helloWorldBlockingEp = check new ("https://localhost:9100", {
         secureSocket:{
-            keyFile: PRIVATE_KEY_PATH,
-            certFile: PUBLIC_CRT_PATH,
-            trustedCertFile: PUBLIC_CRT_PATH
+            key: {
+                keyFile: PRIVATE_KEY_PATH,
+                certFile: PUBLIC_CRT_PATH
+            },
+            cert: PUBLIC_CRT_PATH
         }
     });
 

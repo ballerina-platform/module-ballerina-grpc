@@ -28,7 +28,7 @@ const string TEST_DEADLINE_HEADER = "testdeadline";
 service "HelloWorld36S1" on ep36 {
     
     remote function call1(ContextString request) returns ContextString|Error {
-        log:print("Invoked call1");
+        log:printInfo"Invoked call1");
         var cancel = isCancelled(request.headers);
         if (cancel is boolean) {
             if (cancel) {
@@ -58,7 +58,7 @@ service "HelloWorld36S1" on ep36 {
 }
 service "HelloWorld36S2" on ep36 {
     remote function call2(ContextString request) returns ContextString|Error {
-        log:print("Invoked call2");
+        log:printInfo"Invoked call2");
         if (request.headers[TEST_DEADLINE_HEADER] != ()) {
             time:Time currentTime = time:currentTime();
             string|string[]? deadlineStringValue = request.headers[TEST_DEADLINE_HEADER];

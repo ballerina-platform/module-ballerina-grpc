@@ -26,7 +26,7 @@ listener Listener ep35 = new (9125);
 service "HelloWorld35" on ep35 {
     
     remote function callWithingDeadline(ContextString request) returns ContextString|Error {
-        log:print("Invoked callWithingDeadline");
+        log:printInfo"Invoked callWithingDeadline");
         var cancel = isCancelled(request.headers);
         if (cancel is boolean) {
             if (cancel) {
@@ -39,7 +39,7 @@ service "HelloWorld35" on ep35 {
         }
     }
     remote function callExceededDeadline(ContextString request) returns ContextString|Error {
-        log:print("Invoked callExceededDeadline");
+        log:printInfo"Invoked callExceededDeadline");
         io:println(request);
         var cancel = isCancelled(request.headers);
         if (cancel is boolean) {

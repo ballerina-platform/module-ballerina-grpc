@@ -26,7 +26,7 @@ listener Listener negotiatorep = new (9109);
 service "Negotiator" on negotiatorep {
 
     isolated remote function handshake(NegotiatorHandshakeResponseCaller caller, HandshakeRequest value) {
-        log:print(string `Handshake request: ${value.toString()}`);
+        log:printInfo(string `Handshake request: ${value.toString()}`);
 
         if (value.jsonStr != "") {
             error? sendError = caller->sendError(error InvalidArgumentError("jsonStr should be an empty string."));
@@ -51,21 +51,21 @@ service "Negotiator" on negotiatorep {
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
         error? send = caller->sendHandshakeResponse(response);
         if (send is error) {
-            log:printError("Error while sending the response.", err = send);
+            log:printInfoError("Error while sending the response.", err = send);
         } else {
             error? complete = caller->complete();
         }
     }
 
     isolated remote function publishMetrics(NegotiatorNilCaller caller, MetricsPublishRequest value) {
-        log:print(string `publishMetrics request: ${value.toString()}`);
+        log:printInfo(string `publishMetrics request: ${value.toString()}`);
 
         if (value.metrics.length() < 0) {
             error? sendError = caller->sendError(error InvalidArgumentError("metrics cannot be an empty array."));
             return;
         }
         foreach var metric in value.metrics {
-            log:print(string `metric value: ${metric.toString()}`);
+            log:printInfo(string `metric value: ${metric.toString()}`);
             if (metric.tags.length() < 0) {
                 error? sendError = caller->sendError(error InvalidArgumentError("tags cannot be an empty array."));
                 return;
@@ -75,7 +75,7 @@ service "Negotiator" on negotiatorep {
     }
 
     isolated remote function publishTraces(NegotiatorNilCaller caller, TracesPublishRequest value) {
-        log:print(string `publishTraces request: ${value.toString()}`);
+        log:printInfo(string `publishTraces request: ${value.toString()}`);
         error? complete = caller->complete();
         io:println(complete);
     }

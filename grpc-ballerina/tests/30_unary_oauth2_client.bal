@@ -28,7 +28,7 @@ public function testStringValueReturnWithOauth2() returns Error? {
         scopes: ["token-scope1", "token-scope2"],
         clientConfig: {
             secureSocket: {
-               trustStore: {
+               cert: {
                    path: TRUSTSTORE_PATH,
                    password: "ballerina"
                }
