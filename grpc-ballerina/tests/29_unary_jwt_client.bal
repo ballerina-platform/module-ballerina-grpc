@@ -17,7 +17,7 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public function testStringValueReturnWithJwt() returns Error? {
+public isolated function testStringValueReturnWithJwt() returns Error? {
     HelloWorld29BlockingClient helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {};
 

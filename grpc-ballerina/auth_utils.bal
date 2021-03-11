@@ -40,7 +40,7 @@ type ClientAuthHandler ClientBasicAuthHandler|ClientBearerTokenAuthHandler|Clien
 
 // Logs and prepares the `error` as an `http:ClientAuthError`.
 isolated function prepareClientAuthError(string message, error? err = ()) returns ClientAuthError {
-    log:printError(message, err = err);
+    log:printError(message, 'error = err);
     if (err is error) {
         return error ClientAuthError(message, err);
     }

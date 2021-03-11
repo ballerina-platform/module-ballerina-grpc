@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testClientStreaming() returns Error? {
+isolated function testClientStreaming() returns Error? {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
     // Client endpoint configuration
     HelloWorld4Client helloWorldEp = check new ("http://localhost:9094");

@@ -27,8 +27,8 @@ const string TEST_DEADLINE_HEADER = "testdeadline";
 }
 service "HelloWorld36S1" on ep36 {
     
-    remote function call1(ContextString request) returns ContextString|Error {
-        log:print("Invoked call1");
+    remote isolated function call1(ContextString request) returns ContextString|Error {
+        log:printInfo("Invoked call1");
         var cancel = isCancelled(request.headers);
         if (cancel is boolean) {
             if (cancel) {
@@ -36,8 +36,8 @@ service "HelloWorld36S1" on ep36 {
             } else {
                 HelloWorld36S2Client helloWorldClient = checkpanic new ("http://localhost:9126");
                 var deadline = getDeadline(request.headers);
-                if (deadline is time:Time) {
-                    string deadlineStringValue = checkpanic time:toString(deadline);
+                if (deadline is time:Utc) {
+                    string deadlineStringValue = time:utcToString(deadline);
                     request.headers[TEST_DEADLINE_HEADER] = deadlineStringValue;
                     return helloWorldClient->call2Context({content: "WSO2", headers: request.headers});
                 } else if (deadline is time:Error) {
@@ -57,17 +57,20 @@ service "HelloWorld36S1" on ep36 {
     descMap: getDescriptorMap36()
 }
 service "HelloWorld36S2" on ep36 {
-    remote function call2(ContextString request) returns ContextString|Error {
-        log:print("Invoked call2");
+    remote isolated function call2(ContextString request) returns ContextString|error {
+        log:printInfo("Invoked call2");
         if (request.headers[TEST_DEADLINE_HEADER] != ()) {
-            time:Time currentTime = time:currentTime();
             string|string[]? deadlineStringValue = request.headers[TEST_DEADLINE_HEADER];
             if (deadlineStringValue is string) {
-                var deadline = time:parse(deadlineStringValue, time:ISO_DATE_TIME);
-                if (deadline is time:Time) {
+                time:Utc currentTime = time:utcNow();
+                var deadline = time:utcFromString(deadlineStringValue);
+                if (deadline is time:Utc) {
+                    [int, decimal] [deadlineSeconds, deadlineSecondFraction] = deadline;
+                    [int, decimal] [currentSeconds, currentSecondFraction] = currentTime;
                     io:println(deadline);
-                    io:println(currentTime);
-                    if (currentTime.time < deadline.time) {
+                    if currentSeconds < deadlineSeconds {
+                        return {content: "Ack", headers: {}};
+                    } else if currentSeconds == deadlineSeconds && currentSecondFraction <= deadlineSecondFraction{
                         return {content: "Ack", headers: {}};
                     } else {
                         return error DeadlineExceededError("Exceeded the configured deadline");

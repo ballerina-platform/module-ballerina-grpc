@@ -21,14 +21,23 @@ import ballerina/test;
 
 
 @test:Config {enable:true}
-function testBidiStreaming() returns Error? {
+isolated function testBidiStreaming() returns Error? {
     ChatStreamingClient ep;
     ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {
-            trustStore: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
                 path: TRUSTSTORE_PATH,
                 password: "ballerina"
-            }
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
     // Executing unary non-blocking call registering server message listener.

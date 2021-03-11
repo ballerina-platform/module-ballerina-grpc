@@ -18,7 +18,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testClientStreamingFromReturnRecord() returns Error? {
+isolated function testClientStreamingFromReturnRecord() returns Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClientFromReturn streamingClient;
     var res = helloWorldEp->sayHello();

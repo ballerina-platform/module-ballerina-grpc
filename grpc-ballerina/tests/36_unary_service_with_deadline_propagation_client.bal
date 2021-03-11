@@ -18,13 +18,11 @@ import ballerina/test;
 import ballerina/time;
 
 @test:Config {enable:true}
-function testCallWithDeadlinePropergation() returns error? {
+isolated function testCallWithDeadlinePropergation() returns error? {
     HelloWorld36S1Client helloWorldClient = check new ("http://localhost:9126");
-    time:Duration duration = {
-        minutes: 5
-    };
-    time:Time deadline = check time:addDuration(time:currentTime(), duration);
-    map<string|string[]> headers = check setDeadline(deadline);
+    time:Utc current = time:utcNow();
+    time:Utc deadline = time:utcAddSeconds(current, 300);
+    map<string|string[]> headers = setDeadline(deadline);
     var context = helloWorldClient->call1Context({content: "WSO2", headers: headers});
     if (context is ContextString) {
         test:assertEquals(context.content, "Ack");

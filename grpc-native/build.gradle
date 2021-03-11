@@ -30,7 +30,6 @@ dependencies {
     compile group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    compile group: 'org.ballerinalang', name: 'ballerina-rt', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-config', version: "${ballerinaLangVersion}"
     compile group: 'org.slf4j', name: 'slf4j-jdk14', version: "${slf4jVersion}"

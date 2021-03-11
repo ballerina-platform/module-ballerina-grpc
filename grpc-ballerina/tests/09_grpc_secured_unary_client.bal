@@ -21,22 +21,18 @@ import ballerina/test;
 isolated function testUnarySecuredBlocking() returns Error? {
     HelloWorld85Client helloWorld9BlockingEp = check new ("https://localhost:9099", {
         secureSocket:{
-            trustStore:{
+            cert:{
                path: TRUSTSTORE_PATH,
                password: "ballerina"
             },
-            keyStore: {
+            key: {
                 path: KEYSTORE_PATH,
                 password: "ballerina"
             },
             protocol: {
-                name: "TLSv1.2",
+                name: TLS,
                 versions: ["TLSv1.2","TLSv1.1"]
-            },
-            certValidation : {
-                enable: false
-            },
-            ocspStapling : false
+            }
         }
     });
 
