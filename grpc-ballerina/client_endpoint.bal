@@ -214,7 +214,7 @@ public type RetryConfiguration record {|
 public type ClientConfiguration record {|
     decimal timeout = 60;
     PoolConfiguration? poolConfig = ();
-    SecureSocket? secureSocket = ();
+    ClientSecureSocket? secureSocket = ();
     Compression compression = COMPRESSION_AUTO;
     RetryConfiguration? retryConfiguration = ();
 |};
@@ -232,7 +232,7 @@ public type ClientConfiguration record {|
 # + shareSession - Enable/disable new SSL session creation
 # + handshakeTimeout - SSL handshake time out(in seconds)
 # + sessionTimeout - SSL session time out(in seconds)
-public type SecureSocket record {|
+public type ClientSecureSocket record {|
     boolean enable = true;
     crypto:TrustStore|string cert?;
     crypto:KeyStore|CertKey key?;
