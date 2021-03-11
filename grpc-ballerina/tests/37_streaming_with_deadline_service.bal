@@ -25,9 +25,9 @@ listener Listener ep37 = new (9127);
 }
 service "HelloWorld37" on ep37 {
     
-    remote function callWithDeadline(ContextStringStream clientStream) returns ContextStringStream|Error {
-        log:print("Connected sucessfully.");
-        error? e = clientStream.content.forEach(function(string val) {
+    remote isolated function callWithDeadline(ContextStringStream clientStream) returns ContextStringStream|Error {
+        log:printInfo("Connected sucessfully.");
+        error? e = clientStream.content.forEach(isolated function(string val) {
             io:println(val);
         });
         string[] response = [

@@ -25,7 +25,7 @@ listener Listener helloWorldStreamingep = new (9113);
 service "helloWorldServerStreaming" on helloWorldStreamingep {
 
     isolated remote function lotsOfReplies(HelloWorldServerStreamingHelloResponseCaller caller, HelloRequest value) {
-        log:print("Server received hello from " + value.name);
+        log:printInfo("Server received hello from " + value.name);
         string[] greets = ["Hi", "Hey", "GM"];
 
         foreach string greet in greets {
@@ -35,14 +35,14 @@ service "helloWorldServerStreaming" on helloWorldStreamingep {
             if (err is Error) {
                 log:printError("Error from Connector: " + err.message());
             } else {
-                log:print("Send reply: " + msg.toString());
+                log:printInfo("Send reply: " + msg.toString());
             }
         }
 
         Error? result = caller->complete();
         if (result is Error) {
             log:printError("Error in sending completed notification to caller",
-                err = result);
+                'error = result);
         }
     }
 }

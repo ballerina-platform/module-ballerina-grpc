@@ -24,7 +24,7 @@ listener Listener ep25 = new (9115);
 }
 service "HelloWorld25" on ep25 {
 
-    remote function lotsOfReplies(string name) returns stream<string> {
+    remote isolated function lotsOfReplies(string name) returns stream<string> {
         io:println("Server received hello from " + name);
         string[] greets = [("Hi " + name), ("Hey " + name), ("GM " + name)];
         return greets.toStream();

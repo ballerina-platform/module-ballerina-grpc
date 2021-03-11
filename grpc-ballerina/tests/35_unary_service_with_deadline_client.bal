@@ -18,13 +18,11 @@ import ballerina/test;
 import ballerina/time;
 
 @test:Config {enable:true}
-function testCallWithingDeadline() returns Error? {
+isolated function testCallWithingDeadline() returns Error? {
     HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
-    time:Duration duration = {
-        minutes: 5
-    };
-    time:Time deadline = checkpanic time:addDuration(time:currentTime(), duration);
-    map<string|string[]> headers = checkpanic setDeadline(deadline);
+    time:Utc current = time:utcNow();
+    time:Utc deadline = time:utcAddSeconds(current, 300);
+    map<string|string[]> headers = setDeadline(deadline);
     var context = helloWorldClient->callWithingDeadlineContext({content: "WSO2", headers: headers});
     if (context is ContextString) {
         test:assertEquals(context.content, "Ack");
@@ -34,13 +32,11 @@ function testCallWithingDeadline() returns Error? {
 }
 
 @test:Config {enable:true}
-function testCallExceededDeadline() returns Error? {
+isolated function testCallExceededDeadline() returns Error? {
     HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
-    time:Duration duration = {
-        minutes: 5
-    };
-    time:Time deadline = checkpanic time:subtractDuration(time:currentTime(), duration);
-    map<string|string[]> headers = checkpanic setDeadline(deadline);
+    time:Utc current = time:utcNow();
+    time:Utc deadline = time:utcAddSeconds(current, 5);
+    map<string|string[]> headers = setDeadline(deadline);
     var context = helloWorldClient->callExceededDeadlineContext({content: "WSO2", headers: headers});
     if (context is DeadlineExceededError) {
         test:assertEquals(context.message(), "Exceeded the configured deadline");

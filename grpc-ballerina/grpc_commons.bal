@@ -14,36 +14,35 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Protocols record represents SSL/TLS protocol related options to be used for HTTP client/service invocation.
+# Represents combination of certificate, private key and private key password if encrypted.
 #
-# + name - SSL Protocol to be used. eg TLS1.2
-# + versions - SSL/TLS protocols to be enabled. eg TLSv1,TLSv1.1,TLSv1.2
-public type Protocols record {|
-    string name = "";
-    string[] versions = [];
+# + certFile - A file containing the certificate
+# + keyFile - A file containing the private key
+# + keyPassword - Password of the private key if it is encrypted
+public type CertKey record {|
+   string certFile;
+   string keyFile;
+   string keyPassword?;
 |};
 
-# ValidateCert record represents options related to check whether a certificate is revoked or not.
-#
-# + enable - The status of validateCertEnabled
-# + cacheSize - Maximum size of the cache
-# + cacheValidityPeriod - Time duration of cache validity period
-public type ValidateCert record {|
-    boolean enable = false;
-    int cacheSize = 0;
-    decimal cacheValidityPeriod = 0;
-|};
+# Represents client verify options.
+public enum VerifyClient {
+   REQUIRE,
+   OPTIONAL
+}
 
-# OcspStapling record represents options related to check whether a certificate is revoked or not.
-#
-# + enable - The status of OcspStapling
-# + cacheSize - Maximum size of the cache
-# + cacheValidityPeriod - Time duration of cache validity period
-public type ListenerOcspStapling record {|
-    boolean enable = false;
-    int cacheSize = 0;
-    decimal cacheValidityPeriod = 0;
-|};
+# Represents protocol options.
+public enum Protocol {
+   SSL,
+   TLS,
+   DTLS
+}
+
+# Represents certification validation type options.
+public enum CertValidationType {
+   OCSP_CRL,
+   OCSP_STAPLING
+}
 
 # Options to compress using gzip or deflate.
 #

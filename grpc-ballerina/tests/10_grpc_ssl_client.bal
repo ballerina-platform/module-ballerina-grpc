@@ -17,17 +17,24 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {
-    enable: false
-}
+@test:Config {enable:true}
 isolated function testUnarySecuredBlockingWithCerts() returns Error? {
-    grpcMutualSslServiceClient helloWorldBlockingEp = check new ("https://localhost:9100", {
-        secureSocket:{
-            keyFile: PRIVATE_KEY_PATH,
-            certFile: PUBLIC_CRT_PATH,
-            trustedCertFile: PUBLIC_CRT_PATH
-        }
-    });
+    grpcMutualSslServiceClient helloWorldBlockingEp = check new ("https://localhost:9100",
+        secureSocket = {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        });
 
     string|Error unionResp = helloWorldBlockingEp->hello("WSO2");
     if (unionResp is Error) {
