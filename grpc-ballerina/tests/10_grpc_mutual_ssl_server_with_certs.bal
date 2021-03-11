@@ -16,19 +16,26 @@
 
 import ballerina/log;
 
-listener Listener ep10 = new (9100, {
-    host:"localhost",
-    secureSocket:{
+listener Listener ep10 = new (9100,
+    host = "localhost",
+    secureSocket = {
         key: {
-            keyFile: PRIVATE_KEY_PATH,
-            certFile: PUBLIC_CRT_PATH
+            path: KEYSTORE_PATH,
+            password: "ballerina"
         },
         mutualSsl: {
             verifyClient: REQUIRE,
-            cert: PUBLIC_CRT_PATH
-        }
-    }
-});
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            }
+        },
+        protocol: {
+            name: TLS,
+            versions: ["TLSv1.2","TLSv1.1"]
+        },
+        ciphers:["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+    });
 
 @ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_10,
