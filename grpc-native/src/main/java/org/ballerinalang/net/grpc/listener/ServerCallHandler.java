@@ -50,6 +50,7 @@ import static org.ballerinalang.net.grpc.GrpcConstants.CALLER_ID;
 import static org.ballerinalang.net.grpc.GrpcConstants.ON_MESSAGE_METADATA;
 import static org.ballerinalang.net.grpc.MessageUtils.createHeaderMap;
 import static org.ballerinalang.net.grpc.MessageUtils.getCallerTypeName;
+import static org.ballerinalang.net.grpc.MessageUtils.getContextStreamTypeName;
 import static org.ballerinalang.net.grpc.MessageUtils.getContextTypeName;
 import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -192,9 +193,10 @@ public abstract class ServerCallHandler {
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,
                                    StreamObserver responseObserver) {
         List<Type> signatureParams = resource.getParamTypes();
+        int signatureParamSize = signatureParams.size();
         Object[] paramValues;
         int i = 0;
-        if ((signatureParams.size() >= 1) && (signatureParams.get(0).getTag() == TypeTags.OBJECT_TYPE_TAG) &&
+        if ((signatureParamSize >= 1) && (signatureParams.get(0).getTag() == TypeTags.OBJECT_TYPE_TAG) &&
                 signatureParams.get(0).getName().contains(CALLER_TYPE)) {
             paramValues = new Object[signatureParams.size() * 2];
             paramValues[i] = getConnectionParameter(resource, responseObserver);
@@ -216,8 +218,16 @@ public abstract class ServerCallHandler {
                         entry("headers", headerValues)
                 );
             }
-            BMap contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
-                    getContextTypeName(resource.getRpcInputType()), valueMap);
+            BMap contentContext;
+            if (signatureParamSize >= 1 && (signatureParams.get(0).getTag() == TypeTags.RECORD_TYPE_TAG) &&
+                    signatureParams.get(signatureParamSize - 1).getName().contains("Stream")) {
+                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
+                        getContextStreamTypeName(resource.getRpcInputType()), valueMap);
+            } else {
+                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
+                        getContextTypeName(resource.getRpcInputType()), valueMap);
+            }
+
             paramValues[i] = contentContext;
             paramValues[i + 1] = true;
         } else if (requestParam != null) {

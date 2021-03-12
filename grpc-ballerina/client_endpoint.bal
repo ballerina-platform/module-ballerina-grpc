@@ -30,8 +30,8 @@ public client class Client {
     #
     # + url - The server URL
     # + config - - The `grpc:ClientConfiguration` of the endpoint
-    public isolated function init(string url, ClientConfiguration? config = ()) returns Error? {
-        self.config = config ?: {};
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
+        self.config = config;
         self.url = url;
         return externInit(self, self.url, self.config, globalGrpcClientConnPool);
     }
@@ -112,8 +112,8 @@ isolated function retryBlockingExecute(Client grpcClient, string methodID, anyda
 headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>]|Error) {
     int currentRetryCount = 0;
     int retryCount = retryConfig.retryCount;
-    decimal interval = retryConfig.intervalInMillis;
-    decimal maxInterval = retryConfig.maxIntervalInMillis;
+    decimal interval = retryConfig.interval * 1000;
+    decimal maxInterval = retryConfig.maxInterval * 1000;
     decimal backoffFactor = retryConfig.backoffFactor;
     ErrorType[] errorTypes = retryConfig.errorTypes;
     error? cause = ();
@@ -192,65 +192,62 @@ final ErrorType[] & readonly defaultErrorTypes = [InternalError];
 # Represents grpc client retry functionality configurations.
 #
 # + retryCount - Maximum number of retry attempts in an failure scenario
-# + intervalInMillis - Initial interval between retry attempts
-# + maxIntervalInMillis - Maximum interval between two retry attempts
+# + interval - Initial interval(in seconds) between retry attempts
+# + maxInterval - Maximum interval(in seconds) between two retry attempts
 # + backoffFactor - Retry interval will be multiplied by this factor, in between retry attempts
 # + errorTypes - Error types which should be considered as failure scenarios to retry
 public type RetryConfiguration record {|
    int retryCount;
-   decimal intervalInMillis;
-   decimal maxIntervalInMillis;
+   decimal interval;
+   decimal maxInterval;
    decimal backoffFactor;
    ErrorType[] errorTypes = defaultErrorTypes;
 |};
 
 # Represents client endpoint configuration.
 #
-# + timeoutInMillis - The maximum time to wait (in milliseconds) for a response before closing the connection
+# + timeout - The maximum time to wait(in seconds) for a response before closing the connection
 # + poolConfig - Connection pool configuration
 # + secureSocket - SSL/TLS related options
 # + compression - Specifies the way of handling compression (`accept-encoding`) header
 # + retryConfiguration - Configures the retry functionality
 public type ClientConfiguration record {|
-    int timeoutInMillis = 60000;
+    decimal timeout = 60;
     PoolConfiguration? poolConfig = ();
-    SecureSocket? secureSocket = ();
+    ClientSecureSocket? secureSocket = ();
     Compression compression = COMPRESSION_AUTO;
     RetryConfiguration? retryConfiguration = ();
 |};
 
-# Provides the configurations for facilitating secure communication with a remote HTTP endpoint.
+# Provides the configurations for facilitating secure communication with a remote gRPC endpoint.
 #
-# + disable - Disable the SSL validation
-# + trustStore - Configurations associated with the TrustStore
-# + keyStore - Configurations associated with the KeyStore
-# + certFile - A file containing the certificate of the client
-# + keyFile - A file containing the private key of the client
-# + keyPassword - Password of the private key if it is encrypted
-# + trustedCertFile - A file containing a list of certificates or a single certificate that the client trusts
+# + enable - Enable SSL validation
+# + cert - Configurations associated with `crypto:TrustStore` or single certificate file that the client trusts
+# + key - Configurations associated with `crypto:KeyStore` or combination of certificate and private key of the client
 # + protocol - SSL/TLS protocol related options
-# + certValidation - Certificate validation against CRL or OCSP related options
+# + certValidation - Certificate validation against OCSP_CRL, OCSP_STAPLING related options
 # + ciphers - List of ciphers to be used
 #             eg: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
-# + verifyHostname - Enable/disable host name verification
+# + verifyHostName - Enable/disable host name verification
 # + shareSession - Enable/disable new SSL session creation
-# + ocspStapling - Enable/disable OCSP stapling
-# + handshakeTimeoutInSeconds - SSL handshake time out
-# + sessionTimeoutInSeconds - SSL session time out
-public type SecureSocket record {|
-    boolean disable = false;
-    crypto:TrustStore? trustStore = ();
-    crypto:KeyStore? keyStore = ();
-    string certFile = "";
-    string keyFile = "";
-    string keyPassword = "";
-    string trustedCertFile = "";
-    Protocols? protocol = ();
-    ValidateCert? certValidation = ();
-    string[] ciphers = [];
-    boolean verifyHostname = true;
+# + handshakeTimeout - SSL handshake time out(in seconds)
+# + sessionTimeout - SSL session time out(in seconds)
+public type ClientSecureSocket record {|
+    boolean enable = true;
+    crypto:TrustStore|string cert?;
+    crypto:KeyStore|CertKey key?;
+    record {|
+        Protocol name;
+        string[] versions = [];
+    |} protocol?;
+    record {|
+        CertValidationType 'type = OCSP_STAPLING;
+        int cacheSize;
+        int cacheValidityPeriod;
+    |} certValidation?;
+    string[] ciphers?;
+    boolean verifyHostName = true;
     boolean shareSession = true;
-    boolean ocspStapling = false;
-    int handshakeTimeoutInSeconds?;
-    int sessionTimeoutInSeconds?;
+    decimal handshakeTimeout?;
+    decimal sessionTimeout?;
 |};

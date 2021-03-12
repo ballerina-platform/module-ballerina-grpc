@@ -18,8 +18,8 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testClientStreamingFromReturnRecord() {
-    HelloWorld33Client helloWorldEp = new ("http://localhost:9123");
+isolated function testClientStreamingFromReturnRecord() returns Error? {
+    HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClientFromReturn streamingClient;
     var res = helloWorldEp->sayHello();
     if (res is Error) {
@@ -88,10 +88,10 @@ public client class HelloWorld33Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_33, getDescriptorMap33());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_33, getDescriptorMap33());
     }
 
     isolated remote function sayHello() returns (SayHelloStreamingClientFromReturn|Error) {

@@ -81,8 +81,8 @@ public class Listener {
     #
     # + port - Listener port
     # + config - The `grpc:ListenerConfiguration` of the endpoint
-    public isolated function init(int port, ListenerConfiguration? config = ()) returns error? {
-        self.config = config ?: {};
+    public isolated function init(int port, *ListenerConfiguration config) returns error? {
+        self.config = config;
         self.port = port;
         return externInitEndpoint(self);
     }
@@ -160,54 +160,52 @@ isolated function closeStream(StreamIterator iterator) returns error? =
 const int MAX_PIPELINED_REQUESTS = 10;
 
 # Constant for the default listener endpoint timeout
-const int DEFAULT_LISTENER_TIMEOUT = 120000; //2 mins
+const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 
 # Represents the gRPC server endpoint configuration.
 #
 # + host - The server hostname
 # + secureSocket - The SSL configurations for the client endpoint
-# + timeoutInMillis - Period of time in milliseconds that a connection waits for a read/write operation. Use value 0 to
+# + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
 #                   disable the timeout
 public type ListenerConfiguration record {|
     string host = "0.0.0.0";
     ListenerSecureSocket? secureSocket = ();
-    int timeoutInMillis = DEFAULT_LISTENER_TIMEOUT;
+    decimal timeout = DEFAULT_LISTENER_TIMEOUT;
 |};
 
 # Configures the SSL/TLS options to be used for HTTP service.
 #
-# + trustStore - Configures the trust store to be used
-# + keyStore - Configures the key store to be used
-# + certFile - A file containing the certificate of the server
-# + keyFile - A file containing the private key of the server
-# + keyPassword - Password of the private key if it is encrypted
-# + trustedCertFile - A file containing a list of certificates or a single certificate that the server trusts
+# + key - Configurations associated with `crypto:KeyStore` or combination of certificate and private key of the server
+# + mutualSsl - Configures associated with mutual SSL operations
 # + protocol - SSL/TLS protocol related options
-# + certValidation - Certificate validation against CRL or OCSP related options
-# + ciphers - List of ciphers to be used (e.g.: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-#             TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA)
-# + sslVerifyClient - The type of client certificate verification. (e.g.: "require" or "optional")
-# + shareSession - Enable/disable new SSL session creation
-# + ocspStapling - Enable/disable OCSP stapling
-# + handshakeTimeoutInSeconds - SSL handshake time out
-# + sessionTimeoutInSeconds - SSL session time out
+# + certValidation - Certificate validation against OCSP_CRL, OCSP_STAPLING related options
+# + ciphers - List of ciphers to be used
+#             eg: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+# + shareSession - Enable/Disable new SSL session creation
+# + handshakeTimeout - SSL handshake time out(in seconds)
+# + sessionTimeout - SSL session time out(in seconds)
 public type ListenerSecureSocket record {|
-    crypto:TrustStore? trustStore = ();
-    crypto:KeyStore? keyStore = ();
-    string certFile = "";
-    string keyFile = "";
-    string keyPassword = "";
-    string trustedCertFile = "";
-    Protocols? protocol = ();
-    ValidateCert? certValidation = ();
+    crypto:KeyStore|CertKey key;
+    record {|
+        VerifyClient verifyClient = REQUIRE;
+        crypto:TrustStore|string cert;
+    |} mutualSsl?;
+    record {|
+        Protocol name;
+        string[] versions = [];
+    |} protocol?;
+    record {|
+        CertValidationType 'type = OCSP_STAPLING;
+        int cacheSize;
+        int cacheValidityPeriod;
+    |} certValidation?;
     string[] ciphers = ["TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256", "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
                         "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256", "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
                         "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA", "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
                         "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
                         "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"];
-    string sslVerifyClient = "";
     boolean shareSession = true;
-    ListenerOcspStapling? ocspStapling = ();
-    int handshakeTimeoutInSeconds?;
-    int sessionTimeoutInSeconds?;
+    decimal handshakeTimeout?;
+    decimal sessionTimeout?;
 |};

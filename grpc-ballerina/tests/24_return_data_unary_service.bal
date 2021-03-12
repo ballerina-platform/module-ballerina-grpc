@@ -24,37 +24,37 @@ listener Listener ep24 = new (9114);
 }
 service /HelloWorld24 on ep24 {
 
-    remote function testStringValueReturn(string value) returns string {
+    remote isolated function testStringValueReturn(string value) returns string {
         io:print("Received input for testStringValueReturn: ");
         io:println(value);
         return value;
     }
-    remote function testFloatValueReturn(float value) returns float {
+    remote isolated function testFloatValueReturn(float value) returns float {
         io:print("Received input for testFloatValueReturn: ");
         io:println(value);
         return value;
     }
-    remote function testDoubleValueReturn(float value) returns float {
+    remote isolated function testDoubleValueReturn(float value) returns float {
         io:print("Received input for testDoubleValueReturn: ");
         io:println(value);
         return value;
     }
-    remote function testInt64ValueReturn(int value) returns int {
+    remote isolated function testInt64ValueReturn(int value) returns int {
         io:print("Received input for testInt64ValueReturn: ");
         io:println(value);
         return value;
     }
-    remote function testBoolValueReturn(boolean value) returns boolean {
+    remote isolated function testBoolValueReturn(boolean value) returns boolean {
         io:print("Received input for testBoolValueReturn: ");
         io:println(value);
         return value;
     }
-    remote function testBytesValueReturn(byte[] value) returns byte[] {
+    remote isolated function testBytesValueReturn(byte[] value) returns byte[] {
         io:print("Received input for testBytesValueReturn: ");
         io:println(value);
         return value;
     }
-    remote function testRecordValueReturn(string value) returns SampleMsg24 {
+    remote isolated function testRecordValueReturn(string value) returns SampleMsg24 {
         io:print("Received input for testRecordValueReturn: ");
         io:println(value);
         SampleMsg24 msg = {
@@ -63,7 +63,7 @@ service /HelloWorld24 on ep24 {
         };
         return msg;
     }
-    remote function testRecordValueReturnStream(string value) returns stream<SampleMsg24> {
+    remote isolated function testRecordValueReturnStream(string value) returns stream<SampleMsg24> {
         io:print("Received input for testRecordValueReturnStream: ");
         io:println(value);
         SampleMsg24[] arr = [

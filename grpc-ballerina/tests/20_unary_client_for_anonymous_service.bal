@@ -18,23 +18,23 @@ import ballerina/log;
 import ballerina/test;
 
 // Client endpoint configuration
-final HelloWorld20Client helloWorld20BlockingEp = new ("http://localhost:9110");
+final HelloWorld20Client helloWorld20BlockingEp = check new ("http://localhost:9110");
 
 // Server endpoint configuration
 listener Listener ep20 = new (9110, { host:"localhost"});
 
 @test:BeforeSuite
 function beforeFunc() {
-    log:print("Starting beforeFunc to attach anonymous service");
+    log:printInfo("Starting beforeFunc to attach anonymous service");
     error? attach = ep20.attach(helloService, "HelloWorld101");
     if (attach is error) {
-        log:print("Error while attaching the service: " + attach.message());
+        log:printInfo("Error while attaching the service: " + attach.message());
     }
     error? 'start = ep20.'start();
     if ('start is error) {
-        log:print("Error while starting the listener: " + 'start.message());
+        log:printInfo("Error while starting the listener: " + 'start.message());
     }
-    log:print("beforeFunc ends execution");
+    log:printInfo("beforeFunc ends execution");
 }
 
 @test:Config {
@@ -56,9 +56,9 @@ function testAnonymousServiceWithBlockingClient() {
 function afterFunc() {
     error? 'stop = ep20.immediateStop();
     if ('stop is error) {
-        log:print("Error while stopping the listener: " + 'stop.message());
+        log:printInfo("Error while stopping the listener: " + 'stop.message());
     }
-    log:print("afterFunc ends execution");
+    log:printInfo("afterFunc ends execution");
 }
 
 // Blocking endpoint.
@@ -68,10 +68,10 @@ public client class HelloWorld20Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_20, getDescriptorMap20());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_20, getDescriptorMap20());
     }
 
     isolated remote function hello(string req, map<string|string[]> headers = {}) returns ([string, map<string|string[]>]|Error) {
@@ -90,13 +90,13 @@ service object {} helloService =
     }
     service object {
         isolated remote function hello(Caller caller, string name) {
-            log:print("name: " + name);
+            log:printInfo("name: " + name);
             string message = "Hello " + name;
             Error? err = caller->send(message);
             if (err is Error) {
-                log:print("Error when sending the response: " + err.message());
+                log:printInfo("Error when sending the response: " + err.message());
             } else {
-                log:print("Server send response : " + message);
+                log:printInfo("Server send response : " + message);
             }
             checkpanic caller->complete();
         }

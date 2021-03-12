@@ -16,7 +16,7 @@
 
 import ballerina/test;
 
-final NegotiatorClient negotiatorEp = new ("http://localhost:9109");
+final NegotiatorClient negotiatorEp = check new ("http://localhost:9109");
 
 @test:Config {enable:true}
 function testMapFields() {
@@ -52,10 +52,10 @@ public client class NegotiatorClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new (url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_19, getDescriptorMap19());
+        self.grpcClient = check new (url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_19, getDescriptorMap19());
     }
 
     isolated remote function handshake(HandshakeRequest|ContextHandshakeRequest req) returns (HandshakeResponse|Error) {

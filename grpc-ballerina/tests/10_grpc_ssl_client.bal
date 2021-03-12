@@ -17,17 +17,24 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {
-    enable: false
-}
-isolated function testUnarySecuredBlockingWithCerts() {
-    grpcMutualSslServiceClient helloWorldBlockingEp = new ("https://localhost:9100", {
-        secureSocket:{
-            keyFile: PRIVATE_KEY_PATH,
-            certFile: PUBLIC_CRT_PATH,
-            trustedCertFile: PUBLIC_CRT_PATH
-        }
-    });
+@test:Config {enable:true}
+isolated function testUnarySecuredBlockingWithCerts() returns Error? {
+    grpcMutualSslServiceClient helloWorldBlockingEp = check new ("https://localhost:9100",
+        secureSocket = {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        });
 
     string|Error unionResp = helloWorldBlockingEp->hello("WSO2");
     if (unionResp is Error) {
@@ -45,10 +52,10 @@ public client class grpcMutualSslServiceClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_10, getDescriptorMap10());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_10, getDescriptorMap10());
     }
 
     isolated remote function hello(string|ContextString req) returns (string|Error) {

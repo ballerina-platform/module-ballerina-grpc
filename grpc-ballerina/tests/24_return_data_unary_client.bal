@@ -18,8 +18,8 @@ import ballerina/test;
 import ballerina/lang.'string as langstring;
 
 @test:Config {enable:true}
-public function testStringValueReturn() {
-    HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
+public isolated function testStringValueReturn() returns Error? {
+    HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testStringValueReturn("WSO2");
     if (unionResp is Error) {
         test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
@@ -29,8 +29,8 @@ public function testStringValueReturn() {
 }
 
 @test:Config {enable:true}
-public function testFloatValueReturn() {
-    HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
+public isolated function testFloatValueReturn() returns Error? {
+    HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     float n = 4.5;
     var unionResp = helloWorldBlockingEp->testFloatValueReturn(n);
     if (unionResp is Error) {
@@ -41,8 +41,8 @@ public function testFloatValueReturn() {
 }
 
 @test:Config {enable:true}
-public function testDoubleValueReturn() {
-    HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
+public isolated function testDoubleValueReturn() returns Error? {
+    HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     float n = 4.5;
     var unionResp = helloWorldBlockingEp->testDoubleValueReturn(n);
     if (unionResp is Error) {
@@ -53,8 +53,8 @@ public function testDoubleValueReturn() {
 }
 
 @test:Config {enable:true}
-public function testInt64ValueReturn() {
-    HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
+public isolated function testInt64ValueReturn() returns Error? {
+    HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     int n = 45;
     var unionResp = helloWorldBlockingEp->testInt64ValueReturn(n);
     if (unionResp is Error) {
@@ -65,8 +65,8 @@ public function testInt64ValueReturn() {
 }
 
 @test:Config {enable:true}
-public function testBoolValueReturn() {
-    HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
+public isolated function testBoolValueReturn() returns Error? {
+    HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     boolean b = true;
     var unionResp = helloWorldBlockingEp->testBoolValueReturn(b);
     if (unionResp is Error) {
@@ -77,8 +77,8 @@ public function testBoolValueReturn() {
 }
 
 @test:Config {enable:true}
-public function testBytesValueReturn() {
-    HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
+public isolated function testBytesValueReturn() returns Error? {
+    HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     string s = "Ballerina";
     var unionResp = helloWorldBlockingEp->testBytesValueReturn(s.toBytes());
     if (unionResp is Error) {
@@ -94,8 +94,8 @@ public function testBytesValueReturn() {
 }
 
 @test:Config {enable:true}
-public function testRecordValueReturn() {
-    HelloWorld24Client helloWorldBlockingEp = new ("http://localhost:9114");
+public isolated function testRecordValueReturn() returns Error? {
+    HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testRecordValueReturn("WSO2");
     if (unionResp is Error) {
         test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
@@ -106,8 +106,8 @@ public function testRecordValueReturn() {
 }
 
 @test:Config {enable:true}
-public function testRecordValueReturnStream() {
-    HelloWorld24Client helloWorldEp = new ("http://localhost:9114");
+public isolated function testRecordValueReturnStream() returns Error? {
+    HelloWorld24Client helloWorldEp = check new ("http://localhost:9114");
     var unionResp = helloWorldEp->testRecordValueReturnStream("WSO2");
     if (unionResp is Error) {
         test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
@@ -120,10 +120,10 @@ public client class HelloWorld24Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_24, getDescriptorMap24());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_24, getDescriptorMap24());
     }
 
     isolated remote function testStringValueReturn(string|ContextString req) returns (string|Error) {

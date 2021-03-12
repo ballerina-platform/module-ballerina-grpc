@@ -17,10 +17,10 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-isolated function testErrorResponse() {
+isolated function testErrorResponse() returns Error? {
     string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld13Client helloWorld13BlockingEp = new("http://localhost:9103");
+    HelloWorld13Client helloWorld13BlockingEp = check new("http://localhost:9103");
     var unionResp = helloWorld13BlockingEp->hello(name);
 
     if (unionResp is Error) {
@@ -36,10 +36,10 @@ public client class HelloWorld13Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_13, getDescriptorMap13());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
     isolated remote function hello(string|ContextString req) returns (string|Error) {

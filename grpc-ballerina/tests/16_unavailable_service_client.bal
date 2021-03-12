@@ -20,8 +20,8 @@ import ballerina/test;
 
 
 @test:Config {enable:false}
-isolated function testInvokeUnavailableService() {
-    HelloWorld16Client helloWorld16BlockingEp = new ("http://localhost:9106");
+isolated function testInvokeUnavailableService() returns Error? {
+    HelloWorld16Client helloWorld16BlockingEp = check new ("http://localhost:9106");
     string name = "WSO2";
     string|Error unionResp16 = helloWorld16BlockingEp->hello(name);
     if (unionResp16 is Error) {
@@ -40,10 +40,10 @@ public client class HelloWorld16Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_16, getDescriptorMap16());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_16, getDescriptorMap16());
     }
 
     isolated remote function hello(string|ContextString req) returns (string|Error) {

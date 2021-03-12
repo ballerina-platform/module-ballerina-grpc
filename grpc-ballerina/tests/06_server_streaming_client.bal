@@ -22,10 +22,10 @@ int msgCount = 0;
 boolean eof = false;
 
 @test:Config {enable:true}
-function testReceiveStreamingResponse() {
+function testReceiveStreamingResponse() returns Error? {
     string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld45Client helloWorldEp = new("http://localhost:9096");
+    HelloWorld45Client helloWorldEp = check new("http://localhost:9096");
 
     var result = helloWorldEp->lotsOfReplies(name);
     if (result is Error) {
@@ -47,10 +47,10 @@ public client class HelloWorld45Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_6, getDescriptorMap6());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_6, getDescriptorMap6());
     }
 
     isolated remote function lotsOfReplies(string req) returns stream<anydata, Error>|Error {

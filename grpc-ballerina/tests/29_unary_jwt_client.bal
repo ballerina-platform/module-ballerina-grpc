@@ -17,8 +17,8 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public function testStringValueReturnWithJwt() {
-    HelloWorld29BlockingClient helloWorldEp = new ("http://localhost:9119");
+public isolated function testStringValueReturnWithJwt() returns Error? {
+    HelloWorld29BlockingClient helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {};
 
     JwtIssuerConfig config = {
@@ -61,10 +61,10 @@ public client class HelloWorld29BlockingClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_29, getDescriptorMap29());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_29, getDescriptorMap29());
     }
 
     isolated remote function testStringValueReturn(string|ContextString req) returns ContextString|Error {

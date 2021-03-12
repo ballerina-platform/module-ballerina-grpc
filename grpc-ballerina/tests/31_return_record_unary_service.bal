@@ -24,7 +24,7 @@ listener Listener ep31 = new (9121);
     descMap: getDescriptorMap31()
 }
 service /HelloWorld31 on ep31 {
-    remote function sayHello(SampleMsg31 reqMsg) returns ContextSampleMsg31|error {
+    remote isolated function sayHello(SampleMsg31 reqMsg) returns ContextSampleMsg31|error {
         io:print("Received input for testRecordValueReturn: ");
         io:println(reqMsg);
         if (reqMsg.name == "") {

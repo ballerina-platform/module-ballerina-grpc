@@ -21,14 +21,23 @@ import ballerina/test;
 
 
 @test:Config {enable:true}
-function testBidiStreaming() {
+isolated function testBidiStreaming() returns Error? {
     ChatStreamingClient ep;
-    ChatClient chatEp = new ("https://localhost:9093", {
+    ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {
-            trustStore: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
                 path: TRUSTSTORE_PATH,
                 password: "ballerina"
-            }
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
     // Executing unary non-blocking call registering server message listener.
@@ -75,10 +84,10 @@ public client class ChatClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_3, getDescriptorMap3());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_3, getDescriptorMap3());
     }
 
     isolated remote function chat() returns (ChatStreamingClient|Error) {

@@ -24,7 +24,7 @@ listener Listener ep32 = new (9122);
 }
 service "HelloWorld32" on ep32 {
 
-    remote function sayHello(SampleMsg32 value) returns stream<SampleMsg32> {
+    remote isolated function sayHello(SampleMsg32 value) returns stream<SampleMsg32> {
         io:println(value);
         SampleMsg32[] respArr = [
             {name: "WSO2", id: 0},

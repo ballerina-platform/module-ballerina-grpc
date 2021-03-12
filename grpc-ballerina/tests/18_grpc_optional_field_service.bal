@@ -25,27 +25,27 @@ listener Listener checkoutep = new (9108);
 service "CheckoutService" on checkoutep {
 
     isolated remote function PlaceOrder(CheckoutServicePlaceOrderResponseCaller caller, PlaceOrderRequest value) {
-        log:print("PlaceOrderRequest: " + value.toString());
+        log:printInfo("PlaceOrderRequest: " + value.toString());
 
         var addr = value.address;
-        log:print("Address: " + addr.toString());
+        log:printInfo("Address: " + addr.toString());
         if addr is Address2 {
             PlaceOrderResponse response = {'order: "This is a address"};
             var result = caller->sendPlaceOrderResponse(response);
             if (result is error) {
-                log:printError("Error while sending response.", err = result);
+                log:printError("Error while sending response.", 'error = result);
             }
         } else {
-            log:print("value of Address: " + addr.toString());
+            log:printInfo("value of Address: " + addr.toString());
             PlaceOrderResponse response = {'order: "This is not an address: " + addr.toString()};
             var result = caller->sendPlaceOrderResponse(response);
             if (result is error) {
-                log:printError("Error while sending response.", err = result);
+                log:printError("Error while sending response.", 'error = result);
             }
         }
         var complete = caller->complete();
         if (complete is error) {
-            log:printError("Error while completing the response.", err = complete);
+            log:printError("Error while completing the response.", 'error = complete);
         }
     }
 }

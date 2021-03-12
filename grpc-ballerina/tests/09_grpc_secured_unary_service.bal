@@ -19,24 +19,19 @@ import ballerina/log;
 listener Listener ep9 = new (9099, {
     host:"localhost",
     secureSocket:{
-        keyStore: {
+        key: {
             path: KEYSTORE_PATH,
             password: "ballerina"
         },
-        trustStore: {
-            path: TRUSTSTORE_PATH,
-            password: "ballerina"
+        mutualSsl: {
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            }
         },
         protocol: {
-            name: "TLSv1.2",
+            name: TLS,
             versions: ["TLSv1.2","TLSv1.1"]
-        },
-        sslVerifyClient:"require",
-        certValidation : {
-            enable: false
-        },
-        ocspStapling : {
-            enable: false
         }
     }
 });
@@ -47,13 +42,13 @@ listener Listener ep9 = new (9099, {
 }
 service "HelloWorld85" on ep9 {
     isolated remote function hello(HelloWorld85StringCaller caller, string name) {
-        log:print("name: " + name);
+        log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->sendString(message);
         if (err is Error) {
-            log:printError(err.message(), err = err);
+            log:printError(err.message(), 'error = err);
         } else {
-            log:print("Server send response : " + message);
+            log:printInfo("Server send response : " + message);
         }
         checkpanic caller->complete();
     }

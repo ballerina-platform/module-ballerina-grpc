@@ -18,25 +18,21 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-isolated function testUnarySecuredBlocking() {
-    HelloWorld85Client helloWorld9BlockingEp = new ("https://localhost:9099", {
+isolated function testUnarySecuredBlocking() returns Error? {
+    HelloWorld85Client helloWorld9BlockingEp = check new ("https://localhost:9099", {
         secureSocket:{
-            trustStore:{
+            cert:{
                path: TRUSTSTORE_PATH,
                password: "ballerina"
             },
-            keyStore: {
+            key: {
                 path: KEYSTORE_PATH,
                 password: "ballerina"
             },
             protocol: {
-                name: "TLSv1.2",
+                name: TLS,
                 versions: ["TLSv1.2","TLSv1.1"]
-            },
-            certValidation : {
-                enable: false
-            },
-            ocspStapling : false
+            }
         }
     });
 
@@ -56,10 +52,10 @@ public client class HelloWorld85Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_9, getDescriptorMap9());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_9, getDescriptorMap9());
     }
 
     isolated remote function hello(string|ContextString req) returns (string|Error) {

@@ -27,18 +27,18 @@ listener Listener ep4 = new (9094);
 }
 service "HelloWorld7" on ep4 {
 
-    remote function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error>clientStream) {
-        log:print("connected sucessfully.");
+    remote isolated function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error>clientStream) {
+        log:printInfo("connected sucessfully.");
         error? e = clientStream.forEach(isolated function(string name) {
-            log:print("greet received: " + name);
+            log:printInfo("greet received: " + name);
         });
         if (e is EOS) {
-            log:print("Server Response");
+            log:printInfo("Server Response");
             Error? err = caller->sendString("Ack");
             if (err is Error) {
                 log:printError("Error from Connector: " + err.message());
             } else {
-                log:print("Server send response : Ack");
+                log:printInfo("Server send response : Ack");
             }
         } else if (e is error) {
             log:printError("Something unexpected happens at server :: " + e.message());

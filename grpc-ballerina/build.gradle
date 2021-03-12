@@ -21,6 +21,7 @@ description = 'Ballerina - gRPC Ballerina Generator'
 
 def packageName = "grpc"
 def packageOrg = "ballerina"
+def platform = "java11"
 def tomlVersion = project.version.replace("-SNAPSHOT", "")
 def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
 def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
@@ -34,6 +35,7 @@ def targetNativeJar = file("$project.rootDir/${packageName}-native/build/libs/${
 def distributionBinPath = project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 def originalConfig = ballerinaConfigFile.text
 def originalDependencyConfig = ballerinaDependencyFile.text
+def testCoverageParam = "--code-coverage --includes=org.ballerinalang.net.grpc.*:ballerina.*"
 
 configurations {
     jbalTools
@@ -164,6 +166,7 @@ task updateTomlVersions {
         def stdlibDependentJwtVersion = project.stdlibJwtVersion.replace("-SNAPSHOT", "")
         def stdlibDependentOAuth2Version = project.stdlibOAuth2Version.replace("-SNAPSHOT", "")
         def stdlibDependentRegexVersion = project.stdlibRegexVersion.replace("-SNAPSHOT", "")
+        def stdlibDependentTimeVersion = project.stdlibTimeVersion.replace("-SNAPSHOT", "")
         def stdlibDependentNettyVersion = project.nettyVersion
 
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
@@ -179,6 +182,7 @@ task updateTomlVersions {
         newDependencyConfig = newDependencyConfig.replace("@stdlib.jwt.version@", stdlibDependentJwtVersion)
         newDependencyConfig = newDependencyConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
         newDependencyConfig = newDependencyConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.time.version@", stdlibDependentTimeVersion)
         ballerinaDependencyFile.text = newDependencyConfig
     }
 }
@@ -219,7 +223,7 @@ task initializeVariables {
         }
 
         if (graph.hasTask(":${packageName}-ballerina:test")) {
-            testParams = "--code-coverage --includes=*"
+            testParams = "${testCoverageParam}"
         } else {
             testParams = "--skip-tests"
         }
@@ -244,9 +248,9 @@ task ballerinaTest {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test --code-coverage --includes=* ${groupParams} ${disableGroups} ${debugParams} ${certsAndKeys} && exit %%ERRORLEVEL%%"
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test ${testCoverageParam} ${groupParams} ${disableGroups} ${debugParams} ${certsAndKeys} && exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test --code-coverage --includes=* ${groupParams} ${disableGroups}${debugParams} ${certsAndKeys}"
+                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test ${testCoverageParam} ${groupParams} ${disableGroups}${debugParams} ${certsAndKeys}"
             }
         }
     }
@@ -259,14 +263,17 @@ task ballerinaBuild {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat build ${testParams} ${debugParams} && exit %%ERRORLEVEL%%"
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat build -c ${testParams} ${debugParams} && exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal build ${testParams} ${debugParams}"
+                commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal build -c ${testParams} ${debugParams}"
             }
         }
-        copy {
-            from file("$project.projectDir/target/bala")
-            into file("$artifactCacheParent/bala/${packageOrg}/${packageName}/${tomlVersion}")
+        // extract bala file to artifact cache directory
+        file("$project.projectDir/target/bala").eachFileMatch(~/.*.bala/) { balaFile ->
+            copy {
+                from zipTree(balaFile)
+                into file("$artifactCacheParent/bala/${packageOrg}/${packageName}/${tomlVersion}/${platform}")
+            }
         }
         copy {
             from file("$project.projectDir/target/cache")

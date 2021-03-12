@@ -1,4 +1,4 @@
-// Copyright (c) 2018 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -14,38 +14,24 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
-
-final HelloWorld98Client helloWorld5BlockingEp = check new ("http://localhost:9095");
+import ballerina/time;
 
 @test:Config {enable:true}
-function testInvalidRemoteMethod() {
-    string name = "WSO2";
-    string|Error unionResp = helloWorld5BlockingEp->hello(name);
-    if (unionResp is Error) {
-        test:assertEquals(unionResp.message(), "No registered method descriptor for " +
-                                                               "'grpcservices.HelloWorld98/hello1'");
+isolated function testCallWithDeadlinePropergation() returns error? {
+    HelloWorld36S1Client helloWorldClient = check new ("http://localhost:9126");
+    time:Utc current = time:utcNow();
+    time:Utc deadline = time:utcAddSeconds(current, 300);
+    map<string|string[]> headers = setDeadline(deadline);
+    var context = helloWorldClient->call1Context({content: "WSO2", headers: headers});
+    if (context is ContextString) {
+        test:assertEquals(context.content, "Ack");
     } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertFail("Client got response: " + unionResp);
+        test:assertFail(context.message());
     }
 }
 
-@test:Config {enable:true}
-function testInvalidInputParameter() {
-    string age = "";
-    int|Error unionResp = helloWorld5BlockingEp->testInt(age);
-    if (unionResp is Error) {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client got response : ");
-        test:assertEquals(unionResp, -1);
-    }
-}
-
-public client class HelloWorld98Client {
+public client class HelloWorld36S1Client {
 
     *AbstractClientEndpoint;
 
@@ -54,10 +40,10 @@ public client class HelloWorld98Client {
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
         self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_5, getDescriptorMap5());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_36, getDescriptorMap36());
     }
 
-    isolated remote function hello(string|ContextString req) returns (string|Error) {
+    isolated remote function call1(string|ContextString req) returns (string|Error) {
         
         map<string|string[]> headers = {};
         string message;
@@ -67,11 +53,11 @@ public client class HelloWorld98Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/hello1", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld36S1/call1", message, headers);
         [anydata, map<string|string[]>][result, _] = payload;
         return result.toString();
     }
-    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+    isolated remote function call1Context(string|ContextString req) returns (ContextString|Error) {
         
         map<string|string[]> headers = {};
         string message;
@@ -81,28 +67,26 @@ public client class HelloWorld98Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/hello", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld36S1/call1", message, headers);
         [anydata, map<string|string[]>][result, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function testInt(string|ContextString req) returns (int|Error) {
-        
-        map<string|string[]> headers = {};
-        string message;
-        if (req is ContextString) {
-            message = req.content;
-            headers = req.headers;
-        } else {
-            message = req;
-        }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/testInt", message, headers);
-        [anydata, map<string|string[]>][result, _] = payload;
-        
-        return <int>result;
-        
+}
+
+public client class HelloWorld36S2Client {
+
+    *AbstractClientEndpoint;
+
+    private Client grpcClient;
+
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
+        // initialize client endpoint.
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_36, getDescriptorMap36());
     }
-    isolated remote function testIntContext(string|ContextString req) returns (ContextInt|Error) {
+
+    isolated remote function call2(string|ContextString req) returns (string|Error) {
         
         map<string|string[]> headers = {};
         string message;
@@ -112,10 +96,24 @@ public client class HelloWorld98Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld98/testInt", message, headers);
-        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld36S2/call2", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
+    }
+    isolated remote function call2Context(string|ContextString req) returns (ContextString|Error) {
         
-        return {content: <int>result, headers: respHeaders};
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld36S2/call2", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
     }
 
 }
+

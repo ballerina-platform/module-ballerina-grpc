@@ -18,8 +18,8 @@ import ballerina/log;
 import ballerina/test;
 
 @test:Config {enable:true}
-isolated function testOptionalFieldMessage() {
-    CheckoutServiceClient checkoutServiceBlockingEp = new("http://localhost:9108");
+isolated function testOptionalFieldMessage() returns Error? {
+    CheckoutServiceClient checkoutServiceBlockingEp = check new("http://localhost:9108");
 
     PlaceOrderRequest orderRequest = {
         user_id: "2e8f27b9-b966-45b0-b51f-dcccea697d01",
@@ -34,7 +34,7 @@ isolated function testOptionalFieldMessage() {
     };
     var result = checkoutServiceBlockingEp->PlaceOrder(orderRequest);
     if (result is error) {
-        log:printError("Error response.", err = result);
+        log:printError("Error response.", 'error = result);
         test:assertFail("Error occurred while calling remote method, placeorder");
     } else {
         test:assertEquals(result.'order, "This is a address");
@@ -47,10 +47,10 @@ public client class CheckoutServiceClient {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
-        checkpanic self.grpcClient.initStub(self, ROOT_DESCRIPTOR_18, getDescriptorMap18());
+        self.grpcClient = check new(url, config);
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_18, getDescriptorMap18());
     }
 
     isolated remote function PlaceOrder(PlaceOrderRequest|ContextPlaceOrderRequest req) returns (PlaceOrderResponse|Error) {

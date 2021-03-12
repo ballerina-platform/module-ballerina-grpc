@@ -18,9 +18,9 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testReceiveStreamingResponseFromReturnWithBasicAuth() {
+function testReceiveStreamingResponseFromReturnWithBasicAuth() returns Error? {
     SampleMsg32 reqMsg = {name:"WSO2", id:2};
-    HelloWorld32Client helloWorldEp = new("http://localhost:9122");
+    HelloWorld32Client helloWorldEp = check new("http://localhost:9122");
 
     var result = helloWorldEp->sayHello(reqMsg);
     if (result is Error) {
@@ -43,9 +43,9 @@ function testReceiveStreamingResponseFromReturnWithBasicAuth() {
 }
 
 @test:Config {enable:true}
-function testReceiveStreamingResponseWithHeaders() {
+function testReceiveStreamingResponseWithHeaders() returns Error? {
     SampleMsg32 reqMsg = {name:"WSO2", id:2};
-    HelloWorld32Client helloWorldEp = new("http://localhost:9222");
+    HelloWorld32Client helloWorldEp = check new("http://localhost:9222");
 
     var result = helloWorldEp->sayHelloContext(reqMsg);
     if (result is Error) {
@@ -79,9 +79,9 @@ public client class HelloWorld32Client {
 
     private Client grpcClient;
 
-    public isolated function init(string url, ClientConfiguration? config = ()) {
+    public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
-        self.grpcClient = checkpanic new(url, config);
+        self.grpcClient = check new(url, config);
         Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_32, getDescriptorMap32());
     }
 
