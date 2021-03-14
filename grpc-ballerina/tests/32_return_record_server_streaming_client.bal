@@ -59,8 +59,8 @@ function testReceiveStreamingResponseWithHeaders() returns Error? {
             {name: "Google", id: 3}
         ];
         int count = 0;
-        error? e = result.content.forEach(function(anydata value) {
-            test:assertEquals(<SampleMsg32>value, expectedResults[count]);
+        error? e = result.content.forEach(function(SampleMsg32 value) {
+            test:assertEquals(value, expectedResults[count]);
             count += 1;
         });
         test:assertEquals(count, 4);
@@ -85,15 +85,41 @@ public client class HelloWorld32Client {
         Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_32, getDescriptorMap32());
     }
 
-    isolated remote function sayHello(SampleMsg32 req) returns stream<anydata, Error>|Error {
+    isolated remote function sayHello(SampleMsg32 req) returns stream<SampleMsg32, Error>|Error {
         var payload = check self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
         [stream<anydata, Error>, map<string|string[]>][result, _] = payload;
-        return result;
+        SampleMsg32Stream outputStream = new SampleMsg32Stream(result);
+        return new stream<SampleMsg32, Error>(outputStream);
     }
 
     isolated remote function sayHelloContext(SampleMsg32 req) returns ContextSampleMsg32Stream|Error {
         var payload = check self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
         [stream<anydata, Error>, map<string|string[]>][result, headers] = payload;
-        return {content: result, headers: headers};
+        SampleMsg32Stream outputStream = new SampleMsg32Stream(result);
+        return {content: new stream<SampleMsg32, Error>(outputStream), headers: headers};
+    }
+}
+
+public class SampleMsg32Stream {
+    private stream<anydata, Error> anydataStream;
+
+    public isolated function init(stream<anydata, Error> anydataStream) {
+        self.anydataStream = anydataStream;
+    }
+
+    public isolated function next() returns record {| SampleMsg32 value; |}|Error? {
+        var streamValue = self.anydataStream.next();
+        if (streamValue is ()) {
+            return streamValue;
+        } else if (streamValue is Error) {
+            return streamValue;
+        } else {
+            record {| SampleMsg32 value; |} nextRecord = {value: <SampleMsg32>streamValue.value};
+            return nextRecord;
+        }
+    }
+
+    public isolated function close() returns Error? {
+        return self.anydataStream.close();
     }
 }
