@@ -32,7 +32,7 @@ service "HelloWorld7" on ep4 {
         error? e = clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);
         });
-        if (e is EOS) {
+        if (e is EosError) {
             log:printInfo("Server Response");
             Error? err = caller->sendString("Ack");
             if (err is Error) {
