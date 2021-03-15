@@ -70,7 +70,7 @@ public client class StreamingClient {
                 if (nextRecord is record {|anydata value;|}) {
                     return [nextRecord.value, headers];
                 } else {
-                    return error EOS("End of stream reached");
+                    return error EosError("End of stream reached");
                 }
             } else {
                 var result = externReceive(self);
@@ -84,7 +84,7 @@ public client class StreamingClient {
                     if (nextRecord is record {|anydata value;|}) {
                         return [nextRecord.value, headers];
                     } else {
-                        return error EOS("End of stream reached");
+                        return error EosError("End of stream reached");
                     }
 
                 } else if (result is anydata) {

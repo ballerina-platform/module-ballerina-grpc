@@ -81,7 +81,7 @@ public type DataMismatchError distinct Error;
 public type ClientAuthError distinct Error;
 
 # Represents an error when reaching the end of the client stream.
-public type EOS distinct Error;
+public type EosError distinct Error;
 
 # Represents gRPC related error types.
 public type ErrorType typedesc<Error>;
