@@ -4,7 +4,7 @@ public client class {{serviceName}}Client {
 
     private grpc:Client grpcClient;
 
-    public isolated function init(string url, *ClientConfiguration config) returns grpc:Error? {
+    public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         // initialize client endpoint.
         self.grpcClient = check new(url, config);
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());

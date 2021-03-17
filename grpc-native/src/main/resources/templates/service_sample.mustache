@@ -14,10 +14,10 @@ service "{{serviceName}}" on ep {
     remote function {{methodName}}({{#isNotNull inputType}}{{inputType}} value{{/isNotNull}}) returns {{#if outputType}}{{outputType}}|error{{else}}error?{{/if}} {
         // Implementation goes here.
     }{{/unaryFunctions}}{{#serverStreamingFunctions}}
-    remote function {{methodName}}({{#isNotNull inputType}}{{inputType}} value{{/isNotNull}}) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}}, grpc:Error>|error {
+    remote function {{methodName}}({{#isNotNull inputType}}{{inputType}} value{{/isNotNull}}) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}}, error|never>|error {
     // Implementation goes here.
     }{{/serverStreamingFunctions}}{{#bidiStreamingFunctions}}
-    remote function {{methodName}}(stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}{{~#isNull inputType}}record {}{{/isNull}}, grpc:Error> clientStream) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}}, grpc:Error>|error {
+    remote function {{methodName}}(stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}{{~#isNull inputType}}record {}{{/isNull}}, grpc:Error> clientStream) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}}, error|never>|error {
     // Implementation goes here.
     }{{/bidiStreamingFunctions}}
 }
