@@ -365,6 +365,7 @@ ballerinaTest.dependsOn initializeVariables
 ballerinaTest.dependsOn updateTomlVersions
 ballerinaTest.dependsOn ":${packageName}-native:build"
 ballerinaTest.dependsOn ":${packageName}-test-utils:build"
+ballerinaTest.dependsOn ":${packageName}-compiler-plugin:build"
 test.dependsOn ballerinaTest
 
 ballerinaBuild.dependsOn test
@@ -372,6 +373,7 @@ ballerinaBuild.finalizedBy revertTomlFile
 ballerinaBuild.dependsOn initializeVariables
 ballerinaBuild.dependsOn updateTomlVersions
 ballerinaBuild.dependsOn ":${packageName}-native:build"
+ballerinaBuild.dependsOn ":${packageName}-compiler-plugin:build"
 build.dependsOn ballerinaBuild
 
 ballerinaPublish.dependsOn ballerinaBuild
