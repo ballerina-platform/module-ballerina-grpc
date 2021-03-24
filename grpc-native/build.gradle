@@ -28,6 +28,8 @@ dependencies {
 
     compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}"
