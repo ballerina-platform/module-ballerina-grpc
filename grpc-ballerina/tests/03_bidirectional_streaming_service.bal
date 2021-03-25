@@ -83,7 +83,7 @@ service "Chat" on ep3 {
                 }
             }
         });
-        if (e is EOS) {
+        if (e is EosError) {
             string msg = string `${caller.getId()} left the chat`;
             log:printInfo(msg);
             var v = connectionsMap.remove(caller.getId().toString());

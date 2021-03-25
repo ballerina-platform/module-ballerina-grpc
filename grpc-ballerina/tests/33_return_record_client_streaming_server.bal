@@ -28,7 +28,7 @@ service "HelloWorld33" on ep33 {
         error? e = clientStream.forEach(isolated function(SampleMsg33 val) {
             io:println(val);
         });
-        if (e is EOS) {
+        if (e is EosError) {
             SampleMsg33 response = {name: "WSO2", id: 1};
             return {content: response, headers: {zzz: "yyy"}};
         } else {

@@ -50,7 +50,7 @@ isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error?
     io:println("Completed successfully");
     var result = streamingClient->receiveString();
     int i = 0;
-    while !(result is EOS) {
+    while !(result is EosError) {
         if (result is string) {
             test:assertEquals(result, requests[i]);
         } else {

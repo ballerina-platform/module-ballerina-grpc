@@ -1,4 +1,4 @@
-// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2018 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -17,58 +17,57 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public isolated function testUnaryRecordValueReturn() returns Error? {
-    HelloWorld31Client ep = check new ("http://localhost:9121");
-    SampleMsg31 reqMsg = {name: "WSO2", id: 8};
-    var unionResp = ep->sayHello(reqMsg);
+isolated function testErrorResponse() returns Error? {
+    string name = "WSO2";
+    // Client endpoint configuration
+    HelloWorld13Client helloWorld13BlockingEp = check new("http://localhost:9103");
+    var unionResp = helloWorld13BlockingEp->hello(name);
+
     if (unionResp is Error) {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
+        test:assertEquals(unionResp.message(), "Details");
     } else {
-        SampleMsg31 resMsg = <SampleMsg31>unionResp.content;
-        test:assertEquals(resMsg.name, "Ballerina Lang");
-        test:assertEquals(resMsg.id, 7);
+        test:assertFail(unionResp);
     }
 }
 
-@test:Config {enable:true}
-public isolated function testUnaryErrorReturn() returns Error? {
-    HelloWorld31Client ep = check new ("http://localhost:9121");
-    SampleMsg31 reqMsg = {id: 8};
-    var unionResp = ep->sayHello(reqMsg);
-    if (unionResp is InvalidArgumentError) {
-        test:assertEquals(unionResp.message(), "Name must not be empty.");
-    } else {
-        test:assertFail("RPC call should return an InvalidArgumentError");
-    }
-}
+public client class HelloWorld13Client {
 
-
-public client class HelloWorld31Client {
     *AbstractClientEndpoint;
+
     private Client grpcClient;
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.
         self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_31, getDescriptorMap31());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_13, getDescriptorMap13());
     }
 
-    isolated remote function sayHello(SampleMsg31|ContextSampleMsg31 req) returns (ContextSampleMsg31|Error) {
+    isolated remote function hello(string|ContextString req) returns (string|Error) {
+        
         map<string|string[]> headers = {};
-        SampleMsg31 message;
-        if (req is ContextSampleMsg31) {
+        string message;
+        if (req is ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld31/sayHello", message, headers);
-        [anydata, map<string|string[]>][result, respHeaders] = payload;
-        return {content: <SampleMsg31>result, headers: respHeaders};
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld13/hello", message, headers);
+        [anydata, map<string|string[]>][result, _] = payload;
+        return result.toString();
     }
-
+    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+        
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld13/hello", message, headers);
+        [anydata, map<string|string[]>][result, respHeaders] = payload;
+        return {content: result.toString(), headers: respHeaders};
+    }
 }
-
-
-
-

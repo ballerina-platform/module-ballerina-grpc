@@ -45,7 +45,7 @@ isolated function testBidiStreamingFromReturnRecord() returns Error? {
     io:println("Completed successfully");
     var result = streamingClient->receiveSampleMsg34();
     int i = 0;
-    while !(result is EOS) {
+    while !(result is EosError) {
         io:println(result);
         if (result is SampleMsg34) {
             test:assertEquals(<SampleMsg34> result, requests[i]);
