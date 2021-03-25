@@ -1,0 +1,6 @@
+[plugin]
+id = "grpc-compiler-plugin"
+class = "org.ballerinalang.net.grpc.plugin.GrpcCompilerPlugin"
+
+[[dependency]]
+path = "../grpc-compiler-plugin/build/libs/grpc-compiler-plugin-0.8.0-alpha5.jar"
