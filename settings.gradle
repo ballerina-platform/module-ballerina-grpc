@@ -17,6 +17,7 @@ include (':grpc-native')
 include ('grpc-test-utils')
 include ('grpc-ballerina')
 include ('grpc-compiler-plugin')
+include ('grpc-compiler-plugin-tests')
 
 project(':build-config:checkstyle').projectDir = file('build-config/checkstyle')
 project(':grpc-native').projectDir = file('grpc-native')
