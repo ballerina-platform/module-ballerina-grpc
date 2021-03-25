@@ -19,8 +19,10 @@
 package org.ballerinalang.net.grpc.plugin;
 
 import io.ballerina.compiler.syntax.tree.AnnotationNode;
+import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.ServiceDeclarationNode;
+import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.projects.plugins.AnalysisTask;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.tools.diagnostics.Diagnostic;
@@ -36,7 +38,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
     @Override
     public void perform(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
-
+        // Check the gRPC annotations are present
         ServiceDeclarationNode expressionNode = (ServiceDeclarationNode) syntaxNodeAnalysisContext.node();
         boolean isServiceDescAnnotationPresents = false;
         if (expressionNode.metadata().isPresent()) {
@@ -49,10 +51,24 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
             }
         }
         if (!isServiceDescAnnotationPresents) {
-            DiagnosticInfo diagnosticInfo = new DiagnosticInfo(DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(),
+            DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(),
              "undefined annotation: " + GrpcConstants.GRPC_ANNOTATION_NAME, DiagnosticSeverity.ERROR);
-            Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticInfo, expressionNode.location());
+            Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo, expressionNode.location());
             syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
         }
+
+        // Check the functions are remote or not
+        expressionNode.members().stream().filter(child -> child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
+        || child.kind() == SyntaxKind.RESOURCE_ACCESSOR_DEFINITION).forEach(node -> {
+            FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) node;
+            boolean hasRemoteKeyword = functionDefinitionNode.qualifierList().stream()
+                    .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
+            if (!hasRemoteKeyword) {
+                DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(),
+                        "only remote functions are allowed inside gRPC services", DiagnosticSeverity.ERROR);
+                Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo, expressionNode.location());
+                syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
+            }
+        });
     }
 }
