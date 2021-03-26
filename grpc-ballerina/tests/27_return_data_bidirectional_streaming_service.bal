@@ -28,7 +28,7 @@ service /ChatFromReturn on ep27 {
         string[] messages = [];
         int i = 0;
         error? e = clientStream.forEach(function(ChatMessage27 reqMsg) {
-            io:println(reqMsg);
+            //io:println(reqMsg);
             messages[i] = reqMsg.message + " " + reqMsg.name;
             i += 1;
         });
