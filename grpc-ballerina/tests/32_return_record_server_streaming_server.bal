@@ -24,7 +24,7 @@ listener Listener ep32 = new (9122);
 }
 service "HelloWorld32" on ep32 {
 
-    remote isolated function sayHello(SampleMsg32 value) returns stream<SampleMsg32> {
+    remote isolated function sayHello(SampleMsg32 value) returns stream<SampleMsg32, error?> {
         io:println(value);
         SampleMsg32[] respArr = [
             {name: "WSO2", id: 0},
@@ -43,7 +43,7 @@ public type SampleMsg32 record {|
 |};
 
 public type ContextSampleMsg32Stream record {|
-    stream<SampleMsg32> content;
+    stream<SampleMsg32, error?> content;
     map<string|string[]> headers;
 |};
 

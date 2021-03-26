@@ -347,10 +347,10 @@ public client class HelloWorld24Client {
         return {content: <SampleMsg24>result, headers: respHeaders};
     }
 
-    isolated remote function testRecordValueReturnStream(string req) returns stream<anydata, Error>|Error {
+    isolated remote function testRecordValueReturnStream(string req) returns stream<anydata, Error?>|Error {
 
         var payload = check self.grpcClient->executeServerStreaming("HelloWorld24/testRecordValueReturnStream", req);
-        [stream<anydata, Error>, map<string|string[]>][result, _] = payload;
+        [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
 
         return result;
     }

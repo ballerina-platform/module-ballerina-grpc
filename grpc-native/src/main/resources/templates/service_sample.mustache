@@ -8,16 +8,16 @@ listener grpc:Listener ep = new (9090);
 }
 service "{{serviceName}}" on ep {
     {{#clientStreamingFunctions}}
-    remote function {{methodName}}(stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}{{~#isNull inputType}}record {}{{/isNull}}, grpc:Error> clientStream) returns {{#if outputType}}{{outputType}}|error{{else}}error?{{/if}} {
+    remote function {{methodName}}(stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}{{~#isNull inputType}}record {}{{/isNull}}, grpc:Error?> clientStream) returns {{#if outputType}}{{outputType}}|error{{else}}error?{{/if}} {
         // Implementation goes here.
     }{{/clientStreamingFunctions}}{{#unaryFunctions}}
     remote function {{methodName}}({{#isNotNull inputType}}{{inputType}} value{{/isNotNull}}) returns {{#if outputType}}{{outputType}}|error{{else}}error?{{/if}} {
         // Implementation goes here.
     }{{/unaryFunctions}}{{#serverStreamingFunctions}}
-    remote function {{methodName}}({{#isNotNull inputType}}{{inputType}} value{{/isNotNull}}) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}}, error|never>|error {
+    remote function {{methodName}}({{#isNotNull inputType}}{{inputType}} value{{/isNotNull}}) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}}, error?>|error {
     // Implementation goes here.
     }{{/serverStreamingFunctions}}{{#bidiStreamingFunctions}}
-    remote function {{methodName}}(stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}{{~#isNull inputType}}record {}{{/isNull}}, grpc:Error> clientStream) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}}, error|never>|error {
+    remote function {{methodName}}(stream<{{#isNotNull inputType}}{{inputType}}{{/isNotNull}}{{~#isNull inputType}}record {}{{/isNull}}, grpc:Error?> clientStream) returns stream<{{#isNotNull outputType}}{{outputType}}{{/isNotNull}}{{~#isNull outputType}}record {}{{/isNull}}, error?>|error {
     // Implementation goes here.
     }{{/bidiStreamingFunctions}}
 }
