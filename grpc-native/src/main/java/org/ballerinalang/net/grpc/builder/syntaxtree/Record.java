@@ -18,11 +18,16 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree;
 
+import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.RecordTypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
+
+import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getParameterizedTypeDescriptorNode;
 
 public class Record {
 
@@ -40,5 +45,27 @@ public class Record {
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_BODY_END_DELIMITER
         );
+    }
+
+    public void addStringField(String fieldName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getBuiltinSimpleNameReferenceNode("string"),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addMapField(String fieldName, TypeDescriptorNode descriptorNode) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getParameterizedTypeDescriptorNode("map", descriptorNode),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
     }
 }
