@@ -19,11 +19,12 @@
 package org.ballerinalang.net.grpc.builder.constants;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
-import org.ballerinalang.net.grpc.builder.syntaxtree.TypeName;
+import org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor;
 
 public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_SEMICOLON = AbstractNodeFactory.createIdentifierToken(";");
@@ -32,6 +33,8 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_CLOSE_BRACE = AbstractNodeFactory.createIdentifierToken("}");
     public static final Token SYNTAX_TREE_OPEN_PAREN = AbstractNodeFactory.createIdentifierToken("(");
     public static final Token SYNTAX_TREE_CLOSE_PAREN = AbstractNodeFactory.createIdentifierToken(")");
+    public static final Token SYNTAX_TREE_OPEN_BRACKET = AbstractNodeFactory.createIdentifierToken("[");
+    public static final Token SYNTAX_TREE_CLOSE_BRACKET = AbstractNodeFactory.createIdentifierToken("]");
     public static final Token SYNTAX_TREE_EQUAL = AbstractNodeFactory.createIdentifierToken("=");
     public static final Token SYNTAX_TREE_PIPE = AbstractNodeFactory.createIdentifierToken("|");
     public static final Token SYNTAX_TREE_SLASH = AbstractNodeFactory.createIdentifierToken("/");
@@ -42,6 +45,7 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_ASTERISK = AbstractNodeFactory.createIdentifierToken("*");
     public static final Token SYNTAX_TREE_QUESTION_MARK = AbstractNodeFactory.createIdentifierToken("?");
     public static final Token SYNTAX_TREE_BODY_START_DELIMITER = AbstractNodeFactory.createIdentifierToken("{|\n");
+    public static final Token SYNTAX_TREE_NEWLINE = AbstractNodeFactory.createIdentifierToken("\n");
     public static final Token SYNTAX_TREE_BODY_END_DELIMITER = AbstractNodeFactory.createIdentifierToken("|}");
     public static final Token SYNTAX_TREE_IT= AbstractNodeFactory.createIdentifierToken("<");
     public static final Token SYNTAX_TREE_GT= AbstractNodeFactory.createIdentifierToken(">");
@@ -56,13 +60,15 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_KEYWORD_TYPE = AbstractNodeFactory.createIdentifierToken("type ");
     public static final Token SYNTAX_TREE_KEYWORD_RECORD = AbstractNodeFactory.createIdentifierToken("record ");
     public static final Token SYNTAX_TREE_KEYWORD_RETURNS = AbstractNodeFactory.createIdentifierToken("returns ");
+    public static final Token SYNTAX_TREE_KEYWORD_RETURN = AbstractNodeFactory.createIdentifierToken("return ");
 
     public static final Token SYNTAX_TREE_PARAM_REQUEST = AbstractNodeFactory.createIdentifierToken(" request");
 
     public static final Token SYNTAX_TREE_MODULE_PREFIX_GRPC = AbstractNodeFactory.createIdentifierToken(" grpc");
 
     // Nodes related to grpc module
-    public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING = TypeName.getBuiltinSimpleNameReferenceNode("string");
-    public static final QualifiedNameReferenceNode SYNTAX_TREE_GRPC_ERROR = TypeName.getQualifiedNameReferenceNode("grpc", "Error");
-    public static final SimpleNameReferenceNode SYNTAX_TREE_CONTEXT_STRING = TypeName.getSimpleNameReferenceNode("ContextString");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING = TypeDescriptor.getBuiltinSimpleNameReferenceNode("string");
+    public static final QualifiedNameReferenceNode SYNTAX_TREE_GRPC_ERROR = TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Error");
+    public static final SimpleNameReferenceNode SYNTAX_TREE_CONTEXT_STRING = TypeDescriptor.getSimpleNameReferenceNode("ContextString");
+    public static final ArrayTypeDescriptorNode SYNTAX_TREE_VAR_STRING_ARRAY = TypeDescriptor.getArrayTypeDescriptorNode("string");
 }
