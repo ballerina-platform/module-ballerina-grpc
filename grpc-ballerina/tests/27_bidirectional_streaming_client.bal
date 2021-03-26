@@ -44,7 +44,7 @@ isolated function testBidiStreamingFromReturn() returns Error? {
     string[] expectedOutput = ["Hi Sam", "Hey Ann", "Hello John", "How are you Jack"];
     var result = streamingClient->receive();
     while !(result is EOS) {
-        //io:println(result);
+        io:println(result);
         if (result is Error) {
             test:assertFail("Unexpected output in the stream");
         } else {
