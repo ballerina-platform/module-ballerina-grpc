@@ -37,11 +37,11 @@ service "RetryService" on retryListener {
         requestCount += 1;
         io:println(clientName + ": Attetmpt No. " + requestCount.toString());
         if (requestCount < 4) {
-            var sendResult = caller->sendError(error InternalError("Mocking Internal Error"));
-            var completeResult = caller->complete();
+            error? sendResult = caller->sendError(error InternalError("Mocking Internal Error"));
+            error? completeResult = caller->complete();
         } else {
-            var sendResult = caller->sendString("Total Attempts: " + requestCount.toString());
-            var completeResult = caller->complete();
+            error? sendResult = caller->sendString("Total Attempts: " + requestCount.toString());
+            error? completeResult = caller->complete();
         }
     }
 }

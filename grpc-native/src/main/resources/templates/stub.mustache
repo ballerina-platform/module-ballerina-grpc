@@ -42,20 +42,20 @@ public client class {{serviceName}}Client {
         return {content: <{{outputType}}>result, headers: respHeaders};{{/not_equal}}{{#equals outputType "string"}}return {content: result.toString(), headers: respHeaders};{{/equals}}{{else}}return {headers: respHeaders};{{/if}}
     }
 {{/unaryFunctions}}{{#serverStreamingFunctions}}
-    isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req{{/if}}) returns stream<{{outputType}}, grpc:Error>|grpc:Error {
+    isolated remote function {{methodName}}({{#if inputType}}{{inputType}} req{{/if}}) returns stream<{{outputType}}, grpc:Error?>|grpc:Error {
         {{#unless inputType}}Empty message = {};{{/unless}}
         var payload = check self.grpcClient->executeServerStreaming("{{methodId}}", req);
-        [stream<anydata, grpc:Error>, map<string|string[]>][result, _] = payload;
+        [stream<anydata, grpc:Error?>, map<string|string[]>][result, _] = payload;
         {{removeSpecialCharacters outputType}}Stream outputStream = new {{removeSpecialCharacters outputType}}Stream(result);
-        return new stream<{{outputType}}, grpc:Error>(outputStream);
+        return new stream<{{outputType}}, grpc:Error?>(outputStream);
     }
 
     isolated remote function {{methodName}}Context({{#if inputType}}{{inputType}} req{{/if}}) returns Context{{removeSpecialCharacters inputType}}Stream|grpc:Error {
     {{#unless inputType}}Empty message = {};{{/unless}}
         var payload = check self.grpcClient->executeServerStreaming("{{methodId}}", req);
-        [stream<anydata, grpc:Error>, map<string|string[]>][result, headers] = payload;
+        [stream<anydata, grpc:Error?>, map<string|string[]>][result, headers] = payload;
         {{removeSpecialCharacters outputType}}Stream outputStream = new {{removeSpecialCharacters outputType}}Stream(result);
-        return {content: new stream<{{outputType}}, grpc:Error>(outputStream), headers: headers};
+        return {content: new stream<{{outputType}}, grpc:Error?>(outputStream), headers: headers};
     }
 {{/serverStreamingFunctions}}{{#clientStreamingFunctions}}
     isolated remote function {{methodName}}() returns ({{pascalcase methodName}}StreamingClient|grpc:Error) {
