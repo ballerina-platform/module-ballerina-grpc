@@ -43,8 +43,10 @@ isolated function testClientStreamingFromReturnRecord() returns Error? {
     }
     checkpanic streamingClient->complete();
     io:println("Completed successfully");
-    var response = checkpanic streamingClient->receiveContextSampleMsg33();
-    test:assertEquals(<SampleMsg33>response.content, {name: "WSO2", id: 1});
+    var response = check streamingClient->receiveContextSampleMsg33();
+    if response is ContextSampleMsg33 {
+        test:assertEquals(<SampleMsg33>response.content, {name: "WSO2", id: 1});
+    }
 }
 
 public client class SayHelloStreamingClientFromReturn {
@@ -63,14 +65,25 @@ public client class SayHelloStreamingClientFromReturn {
         return self.sClient->send(message);
     }
 
-    isolated remote function receiveSampleMsg33() returns SampleMsg33|Error {
-        [anydata, map<string|string[]>] [result, headers] = check self.sClient->receive();
-        return <SampleMsg33>result;
+    isolated remote function receiveSampleMsg33() returns SampleMsg33|Error? {
+        var response = check self.sClient->receive();
+        if (response is ()) {
+            return ();
+        } else {
+            [anydata, map<string|string[]>] [result, headers] = response;
+            return <SampleMsg33>result;
+        }
     }
 
-    isolated remote function receiveContextSampleMsg33() returns ContextSampleMsg33|Error {
-        [anydata, map<string|string[]>] [result, headers] = check self.sClient->receive();
-        return {content: <SampleMsg33>result, headers: headers};
+    isolated remote function receiveContextSampleMsg33() returns ContextSampleMsg33|Error? {
+        var response = check self.sClient->receive();
+        if (response is ()) {
+            return response;
+        } else {
+            [anydata, map<string|string[]>] [result, headers] = response;
+            return {content: <SampleMsg33>result, headers: headers};
+        }
+
     }
 
     isolated remote function sendError(Error response) returns Error? {
