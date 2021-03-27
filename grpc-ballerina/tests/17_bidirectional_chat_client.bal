@@ -60,7 +60,7 @@ public isolated function testBidiStreamingInChatClient() returns Error? {
     if responseMsg is error {
         test:assertFail(msg = responseMsg.message());
     } else if responseMsg is () {
-        test:assertFail(msg = "stream can't be without a response message");
+        test:assertFail(msg = "stream can't be closed without a response message");
     } else {
         [anydata, map<string|string[]>][content, headers] = responseMsg;
         test:assertEquals(content.toString(), "Sam: Hi");
