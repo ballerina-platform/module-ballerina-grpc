@@ -100,7 +100,7 @@ service "Chat" on ep3 {
                     log:printInfo("Server message to caller " + callerId + " sent successfully.");
                 }
             }
-        } else if (e is error) {
+        } else {
             log:printError("Error from Connector: " + e.message());
         }
     }

@@ -40,7 +40,7 @@ service "HelloWorld7" on ep4 {
             } else {
                 log:printInfo("Server send response : Ack");
             }
-        } else if (e is error) {
+        } else {
             log:printError("Something unexpected happens at server :: " + e.message());
         }
     }
