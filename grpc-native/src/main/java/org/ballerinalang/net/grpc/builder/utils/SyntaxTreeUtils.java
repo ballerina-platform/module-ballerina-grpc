@@ -32,6 +32,7 @@ import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 import org.ballerinalang.net.grpc.builder.components.Descriptor;
+import org.ballerinalang.net.grpc.builder.components.Message;
 import org.ballerinalang.net.grpc.builder.components.Method;
 import org.ballerinalang.net.grpc.builder.components.ServiceStub;
 import org.ballerinalang.net.grpc.builder.components.StubFile;
@@ -82,6 +83,10 @@ public class SyntaxTreeUtils {
 
             client.addMember(getInitFunction().getFunctionDefinitionNode());
 
+            for (Method method : service.getUnaryFunctions()) {
+                client.addMember(getUnaryFunction(method).getFunctionDefinitionNode());
+                client.addMember(getUnaryContextFunction(method).getFunctionDefinitionNode());
+            }
             for (Method method : service.getClientStreamingFunctions()) {
                 client.addMember(getClientStreamingFunction(method).getFunctionDefinitionNode());
                 clientStreamingClasses.add(getStreamingClientClass(method));
@@ -110,9 +115,15 @@ public class SyntaxTreeUtils {
                 moduleMembers = moduleMembers.add(getCallerClass(caller.getKey(), caller.getKey()).getClassDefinitionNode());
             }
             for (java.util.Map.Entry<String, Boolean> valueType : service.getValueTypeMap().entrySet()) {
-                moduleMembers = moduleMembers.add(getValueTypeStream(valueType.getKey()).getTypeDefinitionNode());
+                if (valueType.getValue()) {
+                    moduleMembers = moduleMembers.add(getValueTypeStream(valueType.getKey()).getTypeDefinitionNode());
+                }
                 moduleMembers = moduleMembers.add(getValueType(valueType.getKey()).getTypeDefinitionNode());
             }
+        }
+
+        for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
+            moduleMembers = moduleMembers.add(getMessageType(message.getKey()).getTypeDefinitionNode());
         }
 
         // ROOT_DESCRIPTOR
@@ -155,6 +166,28 @@ public class SyntaxTreeUtils {
         FunctionDefinition definition = new FunctionDefinition("init",
                 signature.getFunctionSignature(), body.getFunctionBody());
         definition.addQualifiers(new String[]{"public", "isolated"});
+        return definition;
+    }
+
+    public static FunctionDefinition getUnaryFunction(Method method) {
+        FunctionSignature signature = new FunctionSignature();
+        signature.addParameter(getRequiredParamNode(getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, getSimpleNameReferenceNode("ContextString")), "req"));
+        signature.addReturns(Returns.getReturnTypeDescriptorNode(Returns.getParenthesisedTypeDescriptorNode(getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_GRPC_ERROR))));
+        FunctionBody body = new FunctionBody();
+        FunctionDefinition definition = new FunctionDefinition(method.getMethodName(),
+                signature.getFunctionSignature(), body.getFunctionBody());
+        definition.addQualifiers(new String[]{"isolated", "remote"});
+        return definition;
+    }
+
+    public static FunctionDefinition getUnaryContextFunction(Method method) {
+        FunctionSignature signature = new FunctionSignature();
+        signature.addParameter(getRequiredParamNode(getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, getSimpleNameReferenceNode("ContextString")), "req"));
+        signature.addReturns(Returns.getReturnTypeDescriptorNode(Returns.getParenthesisedTypeDescriptorNode(getUnionTypeDescriptorNode(getSimpleNameReferenceNode("ContextString"), SYNTAX_TREE_GRPC_ERROR))));
+        FunctionBody body = new FunctionBody();
+        FunctionDefinition definition = new FunctionDefinition(method.getMethodName() + "Context",
+                signature.getFunctionSignature(), body.getFunctionBody());
+        definition.addQualifiers(new String[]{"isolated", "remote"});
         return definition;
     }
 
@@ -289,5 +322,12 @@ public class SyntaxTreeUtils {
         contextString.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
                 SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
         return new Type(true, typeName, contextString.getRecordTypeDescriptorNode());
+    }
+
+    public static Type getMessageType(String name) {
+        Record message = new Record();
+        message.addFieldWithDefaultValue("string", "name");
+        message.addFieldWithDefaultValue("string", "message");
+        return new Type(true, name, message.getRecordTypeDescriptorNode());
     }
 }

@@ -23,6 +23,7 @@ import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.RecordTypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
@@ -72,16 +73,16 @@ public class Record {
     }
 
     public void addStreamField(String fieldName, String streamType) {
-        Node lhs;
+        Node typeName;
         if (streamType.equals("string")) {
-            lhs = SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
+            typeName = SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
         } else {
-            lhs = getSimpleNameReferenceNode(streamType);
+            typeName = getSimpleNameReferenceNode(streamType);
         }
         fields = fields.add(NodeFactory.createRecordFieldNode(
                 null,
                 null,
-                getStreamTypeDescriptorNode(lhs, null),
+                getStreamTypeDescriptorNode(typeName, null),
                 AbstractNodeFactory.createIdentifierToken(fieldName),
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
@@ -95,6 +96,24 @@ public class Record {
                 getSimpleNameReferenceNode(typeName),
                 AbstractNodeFactory.createIdentifierToken(fieldName),
                 null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addFieldWithDefaultValue(String fieldType, String fieldName) {
+        Node typeName;
+        if (fieldType.equals("string")) {
+            typeName = SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
+        } else {
+            typeName = getSimpleNameReferenceNode(fieldType);
+        }
+        fields = fields.add(NodeFactory.createRecordFieldWithDefaultValueNode(
+                null,
+                null,
+                typeName,
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, AbstractNodeFactory.createIdentifierToken("\"\"")),
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         ));
     }
