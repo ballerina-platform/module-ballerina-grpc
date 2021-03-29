@@ -18,6 +18,9 @@
 
 package org.ballerinalang.net.grpc.plugin;
 
+/**
+ * gRPC Compiler plugin constants.
+ */
 public class GrpcConstants {
-    public static String GRPC_ANNOTATION_NAME = "grpc:ServiceDescriptor";
+    public static final String GRPC_ANNOTATION_NAME = "grpc:ServiceDescriptor";
 }
