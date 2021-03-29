@@ -28,6 +28,7 @@ import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getStreamTypeDescriptorNode;
 
 public class Record {
@@ -70,11 +71,28 @@ public class Record {
         ));
     }
 
-    public void addStreamField(String fieldName) {
+    public void addStreamField(String fieldName, String streamType) {
+        Node lhs;
+        if (streamType.equals("string")) {
+            lhs = SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
+        } else {
+            lhs = getSimpleNameReferenceNode(streamType);
+        }
         fields = fields.add(NodeFactory.createRecordFieldNode(
                 null,
                 null,
-                getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, null),
+                getStreamTypeDescriptorNode(lhs, null),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addCustomField(String fieldName, String typeName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getSimpleNameReferenceNode(typeName),
                 AbstractNodeFactory.createIdentifierToken(fieldName),
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
