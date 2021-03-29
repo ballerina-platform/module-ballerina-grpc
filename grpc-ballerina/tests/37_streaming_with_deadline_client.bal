@@ -50,7 +50,7 @@ isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error?
     io:println("Completed successfully");
     var result = streamingClient->receiveString();
     int i = 0;
-    while !(result is EosError) {
+    while !(result is ()) {
         if (result is string) {
             test:assertEquals(result, requests[i]);
         } else {
@@ -97,14 +97,24 @@ public client class CallWithDeadlineStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function receiveString() returns string|Error {
-        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
-        return payload.toString();
+    isolated remote function receiveString() returns string|Error? {
+        var response = check self.sClient->receive();
+        if (response is ()) {
+            return ();
+        } else {
+            [anydata, map<string|string[]>] [payload, headers] = response;
+            return payload.toString();
+        }
     }
 
-    isolated remote function receiveContextString() returns ContextString|Error {
-        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
-        return {content: payload.toString(), headers: headers};
+    isolated remote function receiveContextString() returns ContextString|Error? {
+        var response = check self.sClient->receive();
+        if (response is ()) {
+            return response;
+        } else {
+            [anydata, map<string|string[]>] [payload, headers] = response;
+            return {content: payload.toString(), headers: headers};
+        }
     }
 
     isolated remote function sendError(Error response) returns Error? {

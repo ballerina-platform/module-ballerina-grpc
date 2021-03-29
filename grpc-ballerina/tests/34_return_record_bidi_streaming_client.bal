@@ -41,11 +41,11 @@ isolated function testBidiStreamingFromReturnRecord() returns Error? {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
-    checkpanic streamingClient->complete();
+    check streamingClient->complete();
     io:println("Completed successfully");
     var result = streamingClient->receiveSampleMsg34();
     int i = 0;
-    while !(result is EosError) {
+    while !(result is ()) {
         io:println(result);
         if (result is SampleMsg34) {
             test:assertEquals(<SampleMsg34> result, requests[i]);
@@ -70,9 +70,14 @@ public client class SayHelloBidiStreamingClientFromReturn {
         return self.sClient->send(message);
     }
 
-    isolated remote function receiveSampleMsg34() returns anydata|Error {
-        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
-        return payload;
+    isolated remote function receiveSampleMsg34() returns anydata|Error? {
+        var response = check self.sClient->receive();
+        if (response is ()) {
+            return response;
+        } else {
+            [anydata, map<string|string[]>] [payload, headers] = response;
+            return payload;
+        }
     }
 
     isolated remote function sendError(Error response) returns Error? {

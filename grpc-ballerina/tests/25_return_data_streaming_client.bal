@@ -51,18 +51,18 @@ public client class HelloWorld25Client {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_25, getDescriptorMap25());
     }
 
-    isolated remote function lotsOfReplies(string req) returns stream<string, Error>|Error {
+    isolated remote function lotsOfReplies(string req) returns stream<string, Error?>|Error {
 
         var payload = check self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req);
-        [stream<anydata, Error>, map<string|string[]>][result, _] = payload;
+        [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
         StringStream outputStream = new StringStream(result);
-        return new stream<string, Error>(outputStream);
+        return new stream<string, Error?>(outputStream);
     }
 
     isolated remote function lotsOfRepliesContext(string req) returns ContextStringStream|Error {
 
         var payload = check self.grpcClient->executeServerStreaming("grpcservices.HelloWorld25/lotsOfReplies", req);
-        [stream<anydata, Error>, map<string|string[]>][result, headers] = payload;
+        [stream<anydata, Error?>, map<string|string[]>][result, headers] = payload;
         StringStream outputStream = new StringStream(result);
         return {content: new stream<string, Error?>(outputStream), headers: headers};
     }
@@ -70,9 +70,9 @@ public client class HelloWorld25Client {
 }
 
 public class StringStream {
-    private stream<anydata, Error> anydataStream;
+    private stream<anydata, Error?> anydataStream;
 
-    public isolated function init(stream<anydata, Error> anydataStream) {
+    public isolated function init(stream<anydata, Error?> anydataStream) {
         self.anydataStream = anydataStream;
     }
 

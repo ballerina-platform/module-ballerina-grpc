@@ -78,7 +78,7 @@ public client class Client {
     # + headers - Optional headers parameter. The header value are passed only if needed. The default value is `()`
     # + return - A `stream<anydata, grpc:Error?>` or a `grpc:Error` when an error occurs while sending the request
     isolated remote function executeServerStreaming(string methodID, anydata payload, map<string|string[]> headers = {})
-                                    returns [stream<anydata, Error>, map<string|string[]>]|Error {
+                                    returns [stream<anydata, Error?>, map<string|string[]>]|Error {
          return externExecuteServerStreaming(self, methodID, payload, headers);
     }
 
@@ -168,7 +168,7 @@ isolated function externExecuteSimpleRPC(Client clientEndpoint, string methodID,
 } external;
 
 isolated function externExecuteServerStreaming(Client clientEndpoint, string methodID, anydata payload,
-                map<string|string[]> headers) returns [stream<anydata, Error>, map<string|string[]>]|Error = @java:Method {
+                map<string|string[]> headers) returns [stream<anydata, Error?>, map<string|string[]>]|Error = @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
 } external;
 

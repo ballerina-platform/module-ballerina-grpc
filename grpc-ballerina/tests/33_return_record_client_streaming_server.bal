@@ -23,12 +23,12 @@ listener Listener ep33 = new (9123);
     descMap: getDescriptorMap33()
 }
 service "HelloWorld33" on ep33 {
-    remote isolated function sayHello(stream<SampleMsg33,error> clientStream) returns ContextSampleMsg33 {
+    remote isolated function sayHello(stream<SampleMsg33, error?> clientStream) returns ContextSampleMsg33 {
         io:println("Connected sucessfully.");
         error? e = clientStream.forEach(isolated function(SampleMsg33 val) {
             io:println(val);
         });
-        if (e is EosError) {
+        if (e is ()) {
             SampleMsg33 response = {name: "WSO2", id: 1};
             return {content: response, headers: {zzz: "yyy"}};
         } else {

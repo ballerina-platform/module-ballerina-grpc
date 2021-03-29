@@ -37,13 +37,13 @@ isolated function testBidiStreamingFromReturn() returns Error? {
         {name:"Jack", message:"How are you"}
     ];
     foreach ChatMessage27 msg in messages {
-        var r = streamingClient->send(msg);
+        error? r = streamingClient->send(msg);
     }
-    var r = streamingClient->complete();
+    error? r = streamingClient->complete();
     int i = 0;
     string[] expectedOutput = ["Hi Sam", "Hey Ann", "Hello John", "How are you Jack"];
     var result = streamingClient->receive();
-    while !(result is EosError) {
+    while !(result is ()) {
         io:println(result);
         if (result is Error) {
             test:assertFail("Unexpected output in the stream");
