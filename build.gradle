@@ -52,6 +52,10 @@ allprojects {
             }
         }
 
+        maven {
+            url = 'https://mvnrepository.com/artifact/org.testng/testng'
+        }
+
         //stdlib module dependencies
         maven {
             url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-io'
@@ -155,8 +159,14 @@ subprojects {
 
     configurations {
         ballerinaStdLibs
+        jbalTools
     }
     dependencies {
+        /* JBallerina Tools */
+        jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
+            transitive = false
+        }
+
         /* Standard libraries */
         ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
         ballerinaStdLibs "org.ballerinalang:crypto-ballerina:${stdlibCryptoVersion}"
