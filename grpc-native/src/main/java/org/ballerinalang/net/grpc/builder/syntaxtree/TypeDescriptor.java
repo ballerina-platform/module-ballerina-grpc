@@ -20,7 +20,10 @@ package org.ballerinalang.net.grpc.builder.syntaxtree;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
+import io.ballerina.compiler.syntax.tree.FieldAccessExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
@@ -29,10 +32,13 @@ import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.StreamTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
+import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.TypeParameterNode;
 import io.ballerina.compiler.syntax.tree.TypeReferenceNode;
+import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.UnionTypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
@@ -55,12 +61,10 @@ public class TypeDescriptor {
     }
 
     public static BuiltinSimpleNameReferenceNode getBuiltinSimpleNameReferenceNode(String name) {
-        switch (name) {
-            case "int" :
-                return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.INT_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
-            default:
-                return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.STRING_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
+        if ("int".equals(name)) {
+            return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.INT_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
         }
+        return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.STRING_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
     }
 
     public static SimpleNameReferenceNode getSimpleNameReferenceNode(String name) {
@@ -110,5 +114,39 @@ public class TypeDescriptor {
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         );
+    }
+
+    public static StreamTypeDescriptorNode getStreamTypeDescriptorNode(Node lhs, Node rhs) {
+        Token comma;
+        if (rhs == null) {
+            comma = null;
+        } else {
+            comma = SyntaxTreeConstants.SYNTAX_TREE_COMMA;
+        }
+        return NodeFactory.createStreamTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_STREAM,
+                NodeFactory.createStreamTypeParamsNode(
+                        SyntaxTreeConstants.SYNTAX_TREE_IT,
+                        lhs,
+                        comma,
+                        rhs,
+                        SyntaxTreeConstants.SYNTAX_TREE_GT));
+    }
+
+    public static CaptureBindingPatternNode getCaptureBindingPatternNode(String name) {
+        return NodeFactory.createCaptureBindingPatternNode(AbstractNodeFactory.createIdentifierToken(name));
+    }
+
+    public static FieldAccessExpressionNode getFieldAccessExpressionNode(String var, String fieldName) {
+        return NodeFactory.createFieldAccessExpressionNode(
+                getSimpleNameReferenceNode(var),
+                SyntaxTreeConstants.SYNTAX_TREE_DOT,
+                getBuiltinSimpleNameReferenceNode(fieldName)
+        );
+    }
+
+    public static TypedBindingPatternNode getTypedBindingPatternNode(TypeDescriptorNode typeDescriptorNode,
+                                                                     BindingPatternNode bindingPatternNode) {
+        return NodeFactory.createTypedBindingPatternNode(typeDescriptorNode, bindingPatternNode);
     }
 }
