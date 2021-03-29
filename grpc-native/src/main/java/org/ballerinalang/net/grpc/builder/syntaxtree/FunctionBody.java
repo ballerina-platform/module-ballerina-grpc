@@ -20,9 +20,11 @@ package org.ballerinalang.net.grpc.builder.syntaxtree;
 
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionBodyNode;
+import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.StatementNode;
+import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
 public class FunctionBody {
@@ -45,6 +47,19 @@ public class FunctionBody {
     public void addReturnsStatement(ExpressionNode expressionNode) {
         statements = statements.add(NodeFactory.createReturnStatementNode(
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURN,
+                expressionNode,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addVariableDeclaration(VariableDeclarationNode node) {
+        statements = statements.add(node);
+    }
+
+    public void addAssignmentStatement(Node varRef, ExpressionNode expressionNode) {
+        statements = statements.add(NodeFactory.createAssignmentStatementNode(
+                varRef,
+                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
                 expressionNode,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         ));
