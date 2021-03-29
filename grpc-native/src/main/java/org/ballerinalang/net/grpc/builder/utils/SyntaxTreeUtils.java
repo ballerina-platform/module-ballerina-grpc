@@ -30,7 +30,6 @@ import io.ballerina.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
 import io.ballerina.compiler.syntax.tree.Token;
-import io.ballerina.compiler.syntax.tree.TypeDefinitionNode;
 import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 import org.ballerinalang.net.grpc.builder.components.Descriptor;
@@ -50,10 +49,17 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.Type;
 import org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
+import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getIncludedRecordParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getQualifiedNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getStreamTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getTypeReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getUnionTypeDescriptorNode;
 
@@ -65,60 +71,60 @@ public class SyntaxTreeUtils {
         ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
         NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createNodeList(importForGrpc);
 
+        List<Type> types = new ArrayList<>();
+
         for (ServiceStub service : stubFile.getStubList()) {
+            List<Class> streamingClients = new ArrayList<>();
+            List<Class> streamingServers = new ArrayList<>();
             Class client = new Class(service.getServiceName() + "Client", true);
+            client.addQualifiers(new String[]{"client"});
 
             client.addMember(getTypeReferenceNode(getQualifiedNameReferenceNode("grpc", "AbstractClientEndpoint")));
             client.addMember(getObjectFieldNode("private", new String[]{}, getQualifiedNameReferenceNode("grpc", "Client"), "grpcClient"));
 
-            // init function
-            FunctionSignature initSignature = new FunctionSignature();
-            initSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, "url"));
-            initSignature.addParameter(getIncludedRecordParamNode(getQualifiedNameReferenceNode("grpc", "ClientConfiguration"), "config"));
-            initSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
-            FunctionBody initBody = new FunctionBody();
-            FunctionDefinition initDefinition = new FunctionDefinition("init",
-                    initSignature.getFunctionSignature(), initBody.getFunctionBody());
-            initDefinition.addQualifiers(new String[]{"public", "isolated"});
-            client.addMember(initDefinition.getFunctionDefinitionNode());
+            client.addMember(getInitFunction().getFunctionDefinitionNode());
 
             for (Method method : service.getClientStreamingFunctions()) {
-                // HelloWorldClient:hello function
-                FunctionSignature helloSignature = new FunctionSignature();
-                helloSignature.addParameter(getRequiredParamNode(getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING), "req"));
-                helloSignature.addReturns(Returns.getReturnTypeDescriptorNode(Returns.getParenthesisedTypeDescriptorNode(getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
-                FunctionBody helloBody = new FunctionBody();
-                FunctionDefinition helloDefinition = new FunctionDefinition(method.getMethodName(),
-                        helloSignature.getFunctionSignature(), helloBody.getFunctionBody());
-                helloDefinition.addQualifiers(new String[]{"isolated", "remote"});
-                client.addMember(helloDefinition.getFunctionDefinitionNode());
+                client.addMember(getClientStreamingFunction(method).getFunctionDefinitionNode());
+                streamingClients.add(getStreamingClient(method));
+            }
 
-//                if (method) {
-//                    // HelloWorldClient:helloContext function
-//                    FunctionSignature helloContextSignature = new FunctionSignature();
-//                    helloContextSignature.addParameter(getRequiredParamNode(TypeDescriptor.getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING), "req"));
-//                    helloContextSignature.addReturns(Returns.getReturnTypeDescriptorNode(Returns.getParenthesisedTypeDescriptorNode(TypeDescriptor.getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING, SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
-//                    FunctionBody helloContextBody = new FunctionBody();
-//                    FunctionDefinition helloContextDefinition = new FunctionDefinition(method.getName() + "Context",
-//                            helloContextSignature.getFunctionSignature(), helloContextBody.getFunctionBody());
-//                    helloContextDefinition.addQualifiers(new String[]{"isolated", "remote"});
-//                    client.addMember(helloContextDefinition.getFunctionDefinitionNode());
-//                }
+            for (Method method : service.getServerStreamingFunctions()) {
+                client.addMember(getServerStreamingFunction(method).getFunctionDefinitionNode());
+                client.addMember(getServerStreamingContextFunction(method).getFunctionDefinitionNode());
+                streamingServers.add(getStringStream(method));
             }
             moduleMembers = moduleMembers.add(client.getClassDefinitionNode());
+
+            for (Class streamingClient : streamingClients) {
+                moduleMembers = moduleMembers.add(streamingClient.getClassDefinitionNode());
+            }
+            for (Class streamingServer : streamingServers) {
+                moduleMembers = moduleMembers.add(streamingServer.getClassDefinitionNode());
+            }
         }
 
         // HelloWorldStringCaller class
         ClassDefinitionNode stringCaller = getHelloWorldStringCaller().getClassDefinitionNode();
         moduleMembers = moduleMembers.add(stringCaller);
 
+        // ContextStringStream record type
+        Record contextStringStream = new Record();
+        contextStringStream.addStreamField("content");
+        contextStringStream.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
+                SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
+        types.add(new Type(true, "ContextStringStream", contextStringStream.getRecordTypeDescriptorNode()));
+
         // ContextString record type
-        Record contextStringRecord = new Record();
-        contextStringRecord.addStringField("content");
-        contextStringRecord.addMapField("headers", getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
-        Type contextString = new Type(true, "ContextString", contextStringRecord.getRecordTypeDescriptorNode());
-        TypeDefinitionNode contextStringTypeDefinitionNode = contextString.getTypeDefinitionNode();
-        moduleMembers = moduleMembers.add(contextStringTypeDefinitionNode);
+        Record contextString = new Record();
+        contextString.addStringField("content");
+        contextString.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
+                SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
+        types.add(new Type(true, "ContextString", contextString.getRecordTypeDescriptorNode()));
+
+        for (Type type : types) {
+            moduleMembers = moduleMembers.add(type.getTypeDefinitionNode());
+        }
 
         // ROOT_DESCRIPTOR
         Constant rootDescriptor = new Constant("ROOT_DESCRIPTOR", stubFile.getRootDescriptor());
@@ -126,7 +132,7 @@ public class SyntaxTreeUtils {
 
         // getDescriptorMap function
         FunctionSignature getDescriptorMapSignature = new FunctionSignature();
-        ParameterizedTypeDescriptorNode mapString = NodeFactory.createParameterizedTypeDescriptorNode(AbstractNodeFactory.createIdentifierToken("map"), TypeDescriptor.getTypeParameterNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING));
+        ParameterizedTypeDescriptorNode mapString = NodeFactory.createParameterizedTypeDescriptorNode(AbstractNodeFactory.createIdentifierToken("map"), TypeDescriptor.getTypeParameterNode(SYNTAX_TREE_VAR_STRING));
         getDescriptorMapSignature.addReturns(Returns.getReturnTypeDescriptorNode(mapString));
         FunctionBody getDescriptorMapBody = new FunctionBody();
 
@@ -149,9 +155,77 @@ public class SyntaxTreeUtils {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
+    public static FunctionDefinition getInitFunction() {
+        FunctionSignature signature = new FunctionSignature();
+        signature.addParameter(getRequiredParamNode(SYNTAX_TREE_VAR_STRING, "url"));
+        signature.addParameter(getIncludedRecordParamNode(getQualifiedNameReferenceNode(
+                "grpc", "ClientConfiguration"), "config"));
+        signature.addReturns(Returns.getReturnTypeDescriptorNode(
+                TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        FunctionBody body = new FunctionBody();
+        FunctionDefinition definition = new FunctionDefinition("init",
+                signature.getFunctionSignature(), body.getFunctionBody());
+        definition.addQualifiers(new String[]{"public", "isolated"});
+        return definition;
+    }
+
+    public static FunctionDefinition getServerStreamingFunction(Method method) {
+        FunctionSignature signature = new FunctionSignature();
+        signature.addParameter(getRequiredParamNode(SYNTAX_TREE_VAR_STRING, "req"));
+        signature.addReturns(Returns.getReturnTypeDescriptorNode(getUnionTypeDescriptorNode(
+                getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_GRPC_ERROR), SYNTAX_TREE_GRPC_ERROR)));
+        FunctionBody body = new FunctionBody();
+        FunctionDefinition definition = new FunctionDefinition(method.getMethodName(),
+                signature.getFunctionSignature(), body.getFunctionBody());
+        definition.addQualifiers(new String[]{"isolated", "remote"});
+        return definition;
+    }
+
+    public static FunctionDefinition getServerStreamingContextFunction(Method method) {
+        FunctionSignature signature = new FunctionSignature();
+        signature.addParameter(getRequiredParamNode(SYNTAX_TREE_VAR_STRING, "req"));
+        signature.addReturns(Returns.getReturnTypeDescriptorNode(getUnionTypeDescriptorNode(
+                getSimpleNameReferenceNode("ContextStringStream"), SYNTAX_TREE_GRPC_ERROR
+        )));
+        FunctionBody body = new FunctionBody();
+        FunctionDefinition definition = new FunctionDefinition(method.getMethodName() + "Context",
+                signature.getFunctionSignature(), body.getFunctionBody());
+        definition.addQualifiers(new String[]{"isolated", "remote"});
+        return definition;
+    }
+
+    public static FunctionDefinition getClientStreamingFunction(Method method) {
+        String clientName = method.getMethodName().substring(0,1).toUpperCase() +
+                method.getMethodName().substring(1) + "StreamingClient";
+        FunctionSignature signature = new FunctionSignature();
+        signature.addReturns(Returns.getReturnTypeDescriptorNode(
+                Returns.getParenthesisedTypeDescriptorNode(getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(clientName),
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
+        FunctionBody body = new FunctionBody();
+        FunctionDefinition definition = new FunctionDefinition(method.getMethodName(),
+                signature.getFunctionSignature(), body.getFunctionBody());
+        definition.addQualifiers(new String[]{"isolated", "remote"});
+        return definition;
+    }
+
+    public static Class getStreamingClient(Method method) {
+        String name = method.getMethodName().substring(0,1).toUpperCase() +
+                method.getMethodName().substring(1) + "StreamingClient";
+        Class streamingClient = new Class(name, true);
+        streamingClient.addQualifiers(new String[]{"client"});
+        return streamingClient;
+    }
+
+    public static Class getStringStream(Method method) {
+        Class streamingClient = new Class("StringStream", true);
+        return streamingClient;
+    }
+
     private static Class getHelloWorldStringCaller() {
         // HelloWorldStringCaller class
         Class helloWorldStringCaller = new Class("HelloWorldStringCaller", true);
+        helloWorldStringCaller.addQualifiers(new String[]{"client"});
 
         // HelloWorldStringCaller:init function
         FunctionSignature initSignature = new FunctionSignature();
@@ -173,7 +247,7 @@ public class SyntaxTreeUtils {
 
         // HelloWorldStringCaller:sendString function
         FunctionSignature sendStringSignature = new FunctionSignature();
-        sendStringSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, "response"));
+        sendStringSignature.addParameter(getRequiredParamNode(SYNTAX_TREE_VAR_STRING, "response"));
         sendStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
         FunctionBody sendStringBody = new FunctionBody();
         FunctionDefinition sendStringDefinition = new FunctionDefinition("sendString",
