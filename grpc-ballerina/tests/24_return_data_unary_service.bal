@@ -63,7 +63,7 @@ service /HelloWorld24 on ep24 {
         };
         return msg;
     }
-    remote isolated function testRecordValueReturnStream(string value) returns stream<SampleMsg24> {
+    remote isolated function testRecordValueReturnStream(string value) returns stream<SampleMsg24, error?> {
         io:print("Received input for testRecordValueReturnStream: ");
         io:println(value);
         SampleMsg24[] arr = [
@@ -77,7 +77,7 @@ service /HelloWorld24 on ep24 {
 }
 
 public type ContextSampleMsg24Stream record {|
-    stream<SampleMsg24> content;
+    stream<SampleMsg24, error?> content;
     map<string|string[]> headers;
 |};
 public type ContextSampleMsg24 record {|

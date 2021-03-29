@@ -40,8 +40,10 @@ isolated function testClientStreamingFromReturn() returns Error? {
     }
     checkpanic streamingClient->complete();
     io:println("completed successfully");
-    string response = checkpanic streamingClient->receiveString();
-    test:assertEquals(response, "Ack");
+    string? response = check streamingClient->receiveString();
+    if response is string {
+        test:assertEquals(response, "Ack");
+    }
 }
 
 public client class LotsOfGreetingsStreamingClientFromReturn {
@@ -60,14 +62,24 @@ public client class LotsOfGreetingsStreamingClientFromReturn {
         return self.sClient->send(message);
     }
 
-    isolated remote function receiveString() returns string|Error {
-        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
-        return payload.toString();
+    isolated remote function receiveString() returns string|Error? {
+        var response = check self.sClient->receive();
+        if (response is ()) {
+            return response;
+        } else {
+            [anydata, map<string|string[]>] [payload, headers] = response;
+            return payload.toString();
+        }
     }
 
-    isolated remote function receiveContextString() returns ContextString|Error {
-        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
-        return {content: payload.toString(), headers: headers};
+    isolated remote function receiveContextString() returns ContextString|Error? {
+        var response = check self.sClient->receive();
+        if (response is ()) {
+            return response;
+        } else {
+            [anydata, map<string|string[]>] [payload, headers] = response;
+            return {content: payload.toString(), headers: headers};
+        }
     }
 
     isolated remote function sendError(Error response) returns Error? {

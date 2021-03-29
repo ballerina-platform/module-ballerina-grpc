@@ -50,7 +50,7 @@ boolean initialized = false;
 }
 service "Chat" on ep3 {
 
-    remote function chat(ChatStringCaller caller, stream<ChatMessage, error> clientStream) {
+    remote function chat(ChatStringCaller caller, stream<ChatMessage, error?> clientStream) {
         log:printInfo(string `${caller.getId()} connected to chat`);
         connectionsMap[caller.getId().toString()] = caller;
         log:printInfo("Client registration completed. Connection map status");
@@ -83,7 +83,7 @@ service "Chat" on ep3 {
                 }
             }
         });
-        if (e is EosError) {
+        if (e is ()) {
             string msg = string `${caller.getId()} left the chat`;
             log:printInfo(msg);
             var v = connectionsMap.remove(caller.getId().toString());
@@ -100,7 +100,7 @@ service "Chat" on ep3 {
                     log:printInfo("Server message to caller " + callerId + " sent successfully.");
                 }
             }
-        } else if (e is error) {
+        } else {
             log:printError("Error from Connector: " + e.message());
         }
     }
@@ -139,7 +139,7 @@ public type ContextChatMessage record {|
 |};
 
 public type ContextChatMessageStream record {|
-    stream<ChatMessage> content;
+    stream<ChatMessage, error?> content;
     map<string|string[]> headers;
 |};
 

@@ -106,7 +106,7 @@ class StreamIterator {
         if (result is anydata) {
             if (result is ()) {
                 self.isClosed = true;
-                return error EosError("End of stream reached");
+                return result;
             }
             return {value: result};
         } else if (result is handle) {

@@ -85,25 +85,25 @@ public client class HelloWorld32Client {
         Error? result = self.grpcClient.initStub(self, ROOT_DESCRIPTOR_32, getDescriptorMap32());
     }
 
-    isolated remote function sayHello(SampleMsg32 req) returns stream<SampleMsg32, Error>|Error {
+    isolated remote function sayHello(SampleMsg32 req) returns stream<SampleMsg32, Error?>|Error {
         var payload = check self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
-        [stream<anydata, Error>, map<string|string[]>][result, _] = payload;
+        [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
         SampleMsg32Stream outputStream = new SampleMsg32Stream(result);
-        return new stream<SampleMsg32, Error>(outputStream);
+        return new stream<SampleMsg32, Error?>(outputStream);
     }
 
     isolated remote function sayHelloContext(SampleMsg32 req) returns ContextSampleMsg32Stream|Error {
         var payload = check self.grpcClient->executeServerStreaming("HelloWorld32/sayHello", req);
-        [stream<anydata, Error>, map<string|string[]>][result, headers] = payload;
+        [stream<anydata, Error?>, map<string|string[]>][result, headers] = payload;
         SampleMsg32Stream outputStream = new SampleMsg32Stream(result);
-        return {content: new stream<SampleMsg32, Error>(outputStream), headers: headers};
+        return {content: new stream<SampleMsg32, Error?>(outputStream), headers: headers};
     }
 }
 
 public class SampleMsg32Stream {
-    private stream<anydata, Error> anydataStream;
+    private stream<anydata, Error?> anydataStream;
 
-    public isolated function init(stream<anydata, Error> anydataStream) {
+    public isolated function init(stream<anydata, Error?> anydataStream) {
         self.anydataStream = anydataStream;
     }
 

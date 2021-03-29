@@ -56,9 +56,9 @@ isolated function testBidiStreaming() returns Error? {
     }
 
     var responseMsg = ep->receiveString();
-    if (responseMsg is string) {
+    if responseMsg is string {
         test:assertEquals(responseMsg, "Sam: Hi");
-    } else {
+    } else if responseMsg is error {
         test:assertFail(msg = responseMsg.message());
     }
 
@@ -71,7 +71,7 @@ isolated function testBidiStreaming() returns Error? {
     responseMsg = ep->receiveString();
     if (responseMsg is string) {
         test:assertEquals(responseMsg, "Sam: GM");
-    } else {
+    } else if (responseMsg is Error) {
         test:assertFail(msg = responseMsg.message());
     }
 
@@ -111,14 +111,24 @@ public client class ChatStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function receiveString() returns string|Error {
-        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
-        return payload.toString();
+    isolated remote function receiveString() returns string|Error? {
+        var response = check self.sClient->receive();
+        if response is () {
+            return response;
+        } else {
+            [anydata, map<string|string[]>] [payload, headers] = response;
+            return payload.toString();
+        }
     }
 
-    isolated remote function receiveContextString() returns ContextString|Error {
-        [anydata, map<string|string[]>] [payload, headers] = check self.sClient->receive();
-        return {content: payload.toString(), headers: headers};
+    isolated remote function receiveContextString() returns ContextString|Error? {
+        var response = check self.sClient->receive();
+        if response is () {
+            return response;
+        } else {
+            [anydata, map<string|string[]>] [payload, headers] = response;
+            return {content: payload.toString(), headers: headers};
+        }
     }
 
     isolated remote function sendError(Error response) returns Error? {

@@ -26,13 +26,13 @@ service "OrderManagement" on ordermgtep {
 
     isolated remote function addOrder(OrderManagementStringCaller caller, Order value) {
         io:println(value);
-        var send = caller->sendString("Order is added " + value.id);
+        error? send = caller->sendString("Order is added " + value.id);
         error? complete = caller->complete();
     }
 
     isolated remote function getOrder(OrderManagementOrderCaller caller, string value) {
         Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
-        var send = caller->sendOrder('order);
+        error? send = caller->sendOrder('order);
         error? complete = caller->complete();
     }
 }

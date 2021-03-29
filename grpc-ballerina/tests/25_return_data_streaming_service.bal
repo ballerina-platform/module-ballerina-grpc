@@ -24,7 +24,7 @@ listener Listener ep25 = new (9115);
 }
 service "HelloWorld25" on ep25 {
 
-    remote isolated function lotsOfReplies(string name) returns stream<string> {
+    remote isolated function lotsOfReplies(string name) returns stream<string, error?> {
         io:println("Server received hello from " + name);
         string[] greets = [("Hi " + name), ("Hey " + name), ("GM " + name)];
         return greets.toStream();
@@ -32,7 +32,7 @@ service "HelloWorld25" on ep25 {
 }
 
 public type ContextStringStream record {|
-    stream<string> content;
+    stream<string, error?> content;
     map<string|string[]> headers;
 |};
 
