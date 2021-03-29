@@ -61,6 +61,7 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_KEYWORD_RECORD = AbstractNodeFactory.createIdentifierToken("record ");
     public static final Token SYNTAX_TREE_KEYWORD_RETURNS = AbstractNodeFactory.createIdentifierToken("returns ");
     public static final Token SYNTAX_TREE_KEYWORD_RETURN = AbstractNodeFactory.createIdentifierToken("return ");
+    public static final Token SYNTAX_TREE_KEYWORD_STREAM = AbstractNodeFactory.createIdentifierToken("stream");
 
     public static final Token SYNTAX_TREE_PARAM_REQUEST = AbstractNodeFactory.createIdentifierToken(" request");
 

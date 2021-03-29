@@ -39,7 +39,6 @@ public class Class {
             visibilityQualifier = AbstractNodeFactory.createIdentifierToken("\npublic ");
         }
         classTypeQualifiers = AbstractNodeFactory.createEmptyNodeList();
-        classTypeQualifiers = classTypeQualifiers.add(AbstractNodeFactory.createIdentifierToken("client "));
         className = AbstractNodeFactory.createIdentifierToken(name + " ");
         members = NodeFactory.createEmptyNodeList();
     }
@@ -58,5 +57,11 @@ public class Class {
 
     public void addMember(Node member) {
         members = members.add(member);
+    }
+
+    public void addQualifiers(String[] qualifiers) {
+        for (String qualifier: qualifiers) {
+            classTypeQualifiers = classTypeQualifiers.add(AbstractNodeFactory.createIdentifierToken(qualifier + " "));
+        }
     }
 }

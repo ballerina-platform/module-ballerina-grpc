@@ -28,6 +28,7 @@ import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getStreamTypeDescriptorNode;
 
 public class Record {
 
@@ -63,6 +64,17 @@ public class Record {
                 null,
                 null,
                 getParameterizedTypeDescriptorNode("map", descriptorNode),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addStreamField(String fieldName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, null),
                 AbstractNodeFactory.createIdentifierToken(fieldName),
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
