@@ -97,6 +97,7 @@ public class SyntaxTreeUtils {
                 serverStreamingClasses.add(getStreamClass(method));
             }
             for (Method method : service.getBidiStreamingFunctions()) {
+                client.addMember(getBidirectionalStreamingFunction(method).getFunctionDefinitionNode());
                 bidirectionalStreamingClasses.add(getStreamingClientClass(method));
             }
             moduleMembers = moduleMembers.add(client.getClassDefinitionNode());
@@ -217,6 +218,21 @@ public class SyntaxTreeUtils {
     }
 
     public static FunctionDefinition getClientStreamingFunction(Method method) {
+        String clientName = method.getMethodName().substring(0,1).toUpperCase() +
+                method.getMethodName().substring(1) + "StreamingClient";
+        FunctionSignature signature = new FunctionSignature();
+        signature.addReturns(Returns.getReturnTypeDescriptorNode(
+                Returns.getParenthesisedTypeDescriptorNode(getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(clientName),
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
+        FunctionBody body = new FunctionBody();
+        FunctionDefinition definition = new FunctionDefinition(method.getMethodName(),
+                signature.getFunctionSignature(), body.getFunctionBody());
+        definition.addQualifiers(new String[]{"isolated", "remote"});
+        return definition;
+    }
+
+    public static FunctionDefinition getBidirectionalStreamingFunction(Method method) {
         String clientName = method.getMethodName().substring(0,1).toUpperCase() +
                 method.getMethodName().substring(1) + "StreamingClient";
         FunctionSignature signature = new FunctionSignature();
