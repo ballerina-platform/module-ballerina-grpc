@@ -54,11 +54,14 @@ import java.util.List;
 
 import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
 import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getFieldAccessExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getMethodCallExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getRemoteMethodCallActionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getIncludedRecordParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getQualifiedNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getStreamTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getTypeReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getUnionTypeDescriptorNode;
@@ -128,7 +131,7 @@ public class SyntaxTreeUtils {
         }
 
         // ROOT_DESCRIPTOR
-        Constant rootDescriptor = new Constant("ROOT_DESCRIPTOR", stubFile.getRootDescriptor());
+        Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor(), false);
         moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
 
         // getDescriptorMap function
@@ -264,9 +267,12 @@ public class SyntaxTreeUtils {
         Class caller = new Class(key, true);
         caller.addQualifiers(new String[]{"client"});
 
+        caller.addMember(getObjectFieldNode("private", new String[]{}, getQualifiedNameReferenceNode("grpc", "Caller"), "caller"));
+
         FunctionSignature initSignature = new FunctionSignature();
         initSignature.addParameter(getRequiredParamNode(TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Caller"), "caller"));
         FunctionBody initBody = new FunctionBody();
+        initBody.addAssignmentStatement(getFieldAccessExpressionNode("self", "caller"), getSimpleNameReferenceNode("caller"));
         FunctionDefinition initDefinition = new FunctionDefinition("init",
                 initSignature.getFunctionSignature(), initBody.getFunctionBody());
         initDefinition.addQualifiers(new String[]{"public", "isolated"});
@@ -275,6 +281,7 @@ public class SyntaxTreeUtils {
         FunctionSignature getIdSignature = new FunctionSignature();
         getIdSignature.addReturns(Returns.getReturnTypeDescriptorNode(NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.INT_TYPE_DESC, AbstractNodeFactory.createIdentifierToken("int"))));
         FunctionBody getIdBody = new FunctionBody();
+        getIdBody.addReturnsStatement(getMethodCallExpressionNode(getFieldAccessExpressionNode("self", "caller"), "getId", new String[]{}));
         FunctionDefinition getIdDefinition = new FunctionDefinition("getId",
                 getIdSignature.getFunctionSignature(), getIdBody.getFunctionBody());
         getIdDefinition.addQualifiers(new String[]{"public", "isolated"});
@@ -284,6 +291,7 @@ public class SyntaxTreeUtils {
         sendStringSignature.addParameter(getRequiredParamNode(SYNTAX_TREE_VAR_STRING, "response"));
         sendStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
         FunctionBody sendStringBody = new FunctionBody();
+        sendStringBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "send", new String[]{"response"}));
         FunctionDefinition sendStringDefinition = new FunctionDefinition("sendString",
                 sendStringSignature.getFunctionSignature(), sendStringBody.getFunctionBody());
         sendStringDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -293,6 +301,7 @@ public class SyntaxTreeUtils {
         sendContextStringSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING, "response"));
         sendContextStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
         FunctionBody sendContextStringBody = new FunctionBody();
+        sendContextStringBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "send", new String[]{"response"}));
         FunctionDefinition sendContextStringDefinition = new FunctionDefinition("sendContextString",
                 sendContextStringSignature.getFunctionSignature(), sendContextStringBody.getFunctionBody());
         sendContextStringDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -302,6 +311,7 @@ public class SyntaxTreeUtils {
         sendErrorSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR, "response"));
         sendErrorSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
         FunctionBody sendErrorBody = new FunctionBody();
+        sendErrorBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "sendError", new String[]{"response"}));
         FunctionDefinition sendErrorDefinition = new FunctionDefinition("sendError",
                 sendErrorSignature.getFunctionSignature(), sendErrorBody.getFunctionBody());
         sendErrorDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -310,6 +320,7 @@ public class SyntaxTreeUtils {
         FunctionSignature completeSignature = new FunctionSignature();
         completeSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
         FunctionBody completeBody = new FunctionBody();
+        completeBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "complete", new String[]{}));
         FunctionDefinition completeDefinition = new FunctionDefinition("complete",
                 completeSignature.getFunctionSignature(), completeBody.getFunctionBody());
         completeDefinition.addQualifiers(new String[]{"isolated", "remote"});
