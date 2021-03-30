@@ -23,6 +23,7 @@ import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
+import io.ballerina.compiler.syntax.tree.ListBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
@@ -30,9 +31,11 @@ import io.ballerina.compiler.syntax.tree.ObjectFieldNode;
 import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.StreamTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
+import io.ballerina.compiler.syntax.tree.TupleTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.TypeParameterNode;
 import io.ballerina.compiler.syntax.tree.TypeReferenceNode;
@@ -134,5 +137,21 @@ public class TypeDescriptor {
     public static TypedBindingPatternNode getTypedBindingPatternNode(TypeDescriptorNode typeDescriptorNode,
                                                                      BindingPatternNode bindingPatternNode) {
         return NodeFactory.createTypedBindingPatternNode(typeDescriptorNode, bindingPatternNode);
+    }
+
+    public static TupleTypeDescriptorNode getTupleTypeDescriptorNode(SeparatedNodeList<Node> memberTypeDesc) {
+        return NodeFactory.createTupleTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
+                memberTypeDesc,
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
+        );
+    }
+
+    public static ListBindingPatternNode getListBindingPatternNode(SeparatedNodeList<BindingPatternNode> bindingPatterns) {
+        return NodeFactory.createListBindingPatternNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
+                bindingPatterns,
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
+        );
     }
 }

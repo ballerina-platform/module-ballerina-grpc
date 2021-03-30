@@ -35,7 +35,7 @@ public class VariableDeclaration {
     private ExpressionNode initializer;
 
     public VariableDeclaration(TypedBindingPatternNode patternNode, ExpressionNode initializer) {
-        annotations = null;
+        annotations = NodeFactory.createEmptyNodeList();
         finalKeyWord = null;
         this.patternNode = patternNode;
         this.initializer = initializer;
