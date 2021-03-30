@@ -18,6 +18,7 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree;
 
+import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
@@ -27,6 +28,7 @@ import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Literal.getLiteralValueToken;
 
 public class Map {
@@ -45,15 +47,42 @@ public class Map {
         );
     }
 
-    public void addField(String key, String value) {
+    public void addStringField(String key, String value) {
         if (fields.size() > 0) {
             fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
         }
         fields.add(
-                NodeFactory.createSpecificFieldNode(null,
+                NodeFactory.createSpecificFieldNode(
+                        null,
                         NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, getLiteralValueToken(key)),
                         SyntaxTreeConstants.SYNTAX_TREE_COLON,
                         NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, getLiteralValueToken(value)))
+        );
+    }
+
+    public void addMethodCallField(String key, ExpressionNode expression, String methodName, String[] args) {
+        if (fields.size() > 0) {
+            fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+        }
+        fields.add(
+                NodeFactory.createSpecificFieldNode(
+                        null,
+                        NodeFactory.createIdentifierToken(key),
+                        SyntaxTreeConstants.SYNTAX_TREE_COLON,
+                        Expression.getMethodCallExpressionNode(expression, methodName, args))
+        );
+    }
+
+    public void addSimpleNameReferenceField(String key, String value) {
+        if (fields.size() > 0) {
+            fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+        }
+        fields.add(
+                NodeFactory.createSpecificFieldNode(
+                        null,
+                        NodeFactory.createIdentifierToken(key),
+                        SyntaxTreeConstants.SYNTAX_TREE_COLON,
+                        getSimpleNameReferenceNode(value))
         );
     }
 }

@@ -19,7 +19,6 @@
 package org.ballerinalang.net.grpc.builder.constants;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
-import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.Token;
@@ -46,7 +45,7 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_ASTERISK = AbstractNodeFactory.createIdentifierToken("*");
     public static final Token SYNTAX_TREE_QUESTION_MARK = AbstractNodeFactory.createIdentifierToken("?");
     public static final Token SYNTAX_TREE_BODY_START_DELIMITER = AbstractNodeFactory.createIdentifierToken("{|\n");
-    public static final Token SYNTAX_TREE_NEWLINE = AbstractNodeFactory.createIdentifierToken("\n");
+    public static final Token SYNTAX_TREE_BLANK_LINE = AbstractNodeFactory.createIdentifierToken("\n\n");
     public static final Token SYNTAX_TREE_BODY_END_DELIMITER = AbstractNodeFactory.createIdentifierToken("|}");
     public static final Token SYNTAX_TREE_IT= AbstractNodeFactory.createIdentifierToken("<");
     public static final Token SYNTAX_TREE_GT= AbstractNodeFactory.createIdentifierToken(">");
@@ -73,5 +72,5 @@ public class SyntaxTreeConstants {
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING = TypeDescriptor.getBuiltinSimpleNameReferenceNode("string");
     public static final QualifiedNameReferenceNode SYNTAX_TREE_GRPC_ERROR = TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Error");
     public static final SimpleNameReferenceNode SYNTAX_TREE_CONTEXT_STRING = Expression.getSimpleNameReferenceNode("ContextString");
-    public static final ArrayTypeDescriptorNode SYNTAX_TREE_VAR_STRING_ARRAY = TypeDescriptor.getArrayTypeDescriptorNode("string");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING_ARRAY = TypeDescriptor.getArrayTypeDescriptorNode("string");
 }
