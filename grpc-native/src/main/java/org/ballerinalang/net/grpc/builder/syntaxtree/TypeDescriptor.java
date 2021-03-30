@@ -23,7 +23,6 @@ import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
-import io.ballerina.compiler.syntax.tree.FieldAccessExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
@@ -31,7 +30,6 @@ import io.ballerina.compiler.syntax.tree.ObjectFieldNode;
 import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
-import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.StreamTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
@@ -65,10 +63,6 @@ public class TypeDescriptor {
             return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.INT_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
         }
         return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.STRING_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
-    }
-
-    public static SimpleNameReferenceNode getSimpleNameReferenceNode(String name) {
-        return NodeFactory.createSimpleNameReferenceNode(AbstractNodeFactory.createIdentifierToken(name + " "));
     }
 
     public static TypeParameterNode getTypeParameterNode(TypeDescriptorNode typeNode) {
@@ -135,14 +129,6 @@ public class TypeDescriptor {
 
     public static CaptureBindingPatternNode getCaptureBindingPatternNode(String name) {
         return NodeFactory.createCaptureBindingPatternNode(AbstractNodeFactory.createIdentifierToken(name));
-    }
-
-    public static FieldAccessExpressionNode getFieldAccessExpressionNode(String var, String fieldName) {
-        return NodeFactory.createFieldAccessExpressionNode(
-                getSimpleNameReferenceNode(var),
-                SyntaxTreeConstants.SYNTAX_TREE_DOT,
-                getBuiltinSimpleNameReferenceNode(fieldName)
-        );
     }
 
     public static TypedBindingPatternNode getTypedBindingPatternNode(TypeDescriptorNode typeDescriptorNode,
