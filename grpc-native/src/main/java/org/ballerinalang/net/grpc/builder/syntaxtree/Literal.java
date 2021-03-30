@@ -25,7 +25,7 @@ import io.ballerina.compiler.syntax.tree.SyntaxKind;
 public class Literal {
 
     public static LiteralValueToken getLiteralValueToken(String literal) {
-        return NodeFactory.createLiteralValueToken(SyntaxKind.DECIMAL_INTEGER_LITERAL_TOKEN, "\"" + literal +
+        return NodeFactory.createLiteralValueToken(SyntaxKind.STRING_LITERAL, "\"" + literal +
                 "\"", NodeFactory.createEmptyMinutiaeList(), NodeFactory.createEmptyMinutiaeList());
     }
 
