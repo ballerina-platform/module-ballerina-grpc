@@ -19,6 +19,7 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree;
 
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
+import io.ballerina.compiler.syntax.tree.ExpressionStatementNode;
 import io.ballerina.compiler.syntax.tree.FunctionBodyNode;
 import io.ballerina.compiler.syntax.tree.IfElseStatementNode;
 import io.ballerina.compiler.syntax.tree.Node;
@@ -68,5 +69,9 @@ public class FunctionBody {
 
     public void addIfElseStatement(IfElseStatementNode node) {
         statements = statements.add(node);
+    }
+
+    public void addExpressionStatement(ExpressionStatementNode expressionStatement) {
+        statements = statements.add(expressionStatement);
     }
 }

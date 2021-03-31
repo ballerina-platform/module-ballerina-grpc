@@ -20,6 +20,7 @@ package org.ballerinalang.net.grpc.builder.syntaxtree;
 
 import io.ballerina.compiler.syntax.tree.CheckExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
+import io.ballerina.compiler.syntax.tree.ExpressionStatementNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
@@ -31,6 +32,14 @@ public class Initializer {
                 SyntaxKind.CHECK_ACTION,
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_CHECK,
                 expression
+        );
+    }
+
+    public static ExpressionStatementNode getCallStatementNode(ExpressionNode expression) {
+        return NodeFactory.createExpressionStatementNode(
+                SyntaxKind.CALL_STATEMENT,
+                expression,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         );
     }
 }
