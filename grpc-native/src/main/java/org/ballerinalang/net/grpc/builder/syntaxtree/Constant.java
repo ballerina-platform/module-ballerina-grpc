@@ -50,7 +50,7 @@ public class Constant {
     public ConstantDeclarationNode getConstantDeclarationNode() {
         return NodeFactory.createConstantDeclarationNode(
                 null,
-                null,
+                visibilityQualifier,
                 constKeyWord,
                 typeDescriptor,
                 variableName,

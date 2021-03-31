@@ -29,6 +29,7 @@ import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
+import io.ballerina.compiler.syntax.tree.StatementNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
 import io.ballerina.compiler.syntax.tree.Token;
@@ -45,6 +46,7 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.Constant;
 import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionBody;
 import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionDefinition;
 import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionSignature;
+import org.ballerinalang.net.grpc.builder.syntaxtree.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.Imports;
 import org.ballerinalang.net.grpc.builder.syntaxtree.Map;
 import org.ballerinalang.net.grpc.builder.syntaxtree.Record;
@@ -57,6 +59,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
+import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
+import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA;
 import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getFieldAccessExpressionNode;
@@ -65,7 +69,12 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getRemote
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getIncludedRecordParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getRequiredParamNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getBlockStatementNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getBracedExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getNilTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Initializer.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Returns.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getListBindingPatternNode;
@@ -109,7 +118,7 @@ public class SyntaxTreeUtils {
             for (Method method : service.getServerStreamingFunctions()) {
                 client.addMember(getServerStreamingFunction(method).getFunctionDefinitionNode());
                 client.addMember(getServerStreamingContextFunction(method).getFunctionDefinitionNode());
-                serverStreamingClasses.add(getServerStreamingClass(method));
+                serverStreamingClasses.add(getServerStreamClass(method));
             }
             for (Method method : service.getBidiStreamingFunctions()) {
                 client.addMember(getBidirectionalStreamingFunction(method).getFunctionDefinitionNode());
@@ -156,7 +165,7 @@ public class SyntaxTreeUtils {
         for (Descriptor descriptor : stubFile.getDescriptors()) {
             descriptorMap.addStringField(descriptor.getKey(), descriptor.getData());
         }
-        getDescriptorMapBody.addReturnsStatement(descriptorMap.getMappingConstructorExpressionNode());
+        getDescriptorMapBody.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
 
         FunctionDefinition getDescriptorMapDefinition = new FunctionDefinition("getDescriptorMap",
                 getDescriptorMapSignature.getFunctionSignature(), getDescriptorMapBody.getFunctionBody());
@@ -177,7 +186,7 @@ public class SyntaxTreeUtils {
         signature.addParameter(getIncludedRecordParamNode(getQualifiedNameReferenceNode(
                 "grpc", "ClientConfiguration"), "config"));
         signature.addReturns(Returns.getReturnTypeDescriptorNode(
-                TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+                SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody body = new FunctionBody();
         FunctionDefinition definition = new FunctionDefinition("init",
                 signature.getFunctionSignature(), body.getFunctionBody());
@@ -285,9 +294,9 @@ public class SyntaxTreeUtils {
 
         FunctionSignature sendSignature = new FunctionSignature();
         sendSignature.addParameter(getRequiredParamNode(getSimpleNameReferenceNode(method.getInputType()), "message"));
-        sendSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendSignature.addReturns(Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody sendBody = new FunctionBody();
-        sendBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "send", new String[]{"message"}));
+        sendBody.addReturnStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "send", new String[]{"message"}));
         FunctionDefinition sendDefinition = new FunctionDefinition("send" + inputType,
                 sendSignature.getFunctionSignature(), sendBody.getFunctionBody());
         sendDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -296,9 +305,9 @@ public class SyntaxTreeUtils {
 
         FunctionSignature sendContextSignature = new FunctionSignature();
         sendContextSignature.addParameter(getRequiredParamNode(getSimpleNameReferenceNode("Context" + inputType), "message"));
-        sendContextSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendContextSignature.addReturns(Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody sendContextBody = new FunctionBody();
-        sendContextBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "send", new String[]{"message"}));
+        sendContextBody.addReturnStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "send", new String[]{"message"}));
         FunctionDefinition sendContextDefinition = new FunctionDefinition("sendContext" + inputType,
                 sendContextSignature.getFunctionSignature(), sendContextBody.getFunctionBody());
         sendContextDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -319,8 +328,8 @@ public class SyntaxTreeUtils {
         FunctionSignature receiveSignature = new FunctionSignature();
         receiveSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getUnionTypeDescriptorNode(getSimpleNameReferenceNode(method.getOutputType()), SYNTAX_TREE_GRPC_ERROR)));
         FunctionBody receiveBody = new FunctionBody();
-        receiveBody.addVariableDeclaration(receive.getVariableDeclarationNode());
-        receiveBody.addReturnsStatement(getMethodCallExpressionNode(getSimpleNameReferenceNode("payload"), "toString", new String[]{}));
+        receiveBody.addVariableStatement(receive.getVariableDeclarationNode());
+        receiveBody.addReturnStatement(getMethodCallExpressionNode(getSimpleNameReferenceNode("payload"), "toString", new String[]{}));
         FunctionDefinition receiveDefinition = new FunctionDefinition("receive" + outputType,
                 receiveSignature.getFunctionSignature(), receiveBody.getFunctionBody());
         receiveDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -330,11 +339,11 @@ public class SyntaxTreeUtils {
         FunctionSignature receiveContextSignature = new FunctionSignature();
         receiveContextSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getUnionTypeDescriptorNode(getSimpleNameReferenceNode("Context" + outputType), SYNTAX_TREE_GRPC_ERROR)));
         FunctionBody receiveContextBody = new FunctionBody();
-        receiveContextBody.addVariableDeclaration(receive.getVariableDeclarationNode());
+        receiveContextBody.addVariableStatement(receive.getVariableDeclarationNode());
         Map returnMap = new Map();
         returnMap.addMethodCallField("content", getSimpleNameReferenceNode("payload"), "toString", new String[]{});
         returnMap.addSimpleNameReferenceField("headers", "headers");
-        receiveContextBody.addReturnsStatement(returnMap.getMappingConstructorExpressionNode());
+        receiveContextBody.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
         FunctionDefinition receiveContextDefinition = new FunctionDefinition("receiveContext" + outputType,
                 receiveContextSignature.getFunctionSignature(), receiveContextBody.getFunctionBody());
         receiveContextDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -343,9 +352,9 @@ public class SyntaxTreeUtils {
 
         FunctionSignature sendErrorSignature = new FunctionSignature();
         sendErrorSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR, "response"));
-        sendErrorSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendErrorSignature.addReturns(Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody sendErrorBody = new FunctionBody();
-        sendErrorBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "sendError", new String[]{"response"}));
+        sendErrorBody.addReturnStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "sendError", new String[]{"response"}));
         FunctionDefinition sendErrorDefinition = new FunctionDefinition("sendError",
                 sendErrorSignature.getFunctionSignature(), sendErrorBody.getFunctionBody());
         sendErrorDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -353,9 +362,9 @@ public class SyntaxTreeUtils {
         streamingClient.addMember(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
 
         FunctionSignature completeSignature = new FunctionSignature();
-        completeSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        completeSignature.addReturns(Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody completeBody = new FunctionBody();
-        completeBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "complete", new String[]{}));
+        completeBody.addReturnStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "complete", new String[]{}));
         FunctionDefinition completeDefinition = new FunctionDefinition("complete",
                 completeSignature.getFunctionSignature(), completeBody.getFunctionBody());
         completeDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -364,9 +373,71 @@ public class SyntaxTreeUtils {
         return streamingClient;
     }
 
-    public static Class getServerStreamingClass(Method method) {
-        Class streamingClient = new Class("StringStream", true);
-        return streamingClient;
+    public static Class getServerStreamClass(Method method) {
+        String inputType = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
+        Class serverStream = new Class(inputType + "Stream", true);
+
+        serverStream.addMember(getObjectFieldNode("private", new String[]{}, getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR), "anydataStream"));
+        serverStream.addMember(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
+
+        FunctionSignature initSignature = new FunctionSignature();
+        initSignature.addParameter(getRequiredParamNode(getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR), "anydataStream"));
+        FunctionBody initBody = new FunctionBody();
+        initBody.addAssignmentStatement(getFieldAccessExpressionNode("self", "anydataStream"), getSimpleNameReferenceNode("anydataStream"));
+        FunctionDefinition initDefinition = new FunctionDefinition("init",
+                initSignature.getFunctionSignature(), initBody.getFunctionBody());
+        initDefinition.addQualifiers(new String[]{"public", "isolated"});
+        serverStream.addMember(initDefinition.getFunctionDefinitionNode());
+        serverStream.addMember(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
+
+        FunctionSignature nextSignature = new FunctionSignature();
+        Record nextRecord = new Record();
+        nextRecord.addCustomField("value", method.getInputType());
+        nextSignature.addReturns(Returns.getReturnTypeDescriptorNode(getUnionTypeDescriptorNode(nextRecord.getRecordTypeDescriptorNode(), SYNTAX_TREE_GRPC_ERROR_OPTIONAL)));
+        FunctionBody nextBody = new FunctionBody();
+
+        VariableDeclaration streamValue = new VariableDeclaration(getTypedBindingPatternNode(getBuiltinSimpleNameReferenceNode("var"), getCaptureBindingPatternNode("streamValue")), getMethodCallExpressionNode(getFieldAccessExpressionNode("self", "anydataStream"), "next", new String[]{}));
+        nextBody.addVariableStatement(streamValue.getVariableDeclarationNode());
+
+        IfElse streamValueNilCheck = new IfElse(
+                getBracedExpressionNode(getTypeTestExpressionNode(getSimpleNameReferenceNode("streamValue"), getNilTypeDescriptorNode()))
+        );
+        streamValueNilCheck.addReturnStatement(getSimpleNameReferenceNode("streamValue"));
+        IfElse streamValueErrorCheck = new IfElse(
+                getBracedExpressionNode(getTypeTestExpressionNode(getSimpleNameReferenceNode("streamValue"), SYNTAX_TREE_GRPC_ERROR))
+        );
+        streamValueErrorCheck.addReturnStatement(getSimpleNameReferenceNode("streamValue"));
+
+        ArrayList<StatementNode> elseStatement = new ArrayList<>();
+
+        Record nextRecordRec = new Record();
+        nextRecordRec.addStringField("value");
+        Map nextRecordMap = new Map();
+        nextRecordMap.addTypeCastExpressionField("value", "string", getFieldAccessExpressionNode("streamValue", "value"));
+        VariableDeclaration nextRecordVar = new VariableDeclaration(getTypedBindingPatternNode(nextRecordRec.getRecordTypeDescriptorNode(), getCaptureBindingPatternNode("nextRecord")), nextRecordMap.getMappingConstructorExpressionNode());
+        elseStatement.add(nextRecordVar.getVariableDeclarationNode());
+        elseStatement.add(getReturnStatementNode(getSimpleNameReferenceNode("nextRecord")));
+        streamValueErrorCheck.addElseBody(getBlockStatementNode(elseStatement));
+        streamValueNilCheck.addElseBody(streamValueErrorCheck);
+
+        nextBody.addIfElseStatement(streamValueNilCheck.getIfElseStatementNode());
+
+        FunctionDefinition next = new FunctionDefinition("next",
+                nextSignature.getFunctionSignature(), nextBody.getFunctionBody());
+        next.addQualifiers(new String[]{"public", "isolated"});
+        serverStream.addMember(next.getFunctionDefinitionNode());
+        serverStream.addMember(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
+
+        FunctionSignature closeSignature = new FunctionSignature();
+        closeSignature.addReturns(Returns.getReturnTypeDescriptorNode(SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
+        FunctionBody closeBody = new FunctionBody();
+        closeBody.addReturnStatement(getMethodCallExpressionNode(getFieldAccessExpressionNode("self", "anydataStream"), "close", new String[]{}));
+        FunctionDefinition close = new FunctionDefinition("close",
+                closeSignature.getFunctionSignature(), closeBody.getFunctionBody());
+        close.addQualifiers(new String[]{"public", "isolated"});
+        serverStream.addMember(close.getFunctionDefinitionNode());
+
+        return serverStream;
     }
 
     private static Class getCallerClass(String key) {
@@ -389,7 +460,7 @@ public class SyntaxTreeUtils {
         FunctionSignature getIdSignature = new FunctionSignature();
         getIdSignature.addReturns(Returns.getReturnTypeDescriptorNode(NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.INT_TYPE_DESC, AbstractNodeFactory.createIdentifierToken("int"))));
         FunctionBody getIdBody = new FunctionBody();
-        getIdBody.addReturnsStatement(getMethodCallExpressionNode(getFieldAccessExpressionNode("self", "caller"), "getId", new String[]{}));
+        getIdBody.addReturnStatement(getMethodCallExpressionNode(getFieldAccessExpressionNode("self", "caller"), "getId", new String[]{}));
         FunctionDefinition getIdDefinition = new FunctionDefinition("getId",
                 getIdSignature.getFunctionSignature(), getIdBody.getFunctionBody());
         getIdDefinition.addQualifiers(new String[]{"public", "isolated"});
@@ -398,9 +469,9 @@ public class SyntaxTreeUtils {
 
         FunctionSignature sendStringSignature = new FunctionSignature();
         sendStringSignature.addParameter(getRequiredParamNode(SYNTAX_TREE_VAR_STRING, "response"));
-        sendStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody sendStringBody = new FunctionBody();
-        sendStringBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "send", new String[]{"response"}));
+        sendStringBody.addReturnStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "send", new String[]{"response"}));
         FunctionDefinition sendStringDefinition = new FunctionDefinition("sendString",
                 sendStringSignature.getFunctionSignature(), sendStringBody.getFunctionBody());
         sendStringDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -409,9 +480,9 @@ public class SyntaxTreeUtils {
 
         FunctionSignature sendContextStringSignature = new FunctionSignature();
         sendContextStringSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING, "response"));
-        sendContextStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendContextStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody sendContextStringBody = new FunctionBody();
-        sendContextStringBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "send", new String[]{"response"}));
+        sendContextStringBody.addReturnStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "send", new String[]{"response"}));
         FunctionDefinition sendContextStringDefinition = new FunctionDefinition("sendContextString",
                 sendContextStringSignature.getFunctionSignature(), sendContextStringBody.getFunctionBody());
         sendContextStringDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -420,9 +491,9 @@ public class SyntaxTreeUtils {
 
         FunctionSignature sendErrorSignature = new FunctionSignature();
         sendErrorSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR, "response"));
-        sendErrorSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendErrorSignature.addReturns(Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody sendErrorBody = new FunctionBody();
-        sendErrorBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "sendError", new String[]{"response"}));
+        sendErrorBody.addReturnStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "sendError", new String[]{"response"}));
         FunctionDefinition sendErrorDefinition = new FunctionDefinition("sendError",
                 sendErrorSignature.getFunctionSignature(), sendErrorBody.getFunctionBody());
         sendErrorDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -430,9 +501,9 @@ public class SyntaxTreeUtils {
         caller.addMember(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
 
         FunctionSignature completeSignature = new FunctionSignature();
-        completeSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error")));
+        completeSignature.addReturns(Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody completeBody = new FunctionBody();
-        completeBody.addReturnsStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "complete", new String[]{}));
+        completeBody.addReturnStatement(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "caller"), "complete", new String[]{}));
         FunctionDefinition completeDefinition = new FunctionDefinition("complete",
                 completeSignature.getFunctionSignature(), completeBody.getFunctionBody());
         completeDefinition.addQualifiers(new String[]{"isolated", "remote"});

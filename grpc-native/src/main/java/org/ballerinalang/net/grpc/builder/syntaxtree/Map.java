@@ -30,6 +30,7 @@ import java.util.List;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Literal.getLiteralValueToken;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getTypeCastExpressionNode;
 
 public class Map {
 
@@ -83,6 +84,20 @@ public class Map {
                         NodeFactory.createIdentifierToken(key),
                         SyntaxTreeConstants.SYNTAX_TREE_COLON,
                         getSimpleNameReferenceNode(value))
+        );
+    }
+
+    public void addTypeCastExpressionField(String fieldName, String typeCastParam, ExpressionNode expression) {
+        if (fields.size() > 0) {
+            fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+        }
+        fields.add(
+                NodeFactory.createSpecificFieldNode(
+                        null,
+                        NodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_COLON,
+                        getTypeCastExpressionNode(typeCastParam, expression)
+                )
         );
     }
 }
