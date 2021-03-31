@@ -23,6 +23,7 @@ import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
+import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.ListBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
@@ -36,6 +37,7 @@ import io.ballerina.compiler.syntax.tree.StreamTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TupleTypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.TypeCastExpressionNode;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.TypeParameterNode;
 import io.ballerina.compiler.syntax.tree.TypeReferenceNode;
@@ -152,6 +154,18 @@ public class TypeDescriptor {
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
                 bindingPatterns,
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
+        );
+    }
+
+    public static TypeCastExpressionNode getTypeCastExpressionNode(String typeCastParam, ExpressionNode expression) {
+        return NodeFactory.createTypeCastExpressionNode(
+                SyntaxTreeConstants.SYNTAX_TREE_IT,
+                NodeFactory.createTypeCastParamNode(
+                        NodeFactory.createEmptyNodeList(),
+                        getBuiltinSimpleNameReferenceNode(typeCastParam)
+                ),
+                SyntaxTreeConstants.SYNTAX_TREE_GT,
+                expression
         );
     }
 }
