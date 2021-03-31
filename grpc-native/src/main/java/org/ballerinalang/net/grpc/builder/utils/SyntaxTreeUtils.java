@@ -64,6 +64,7 @@ import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.S
 import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getFieldAccessExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getImplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
@@ -73,6 +74,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getBlockState
 import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getTypeTestExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Initializer.getCallStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Initializer.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Returns.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
@@ -103,9 +105,11 @@ public class SyntaxTreeUtils {
             client.addQualifiers(new String[]{"client"});
 
             client.addMember(getTypeReferenceNode(getQualifiedNameReferenceNode("grpc", "AbstractClientEndpoint")));
+            client.addMember(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
             client.addMember(getObjectFieldNode("private", new String[]{}, getQualifiedNameReferenceNode("grpc", "Client"), "grpcClient"));
-
+            client.addMember(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
             client.addMember(getInitFunction().getFunctionDefinitionNode());
+            client.addMember(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
 
             for (Method method : service.getUnaryFunctions()) {
                 client.addMember(getUnaryFunction(method).getFunctionDefinitionNode());
@@ -188,6 +192,8 @@ public class SyntaxTreeUtils {
         signature.addReturns(Returns.getReturnTypeDescriptorNode(
                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
         FunctionBody body = new FunctionBody();
+        body.addAssignmentStatement(getFieldAccessExpressionNode("self", "grpcClient"), getCheckExpressionNode(getImplicitNewExpressionNode(new String[]{"url", "config"})));
+        body.addExpressionStatement(getCallStatementNode(getCheckExpressionNode(getMethodCallExpressionNode(getFieldAccessExpressionNode("self", "grpcClient"), "initStub", new String[]{"self", "ROOT_DESCRIPTOR", "getDescriptorMap()"}))));
         FunctionDefinition definition = new FunctionDefinition("init",
                 signature.getFunctionSignature(), body.getFunctionBody());
         definition.addQualifiers(new String[]{"public", "isolated"});
