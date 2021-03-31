@@ -19,10 +19,12 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree;
 
 import io.ballerina.compiler.syntax.tree.AnnotationNode;
+import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.ParenthesisedTypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.ReturnStatementNode;
 import io.ballerina.compiler.syntax.tree.ReturnTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
@@ -44,6 +46,14 @@ public class Returns {
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
                 typeDesc,
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+        );
+    }
+
+    public static ReturnStatementNode getReturnStatementNode(ExpressionNode expression) {
+        return NodeFactory.createReturnStatementNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURN,
+                expression,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         );
     }
 }
