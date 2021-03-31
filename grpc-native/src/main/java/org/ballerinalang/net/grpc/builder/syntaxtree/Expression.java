@@ -22,6 +22,7 @@ import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.FieldAccessExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
+import io.ballerina.compiler.syntax.tree.ImplicitNewExpressionNode;
 import io.ballerina.compiler.syntax.tree.MethodCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
@@ -51,6 +52,9 @@ public class Expression {
     public static MethodCallExpressionNode getMethodCallExpressionNode(ExpressionNode expression, String methodName, String[] args) {
         List<Node> argList = new ArrayList<>();
         for (String arg : args) {
+            if (argList.size() > 0) {
+                argList.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+            }
             argList.add(NodeFactory.createPositionalArgumentNode(getSimpleNameReferenceNode(arg)));
         }
         SeparatedNodeList<FunctionArgumentNode> arguments = NodeFactory.createSeparatedNodeList(argList);
@@ -77,6 +81,24 @@ public class Expression {
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
                 arguments,
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+        );
+    }
+
+    public static ImplicitNewExpressionNode getImplicitNewExpressionNode(String[] args) {
+        List<Node> arguments = new ArrayList<>();
+        for (String arg : args) {
+            if (arguments.size() > 0) {
+                arguments.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+            }
+            arguments.add(NodeFactory.createPositionalArgumentNode(getSimpleNameReferenceNode(arg)));
+        }
+        return NodeFactory.createImplicitNewExpressionNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_NEW,
+                NodeFactory.createParenthesizedArgList(
+                        SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                        NodeFactory.createSeparatedNodeList(arguments),
+                        SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+                )
         );
     }
 }
