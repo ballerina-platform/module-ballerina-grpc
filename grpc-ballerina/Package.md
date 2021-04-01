@@ -123,8 +123,8 @@ service HelloWorld on new grpc:Listener(9090) {
         error? e = clientStream.forEach(function(string name) {
             // Handle the message sent from the stream here
         });
-        //A grpc:EosError is returned once the client stream is completed
-        if (e is grpc:EosError) {
+        //A nil value is returned once the client stream is completed
+        if (e is ()) {
             return "Ack";
         } else if (e is error) {
             // Handle the error sent by the client here
@@ -178,8 +178,8 @@ service Chat on new grpc:Listener(9090) {
             // Handle the streamed messages sent from the client here
             grpc:Error? err = caller->send(string `${chatMsg.name}: ${chatMsg.message}`);
         });
-        //A grpc:EosError is returned once the client has competed streaming
-        if (e is grpc:EosError) {
+        //A nil value is returned once the client has competed streaming
+        if (e is ()) {
             // Handle once the client has completed streaming
         } else if (e is error) {
             // Handle the error sent by the client here
@@ -210,7 +210,7 @@ The code snippet given below calls the above service using the auto-generated Ba
 
     // Receives the server stream response iteratively.
     string|grpc:Error result = streamingClient->receiveString();
-    while !(result is grpc:EosError) {
+    while !(result is ()) {
         if !(result is grpc:Error) {
             io:println(result);
         }

@@ -97,7 +97,7 @@ public class ClientConnectorListener implements HttpClientConnectorListener {
                                 // This is a protocol violation as we expect to receive trailer headers with Last Http
                                 // content.
                                 transportError = Status.Code.INTERNAL.toStatus().withDescription("Received unexpected" +
-                                        " EosError on DATA frame from server.");
+                                        " end-of-stream on DATA frame from server.");
                                 transportErrorMetadata = new DefaultHttpHeaders();
                                 stateListener.transportReportStatus(transportError, false, transportErrorMetadata);
                             } else {
