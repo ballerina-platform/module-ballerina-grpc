@@ -15,11 +15,11 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.ballerinalang.net.grpc.builder.utils;
+package org.ballerinalang.net.grpc.builder.balgen;
 
 import java.util.Locale;
 
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PACKAGE_SEPARATOR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 
 /**
  * Util functions which are use when generating . bal stub

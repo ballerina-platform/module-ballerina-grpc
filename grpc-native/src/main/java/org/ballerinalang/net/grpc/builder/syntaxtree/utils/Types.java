@@ -1,16 +1,16 @@
-package org.ballerinalang.net.grpc.builder.utils;
+package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
-import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
+import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 import org.ballerinalang.net.grpc.builder.stub.EnumField;
 import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
 import org.ballerinalang.net.grpc.builder.stub.Field;
 import org.ballerinalang.net.grpc.builder.stub.Message;
-import org.ballerinalang.net.grpc.builder.syntaxtree.Enum;
-import org.ballerinalang.net.grpc.builder.syntaxtree.Record;
-import org.ballerinalang.net.grpc.builder.syntaxtree.Type;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Enum;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Record;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Type;
 
-import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getUnionTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 
 public class Types {
 
@@ -63,7 +63,7 @@ public class Types {
                 messageRecord.getRecordTypeDescriptorNode());
     }
 
-    public static Enum getEnum(EnumMessage enumMessage) {
+    public static Enum getEnumType(EnumMessage enumMessage) {
         Enum enumMsg = new Enum(enumMessage.getMessageName(), true);
         for (EnumField field : enumMessage.getFieldList()) {
             enumMsg.addMember(Enum.getEnumMemberNode(field.getName()));

@@ -23,7 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.ballerinalang.net.grpc.builder.utils.BalGenerationUtils.bytesToHex;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils.bytesToHex;
 
 /**
  * Service descriptor definition.
