@@ -13,7 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-// This is the server implementation of the unary blocking/unblocking scenario.
+// This is the server implementation of the server streaming scenario.
 import ballerina/grpc;
 import ballerina/log;
 
@@ -24,19 +24,17 @@ listener grpc:Listener ep = new (9090);
     descMap: getDescriptorMap()
 }
 service "HelloWorld" on ep {
-    remote function hello(ContextString request) returns ContextString|error {
-        log:printInfo("Invoked the hello RPC call.");
-        // Reads the request content.
-        string message = "Hello " + request.content;
 
-        // Reads custom headers in request message.
-        string reqHeader = check grpc:getHeader(request.headers, "client_header_key");
-        log:printInfo("Server received header value: " + reqHeader);
-
-        // Sends response with custom headers.
-        return {
-            content: message,
-            headers: {server_header_key: "Response Header value"}
-        };
+    remote function sendReplies(string name, int x = 4) returns stream<string, error?>|error {
+        log:printInfo("Server received hello from " + name);
+        string[] greets = ["Hi", "Hey", "GM"];
+        // Create the array of responses by appending the received name.
+        int i = 0;
+        foreach string greet in greets {
+            greets[i] = greet + " " + name;
+            i += 1;
+        }
+        // Return the stream of strings back to the client.
+        return greets.toStream();
     }
 }

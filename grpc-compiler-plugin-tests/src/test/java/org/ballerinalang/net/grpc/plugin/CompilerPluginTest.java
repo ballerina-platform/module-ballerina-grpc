@@ -44,7 +44,8 @@ public class CompilerPluginTest {
             .toAbsolutePath();
 
     @Test
-    public void testCompilerPlugin() {
+    public void testCompilerPluginUnary() {
+
         Package currentPackage = loadPackage("package_01");
         PackageCompilation compilation = currentPackage.getCompilation();
 
@@ -52,13 +53,76 @@ public class CompilerPluginTest {
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
     }
 
+    @Test
+    public void testCompilerPluginServerStreaming() {
+
+        Package currentPackage = loadPackage("package_02");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+    }
+
+    @Test
+    public void testCompilerPluginServerStreamingWithCaller() {
+
+        Package currentPackage = loadPackage("package_03");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] return types are not allowed with " +
+         "the caller";
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+                diagnostic -> errMsg.equals(diagnostic.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginServerStreamingWithExtraParams() {
+
+        Package currentPackage = loadPackage("package_04");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] when there are two parameters to " +
+         "a remote function, the first one must be a caller type";
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+                diagnostic -> errMsg.equals(diagnostic.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginServerStreamingWithoutAnnotations() {
+
+        Package currentPackage = loadPackage("package_05");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(21:0,35:1)] undefined annotation: " +
+         "grpc:ServiceDescriptor";
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+                diagnostic -> errMsg.equals(diagnostic.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginServerStreamingWithResourceFunction() {
+
+        Package currentPackage = loadPackage("package_06");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(40:4,42:5)] only remote functions are " +
+         "allowed inside gRPC services";
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+                diagnostic -> errMsg.equals(diagnostic.toString())));
+    }
+
     private Package loadPackage(String path) {
+
         Path projectDirPath = RESOURCE_DIRECTORY.resolve(path);
         BuildProject project = BuildProject.load(getEnvironmentBuilder(), projectDirPath);
         return project.currentPackage();
     }
 
     private static ProjectEnvironmentBuilder getEnvironmentBuilder() {
+
         Environment environment = EnvironmentBuilder.getBuilder().setBallerinaHome(DISTRIBUTION_PATH).build();
         return ProjectEnvironmentBuilder.getBuilder(environment);
     }
