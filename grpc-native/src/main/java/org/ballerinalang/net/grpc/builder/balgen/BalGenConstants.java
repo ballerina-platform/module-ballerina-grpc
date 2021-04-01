@@ -15,7 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.ballerinalang.net.grpc.builder.utils;
+package org.ballerinalang.net.grpc.builder.balgen;
 
 import java.io.File;
 

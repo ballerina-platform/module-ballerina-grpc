@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.syntaxtree;
+package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
@@ -27,7 +27,7 @@ import io.ballerina.compiler.syntax.tree.ParenthesisedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ReturnStatementNode;
 import io.ballerina.compiler.syntax.tree.ReturnTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
-import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
+import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 public class Returns {
 

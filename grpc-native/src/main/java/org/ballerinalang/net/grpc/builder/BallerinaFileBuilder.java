@@ -38,9 +38,9 @@ import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.stub.ServiceFile;
 import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
 import org.ballerinalang.net.grpc.builder.stub.StubFile;
-import org.ballerinalang.net.grpc.builder.utils.BalGenConstants;
-import org.ballerinalang.net.grpc.builder.utils.BalGenerationUtils;
-import org.ballerinalang.net.grpc.builder.utils.SyntaxTreeUtils;
+import org.ballerinalang.net.grpc.builder.balgen.BalGenConstants;
+import org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils;
+import org.ballerinalang.net.grpc.builder.syntaxtree.SyntaxTreeGen;
 import org.ballerinalang.net.grpc.exception.CodeBuilderException;
 import org.ballerinalang.net.grpc.exception.GrpcServerException;
 import org.ballerinalang.net.grpc.proto.definition.EmptyMessage;
@@ -65,17 +65,17 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.EMPTY_DATA_TYPE;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.FILE_SEPARATOR;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GOOGLE_API_LIB;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GOOGLE_STANDARD_LIB;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GRPC_CLIENT;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GRPC_SERVICE;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PACKAGE_SEPARATOR;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.STUB_FILE_PREFIX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.TEMPLATES_DIR_PATH_KEY;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.TEMPLATES_SUFFIX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.TEMPLATE_DIR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.EMPTY_DATA_TYPE;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.FILE_SEPARATOR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GOOGLE_API_LIB;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GOOGLE_STANDARD_LIB;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_SERVICE;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.STUB_FILE_PREFIX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_DIR_PATH_KEY;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_SUFFIX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATE_DIR;
 import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.PROTO_FILE_EXTENSION;
 
 /**
@@ -238,7 +238,7 @@ public class BallerinaFileBuilder {
 //                    writeOutputFile(serviceFile, servicePath);
 
                     String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeUtils.generateSyntaxTree(stubFileObject), stubFilePath);
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
                 } else if (GRPC_CLIENT.equals(mode)) {
 //                    String clientFilePath = generateOutputFile(
 //                            this.balOutPath,
@@ -247,11 +247,11 @@ public class BallerinaFileBuilder {
 //                    writeOutputFile(new ClientFile(serviceDescriptor.getName()),
 //                            SAMPLE_CLIENT_TEMPLATE_NAME, clientFilePath);
                     String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeUtils.generateSyntaxTree(stubFileObject), stubFilePath);
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
                 } else {
                     // For both client and server sides
                     String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeUtils.generateSyntaxTree(stubFileObject), stubFilePath);
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
                 }
             }
         } catch (GrpcServerException e) {

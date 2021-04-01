@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.syntaxtree;
+package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.FunctionBodyNode;
