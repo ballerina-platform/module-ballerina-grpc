@@ -31,13 +31,13 @@ import io.ballerina.tools.text.TextDocuments;
 import org.apache.commons.lang3.StringUtils;
 import org.ballerinalang.formatter.core.Formatter;
 import org.ballerinalang.formatter.core.FormatterException;
-import org.ballerinalang.net.grpc.builder.components.Descriptor;
-import org.ballerinalang.net.grpc.builder.components.EnumMessage;
-import org.ballerinalang.net.grpc.builder.components.Message;
-import org.ballerinalang.net.grpc.builder.components.Method;
-import org.ballerinalang.net.grpc.builder.components.ServiceFile;
-import org.ballerinalang.net.grpc.builder.components.ServiceStub;
-import org.ballerinalang.net.grpc.builder.components.StubFile;
+import org.ballerinalang.net.grpc.builder.stub.Descriptor;
+import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
+import org.ballerinalang.net.grpc.builder.stub.Message;
+import org.ballerinalang.net.grpc.builder.stub.Method;
+import org.ballerinalang.net.grpc.builder.stub.ServiceFile;
+import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
+import org.ballerinalang.net.grpc.builder.stub.StubFile;
 import org.ballerinalang.net.grpc.builder.utils.BalGenConstants;
 import org.ballerinalang.net.grpc.builder.utils.BalGenerationUtils;
 import org.ballerinalang.net.grpc.builder.utils.SyntaxTreeUtils;
@@ -227,6 +227,7 @@ public class BallerinaFileBuilder {
 
                 if (GRPC_SERVICE.equals(mode)) {
                     serviceFile = sampleServiceBuilder.build();
+                    // Todo: remove
                     serviceFile.setEnableEp(enableEp);
                     if (enableEp) {
                         enableEp = false;
