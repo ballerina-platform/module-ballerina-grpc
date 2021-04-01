@@ -110,7 +110,7 @@ public class BallerinaFileBuilder {
     }
 
     public static SyntaxTree syntaxTreeDemo() {
-        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "grpc_server_streaming_pb.bal");
+        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "helloWorldWithEnum_pb.bal");
         String content = null;
         try {
             content = getSourceText(sourceFilePath);
