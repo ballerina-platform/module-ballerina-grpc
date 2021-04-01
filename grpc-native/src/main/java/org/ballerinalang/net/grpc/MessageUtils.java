@@ -426,7 +426,7 @@ public class MessageUtils {
     }
 
     /**
-     * Returns Custom Caller Type name using service name and return type.
+     * Returns Custom Caller Types name using service name and return type.
      *
      * @param serviceName Service name defined in the contract.
      * @param returnType output type.

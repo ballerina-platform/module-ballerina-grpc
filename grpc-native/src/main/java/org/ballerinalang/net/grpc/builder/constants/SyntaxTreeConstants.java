@@ -61,6 +61,7 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_KEYWORD_CHECK = AbstractNodeFactory.createIdentifierToken("check ");
     public static final Token SYNTAX_TREE_KEYWORD_TYPE = AbstractNodeFactory.createIdentifierToken("type ");
     public static final Token SYNTAX_TREE_KEYWORD_RECORD = AbstractNodeFactory.createIdentifierToken("record ");
+    public static final Token SYNTAX_TREE_KEYWORD_ENUM = AbstractNodeFactory.createIdentifierToken("enum ");
     public static final Token SYNTAX_TREE_KEYWORD_RETURNS = AbstractNodeFactory.createIdentifierToken("returns ");
     public static final Token SYNTAX_TREE_KEYWORD_RETURN = AbstractNodeFactory.createIdentifierToken("return ");
     public static final Token SYNTAX_TREE_KEYWORD_STREAM = AbstractNodeFactory.createIdentifierToken("stream ");
@@ -74,6 +75,7 @@ public class SyntaxTreeConstants {
 
     // Nodes related to grpc module
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING = TypeDescriptor.getBuiltinSimpleNameReferenceNode("string");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_BOOLEAN = TypeDescriptor.getBuiltinSimpleNameReferenceNode("boolean");
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_ANYDATA = TypeDescriptor.getBuiltinSimpleNameReferenceNode("anydata");
     public static final QualifiedNameReferenceNode SYNTAX_TREE_GRPC_ERROR = TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Error");
     public static final OptionalTypeDescriptorNode SYNTAX_TREE_GRPC_ERROR_OPTIONAL = TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error");
