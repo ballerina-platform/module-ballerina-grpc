@@ -29,16 +29,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.BODY_PARAMETER;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.HTTP_PATTERN_NOT_SET;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.INITIAL_PARENT_PREFIX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.MESSAGE_PARAMETER;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PATH_PARAMETER;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PATH_PARAMETER_PATTERN_REGEX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PRIMITIVE_FIELD_NAME;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.QUERY_PARAMETER;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenerationUtils.checkPrimitiveType;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenerationUtils.getMappingBalType;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.BODY_PARAMETER;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.HTTP_PATTERN_NOT_SET;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.INITIAL_PARENT_PREFIX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.MESSAGE_PARAMETER;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PATH_PARAMETER;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PATH_PARAMETER_PATTERN_REGEX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PRIMITIVE_FIELD_NAME;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.QUERY_PARAMETER;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils.checkPrimitiveType;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils.getMappingBalType;
 
 /**
  * Method definition bean class.

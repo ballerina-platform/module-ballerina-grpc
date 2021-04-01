@@ -19,11 +19,11 @@ package org.ballerinalang.net.grpc.builder.stub;
 
 import java.util.Arrays;
 
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.EMPTY_STRING;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PACKAGE_SEPARATOR;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PACKAGE_SEPARATOR_REGEX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PARENT_SPLITTING_INDEX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.QUERY_PARAMETER;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.EMPTY_STRING;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR_REGEX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PARENT_SPLITTING_INDEX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.QUERY_PARAMETER;
 
 /**
  * Parameter definition class.

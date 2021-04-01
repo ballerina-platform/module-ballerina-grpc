@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GRPC_PROXY;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_PROXY;
 import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.TMP_DIRECTORY_PATH;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.COMPONENT_IDENTIFIER;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.EMPTY_STRING;
