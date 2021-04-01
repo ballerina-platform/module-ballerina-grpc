@@ -45,6 +45,8 @@ import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.UnionTypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
+
 public class TypeDescriptor {
 
     public static QualifiedNameReferenceNode getQualifiedNameReferenceNode(String modulePrefix, String identifier) {
@@ -55,6 +57,10 @@ public class TypeDescriptor {
     }
 
     public static OptionalTypeDescriptorNode getOptionalTypeDescriptorNode(String modulePrefix, String identifier) {
+        if (modulePrefix.isEmpty()) {
+            return NodeFactory.createOptionalTypeDescriptorNode(
+                    getSimpleNameReferenceNode(identifier), SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK);
+        }
         return NodeFactory.createOptionalTypeDescriptorNode(
                 getQualifiedNameReferenceNode(modulePrefix, identifier), SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK);
     }

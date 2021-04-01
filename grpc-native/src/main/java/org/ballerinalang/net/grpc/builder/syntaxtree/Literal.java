@@ -19,8 +19,10 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree;
 
 import io.ballerina.compiler.syntax.tree.LiteralValueToken;
+import io.ballerina.compiler.syntax.tree.NilLiteralNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
+import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
 public class Literal {
 
@@ -32,5 +34,12 @@ public class Literal {
     public static LiteralValueToken getLiteralValueToken(int literal) {
         return NodeFactory.createLiteralValueToken(SyntaxKind.DECIMAL_INTEGER_LITERAL_TOKEN, "\"" + literal +
                 "\"", NodeFactory.createEmptyMinutiaeList(), NodeFactory.createEmptyMinutiaeList());
+    }
+
+    public static NilLiteralNode getNilLiteralNode() {
+        return NodeFactory.createNilLiteralNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+        );
     }
 }
