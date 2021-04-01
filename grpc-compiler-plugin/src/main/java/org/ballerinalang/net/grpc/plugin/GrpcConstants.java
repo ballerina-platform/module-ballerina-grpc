@@ -22,5 +22,14 @@ package org.ballerinalang.net.grpc.plugin;
  * gRPC Compiler plugin constants.
  */
 public class GrpcConstants {
+
     public static final String GRPC_ANNOTATION_NAME = "grpc:ServiceDescriptor";
+
+    // Diagnostic error messages
+    public static final String UNDEFINED_ANNOTATION_MSG = "undefined annotation: ";
+    public static final String ONLY_REMOTE_FUNCTIONS_MSG = "only remote functions are allowed inside gRPC services";
+    public static final String RETURN_WITH_CALLER_MSG = "return types are not allowed with the caller";
+    public static final String MAX_PARAM_COUNT_MSG = "the maximum number of parameters to a remote function is 2";
+    public static final String TWO_PARAMS_WITHOUT_CALLER_MSG = "when there are two parameters to a remote function, " +
+            "the first one must be a caller type";
 }

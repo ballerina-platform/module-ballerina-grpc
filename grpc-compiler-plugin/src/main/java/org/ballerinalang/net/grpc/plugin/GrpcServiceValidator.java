@@ -22,6 +22,9 @@ import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
 import io.ballerina.compiler.syntax.tree.NodeList;
+import io.ballerina.compiler.syntax.tree.ParameterNode;
+import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
+import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.ServiceDeclarationNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.projects.plugins.AnalysisTask;
@@ -32,10 +35,14 @@ import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 import org.ballerinalang.util.diagnostic.DiagnosticErrorCode;
 
+import java.util.Locale;
+
 /**
  * gRPC service validator for compiler API.
  */
 public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisContext> {
+
+    private static final String GRPC_GENERIC_CALLER = "caller";
 
     @Override
     public void perform(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
@@ -52,46 +59,76 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
             }
         }
         if (!isServiceDescAnnotationPresents) {
-            DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(
-                    DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(),
-                    "undefined annotation: " + GrpcConstants.GRPC_ANNOTATION_NAME, DiagnosticSeverity.ERROR);
-            Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo, expressionNode.location());
-            syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
+            reportServiceErrorDiagnostic(expressionNode, syntaxNodeAnalysisContext,
+                    (GrpcConstants.UNDEFINED_ANNOTATION_MSG + GrpcConstants.GRPC_ANNOTATION_NAME));
         }
 
-        // Check the functions are remote or not
         expressionNode.members().stream().filter(child -> child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
                 || child.kind() == SyntaxKind.RESOURCE_ACCESSOR_DEFINITION).forEach(node -> {
 
             FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) node;
-            FunctionSignatureNode functionSignatureNode = functionDefinitionNode.functionSignature();
-
             // Check functions are remote or not
-            boolean hasRemoteKeyword = functionDefinitionNode.qualifierList().stream()
-                    .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
-            if (!hasRemoteKeyword) {
-                DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(DiagnosticErrorCode.UNDEFINED_ANNOTATION
-                        .diagnosticId(), "only remote functions are allowed inside gRPC services",
-                        DiagnosticSeverity.ERROR);
-                Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo,
-                        functionDefinitionNode.location());
-                syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
-            }
+            validateServiceFunctions(functionDefinitionNode, syntaxNodeAnalysisContext);
+            // Check params and return types
+            validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext);
 
-            // Check return type
-            if (functionSignatureNode.returnTypeDesc().isPresent()) {
+        });
+    }
+
+    public void validateServiceFunctions(FunctionDefinitionNode functionDefinitionNode,
+                                         SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
+
+        boolean hasRemoteKeyword = functionDefinitionNode.qualifierList().stream()
+                .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
+        if (!hasRemoteKeyword) {
+            reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                    GrpcConstants.ONLY_REMOTE_FUNCTIONS_MSG);
+        }
+    }
+
+    public void validateFunctionSignature(FunctionDefinitionNode functionDefinitionNode,
+                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
+
+        FunctionSignatureNode functionSignatureNode = functionDefinitionNode.functionSignature();
+        SeparatedNodeList<ParameterNode> parameterNodes = functionSignatureNode.parameters();
+
+        if (parameterNodes.size() == 2) {
+            RequiredParameterNode requiredParameterNode = (RequiredParameterNode)
+                    functionSignatureNode.parameters().get(0);
+            if (!requiredParameterNode.toString().toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
+                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                        GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_MSG);
+            } else if (functionSignatureNode.returnTypeDesc().isPresent()) {
                 SyntaxKind returnTypeKind = functionSignatureNode.returnTypeDesc().get().type().kind();
-                if (functionSignatureNode.parameters().size() >= 2 &&
-                        !SyntaxKind.NIL_TYPE_DESC.name().equals(returnTypeKind.name())) {
-
-                    DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(
-                            DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(),
-                            "return types are not allowed with the caller", DiagnosticSeverity.ERROR);
-                    Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo,
-                            functionDefinitionNode.location());
-                    syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
+                if (!SyntaxKind.NIL_TYPE_DESC.name().equals(returnTypeKind.name())) {
+                    reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                            GrpcConstants.RETURN_WITH_CALLER_MSG);
                 }
             }
-        });
+        } else if (parameterNodes.size() > 2) {
+            reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                    GrpcConstants.MAX_PARAM_COUNT_MSG);
+        }
+
+    }
+
+    public void reportErrorDiagnostic(FunctionDefinitionNode functionDefinitionNode,
+                                      SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message) {
+
+        DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(
+                DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(), message, DiagnosticSeverity.ERROR);
+        Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo,
+                functionDefinitionNode.location());
+        syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
+    }
+
+    public void reportServiceErrorDiagnostic(ServiceDeclarationNode serviceDeclarationNode,
+                                             SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message) {
+
+        DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(),
+                message, DiagnosticSeverity.ERROR);
+        Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo,
+                serviceDeclarationNode.location());
+        syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
     }
 }
