@@ -16,30 +16,30 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.utils;
+package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
-import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
-import org.ballerinalang.net.grpc.builder.syntaxtree.Class;
-import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionBody;
-import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionDefinition;
-import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionSignature;
-import org.ballerinalang.net.grpc.builder.syntaxtree.Returns;
-import org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor;
+import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getFieldAccessExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getMethodCallExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getRequiredParamNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getObjectFieldNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getQualifiedNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 
 public class Caller {
 
-    static Class getCallerClass(String key, String value) {
+    public static Class getCallerClass(String key, String value) {
         Class caller = new Class(key, true);
         caller.addQualifiers(new String[]{"client"});
 

@@ -16,13 +16,13 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.syntaxtree;
+package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.LiteralValueToken;
 import io.ballerina.compiler.syntax.tree.NilLiteralNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
-import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
+import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 public class Literal {
 

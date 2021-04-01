@@ -16,14 +16,14 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.syntaxtree;
+package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDefinitionNode;
-import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
+import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 public class Type {
 

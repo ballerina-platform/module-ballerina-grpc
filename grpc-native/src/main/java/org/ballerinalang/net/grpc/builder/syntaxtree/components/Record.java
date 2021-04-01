@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.syntaxtree;
+package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
@@ -26,14 +26,14 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.RecordTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
-import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
+import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getNilTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getOptionalTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getParameterizedTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getStreamTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 
 public class Record {
 

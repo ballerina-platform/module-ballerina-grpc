@@ -16,43 +16,62 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.utils;
+package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
-import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 import org.ballerinalang.net.grpc.builder.stub.Method;
-import org.ballerinalang.net.grpc.builder.syntaxtree.Class;
-import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionBody;
-import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionDefinition;
-import org.ballerinalang.net.grpc.builder.syntaxtree.FunctionSignature;
-import org.ballerinalang.net.grpc.builder.syntaxtree.Map;
-import org.ballerinalang.net.grpc.builder.syntaxtree.Returns;
-import org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor;
-import org.ballerinalang.net.grpc.builder.syntaxtree.VariableDeclaration;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
+import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
-import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
-import static org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getFieldAccessExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getMethodCallExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getRequiredParamNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.Initializer.getCheckExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getCaptureBindingPatternNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getListBindingPatternNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getObjectFieldNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getParameterizedTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getQualifiedNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getTupleTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getTypedBindingPatternNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getUnionTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 
-public class StreamingClient {
+public class Client {
+
+    public static FunctionDefinition getClientStreamingFunction(Method method) {
+        String clientName = method.getMethodName().substring(0,1).toUpperCase() + method.getMethodName().substring(1)
+                + "StreamingClient";
+        FunctionSignature signature = new FunctionSignature();
+        signature.addReturns(
+                Returns.getReturnTypeDescriptorNode(
+                        Returns.getParenthesisedTypeDescriptorNode(
+                                getUnionTypeDescriptorNode(
+                                        getSimpleNameReferenceNode(clientName),
+                                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
+        FunctionBody body = new FunctionBody();
+        FunctionDefinition definition = new FunctionDefinition(
+                method.getMethodName(),
+                signature.getFunctionSignature(),
+                body.getFunctionBody());
+        definition.addQualifiers(new String[]{"isolated", "remote"});
+        return definition;
+    }
 
     public static Class getStreamingClientClass(Method method) {
         String name = method.getMethodName().substring(0, 1).toUpperCase() + method.getMethodName().substring(1) +
