@@ -36,7 +36,7 @@ public class Class {
 
     public Class (String name, boolean isPublic) {
         if (isPublic) {
-            visibilityQualifier = AbstractNodeFactory.createIdentifierToken("\npublic ");
+            visibilityQualifier = AbstractNodeFactory.createIdentifierToken("public ");
         }
         classTypeQualifiers = AbstractNodeFactory.createEmptyNodeList();
         className = AbstractNodeFactory.createIdentifierToken(name + " ");

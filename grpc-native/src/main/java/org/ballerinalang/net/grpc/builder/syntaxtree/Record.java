@@ -19,6 +19,7 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
@@ -28,7 +29,9 @@ import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.Expression.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getOptionalTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.TypeDescriptor.getStreamTypeDescriptorNode;
 
@@ -61,6 +64,76 @@ public class Record {
         ));
     }
 
+    public void addStringFieldWithDefaultValue(String fieldName, String defaultValue) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldWithDefaultValueNode(
+                        null,
+                        null,
+                        SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING,
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        NodeFactory.createBasicLiteralNode(
+                                SyntaxKind.STRING_LITERAL,
+                                AbstractNodeFactory.createIdentifierToken("\"" + defaultValue + "\"")),
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addBooleanFieldWithDefaultValue(String fieldName, String defaultValue) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldWithDefaultValueNode(
+                        null,
+                        null,
+                        SyntaxTreeConstants.SYNTAX_TREE_VAR_BOOLEAN,
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        NodeFactory.createBasicLiteralNode(
+                                SyntaxKind.BOOLEAN_LITERAL,
+                                AbstractNodeFactory.createIdentifierToken(defaultValue)),
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                ));
+    }
+
+    public void addCustomField(String fieldName, String typeName) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldNode(
+                        null,
+                        null,
+                        getSimpleNameReferenceNode(typeName),
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        null,
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addCustomFieldWithDefaultValue(String fieldType, String fieldName, Object defaultValue) {
+        ExpressionNode expressionNode;
+        switch (fieldType) {
+            case "string" :
+                expressionNode = NodeFactory.createBasicLiteralNode(
+                        SyntaxKind.STRING_LITERAL,
+                        AbstractNodeFactory.createIdentifierToken(String.valueOf(defaultValue)));
+                break;
+            case "boolean" :
+                expressionNode = NodeFactory.createBasicLiteralNode(
+                        SyntaxKind.BOOLEAN_LITERAL,
+                        AbstractNodeFactory.createIdentifierToken(String.valueOf(defaultValue)));
+                break;
+            default :
+                expressionNode = getNilTypeDescriptorNode();
+        }
+        fields = fields.add(
+                NodeFactory.createRecordFieldWithDefaultValueNode(
+                        null,
+                        null,
+                        getOptionalTypeDescriptorNode("", fieldType),
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        expressionNode,
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                ));
+    }
+
     public void addMapField(String fieldName, TypeDescriptorNode descriptorNode) {
         fields = fields.add(NodeFactory.createRecordFieldNode(
                 null,
@@ -85,35 +158,6 @@ public class Record {
                 getStreamTypeDescriptorNode(typeName, null),
                 AbstractNodeFactory.createIdentifierToken(fieldName),
                 null,
-                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-        ));
-    }
-
-    public void addCustomField(String fieldName, String typeName) {
-        fields = fields.add(NodeFactory.createRecordFieldNode(
-                null,
-                null,
-                getSimpleNameReferenceNode(typeName),
-                AbstractNodeFactory.createIdentifierToken(fieldName),
-                null,
-                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-        ));
-    }
-
-    public void addFieldWithDefaultValue(String fieldType, String fieldName) {
-        Node typeName;
-        if (fieldType.equals("string")) {
-            typeName = SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
-        } else {
-            typeName = getSimpleNameReferenceNode(fieldType);
-        }
-        fields = fields.add(NodeFactory.createRecordFieldWithDefaultValueNode(
-                null,
-                null,
-                typeName,
-                AbstractNodeFactory.createIdentifierToken(fieldName),
-                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, AbstractNodeFactory.createIdentifierToken("\"\"")),
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         ));
     }

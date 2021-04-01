@@ -168,17 +168,17 @@ public class ServerConnectorListener implements HttpConnectorListener {
                     ("Expected path to start with /: %s", path));
             return false;
         }
-        // Verify that the Content-Type is correct in the inboundMessage.
+        // Verify that the Content-Types is correct in the inboundMessage.
         CharSequence contentType = headers.get("content-type");
         if (contentType == null) {
-            handleFailure(inboundMessage.getHttpCarbonMessage(), 415, Status.Code.INTERNAL, "Content-Type is " +
+            handleFailure(inboundMessage.getHttpCarbonMessage(), 415, Status.Code.INTERNAL, "Content-Types is " +
                     "missing from the request");
             return false;
         }
         String contentTypeString = contentType.toString();
         if (!MessageUtils.isGrpcContentType(contentTypeString)) {
             handleFailure(inboundMessage.getHttpCarbonMessage(), 415, Status.Code.INTERNAL, String.format
-                    ("Content-Type '%s' is not supported", contentTypeString));
+                    ("Content-Types '%s' is not supported", contentTypeString));
             return false;
         }
         String method = inboundMessage.getHttpMethod();
