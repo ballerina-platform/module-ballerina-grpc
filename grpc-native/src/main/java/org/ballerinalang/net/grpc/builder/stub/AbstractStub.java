@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.components;
+package org.ballerinalang.net.grpc.builder.stub;
 
 import java.util.ArrayList;
 import java.util.HashMap;

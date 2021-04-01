@@ -56,6 +56,9 @@ public class Class {
     }
 
     public void addMember(Node member) {
+        if (members.size() > 0) {
+            members = members.add(SyntaxTreeConstants.SYNTAX_TREE_BLANK_LINE);
+        }
         members = members.add(member);
     }
 
