@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.components;
+package org.ballerinalang.net.grpc.builder.stub;
 
 import org.ballerinalang.net.grpc.exception.CodeBuilderException;
 
