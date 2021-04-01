@@ -153,7 +153,7 @@ public class GrpcConstants {
     public static final String SCHEME_HEADER = "scheme";
     public static final String AUTHORITY = "authority";
 
-    //Content-Type used for GRPC-over-HTTP/2.
+    //Content-Types used for GRPC-over-HTTP/2.
     public static final String CONTENT_TYPE_GRPC = "application/grpc";
 
     //The HTTP method used for GRPC requests.

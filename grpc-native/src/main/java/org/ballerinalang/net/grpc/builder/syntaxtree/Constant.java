@@ -40,7 +40,7 @@ public class Constant {
 
     public Constant(String type, String name, String value, boolean isPublic) {
         if (isPublic) {
-            visibilityQualifier = AbstractNodeFactory.createIdentifierToken("\npublic ");
+            visibilityQualifier = AbstractNodeFactory.createIdentifierToken("public ");
         }
         typeDescriptor = getBuiltinSimpleNameReferenceNode(type);
         variableName = AbstractNodeFactory.createIdentifierToken(name);
