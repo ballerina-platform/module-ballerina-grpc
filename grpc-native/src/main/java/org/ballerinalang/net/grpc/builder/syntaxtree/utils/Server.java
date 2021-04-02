@@ -18,7 +18,6 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
-import io.ballerina.compiler.syntax.tree.StatementNode;
 import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
@@ -30,17 +29,13 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.Record;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 
-import java.util.ArrayList;
-
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBlockStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
@@ -148,16 +143,14 @@ public class Server {
                                 getSimpleNameReferenceNode("streamValue"),
                                 getNilTypeDescriptorNode()))
         );
-        streamValueNilCheck.addReturnStatement(getSimpleNameReferenceNode("streamValue"));
+        streamValueNilCheck.addIfReturnStatement(getSimpleNameReferenceNode("streamValue"));
         IfElse streamValueErrorCheck = new IfElse(
                 getBracedExpressionNode(
                         getTypeTestExpressionNode(
                                 getSimpleNameReferenceNode("streamValue"),
                                 SYNTAX_TREE_GRPC_ERROR))
         );
-        streamValueErrorCheck.addReturnStatement(getSimpleNameReferenceNode("streamValue"));
-
-        ArrayList<StatementNode> elseStatement = new ArrayList<>();
+        streamValueErrorCheck.addIfReturnStatement(getSimpleNameReferenceNode("streamValue"));
 
         Record nextRecordRec = new Record();
         nextRecordRec.addStringField("value");
@@ -171,9 +164,9 @@ public class Server {
                         nextRecordRec.getRecordTypeDescriptorNode(),
                         getCaptureBindingPatternNode("nextRecord")),
                 nextRecordMap.getMappingConstructorExpressionNode());
-        elseStatement.add(nextRecordVar.getVariableDeclarationNode());
-        elseStatement.add(getReturnStatementNode(getSimpleNameReferenceNode("nextRecord")));
-        streamValueErrorCheck.addElseBody(getBlockStatementNode(elseStatement));
+        streamValueErrorCheck.addElseBody();
+        streamValueErrorCheck.addElseVariableDeclarationStatement(nextRecordVar.getVariableDeclarationNode());
+        streamValueErrorCheck.addElseReturnStatement(getSimpleNameReferenceNode("nextRecord"));
         streamValueNilCheck.addElseBody(streamValueErrorCheck);
 
         nextBody.addIfElseStatement(streamValueNilCheck.getIfElseStatementNode());

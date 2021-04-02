@@ -33,6 +33,7 @@ public class VariableDeclaration {
     private Token finalKeyWord;
     private TypedBindingPatternNode patternNode;
     private ExpressionNode initializer;
+    private Token equals;
 
     public VariableDeclaration(TypedBindingPatternNode patternNode, ExpressionNode initializer) {
         annotations = NodeFactory.createEmptyNodeList();
@@ -42,11 +43,16 @@ public class VariableDeclaration {
     }
 
     public VariableDeclarationNode getVariableDeclarationNode() {
+        if (initializer == null) {
+            equals = null;
+        } else {
+            equals = SyntaxTreeConstants.SYNTAX_TREE_EQUAL;
+        }
         return NodeFactory.createVariableDeclarationNode(
                 annotations,
                 finalKeyWord,
                 patternNode,
-                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                equals,
                 initializer,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         );
