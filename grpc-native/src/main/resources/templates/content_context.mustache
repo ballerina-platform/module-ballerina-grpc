@@ -1,6 +1,6 @@
 {{#if this}}
 public type Context{{#if @key}}{{removeSpecialCharacters @key}}{{else}}Nil{{/if}}Stream record {|
-    {{#if @key}}stream<{{@key}}> content;{{/if}}
+    {{#if @key}}stream<{{@key}}, error?> content;{{/if}}
     map<string|string[]> headers;
 |};
 public type Context{{#if @key}}{{removeSpecialCharacters @key}}{{else}}Nil{{/if}} record {|

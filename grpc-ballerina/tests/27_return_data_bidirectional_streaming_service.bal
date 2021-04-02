@@ -22,9 +22,9 @@ listener Listener ep27 = new (9117);
     descriptor: ROOT_DESCRIPTOR_27,
     descMap: getDescriptorMap27()
 }
-service /ChatFromReturn on ep27 {
+service "ChatFromReturn" on ep27 {
 
-    remote function chat(stream<ChatMessage27,error> clientStream) returns stream<string> {
+    remote function chat(stream<ChatMessage27,error?> clientStream) returns stream<string, error?> {
         string[] messages = [];
         int i = 0;
         error? e = clientStream.forEach(function(ChatMessage27 reqMsg) {
