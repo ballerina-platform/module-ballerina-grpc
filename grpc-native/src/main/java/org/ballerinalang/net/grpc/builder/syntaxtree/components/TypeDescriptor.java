@@ -70,10 +70,22 @@ public class TypeDescriptor {
     }
 
     public static BuiltinSimpleNameReferenceNode getBuiltinSimpleNameReferenceNode(String name) {
-        if ("int".equals(name)) {
-            return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.INT_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
+        switch (name) {
+            case "int" :
+                return NodeFactory.createBuiltinSimpleNameReferenceNode(
+                        SyntaxKind.INT_TYPE_DESC,
+                        AbstractNodeFactory.createIdentifierToken(name + " ")
+                );
+            case "var" :
+                return NodeFactory.createBuiltinSimpleNameReferenceNode(
+                        SyntaxKind.VAR_TYPE_DESC,
+                        AbstractNodeFactory.createIdentifierToken(name + " ")
+                );
+            default:
+                return NodeFactory.createBuiltinSimpleNameReferenceNode(
+                        SyntaxKind.STRING_TYPE_DESC,
+                        AbstractNodeFactory.createIdentifierToken(name + " "));
         }
-        return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.STRING_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
     }
 
     public static TypeParameterNode getTypeParameterNode(TypeDescriptorNode typeNode) {

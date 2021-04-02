@@ -63,7 +63,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Bidirectional.getBidirectionalStreamingFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Caller.getCallerClass;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getClientStreamingFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamingContextFunction;
@@ -99,7 +99,7 @@ public class SyntaxTreeGen {
                 client.addMember(getUnaryContextFunction(method).getFunctionDefinitionNode());
             }
             for (Method method : service.getClientStreamingFunctions()) {
-                client.addMember(getClientStreamingFunction(method).getFunctionDefinitionNode());
+                client.addMember(getStreamingClientFunction(method).getFunctionDefinitionNode());
                 clientStreamingClasses.add(getStreamingClientClass(method));
             }
             for (Method method : service.getServerStreamingFunctions()) {

@@ -18,7 +18,6 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
-import io.ballerina.compiler.syntax.tree.BlockStatementNode;
 import io.ballerina.compiler.syntax.tree.BracedExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.IfElseStatementNode;
@@ -29,28 +28,38 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.StatementNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.TypeTestExpressionNode;
+import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import java.util.ArrayList;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
 
 public class IfElse {
 
     private ExpressionNode condition;
     private Node elseBody;
-    private NodeList<StatementNode> statements;
+    private NodeList<StatementNode> ifStatements;
+    private NodeList<StatementNode> elseStatements;
 
     public IfElse(ExpressionNode condition) {
         this.condition = condition;
-        statements = NodeFactory.createEmptyNodeList();
+        ifStatements = NodeFactory.createEmptyNodeList();
+        elseStatements = NodeFactory.createEmptyNodeList();
     }
 
     public IfElseStatementNode getIfElseStatementNode() {
+        if (elseBody == null && elseStatements.size() > 0) {
+            elseBody = NodeFactory.createBlockStatementNode(
+                    SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
+                    elseStatements,
+                    SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
+            );
+        }
         return NodeFactory.createIfElseStatementNode(
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_IF,
                 condition,
                 NodeFactory.createBlockStatementNode(
                         SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
-                        statements,
+                        ifStatements,
                         SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
                 ),
                 elseBody
@@ -64,11 +73,62 @@ public class IfElse {
         );
     }
 
-    public void addElseBody(BlockStatementNode elseBody) {
-        this.elseBody = NodeFactory.createElseBlockNode(
+    public void addElseBody() {
+        elseBody = NodeFactory.createElseBlockNode(
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_ELSE,
-                elseBody
+                NodeFactory.createBlockStatementNode(
+                        SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
+                        elseStatements,
+                        SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
+                )
         );
+    }
+
+    public void addIfReturnStatement(ExpressionNode expressionNode) {
+        ifStatements = ifStatements.add(
+                NodeFactory.createReturnStatementNode(
+                        SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURN,
+                        expressionNode,
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                ));
+    }
+
+    public void addElseReturnStatement(ExpressionNode expressionNode) {
+        elseStatements = elseStatements.add(
+                NodeFactory.createReturnStatementNode(
+                        SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURN,
+                        expressionNode,
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                ));
+        addElseBody();
+    }
+
+    public void addIfAssignmentStatement(String varRef, ExpressionNode expression) {
+        ifStatements =  ifStatements.add(
+                NodeFactory.createAssignmentStatementNode(
+                        getSimpleNameReferenceNode(varRef),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        expression,
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                )
+        );
+    }
+
+    public void addElseAssignmentStatement(String varRef, ExpressionNode expression) {
+        elseStatements =  elseStatements.add(
+                NodeFactory.createAssignmentStatementNode(
+                        getSimpleNameReferenceNode(varRef),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        expression,
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                )
+        );
+        addElseBody();
+    }
+
+    public void addElseVariableDeclarationStatement(VariableDeclarationNode variableDeclarationNode) {
+        elseStatements = elseStatements.add(variableDeclarationNode);
+        addElseBody();
     }
 
     public static BracedExpressionNode getBracedExpressionNode(ExpressionNode expression) {
@@ -92,28 +152,6 @@ public class IfElse {
         return NodeFactory.createNilTypeDescriptorNode(
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
-        );
-    }
-
-    public void addReturnStatement(ExpressionNode expressionNode) {
-        statements = statements.add(NodeFactory.createReturnStatementNode(
-                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURN,
-                expressionNode,
-                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-        ));
-    }
-
-    public static BlockStatementNode getBlockStatementNode(ArrayList<StatementNode> statements) {
-        NodeList<StatementNode> statementNodes;
-        if (statements == null) {
-            statementNodes = NodeFactory.createEmptyNodeList();
-        } else {
-            statementNodes = NodeFactory.createNodeList(statements);
-        }
-        return NodeFactory.createBlockStatementNode(
-                SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
-                statementNodes,
-                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
         );
     }
 }

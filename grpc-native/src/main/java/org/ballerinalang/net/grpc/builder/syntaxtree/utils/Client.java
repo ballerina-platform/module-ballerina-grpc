@@ -54,7 +54,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 
 public class Client {
 
-    public static FunctionDefinition getClientStreamingFunction(Method method) {
+    public static FunctionDefinition getStreamingClientFunction(Method method) {
         String clientName = method.getMethodName().substring(0,1).toUpperCase() + method.getMethodName().substring(1)
                 + "StreamingClient";
         FunctionSignature signature = new FunctionSignature();
