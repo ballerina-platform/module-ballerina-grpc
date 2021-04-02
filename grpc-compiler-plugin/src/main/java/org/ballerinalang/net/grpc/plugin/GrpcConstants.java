@@ -24,6 +24,8 @@ package org.ballerinalang.net.grpc.plugin;
 public class GrpcConstants {
 
     public static final String GRPC_ANNOTATION_NAME = "grpc:ServiceDescriptor";
+    public static final String BALLERINA_ORG_NAME = "ballerina";
+    public static final String GRPC_PACKAGE_NAME = "grpc";
 
     // Diagnostic error messages
     public static final String UNDEFINED_ANNOTATION_MSG = "undefined annotation: ";

@@ -23,7 +23,7 @@ listener grpc:Listener ep = new (9090);
     descriptor: ROOT_DESCRIPTOR,
     descMap: getDescriptorMap()
 }
-service "HelloWorld" on ep {
+service "HelloWorld" on new grpc:Listener(9090) {
 
     remote function sendReplies(HelloWorldStringCaller caller, string name) returns stream<string, error?>|error {
         log:printInfo("Server received hello from " + name);
