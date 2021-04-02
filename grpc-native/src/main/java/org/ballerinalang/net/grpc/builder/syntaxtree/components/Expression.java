@@ -71,6 +71,9 @@ public class Expression {
     public static RemoteMethodCallActionNode getRemoteMethodCallActionNode(ExpressionNode expression, String methodName, String[] args) {
         List<Node> argList = new ArrayList<>();
         for (String arg : args) {
+            if (argList.size() > 0){
+                argList.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+            }
             argList.add(NodeFactory.createPositionalArgumentNode(getSimpleNameReferenceNode(arg)));
         }
         SeparatedNodeList<FunctionArgumentNode> arguments = NodeFactory.createSeparatedNodeList(argList);

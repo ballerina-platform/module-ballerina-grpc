@@ -40,6 +40,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 public class Caller {
 
     public static Class getCallerClass(String key, String value) {
+        String valueCap = value.substring(0, 1).toUpperCase() + value.substring(1);
         Class caller = new Class(key, true);
         caller.addQualifiers(new String[]{"client"});
 
@@ -100,7 +101,7 @@ public class Caller {
                         "send",
                         new String[]{"response"}));
         FunctionDefinition sendDefinition = new FunctionDefinition(
-                "send" + value,
+                "send" + valueCap,
                 sendSignature.getFunctionSignature(),
                 sendBody.getFunctionBody());
         sendDefinition.addQualifiers(new String[]{"isolated", "remote"});
@@ -109,7 +110,7 @@ public class Caller {
         FunctionSignature sendContextSignature = new FunctionSignature();
         sendContextSignature.addParameter(
                 getRequiredParamNode(
-                        getSimpleNameReferenceNode("Context" + value),
+                        getSimpleNameReferenceNode("Context" + valueCap),
                         "response"));
         sendContextSignature.addReturns(
                 Returns.getReturnTypeDescriptorNode(
@@ -121,7 +122,7 @@ public class Caller {
                         "send",
                         new String[]{"response"}));
         FunctionDefinition sendContextDefinition = new FunctionDefinition("" +
-                "sendContext" + value,
+                "sendContext" + valueCap,
                 sendContextSignature.getFunctionSignature(),
                 sendContextBody.getFunctionBody());
         sendContextDefinition.addQualifiers(new String[]{"isolated", "remote"});
