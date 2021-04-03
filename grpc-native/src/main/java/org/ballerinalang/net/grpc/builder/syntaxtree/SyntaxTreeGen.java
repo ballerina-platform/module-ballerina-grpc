@@ -61,10 +61,9 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Bidirectional.getBidirectionalStreamingFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Caller.getCallerClass;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientClass;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamingContextFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamingFunction;
@@ -99,7 +98,7 @@ public class SyntaxTreeGen {
                 client.addMember(getUnaryContextFunction(method).getFunctionDefinitionNode());
             }
             for (Method method : service.getClientStreamingFunctions()) {
-                client.addMember(getStreamingClientFunction(method).getFunctionDefinitionNode());
+                client.addMember(getStreamingClientFunction(method, false).getFunctionDefinitionNode());
                 clientStreamingClasses.add(getStreamingClientClass(method));
             }
             for (Method method : service.getServerStreamingFunctions()) {
@@ -108,7 +107,7 @@ public class SyntaxTreeGen {
                 serverStreamingClasses.add(getServerStreamClass(method));
             }
             for (Method method : service.getBidiStreamingFunctions()) {
-                client.addMember(getBidirectionalStreamingFunction(method).getFunctionDefinitionNode());
+                client.addMember(getStreamingClientFunction(method, true).getFunctionDefinitionNode());
                 bidirectionalStreamingClasses.add(getStreamingClientClass(method));
             }
             moduleMembers = moduleMembers.add(client.getClassDefinitionNode());
