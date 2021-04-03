@@ -100,4 +100,18 @@ public class Map {
                 )
         );
     }
+
+    public void addField(String fieldName, ExpressionNode field) {
+        if (fields.size() > 0) {
+            fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+        }
+        fields.add(
+                NodeFactory.createSpecificFieldNode(
+                        null,
+                        NodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_COLON,
+                        field
+                )
+        );
+    }
 }

@@ -47,8 +47,9 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_IT= AbstractNodeFactory.createIdentifierToken("<");
     public static final Token SYNTAX_TREE_GT= AbstractNodeFactory.createIdentifierToken(">");
     public static final Token SYNTAX_TREE_RIGHT_ARROW= AbstractNodeFactory.createIdentifierToken("->");
+    public static final Token SYNTAX_TREE_UNDERSCORE= AbstractNodeFactory.createIdentifierToken("_");
 
-    public static final Token SYNTAX_TREE_KEYWORD_NEW = AbstractNodeFactory.createIdentifierToken("new");
+    public static final Token SYNTAX_TREE_KEYWORD_NEW = AbstractNodeFactory.createIdentifierToken("new ");
     public static final Token SYNTAX_TREE_KEYWORD_IMPORT = AbstractNodeFactory.createIdentifierToken("import ");
     public static final Token SYNTAX_TREE_KEYWORD_CHECK = AbstractNodeFactory.createIdentifierToken("check ");
     public static final Token SYNTAX_TREE_KEYWORD_TYPE = AbstractNodeFactory.createIdentifierToken("type ");
