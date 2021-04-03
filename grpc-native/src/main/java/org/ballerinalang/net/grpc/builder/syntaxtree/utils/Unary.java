@@ -18,10 +18,10 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
-import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
+import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
@@ -76,14 +76,10 @@ public class Unary {
                         "map",
                         getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
         );
-        SeparatedNodeList<BindingPatternNode> bindingPatterns = NodeFactory.createSeparatedNodeList(
-                getCaptureBindingPatternNode("result"),
-                SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getCaptureBindingPatternNode("_"));
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getTupleTypeDescriptorNode(payloadArgs),
-                        getListBindingPatternNode(bindingPatterns)),
+                        getListBindingPatternNode(new String[]{"result", "_"})),
                 getSimpleNameReferenceNode("payload")
         );
         body.addVariableStatement(payload.getVariableDeclarationNode());
@@ -102,6 +98,7 @@ public class Unary {
 
     public static FunctionDefinition getUnaryContextFunction(Method method) {
         String inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
+        String outCap = method.getOutputType().substring(0, 1).toUpperCase() + method.getOutputType().substring(1);
         FunctionSignature signature = new FunctionSignature();
         signature.addParameter(
                 getRequiredParamNode(
@@ -113,7 +110,7 @@ public class Unary {
                 Returns.getReturnTypeDescriptorNode(
                         Returns.getParenthesisedTypeDescriptorNode(
                                 getUnionTypeDescriptorNode(
-                                        getSimpleNameReferenceNode("Context" + inputCap),
+                                        getSimpleNameReferenceNode("Context" + outCap),
                                         SYNTAX_TREE_GRPC_ERROR))));
         FunctionBody body = addUnaryBody(inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
@@ -123,14 +120,10 @@ public class Unary {
                         "map",
                         getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
         );
-        SeparatedNodeList<BindingPatternNode> bindingPatterns = NodeFactory.createSeparatedNodeList(
-                getCaptureBindingPatternNode("result"),
-                SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getCaptureBindingPatternNode("respHeaders"));
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getTupleTypeDescriptorNode(payloadArgs),
-                        getListBindingPatternNode(bindingPatterns)),
+                        getListBindingPatternNode(new String[]{"result", "respHeaders"})),
                 getSimpleNameReferenceNode("payload")
         );
         body.addVariableStatement(payload.getVariableDeclarationNode());
@@ -162,9 +155,15 @@ public class Unary {
                 new Map().getMappingConstructorExpressionNode()
         );
         body.addVariableStatement(headers.getVariableDeclarationNode());
+        TypeDescriptorNode messageType;
+        if (method.getInputType().equals("string")) {
+            messageType = getBuiltinSimpleNameReferenceNode("string");
+        } else {
+            messageType = getSimpleNameReferenceNode(method.getInputType());
+        }
         VariableDeclaration message = new VariableDeclaration(
                 getTypedBindingPatternNode(
-                        getBuiltinSimpleNameReferenceNode("string"),
+                        messageType,
                         getCaptureBindingPatternNode("message")),
                 null
         );

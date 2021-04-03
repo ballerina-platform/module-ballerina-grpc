@@ -18,7 +18,6 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
-import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
@@ -33,6 +32,7 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getExplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
@@ -65,6 +65,20 @@ public class Client {
                                         getSimpleNameReferenceNode(clientName),
                                         SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
         FunctionBody body = new FunctionBody();
+        VariableDeclaration sClient = new VariableDeclaration(
+                getTypedBindingPatternNode(
+                        getQualifiedNameReferenceNode("grpc", "StreamingClient"),
+                        getCaptureBindingPatternNode("sClient")),
+                getCheckExpressionNode(
+                        getRemoteMethodCallActionNode(
+                                getFieldAccessExpressionNode("self", "grpcClient"),
+                                "executeClientStreaming",
+                                new String[]{"\"" + method.getMethodId() +  "\""}
+                        )
+                )
+        );
+        body.addVariableStatement(sClient.getVariableDeclarationNode());
+        body.addReturnStatement(getExplicitNewExpressionNode(clientName, new String[]{"sClient"}));
         FunctionDefinition definition = new FunctionDefinition(
                 method.getMethodName(),
                 signature.getFunctionSignature(),
@@ -151,11 +165,7 @@ public class Client {
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
                 getParameterizedTypeDescriptorNode("map", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
         );
-        SeparatedNodeList<BindingPatternNode> bindingPatterns = NodeFactory.createSeparatedNodeList(
-                getCaptureBindingPatternNode("payload"),
-                SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getCaptureBindingPatternNode("headers"));
-        VariableDeclaration receive = new VariableDeclaration(getTypedBindingPatternNode(getTupleTypeDescriptorNode(receiveArgs), getListBindingPatternNode(bindingPatterns)), getCheckExpressionNode(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "receive", new String[]{})));
+        VariableDeclaration receive = new VariableDeclaration(getTypedBindingPatternNode(getTupleTypeDescriptorNode(receiveArgs), getListBindingPatternNode(new String[]{"payload", "headers"})), getCheckExpressionNode(getRemoteMethodCallActionNode(getFieldAccessExpressionNode("self", "sClient"), "receive", new String[]{})));
 
         FunctionSignature receiveSignature = new FunctionSignature();
         receiveSignature.addReturns(
