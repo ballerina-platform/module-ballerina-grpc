@@ -54,7 +54,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 
 public class Client {
 
-    public static FunctionDefinition getStreamingClientFunction(Method method) {
+    public static FunctionDefinition getStreamingClientFunction(Method method, boolean bidirectional) {
+        String methodName = bidirectional? "executeBidirectionalStreaming" : "executeClientStreaming";
         String clientName = method.getMethodName().substring(0,1).toUpperCase() + method.getMethodName().substring(1)
                 + "StreamingClient";
         FunctionSignature signature = new FunctionSignature();
@@ -72,7 +73,7 @@ public class Client {
                 getCheckExpressionNode(
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "grpcClient"),
-                                "executeClientStreaming",
+                                methodName,
                                 new String[]{"\"" + method.getMethodId() +  "\""}
                         )
                 )
