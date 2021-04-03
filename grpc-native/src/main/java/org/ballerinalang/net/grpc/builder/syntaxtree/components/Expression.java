@@ -19,6 +19,7 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.ExplicitNewExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.FieldAccessExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
@@ -29,6 +30,7 @@ import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.RemoteMethodCallActionNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
@@ -97,6 +99,44 @@ public class Expression {
         }
         return NodeFactory.createImplicitNewExpressionNode(
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_NEW,
+                NodeFactory.createParenthesizedArgList(
+                        SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                        NodeFactory.createSeparatedNodeList(arguments),
+                        SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+                )
+        );
+    }
+
+    public static ExplicitNewExpressionNode getExplicitNewExpressionNode(String type, String[] args) {
+        List<Node> arguments = new ArrayList<>();
+        for (String arg : args) {
+            if (arguments.size() > 0) {
+                arguments.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+            }
+            arguments.add(NodeFactory.createPositionalArgumentNode(getSimpleNameReferenceNode(arg)));
+        }
+        return NodeFactory.createExplicitNewExpressionNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_NEW,
+                getSimpleNameReferenceNode(type),
+                NodeFactory.createParenthesizedArgList(
+                        SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                        NodeFactory.createSeparatedNodeList(arguments),
+                        SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+                )
+        );
+    }
+
+    public static ExplicitNewExpressionNode getExplicitNewExpressionNode(TypeDescriptorNode type, String[] args) {
+        List<Node> arguments = new ArrayList<>();
+        for (String arg : args) {
+            if (arguments.size() > 0) {
+                arguments.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+            }
+            arguments.add(NodeFactory.createPositionalArgumentNode(getSimpleNameReferenceNode(arg)));
+        }
+        return NodeFactory.createExplicitNewExpressionNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_NEW,
+                type,
                 NodeFactory.createParenthesizedArgList(
                         SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
                         NodeFactory.createSeparatedNodeList(arguments),

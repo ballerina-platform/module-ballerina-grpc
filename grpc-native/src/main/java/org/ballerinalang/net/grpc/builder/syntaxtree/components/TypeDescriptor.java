@@ -43,7 +43,11 @@ import io.ballerina.compiler.syntax.tree.TypeParameterNode;
 import io.ballerina.compiler.syntax.tree.TypeReferenceNode;
 import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.UnionTypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.WildcardBindingPatternNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
 
@@ -154,6 +158,10 @@ public class TypeDescriptor {
         return NodeFactory.createCaptureBindingPatternNode(AbstractNodeFactory.createIdentifierToken(name));
     }
 
+    public static WildcardBindingPatternNode getWildcardBindingPatternNode() {
+        return NodeFactory.createWildcardBindingPatternNode(SyntaxTreeConstants.SYNTAX_TREE_UNDERSCORE);
+    }
+
     public static TypedBindingPatternNode getTypedBindingPatternNode(TypeDescriptorNode typeDescriptorNode,
                                                                      BindingPatternNode bindingPatternNode) {
         return NodeFactory.createTypedBindingPatternNode(typeDescriptorNode, bindingPatternNode);
@@ -167,10 +175,21 @@ public class TypeDescriptor {
         );
     }
 
-    public static ListBindingPatternNode getListBindingPatternNode(SeparatedNodeList<BindingPatternNode> bindingPatterns) {
+    public static ListBindingPatternNode getListBindingPatternNode(String[] bindingPatterns) {
+        List<Node> bindingPatterNodes = new ArrayList<>();
+        for (String bindingPattern : bindingPatterns) {
+            if (bindingPatterNodes.size() > 0) {
+                bindingPatterNodes.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+            }
+            if (bindingPattern.equals("_")) {
+                bindingPatterNodes.add(getWildcardBindingPatternNode());
+            } else {
+                bindingPatterNodes.add(getCaptureBindingPatternNode(bindingPattern));
+            }
+        }
         return NodeFactory.createListBindingPatternNode(
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
-                bindingPatterns,
+                NodeFactory.createSeparatedNodeList(bindingPatterNodes),
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
         );
     }
