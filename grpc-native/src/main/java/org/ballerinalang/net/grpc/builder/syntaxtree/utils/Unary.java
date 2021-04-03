@@ -45,6 +45,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
@@ -83,13 +84,7 @@ public class Unary {
                 getSimpleNameReferenceNode("payload")
         );
         body.addVariableStatement(payload.getVariableDeclarationNode());
-        body.addReturnStatement(
-                getMethodCallExpressionNode(
-                        getSimpleNameReferenceNode("result"),
-                        "toString",
-                        new String[]{}
-                )
-        );
+        addUnaryFunctionReturnStatement(body, method);
         FunctionDefinition definition = new FunctionDefinition(method.getMethodName(),
                 signature.getFunctionSignature(), body.getFunctionBody());
         definition.addQualifiers(new String[]{"isolated", "remote"});
@@ -127,15 +122,7 @@ public class Unary {
                 getSimpleNameReferenceNode("payload")
         );
         body.addVariableStatement(payload.getVariableDeclarationNode());
-        Map returnMap = new Map();
-        returnMap.addMethodCallField(
-                "content",
-                getSimpleNameReferenceNode("result"),
-                "toString",
-                new String[]{}
-        );
-        returnMap.addSimpleNameReferenceField("headers", "respHeaders");
-        body.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
+        addUnaryContextFunctionReturnStatement(body, method);
         FunctionDefinition definition = new FunctionDefinition(
                 method.getMethodName() + "Context",
                 signature.getFunctionSignature(),
@@ -201,5 +188,43 @@ public class Unary {
         );
         body.addVariableStatement(payload.getVariableDeclarationNode());
         return body;
+    }
+
+    private static void addUnaryFunctionReturnStatement(FunctionBody body, Method method) {
+        if (method.getOutputType().equals("string")) {
+            body.addReturnStatement(
+                    getMethodCallExpressionNode(
+                            getSimpleNameReferenceNode("result"),
+                            "toString",
+                            new String[]{}
+                    )
+            );
+        } else {
+            body.addReturnStatement(
+                    getTypeCastExpressionNode(
+                            method.getOutputType(),
+                            getSimpleNameReferenceNode("result")
+                    )
+            );
+        }
+    }
+
+    private static void addUnaryContextFunctionReturnStatement(FunctionBody body, Method method) {
+        Map returnMap = new Map();
+        if (method.getOutputType().equals("string")) {
+            returnMap.addMethodCallField(
+                    "content",
+                    getSimpleNameReferenceNode("result"),
+                    "toString",
+                    new String[]{}
+            );
+        } else {
+            returnMap.addTypeCastExpressionField(
+                    "content",
+                    method.getOutputType(),
+                    getSimpleNameReferenceNode("result"));
+        }
+        returnMap.addSimpleNameReferenceField("headers", "respHeaders");
+        body.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
     }
 }
