@@ -64,6 +64,17 @@ public class Record {
         ));
     }
 
+    public void addOptionalStringField(String fieldName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getBuiltinSimpleNameReferenceNode("string"),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
     public void addStringFieldWithDefaultValue(String fieldName, String defaultValue) {
         fields = fields.add(
                 NodeFactory.createRecordFieldWithDefaultValueNode(
@@ -76,6 +87,17 @@ public class Record {
                                 SyntaxKind.STRING_LITERAL,
                                 AbstractNodeFactory.createIdentifierToken("\"" + defaultValue + "\"")),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addOptionalBooleanField(String fieldName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getBuiltinSimpleNameReferenceNode("boolean"),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         ));
     }
 
@@ -94,6 +116,32 @@ public class Record {
                 ));
     }
 
+    public void addOptionalIntegerField(String fieldName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getBuiltinSimpleNameReferenceNode("int"),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addIntegerFieldWithDefaultValue(String fieldName, String defaultValue) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldWithDefaultValueNode(
+                        null,
+                        null,
+                        SyntaxTreeConstants.SYNTAX_TREE_VAR_INT,
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        NodeFactory.createBasicLiteralNode(
+                                SyntaxKind.NUMERIC_LITERAL,
+                                AbstractNodeFactory.createIdentifierToken(defaultValue)),
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                ));
+    }
+
     public void addCustomField(String fieldName, String typeName) {
         fields = fields.add(
                 NodeFactory.createRecordFieldNode(
@@ -103,6 +151,17 @@ public class Record {
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         null,
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addOptionalCustomField(String fieldName, String typeName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getSimpleNameReferenceNode(typeName),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         ));
     }
 

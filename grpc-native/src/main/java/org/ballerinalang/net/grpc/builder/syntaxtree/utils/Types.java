@@ -1,16 +1,32 @@
+/*
+ *  Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
+
 package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
-import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 import org.ballerinalang.net.grpc.builder.stub.EnumField;
 import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
-import org.ballerinalang.net.grpc.builder.stub.Field;
-import org.ballerinalang.net.grpc.builder.stub.Message;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Enum;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Record;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Type;
+import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 
 public class Types {
 
@@ -34,33 +50,6 @@ public class Types {
         contextString.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
                 SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
         return new Type(true, typeName, contextString.getRecordTypeDescriptorNode());
-    }
-
-    public static Type getMessageType(Message message) {
-        Record messageRecord = new Record();
-        for (Field field : message.getFieldList()) {
-            switch (field.getFieldType()) {
-                case "string" :
-                    messageRecord.addStringFieldWithDefaultValue(
-                            field.getFieldName(),
-                            field.getDefaultValue());
-                    break;
-                case "boolean" :
-                    messageRecord.addBooleanFieldWithDefaultValue(
-                            field.getFieldName(),
-                            field.getDefaultValue());
-                    break;
-                default:
-                    messageRecord.addCustomFieldWithDefaultValue(
-                            field.getFieldType(),
-                            field.getFieldName(),
-                            field.getDefaultValue());
-            }
-        }
-        return new Type(
-                true,
-                message.getMessageName(),
-                messageRecord.getRecordTypeDescriptorNode());
     }
 
     public static Enum getEnumType(EnumMessage enumMessage) {

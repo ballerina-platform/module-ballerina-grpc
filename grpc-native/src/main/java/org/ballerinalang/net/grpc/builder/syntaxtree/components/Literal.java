@@ -22,6 +22,7 @@ import io.ballerina.compiler.syntax.tree.LiteralValueToken;
 import io.ballerina.compiler.syntax.tree.NilLiteralNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
+import io.ballerina.compiler.syntax.tree.Token;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 public class Literal {
@@ -32,8 +33,27 @@ public class Literal {
     }
 
     public static LiteralValueToken getLiteralValueToken(int literal) {
-        return NodeFactory.createLiteralValueToken(SyntaxKind.DECIMAL_INTEGER_LITERAL_TOKEN, "\"" + literal +
-                "\"", NodeFactory.createEmptyMinutiaeList(), NodeFactory.createEmptyMinutiaeList());
+        return NodeFactory.createLiteralValueToken(
+                SyntaxKind.DECIMAL_INTEGER_LITERAL_TOKEN,
+                String.valueOf(literal), NodeFactory.createEmptyMinutiaeList(),
+                NodeFactory.createEmptyMinutiaeList()
+        );
+    }
+
+    public static Token getLiteralValueToken(boolean literal) {
+        if (literal) {
+            return NodeFactory.createToken(
+                    SyntaxKind.TRUE_KEYWORD,
+                    NodeFactory.createEmptyMinutiaeList(),
+                    NodeFactory.createEmptyMinutiaeList()
+            );
+        } else {
+            return NodeFactory.createToken(
+                    SyntaxKind.FALSE_KEYWORD,
+                    NodeFactory.createEmptyMinutiaeList(),
+                    NodeFactory.createEmptyMinutiaeList()
+            );
+        }
     }
 
     public static NilLiteralNode getNilLiteralNode() {
