@@ -64,11 +64,11 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Caller.getCallerClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Message.getMessageNodes;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamingContextFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamingFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Types.getEnumType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Types.getMessageType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Types.getValueType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Types.getValueTypeStream;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Unary.getUnaryContextFunction;
@@ -134,7 +134,9 @@ public class SyntaxTreeGen {
         }
 
         for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
-            moduleMembers = moduleMembers.add(getMessageType(message.getValue()).getTypeDefinitionNode());
+            for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
+                moduleMembers = moduleMembers.add(messageNode);
+            }
         }
 
         for (EnumMessage enumMessage : stubFile.getEnumList()) {

@@ -85,6 +85,11 @@ public class TypeDescriptor {
                         SyntaxKind.VAR_TYPE_DESC,
                         AbstractNodeFactory.createIdentifierToken(name + " ")
                 );
+            case "boolean" :
+                return NodeFactory.createBuiltinSimpleNameReferenceNode(
+                        SyntaxKind.BOOLEAN_TYPE_DESC,
+                        AbstractNodeFactory.createIdentifierToken(name + " ")
+                );
             default:
                 return NodeFactory.createBuiltinSimpleNameReferenceNode(
                         SyntaxKind.STRING_TYPE_DESC,
