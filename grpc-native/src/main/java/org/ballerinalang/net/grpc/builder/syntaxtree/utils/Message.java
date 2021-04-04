@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getOptionalFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
@@ -62,6 +64,17 @@ public class Message {
         messageMembers = messageMembers.add(getMessageType(message).getTypeDefinitionNode());
         if (message.getOneofFieldMap() != null) {
             messageMembers = messageMembers.add(getValidationFunction(message).getFunctionDefinitionNode());
+            for (Map.Entry<String, List<Field>> oneOfFieldMap : message.getOneofFieldMap().entrySet()) {
+                for (Field field : oneOfFieldMap.getValue()) {
+                    messageMembers = messageMembers.add(
+                            getOneOfFieldSetFunction(
+                                    message.getMessageName(),
+                                    field,
+                                    oneOfFieldMap.getValue()
+                            ).getFunctionDefinitionNode()
+                    );
+                }
+            }
         }
         return messageMembers;
     }
@@ -120,6 +133,7 @@ public class Message {
     private static FunctionDefinition getValidationFunction(org.ballerinalang.net.grpc.builder.stub.Message message) {
 //        String name = message.getMessageName().substring(0, 1).toLowerCase() + message.getMessageName().substring(1);
         String name = "r";
+        // Todo: remove hardcoded "r"
         FunctionSignature signature = new FunctionSignature();
         signature.addReturns(
                 getReturnTypeDescriptorNode(
@@ -220,5 +234,47 @@ public class Message {
             );
         }
         return binaryExpressionNode;
+    }
+
+    private static FunctionDefinition getOneOfFieldSetFunction(String messageName, Field field, List<Field> fields) {
+        FunctionSignature signature = new FunctionSignature();
+        signature.addParameter(
+                getRequiredParamNode(
+                        getSimpleNameReferenceNode(messageName),
+                        // Todo: remove hardcoded r
+                        "r"
+                )
+        );
+        signature.addParameter(
+                getRequiredParamNode(
+                        getBuiltinSimpleNameReferenceNode(field.getFieldType()),
+                        field.getFieldName()
+                )
+        );
+        FunctionBody body = new FunctionBody();
+        body.addAssignmentStatement(
+                getFieldAccessExpressionNode(
+                        "r",
+                        field.getFieldName()
+                ),
+                getSimpleNameReferenceNode(field.getFieldName())
+        );
+        for (Field oneOfField : fields) {
+            if (!oneOfField.getFieldName().equals(field.getFieldName())) {
+                body.addAssignmentStatement(
+                        getSimpleNameReferenceNode("_"),
+                        getMethodCallExpressionNode(
+                                getSimpleNameReferenceNode("r"),
+                                "removeIfHasKey",
+                                new String[]{"\"" + oneOfField.getFieldName() + "\""}
+                        )
+                );
+            }
+        }
+        return new FunctionDefinition(
+                messageName + "_" + field.getFieldName(),
+                signature.getFunctionSignature(),
+                body.getFunctionBody()
+        );
     }
 }
