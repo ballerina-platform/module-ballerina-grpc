@@ -21,6 +21,7 @@ package org.ballerinalang.net.grpc.builder.syntaxtree.constants;
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
@@ -48,6 +49,7 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_GT= AbstractNodeFactory.createIdentifierToken(">");
     public static final Token SYNTAX_TREE_RIGHT_ARROW= AbstractNodeFactory.createIdentifierToken("->");
     public static final Token SYNTAX_TREE_UNDERSCORE= AbstractNodeFactory.createIdentifierToken("_");
+    public static final Token SYNTAX_TREE_OPTIONAL_CHAINING= AbstractNodeFactory.createIdentifierToken("?.");
 
     public static final Token SYNTAX_TREE_KEYWORD_NEW = AbstractNodeFactory.createIdentifierToken("new ");
     public static final Token SYNTAX_TREE_KEYWORD_IMPORT = AbstractNodeFactory.createIdentifierToken("import ");
@@ -62,7 +64,13 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_KEYWORD_ELSE = AbstractNodeFactory.createIdentifierToken("else ");
     public static final Token SYNTAX_TREE_KEYWORD_IS = AbstractNodeFactory.createIdentifierToken("is ");
 
+    public static final Token SYNTAX_TREE_OPERATOR_OR = AbstractNodeFactory.createToken(SyntaxKind.LOGICAL_OR_TOKEN);
+    public static final Token SYNTAX_TREE_OPERATOR_UNARY = AbstractNodeFactory.createToken(SyntaxKind.EXCLAMATION_MARK_TOKEN);
+    public static final Token SYNTAX_TREE_OPERATOR_PLUS = AbstractNodeFactory.createToken(SyntaxKind.PLUS_TOKEN);
+    public static final Token SYNTAX_TREE_OPERATOR_GREATER_THAN = AbstractNodeFactory.createToken(SyntaxKind.GT_TOKEN);
+
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING = TypeDescriptor.getBuiltinSimpleNameReferenceNode("string");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_INT = TypeDescriptor.getBuiltinSimpleNameReferenceNode("int");
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_BOOLEAN = TypeDescriptor.getBuiltinSimpleNameReferenceNode("boolean");
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_ANYDATA = TypeDescriptor.getBuiltinSimpleNameReferenceNode("anydata");
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING_ARRAY = TypeDescriptor.getArrayTypeDescriptorNode("string");

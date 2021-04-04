@@ -27,6 +27,7 @@ import io.ballerina.compiler.syntax.tree.ImplicitNewExpressionNode;
 import io.ballerina.compiler.syntax.tree.MethodCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
+import io.ballerina.compiler.syntax.tree.OptionalFieldAccessExpressionNode;
 import io.ballerina.compiler.syntax.tree.RemoteMethodCallActionNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
@@ -47,7 +48,16 @@ public class Expression {
         return NodeFactory.createFieldAccessExpressionNode(
                 getSimpleNameReferenceNode(var),
                 SyntaxTreeConstants.SYNTAX_TREE_DOT,
+                // Todo : check if getSimpleNameReferenceNode() should be used below
                 getBuiltinSimpleNameReferenceNode(fieldName)
+        );
+    }
+
+    public static OptionalFieldAccessExpressionNode getOptionalFieldAccessExpressionNode(String var, String fieldName) {
+        return NodeFactory.createOptionalFieldAccessExpressionNode(
+                getSimpleNameReferenceNode(var),
+                SyntaxTreeConstants.SYNTAX_TREE_OPTIONAL_CHAINING,
+                getSimpleNameReferenceNode(fieldName)
         );
     }
 

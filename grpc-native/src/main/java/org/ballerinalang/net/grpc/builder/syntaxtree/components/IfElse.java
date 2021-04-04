@@ -18,6 +18,7 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
+import io.ballerina.compiler.syntax.tree.BinaryExpressionNode;
 import io.ballerina.compiler.syntax.tree.BracedExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.IfElseStatementNode;
@@ -27,7 +28,9 @@ import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.StatementNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
+import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeTestExpressionNode;
+import io.ballerina.compiler.syntax.tree.UnaryExpressionNode;
 import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
@@ -82,6 +85,10 @@ public class IfElse {
                         SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
                 )
         );
+    }
+
+    public void addIfStatement(StatementNode statement) {
+        ifStatements = ifStatements.add(statement);
     }
 
     public void addIfReturnStatement(ExpressionNode expressionNode) {
@@ -152,6 +159,22 @@ public class IfElse {
         return NodeFactory.createNilTypeDescriptorNode(
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+        );
+    }
+
+    public static BinaryExpressionNode getBinaryExpressionNode(Node lhs, Node rhs, Token operator) {
+        return NodeFactory.createBinaryExpressionNode(
+                SyntaxKind.BINARY_EXPRESSION,
+                lhs,
+                operator,
+                rhs
+        );
+    }
+
+    public static UnaryExpressionNode getUnaryExpressionNode(ExpressionNode expression) {
+        return NodeFactory.createUnaryExpressionNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPERATOR_UNARY,
+                expression
         );
     }
 }
