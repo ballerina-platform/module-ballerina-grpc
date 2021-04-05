@@ -82,27 +82,26 @@ public class Message {
     private static Type getMessageType(org.ballerinalang.net.grpc.builder.stub.Message message) {
         Record messageRecord = new Record();
         for (Field field : message.getFieldList()) {
+            String fieldName = field.getFieldName();
+            String defaultValue = field.getDefaultValue();
             switch (field.getFieldType()) {
                 case "string" :
-                    messageRecord.addStringFieldWithDefaultValue(
-                            field.getFieldName(),
-                            field.getDefaultValue());
+                    messageRecord.addStringFieldWithDefaultValue(fieldName, defaultValue);
                     break;
                 case "int" :
-                    messageRecord.addIntegerFieldWithDefaultValue(
-                            field.getFieldName(),
-                            field.getDefaultValue());
+                    messageRecord.addIntegerFieldWithDefaultValue(fieldName, defaultValue);
+                    break;
+                case "float" :
+                    messageRecord.addFloatFieldWithDefaultValue(fieldName, defaultValue);
                     break;
                 case "boolean" :
-                    messageRecord.addBooleanFieldWithDefaultValue(
-                            field.getFieldName(),
-                            field.getDefaultValue());
+                    messageRecord.addBooleanFieldWithDefaultValue(fieldName, defaultValue);
+                    break;
+                case "byte[]" :
+                    messageRecord.addArrayFieldWithDefaultValue(fieldName, "byte");
                     break;
                 default:
-                    messageRecord.addCustomFieldWithDefaultValue(
-                            field.getFieldType(),
-                            field.getFieldName(),
-                            field.getDefaultValue());
+                    messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), fieldName, defaultValue);
             }
         }
         if (message.getOneofFieldMap() != null) {
@@ -115,8 +114,14 @@ public class Message {
                         case "int" :
                             messageRecord.addOptionalIntegerField(field.getFieldName());
                             break;
+                        case "float" :
+                            messageRecord.addOptionalFloatField(field.getFieldName());
+                            break;
                         case "boolean" :
                             messageRecord.addOptionalBooleanField(field.getFieldName());
+                            break;
+                        case "byte[]" :
+                            messageRecord.addOptionalArrayField(field.getFieldName(), "byte");
                             break;
                         default:
                             messageRecord.addOptionalCustomField(field.getFieldName(), field.getFieldType());
@@ -131,9 +136,6 @@ public class Message {
     }
 
     private static FunctionDefinition getValidationFunction(org.ballerinalang.net.grpc.builder.stub.Message message) {
-//        String name = message.getMessageName().substring(0, 1).toLowerCase() + message.getMessageName().substring(1);
-        String name = "r";
-        // Todo: remove hardcoded "r"
         FunctionSignature signature = new FunctionSignature();
         signature.addReturns(
                 getReturnTypeDescriptorNode(
@@ -143,7 +145,7 @@ public class Message {
         signature.addParameter(
                 getRequiredParamNode(
                         getSimpleNameReferenceNode(message.getMessageName()),
-                        name
+                        "r"
                 )
         );
         FunctionBody body = new FunctionBody();
@@ -163,7 +165,7 @@ public class Message {
                         getUnaryExpressionNode(
                                 getBracedExpressionNode(
                                         getTypeTestExpressionNode(
-                                                getOptionalFieldAccessExpressionNode(name, field.getFieldName()),
+                                                getOptionalFieldAccessExpressionNode("r", field.getFieldName()),
                                                 getNilTypeDescriptorNode()
                                         )
                                 )
@@ -241,7 +243,6 @@ public class Message {
         signature.addParameter(
                 getRequiredParamNode(
                         getSimpleNameReferenceNode(messageName),
-                        // Todo: remove hardcoded r
                         "r"
                 )
         );
