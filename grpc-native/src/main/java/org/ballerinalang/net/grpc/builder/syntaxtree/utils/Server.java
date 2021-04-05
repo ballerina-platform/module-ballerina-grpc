@@ -68,6 +68,7 @@ public class Server {
                         getSimpleNameReferenceNode(method.getInputType()),
                         "req"));
         signature.addReturns(
+                // Todo: remove Returns.getReturnTypeDescriptorNode
                 Returns.getReturnTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
                                 getStreamTypeDescriptorNode(
