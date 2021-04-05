@@ -37,7 +37,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionP
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 
-public class Caller {
+public class CallerUtils {
 
     public static Class getCallerClass(String key, String value) {
         String valueCap = value.substring(0, 1).toUpperCase() + value.substring(1);

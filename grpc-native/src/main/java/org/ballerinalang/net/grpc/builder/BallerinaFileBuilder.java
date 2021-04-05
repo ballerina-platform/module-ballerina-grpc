@@ -112,7 +112,7 @@ public class BallerinaFileBuilder {
     }
 
     public static SyntaxTree syntaxTreeDemo() {
-        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "oneof_field_service_pb.bal");
+        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "helloWorldClientStreaming_pb.bal");
         String content = null;
         try {
             content = getSourceText(sourceFilePath);
@@ -194,7 +194,6 @@ public class BallerinaFileBuilder {
                 ServiceStub.Builder serviceStubBuilder = ServiceStub.newBuilder(serviceDescriptor.getName());
                 ServiceFile.Builder sampleServiceBuilder = ServiceFile.newBuilder(serviceDescriptor.getName());
                 List<DescriptorProtos.MethodDescriptorProto> methodList = serviceDescriptor.getMethodList();
-//                boolean isUnaryContains = false;
                 stubFileObject.setMessageMap(messageList.stream().collect(Collectors.toMap(Message::getMessageName,
                         message -> message)));
                 for (DescriptorProtos.MethodDescriptorProto methodDescriptorProto : methodList) {
