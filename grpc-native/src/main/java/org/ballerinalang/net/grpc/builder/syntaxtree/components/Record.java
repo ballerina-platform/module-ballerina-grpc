@@ -257,17 +257,23 @@ public class Record {
         ));
     }
 
-    public void addStreamField(String fieldName, String streamType) {
-        Node typeName;
+    public void addStreamField(String fieldName, String streamType, boolean optionalError) {
+        Node lhs;
+        Node rhs;
         if (streamType.equals("string")) {
-            typeName = SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
+            lhs = SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
         } else {
-            typeName = getSimpleNameReferenceNode(streamType);
+            lhs = getSimpleNameReferenceNode(streamType);
+        }
+        if (optionalError) {
+            rhs = getOptionalTypeDescriptorNode("", "error");
+        } else {
+            rhs = null;
         }
         fields = fields.add(NodeFactory.createRecordFieldNode(
                 null,
                 null,
-                getStreamTypeDescriptorNode(typeName, null),
+                getStreamTypeDescriptorNode(lhs, rhs),
                 AbstractNodeFactory.createIdentifierToken(fieldName),
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
