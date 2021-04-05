@@ -45,11 +45,12 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_BODY_START_DELIMITER = AbstractNodeFactory.createIdentifierToken("{|\n");
     public static final Token SYNTAX_TREE_BLANK_LINE = AbstractNodeFactory.createIdentifierToken("\n\n");
     public static final Token SYNTAX_TREE_BODY_END_DELIMITER = AbstractNodeFactory.createIdentifierToken("|}");
-    public static final Token SYNTAX_TREE_IT= AbstractNodeFactory.createIdentifierToken("<");
-    public static final Token SYNTAX_TREE_GT= AbstractNodeFactory.createIdentifierToken(">");
+    public static final Token SYNTAX_TREE_IT = AbstractNodeFactory.createIdentifierToken("<");
+    public static final Token SYNTAX_TREE_GT = AbstractNodeFactory.createIdentifierToken(">");
     public static final Token SYNTAX_TREE_RIGHT_ARROW= AbstractNodeFactory.createIdentifierToken("->");
     public static final Token SYNTAX_TREE_UNDERSCORE= AbstractNodeFactory.createIdentifierToken("_");
-    public static final Token SYNTAX_TREE_OPTIONAL_CHAINING= AbstractNodeFactory.createIdentifierToken("?.");
+    public static final Token SYNTAX_TREE_OPTIONAL_CHAINING = AbstractNodeFactory.createIdentifierToken("?.");
+    public static final Token SYNTAX_TREE_AT = AbstractNodeFactory.createIdentifierToken("@");
 
     public static final Token SYNTAX_TREE_KEYWORD_NEW = AbstractNodeFactory.createIdentifierToken("new ");
     public static final Token SYNTAX_TREE_KEYWORD_IMPORT = AbstractNodeFactory.createIdentifierToken("import ");
@@ -63,6 +64,10 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_KEYWORD_IF = AbstractNodeFactory.createIdentifierToken("if ");
     public static final Token SYNTAX_TREE_KEYWORD_ELSE = AbstractNodeFactory.createIdentifierToken("else ");
     public static final Token SYNTAX_TREE_KEYWORD_IS = AbstractNodeFactory.createIdentifierToken("is ");
+    public static final Token SYNTAX_TREE_KEYWORD_LISTENER = AbstractNodeFactory.createIdentifierToken("listener ");
+    public static final Token SYNTAX_TREE_KEYWORD_SERVICE = AbstractNodeFactory.createIdentifierToken("service ");
+    public static final Token SYNTAX_TREE_KEYWORD_ON = AbstractNodeFactory.createIdentifierToken("on ");
+    public static final Token SYNTAX_TREE_KEYWORD_ERROR = AbstractNodeFactory.createIdentifierToken("error ");
 
     public static final Token SYNTAX_TREE_OPERATOR_OR = AbstractNodeFactory.createToken(SyntaxKind.LOGICAL_OR_TOKEN);
     public static final Token SYNTAX_TREE_OPERATOR_UNARY = AbstractNodeFactory.createToken(SyntaxKind.EXCLAMATION_MARK_TOKEN);

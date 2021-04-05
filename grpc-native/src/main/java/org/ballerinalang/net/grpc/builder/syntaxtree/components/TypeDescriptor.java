@@ -23,6 +23,7 @@ import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
+import io.ballerina.compiler.syntax.tree.ErrorTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.ListBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.Node;
@@ -208,6 +209,13 @@ public class TypeDescriptor {
                 ),
                 SyntaxTreeConstants.SYNTAX_TREE_GT,
                 expression
+        );
+    }
+
+    public static ErrorTypeDescriptorNode getErrorTypeDescriptorNode() {
+        return NodeFactory.createErrorTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_ERROR,
+                null
         );
     }
 }
