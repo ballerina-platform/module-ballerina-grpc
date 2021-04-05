@@ -112,7 +112,7 @@ public class BallerinaFileBuilder {
     }
 
     public static SyntaxTree syntaxTreeDemo() {
-        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "Chat_sample_service.bal");
+        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "oneof_field_service_pb.bal");
         String content = null;
         try {
             content = getSourceText(sourceFilePath);
