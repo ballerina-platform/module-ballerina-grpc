@@ -31,6 +31,8 @@ import io.ballerina.tools.text.TextDocuments;
 import org.apache.commons.lang3.StringUtils;
 import org.ballerinalang.formatter.core.Formatter;
 import org.ballerinalang.formatter.core.FormatterException;
+import org.ballerinalang.net.grpc.builder.balgen.BalGenConstants;
+import org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils;
 import org.ballerinalang.net.grpc.builder.stub.Descriptor;
 import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
 import org.ballerinalang.net.grpc.builder.stub.Message;
@@ -38,8 +40,6 @@ import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.stub.ServiceFile;
 import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
 import org.ballerinalang.net.grpc.builder.stub.StubFile;
-import org.ballerinalang.net.grpc.builder.balgen.BalGenConstants;
-import org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils;
 import org.ballerinalang.net.grpc.builder.syntaxtree.SyntaxTreeGen;
 import org.ballerinalang.net.grpc.exception.CodeBuilderException;
 import org.ballerinalang.net.grpc.exception.GrpcServerException;
@@ -72,6 +72,8 @@ import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GOOGLE_S
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_SERVICE;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.SAMPLE_FILE_PREFIX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.SAMPLE_SERVICE_FILE_PREFIX;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.STUB_FILE_PREFIX;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_DIR_PATH_KEY;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_SUFFIX;
@@ -110,7 +112,7 @@ public class BallerinaFileBuilder {
     }
 
     public static SyntaxTree syntaxTreeDemo() {
-        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "oneof_field_service_pb.bal");
+        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "Chat_sample_service.bal");
         String content = null;
         try {
             content = getSourceText(sourceFilePath);
@@ -226,33 +228,18 @@ public class BallerinaFileBuilder {
                 }
 
                 if (GRPC_SERVICE.equals(mode)) {
-                    serviceFile = sampleServiceBuilder.build();
-                    // Todo: remove
-                    serviceFile.setEnableEp(enableEp);
-                    if (enableEp) {
-                        enableEp = false;
-                    }
-
-//                    String servicePath = generateOutputFile(this.balOutPath, serviceDescriptor.getName() +
-//                            SAMPLE_SERVICE_FILE_PREFIX);
-//                    writeOutputFile(serviceFile, servicePath);
-
-                    String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
-                } else if (GRPC_CLIENT.equals(mode)) {
-//                    String clientFilePath = generateOutputFile(
-//                            this.balOutPath,
-//                            serviceDescriptor.getName() + SAMPLE_FILE_PREFIX
-//                    );
-//                    writeOutputFile(new ClientFile(serviceDescriptor.getName()),
-//                            SAMPLE_CLIENT_TEMPLATE_NAME, clientFilePath);
-                    String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
-                } else {
-                    // For both client and server sides
-                    String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
+                    String serviceFilePath = generateOutputFile(this.balOutPath, serviceDescriptor.getName() +
+                            SAMPLE_SERVICE_FILE_PREFIX);
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject, mode), serviceFilePath);
                 }
+                if (GRPC_CLIENT.equals(mode)) {
+                    String clientFilePath = generateOutputFile(this.balOutPath,
+                            serviceDescriptor.getName() + SAMPLE_FILE_PREFIX
+                    );
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject, mode), clientFilePath);
+                }
+                String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
+                writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
             }
         } catch (GrpcServerException e) {
             throw new CodeBuilderException("Message descriptor error. " + e.getMessage());
