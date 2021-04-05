@@ -27,11 +27,17 @@ public class GrpcConstants {
     public static final String BALLERINA_ORG_NAME = "ballerina";
     public static final String GRPC_PACKAGE_NAME = "grpc";
 
-    // Diagnostic error messages
+    // Diagnostic error messages and IDs
     public static final String UNDEFINED_ANNOTATION_MSG = "undefined annotation: ";
     public static final String ONLY_REMOTE_FUNCTIONS_MSG = "only remote functions are allowed inside gRPC services";
     public static final String RETURN_WITH_CALLER_MSG = "return types are not allowed with the caller";
     public static final String MAX_PARAM_COUNT_MSG = "the maximum number of parameters to a remote function is 2";
     public static final String TWO_PARAMS_WITHOUT_CALLER_MSG = "when there are two parameters to a remote function, " +
             "the first one must be a caller type";
+
+    public static final String UNDEFINED_ANNOTATION_ID = "GRPC_101";
+    public static final String ONLY_REMOTE_FUNCTIONS_ID = "GRPC_102";
+    public static final String RETURN_WITH_CALLER_ID = "GRPC_103";
+    public static final String MAX_PARAM_COUNT_ID = "GRPC_104";
+    public static final String TWO_PARAMS_WITHOUT_CALLER_ID = "GRPC_105";
 }

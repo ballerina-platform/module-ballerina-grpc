@@ -27,6 +27,7 @@ import io.ballerina.compiler.api.symbols.UnionTypeSymbol;
 import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
+import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.ParameterNode;
 import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
@@ -39,7 +40,6 @@ import io.ballerina.tools.diagnostics.Diagnostic;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
-import org.ballerinalang.util.diagnostic.DiagnosticErrorCode;
 
 import java.util.List;
 import java.util.Locale;
@@ -118,8 +118,9 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
             }
         }
         if (!isServiceDescAnnotationPresents) {
-            reportServiceErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
-                    (GrpcConstants.UNDEFINED_ANNOTATION_MSG + GrpcConstants.GRPC_ANNOTATION_NAME));
+            reportErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
+                    (GrpcConstants.UNDEFINED_ANNOTATION_MSG + GrpcConstants.GRPC_ANNOTATION_NAME),
+                    GrpcConstants.UNDEFINED_ANNOTATION_ID);
         }
     }
 
@@ -130,7 +131,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                 .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
         if (!hasRemoteKeyword) {
             reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                    GrpcConstants.ONLY_REMOTE_FUNCTIONS_MSG);
+                    GrpcConstants.ONLY_REMOTE_FUNCTIONS_MSG, GrpcConstants.ONLY_REMOTE_FUNCTIONS_ID);
         }
     }
 
@@ -145,38 +146,27 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                     functionSignatureNode.parameters().get(0);
             if (!requiredParameterNode.toString().toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                        GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_MSG);
+                        GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_MSG, GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_ID);
             } else if (functionSignatureNode.returnTypeDesc().isPresent()) {
                 SyntaxKind returnTypeKind = functionSignatureNode.returnTypeDesc().get().type().kind();
                 if (!SyntaxKind.NIL_TYPE_DESC.name().equals(returnTypeKind.name())) {
                     reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                            GrpcConstants.RETURN_WITH_CALLER_MSG);
+                            GrpcConstants.RETURN_WITH_CALLER_MSG, GrpcConstants.RETURN_WITH_CALLER_ID);
                 }
             }
         } else if (parameterNodes.size() > 2) {
             reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                    GrpcConstants.MAX_PARAM_COUNT_MSG);
+                    GrpcConstants.MAX_PARAM_COUNT_MSG, GrpcConstants.MAX_PARAM_COUNT_ID);
         }
 
     }
 
-    public void reportErrorDiagnostic(FunctionDefinitionNode functionDefinitionNode,
-                                      SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message) {
+    public void reportErrorDiagnostic(Node node, SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message,
+    String diagnosticId) {
 
-        DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(
-                DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(), message, DiagnosticSeverity.ERROR);
+        DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(diagnosticId, message, DiagnosticSeverity.ERROR);
         Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo,
-                functionDefinitionNode.location());
-        syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
-    }
-
-    public void reportServiceErrorDiagnostic(ServiceDeclarationNode serviceDeclarationNode,
-                                             SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message) {
-
-        DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(DiagnosticErrorCode.UNDEFINED_ANNOTATION.diagnosticId(),
-                message, DiagnosticSeverity.ERROR);
-        Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo,
-                serviceDeclarationNode.location());
+                node.location());
         syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
     }
 }
