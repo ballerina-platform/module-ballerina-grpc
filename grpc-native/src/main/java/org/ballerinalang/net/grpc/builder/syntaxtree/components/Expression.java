@@ -25,6 +25,7 @@ import io.ballerina.compiler.syntax.tree.FieldAccessExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
 import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.ImplicitNewExpressionNode;
+import io.ballerina.compiler.syntax.tree.ListConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MethodCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
@@ -173,6 +174,17 @@ public class Expression {
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
                 NodeFactory.createSeparatedNodeList(arguments),
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+        );
+    }
+
+    public static ListConstructorExpressionNode getListConstructorExpressionNode(List<Node> expressions) {
+        if (expressions == null) {
+            expressions = new ArrayList<>();
+        }
+        return NodeFactory.createListConstructorExpressionNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
+                NodeFactory.createSeparatedNodeList(expressions),
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
         );
     }
 }

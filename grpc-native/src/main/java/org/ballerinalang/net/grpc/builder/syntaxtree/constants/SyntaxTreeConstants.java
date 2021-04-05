@@ -76,9 +76,11 @@ public class SyntaxTreeConstants {
 
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING = TypeDescriptor.getBuiltinSimpleNameReferenceNode("string");
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_INT = TypeDescriptor.getBuiltinSimpleNameReferenceNode("int");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_FLOAT = TypeDescriptor.getBuiltinSimpleNameReferenceNode("float");
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_BOOLEAN = TypeDescriptor.getBuiltinSimpleNameReferenceNode("boolean");
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_ANYDATA = TypeDescriptor.getBuiltinSimpleNameReferenceNode("anydata");
     public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING_ARRAY = TypeDescriptor.getArrayTypeDescriptorNode("string");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_BYTE_ARRAY = TypeDescriptor.getArrayTypeDescriptorNode("byte");
 
     // Nodes related to grpc module
     public static final QualifiedNameReferenceNode SYNTAX_TREE_GRPC_ERROR = TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Error");
