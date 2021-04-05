@@ -28,8 +28,10 @@ import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getListConstructorExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getArrayTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
@@ -101,6 +103,17 @@ public class Record {
         ));
     }
 
+    public void addOptionalArrayField(String fieldName, String fieldType) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getArrayTypeDescriptorNode(fieldType),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
     public void addBooleanFieldWithDefaultValue(String fieldName, String defaultValue) {
         fields = fields.add(
                 NodeFactory.createRecordFieldWithDefaultValueNode(
@@ -116,11 +129,36 @@ public class Record {
                 ));
     }
 
+    public void addArrayFieldWithDefaultValue(String fieldName, String type) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldWithDefaultValueNode(
+                        null,
+                        null,
+                        getArrayTypeDescriptorNode(type),
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        getListConstructorExpressionNode(null),
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                ));
+    }
+
+
     public void addOptionalIntegerField(String fieldName) {
         fields = fields.add(NodeFactory.createRecordFieldNode(
                 null,
                 null,
                 getBuiltinSimpleNameReferenceNode("int"),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
+    public void addOptionalFloatField(String fieldName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getBuiltinSimpleNameReferenceNode("float"),
                 AbstractNodeFactory.createIdentifierToken(fieldName),
                 SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
@@ -133,6 +171,21 @@ public class Record {
                         null,
                         null,
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_INT,
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        NodeFactory.createBasicLiteralNode(
+                                SyntaxKind.NUMERIC_LITERAL,
+                                AbstractNodeFactory.createIdentifierToken(defaultValue)),
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                ));
+    }
+
+    public void addFloatFieldWithDefaultValue(String fieldName, String defaultValue) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldWithDefaultValueNode(
+                        null,
+                        null,
+                        SyntaxTreeConstants.SYNTAX_TREE_VAR_FLOAT,
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
                         NodeFactory.createBasicLiteralNode(
