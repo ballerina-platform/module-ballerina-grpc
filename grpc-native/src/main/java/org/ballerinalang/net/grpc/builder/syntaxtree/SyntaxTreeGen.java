@@ -36,30 +36,44 @@ import org.ballerinalang.net.grpc.builder.stub.Message;
 import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
 import org.ballerinalang.net.grpc.builder.stub.StubFile;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Annotation;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Constant;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Imports;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Listener;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.ModuleVariable;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Service;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_SERVICE;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFunctionCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getImplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getIncludedRecordParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCallStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getErrorTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Caller.getCallerClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientClass;
@@ -199,5 +213,94 @@ public class SyntaxTreeGen {
                 body.getFunctionBody());
         definition.addQualifiers(new String[]{"public", "isolated"});
         return definition;
+    }
+
+    public static SyntaxTree generateSyntaxTree(StubFile stubFile, String mode) {
+        NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
+        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createEmptyNodeList();
+
+        if (GRPC_SERVICE.equals(mode)) {
+            String input = stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).getInputType();
+            String output = stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).getOutputType();
+            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
+            imports = AbstractNodeFactory.createNodeList(importForGrpc);
+
+            Listener listener = new Listener(
+                    "ep",
+                    getQualifiedNameReferenceNode("grpc", "Listener"),
+                    getImplicitNewExpressionNode(new String[]{"9090"}),
+                    false
+            );
+            moduleMembers = moduleMembers.add(listener.getListenerDeclarationNode());
+
+            Service service = new Service(
+                    new String[]{"\"" + stubFile.getStubList().get(0).getServiceName() + "\""},
+                    new String[]{"ep"}
+            );
+            Annotation grpcServiceDescriptor = new Annotation("grpc", "ServiceDescriptor");
+            grpcServiceDescriptor.addField("descriptor", "ROOT_DESCRIPTOR");
+            grpcServiceDescriptor.addField(
+                    "descMap",
+                    getFunctionCallExpressionNode("getDescriptorMap", new String[]{})
+                    );
+            service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
+            FunctionSignature signature = new FunctionSignature();
+            signature.addParameter(
+                    getRequiredParamNode(
+                            getSimpleNameReferenceNode(input),
+                            "value"
+                    )
+            );
+            signature.addReturns(
+                    Returns.getReturnTypeDescriptorNode(
+                            getUnionTypeDescriptorNode(
+                                    getStreamTypeDescriptorNode(
+                                            getSimpleNameReferenceNode(output),
+                                            // Todo: parametarize identirifer (optionalTypeDescriptor)
+                                            getOptionalTypeDescriptorNode("", "error")
+                                    ),
+                                    getErrorTypeDescriptorNode()
+                            )
+                    )
+            );
+            FunctionBody body = new FunctionBody();
+            FunctionDefinition function = new FunctionDefinition(
+                    // Todo: parameterize
+                    stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).getMethodName(),
+                    signature.getFunctionSignature(),
+                    body.getFunctionBody()
+            );
+            function.addQualifiers(new String[]{"remote"});
+            service.addMember(function.getFunctionDefinitionNode());
+            moduleMembers = moduleMembers.add(service.getServiceDeclarationNode());
+        }
+        if (GRPC_CLIENT.equals(mode)) {
+            ModuleVariable clientEp = new ModuleVariable(
+                    getTypedBindingPatternNode(
+                            getSimpleNameReferenceNode("Client"),
+                            getCaptureBindingPatternNode("ep")
+                    ),
+                    getCheckExpressionNode(
+                            getImplicitNewExpressionNode(new String[]{"\"http://localhost:9090\""})
+                    ),
+                    false
+            );
+            moduleMembers = moduleMembers.add(clientEp.getModuleVariableDeclarationNode());
+
+            FunctionSignature signature = new FunctionSignature();
+            FunctionBody body = new FunctionBody();
+            FunctionDefinition main = new FunctionDefinition(
+                    "main",
+                    signature.getFunctionSignature(),
+                    body.getFunctionBody()
+            );
+            moduleMembers = moduleMembers.add(main.getFunctionDefinitionNode());
+        }
+
+        Token eofToken = AbstractNodeFactory.createIdentifierToken("");
+        ModulePartNode modulePartNode = NodeFactory.createModulePartNode(imports, moduleMembers, eofToken);
+        TextDocument textDocument = TextDocuments.from("");
+        SyntaxTree syntaxTree = SyntaxTree.from(textDocument);
+        return syntaxTree.modifyWith(modulePartNode);
     }
 }
