@@ -27,16 +27,21 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
 
-public class Types {
+public class ValueTypeUtils {
 
     public static Type getValueTypeStream(String name) {
-        String typeName = "Context" + name.substring(0,1).toUpperCase() + name.substring(1) + "Stream";
-        Record contextStringStream = new Record();
-        contextStringStream.addStreamField("content", name);
-        contextStringStream.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
+        String typeName = "Context" + getCapitalized(name) + "Stream";
+        Record contextStream = new Record();
+        contextStream.addStreamField("content", name, !name.equals("string"));
+        contextStream.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
                 SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
-        return new Type(true, typeName, contextStringStream.getRecordTypeDescriptorNode());
+        return new Type(
+                true,
+                typeName,
+                contextStream.getRecordTypeDescriptorNode()
+        );
     }
 
     public static Type getValueType(String key) {
