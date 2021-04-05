@@ -56,7 +56,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 
-public class Message {
+public class MessageUtils {
 
     public static NodeList<ModuleMemberDeclarationNode> getMessageNodes(org.ballerinalang.net.grpc.builder.stub.Message message) {
         NodeList<ModuleMemberDeclarationNode> messageMembers = AbstractNodeFactory.createEmptyNodeList();

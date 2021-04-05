@@ -75,16 +75,16 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Caller.getCallerClass;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientClass;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Client.getStreamingClientFunction;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Message.getMessageNodes;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamClass;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamingContextFunction;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Server.getServerStreamingFunction;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Types.getEnumType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Types.getValueType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Types.getValueTypeStream;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientClass;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamingContextFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamingFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getEnumType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueTypeStream;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Unary.getUnaryContextFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Unary.getUnaryFunction;
 
