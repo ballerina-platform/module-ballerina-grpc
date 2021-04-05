@@ -23,6 +23,7 @@ import io.ballerina.compiler.syntax.tree.ExplicitNewExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.FieldAccessExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
+import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.ImplicitNewExpressionNode;
 import io.ballerina.compiler.syntax.tree.MethodCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
@@ -152,6 +153,26 @@ public class Expression {
                         NodeFactory.createSeparatedNodeList(arguments),
                         SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
                 )
+        );
+    }
+
+    public static FunctionCallExpressionNode getFunctionCallExpressionNode(String name, String[] args) {
+        List<Node> arguments = new ArrayList<>();
+        for (String arg : args) {
+            arguments.add(
+                    NodeFactory.createSpecificFieldNode(
+                            null,
+                            AbstractNodeFactory.createIdentifierToken(arg),
+                            SyntaxTreeConstants.SYNTAX_TREE_COLON,
+                            NodeFactory.createSimpleNameReferenceNode(AbstractNodeFactory.createIdentifierToken(arg))
+                    )
+            );
+        }
+        return NodeFactory.createFunctionCallExpressionNode(
+                getSimpleNameReferenceNode(name),
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                NodeFactory.createSeparatedNodeList(arguments),
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
         );
     }
 }
