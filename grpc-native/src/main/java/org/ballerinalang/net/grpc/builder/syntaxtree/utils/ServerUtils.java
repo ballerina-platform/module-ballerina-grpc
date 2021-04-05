@@ -58,7 +58,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 
-public class Server {
+public class ServerUtils {
 
     public static FunctionDefinition getServerStreamingFunction(Method method) {
         String outCap = method.getOutputType().substring(0,1).toUpperCase() + method.getOutputType().substring(1);
