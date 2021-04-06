@@ -34,10 +34,12 @@ public class GrpcConstants {
     public static final String MAX_PARAM_COUNT_MSG = "the maximum number of parameters to a remote function is 2";
     public static final String TWO_PARAMS_WITHOUT_CALLER_MSG = "when there are two parameters to a remote function, " +
             "the first one must be a caller type";
+    public static final String INVALID_CALLER_TYPE_MSG = "expected caller type \"";
 
     public static final String UNDEFINED_ANNOTATION_ID = "GRPC_101";
     public static final String ONLY_REMOTE_FUNCTIONS_ID = "GRPC_102";
     public static final String RETURN_WITH_CALLER_ID = "GRPC_103";
     public static final String MAX_PARAM_COUNT_ID = "GRPC_104";
     public static final String TWO_PARAMS_WITHOUT_CALLER_ID = "GRPC_105";
+    public static final String INVALID_CALLER_TYPE_ID = "GRPC_106";
 }

@@ -40,6 +40,7 @@ import io.ballerina.tools.diagnostics.Diagnostic;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
+import org.ballerinalang.net.grpc.MessageUtils;
 
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +58,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         // Check the gRPC annotations are present
         ServiceDeclarationNode serviceDeclarationNode = (ServiceDeclarationNode) syntaxNodeAnalysisContext.node();
         if (isBallerinaGrpcService(syntaxNodeAnalysisContext)) {
+            String serviceName = serviceNameFromServiceDeclarationNode(serviceDeclarationNode);
             validateServiceAnnotation(serviceDeclarationNode, syntaxNodeAnalysisContext);
             serviceDeclarationNode.members().stream().filter(child ->
             child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
@@ -66,7 +68,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                 // Check functions are remote or not
                 validateServiceFunctions(functionDefinitionNode, syntaxNodeAnalysisContext);
                 // Check params and return types
-                validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext);
+                validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext, serviceName);
 
             });
         }
@@ -136,7 +138,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
     }
 
     public void validateFunctionSignature(FunctionDefinitionNode functionDefinitionNode,
-                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
+                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String serviceName) {
 
         FunctionSignatureNode functionSignatureNode = functionDefinitionNode.functionSignature();
         SeparatedNodeList<ParameterNode> parameterNodes = functionSignatureNode.parameters();
@@ -144,9 +146,20 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         if (parameterNodes.size() == 2) {
             RequiredParameterNode requiredParameterNode = (RequiredParameterNode)
                     functionSignatureNode.parameters().get(0);
-            if (!requiredParameterNode.toString().toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
+            RequiredParameterNode messageNode = (RequiredParameterNode)
+                    functionSignatureNode.parameters().get(1);
+            String firstParameter = requiredParameterNode.typeName().toString().strip();
+            String expectedFirstParameter = MessageUtils.getCallerTypeName(serviceName,
+                    messageNode.typeName().toString().strip());
+
+            if (!firstParameter.toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
                         GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_MSG, GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_ID);
+            } else if (!firstParameter.equals(expectedFirstParameter)) {
+                String diagnosticMessage = GrpcConstants.INVALID_CALLER_TYPE_MSG + expectedFirstParameter
+                        + "\" but found \"" + firstParameter + "\"";
+                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                        diagnosticMessage, GrpcConstants.INVALID_CALLER_TYPE_ID);
             } else if (functionSignatureNode.returnTypeDesc().isPresent()) {
                 SyntaxKind returnTypeKind = functionSignatureNode.returnTypeDesc().get().type().kind();
                 if (!SyntaxKind.NIL_TYPE_DESC.name().equals(returnTypeKind.name())) {
@@ -162,11 +175,21 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
     }
 
     public void reportErrorDiagnostic(Node node, SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message,
-    String diagnosticId) {
+                                      String diagnosticId) {
 
         DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(diagnosticId, message, DiagnosticSeverity.ERROR);
         Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo,
                 node.location());
         syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
+    }
+
+    public String serviceNameFromServiceDeclarationNode(ServiceDeclarationNode serviceDeclarationNode) {
+
+        NodeList<Node> nodeList = serviceDeclarationNode.absoluteResourcePath();
+        if (nodeList.size() > 0) {
+            String serviceName = serviceDeclarationNode.absoluteResourcePath().get(0).toString();
+            return serviceName.replaceAll("\"", "").strip();
+        }
+        return "";
     }
 }
