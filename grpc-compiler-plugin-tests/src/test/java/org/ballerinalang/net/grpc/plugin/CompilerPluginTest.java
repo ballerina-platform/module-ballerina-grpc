@@ -94,7 +94,7 @@ public class CompilerPluginTest {
                 diagnostic -> errMsg.equals(diagnostic.toString())));
     }
 
-    @Test
+    @Test(enabled = false)
     public void testCompilerPluginServerStreamingWithoutAnnotations() {
 
         Package currentPackage = loadPackage("package_05");
