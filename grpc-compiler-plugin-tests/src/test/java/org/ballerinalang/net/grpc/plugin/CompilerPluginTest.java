@@ -94,12 +94,12 @@ public class CompilerPluginTest {
                 diagnostic -> errMsg.equals(diagnostic.toString())));
     }
 
-    @Test(enabled = false)
+    @Test
     public void testCompilerPluginServerStreamingWithoutAnnotations() {
 
         Package currentPackage = loadPackage("package_05");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(21:0,35:1)] undefined annotation: " +
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(29:0,42:1)] undefined annotation: " +
          "grpc:ServiceDescriptor";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
