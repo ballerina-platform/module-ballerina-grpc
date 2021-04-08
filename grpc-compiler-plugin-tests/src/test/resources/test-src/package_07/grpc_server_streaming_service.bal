@@ -25,16 +25,17 @@ listener grpc:Listener ep = new (9090);
 }
 service "HelloWorld" on new grpc:Listener(9090) {
 
-    remote function sendReplies(HelloWorldStringCaller caller, string name) returns stream<string, error?>|error {
+    remote function sendReplies(CustomCaller caller, string name) {
         log:printInfo("Server received hello from " + name);
         string[] greets = ["Hi", "Hey", "GM"];
-        // Create the array of responses by appending the received name.
-        int i = 0;
         foreach string greet in greets {
-            greets[i] = greet + " " + name;
-            i += 1;
+            grpc:Error? err = caller->sendString(greet + " " + name);
+            if (err is grpc:Error) {
+                log:printError("Error from Connector: " + err.message());
+            } else {
+                log:printInfo("send reply: " + greet + " " + name);
+            }
         }
-        // Return the stream of strings back to the client.
-        return greets.toStream();
+        checkpanic caller->complete();
     }
 }

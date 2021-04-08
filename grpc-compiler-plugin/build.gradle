@@ -30,6 +30,8 @@ dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
+
+    implementation project(":grpc-native")
 }
 
 def excludePattern = '**/module-info.java'
@@ -67,3 +69,5 @@ compileJava {
         classpath = files()
     }
 }
+
+build.dependsOn ":grpc-native:build"
