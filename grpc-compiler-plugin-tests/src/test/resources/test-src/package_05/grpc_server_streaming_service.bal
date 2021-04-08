@@ -15,13 +15,20 @@
 // under the License.
 // This is the server implementation of the server streaming scenario.
 import ballerina/grpc;
+import ballerina/http;
 import ballerina/log;
 
 listener grpc:Listener ep = new (9090);
 
-service "HelloWorld" on ep {
+service / on new http:Listener(9091) {
 
-    remote function sendReplies(string name) returns stream<string, error?>|error {
+    resource function get greeting() returns string {
+        return "Hello, World!";
+    }
+}
+
+service "HelloWorld" on ep {
+    remote function lotsOfReplies(string name) returns stream<string, error?>|error {
         log:printInfo("Server received hello from " + name);
         string[] greets = ["Hi", "Hey", "GM"];
         // Create the array of responses by appending the received name.
