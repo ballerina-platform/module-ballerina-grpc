@@ -25,12 +25,15 @@ import io.ballerina.compiler.api.symbols.TypeReferenceTypeSymbol;
 import io.ballerina.compiler.api.symbols.TypeSymbol;
 import io.ballerina.compiler.api.symbols.UnionTypeSymbol;
 import io.ballerina.compiler.syntax.tree.AnnotationNode;
+import io.ballerina.compiler.syntax.tree.DefaultableParameterNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
+import io.ballerina.compiler.syntax.tree.IncludedRecordParameterNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.ParameterNode;
 import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
+import io.ballerina.compiler.syntax.tree.RestParameterNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.ServiceDeclarationNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
@@ -61,8 +64,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
             String serviceName = serviceNameFromServiceDeclarationNode(serviceDeclarationNode);
             validateServiceAnnotation(serviceDeclarationNode, syntaxNodeAnalysisContext);
             serviceDeclarationNode.members().stream().filter(child ->
-            child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
-            || child.kind() == SyntaxKind.RESOURCE_ACCESSOR_DEFINITION).forEach(node -> {
+                    child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
+                            || child.kind() == SyntaxKind.RESOURCE_ACCESSOR_DEFINITION).forEach(node -> {
 
                 FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) node;
                 // Check functions are remote or not
@@ -144,13 +147,9 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         SeparatedNodeList<ParameterNode> parameterNodes = functionSignatureNode.parameters();
 
         if (parameterNodes.size() == 2) {
-            RequiredParameterNode requiredParameterNode = (RequiredParameterNode)
-                    functionSignatureNode.parameters().get(0);
-            RequiredParameterNode messageNode = (RequiredParameterNode)
-                    functionSignatureNode.parameters().get(1);
-            String firstParameter = requiredParameterNode.typeName().toString().strip();
+            String firstParameter = typeNameFromParameterNode(functionSignatureNode.parameters().get(0));
             String expectedFirstParameter = MessageUtils.getCallerTypeName(serviceName,
-                    messageNode.typeName().toString().strip());
+                    typeNameFromParameterNode(functionSignatureNode.parameters().get(1)));
 
             if (!firstParameter.toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
@@ -189,6 +188,24 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         if (nodeList.size() > 0) {
             String serviceName = serviceDeclarationNode.absoluteResourcePath().get(0).toString();
             return serviceName.replaceAll("\"", "").strip();
+        }
+        return "";
+    }
+
+    public String typeNameFromParameterNode(ParameterNode parameterNode) {
+
+        if (parameterNode instanceof RequiredParameterNode) {
+            RequiredParameterNode requiredParameterNode = (RequiredParameterNode) parameterNode;
+            return requiredParameterNode.typeName().toString().strip();
+        } else if (parameterNode instanceof DefaultableParameterNode) {
+            DefaultableParameterNode defaultableParameterNode = (DefaultableParameterNode) parameterNode;
+            return defaultableParameterNode.typeName().toString().strip();
+        } else if (parameterNode instanceof IncludedRecordParameterNode) {
+            IncludedRecordParameterNode includedParameterNode = (IncludedRecordParameterNode) parameterNode;
+            return includedParameterNode.typeName().toString().strip();
+        } else if (parameterNode instanceof RestParameterNode) {
+            RestParameterNode restParameterNode = (RestParameterNode) parameterNode;
+            return restParameterNode.typeName().toString().strip();
         }
         return "";
     }
