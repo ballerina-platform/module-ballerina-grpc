@@ -74,7 +74,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_03");
         PackageCompilation compilation = currentPackage.getCompilation();
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] return types are not allowed with " +
-         "the caller";
+                "the caller";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
@@ -87,7 +87,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_04");
         PackageCompilation compilation = currentPackage.getCompilation();
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] when there are two parameters to " +
-         "a remote function, the first one must be a caller type";
+                "a remote function, the first one must be a caller type";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
@@ -100,7 +100,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_05");
         PackageCompilation compilation = currentPackage.getCompilation();
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(29:0,42:1)] undefined annotation: " +
-         "grpc:ServiceDescriptor";
+                "grpc:ServiceDescriptor";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
@@ -113,7 +113,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_06");
         PackageCompilation compilation = currentPackage.getCompilation();
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(40:4,42:5)] only remote functions are " +
-         "allowed inside gRPC services";
+                "allowed inside gRPC services";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
@@ -126,11 +126,20 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_07");
         PackageCompilation compilation = currentPackage.getCompilation();
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,39:5)] expected caller type " +
-         "\"HelloWorldStringCaller\" but found \"CustomCaller\"";
+                "\"HelloWorldStringCaller\" but found \"CustomCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 diagnostic -> errMsg.equals(diagnostic.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginServerStreamingWithAlias() {
+
+        Package currentPackage = loadPackage("package_08");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
     }
 
     private Package loadPackage(String path) {

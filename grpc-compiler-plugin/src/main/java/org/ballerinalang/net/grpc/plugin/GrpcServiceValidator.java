@@ -18,13 +18,13 @@
 
 package org.ballerinalang.net.grpc.plugin;
 
+import io.ballerina.compiler.api.symbols.AnnotationSymbol;
 import io.ballerina.compiler.api.symbols.ServiceDeclarationSymbol;
 import io.ballerina.compiler.api.symbols.Symbol;
 import io.ballerina.compiler.api.symbols.TypeDescKind;
 import io.ballerina.compiler.api.symbols.TypeReferenceTypeSymbol;
 import io.ballerina.compiler.api.symbols.TypeSymbol;
 import io.ballerina.compiler.api.symbols.UnionTypeSymbol;
-import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.DefaultableParameterNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
@@ -58,74 +58,82 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
     @Override
     public void perform(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
-        // Check the gRPC annotations are present
+
         ServiceDeclarationNode serviceDeclarationNode = (ServiceDeclarationNode) syntaxNodeAnalysisContext.node();
-        if (isBallerinaGrpcService(syntaxNodeAnalysisContext)) {
-            String serviceName = serviceNameFromServiceDeclarationNode(serviceDeclarationNode);
-            validateServiceAnnotation(serviceDeclarationNode, syntaxNodeAnalysisContext);
-            serviceDeclarationNode.members().stream().filter(child ->
-                    child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
-                            || child.kind() == SyntaxKind.RESOURCE_ACCESSOR_DEFINITION).forEach(node -> {
+        Optional<Symbol> optionalServiceDeclarationSymbol = syntaxNodeAnalysisContext.semanticModel()
+                .symbol(serviceDeclarationNode);
+        if (optionalServiceDeclarationSymbol.isPresent() &&
+                (optionalServiceDeclarationSymbol.get() instanceof ServiceDeclarationSymbol)) {
 
-                FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) node;
-                // Check functions are remote or not
-                validateServiceFunctions(functionDefinitionNode, syntaxNodeAnalysisContext);
-                // Check params and return types
-                validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext, serviceName);
+            ServiceDeclarationSymbol serviceDeclarationSymbol = (ServiceDeclarationSymbol)
+                    optionalServiceDeclarationSymbol.get();
 
-            });
+            if (isBallerinaGrpcService(serviceDeclarationSymbol)) {
+                String serviceName = serviceNameFromServiceDeclarationNode(serviceDeclarationNode);
+                validateServiceAnnotation(serviceDeclarationNode, syntaxNodeAnalysisContext, serviceDeclarationSymbol);
+                serviceDeclarationNode.members().stream().filter(child ->
+                        child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
+                                || child.kind() == SyntaxKind.RESOURCE_ACCESSOR_DEFINITION).forEach(node -> {
+
+                    FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) node;
+                    // Check functions are remote or not
+                    validateServiceFunctions(functionDefinitionNode, syntaxNodeAnalysisContext);
+                    // Check params and return types
+                    validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext, serviceName);
+
+                });
+            }
+
         }
+
     }
 
-    public boolean isBallerinaGrpcService(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
+    public boolean isBallerinaGrpcService(ServiceDeclarationSymbol serviceDeclarationSymbol) {
 
-        ServiceDeclarationNode serviceDeclarationNode = (ServiceDeclarationNode) syntaxNodeAnalysisContext.node();
-        Optional<Symbol> serviceDeclarationSymbol = syntaxNodeAnalysisContext.semanticModel()
-                .symbol(serviceDeclarationNode);
-        if (serviceDeclarationSymbol.isPresent()) {
-            List<TypeSymbol> listenerTypes = ((ServiceDeclarationSymbol) serviceDeclarationSymbol.get())
-                    .listenerTypes();
-            for (TypeSymbol listenerType : listenerTypes) {
-                if (listenerType.typeKind() == TypeDescKind.UNION) {
-                    List<TypeSymbol> memberDescriptors = ((UnionTypeSymbol) listenerType).memberTypeDescriptors();
-                    for (TypeSymbol typeSymbol : memberDescriptors) {
-                        if (typeSymbol.getModule().isPresent() && typeSymbol.getModule().get().id().orgName()
-                                .equals(GrpcConstants.BALLERINA_ORG_NAME) && typeSymbol.getModule()
-                                .flatMap(Symbol::getName).orElse("").equals(GrpcConstants.GRPC_PACKAGE_NAME)) {
+        List<TypeSymbol> listenerTypes = serviceDeclarationSymbol.listenerTypes();
+        for (TypeSymbol listenerType : listenerTypes) {
+            if (listenerType.typeKind() == TypeDescKind.UNION) {
+                List<TypeSymbol> memberDescriptors = ((UnionTypeSymbol) listenerType).memberTypeDescriptors();
+                for (TypeSymbol typeSymbol : memberDescriptors) {
+                    if (typeSymbol.getModule().isPresent() && typeSymbol.getModule().get().id().orgName()
+                            .equals(GrpcConstants.BALLERINA_ORG_NAME) && typeSymbol.getModule()
+                            .flatMap(Symbol::getName).orElse("").equals(GrpcConstants.GRPC_PACKAGE_NAME)) {
 
-                            return true;
-                        }
+                        return true;
                     }
-                } else if (listenerType.typeKind() == TypeDescKind.TYPE_REFERENCE
-                        && listenerType.getModule().isPresent()
-                        && listenerType.getModule().get().id().orgName().equals(GrpcConstants.BALLERINA_ORG_NAME)
-                        && ((TypeReferenceTypeSymbol) listenerType).typeDescriptor().getModule()
-                        .flatMap(Symbol::getName).orElse("").equals(GrpcConstants.GRPC_PACKAGE_NAME)) {
-
-                    return true;
                 }
+            } else if (listenerType.typeKind() == TypeDescKind.TYPE_REFERENCE
+                    && listenerType.getModule().isPresent()
+                    && listenerType.getModule().get().id().orgName().equals(GrpcConstants.BALLERINA_ORG_NAME)
+                    && ((TypeReferenceTypeSymbol) listenerType).typeDescriptor().getModule()
+                    .flatMap(Symbol::getName).orElse("").equals(GrpcConstants.GRPC_PACKAGE_NAME)) {
+
+                return true;
             }
         }
         return false;
     }
 
     public void validateServiceAnnotation(ServiceDeclarationNode serviceDeclarationNode,
-                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
+                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext,
+                                          ServiceDeclarationSymbol serviceDeclarationSymbol) {
 
         boolean isServiceDescAnnotationPresents = false;
-        if (serviceDeclarationNode.metadata().isPresent()) {
-            NodeList<AnnotationNode> nodeList = serviceDeclarationNode.metadata().get().annotations();
-            for (AnnotationNode annotationNode : nodeList) {
-                if (GrpcConstants.GRPC_ANNOTATION_NAME.equals(annotationNode.annotReference().toString().strip())) {
-                    isServiceDescAnnotationPresents = true;
-                    break;
-                }
+        List<AnnotationSymbol> annotationSymbols = serviceDeclarationSymbol.annotations();
+        for (AnnotationSymbol annotationSymbol : annotationSymbols) {
+            if (annotationSymbol.getModule().isPresent()
+                    && GrpcConstants.GRPC_PACKAGE_NAME.equals(annotationSymbol.getModule().get().id().moduleName())
+                    && annotationSymbol.getName().isPresent()
+                    && GrpcConstants.GRPC_ANNOTATION_NAME.equals(annotationSymbol.getName().get())) {
+
+                isServiceDescAnnotationPresents = true;
+                break;
             }
         }
         if (!isServiceDescAnnotationPresents) {
             reportErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
-                    (GrpcConstants.UNDEFINED_ANNOTATION_MSG + GrpcConstants.GRPC_ANNOTATION_NAME),
-                    GrpcConstants.UNDEFINED_ANNOTATION_ID);
+                    (GrpcConstants.UNDEFINED_ANNOTATION_MSG + GrpcConstants.GRPC_PACKAGE_NAME + ":" +
+                            GrpcConstants.GRPC_ANNOTATION_NAME), GrpcConstants.UNDEFINED_ANNOTATION_ID);
         }
     }
 
