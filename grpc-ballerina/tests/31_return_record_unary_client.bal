@@ -68,7 +68,3 @@ public client class HelloWorld31Client {
     }
 
 }
-
-
-
-
