@@ -52,7 +52,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 
-public class Unary {
+public class UnaryUtils {
 
     public static FunctionDefinition getUnaryFunction(Method method) {
         String inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
