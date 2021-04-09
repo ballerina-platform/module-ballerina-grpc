@@ -57,11 +57,12 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
 
 public class ServerUtils {
 
     public static FunctionDefinition getServerStreamingFunction(Method method) {
-        String outCap = method.getOutputType().substring(0,1).toUpperCase() + method.getOutputType().substring(1);
+        String outCap = getCapitalized(method.getOutputType());
         FunctionSignature signature = new FunctionSignature();
         signature.addParameter(
                 getRequiredParamNode(
@@ -73,12 +74,15 @@ public class ServerUtils {
                         getUnionTypeDescriptorNode(
                                 getStreamTypeDescriptorNode(
                                         getSimpleNameReferenceNode(method.getOutputType()),
-                                        SYNTAX_TREE_GRPC_ERROR),
+                                        SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
                                 SYNTAX_TREE_GRPC_ERROR)));
         FunctionBody body = getServerBody(method, "_", outCap);
         body.addReturnStatement(
                 getExplicitNewExpressionNode(
-                        getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_GRPC_ERROR),
+                        getStreamTypeDescriptorNode(
+                                getSimpleNameReferenceNode(method.getOutputType()),
+                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                        ),
                         new String[]{"outputStream"}
                 )
         );
@@ -91,7 +95,8 @@ public class ServerUtils {
     }
 
     public static FunctionDefinition getServerStreamingContextFunction(Method method) {
-        String outCap = method.getOutputType().substring(0,1).toUpperCase() + method.getOutputType().substring(1);
+        String inputCap = getCapitalized(method.getInputType());
+        String outputCap = getCapitalized(method.getOutputType());
         FunctionSignature signature = new FunctionSignature();
         signature.addParameter(
                 getRequiredParamNode(
@@ -100,15 +105,17 @@ public class ServerUtils {
         signature.addReturns(
                 Returns.getReturnTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(
-                                        "Context" + outCap + "Stream"),
+                                getSimpleNameReferenceNode("Context" + inputCap + "Stream"),
                                 SYNTAX_TREE_GRPC_ERROR)));
-        FunctionBody body = getServerBody(method, "headers", outCap);
+        FunctionBody body = getServerBody(method, "headers", outputCap);
         Map returnMap = new Map();
         returnMap.addField(
                 "content",
                 getExplicitNewExpressionNode(
-                        getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_GRPC_ERROR),
+                        getStreamTypeDescriptorNode(
+                                getSimpleNameReferenceNode(method.getOutputType()),
+                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                        ),
                         new String[]{"outputStream"}
                 )
         );
@@ -123,20 +130,20 @@ public class ServerUtils {
     }
 
     public static Class getServerStreamClass(Method method) {
-        String outputType = method.getOutputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
-        Class serverStream = new Class(outputType + "Stream", true);
+        String outCap = getCapitalized(method.getOutputType());
+        Class serverStream = new Class(outCap + "Stream", true);
 
         serverStream.addMember(
                 getObjectFieldNode(
                         "private",
                         new String[]{},
-                        getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR),
+                        getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
                         "anydataStream"));
 
         FunctionSignature initSignature = new FunctionSignature();
         initSignature.addParameter(
                 getRequiredParamNode(
-                        getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR),
+                        getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
                         "anydataStream"));
         FunctionBody initBody = new FunctionBody();
         initBody.addAssignmentStatement(
@@ -151,7 +158,7 @@ public class ServerUtils {
 
         FunctionSignature nextSignature = new FunctionSignature();
         Record nextRecord = new Record();
-        nextRecord.addCustomField("value", method.getInputType());
+        nextRecord.addCustomField("value", method.getOutputType());
         nextSignature.addReturns(
                 Returns.getReturnTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
@@ -184,11 +191,11 @@ public class ServerUtils {
         streamValueErrorCheck.addIfReturnStatement(getSimpleNameReferenceNode("streamValue"));
 
         Record nextRecordRec = new Record();
-        nextRecordRec.addStringField("value");
+        nextRecordRec.addCustomField(method.getOutputType(), "value");
         Map nextRecordMap = new Map();
         nextRecordMap.addTypeCastExpressionField(
                 "value",
-                "string",
+                method.getOutputType(),
                 getFieldAccessExpressionNode("streamValue", "value"));
         VariableDeclaration nextRecordVar = new VariableDeclaration(
                 getTypedBindingPatternNode(
@@ -245,7 +252,7 @@ public class ServerUtils {
         body.addVariableStatement(payload.getVariableDeclarationNode());
 
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
-                getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR),
+                getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
                 getParameterizedTypeDescriptorNode(
                         "map",
