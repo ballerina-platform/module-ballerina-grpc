@@ -29,6 +29,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.StreamObserver;
+import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
@@ -59,6 +60,26 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
     @Override
     public void notifySuccess(Object response) {
         super.notifySuccess(response);
+        // check whether connection is closed.
+        if (responseSender instanceof ServerCallHandler.ServerCallStreamObserver) {
+            ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
+                    .ServerCallStreamObserver) responseSender;
+            if (!serverCallStreamObserver.isReady()) {
+                return;
+            }
+            if (serverCallStreamObserver.isCancelled()) {
+                return;
+            }
+        }
+        if (response instanceof BError) {
+            handleFailure(responseSender, (BError) response);
+            if (observerContext != null) {
+                observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE,
+                        HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+            }
+            return;
+        }
+
         Object content;
         BMap headerValues = null;
         if (isContextRecordByValue(response)) {
@@ -71,16 +92,22 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
         HttpHeaders headers = convertToHttpHeaders(headerValues);
 
         if (content instanceof BStream) {
-            BObject bObject = (BObject) ((BStream) content).getIteratorObj();
+            BObject bObject = ((BStream) content).getIteratorObj();
             ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                     runtime, responseSender, outputType, bObject, headers);
             runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
         } else {
-            //Message responseMessage = MessageUtils.generateProtoMessage(responseValue, outputType);
-            Message responseMessage = new Message(outputType.getName(), content);
-            responseMessage.setHeaders(headers);
-            responseSender.onNext(responseMessage);
-            responseSender.onCompleted();
+            // If content is null and remote function doesn't return empty response means. response is already sent
+            // to client via caller object, but connection is not closed already by calling complete function.
+            // Hence closing the connection.
+            if (content == null) {
+                responseSender.onCompleted();
+            } else {
+                Message responseMessage = new Message(outputType.getName(), content);
+                responseMessage.setHeaders(headers);
+                responseSender.onNext(responseMessage);
+                responseSender.onCompleted();
+            }
         }
     }
 
