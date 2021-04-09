@@ -39,6 +39,8 @@ public class FunctionDefinition {
     private final FunctionBodyNode functionBody;
 
     public FunctionDefinition(String name, FunctionSignatureNode signature, FunctionBodyNode body) {
+        // Todo: have a single class for function definition, signature, param and body (Function).
+        // Todo: Function() should create empty signature and body.
         qualifierList = AbstractNodeFactory.createEmptyNodeList();
         functionName = AbstractNodeFactory.createIdentifierToken(name);
         relativeResourcePath = AbstractNodeFactory.createEmptyNodeList();

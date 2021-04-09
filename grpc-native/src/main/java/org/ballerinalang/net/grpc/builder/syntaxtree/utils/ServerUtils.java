@@ -140,31 +140,43 @@ public class ServerUtils {
                         getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
                         "anydataStream"));
 
-        FunctionSignature initSignature = new FunctionSignature();
-        initSignature.addParameter(
+        serverStream.addMember(getInitFunction().getFunctionDefinitionNode());
+
+        serverStream.addMember(getNextFunction(method).getFunctionDefinitionNode());
+
+        serverStream.addMember(getCloseFunction().getFunctionDefinitionNode());
+
+        return serverStream;
+    }
+
+    private static FunctionDefinition getInitFunction() {
+        FunctionSignature signature = new FunctionSignature();
+        signature.addParameter(
                 getRequiredParamNode(
                         getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
                         "anydataStream"));
-        FunctionBody initBody = new FunctionBody();
-        initBody.addAssignmentStatement(
+        FunctionBody body = new FunctionBody();
+        body.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "anydataStream"),
                 getSimpleNameReferenceNode("anydataStream"));
-        FunctionDefinition initDefinition = new FunctionDefinition(
+        FunctionDefinition definition = new FunctionDefinition(
                 "init",
-                initSignature.getFunctionSignature(),
-                initBody.getFunctionBody());
-        initDefinition.addQualifiers(new String[]{"public", "isolated"});
-        serverStream.addMember(initDefinition.getFunctionDefinitionNode());
+                signature.getFunctionSignature(),
+                body.getFunctionBody());
+        definition.addQualifiers(new String[]{"public", "isolated"});
+        return definition;
+    }
 
-        FunctionSignature nextSignature = new FunctionSignature();
+    private static FunctionDefinition getNextFunction(Method method) {
+        FunctionSignature signature = new FunctionSignature();
         Record nextRecord = new Record();
         nextRecord.addCustomField("value", method.getOutputType());
-        nextSignature.addReturns(
+        signature.addReturns(
                 Returns.getReturnTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
                                 nextRecord.getRecordTypeDescriptorNode(),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL)));
-        FunctionBody nextBody = new FunctionBody();
+        FunctionBody body = new FunctionBody();
         VariableDeclaration streamValue = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getBuiltinSimpleNameReferenceNode("var"),
@@ -173,7 +185,7 @@ public class ServerUtils {
                         getFieldAccessExpressionNode("self", "anydataStream"),
                         "next",
                         new String[]{}));
-        nextBody.addVariableStatement(streamValue.getVariableDeclarationNode());
+        body.addVariableStatement(streamValue.getVariableDeclarationNode());
 
         IfElse streamValueNilCheck = new IfElse(
                 getBracedExpressionNode(
@@ -191,7 +203,7 @@ public class ServerUtils {
         streamValueErrorCheck.addIfReturnStatement(getSimpleNameReferenceNode("streamValue"));
 
         Record nextRecordRec = new Record();
-        nextRecordRec.addCustomField(method.getOutputType(), "value");
+        nextRecordRec.addCustomField("value", method.getOutputType());
         Map nextRecordMap = new Map();
         nextRecordMap.addTypeCastExpressionField(
                 "value",
@@ -207,32 +219,32 @@ public class ServerUtils {
         streamValueErrorCheck.addElseReturnStatement(getSimpleNameReferenceNode("nextRecord"));
         streamValueNilCheck.addElseBody(streamValueErrorCheck);
 
-        nextBody.addIfElseStatement(streamValueNilCheck.getIfElseStatementNode());
+        body.addIfElseStatement(streamValueNilCheck.getIfElseStatementNode());
 
-        FunctionDefinition next = new FunctionDefinition(
+        FunctionDefinition definition = new FunctionDefinition(
                 "next",
-                nextSignature.getFunctionSignature(),
-                nextBody.getFunctionBody());
-        next.addQualifiers(new String[]{"public", "isolated"});
-        serverStream.addMember(next.getFunctionDefinitionNode());
+                signature.getFunctionSignature(),
+                body.getFunctionBody());
+        definition.addQualifiers(new String[]{"public", "isolated"});
+        return definition;
+    }
 
-        FunctionSignature closeSignature = new FunctionSignature();
-        closeSignature.addReturns(
+    private static FunctionDefinition getCloseFunction() {
+        FunctionSignature signature = new FunctionSignature();
+        signature.addReturns(
                 Returns.getReturnTypeDescriptorNode(SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
-        FunctionBody closeBody = new FunctionBody();
-        closeBody.addReturnStatement(
+        FunctionBody body = new FunctionBody();
+        body.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "anydataStream"),
                         "close",
                         new String[]{}));
-        FunctionDefinition close = new FunctionDefinition(
+        FunctionDefinition definition = new FunctionDefinition(
                 "close",
-                closeSignature.getFunctionSignature(),
-                closeBody.getFunctionBody());
-        close.addQualifiers(new String[]{"public", "isolated"});
-        serverStream.addMember(close.getFunctionDefinitionNode());
-
-        return serverStream;
+                signature.getFunctionSignature(),
+                body.getFunctionBody());
+        definition.addQualifiers(new String[]{"public", "isolated"});
+        return definition;
     }
 
     private static FunctionBody getServerBody(Method method, String headers, String outCap) {
