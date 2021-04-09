@@ -85,8 +85,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.ge
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getEnumType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueTypeStream;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Unary.getUnaryContextFunction;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.Unary.getUnaryFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.UnaryUtils.getUnaryContextFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.UnaryUtils.getUnaryFunction;
 
 public class SyntaxTreeGen {
 
