@@ -55,6 +55,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
 
 public class MessageUtils {
 
@@ -149,7 +150,7 @@ public class MessageUtils {
                 )
         );
         FunctionBody body = new FunctionBody();
-        ArrayList<String> counts = new ArrayList();
+        ArrayList<String> counts = new ArrayList<>();
         for (Map.Entry<String, List<Field>> oneOfFieldMap : message.getOneofFieldMap().entrySet()) {
             counts.add(oneOfFieldMap.getKey() + "Count");
             VariableDeclaration count = new VariableDeclaration(
@@ -272,10 +273,16 @@ public class MessageUtils {
                 );
             }
         }
-        return new FunctionDefinition(
-                messageName + "_" + field.getFieldName(),
+        StringBuilder functionName = new StringBuilder("set" + messageName + "_");
+        for (String s : field.getFieldName().split("_")) {
+            functionName.append(getCapitalized(s));
+        }
+        FunctionDefinition definition = new  FunctionDefinition(
+                functionName.toString(),
                 signature.getFunctionSignature(),
                 body.getFunctionBody()
         );
+        definition.addQualifiers(new String[]{"isolated"});
+        return definition;
     }
 }
