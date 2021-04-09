@@ -88,7 +88,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
     }
 
-    public boolean isBallerinaGrpcService(ServiceDeclarationSymbol serviceDeclarationSymbol) {
+    private boolean isBallerinaGrpcService(ServiceDeclarationSymbol serviceDeclarationSymbol) {
 
         List<TypeSymbol> listenerTypes = serviceDeclarationSymbol.listenerTypes();
         for (TypeSymbol listenerType : listenerTypes) {
@@ -114,7 +114,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         return false;
     }
 
-    public void validateServiceAnnotation(ServiceDeclarationNode serviceDeclarationNode,
+    private void validateServiceAnnotation(ServiceDeclarationNode serviceDeclarationNode,
                                           SyntaxNodeAnalysisContext syntaxNodeAnalysisContext,
                                           ServiceDeclarationSymbol serviceDeclarationSymbol) {
 
@@ -137,7 +137,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         }
     }
 
-    public void validateServiceFunctions(FunctionDefinitionNode functionDefinitionNode,
+    private void validateServiceFunctions(FunctionDefinitionNode functionDefinitionNode,
                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
 
         boolean hasRemoteKeyword = functionDefinitionNode.qualifierList().stream()
@@ -148,7 +148,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         }
     }
 
-    public void validateFunctionSignature(FunctionDefinitionNode functionDefinitionNode,
+    private void validateFunctionSignature(FunctionDefinitionNode functionDefinitionNode,
                                           SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String serviceName) {
 
         FunctionSignatureNode functionSignatureNode = functionDefinitionNode.functionSignature();
@@ -181,7 +181,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
     }
 
-    public void reportErrorDiagnostic(Node node, SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message,
+    private void reportErrorDiagnostic(Node node, SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message,
                                       String diagnosticId) {
 
         DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(diagnosticId, message, DiagnosticSeverity.ERROR);
@@ -190,7 +190,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         syntaxNodeAnalysisContext.reportDiagnostic(diagnostic);
     }
 
-    public String serviceNameFromServiceDeclarationNode(ServiceDeclarationNode serviceDeclarationNode) {
+    private String serviceNameFromServiceDeclarationNode(ServiceDeclarationNode serviceDeclarationNode) {
 
         NodeList<Node> nodeList = serviceDeclarationNode.absoluteResourcePath();
         if (nodeList.size() > 0) {
@@ -200,7 +200,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         return "";
     }
 
-    public String typeNameFromParameterNode(ParameterNode parameterNode) {
+    private String typeNameFromParameterNode(ParameterNode parameterNode) {
 
         if (parameterNode instanceof RequiredParameterNode) {
             RequiredParameterNode requiredParameterNode = (RequiredParameterNode) parameterNode;
