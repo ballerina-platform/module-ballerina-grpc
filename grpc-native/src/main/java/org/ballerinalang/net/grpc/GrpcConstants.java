@@ -273,4 +273,8 @@ public class GrpcConstants {
 
     public static final BString SECURESOCKET_CONFIG_CERT_VALIDATION_TYPE_OCSP_STAPLING =
             StringUtils.fromString("OCSP_STAPLING");
+
+    //context message field name constants
+    public static final String CONTENT_FIELD = "content";
+    public static final String HEADER_FIELD = "headers";
 }

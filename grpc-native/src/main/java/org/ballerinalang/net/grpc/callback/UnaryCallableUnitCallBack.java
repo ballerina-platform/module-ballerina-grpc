@@ -32,7 +32,9 @@ import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static org.ballerinalang.net.grpc.GrpcConstants.CONTENT_FIELD;
 import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
+import static org.ballerinalang.net.grpc.GrpcConstants.HEADER_FIELD;
 import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
 import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
 import static org.ballerinalang.net.grpc.MessageUtils.isRecordMapValue;
@@ -86,8 +88,8 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         Object content;
         BMap headerValues = null;
         if (isContextRecordByValue(response)) {
-            content = ((BMap) response).get(StringUtils.fromString("content"));
-            headerValues = ((BMap) response).getMapValue(StringUtils.fromString("headers"));
+            content = ((BMap) response).get(StringUtils.fromString(CONTENT_FIELD));
+            headerValues = ((BMap) response).getMapValue(StringUtils.fromString(HEADER_FIELD));
         } else {
             content = response;
         }
