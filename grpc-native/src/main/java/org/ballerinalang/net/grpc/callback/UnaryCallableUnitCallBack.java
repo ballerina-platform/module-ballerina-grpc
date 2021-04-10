@@ -32,7 +32,9 @@ import org.ballerinalang.net.grpc.StreamObserver;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static org.ballerinalang.net.grpc.GrpcConstants.CONTENT_FIELD;
 import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
+import static org.ballerinalang.net.grpc.GrpcConstants.HEADER_FIELD;
 import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
 import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
 import static org.ballerinalang.net.grpc.MessageUtils.isRecordMapValue;
@@ -82,49 +84,51 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             }
             return;
         }
+
+        Object content;
+        BMap headerValues = null;
+        if (isContextRecordByValue(response)) {
+            content = ((BMap) response).get(StringUtils.fromString(CONTENT_FIELD));
+            headerValues = ((BMap) response).getMapValue(StringUtils.fromString(HEADER_FIELD));
+        } else {
+            content = response;
+        }
+        // Update response headers when request headers exists in the context.
+        HttpHeaders headers = convertToHttpHeaders(headerValues);
+
         // notify success only if response message is empty. Service impl doesn't send empty message. Empty response
         // scenarios handles here.
         if (emptyResponse) {
-            requestSender.onNext(new Message(EMPTY_DATATYPE_NAME, null));
+            Message responseMessage = new Message(EMPTY_DATATYPE_NAME, null);
+            responseMessage.setHeaders(headers);
+            requestSender.onNext(responseMessage);
             requestSender.onCompleted();
         } else {
-            Object content;
-            BMap headerValues = null;
-            if (isContextRecordByValue(response)) {
-                content = ((BMap) response).get(StringUtils.fromString("content"));
-                headerValues = ((BMap) response).getMapValue(StringUtils.fromString("headers"));
-            } else {
-                content = response;
-            }
-            // If content is null and remote function doesn't return empty response means. response is already sent
-            // to client via caller object, but connection is not closed already by calling complete function.
-            // Hence closing the connection.
-            if (content == null) {
-                requestSender.onCompleted();
-            }
-
-            // Update response headers when request headers exists in the context.
-            HttpHeaders headers = convertToHttpHeaders(headerValues);
-
             if (content instanceof BStream) {
-                BObject bObject = (BObject) ((BStream) content).getIteratorObj();
+                BObject bObject = ((BStream) content).getIteratorObj();
                 ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                         runtime, requestSender, outputType, bObject, headers);
                 runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
             } else {
-                //Message responseMessage = MessageUtils.generateProtoMessage(responseValue, outputType);
-                Message responseMessage = new Message(outputType.getName(), content);
-                responseMessage.setHeaders(headers);
-                if (observerContext != null) {
-                    headers.entries().forEach(
-                            x -> observerContext.addTag(x.getKey(), x.getValue()));
-                }
-                requestSender.onNext(responseMessage);
+                // If content is null and remote function doesn't return empty response means. response is already sent
+                // to client via caller object, but connection is not closed already by calling complete function.
+                // Hence closing the connection.
+                if (content == null) {
+                    requestSender.onCompleted();
+                } else {
+                    Message responseMessage = new Message(outputType.getName(), content);
+                    responseMessage.setHeaders(headers);
+                    if (observerContext != null) {
+                        headers.entries().forEach(
+                                x -> observerContext.addTag(x.getKey(), x.getValue()));
+                    }
+                    requestSender.onNext(responseMessage);
 
-                if (observerContext != null) {
-                    observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.OK.code());
+                    if (observerContext != null) {
+                        observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.OK.code());
+                    }
+                    requestSender.onCompleted();
                 }
-                requestSender.onCompleted();
             }
         }
     }
