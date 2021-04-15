@@ -24,6 +24,7 @@ import io.ballerina.compiler.syntax.tree.ModuleMemberDeclarationNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
+import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
 import org.ballerinalang.net.grpc.builder.stub.Field;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
@@ -56,6 +57,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 
 public class MessageUtils {
 
@@ -75,6 +77,11 @@ public class MessageUtils {
                             ).getFunctionDefinitionNode()
                     );
                 }
+            }
+        }
+        if (message.getEnumList() != null) {
+            for (EnumMessage enumMessage : message.getEnumList()) {
+                messageMembers = messageMembers.add(getEnum(enumMessage).getEnumDeclarationNode());
             }
         }
         return messageMembers;
