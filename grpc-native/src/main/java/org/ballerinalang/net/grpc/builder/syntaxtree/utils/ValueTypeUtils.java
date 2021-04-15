@@ -18,9 +18,6 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
-import org.ballerinalang.net.grpc.builder.stub.EnumField;
-import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Enum;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Record;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Type;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
@@ -55,13 +52,5 @@ public class ValueTypeUtils {
         contextString.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
                 SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
         return new Type(true, typeName, contextString.getRecordTypeDescriptorNode());
-    }
-
-    public static Enum getEnumType(EnumMessage enumMessage) {
-        Enum enumMsg = new Enum(enumMessage.getMessageName(), true);
-        for (EnumField field : enumMessage.getFieldList()) {
-            enumMsg.addMember(Enum.getEnumMemberNode(field.getName()));
-        }
-        return enumMsg;
     }
 }
