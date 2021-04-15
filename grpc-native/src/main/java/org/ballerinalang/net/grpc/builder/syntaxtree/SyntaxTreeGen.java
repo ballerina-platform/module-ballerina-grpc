@@ -78,15 +78,15 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamingContextFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamingFunction;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getEnumType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueTypeStream;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.UnaryUtils.getUnaryContextFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.UnaryUtils.getUnaryFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueTypeStream;
 
 public class SyntaxTreeGen {
 
@@ -154,7 +154,7 @@ public class SyntaxTreeGen {
         }
 
         for (EnumMessage enumMessage : stubFile.getEnumList()) {
-            moduleMembers = moduleMembers.add(getEnumType(enumMessage).getEnumDeclarationNode());
+            moduleMembers = moduleMembers.add(getEnum(enumMessage).getEnumDeclarationNode());
         }
 
         // ROOT_DESCRIPTOR
