@@ -22,7 +22,7 @@ description = 'Ballerina - gRPC Ballerina Generator'
 def packageName = "grpc"
 def packageOrg = "ballerina"
 def platform = "java11"
-def tomlVersion = project.version.replace("-SNAPSHOT", "")
+def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
 def dependenciesTomlFile = new File("$project.projectDir/Dependencies.toml")
 def compilerPluginTomlFile = new File("$project.projectDir/CompilerPlugin.toml")
@@ -38,6 +38,20 @@ def originalBallerinaToml = ballerinaTomlFile.text
 def originalDependenciesToml = dependenciesTomlFile.text
 def originalCompilerPluginToml = compilerPluginTomlFile.text
 def testCoverageParam = "--code-coverage --includes=org.ballerinalang.net.grpc.*:ballerina.*"
+
+def stripBallerinaExtensionVersion(String extVersion) {
+    if (extVersion.matches(project.ext.timestampedVersionRegex)) {
+        def splitVersion = extVersion.split('-');
+        if (splitVersion.length > 3) {
+            def strippedValues = splitVersion[0..-4]
+            return strippedValues.join('-')
+        } else {
+            return extVersion
+        }
+    } else {
+        return extVersion.replace("${project.ext.snapshotVersion}", "")
+    }
+}
 
 configurations {
     jbalTools
@@ -158,13 +172,13 @@ task copyStdlibs(type: Copy) {
 
 task updateTomlFiles {
     doLast {
-        def stdlibDependentCryptoVersion = project.stdlibCryptoVersion.replace("-SNAPSHOT", "")
-        def stdlibDependentHttpVersion = project.stdlibHttpVersion.replace("-SNAPSHOT", "")
-        def stdlibDependentAuthVersion = project.stdlibOAuth2Version.replace("-SNAPSHOT", "")
-        def stdlibDependentJwtVersion = project.stdlibJwtVersion.replace("-SNAPSHOT", "")
-        def stdlibDependentOAuth2Version = project.stdlibOAuth2Version.replace("-SNAPSHOT", "")
-        def stdlibDependentRegexVersion = project.stdlibRegexVersion.replace("-SNAPSHOT", "")
-        def stdlibDependentTimeVersion = project.stdlibTimeVersion.replace("-SNAPSHOT", "")
+        def stdlibDependentCryptoVersion = stripBallerinaExtensionVersion(project.stdlibCryptoVersion)
+        def stdlibDependentHttpVersion = stripBallerinaExtensionVersion(project.stdlibHttpVersion)
+        def stdlibDependentAuthVersion = stripBallerinaExtensionVersion(project.stdlibOAuth2Version)
+        def stdlibDependentJwtVersion = stripBallerinaExtensionVersion(project.stdlibJwtVersion)
+        def stdlibDependentOAuth2Version = stripBallerinaExtensionVersion(project.stdlibOAuth2Version)
+        def stdlibDependentRegexVersion = stripBallerinaExtensionVersion(project.stdlibRegexVersion)
+        def stdlibDependentTimeVersion = stripBallerinaExtensionVersion(project.stdlibTimeVersion)
         def stdlibDependentNettyVersion = project.nettyVersion
 
         def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
