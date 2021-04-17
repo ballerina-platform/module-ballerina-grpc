@@ -46,23 +46,33 @@ Execute the commands below to build from source.
         
         ./gradlew clean build
 
-1. To run the integration tests:
+2. To run the integration tests:
 
         ./gradlew clean test
 
-1. To build the module without the tests:
+3. To build the module without the tests:
 
         ./gradlew clean build -x test
 
-1. To debug the Ballerina implementation against the native implementation:
+5. To debug the Ballerina implementation against the native implementation:
    ```
    ./gradlew clean build -Pdebug=<port>
    ./gradlew clean test -Pdebug=<port>
    ```
-1. To debug the Ballerina implementation against the Ballerina language:
+
+6. To debug the Ballerina implementation against the Ballerina language:
    ```
    ./gradlew clean build -PbalJavaDebug=<port>
    ./gradlew clean test -PbalJavaDebug=<port>
+   ```
+
+7. Publish the generated artifacts to the local Ballerina central repository:
+    ```
+    ./gradlew clean build -PpublishToLocalCentral=true
+    ```
+8. Publish the generated artifacts to the Ballerina central repository:
+   ```
+   ./gradlew clean build -PpublishToCentral=true
    ```
 
 ## Contributing to Ballerina
