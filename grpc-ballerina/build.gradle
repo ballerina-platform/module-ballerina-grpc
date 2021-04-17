@@ -421,6 +421,7 @@ ballerinaBuild.finalizedBy revertTomlFiles
 ballerinaBuild.dependsOn initializeVariables
 ballerinaBuild.dependsOn updateTomlFiles
 ballerinaBuild.dependsOn ":${packageName}-native:build"
+ballerinaBuild.dependsOn ":${packageName}-test-utils:build"
 ballerinaBuild.dependsOn ":${packageName}-compiler-plugin:build"
 test.dependsOn ballerinaBuild
 build.dependsOn ballerinaBuild
