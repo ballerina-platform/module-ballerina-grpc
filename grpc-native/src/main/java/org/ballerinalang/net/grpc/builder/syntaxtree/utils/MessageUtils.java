@@ -26,6 +26,7 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
 import org.ballerinalang.net.grpc.builder.stub.Field;
+import org.ballerinalang.net.grpc.builder.stub.Message;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
@@ -65,6 +66,14 @@ public class MessageUtils {
         NodeList<ModuleMemberDeclarationNode> messageMembers = AbstractNodeFactory.createEmptyNodeList();
 
         messageMembers = messageMembers.add(getMessageType(message).getTypeDefinitionNode());
+
+        if (message.getNestedMessageList() != null) {
+            for (Message nestedMessage : message.getNestedMessageList()) {
+                for (ModuleMemberDeclarationNode messageNode : getMessageNodes(nestedMessage)) {
+                    messageMembers = messageMembers.add(messageNode);
+                }
+            }
+        }
         if (message.getOneofFieldMap() != null) {
             messageMembers = messageMembers.add(getValidationFunction(message).getFunctionDefinitionNode());
             for (Map.Entry<String, List<Field>> oneOfFieldMap : message.getOneofFieldMap().entrySet()) {
