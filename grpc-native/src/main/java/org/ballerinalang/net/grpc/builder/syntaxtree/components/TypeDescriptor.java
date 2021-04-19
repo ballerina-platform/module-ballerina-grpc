@@ -118,6 +118,15 @@ public class TypeDescriptor {
         );
     }
 
+    public static ArrayTypeDescriptorNode getArrayTypeDescriptorNode(Record type) {
+        return NodeFactory.createArrayTypeDescriptorNode(
+                type.getRecordTypeDescriptorNode(),
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
+        );
+    }
+
     public static TypeReferenceNode getTypeReferenceNode(Node typeName) {
         return NodeFactory.createTypeReferenceNode(
                 SyntaxTreeConstants.SYNTAX_TREE_ASTERISK,
