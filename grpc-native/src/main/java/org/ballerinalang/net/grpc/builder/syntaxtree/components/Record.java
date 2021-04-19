@@ -19,7 +19,6 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
-import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
@@ -219,31 +218,33 @@ public class Record {
     }
 
     public void addCustomFieldWithDefaultValue(String fieldType, String fieldName, Object defaultValue) {
-        ExpressionNode expressionNode;
-        switch (fieldType) {
-            case "string" :
-                expressionNode = NodeFactory.createBasicLiteralNode(
-                        SyntaxKind.STRING_LITERAL,
-                        AbstractNodeFactory.createIdentifierToken(String.valueOf(defaultValue)));
+        switch (defaultValue.toString()) {
+            case "[]" :
+                fields = fields.add(
+                        NodeFactory.createRecordFieldWithDefaultValueNode(
+                                null,
+                                null,
+                                getArrayTypeDescriptorNode(fieldType),
+                                AbstractNodeFactory.createIdentifierToken(fieldName),
+                                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                                getListConstructorExpressionNode(null),
+                                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                        )
+                );
                 break;
-            case "boolean" :
-                expressionNode = NodeFactory.createBasicLiteralNode(
-                        SyntaxKind.BOOLEAN_LITERAL,
-                        AbstractNodeFactory.createIdentifierToken(String.valueOf(defaultValue)));
-                break;
-            default :
-                expressionNode = getNilTypeDescriptorNode();
+            default:
+                fields = fields.add(
+                        NodeFactory.createRecordFieldWithDefaultValueNode(
+                                null,
+                                null,
+                                getOptionalTypeDescriptorNode("", fieldType),
+                                AbstractNodeFactory.createIdentifierToken(fieldName),
+                                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                                getNilTypeDescriptorNode(),
+                                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                        )
+                );
         }
-        fields = fields.add(
-                NodeFactory.createRecordFieldWithDefaultValueNode(
-                        null,
-                        null,
-                        getOptionalTypeDescriptorNode("", fieldType),
-                        AbstractNodeFactory.createIdentifierToken(fieldName),
-                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                        expressionNode,
-                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-                ));
     }
 
     public void addMapField(String fieldName, TypeDescriptorNode descriptorNode) {
