@@ -24,12 +24,12 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
 public class ValueTypeUtils {
 
     public static Type getValueTypeStream(String name) {
-        String typeName = "Context" + getCapitalized(name) + "Stream";
+        String typeName = "Context" + capitalize(name) + "Stream";
         Record contextStream = new Record();
         contextStream.addStreamField("content", name, !name.equals("string"));
         contextStream.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
