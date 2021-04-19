@@ -57,13 +57,13 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
 public class ClientUtils {
 
     public static FunctionDefinition getStreamingClientFunction(Method method, boolean bidirectional) {
         String methodName = bidirectional? "executeBidirectionalStreaming" : "executeClientStreaming";
-        String clientName = getCapitalized(method.getMethodName()) + "StreamingClient";
+        String clientName = capitalize(method.getMethodName()) + "StreamingClient";
         FunctionSignature signature = new FunctionSignature();
         signature.addReturns(
                 Returns.getReturnTypeDescriptorNode(
@@ -158,7 +158,7 @@ public class ClientUtils {
                         "send",
                         new String[]{"message"}));
         FunctionDefinition definition = new FunctionDefinition(
-                "send" + getCapitalized(method.getInputType()),
+                "send" + capitalize(method.getInputType()),
                 signature.getFunctionSignature(),
                 body.getFunctionBody());
         definition.addQualifiers(new String[]{"isolated", "remote"});
@@ -169,7 +169,7 @@ public class ClientUtils {
         FunctionSignature signature = new FunctionSignature();
         signature.addParameter(
                 getRequiredParamNode(
-                        getSimpleNameReferenceNode("Context" + getCapitalized(method.getInputType())),
+                        getSimpleNameReferenceNode("Context" + capitalize(method.getInputType())),
                         "message"));
         signature.addReturns(
                 Returns.getReturnTypeDescriptorNode(
@@ -181,7 +181,7 @@ public class ClientUtils {
                         "send",
                         new String[]{"message"}));
         FunctionDefinition definition = new FunctionDefinition(
-                "sendContext" + getCapitalized(method.getInputType()),
+                "sendContext" + capitalize(method.getInputType()),
                 signature.getFunctionSignature(),
                 body.getFunctionBody());
         definition.addQualifiers(new String[]{"isolated", "remote"});
@@ -259,7 +259,7 @@ public class ClientUtils {
             body.addIfElseStatement(responseCheck.getIfElseStatementNode());
         }
         FunctionDefinition definition = new FunctionDefinition(
-                "receive" + getCapitalized(method.getOutputType()),
+                "receive" + capitalize(method.getOutputType()),
                 signature.getFunctionSignature(),
                 body.getFunctionBody());
         definition.addQualifiers(new String[]{"isolated", "remote"});
@@ -279,7 +279,7 @@ public class ClientUtils {
         signature.addReturns(
                 Returns.getReturnTypeDescriptorNode(
                         TypeDescriptor.getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode("Context" + getCapitalized(method.getOutputType())),
+                                getSimpleNameReferenceNode("Context" + capitalize(method.getOutputType())),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL)));
         FunctionBody body = new FunctionBody();
         if (method.getOutputType().equals("string")) {
@@ -341,7 +341,7 @@ public class ClientUtils {
             body.addIfElseStatement(responseCheck.getIfElseStatementNode());
         }
         FunctionDefinition definition = new FunctionDefinition(
-                "receiveContext" + getCapitalized(method.getOutputType()),
+                "receiveContext" + capitalize(method.getOutputType()),
                 signature.getFunctionSignature(),
                 body.getFunctionBody());
         definition.addQualifiers(new String[]{"isolated", "remote"});

@@ -57,7 +57,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalizeFirstLetter;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 
 public class MessageUtils {
@@ -230,7 +231,7 @@ public class MessageUtils {
                         getLiteralValueToken(true))
         );
         FunctionDefinition validationFunction = new FunctionDefinition(
-                "isValid" + message.getMessageName(),
+                "isValid" + capitalizeFirstLetter(message.getMessageName()),
                 signature.getFunctionSignature(),
                 body.getFunctionBody()
         );
@@ -301,7 +302,7 @@ public class MessageUtils {
         }
         StringBuilder functionName = new StringBuilder("set" + messageName + "_");
         for (String s : field.getFieldName().split("_")) {
-            functionName.append(getCapitalized(s));
+            functionName.append(capitalize(s));
         }
         FunctionDefinition definition = new  FunctionDefinition(
                 functionName.toString(),
