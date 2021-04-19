@@ -17,29 +17,30 @@
  */
 package org.ballerinalang.net.grpc.builder;
 
-import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.context.FieldValueResolver;
-import com.github.jknack.handlebars.context.JavaBeanValueResolver;
-import com.github.jknack.handlebars.context.MapValueResolver;
 import com.github.jknack.handlebars.helper.StringHelpers;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.FileTemplateLoader;
 import com.google.api.AnnotationsProto;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.ExtensionRegistry;
+import io.ballerina.compiler.syntax.tree.SyntaxTree;
+import io.ballerina.tools.text.TextDocument;
+import io.ballerina.tools.text.TextDocuments;
 import org.apache.commons.lang3.StringUtils;
-import org.ballerinalang.net.grpc.builder.components.ClientFile;
-import org.ballerinalang.net.grpc.builder.components.Descriptor;
-import org.ballerinalang.net.grpc.builder.components.EnumMessage;
-import org.ballerinalang.net.grpc.builder.components.Message;
-import org.ballerinalang.net.grpc.builder.components.Method;
-import org.ballerinalang.net.grpc.builder.components.ServiceFile;
-import org.ballerinalang.net.grpc.builder.components.ServiceStub;
-import org.ballerinalang.net.grpc.builder.components.StubFile;
-import org.ballerinalang.net.grpc.builder.utils.BalGenConstants;
-import org.ballerinalang.net.grpc.builder.utils.BalGenerationUtils;
+import org.ballerinalang.formatter.core.Formatter;
+import org.ballerinalang.formatter.core.FormatterException;
+import org.ballerinalang.net.grpc.builder.balgen.BalGenConstants;
+import org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils;
+import org.ballerinalang.net.grpc.builder.stub.Descriptor;
+import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
+import org.ballerinalang.net.grpc.builder.stub.Message;
+import org.ballerinalang.net.grpc.builder.stub.Method;
+import org.ballerinalang.net.grpc.builder.stub.ServiceFile;
+import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
+import org.ballerinalang.net.grpc.builder.stub.StubFile;
+import org.ballerinalang.net.grpc.builder.syntaxtree.SyntaxTreeGen;
 import org.ballerinalang.net.grpc.exception.CodeBuilderException;
 import org.ballerinalang.net.grpc.exception.GrpcServerException;
 import org.ballerinalang.net.grpc.proto.definition.EmptyMessage;
@@ -54,6 +55,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,24 +65,19 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.CLIENT_STUB_TEMPLATE_FILE_NAME;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.EMPTY_DATA_TYPE;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.FILE_SEPARATOR;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GOOGLE_API_LIB;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GOOGLE_STANDARD_LIB;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GRPC_CLIENT;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.GRPC_SERVICE;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.PACKAGE_SEPARATOR;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.SAMPLE_CLIENT_TEMPLATE_NAME;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.SAMPLE_FILE_PREFIX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.SAMPLE_SERVICE_FILE_PREFIX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.SAMPLE_SERVICE_TEMPLATE_NAME;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.SERVICE_STUB_TEMPLATE_FILE_NAME;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.STUB_FILE_PREFIX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.STUB_TEMPLATE_FILE_NAME;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.TEMPLATES_DIR_PATH_KEY;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.TEMPLATES_SUFFIX;
-import static org.ballerinalang.net.grpc.builder.utils.BalGenConstants.TEMPLATE_DIR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.EMPTY_DATA_TYPE;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.FILE_SEPARATOR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GOOGLE_API_LIB;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GOOGLE_STANDARD_LIB;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_SERVICE;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.SAMPLE_FILE_PREFIX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.SAMPLE_SERVICE_FILE_PREFIX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.STUB_FILE_PREFIX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_DIR_PATH_KEY;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_SUFFIX;
+import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATE_DIR;
 import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.PROTO_FILE_EXTENSION;
 
 /**
@@ -91,6 +88,7 @@ public class BallerinaFileBuilder {
     private byte[] rootDescriptor;
     private Set<byte[]> dependentDescriptors;
     private String balOutPath;
+    private static final Path resourceDirectory = Paths.get("src").resolve("main").resolve("resources").toAbsolutePath();
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
@@ -104,12 +102,29 @@ public class BallerinaFileBuilder {
     }
 
     public void build(String mode) throws CodeBuilderException {
+        SyntaxTree treeDemo = syntaxTreeDemo();
         // compute root descriptor source code.
         computeSourceContent(rootDescriptor, mode);
         // compute dependent descriptor source code.
         for (byte[] descriptorData : dependentDescriptors) {
             computeSourceContent(descriptorData, null);
         }
+    }
+
+    public static SyntaxTree syntaxTreeDemo() {
+        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "helloWorldWithNestedMessage_pb.bal");
+        String content = null;
+        try {
+            content = getSourceText(sourceFilePath);
+        } catch (IOException e) {
+            // do something
+        }
+        TextDocument textDocument = TextDocuments.from(content);
+        return SyntaxTree.from(textDocument);
+    }
+
+    private static String getSourceText(Path sourceFilePath) throws IOException {
+        return Files.readString(resourceDirectory.resolve(sourceFilePath));
     }
 
     private void computeSourceContent(byte[] descriptor, String mode) throws CodeBuilderException {
@@ -179,7 +194,6 @@ public class BallerinaFileBuilder {
                 ServiceStub.Builder serviceStubBuilder = ServiceStub.newBuilder(serviceDescriptor.getName());
                 ServiceFile.Builder sampleServiceBuilder = ServiceFile.newBuilder(serviceDescriptor.getName());
                 List<DescriptorProtos.MethodDescriptorProto> methodList = serviceDescriptor.getMethodList();
-//                boolean isUnaryContains = false;
                 stubFileObject.setMessageMap(messageList.stream().collect(Collectors.toMap(Message::getMessageName,
                         message -> message)));
                 for (DescriptorProtos.MethodDescriptorProto methodDescriptorProto : methodList) {
@@ -213,32 +227,18 @@ public class BallerinaFileBuilder {
                 }
 
                 if (GRPC_SERVICE.equals(mode)) {
-                    serviceFile = sampleServiceBuilder.build();
-                    serviceFile.setEnableEp(enableEp);
-                    if (enableEp) {
-                        enableEp = false;
-                    }
-
-                    String servicePath = generateOutputFile(this.balOutPath, serviceDescriptor.getName() +
+                    String serviceFilePath = generateOutputFile(this.balOutPath, serviceDescriptor.getName() +
                             SAMPLE_SERVICE_FILE_PREFIX);
-                    writeOutputFile(serviceFile, SAMPLE_SERVICE_TEMPLATE_NAME, servicePath);
-
-                    String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(stubFileObject, SERVICE_STUB_TEMPLATE_FILE_NAME, stubFilePath);
-                } else if (GRPC_CLIENT.equals(mode)) {
-                    String clientFilePath = generateOutputFile(
-                            this.balOutPath,
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject, mode), serviceFilePath);
+                }
+                if (GRPC_CLIENT.equals(mode)) {
+                    String clientFilePath = generateOutputFile(this.balOutPath,
                             serviceDescriptor.getName() + SAMPLE_FILE_PREFIX
                     );
-                    writeOutputFile(new ClientFile(serviceDescriptor.getName()),
-                            SAMPLE_CLIENT_TEMPLATE_NAME, clientFilePath);
-                    String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(stubFileObject, CLIENT_STUB_TEMPLATE_FILE_NAME, stubFilePath);
-                } else {
-                    // For both client and server sides
-                    String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                    writeOutputFile(stubFileObject, STUB_TEMPLATE_FILE_NAME, stubFilePath);
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject, mode), clientFilePath);
                 }
+                String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
+                writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
             }
         } catch (GrpcServerException e) {
             throw new CodeBuilderException("Message descriptor error. " + e.getMessage());
@@ -263,31 +263,24 @@ public class BallerinaFileBuilder {
     }
 
     /**
-     * Write ballerina definition of a <code>object</code> to a file as described by <code>template.</code>
+     * Write ballerina definition of a <code>syntaxTree</code> to a file.
      *
-     * @param object       Context object to be used by the template parser
-     * @param templateName Name of the parent template to be used
+     * @param syntaxTree   Syntax tree object representing the stub file
      * @param outPath      Destination path for writing the resulting source file
      * @throws CodeBuilderException when file operations fail
      */
-    private static void writeOutputFile(Object object, String templateName, String outPath)
+    private static void writeOutputFile(SyntaxTree syntaxTree, String outPath)
             throws CodeBuilderException {
-
-        PrintWriter writer = null;
+        String content = "";
         try {
-            Template template = compileTemplate(templateName);
-            Context context = Context.newBuilder(object).resolver(
-                    MapValueResolver.INSTANCE,
-                    JavaBeanValueResolver.INSTANCE,
-                    FieldValueResolver.INSTANCE).build();
-            writer = new PrintWriter(outPath, StandardCharsets.UTF_8.name());
-            writer.println(template.apply(context));
+            content = Formatter.format(syntaxTree.toSourceCode());
+        } catch (FormatterException e) {
+            throw new CodeBuilderException("Formatter Error while formatting output source code. " + e.getMessage(), e);
+        }
+        try (PrintWriter writer = new PrintWriter(outPath, StandardCharsets.UTF_8.name())) {
+            writer.println(content);
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error while writing output to Ballerina file. " + e.getMessage(), e);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 

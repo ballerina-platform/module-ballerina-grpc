@@ -76,7 +76,7 @@ public client class HelloWorldServerStreamingHelloResponseCaller {
 
 
 public type ContextHelloResponseStream record {|
-    stream<HelloResponse> content;
+    stream<HelloResponse, error?> content;
     map<string|string[]> headers;
 |};
 

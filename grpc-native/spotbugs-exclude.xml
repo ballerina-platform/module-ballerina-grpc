@@ -17,11 +17,6 @@
   -->
 <FindBugsFilter>
     <Match>
-        <Class name="org.ballerinalang.net.grpc.proto.ServiceProtoBuilder" />
-        <Method name="process" />
-        <Bug pattern="BC_IMPOSSIBLE_INSTANCEOF" />
-    </Match>
-    <Match>
         <Class name="org.ballerinalang.net.grpc.protobuf.cmd.GrpcCmd" />
         <Method name="readProperties" />
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />

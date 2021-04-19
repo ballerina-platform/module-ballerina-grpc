@@ -49,10 +49,10 @@ public client class helloWorldServerStreamingClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_23, getDescriptorMap23());
     }
 
-    isolated remote function lotsOfReplies(HelloRequest req) returns stream<anydata, Error>|Error {
+    isolated remote function lotsOfReplies(HelloRequest req) returns stream<anydata, Error?>|Error {
         
         var payload = check self.grpcClient->executeServerStreaming("helloWorldServerStreaming/lotsOfReplies", req);
-        [stream<anydata, Error>, map<string|string[]>][result, _] = payload;
+        [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
 
         return result;
     }
