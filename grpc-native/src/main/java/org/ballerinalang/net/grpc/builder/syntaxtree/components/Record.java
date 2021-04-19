@@ -240,9 +240,21 @@ public class Record {
         ));
     }
 
-    public void addCustomFieldWithDefaultValue(String fieldType, String fieldName, Object defaultValue) {
-        switch (defaultValue.toString()) {
-            case "[]" :
+    public void addCustomFieldWithDefaultValue(String fieldType, String fieldName, String defaultValue) {
+        if (defaultValue == null) {
+            fields = fields.add(
+                    NodeFactory.createRecordFieldWithDefaultValueNode(
+                            null,
+                            null,
+                            getOptionalTypeDescriptorNode("", fieldType),
+                            AbstractNodeFactory.createIdentifierToken(fieldName),
+                            SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                            getNilTypeDescriptorNode(),
+                            SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                    )
+            );
+        } else {
+            if ("[]".equals(defaultValue)) {
                 fields = fields.add(
                         NodeFactory.createRecordFieldWithDefaultValueNode(
                                 null,
@@ -254,19 +266,7 @@ public class Record {
                                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
                         )
                 );
-                break;
-            default:
-                fields = fields.add(
-                        NodeFactory.createRecordFieldWithDefaultValueNode(
-                                null,
-                                null,
-                                getOptionalTypeDescriptorNode("", fieldType),
-                                AbstractNodeFactory.createIdentifierToken(fieldName),
-                                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                                getNilTypeDescriptorNode(),
-                                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-                        )
-                );
+            }
         }
     }
 
