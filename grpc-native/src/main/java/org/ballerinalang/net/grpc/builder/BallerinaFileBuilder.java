@@ -112,7 +112,7 @@ public class BallerinaFileBuilder {
     }
 
     public static SyntaxTree syntaxTreeDemo() {
-        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "helloWorldClientStreaming_pb.bal");
+        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "helloWorldWithNestedMessage_pb.bal");
         String content = null;
         try {
             content = getSourceText(sourceFilePath);
