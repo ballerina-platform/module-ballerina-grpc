@@ -54,6 +54,17 @@ public class Record {
         );
     }
 
+    public void addField(String fieldType, String fieldName) {
+        fields = fields.add(NodeFactory.createRecordFieldNode(
+                null,
+                null,
+                getBuiltinSimpleNameReferenceNode(fieldType),
+                AbstractNodeFactory.createIdentifierToken(fieldName),
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        ));
+    }
+
     public void addStringField(String fieldName) {
         fields = fields.add(NodeFactory.createRecordFieldNode(
                 null,
@@ -141,6 +152,18 @@ public class Record {
                 ));
     }
 
+    public void addArrayFieldWithDefaultValue(String fieldName, Record type) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldWithDefaultValueNode(
+                        null,
+                        null,
+                        getArrayTypeDescriptorNode(type),
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        getListConstructorExpressionNode(null),
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                ));
+    }
 
     public void addOptionalIntegerField(String fieldName) {
         fields = fields.add(NodeFactory.createRecordFieldNode(

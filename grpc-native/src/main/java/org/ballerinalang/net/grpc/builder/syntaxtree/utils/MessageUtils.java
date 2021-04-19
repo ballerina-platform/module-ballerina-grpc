@@ -122,8 +122,8 @@ public class MessageUtils {
             }
         }
         if (message.getOneofFieldMap() != null) {
-            for (Map.Entry<String, List<Field>> oneOfFieldMap : message.getOneofFieldMap().entrySet()) {
-                for (Field field : oneOfFieldMap.getValue()) {
+            for (Map.Entry<String, List<Field>> oneOfField : message.getOneofFieldMap().entrySet()) {
+                for (Field field : oneOfField.getValue()) {
                     switch (field.getFieldType()) {
                         case "string" :
                             messageRecord.addOptionalStringField(field.getFieldName());
@@ -144,6 +144,16 @@ public class MessageUtils {
                             messageRecord.addOptionalCustomField(field.getFieldName(), field.getFieldType());
                     }
                 }
+            }
+        }
+        if (message.getMapList() != null) {
+            for (Message map : message.getMapList()) {
+                Record record = new Record();
+                for (Field field : map.getFieldList()) {
+                    // Todo: Add a test case with all the field types (int32, int64 ...)
+                    record.addField(field.getFieldType(), field.getFieldName());
+                }
+                messageRecord.addArrayFieldWithDefaultValue(map.getMessageName(), record);
             }
         }
         return new Type(
