@@ -57,12 +57,12 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
 public class ServerUtils {
 
     public static FunctionDefinition getServerStreamingFunction(Method method) {
-        String outCap = getCapitalized(method.getOutputType());
+        String outCap = capitalize(method.getOutputType());
         FunctionSignature signature = new FunctionSignature();
         signature.addParameter(
                 getRequiredParamNode(
@@ -95,8 +95,8 @@ public class ServerUtils {
     }
 
     public static FunctionDefinition getServerStreamingContextFunction(Method method) {
-        String inputCap = getCapitalized(method.getInputType());
-        String outputCap = getCapitalized(method.getOutputType());
+        String inputCap = capitalize(method.getInputType());
+        String outputCap = capitalize(method.getOutputType());
         FunctionSignature signature = new FunctionSignature();
         signature.addParameter(
                 getRequiredParamNode(
@@ -130,7 +130,7 @@ public class ServerUtils {
     }
 
     public static Class getServerStreamClass(Method method) {
-        String outCap = getCapitalized(method.getOutputType());
+        String outCap = capitalize(method.getOutputType());
         Class serverStream = new Class(outCap + "Stream", true);
 
         serverStream.addMember(
