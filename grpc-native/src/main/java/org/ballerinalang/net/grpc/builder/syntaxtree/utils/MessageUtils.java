@@ -21,9 +21,7 @@ package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.BinaryExpressionNode;
 import io.ballerina.compiler.syntax.tree.ModuleMemberDeclarationNode;
-import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
-import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
 import org.ballerinalang.net.grpc.builder.stub.Field;
 import org.ballerinalang.net.grpc.builder.stub.Message;
@@ -48,7 +46,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.ge
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getUnaryExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getLiteralValueToken;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getBooleanLiteralNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getNumericLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getCompoundAssignmentStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
@@ -177,7 +176,7 @@ public class MessageUtils {
                             SyntaxTreeConstants.SYNTAX_TREE_VAR_INT,
                             getCaptureBindingPatternNode(oneOfFieldMap.getKey() + "Count")
                     ),
-                    NodeFactory.createBasicLiteralNode(SyntaxKind.NUMERIC_LITERAL, getLiteralValueToken(0))
+                    getNumericLiteralNode(0)
             );
             function.addVariableStatement(count.getVariableDeclarationNode());
             for (Field field : oneOfFieldMap.getValue()) {
@@ -209,19 +208,13 @@ public class MessageUtils {
             );
             countCheck.addIfStatement(
                     getReturnStatementNode(
-                            NodeFactory.createBasicLiteralNode(
-                                    SyntaxKind.BOOLEAN_LITERAL,
-                                    getLiteralValueToken(false)
-                            )
+                            getBooleanLiteralNode(false)
                     )
             );
             function.addIfElseStatement(countCheck.getIfElseStatementNode());
         }
         function.addReturnStatement(
-                NodeFactory.createBasicLiteralNode(
-                        SyntaxKind.BOOLEAN_LITERAL,
-                        getLiteralValueToken(true)
-                )
+                getBooleanLiteralNode(true)
         );
         function.addQualifiers(new String[]{"isolated"});
         return function;
@@ -230,19 +223,13 @@ public class MessageUtils {
     private static BinaryExpressionNode getCountCheckBinaryExpression(ArrayList<String> counts) {
         BinaryExpressionNode binaryExpressionNode = getBinaryExpressionNode(
                 getSimpleNameReferenceNode(counts.get(0)),
-                NodeFactory.createBasicLiteralNode(
-                        SyntaxKind.NUMERIC_LITERAL,
-                        getLiteralValueToken(1)
-                ),
+                getNumericLiteralNode(1),
                 SyntaxTreeConstants.SYNTAX_TREE_OPERATOR_GREATER_THAN
         );
         for (int i = 1; i < counts.size(); i ++) {
             BinaryExpressionNode rhs = getBinaryExpressionNode(
                     getSimpleNameReferenceNode(counts.get(i)),
-                    NodeFactory.createBasicLiteralNode(
-                            SyntaxKind.NUMERIC_LITERAL,
-                            getLiteralValueToken(1)
-                    ),
+                    getNumericLiteralNode(1),
                     SyntaxTreeConstants.SYNTAX_TREE_OPERATOR_GREATER_THAN
             );
             binaryExpressionNode = getBinaryExpressionNode(

@@ -22,12 +22,11 @@ import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.BasicLiteralNode;
 import io.ballerina.compiler.syntax.tree.ConstantDeclarationNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
-import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getLiteralValueToken;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 
 public class Constant {
@@ -44,7 +43,7 @@ public class Constant {
         }
         typeDescriptor = getBuiltinSimpleNameReferenceNode(type);
         variableName = AbstractNodeFactory.createIdentifierToken(name);
-        initializer = NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, getLiteralValueToken(value));
+        initializer = getStringLiteralNode(value);
     }
 
     public ConstantDeclarationNode getConstantDeclarationNode() {

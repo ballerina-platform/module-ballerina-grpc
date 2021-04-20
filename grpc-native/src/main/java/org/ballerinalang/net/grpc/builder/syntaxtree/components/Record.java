@@ -23,13 +23,15 @@ import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.RecordTypeDescriptorNode;
-import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getListConstructorExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getBooleanLiteralNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getNumericLiteralNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getArrayTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
@@ -95,9 +97,7 @@ public class Record {
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING,
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                        NodeFactory.createBasicLiteralNode(
-                                SyntaxKind.STRING_LITERAL,
-                                AbstractNodeFactory.createIdentifierToken("\"" + defaultValue + "\"")),
+                        getStringLiteralNode(defaultValue),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         ));
     }
@@ -132,9 +132,7 @@ public class Record {
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_BOOLEAN,
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                        NodeFactory.createBasicLiteralNode(
-                                SyntaxKind.BOOLEAN_LITERAL,
-                                AbstractNodeFactory.createIdentifierToken(defaultValue)),
+                        getBooleanLiteralNode(Boolean.parseBoolean(defaultValue)),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
                 ));
     }
@@ -195,9 +193,7 @@ public class Record {
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_INT,
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                        NodeFactory.createBasicLiteralNode(
-                                SyntaxKind.NUMERIC_LITERAL,
-                                AbstractNodeFactory.createIdentifierToken(defaultValue)),
+                        getNumericLiteralNode(Integer.parseInt(defaultValue)),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
                 ));
     }
@@ -210,9 +206,7 @@ public class Record {
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_FLOAT,
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                        NodeFactory.createBasicLiteralNode(
-                                SyntaxKind.NUMERIC_LITERAL,
-                                AbstractNodeFactory.createIdentifierToken(defaultValue)),
+                        getNumericLiteralNode(Integer.parseInt(defaultValue)),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
                 ));
     }

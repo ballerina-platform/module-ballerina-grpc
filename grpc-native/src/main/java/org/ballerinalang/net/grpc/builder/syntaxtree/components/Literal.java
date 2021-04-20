@@ -18,12 +18,12 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
+import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.BasicLiteralNode;
 import io.ballerina.compiler.syntax.tree.LiteralValueToken;
-import io.ballerina.compiler.syntax.tree.NilLiteralNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
-import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 public class Literal {
 
@@ -56,10 +56,24 @@ public class Literal {
         }
     }
 
-    public static NilLiteralNode getNilLiteralNode() {
-        return NodeFactory.createNilLiteralNode(
-                SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
-                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+    public static BasicLiteralNode getNumericLiteralNode(int value) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.NUMERIC_LITERAL,
+                getLiteralValueToken(value)
+        );
+    }
+
+    public static BasicLiteralNode getStringLiteralNode(String value) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.STRING_LITERAL,
+                AbstractNodeFactory.createIdentifierToken("\"" + value + "\"")
+        );
+    }
+
+    public static BasicLiteralNode getBooleanLiteralNode(boolean value) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.BOOLEAN_LITERAL,
+                getLiteralValueToken(value)
         );
     }
 }

@@ -22,14 +22,13 @@ import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
-import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getLiteralValueToken;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 
 public class Map {
@@ -55,9 +54,10 @@ public class Map {
         fields.add(
                 NodeFactory.createSpecificFieldNode(
                         null,
-                        NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, getLiteralValueToken(key)),
+                        getStringLiteralNode(key),
                         SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                        NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, getLiteralValueToken(value)))
+                        getStringLiteralNode(value)
+                )
         );
     }
 
