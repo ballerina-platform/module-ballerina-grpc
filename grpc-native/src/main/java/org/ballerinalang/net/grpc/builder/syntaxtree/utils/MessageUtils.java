@@ -40,7 +40,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getOptionalFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBinaryExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
@@ -162,12 +161,7 @@ public class MessageUtils {
     private static Function getValidationFunction(Message message) {
         Function function = new Function("isValid" + capitalizeFirstLetter(message.getMessageName()));
         function.addReturns(getBuiltinSimpleNameReferenceNode("boolean"));
-        function.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(message.getMessageName()),
-                        "r"
-                )
-        );
+        function.addRequiredParameter(getSimpleNameReferenceNode(message.getMessageName()), "r");
         ArrayList<String> counts = new ArrayList<>();
         for (Map.Entry<String, List<Field>> oneOfFieldMap : message.getOneofFieldMap().entrySet()) {
             counts.add(oneOfFieldMap.getKey() + "Count");
@@ -247,17 +241,10 @@ public class MessageUtils {
             functionName.append(capitalize(s));
         }
         Function function = new Function(functionName.toString());
-        function.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(messageName),
-                        "r"
-                )
-        );
-        function.addParameter(
-                getRequiredParamNode(
-                        getBuiltinSimpleNameReferenceNode(field.getFieldType()),
-                        field.getFieldName()
-                )
+        function.addRequiredParameter(getSimpleNameReferenceNode(messageName), "r");
+        function.addRequiredParameter(
+                getBuiltinSimpleNameReferenceNode(field.getFieldType()),
+                field.getFieldName()
         );
         function.addAssignmentStatement(
                 getFieldAccessExpressionNode(

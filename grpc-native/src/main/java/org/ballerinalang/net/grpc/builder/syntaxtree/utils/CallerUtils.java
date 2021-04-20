@@ -30,7 +30,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
@@ -51,11 +50,9 @@ public class CallerUtils {
                 )
         );
         Function init = new Function("init");
-        init.addParameter(
-                getRequiredParamNode(
-                        TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Caller"),
-                        "caller"
-                )
+        init.addRequiredParameter(
+                TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Caller"),
+                "caller"
         );
         init.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "caller"),
@@ -82,11 +79,9 @@ public class CallerUtils {
         caller.addMember(getId.getFunctionDefinitionNode());
 
         Function send = new Function("send" + valueCap);
-        send.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(value),
-                        "response"
-                )
+        send.addRequiredParameter(
+                getSimpleNameReferenceNode(value),
+                "response"
         );
         send.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         send.addReturnStatement(
@@ -100,11 +95,9 @@ public class CallerUtils {
         caller.addMember(send.getFunctionDefinitionNode());
 
         Function sendContext = new Function("sendContext" + valueCap);
-        sendContext.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode("Context" + valueCap),
-                        "response"
-                )
+        sendContext.addRequiredParameter(
+                getSimpleNameReferenceNode("Context" + valueCap),
+                "response"
         );
         sendContext.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         sendContext.addReturnStatement(
@@ -118,12 +111,7 @@ public class CallerUtils {
         caller.addMember(sendContext.getFunctionDefinitionNode());
 
         Function sendError = new Function("sendError");
-        sendError.addParameter(
-                getRequiredParamNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR,
-                        "response"
-                )
-        );
+        sendError.addRequiredParameter(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR, "response");
         sendError.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         sendError.addReturnStatement(
                 getRemoteMethodCallActionNode(

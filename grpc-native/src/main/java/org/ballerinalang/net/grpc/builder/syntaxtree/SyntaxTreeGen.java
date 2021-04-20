@@ -55,8 +55,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getImplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getIncludedRecordParamNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCallStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
@@ -178,14 +176,10 @@ public class SyntaxTreeGen {
 
     public static Function getInitFunction() {
         Function function = new Function("init");
-        function.addParameter(
-                getRequiredParamNode(SYNTAX_TREE_VAR_STRING, "url")
-        );
-        function.addParameter(
-                getIncludedRecordParamNode(
-                        getQualifiedNameReferenceNode("grpc", "ClientConfiguration"),
-                        "config"
-                )
+        function.addRequiredParameter(SYNTAX_TREE_VAR_STRING, "url");
+        function.addIncludedRecordParameter(
+                getQualifiedNameReferenceNode("grpc", "ClientConfiguration"),
+                "config"
         );
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addAssignmentStatement(
@@ -240,12 +234,7 @@ public class SyntaxTreeGen {
                     getFunctionCallExpressionNode("getDescriptorMap", new String[]{})
                     );
             service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
-            function.addParameter(
-                    getRequiredParamNode(
-                            getSimpleNameReferenceNode(input),
-                            "value"
-                    )
-            );
+            function.addRequiredParameter(getSimpleNameReferenceNode(input), "value");
             function.addReturns(
                     getUnionTypeDescriptorNode(
                             getStreamTypeDescriptorNode(
