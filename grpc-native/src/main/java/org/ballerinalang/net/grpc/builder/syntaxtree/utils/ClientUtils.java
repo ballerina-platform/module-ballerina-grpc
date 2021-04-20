@@ -37,7 +37,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
@@ -122,11 +121,9 @@ public class ClientUtils {
 
     private static Function getInitFunction() {
         Function function = new Function("init");
-        function.addParameter(
-                getRequiredParamNode(
-                        TypeDescriptor.getQualifiedNameReferenceNode("grpc", "StreamingClient"),
-                        "sClient"
-                )
+        function.addRequiredParameter(
+                TypeDescriptor.getQualifiedNameReferenceNode("grpc", "StreamingClient"),
+                "sClient"
         );
         function.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "sClient"),
@@ -138,11 +135,9 @@ public class ClientUtils {
 
     private static Function getSendFunction(Method method) {
         Function function = new Function("send" + capitalize(method.getInputType()));
-        function.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        "message"
-                )
+        function.addRequiredParameter(
+                getSimpleNameReferenceNode(method.getInputType()),
+                "message"
         );
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addReturnStatement(
@@ -158,11 +153,9 @@ public class ClientUtils {
 
     private static Function getSendContextFunction(Method method) {
         Function function = new Function("sendContext" + capitalize(method.getInputType()));
-        function.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode("Context" + capitalize(method.getInputType())),
-                        "message"
-                )
+        function.addRequiredParameter(
+                getSimpleNameReferenceNode("Context" + capitalize(method.getInputType())),
+                "message"
         );
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addReturnStatement(
@@ -339,12 +332,7 @@ public class ClientUtils {
 
     private static Function getSendErrorFunction() {
         Function function = new Function("sendError");
-        function.addParameter(
-                getRequiredParamNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR,
-                        "response"
-                )
-        );
+        function.addRequiredParameter(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR, "response");
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addReturnStatement(
                 getRemoteMethodCallActionNode(

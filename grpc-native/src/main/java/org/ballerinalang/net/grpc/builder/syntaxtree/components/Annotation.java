@@ -21,7 +21,6 @@ package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
-import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
@@ -31,10 +30,9 @@ import java.util.List;
 
 public class Annotation {
 
-    private String modulePrefix;
-    private String identifier;
-    private MappingConstructorExpressionNode annotValue;
-    private List<Node> fields;
+    private final String modulePrefix;
+    private final String identifier;
+    private final List<Node> fields;
 
     public Annotation(String modulePrefix, String identifier) {
         fields = new ArrayList<>();

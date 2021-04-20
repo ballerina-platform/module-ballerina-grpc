@@ -35,7 +35,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
@@ -61,10 +60,10 @@ public class ServerUtils {
     public static Function getServerStreamingFunction(Method method) {
         Function function = new Function(method.getMethodName());
         String outCap = capitalize(method.getOutputType());
-        function.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        "req"));
+        function.addRequiredParameter(
+                getSimpleNameReferenceNode(method.getInputType()),
+                "req"
+        );
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
@@ -92,10 +91,10 @@ public class ServerUtils {
         String inputCap = capitalize(method.getInputType());
         String outputCap = capitalize(method.getOutputType());
         Function function = new Function(method.getMethodName() + "Context");
-        function.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        "req"));
+        function.addRequiredParameter(
+                getSimpleNameReferenceNode(method.getInputType()),
+                "req"
+        );
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getSimpleNameReferenceNode("Context" + inputCap + "Stream"),
@@ -142,11 +141,9 @@ public class ServerUtils {
 
     private static Function getInitFunction() {
         Function function = new Function("init");
-        function.addParameter(
-                getRequiredParamNode(
-                        getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
-                        "anydataStream"
-                )
+        function.addRequiredParameter(
+                getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
+                "anydataStream"
         );
         function.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "anydataStream"),
