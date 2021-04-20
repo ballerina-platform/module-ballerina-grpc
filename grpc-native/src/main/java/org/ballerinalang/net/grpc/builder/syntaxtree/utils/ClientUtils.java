@@ -27,7 +27,6 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
@@ -46,6 +45,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
@@ -63,7 +63,7 @@ public class ClientUtils {
         String clientName = capitalize(method.getMethodName()) + "StreamingClient";
         Function function = new Function(method.getMethodName());
         function.addReturns(
-                Returns.getParenthesisedTypeDescriptorNode(
+                getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
                                 getSimpleNameReferenceNode(clientName),
                                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR

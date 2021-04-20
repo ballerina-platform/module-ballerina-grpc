@@ -27,11 +27,6 @@ import io.ballerina.compiler.syntax.tree.Token;
 
 public class Literal {
 
-    public static LiteralValueToken getLiteralValueToken(String literal) {
-        return NodeFactory.createLiteralValueToken(SyntaxKind.STRING_LITERAL, "\"" + literal +
-                "\"", NodeFactory.createEmptyMinutiaeList(), NodeFactory.createEmptyMinutiaeList());
-    }
-
     public static LiteralValueToken getLiteralValueToken(int literal) {
         return NodeFactory.createLiteralValueToken(
                 SyntaxKind.DECIMAL_INTEGER_LITERAL_TOKEN,

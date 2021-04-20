@@ -38,7 +38,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 
 public class IfElse {
 
-    private ExpressionNode condition;
+    private final ExpressionNode condition;
     private Node elseBody;
     private NodeList<StatementNode> ifStatements;
     private NodeList<StatementNode> elseStatements;
