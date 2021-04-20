@@ -31,11 +31,19 @@ public class Imports {
 
     public static ImportDeclarationNode getImportDeclarationNode(String orgName, String moduleName) {
         Token orgNameToken = AbstractNodeFactory.createIdentifierToken(orgName);
-        ImportOrgNameNode importOrgNameNode = NodeFactory.createImportOrgNameNode(orgNameToken, SyntaxTreeConstants.SYNTAX_TREE_SLASH);
+        ImportOrgNameNode importOrgNameNode = NodeFactory.createImportOrgNameNode(
+                orgNameToken,
+                SyntaxTreeConstants.SYNTAX_TREE_SLASH
+        );
         Token moduleNameToken = AbstractNodeFactory.createIdentifierToken(moduleName);
         SeparatedNodeList<IdentifierToken> moduleNodeList = AbstractNodeFactory.createSeparatedNodeList(moduleNameToken);
 
-        return NodeFactory.createImportDeclarationNode(SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_IMPORT, importOrgNameNode,
-                moduleNodeList, null, SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON );
+        return NodeFactory.createImportDeclarationNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_IMPORT,
+                importOrgNameNode,
+                moduleNodeList,
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        );
     }
 }
