@@ -27,11 +27,9 @@ import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
 import io.ballerina.compiler.syntax.tree.IdentifierToken;
 import io.ballerina.compiler.syntax.tree.IfElseStatementNode;
-import io.ballerina.compiler.syntax.tree.IncludedRecordParameterNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
-import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
 import io.ballerina.compiler.syntax.tree.ReturnTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.StatementNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
@@ -52,8 +50,6 @@ public class Function {
     private final Token finalKeyWord = AbstractNodeFactory.createIdentifierToken("function ");
     private final IdentifierToken functionName;
     private final NodeList<Node> relativeResourcePath;
-    private final FunctionSignatureNode functionSignature;
-    private final FunctionBodyNode functionBody;
 
     private final List<Node> parameters;
     private ReturnTypeDescriptorNode returnTypeDescriptorNode;
@@ -64,12 +60,8 @@ public class Function {
         qualifierList = AbstractNodeFactory.createEmptyNodeList();
         functionName = AbstractNodeFactory.createIdentifierToken(name);
         relativeResourcePath = AbstractNodeFactory.createEmptyNodeList();
-
         parameters = new ArrayList<>();
-        functionSignature = getFunctionSignature();
-
         statements = NodeFactory.createEmptyNodeList();
-        functionBody = getFunctionBody();
     }
 
     public FunctionDefinitionNode getFunctionDefinitionNode() {
@@ -101,11 +93,33 @@ public class Function {
         );
     }
 
-    public void addParameter(Node parameterNode) {
+    public void addRequiredParameter(Node typeName, String name) {
         if (parameters.size() > 0) {
             parameters.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
         }
-        parameters.add(parameterNode);
+        NodeList<AnnotationNode> annotations = NodeFactory.createEmptyNodeList();
+        parameters.add(
+                NodeFactory.createRequiredParameterNode(
+                        annotations,
+                        typeName,
+                        AbstractNodeFactory.createIdentifierToken(name)
+                )
+        );
+    }
+
+    public void addIncludedRecordParameter(Node typeName, String name) {
+        if (parameters.size() > 0) {
+            parameters.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+        }
+        NodeList<AnnotationNode> annotations = NodeFactory.createEmptyNodeList();
+        parameters.add(
+                NodeFactory.createIncludedRecordParameterNode(
+                        annotations,
+                        SyntaxTreeConstants.SYNTAX_TREE_ASTERISK,
+                        typeName,
+                        AbstractNodeFactory.createIdentifierToken(name)
+                )
+        );
     }
 
     public void addReturns(TypeDescriptorNode node) {
@@ -148,24 +162,5 @@ public class Function {
 
     public void addExpressionStatement(ExpressionStatementNode expressionStatement) {
         statements = statements.add(expressionStatement);
-    }
-
-    public static RequiredParameterNode getRequiredParamNode(Node typeName, String name) {
-        NodeList<AnnotationNode> annotations = NodeFactory.createEmptyNodeList();
-        return NodeFactory.createRequiredParameterNode(
-                annotations,
-                typeName,
-                AbstractNodeFactory.createIdentifierToken(name)
-        );
-    }
-
-    public static IncludedRecordParameterNode getIncludedRecordParamNode(Node typeName, String name) {
-        NodeList<AnnotationNode> annotations = NodeFactory.createEmptyNodeList();
-        return NodeFactory.createIncludedRecordParameterNode(
-                annotations,
-                SyntaxTreeConstants.SYNTAX_TREE_ASTERISK,
-                typeName,
-                AbstractNodeFactory.createIdentifierToken(name)
-        );
     }
 }
