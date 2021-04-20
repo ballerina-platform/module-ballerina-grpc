@@ -22,12 +22,11 @@ import io.ballerina.compiler.syntax.tree.CompoundAssignmentStatementNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.ReturnStatementNode;
-import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getLiteralValueToken;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getNumericLiteralNode;
 
 public class Statement {
 
@@ -36,11 +35,7 @@ public class Statement {
                 getSimpleNameReferenceNode(lhs),
                 binaryOperator,
                 SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                // Todo: function to return BasicLiteralNode
-                NodeFactory.createBasicLiteralNode(
-                        SyntaxKind.NUMERIC_LITERAL,
-                        getLiteralValueToken(value)
-                ),
+                getNumericLiteralNode(value),
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         );
     }
