@@ -118,6 +118,12 @@ dependencies {
     externalJars (group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}") {
         transitive = false
     }
+    externalJars (group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+    externalJars (group: 'org.wso2.orbit.org.antlr', name: 'antlr4-runtime', version: "${wso2OrbitAntlrVersion}") {
+        transitive = false
+    }
 }
 
 clean {
@@ -185,6 +191,8 @@ task updateTomlFiles {
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
         newBallerinaToml = newBallerinaToml.replace("@netty.version@", stdlibDependentNettyVersion)
+        newBallerinaToml = newBallerinaToml.replace("@antlr.version@", wso2OrbitAntlrVersion)
+        newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
         ballerinaTomlFile.text = newBallerinaToml
 
         def newDependencyConfig = dependenciesTomlFile.text.replace("@stdlib.crypto.version@", stdlibDependentCryptoVersion)

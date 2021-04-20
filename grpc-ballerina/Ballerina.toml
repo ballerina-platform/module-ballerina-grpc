@@ -17,6 +17,19 @@ scope = "testOnly"
 artifactId = "grpc"
 version = "@project.version@"
 
+[[platform.java11.dependency]]
+path = "./lib/ballerina-cli-@ballerinalang.version@.jar"
+groupId = "org.ballerinalang"
+scope = "testOnly"
+artifactId = "ballerina-cli"
+version = "@ballerinalang.version@"
+
+[[platform.java11.dependency]]
+path = "./lib/antlr4-runtime-@antlr.version@.jar"
+groupId = "org.wso2.orbit.org.antlr"
+scope = "testOnly"
+artifactId = "antlr4-runtime"
+version = "@antlr.version@"
 
 [[platform.java11.dependency]]
 path = "./lib/http-native-@http.native.version@.jar"
