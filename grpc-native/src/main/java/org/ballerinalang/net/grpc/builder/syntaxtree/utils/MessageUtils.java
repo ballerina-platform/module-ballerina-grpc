@@ -95,26 +95,18 @@ public class MessageUtils {
     private static Type getMessageType(org.ballerinalang.net.grpc.builder.stub.Message message) {
         Record messageRecord = new Record();
         for (Field field : message.getFieldList()) {
-            String fieldName = field.getFieldName();
-            String defaultValue = field.getDefaultValue();
             switch (field.getFieldType()) {
                 case "string" :
-                    messageRecord.addStringFieldWithDefaultValue(fieldName, defaultValue);
-                    break;
                 case "int" :
-                    messageRecord.addIntegerFieldWithDefaultValue(fieldName, defaultValue);
-                    break;
                 case "float" :
-                    messageRecord.addFloatFieldWithDefaultValue(fieldName, defaultValue);
-                    break;
                 case "boolean" :
-                    messageRecord.addBooleanFieldWithDefaultValue(fieldName, defaultValue);
+                    messageRecord.addBasicFieldWithDefaultValue(field.getFieldType(), field.getFieldName(), field.getDefaultValue());
                     break;
                 case "byte[]" :
-                    messageRecord.addArrayFieldWithDefaultValue(fieldName, "byte");
+                    messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
                     break;
                 default:
-                    messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), fieldName, defaultValue);
+                    messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(), field.getDefaultValue());
             }
         }
         if (message.getOneofFieldMap() != null) {
@@ -122,22 +114,16 @@ public class MessageUtils {
                 for (Field field : oneOfField.getValue()) {
                     switch (field.getFieldType()) {
                         case "string" :
-                            messageRecord.addOptionalStringField(field.getFieldName());
-                            break;
                         case "int" :
-                            messageRecord.addOptionalIntegerField(field.getFieldName());
-                            break;
                         case "float" :
-                            messageRecord.addOptionalFloatField(field.getFieldName());
-                            break;
                         case "boolean" :
-                            messageRecord.addOptionalBooleanField(field.getFieldName());
+                            messageRecord.addOptionalBasicField(field.getFieldType(), field.getFieldName());
                             break;
                         case "byte[]" :
-                            messageRecord.addOptionalArrayField(field.getFieldName(), "byte");
+                            messageRecord.addOptionalArrayField(field.getFieldType(), field.getFieldName());
                             break;
                         default:
-                            messageRecord.addOptionalCustomField(field.getFieldName(), field.getFieldType());
+                            messageRecord.addOptionalCustomField(field.getFieldType(), field.getFieldName());
                     }
                 }
             }
@@ -147,7 +133,7 @@ public class MessageUtils {
                 Record record = new Record();
                 for (Field field : map.getFieldList()) {
                     // Todo: Add a test case with all the field types (int32, int64 ...)
-                    record.addField(field.getFieldType(), field.getFieldName());
+                    record.addBasicField(field.getFieldType(), field.getFieldName());
                 }
                 messageRecord.addArrayFieldWithDefaultValue(map.getMessageName(), record);
             }
