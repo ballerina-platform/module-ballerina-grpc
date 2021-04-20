@@ -29,7 +29,7 @@ function testUnaryStubGeneration() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {enable:true}
+@test:Config {enable:false}
 function testDirectoryWithSpace() {
     string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, "a` b", "helloWorld.proto");
     io:println("Proto file path: ");
