@@ -29,11 +29,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 
 public class Listener {
 
-    private MetadataNode metadata;
+    private final MetadataNode metadata;
     private Token visibilityQualifier;
-    private TypeDescriptorNode typeDescriptor;
-    private Token name;
-    private ImplicitNewExpressionNode initializer;
+    private final TypeDescriptorNode typeDescriptor;
+    private final Token name;
+    private final ImplicitNewExpressionNode initializer;
 
     public Listener(String name, TypeDescriptorNode typeDescriptor, ImplicitNewExpressionNode initializer, boolean isPublic) {
         metadata = null;
