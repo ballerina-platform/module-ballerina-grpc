@@ -34,7 +34,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
@@ -56,12 +55,13 @@ public class UnaryUtils {
     public static Function getUnaryFunction(Method method) {
         Function function = new Function(method.getMethodName());
         String inputCap = capitalize(method.getInputType());
-        function.addParameter(
-                getRequiredParamNode(
-                        getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getInputType()),
-                                getSimpleNameReferenceNode("Context" + inputCap)),
-                        "req"));
+        function.addRequiredParameter(
+                getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(method.getInputType()),
+                        getSimpleNameReferenceNode("Context" + inputCap)
+                ),
+                "req"
+        );
         function.addReturns(
                 Returns.getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
@@ -94,12 +94,13 @@ public class UnaryUtils {
         String inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
         String outCap = method.getOutputType().substring(0, 1).toUpperCase() + method.getOutputType().substring(1);
         Function function = new Function(method.getMethodName() + "Context");
-        function.addParameter(
-                getRequiredParamNode(
-                        getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getInputType()),
-                                getSimpleNameReferenceNode("Context" + inputCap)),
-                        "req"));
+        function.addRequiredParameter(
+                getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(method.getInputType()),
+                        getSimpleNameReferenceNode("Context" + inputCap)
+                ),
+                "req"
+        );
         function.addReturns(
                 Returns.getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(

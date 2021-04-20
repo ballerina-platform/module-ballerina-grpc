@@ -39,8 +39,6 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
-
 public class Expression {
 
     public static SimpleNameReferenceNode getSimpleNameReferenceNode(String name) {
@@ -84,7 +82,7 @@ public class Expression {
     public static RemoteMethodCallActionNode getRemoteMethodCallActionNode(ExpressionNode expression, String methodName, String[] args) {
         List<Node> argList = new ArrayList<>();
         for (String arg : args) {
-            if (argList.size() > 0){
+            if (argList.size() > 0) {
                 argList.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
             }
             argList.add(NodeFactory.createPositionalArgumentNode(getSimpleNameReferenceNode(arg)));
