@@ -42,14 +42,13 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getOptionalFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBinaryExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getUnaryExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getLiteralValueToken;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns.getReturnTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getCompoundAssignmentStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
@@ -163,11 +162,7 @@ public class MessageUtils {
 
     private static Function getValidationFunction(Message message) {
         Function function = new Function("isValid" + capitalizeFirstLetter(message.getMessageName()));
-        function.addReturns(
-                getReturnTypeDescriptorNode(
-                        getBuiltinSimpleNameReferenceNode("boolean")
-                )
-        );
+        function.addReturns(getBuiltinSimpleNameReferenceNode("boolean"));
         function.addParameter(
                 getRequiredParamNode(
                         getSimpleNameReferenceNode(message.getMessageName()),

@@ -34,7 +34,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
@@ -63,11 +63,13 @@ public class UnaryUtils {
                                 getSimpleNameReferenceNode("Context" + inputCap)),
                         "req"));
         function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        Returns.getParenthesisedTypeDescriptorNode(
-                                getUnionTypeDescriptorNode(
-                                        getSimpleNameReferenceNode(method.getOutputType()),
-                                        SYNTAX_TREE_GRPC_ERROR))));
+                Returns.getParenthesisedTypeDescriptorNode(
+                        getUnionTypeDescriptorNode(
+                                getSimpleNameReferenceNode(method.getOutputType()),
+                                SYNTAX_TREE_GRPC_ERROR
+                        )
+                )
+        );
         addUnaryBody(function, inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
@@ -99,11 +101,13 @@ public class UnaryUtils {
                                 getSimpleNameReferenceNode("Context" + inputCap)),
                         "req"));
         function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        Returns.getParenthesisedTypeDescriptorNode(
-                                getUnionTypeDescriptorNode(
-                                        getSimpleNameReferenceNode("Context" + outCap),
-                                        SYNTAX_TREE_GRPC_ERROR))));
+                Returns.getParenthesisedTypeDescriptorNode(
+                        getUnionTypeDescriptorNode(
+                                getSimpleNameReferenceNode("Context" + outCap),
+                                SYNTAX_TREE_GRPC_ERROR
+                        )
+                )
+        );
         addUnaryBody(function, inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),

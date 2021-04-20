@@ -42,7 +42,6 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.Imports;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Listener;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.ModuleVariable;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Service;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
@@ -160,9 +159,7 @@ public class SyntaxTreeGen {
         // getDescriptorMap function
         Function getDescriptorMap = new Function("getDescriptorMap");
         getDescriptorMap.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        getParameterizedTypeDescriptorNode("map", SYNTAX_TREE_VAR_STRING)
-                )
+                getParameterizedTypeDescriptorNode("map", SYNTAX_TREE_VAR_STRING)
         );
         Map descriptorMap = new Map();
         for (Descriptor descriptor : stubFile.getDescriptors()) {
@@ -190,9 +187,7 @@ public class SyntaxTreeGen {
                         "config"
                 )
         );
-        function.addReturns(
-                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
-        );
+        function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "grpcClient"),
                 getCheckExpressionNode(
@@ -252,15 +247,13 @@ public class SyntaxTreeGen {
                     )
             );
             function.addReturns(
-                    Returns.getReturnTypeDescriptorNode(
-                            getUnionTypeDescriptorNode(
-                                    getStreamTypeDescriptorNode(
-                                            getSimpleNameReferenceNode(output),
-                                            // Todo: parametarize identirifer (optionalTypeDescriptor)
-                                            getOptionalTypeDescriptorNode("", "error")
-                                    ),
-                                    getErrorTypeDescriptorNode()
-                            )
+                    getUnionTypeDescriptorNode(
+                            getStreamTypeDescriptorNode(
+                                    getSimpleNameReferenceNode(output),
+                                    // Todo: parametarize identirifer (optionalTypeDescriptor)
+                                    getOptionalTypeDescriptorNode("", "error")
+                            ),
+                            getErrorTypeDescriptorNode()
                     )
             );
             function.addQualifiers(new String[]{"remote"});
