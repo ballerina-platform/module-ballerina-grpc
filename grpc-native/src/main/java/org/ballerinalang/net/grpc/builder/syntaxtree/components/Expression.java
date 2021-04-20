@@ -50,8 +50,7 @@ public class Expression {
         return NodeFactory.createFieldAccessExpressionNode(
                 getSimpleNameReferenceNode(var),
                 SyntaxTreeConstants.SYNTAX_TREE_DOT,
-                // Todo : check if getSimpleNameReferenceNode() should be used below
-                getBuiltinSimpleNameReferenceNode(fieldName)
+                getSimpleNameReferenceNode(fieldName)
         );
     }
 
