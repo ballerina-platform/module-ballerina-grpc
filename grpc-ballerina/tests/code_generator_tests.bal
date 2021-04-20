@@ -31,7 +31,7 @@ function testUnaryStubGeneration() {
 
 @test:Config {enable:false}
 function testDirectoryWithSpace() {
-    string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, "a` b", "helloWorld.proto");
+    string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, "a b", "helloWorld.proto");
     io:println("Proto file path: ");
     io:println(protoFilePath);
     string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, "tool_test2");
