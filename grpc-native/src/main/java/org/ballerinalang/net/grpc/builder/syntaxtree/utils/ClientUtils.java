@@ -64,12 +64,10 @@ public class ClientUtils {
         String clientName = capitalize(method.getMethodName()) + "StreamingClient";
         Function function = new Function(method.getMethodName());
         function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        Returns.getParenthesisedTypeDescriptorNode(
-                                getUnionTypeDescriptorNode(
-                                        getSimpleNameReferenceNode(clientName),
-                                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
-                                )
+                Returns.getParenthesisedTypeDescriptorNode(
+                        getUnionTypeDescriptorNode(
+                                getSimpleNameReferenceNode(clientName),
+                                SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
                         )
                 )
         );
@@ -146,9 +144,7 @@ public class ClientUtils {
                         "message"
                 )
         );
-        function.addReturns(
-                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
-        );
+        function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
@@ -168,9 +164,7 @@ public class ClientUtils {
                         "message"
                 )
         );
-        function.addReturns(
-                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
-        );
+        function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
@@ -193,11 +187,9 @@ public class ClientUtils {
                 getTupleTypeDescriptorNode(receiveArgs),
                 getListBindingPatternNode(new String[]{"payload", "headers"}));
         function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        TypeDescriptor.getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getOutputType()),
-                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                        )
+                TypeDescriptor.getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(method.getOutputType()),
+                        SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                 )
         );
         if (method.getOutputType().equals("string")) {
@@ -274,11 +266,9 @@ public class ClientUtils {
                 getListBindingPatternNode(new String[]{"payload", "headers"})
         );
         function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        TypeDescriptor.getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode("Context" + capitalize(method.getOutputType())),
-                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                        )
+                TypeDescriptor.getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode("Context" + capitalize(method.getOutputType())),
+                        SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                 )
         );
         if (method.getOutputType().equals("string")) {
@@ -355,11 +345,7 @@ public class ClientUtils {
                         "response"
                 )
         );
-        function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                )
-        );
+        function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
@@ -373,11 +359,7 @@ public class ClientUtils {
 
     private static Function getCompleteFunction() {
         Function function = new Function("complete");
-        function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                )
-        );
+        function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),

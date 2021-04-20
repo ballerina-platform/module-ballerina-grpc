@@ -27,7 +27,6 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Record;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
@@ -36,7 +35,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
@@ -67,13 +66,14 @@ public class ServerUtils {
                         getSimpleNameReferenceNode(method.getInputType()),
                         "req"));
         function.addReturns(
-                // Todo: remove Returns.getReturnTypeDescriptorNode
-                Returns.getReturnTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                getStreamTypeDescriptorNode(
-                                        getSimpleNameReferenceNode(method.getOutputType()),
-                                        SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
-                                SYNTAX_TREE_GRPC_ERROR)));
+                getUnionTypeDescriptorNode(
+                        getStreamTypeDescriptorNode(
+                                getSimpleNameReferenceNode(method.getOutputType()),
+                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                        ),
+                        SYNTAX_TREE_GRPC_ERROR
+                )
+        );
         addServerBody(function, method, "_", outCap);
         function.addReturnStatement(
                 getExplicitNewExpressionNode(
@@ -97,10 +97,11 @@ public class ServerUtils {
                         getSimpleNameReferenceNode(method.getInputType()),
                         "req"));
         function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode("Context" + inputCap + "Stream"),
-                                SYNTAX_TREE_GRPC_ERROR)));
+                getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode("Context" + inputCap + "Stream"),
+                        SYNTAX_TREE_GRPC_ERROR
+                )
+        );
         addServerBody(function, method, "headers", outputCap);
         Map returnMap = new Map();
         returnMap.addField(
@@ -160,11 +161,9 @@ public class ServerUtils {
         Record nextRecord = new Record();
         nextRecord.addCustomField("value", method.getOutputType());
         function.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                nextRecord.getRecordTypeDescriptorNode(),
-                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                        )
+                getUnionTypeDescriptorNode(
+                        nextRecord.getRecordTypeDescriptorNode(),
+                        SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                 )
         );
         VariableDeclaration streamValue = new VariableDeclaration(
@@ -226,9 +225,7 @@ public class ServerUtils {
 
     private static Function getCloseFunction() {
         Function function = new Function("close");
-        function.addReturns(
-                Returns.getReturnTypeDescriptorNode(SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
-        );
+        function.addReturns(SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         function.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "anydataStream"),

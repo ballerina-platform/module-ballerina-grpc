@@ -23,7 +23,6 @@ import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
@@ -31,7 +30,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
@@ -67,11 +66,9 @@ public class CallerUtils {
 
         Function getId = new Function("getId");
         getId.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        NodeFactory.createBuiltinSimpleNameReferenceNode(
-                                SyntaxKind.INT_TYPE_DESC,
-                                AbstractNodeFactory.createIdentifierToken("int")
-                        )
+                NodeFactory.createBuiltinSimpleNameReferenceNode(
+                        SyntaxKind.INT_TYPE_DESC,
+                        AbstractNodeFactory.createIdentifierToken("int")
                 )
         );
         getId.addReturnStatement(
@@ -91,9 +88,7 @@ public class CallerUtils {
                         "response"
                 )
         );
-        send.addReturns(
-                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
-        );
+        send.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         send.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "caller"),
@@ -111,9 +106,7 @@ public class CallerUtils {
                         "response"
                 )
         );
-        sendContext.addReturns(
-                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
-        );
+        sendContext.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         sendContext.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "caller"),
@@ -131,9 +124,7 @@ public class CallerUtils {
                         "response"
                 )
         );
-        sendError.addReturns(
-                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
-        );
+        sendError.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         sendError.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "caller"),
@@ -145,9 +136,7 @@ public class CallerUtils {
         caller.addMember(sendError.getFunctionDefinitionNode());
 
         Function complete = new Function("complete");
-        complete.addReturns(
-                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
-        );
+        complete.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
         complete.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "caller"),

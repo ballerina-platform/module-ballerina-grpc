@@ -36,11 +36,14 @@ import io.ballerina.compiler.syntax.tree.ReturnTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.StatementNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
+import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns.getReturnTypeDescriptorNode;
 
 public class Function {
 
@@ -105,8 +108,8 @@ public class Function {
         parameters.add(parameterNode);
     }
 
-    public void addReturns(ReturnTypeDescriptorNode returns) {
-        returnTypeDescriptorNode = returns;
+    public void addReturns(TypeDescriptorNode node) {
+        returnTypeDescriptorNode = getReturnTypeDescriptorNode(node);
     }
 
     private FunctionBodyNode getFunctionBody() {
