@@ -50,10 +50,8 @@ public class Function {
     private final Token finalKeyWord = AbstractNodeFactory.createIdentifierToken("function ");
     private final IdentifierToken functionName;
     private final NodeList<Node> relativeResourcePath;
-
     private final List<Node> parameters;
     private ReturnTypeDescriptorNode returnTypeDescriptorNode;
-
     private NodeList<StatementNode> statements;
 
     public Function(String name) {
