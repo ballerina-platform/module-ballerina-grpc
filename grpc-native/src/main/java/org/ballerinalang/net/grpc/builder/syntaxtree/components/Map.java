@@ -47,6 +47,20 @@ public class Map {
         );
     }
 
+    public void addField(String fieldName, ExpressionNode field) {
+        if (fields.size() > 0) {
+            fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+        }
+        fields.add(
+                NodeFactory.createSpecificFieldNode(
+                        null,
+                        NodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_COLON,
+                        field
+                )
+        );
+    }
+
     public void addStringField(String key, String value) {
         if (fields.size() > 0) {
             fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
@@ -97,20 +111,6 @@ public class Map {
                         NodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_COLON,
                         getTypeCastExpressionNode(typeCastParam, expression)
-                )
-        );
-    }
-
-    public void addField(String fieldName, ExpressionNode field) {
-        if (fields.size() > 0) {
-            fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
-        }
-        fields.add(
-                NodeFactory.createSpecificFieldNode(
-                        null,
-                        NodeFactory.createIdentifierToken(fieldName),
-                        SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                        field
                 )
         );
     }
