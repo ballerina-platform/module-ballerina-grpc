@@ -29,11 +29,10 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 
 public class VariableDeclaration {
 
-    private NodeList<AnnotationNode> annotations;
-    private Token finalKeyWord;
-    private TypedBindingPatternNode patternNode;
-    private ExpressionNode initializer;
-    private Token equals;
+    private final NodeList<AnnotationNode> annotations;
+    private final Token finalKeyWord;
+    private final TypedBindingPatternNode patternNode;
+    private final ExpressionNode initializer;
 
     public VariableDeclaration(TypedBindingPatternNode patternNode, ExpressionNode initializer) {
         annotations = NodeFactory.createEmptyNodeList();
@@ -43,6 +42,7 @@ public class VariableDeclaration {
     }
 
     public VariableDeclarationNode getVariableDeclarationNode() {
+        Token equals;
         if (initializer == null) {
             equals = null;
         } else {

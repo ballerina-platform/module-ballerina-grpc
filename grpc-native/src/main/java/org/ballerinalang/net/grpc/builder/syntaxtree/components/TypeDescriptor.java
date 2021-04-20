@@ -19,6 +19,7 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
@@ -32,7 +33,9 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.ObjectFieldNode;
 import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.ParenthesisedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.ReturnTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.StreamTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
@@ -136,7 +139,7 @@ public class TypeDescriptor {
     }
 
     public static ObjectFieldNode getObjectFieldNode(String visibility, String[] qualifiers, Node typeName, String fieldName) {
-        NodeList qualifierList = NodeFactory.createEmptyNodeList();
+        NodeList<Token> qualifierList = NodeFactory.createEmptyNodeList();
         for (String qualifier : qualifiers) {
             qualifierList = qualifierList.add(AbstractNodeFactory.createIdentifierToken(qualifier + " "));
         }
@@ -225,6 +228,24 @@ public class TypeDescriptor {
         return NodeFactory.createErrorTypeDescriptorNode(
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_ERROR,
                 null
+        );
+    }
+
+    public static ReturnTypeDescriptorNode getReturnTypeDescriptorNode(Node type) {
+        NodeList<AnnotationNode> annotations = NodeFactory.createEmptyNodeList();
+
+        return NodeFactory.createReturnTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURNS,
+                annotations,
+                type
+        );
+    }
+
+    public static ParenthesisedTypeDescriptorNode getParenthesisedTypeDescriptorNode(TypeDescriptorNode typeDesc) {
+        return NodeFactory.createParenthesisedTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                typeDesc,
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
         );
     }
 }

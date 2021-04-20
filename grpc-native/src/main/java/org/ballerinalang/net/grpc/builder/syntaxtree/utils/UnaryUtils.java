@@ -26,7 +26,6 @@ import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
@@ -41,6 +40,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
@@ -63,7 +63,7 @@ public class UnaryUtils {
                 "req"
         );
         function.addReturns(
-                Returns.getParenthesisedTypeDescriptorNode(
+                getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
                                 getSimpleNameReferenceNode(method.getOutputType()),
                                 SYNTAX_TREE_GRPC_ERROR
@@ -102,7 +102,7 @@ public class UnaryUtils {
                 "req"
         );
         function.addReturns(
-                Returns.getParenthesisedTypeDescriptorNode(
+                getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
                                 getSimpleNameReferenceNode("Context" + outCap),
                                 SYNTAX_TREE_GRPC_ERROR
