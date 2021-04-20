@@ -185,6 +185,7 @@ task updateTomlFiles {
         def stdlibDependentOAuth2Version = stripBallerinaExtensionVersion(project.stdlibOAuth2Version)
         def stdlibDependentRegexVersion = stripBallerinaExtensionVersion(project.stdlibRegexVersion)
         def stdlibDependentTimeVersion = stripBallerinaExtensionVersion(project.stdlibTimeVersion)
+        def stdlibDependentOsVersion = stripBallerinaExtensionVersion(project.stdlibOsVersion)
         def stdlibDependentNettyVersion = project.nettyVersion
 
         def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
@@ -202,6 +203,7 @@ task updateTomlFiles {
         newDependencyConfig = newDependencyConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
         newDependencyConfig = newDependencyConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
         newDependencyConfig = newDependencyConfig.replace("@stdlib.time.version@", stdlibDependentTimeVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.os.version@", stdlibDependentOsVersion)
         dependenciesTomlFile.text = newDependencyConfig
 
         def newCompilerPluginToml = compilerPluginTomlFile.text.replace("@project.version@", project.version)
