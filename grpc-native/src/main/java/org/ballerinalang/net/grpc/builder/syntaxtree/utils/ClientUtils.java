@@ -24,9 +24,7 @@ import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
@@ -39,7 +37,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Function.getRequiredParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
@@ -61,21 +59,25 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.ca
 
 public class ClientUtils {
 
-    public static FunctionDefinition getStreamingClientFunction(Method method, boolean bidirectional) {
+    public static Function getStreamingClientFunction(Method method, boolean bidirectional) {
         String methodName = bidirectional? "executeBidirectionalStreaming" : "executeClientStreaming";
         String clientName = capitalize(method.getMethodName()) + "StreamingClient";
-        FunctionSignature signature = new FunctionSignature();
-        signature.addReturns(
+        Function function = new Function(method.getMethodName());
+        function.addReturns(
                 Returns.getReturnTypeDescriptorNode(
                         Returns.getParenthesisedTypeDescriptorNode(
                                 getUnionTypeDescriptorNode(
                                         getSimpleNameReferenceNode(clientName),
-                                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
-        FunctionBody body = new FunctionBody();
+                                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
+                                )
+                        )
+                )
+        );
         VariableDeclaration sClient = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getQualifiedNameReferenceNode("grpc", "StreamingClient"),
-                        getCaptureBindingPatternNode("sClient")),
+                        getCaptureBindingPatternNode("sClient")
+                ),
                 getCheckExpressionNode(
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "grpcClient"),
@@ -84,14 +86,10 @@ public class ClientUtils {
                         )
                 )
         );
-        body.addVariableStatement(sClient.getVariableDeclarationNode());
-        body.addReturnStatement(getExplicitNewExpressionNode(clientName, new String[]{"sClient"}));
-        FunctionDefinition definition = new FunctionDefinition(
-                method.getMethodName(),
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+        function.addVariableStatement(sClient.getVariableDeclarationNode());
+        function.addReturnStatement(getExplicitNewExpressionNode(clientName, new String[]{"sClient"}));
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
     public static Class getStreamingClientClass(Method method) {
@@ -124,71 +122,68 @@ public class ClientUtils {
         return streamingClient;
     }
 
-    private static FunctionDefinition getInitFunction() {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
+    private static Function getInitFunction() {
+        Function function = new Function("init");
+        function.addParameter(
                 getRequiredParamNode(
                         TypeDescriptor.getQualifiedNameReferenceNode("grpc", "StreamingClient"),
-                        "sClient"));
-        FunctionBody body = new FunctionBody();
-        body.addAssignmentStatement(
+                        "sClient"
+                )
+        );
+        function.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "sClient"),
-                getSimpleNameReferenceNode("sClient"));
-        FunctionDefinition definition = new FunctionDefinition(
-                "init",
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated"});
-        return definition;
+                getSimpleNameReferenceNode("sClient")
+        );
+        function.addQualifiers(new String[]{"isolated"});
+        return function;
     }
 
-    private static FunctionDefinition getSendFunction(Method method) {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
+    private static Function getSendFunction(Method method) {
+        Function function = new Function("send" + capitalize(method.getInputType()));
+        function.addParameter(
                 getRequiredParamNode(
                         getSimpleNameReferenceNode(method.getInputType()),
-                        "message"));
-        signature.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
-        FunctionBody body = new FunctionBody();
-        body.addReturnStatement(
+                        "message"
+                )
+        );
+        function.addReturns(
+                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
+        );
+        function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
                         "send",
-                        new String[]{"message"}));
-        FunctionDefinition definition = new FunctionDefinition(
-                "send" + capitalize(method.getInputType()),
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+                        new String[]{"message"}
+                )
+        );
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
-    private static FunctionDefinition getSendContextFunction(Method method) {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
+    private static Function getSendContextFunction(Method method) {
+        Function function = new Function("sendContext" + capitalize(method.getInputType()));
+        function.addParameter(
                 getRequiredParamNode(
                         getSimpleNameReferenceNode("Context" + capitalize(method.getInputType())),
-                        "message"));
-        signature.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
-        FunctionBody body = new FunctionBody();
-        body.addReturnStatement(
+                        "message"
+                )
+        );
+        function.addReturns(
+                Returns.getReturnTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL)
+        );
+        function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
                         "send",
-                        new String[]{"message"}));
-        FunctionDefinition definition = new FunctionDefinition(
-                "sendContext" + capitalize(method.getInputType()),
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+                        new String[]{"message"}
+                )
+        );
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
-    private static FunctionDefinition getReceiveFunction(Method method) {
+    private static Function getReceiveFunction(Method method) {
+        Function function = new Function("receive" + capitalize(method.getOutputType()));
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -197,28 +192,32 @@ public class ClientUtils {
         TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
                 getTupleTypeDescriptorNode(receiveArgs),
                 getListBindingPatternNode(new String[]{"payload", "headers"}));
-        FunctionSignature signature = new FunctionSignature();
-        signature.addReturns(
+        function.addReturns(
                 Returns.getReturnTypeDescriptorNode(
                         TypeDescriptor.getUnionTypeDescriptorNode(
                                 getSimpleNameReferenceNode(method.getOutputType()),
-                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL)));
-
-        FunctionBody body = new FunctionBody();
+                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                        )
+                )
+        );
         if (method.getOutputType().equals("string")) {
             VariableDeclaration receive = new VariableDeclaration(
                     receiveArgsPattern,
                     getCheckExpressionNode(
                             getRemoteMethodCallActionNode(
                                     getFieldAccessExpressionNode("self", "sClient"),
-                                    "receive", new String[]{}))
+                                    "receive", new String[]{}
+                            )
+                    )
             );
-            body.addVariableStatement(receive.getVariableDeclarationNode());
-            body.addReturnStatement(
+            function.addVariableStatement(receive.getVariableDeclarationNode());
+            function.addReturnStatement(
                     getMethodCallExpressionNode(
                             getSimpleNameReferenceNode("payload"),
                             "toString",
-                            new String[]{}));
+                            new String[]{}
+                    )
+            );
         } else {
             VariableDeclaration response = new VariableDeclaration(
                     getTypedBindingPatternNode(
@@ -233,7 +232,7 @@ public class ClientUtils {
                             )
                     )
             );
-            body.addVariableStatement(response.getVariableDeclarationNode());
+            function.addVariableStatement(response.getVariableDeclarationNode());
             IfElse responseCheck = new IfElse(
                     getTypeTestExpressionNode(
                             getSimpleNameReferenceNode("response"),
@@ -249,24 +248,22 @@ public class ClientUtils {
                     new VariableDeclaration(
                             receiveArgsPattern,
                             getSimpleNameReferenceNode("response")
-                    ).getVariableDeclarationNode());
+                    ).getVariableDeclarationNode()
+            );
             responseCheck.addElseReturnStatement(
                     getTypeCastExpressionNode(
                             method.getOutputType(),
                             getSimpleNameReferenceNode("payload")
                     )
             );
-            body.addIfElseStatement(responseCheck.getIfElseStatementNode());
+            function.addIfElseStatement(responseCheck.getIfElseStatementNode());
         }
-        FunctionDefinition definition = new FunctionDefinition(
-                "receive" + capitalize(method.getOutputType()),
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
-    private static FunctionDefinition getReceiveContextFunction(Method method) {
+    private static Function getReceiveContextFunction(Method method) {
+        Function function = new Function("receiveContext" + capitalize(method.getOutputType()));
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -274,31 +271,36 @@ public class ClientUtils {
         );
         TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
                 getTupleTypeDescriptorNode(receiveArgs),
-                getListBindingPatternNode(new String[]{"payload", "headers"}));
-        FunctionSignature signature = new FunctionSignature();
-        signature.addReturns(
+                getListBindingPatternNode(new String[]{"payload", "headers"})
+        );
+        function.addReturns(
                 Returns.getReturnTypeDescriptorNode(
                         TypeDescriptor.getUnionTypeDescriptorNode(
                                 getSimpleNameReferenceNode("Context" + capitalize(method.getOutputType())),
-                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL)));
-        FunctionBody body = new FunctionBody();
+                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                        )
+                )
+        );
         if (method.getOutputType().equals("string")) {
             VariableDeclaration receive = new VariableDeclaration(
                     receiveArgsPattern,
                     getCheckExpressionNode(
                             getRemoteMethodCallActionNode(
                                     getFieldAccessExpressionNode("self", "sClient"),
-                                    "receive", new String[]{}))
+                                    "receive", new String[]{}
+                            )
+                    )
             );
-            body.addVariableStatement(receive.getVariableDeclarationNode());
+            function.addVariableStatement(receive.getVariableDeclarationNode());
             Map returnMap = new Map();
             returnMap.addMethodCallField(
                     "content",
                     getSimpleNameReferenceNode("payload"),
                     "toString",
-                    new String[]{});
+                    new String[]{}
+            );
             returnMap.addSimpleNameReferenceField("headers", "headers");
-            body.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
+            function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
         } else {
             VariableDeclaration response = new VariableDeclaration(
                     getTypedBindingPatternNode(
@@ -313,7 +315,7 @@ public class ClientUtils {
                             )
                     )
             );
-            body.addVariableStatement(response.getVariableDeclarationNode());
+            function.addVariableStatement(response.getVariableDeclarationNode());
             IfElse responseCheck = new IfElse(
                     getTypeTestExpressionNode(
                             getSimpleNameReferenceNode("response"),
@@ -329,64 +331,61 @@ public class ClientUtils {
                     new VariableDeclaration(
                             receiveArgsPattern,
                             getSimpleNameReferenceNode("response")
-                    ).getVariableDeclarationNode());
+                    ).getVariableDeclarationNode()
+            );
             Map returnMap = new Map();
             returnMap.addTypeCastExpressionField(
                     "content",
                     method.getOutputType(),
                     getSimpleNameReferenceNode("payload")
-                    );
+            );
             returnMap.addSimpleNameReferenceField("headers", "headers");
             responseCheck.addElseReturnStatement(returnMap.getMappingConstructorExpressionNode());
-            body.addIfElseStatement(responseCheck.getIfElseStatementNode());
+            function.addIfElseStatement(responseCheck.getIfElseStatementNode());
         }
-        FunctionDefinition definition = new FunctionDefinition(
-                "receiveContext" + capitalize(method.getOutputType()),
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
-    private static FunctionDefinition getSendErrorFunction() {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
+    private static Function getSendErrorFunction() {
+        Function function = new Function("sendError");
+        function.addParameter(
                 getRequiredParamNode(
                         SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR,
-                        "response"));
-        signature.addReturns(
+                        "response"
+                )
+        );
+        function.addReturns(
                 Returns.getReturnTypeDescriptorNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
-        FunctionBody body = new FunctionBody();
-        body.addReturnStatement(
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                )
+        );
+        function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
                         "sendError",
-                        new String[]{"response"}));
-        FunctionDefinition definition = new FunctionDefinition(
-                "sendError",
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+                        new String[]{"response"}
+                )
+        );
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
-    private static FunctionDefinition getCompleteFunction() {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addReturns(
+    private static Function getCompleteFunction() {
+        Function function = new Function("complete");
+        function.addReturns(
                 Returns.getReturnTypeDescriptorNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
-        FunctionBody body = new FunctionBody();
-        body.addReturnStatement(
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                )
+        );
+        function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
                         "complete",
-                        new String[]{}));
-        FunctionDefinition definition = new FunctionDefinition(
-                "complete",
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+                        new String[]{}
+                )
+        );
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 }

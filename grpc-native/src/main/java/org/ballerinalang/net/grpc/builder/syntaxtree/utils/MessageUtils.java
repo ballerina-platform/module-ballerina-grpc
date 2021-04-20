@@ -27,9 +27,7 @@ import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
 import org.ballerinalang.net.grpc.builder.stub.Field;
 import org.ballerinalang.net.grpc.builder.stub.Message;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Record;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Type;
@@ -163,20 +161,19 @@ public class MessageUtils {
                 messageRecord.getRecordTypeDescriptorNode());
     }
 
-    private static FunctionDefinition getValidationFunction(org.ballerinalang.net.grpc.builder.stub.Message message) {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addReturns(
+    private static Function getValidationFunction(Message message) {
+        Function function = new Function("isValid" + capitalizeFirstLetter(message.getMessageName()));
+        function.addReturns(
                 getReturnTypeDescriptorNode(
                         getBuiltinSimpleNameReferenceNode("boolean")
                 )
         );
-        signature.addParameter(
+        function.addParameter(
                 getRequiredParamNode(
                         getSimpleNameReferenceNode(message.getMessageName()),
                         "r"
                 )
         );
-        FunctionBody body = new FunctionBody();
         ArrayList<String> counts = new ArrayList<>();
         for (Map.Entry<String, List<Field>> oneOfFieldMap : message.getOneofFieldMap().entrySet()) {
             counts.add(oneOfFieldMap.getKey() + "Count");
@@ -187,7 +184,7 @@ public class MessageUtils {
                     ),
                     NodeFactory.createBasicLiteralNode(SyntaxKind.NUMERIC_LITERAL, getLiteralValueToken(0))
             );
-            body.addVariableStatement(count.getVariableDeclarationNode());
+            function.addVariableStatement(count.getVariableDeclarationNode());
             for (Field field : oneOfFieldMap.getValue()) {
                 IfElse oneOfFieldCheck = new IfElse(
                         getUnaryExpressionNode(
@@ -206,7 +203,7 @@ public class MessageUtils {
                                 1
                         )
                 );
-                body.addIfElseStatement(oneOfFieldCheck.getIfElseStatementNode());
+                function.addIfElseStatement(oneOfFieldCheck.getIfElseStatementNode());
             }
         }
         if (counts.size() > 0) {
@@ -223,20 +220,16 @@ public class MessageUtils {
                             )
                     )
             );
-            body.addIfElseStatement(countCheck.getIfElseStatementNode());
+            function.addIfElseStatement(countCheck.getIfElseStatementNode());
         }
-        body.addReturnStatement(
+        function.addReturnStatement(
                 NodeFactory.createBasicLiteralNode(
                         SyntaxKind.BOOLEAN_LITERAL,
-                        getLiteralValueToken(true))
+                        getLiteralValueToken(true)
+                )
         );
-        FunctionDefinition validationFunction = new FunctionDefinition(
-                "isValid" + capitalizeFirstLetter(message.getMessageName()),
-                signature.getFunctionSignature(),
-                body.getFunctionBody()
-        );
-        validationFunction.addQualifiers(new String[]{"isolated"});
-        return validationFunction;
+        function.addQualifiers(new String[]{"isolated"});
+        return function;
     }
 
     private static BinaryExpressionNode getCountCheckBinaryExpression(ArrayList<String> counts) {
@@ -266,22 +259,25 @@ public class MessageUtils {
         return binaryExpressionNode;
     }
 
-    private static FunctionDefinition getOneOfFieldSetFunction(String messageName, Field field, List<Field> fields) {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
+    private static Function getOneOfFieldSetFunction(String messageName, Field field, List<Field> fields) {
+        StringBuilder functionName = new StringBuilder("set" + messageName + "_");
+        for (String s : field.getFieldName().split("_")) {
+            functionName.append(capitalize(s));
+        }
+        Function function = new Function(functionName.toString());
+        function.addParameter(
                 getRequiredParamNode(
                         getSimpleNameReferenceNode(messageName),
                         "r"
                 )
         );
-        signature.addParameter(
+        function.addParameter(
                 getRequiredParamNode(
                         getBuiltinSimpleNameReferenceNode(field.getFieldType()),
                         field.getFieldName()
                 )
         );
-        FunctionBody body = new FunctionBody();
-        body.addAssignmentStatement(
+        function.addAssignmentStatement(
                 getFieldAccessExpressionNode(
                         "r",
                         field.getFieldName()
@@ -290,7 +286,7 @@ public class MessageUtils {
         );
         for (Field oneOfField : fields) {
             if (!oneOfField.getFieldName().equals(field.getFieldName())) {
-                body.addAssignmentStatement(
+                function.addAssignmentStatement(
                         getSimpleNameReferenceNode("_"),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("r"),
@@ -300,16 +296,7 @@ public class MessageUtils {
                 );
             }
         }
-        StringBuilder functionName = new StringBuilder("set" + messageName + "_");
-        for (String s : field.getFieldName().split("_")) {
-            functionName.append(capitalize(s));
-        }
-        FunctionDefinition definition = new  FunctionDefinition(
-                functionName.toString(),
-                signature.getFunctionSignature(),
-                body.getFunctionBody()
-        );
-        definition.addQualifiers(new String[]{"isolated"});
-        return definition;
+        function.addQualifiers(new String[]{"isolated"});
+        return function;
     }
 }
