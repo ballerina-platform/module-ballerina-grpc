@@ -18,17 +18,29 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
+import io.ballerina.compiler.syntax.tree.AssignmentStatementNode;
 import io.ballerina.compiler.syntax.tree.CompoundAssignmentStatementNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
+import io.ballerina.compiler.syntax.tree.ExpressionStatementNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.ReturnStatementNode;
+import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getNumericLiteralNode;
 
 public class Statement {
+
+    public static AssignmentStatementNode getAssignmentStatementNode(String varRef, ExpressionNode expression) {
+        return NodeFactory.createAssignmentStatementNode(
+                getSimpleNameReferenceNode(varRef),
+                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                expression,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        );
+    }
 
     public static CompoundAssignmentStatementNode getCompoundAssignmentStatementNode(String lhs, Token binaryOperator, int value) {
         return NodeFactory.createCompoundAssignmentStatementNode(
@@ -43,6 +55,14 @@ public class Statement {
     public static ReturnStatementNode getReturnStatementNode(ExpressionNode expression) {
         return NodeFactory.createReturnStatementNode(
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURN,
+                expression,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        );
+    }
+
+    public static ExpressionStatementNode getCallStatementNode(ExpressionNode expression) {
+        return NodeFactory.createExpressionStatementNode(
+                SyntaxKind.CALL_STATEMENT,
                 expression,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         );
