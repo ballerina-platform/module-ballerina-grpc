@@ -27,6 +27,11 @@ import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * Class representing VariableDeclarationNode.
+ *
+ * @since 0.8.0
+ */
 public class VariableDeclaration {
 
     private final NodeList<AnnotationNode> annotations;

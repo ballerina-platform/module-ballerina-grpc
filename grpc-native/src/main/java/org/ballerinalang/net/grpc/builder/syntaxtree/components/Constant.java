@@ -29,6 +29,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 
+/**
+ * Class representing ConstantDeclarationNode.
+ *
+ * @since 0.8.0
+ */
 public class Constant {
 
     private Token visibilityQualifier;

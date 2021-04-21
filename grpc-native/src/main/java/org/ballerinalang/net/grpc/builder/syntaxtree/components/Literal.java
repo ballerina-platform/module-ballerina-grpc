@@ -23,6 +23,11 @@ import io.ballerina.compiler.syntax.tree.BasicLiteralNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 
+/**
+ * Class representing different types of BasicLiteralNodes.
+ *
+ * @since 0.8.0
+ */
 public class Literal {
 
     public static BasicLiteralNode getNumericLiteralNode(int value) {

@@ -18,6 +18,11 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
+/**
+ * Utility functions common to Syntax tree generation.
+ *
+ * @since 0.8.0
+ */
 public class CommonUtils {
 
     public static String capitalize(String name) {

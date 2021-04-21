@@ -34,6 +34,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing ServiceDeclarationNode.
+ *
+ * @since 0.8.0
+ */
 public class Service {
 
     private final NodeList<Token> qualifierList;

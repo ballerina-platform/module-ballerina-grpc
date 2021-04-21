@@ -26,6 +26,11 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.Token;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * Class representing ClassDefinitionNode.
+ *
+ * @since 0.8.0
+ */
 public class Class {
 
     private Token visibilityQualifier;
@@ -34,7 +39,7 @@ public class Class {
     private final Token className;
     private NodeList<Node> members;
 
-    public Class (String name, boolean isPublic) {
+    public Class(String name, boolean isPublic) {
         if (isPublic) {
             visibilityQualifier = AbstractNodeFactory.createIdentifierToken("public ");
         }
@@ -63,7 +68,7 @@ public class Class {
     }
 
     public void addQualifiers(String[] qualifiers) {
-        for (String qualifier: qualifiers) {
+        for (String qualifier : qualifiers) {
             classTypeQualifiers = classTypeQualifiers.add(AbstractNodeFactory.createIdentifierToken(qualifier + " "));
         }
     }

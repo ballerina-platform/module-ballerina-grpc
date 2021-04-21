@@ -25,6 +25,11 @@ import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDefinitionNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * Class representing TypeDefinitionNode.
+ *
+ * @since 0.8.0
+ */
 public class Type {
 
     private Token visibilityQualifier;

@@ -28,9 +28,14 @@ import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getNumericLiteralNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 
+/**
+ * Class representing different types of StatementNodes.
+ *
+ * @since 0.8.0
+ */
 public class Statement {
 
     public static AssignmentStatementNode getAssignmentStatementNode(String varRef, ExpressionNode expression) {
@@ -42,7 +47,8 @@ public class Statement {
         );
     }
 
-    public static CompoundAssignmentStatementNode getCompoundAssignmentStatementNode(String lhs, Token binaryOperator, int value) {
+    public static CompoundAssignmentStatementNode getCompoundAssignmentStatementNode(String lhs, Token binaryOperator,
+                                                                                     int value) {
         return NodeFactory.createCompoundAssignmentStatementNode(
                 getSimpleNameReferenceNode(lhs),
                 binaryOperator,

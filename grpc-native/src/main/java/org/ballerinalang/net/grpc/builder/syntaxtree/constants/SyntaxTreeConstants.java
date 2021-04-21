@@ -26,7 +26,13 @@ import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
 
+/**
+ * Class encapsulating all the Syntax tree related constants.
+ *
+ * @since 0.8.0
+ */
 public class SyntaxTreeConstants {
+
     public static final Token SYNTAX_TREE_SEMICOLON = AbstractNodeFactory.createIdentifierToken(";");
     public static final Token SYNTAX_TREE_COLON = AbstractNodeFactory.createIdentifierToken(":");
     public static final Token SYNTAX_TREE_OPEN_BRACE = AbstractNodeFactory.createIdentifierToken("{");
@@ -47,8 +53,8 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_BODY_END_DELIMITER = AbstractNodeFactory.createIdentifierToken("|}");
     public static final Token SYNTAX_TREE_IT = AbstractNodeFactory.createIdentifierToken("<");
     public static final Token SYNTAX_TREE_GT = AbstractNodeFactory.createIdentifierToken(">");
-    public static final Token SYNTAX_TREE_RIGHT_ARROW= AbstractNodeFactory.createIdentifierToken("->");
-    public static final Token SYNTAX_TREE_UNDERSCORE= AbstractNodeFactory.createIdentifierToken("_");
+    public static final Token SYNTAX_TREE_RIGHT_ARROW = AbstractNodeFactory.createIdentifierToken("->");
+    public static final Token SYNTAX_TREE_UNDERSCORE = AbstractNodeFactory.createIdentifierToken("_");
     public static final Token SYNTAX_TREE_OPTIONAL_CHAINING = AbstractNodeFactory.createIdentifierToken("?.");
     public static final Token SYNTAX_TREE_AT = AbstractNodeFactory.createIdentifierToken("@");
 
@@ -70,19 +76,23 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_KEYWORD_ERROR = AbstractNodeFactory.createIdentifierToken("error ");
 
     public static final Token SYNTAX_TREE_OPERATOR_OR = AbstractNodeFactory.createToken(SyntaxKind.LOGICAL_OR_TOKEN);
-    public static final Token SYNTAX_TREE_OPERATOR_UNARY = AbstractNodeFactory.createToken(SyntaxKind.EXCLAMATION_MARK_TOKEN);
+    public static final Token SYNTAX_TREE_OPERATOR_UNARY =
+            AbstractNodeFactory.createToken(SyntaxKind.EXCLAMATION_MARK_TOKEN);
     public static final Token SYNTAX_TREE_OPERATOR_PLUS = AbstractNodeFactory.createToken(SyntaxKind.PLUS_TOKEN);
     public static final Token SYNTAX_TREE_OPERATOR_GREATER_THAN = AbstractNodeFactory.createToken(SyntaxKind.GT_TOKEN);
 
-    public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING = TypeDescriptor.getBuiltinSimpleNameReferenceNode("string");
-    public static final TypeDescriptorNode SYNTAX_TREE_VAR_INT = TypeDescriptor.getBuiltinSimpleNameReferenceNode("int");
-    public static final TypeDescriptorNode SYNTAX_TREE_VAR_FLOAT = TypeDescriptor.getBuiltinSimpleNameReferenceNode("float");
-    public static final TypeDescriptorNode SYNTAX_TREE_VAR_BOOLEAN = TypeDescriptor.getBuiltinSimpleNameReferenceNode("boolean");
-    public static final TypeDescriptorNode SYNTAX_TREE_VAR_ANYDATA = TypeDescriptor.getBuiltinSimpleNameReferenceNode("anydata");
-    public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING_ARRAY = TypeDescriptor.getArrayTypeDescriptorNode("string");
-    public static final TypeDescriptorNode SYNTAX_TREE_VAR_BYTE_ARRAY = TypeDescriptor.getArrayTypeDescriptorNode("byte");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING =
+            TypeDescriptor.getBuiltinSimpleNameReferenceNode("string");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_INT =
+            TypeDescriptor.getBuiltinSimpleNameReferenceNode("int");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_ANYDATA =
+            TypeDescriptor.getBuiltinSimpleNameReferenceNode("anydata");
+    public static final TypeDescriptorNode SYNTAX_TREE_VAR_STRING_ARRAY =
+            TypeDescriptor.getArrayTypeDescriptorNode("string");
 
     // Nodes related to grpc module
-    public static final QualifiedNameReferenceNode SYNTAX_TREE_GRPC_ERROR = TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Error");
-    public static final OptionalTypeDescriptorNode SYNTAX_TREE_GRPC_ERROR_OPTIONAL = TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error");
+    public static final QualifiedNameReferenceNode SYNTAX_TREE_GRPC_ERROR =
+            TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Error");
+    public static final OptionalTypeDescriptorNode SYNTAX_TREE_GRPC_ERROR_OPTIONAL =
+            TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error");
 }
