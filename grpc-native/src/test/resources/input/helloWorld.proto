@@ -16,24 +16,21 @@
  *  under the License.
  */
 
-package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
-
-import org.ballerinalang.net.grpc.builder.stub.EnumField;
-import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Enum;
-
-/**
- * Utility functions related to Enum.
- *
- * @since 0.8.0
- */
-public class EnumUtils {
-
-    public static Enum getEnum(EnumMessage enumMessage) {
-        Enum enumMsg = new Enum(enumMessage.getMessageName(), true);
-        for (EnumField field : enumMessage.getFieldList()) {
-            enumMsg.addMember(Enum.getEnumMemberNode(field.getName()));
-        }
-        return enumMsg;
-    }
+syntax = "proto3";
+service helloWorld {
+		rpc hello(HelloRequest) returns (HelloResponse);
+		rpc bye(ByeRequest) returns (ByeResponse);
 }
+message HelloRequest {
+	string name = 1;
+}
+message HelloResponse {
+	string message = 1;
+}
+message ByeRequest {
+	string greet = 1;
+}
+message ByeResponse {
+	string say = 1;
+}
+

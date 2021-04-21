@@ -50,19 +50,19 @@ import java.util.List;
 
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_SERVICE;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFunctionCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getImplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getCallStatementNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getErrorTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
@@ -81,6 +81,11 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.UnaryUtils.get
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueTypeStream;
 
+/**
+ * Syntax tree generation class.
+ *
+ * @since 0.8.0
+ */
 public class SyntaxTreeGen {
 
     public static SyntaxTree generateSyntaxTree(StubFile stubFile) {
@@ -97,7 +102,8 @@ public class SyntaxTreeGen {
             client.addQualifiers(new String[]{"client"});
 
             client.addMember(getTypeReferenceNode(getQualifiedNameReferenceNode("grpc", "AbstractClientEndpoint")));
-            client.addMember(getObjectFieldNode("private", new String[]{}, getQualifiedNameReferenceNode("grpc", "Client"), "grpcClient"));
+            client.addMember(getObjectFieldNode("private", new String[]{},
+                    getQualifiedNameReferenceNode("grpc", "Client"), "grpcClient"));
             client.addMember(getInitFunction().getFunctionDefinitionNode());
 
             for (Method method : service.getUnaryFunctions()) {
@@ -130,7 +136,8 @@ public class SyntaxTreeGen {
             }
 
             for (java.util.Map.Entry<String, String> caller : service.getCallerMap().entrySet()) {
-                moduleMembers = moduleMembers.add(getCallerClass(caller.getKey(), caller.getValue()).getClassDefinitionNode());
+                moduleMembers = moduleMembers.add(getCallerClass(caller.getKey(), caller.getValue())
+                        .getClassDefinitionNode());
             }
             for (java.util.Map.Entry<String, Boolean> valueType : service.getValueTypeMap().entrySet()) {
                 if (valueType.getValue()) {
@@ -151,7 +158,8 @@ public class SyntaxTreeGen {
         }
 
         // ROOT_DESCRIPTOR
-        Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor(), false);
+        Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor(),
+                false);
         moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
 
         // getDescriptorMap function
@@ -174,42 +182,14 @@ public class SyntaxTreeGen {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
-    public static Function getInitFunction() {
-        Function function = new Function("init");
-        function.addRequiredParameter(SYNTAX_TREE_VAR_STRING, "url");
-        function.addIncludedRecordParameter(
-                getQualifiedNameReferenceNode("grpc", "ClientConfiguration"),
-                "config"
-        );
-        function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
-        function.addAssignmentStatement(
-                getFieldAccessExpressionNode("self", "grpcClient"),
-                getCheckExpressionNode(
-                        getImplicitNewExpressionNode(new String[]{"url", "config"})
-                )
-        );
-        function.addExpressionStatement(
-                getCallStatementNode(
-                        getCheckExpressionNode(
-                                getMethodCallExpressionNode(
-                                        getFieldAccessExpressionNode("self", "grpcClient"),
-                                        "initStub",
-                                        new String[]{"self", "ROOT_DESCRIPTOR","getDescriptorMap()"}
-                                )
-                        )
-                )
-        );
-        function.addQualifiers(new String[]{"public", "isolated"});
-        return function;
-    }
-
     public static SyntaxTree generateSyntaxTree(StubFile stubFile, String mode) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
         NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createEmptyNodeList();
 
         if (GRPC_SERVICE.equals(mode)) {
             // Todo: parameterize remove hardcoded 0 ?
-            Function function = new Function(stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).getMethodName());
+            Function function = new Function(stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).
+                    getMethodName());
             String input = stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).getInputType();
             String output = stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).getOutputType();
             ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
@@ -232,7 +212,7 @@ public class SyntaxTreeGen {
             grpcServiceDescriptor.addField(
                     "descMap",
                     getFunctionCallExpressionNode("getDescriptorMap", new String[]{})
-                    );
+            );
             service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
             function.addRequiredParameter(getSimpleNameReferenceNode(input), "value");
             function.addReturns(
@@ -270,5 +250,34 @@ public class SyntaxTreeGen {
         TextDocument textDocument = TextDocuments.from("");
         SyntaxTree syntaxTree = SyntaxTree.from(textDocument);
         return syntaxTree.modifyWith(modulePartNode);
+    }
+
+    public static Function getInitFunction() {
+        Function function = new Function("init");
+        function.addRequiredParameter(SYNTAX_TREE_VAR_STRING, "url");
+        function.addIncludedRecordParameter(
+                getQualifiedNameReferenceNode("grpc", "ClientConfiguration"),
+                "config"
+        );
+        function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
+        function.addAssignmentStatement(
+                getFieldAccessExpressionNode("self", "grpcClient"),
+                getCheckExpressionNode(
+                        getImplicitNewExpressionNode(new String[]{"url", "config"})
+                )
+        );
+        function.addExpressionStatement(
+                getCallStatementNode(
+                        getCheckExpressionNode(
+                                getMethodCallExpressionNode(
+                                        getFieldAccessExpressionNode("self", "grpcClient"),
+                                        "initStub",
+                                        new String[]{"self", "ROOT_DESCRIPTOR", "getDescriptorMap()"}
+                                )
+                        )
+                )
+        );
+        function.addQualifiers(new String[]{"public", "isolated"});
+        return function;
     }
 }

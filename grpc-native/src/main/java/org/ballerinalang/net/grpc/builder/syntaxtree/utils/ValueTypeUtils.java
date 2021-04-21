@@ -26,6 +26,11 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
+/**
+ * Utility functions related to ValueType.
+ *
+ * @since 0.8.0
+ */
 public class ValueTypeUtils {
 
     public static Type getValueTypeStream(String key) {

@@ -44,6 +44,11 @@ import java.util.List;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getReturnTypeDescriptorNode;
 
+/**
+ * Class representing FunctionDefinitionNode.
+ *
+ * @since 0.8.0
+ */
 public class Function {
 
     private final SyntaxKind kind = SyntaxKind.OBJECT_METHOD_DEFINITION;
@@ -78,7 +83,7 @@ public class Function {
     }
 
     public void addQualifiers(String[] qualifiers) {
-        for (String qualifier: qualifiers) {
+        for (String qualifier : qualifiers) {
             qualifierList = qualifierList.add(AbstractNodeFactory.createIdentifierToken(qualifier + " "));
         }
     }

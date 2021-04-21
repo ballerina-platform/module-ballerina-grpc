@@ -55,6 +55,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing different types of TypeDescriptorNodes.
+ *
+ * @since 0.8.0
+ */
 public class TypeDescriptor {
 
     public static QualifiedNameReferenceNode getQualifiedNameReferenceNode(String modulePrefix, String identifier) {
@@ -89,13 +94,13 @@ public class TypeDescriptor {
     public static BuiltinSimpleNameReferenceNode getBuiltinSimpleNameReferenceNode(String name) {
         SyntaxKind kind;
         switch (name) {
-            case "int" :
+            case "int":
                 kind = SyntaxKind.INT_TYPE_DESC;
                 break;
-            case "var" :
+            case "var":
                 kind = SyntaxKind.VAR_TYPE_DESC;
                 break;
-            case "boolean" :
+            case "boolean":
                 kind = SyntaxKind.BOOLEAN_TYPE_DESC;
                 break;
             default:
@@ -115,7 +120,8 @@ public class TypeDescriptor {
         );
     }
 
-    public static ParameterizedTypeDescriptorNode getParameterizedTypeDescriptorNode(String type, TypeDescriptorNode descriptorNode) {
+    public static ParameterizedTypeDescriptorNode getParameterizedTypeDescriptorNode(
+            String type, TypeDescriptorNode descriptorNode) {
         return NodeFactory.createParameterizedTypeDescriptorNode(
                 AbstractNodeFactory.createIdentifierToken(type),
                 getTypeParameterNode(descriptorNode)
@@ -148,7 +154,8 @@ public class TypeDescriptor {
         );
     }
 
-    public static ObjectFieldNode getObjectFieldNode(String visibility, String[] qualifiers, Node typeName, String fieldName) {
+    public static ObjectFieldNode getObjectFieldNode(String visibility, String[] qualifiers, Node typeName,
+                                                     String fieldName) {
         NodeList<Token> qualifierList = NodeFactory.createEmptyNodeList();
         for (String qualifier : qualifiers) {
             qualifierList = qualifierList.add(AbstractNodeFactory.createIdentifierToken(qualifier + " "));

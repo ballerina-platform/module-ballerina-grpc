@@ -26,6 +26,11 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.StatementNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * Class representing IfElseStatementNode.
+ *
+ * @since 0.8.0
+ */
 public class IfElse {
 
     private final ExpressionNode condition;

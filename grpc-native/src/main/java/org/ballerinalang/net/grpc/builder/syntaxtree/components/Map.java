@@ -28,10 +28,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 
+/**
+ * Class representing MappingConstructorExpressionNode.
+ *
+ * @since 0.8.0
+ */
 public class Map {
 
     private final List<Node> fields;

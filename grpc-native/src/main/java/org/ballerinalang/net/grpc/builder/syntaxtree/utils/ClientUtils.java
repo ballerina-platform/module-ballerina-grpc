@@ -31,13 +31,12 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getExplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
@@ -47,6 +46,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
@@ -56,10 +56,15 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
+/**
+ * Utility functions related to Client.
+ *
+ * @since 0.8.0
+ */
 public class ClientUtils {
 
     public static Function getStreamingClientFunction(Method method, boolean bidirectional) {
-        String methodName = bidirectional? "executeBidirectionalStreaming" : "executeClientStreaming";
+        String methodName = bidirectional ? "executeBidirectionalStreaming" : "executeClientStreaming";
         String clientName = capitalize(method.getMethodName()) + "StreamingClient";
         Function function = new Function(method.getMethodName());
         function.addReturns(
@@ -79,7 +84,7 @@ public class ClientUtils {
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "grpcClient"),
                                 methodName,
-                                new String[]{"\"" + method.getMethodId() +  "\""}
+                                new String[]{"\"" + method.getMethodId() + "\""}
                         )
                 )
         );
@@ -174,7 +179,10 @@ public class ClientUtils {
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getParameterizedTypeDescriptorNode("map", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
+                getParameterizedTypeDescriptorNode(
+                        "map",
+                        getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY)
+                )
         );
         TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
                 getTupleTypeDescriptorNode(receiveArgs),
@@ -211,9 +219,9 @@ public class ClientUtils {
                     ),
                     getCheckExpressionNode(
                             getRemoteMethodCallActionNode(
-                                  getFieldAccessExpressionNode("self", "sClient"),
-                                  "receive",
-                                  new String[]{}
+                                    getFieldAccessExpressionNode("self", "sClient"),
+                                    "receive",
+                                    new String[]{}
                             )
                     )
             );
@@ -254,7 +262,9 @@ public class ClientUtils {
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getParameterizedTypeDescriptorNode("map", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
+                getParameterizedTypeDescriptorNode("map",
+                        getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY)
+                )
         );
         TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
                 getTupleTypeDescriptorNode(receiveArgs),

@@ -88,7 +88,8 @@ public class BallerinaFileBuilder {
     private byte[] rootDescriptor;
     private Set<byte[]> dependentDescriptors;
     private String balOutPath;
-    private static final Path resourceDirectory = Paths.get("src").resolve("main").resolve("resources").toAbsolutePath();
+    private static final Path resourceDirectory = Paths.get("src").resolve("main").resolve("resources")
+            .toAbsolutePath();
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
@@ -102,7 +103,7 @@ public class BallerinaFileBuilder {
     }
 
     public void build(String mode) throws CodeBuilderException {
-        SyntaxTree treeDemo = syntaxTreeDemo();
+//        SyntaxTree treeDemo = syntaxTreeDemo();
         // compute root descriptor source code.
         computeSourceContent(rootDescriptor, mode);
         // compute dependent descriptor source code.
