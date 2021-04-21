@@ -27,6 +27,11 @@ import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * Class representing ModuleVariableDeclarationNode.
+ *
+ * @since 0.8.0
+ */
 public class ModuleVariable {
 
     private Token visibilityQualifier;
