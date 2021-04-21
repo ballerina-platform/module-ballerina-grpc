@@ -27,7 +27,8 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 
@@ -84,7 +85,7 @@ public class Map {
                         null,
                         NodeFactory.createIdentifierToken(key),
                         SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                        Expression.getMethodCallExpressionNode(expression, methodName, args))
+                        getMethodCallExpressionNode(expression, methodName, args))
         );
     }
 

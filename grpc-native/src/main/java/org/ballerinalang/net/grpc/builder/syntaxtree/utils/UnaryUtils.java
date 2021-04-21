@@ -32,10 +32,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getAssignmentStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
@@ -158,16 +159,24 @@ public class UnaryUtils {
                                 getSimpleNameReferenceNode("req"),
                                 getSimpleNameReferenceNode("Context" + inputCap)
                         )));
-        reqIsContext.addIfAssignmentStatement(
-                "message",
-                getFieldAccessExpressionNode("req", "content"));
-        reqIsContext.addIfAssignmentStatement(
-                "headers",
-                getFieldAccessExpressionNode("req", "headers"));
+        reqIsContext.addIfStatement(
+                getAssignmentStatementNode(
+                        "message",
+                        getFieldAccessExpressionNode("req", "content")
+                )
+        );
+        reqIsContext.addIfStatement(
+                getAssignmentStatementNode(
+                        "headers",
+                        getFieldAccessExpressionNode("req", "headers")
+                )
+        );
         reqIsContext.addElseBody();
-        reqIsContext.addElseAssignmentStatement(
-                "message",
-                getSimpleNameReferenceNode("req")
+        reqIsContext.addElseStatement(
+                getAssignmentStatementNode(
+                        "message",
+                        getSimpleNameReferenceNode("req")
+                )
         );
         function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
 
