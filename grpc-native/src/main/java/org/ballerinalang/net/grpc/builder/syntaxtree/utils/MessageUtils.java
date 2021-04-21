@@ -36,13 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBinaryExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getOptionalFieldAccessExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBinaryExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getUnaryExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getBooleanLiteralNode;
@@ -51,14 +49,21 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalizeFirstLetter;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 
+/**
+ * Utility functions related to Message.
+ *
+ * @since 0.8.0
+ */
 public class MessageUtils {
 
-    public static NodeList<ModuleMemberDeclarationNode> getMessageNodes(org.ballerinalang.net.grpc.builder.stub.Message message) {
+    public static NodeList<ModuleMemberDeclarationNode> getMessageNodes(Message message) {
         NodeList<ModuleMemberDeclarationNode> messageMembers = AbstractNodeFactory.createEmptyNodeList();
 
         messageMembers = messageMembers.add(getMessageType(message).getTypeDefinitionNode());
@@ -92,34 +97,36 @@ public class MessageUtils {
         return messageMembers;
     }
 
-    private static Type getMessageType(org.ballerinalang.net.grpc.builder.stub.Message message) {
+    private static Type getMessageType(Message message) {
         Record messageRecord = new Record();
         for (Field field : message.getFieldList()) {
             switch (field.getFieldType()) {
-                case "string" :
-                case "int" :
-                case "float" :
-                case "boolean" :
-                    messageRecord.addBasicFieldWithDefaultValue(field.getFieldType(), field.getFieldName(), field.getDefaultValue());
+                case "string":
+                case "int":
+                case "float":
+                case "boolean":
+                    messageRecord.addBasicFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
+                            field.getDefaultValue());
                     break;
-                case "byte[]" :
+                case "byte[]":
                     messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
                     break;
                 default:
-                    messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(), field.getDefaultValue());
+                    messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
+                            field.getDefaultValue());
             }
         }
         if (message.getOneofFieldMap() != null) {
             for (Map.Entry<String, List<Field>> oneOfField : message.getOneofFieldMap().entrySet()) {
                 for (Field field : oneOfField.getValue()) {
                     switch (field.getFieldType()) {
-                        case "string" :
-                        case "int" :
-                        case "float" :
-                        case "boolean" :
+                        case "string":
+                        case "int":
+                        case "float":
+                        case "boolean":
                             messageRecord.addOptionalBasicField(field.getFieldType(), field.getFieldName());
                             break;
-                        case "byte[]" :
+                        case "byte[]":
                             messageRecord.addOptionalArrayField(field.getFieldType(), field.getFieldName());
                             break;
                         default:
@@ -206,7 +213,7 @@ public class MessageUtils {
                 getNumericLiteralNode(1),
                 SyntaxTreeConstants.SYNTAX_TREE_OPERATOR_GREATER_THAN
         );
-        for (int i = 1; i < counts.size(); i ++) {
+        for (int i = 1; i < counts.size(); i++) {
             BinaryExpressionNode rhs = getBinaryExpressionNode(
                     getSimpleNameReferenceNode(counts.get(i)),
                     getNumericLiteralNode(1),

@@ -27,6 +27,11 @@ import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * Class representing ListenerDeclarationNode.
+ *
+ * @since 0.8.0
+ */
 public class Listener {
 
     private final MetadataNode metadata;
@@ -35,7 +40,8 @@ public class Listener {
     private final Token name;
     private final ImplicitNewExpressionNode initializer;
 
-    public Listener(String name, TypeDescriptorNode typeDescriptor, ImplicitNewExpressionNode initializer, boolean isPublic) {
+    public Listener(String name, TypeDescriptorNode typeDescriptor, ImplicitNewExpressionNode initializer,
+                    boolean isPublic) {
         metadata = null;
         if (isPublic) {
             visibilityQualifier = AbstractNodeFactory.createIdentifierToken("public ");

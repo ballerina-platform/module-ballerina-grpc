@@ -30,6 +30,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing EnumDeclarationNode.
+ *
+ * @since 0.8.0
+ */
 public class Enum {
 
     private final MetadataNode metadata;

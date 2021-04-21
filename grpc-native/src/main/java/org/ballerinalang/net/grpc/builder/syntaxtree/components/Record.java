@@ -27,15 +27,20 @@ import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getListConstructorExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getArrayTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 
+/**
+ * Class representing RecordTypeDescriptorNode.
+ *
+ * @since 0.8.0
+ */
 public class Record {
 
     private NodeList<Node> fields;
@@ -167,7 +172,8 @@ public class Record {
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
                         getStringLiteralNode(defaultValue),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-        ));
+                )
+        );
     }
 
     public void addArrayFieldWithDefaultValue(String fieldType, String fieldName) {
@@ -180,7 +186,8 @@ public class Record {
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
                         getListConstructorExpressionNode(null),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-                ));
+                )
+        );
     }
 
     public void addArrayFieldWithDefaultValue(String fieldName, Record type) {
@@ -193,7 +200,8 @@ public class Record {
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
                         getListConstructorExpressionNode(null),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-                ));
+                )
+        );
     }
 
     public void addCustomFieldWithDefaultValue(String fieldType, String fieldName, String defaultValue) {

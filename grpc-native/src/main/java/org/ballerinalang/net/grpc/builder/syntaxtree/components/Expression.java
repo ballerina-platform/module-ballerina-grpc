@@ -47,6 +47,11 @@ import java.util.List;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 
+/**
+ * Class representing different types of ExpressionNodes.
+ *
+ * @since 0.8.0
+ */
 public class Expression {
 
     public static FieldAccessExpressionNode getFieldAccessExpressionNode(String var, String fieldName) {
@@ -65,7 +70,8 @@ public class Expression {
         );
     }
 
-    public static MethodCallExpressionNode getMethodCallExpressionNode(ExpressionNode expression, String methodName, String[] args) {
+    public static MethodCallExpressionNode getMethodCallExpressionNode(ExpressionNode expression, String methodName,
+                                                                       String[] args) {
         List<Node> argList = new ArrayList<>();
         for (String arg : args) {
             if (argList.size() > 0) {
@@ -84,7 +90,8 @@ public class Expression {
         );
     }
 
-    public static RemoteMethodCallActionNode getRemoteMethodCallActionNode(ExpressionNode expression, String methodName, String[] args) {
+    public static RemoteMethodCallActionNode getRemoteMethodCallActionNode(ExpressionNode expression, String methodName,
+                                                                           String[] args) {
         List<Node> argList = new ArrayList<>();
         for (String arg : args) {
             if (argList.size() > 0) {
