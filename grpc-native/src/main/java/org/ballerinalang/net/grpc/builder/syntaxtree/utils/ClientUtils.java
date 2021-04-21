@@ -35,14 +35,14 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
@@ -229,16 +229,18 @@ public class ClientUtils {
                             getSimpleNameReferenceNode("response")
                     )
             );
-            responseCheck.addElseVariableDeclarationStatement(
+            responseCheck.addElseStatement(
                     new VariableDeclaration(
                             receiveArgsPattern,
                             getSimpleNameReferenceNode("response")
                     ).getVariableDeclarationNode()
             );
-            responseCheck.addElseReturnStatement(
-                    getTypeCastExpressionNode(
-                            method.getOutputType(),
-                            getSimpleNameReferenceNode("payload")
+            responseCheck.addElseStatement(
+                    getReturnStatementNode(
+                            getTypeCastExpressionNode(
+                                    method.getOutputType(),
+                                    getSimpleNameReferenceNode("payload")
+                            )
                     )
             );
             function.addIfElseStatement(responseCheck.getIfElseStatementNode());
@@ -310,7 +312,7 @@ public class ClientUtils {
                             getSimpleNameReferenceNode("response")
                     )
             );
-            responseCheck.addElseVariableDeclarationStatement(
+            responseCheck.addElseStatement(
                     new VariableDeclaration(
                             receiveArgsPattern,
                             getSimpleNameReferenceNode("response")
@@ -323,7 +325,11 @@ public class ClientUtils {
                     getSimpleNameReferenceNode("payload")
             );
             returnMap.addSimpleNameReferenceField("headers", "headers");
-            responseCheck.addElseReturnStatement(returnMap.getMappingConstructorExpressionNode());
+            responseCheck.addElseStatement(
+                    getReturnStatementNode(
+                            returnMap.getMappingConstructorExpressionNode()
+                    )
+            );
             function.addIfElseStatement(responseCheck.getIfElseStatementNode());
         }
         function.addQualifiers(new String[]{"isolated", "remote"});
