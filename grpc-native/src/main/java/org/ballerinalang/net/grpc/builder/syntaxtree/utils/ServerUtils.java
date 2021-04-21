@@ -34,11 +34,12 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expressio
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
@@ -184,7 +185,11 @@ public class ServerUtils {
                         )
                 )
         );
-        streamValueNilCheck.addIfReturnStatement(getSimpleNameReferenceNode("streamValue"));
+        streamValueNilCheck.addIfStatement(
+                getReturnStatementNode(
+                        getSimpleNameReferenceNode("streamValue")
+                )
+        );
         IfElse streamValueErrorCheck = new IfElse(
                 getBracedExpressionNode(
                         getTypeTestExpressionNode(
@@ -193,7 +198,11 @@ public class ServerUtils {
                         )
                 )
         );
-        streamValueErrorCheck.addIfReturnStatement(getSimpleNameReferenceNode("streamValue"));
+        streamValueErrorCheck.addIfStatement(
+                getReturnStatementNode(
+                        getSimpleNameReferenceNode("streamValue")
+                )
+        );
 
         Record nextRecordRec = new Record();
         nextRecordRec.addCustomField("value", method.getOutputType());
@@ -211,8 +220,14 @@ public class ServerUtils {
                 nextRecordMap.getMappingConstructorExpressionNode()
         );
         streamValueErrorCheck.addElseBody();
-        streamValueErrorCheck.addElseVariableDeclarationStatement(nextRecordVar.getVariableDeclarationNode());
-        streamValueErrorCheck.addElseReturnStatement(getSimpleNameReferenceNode("nextRecord"));
+        streamValueErrorCheck.addElseStatement(
+                nextRecordVar.getVariableDeclarationNode()
+        );
+        streamValueErrorCheck.addElseStatement(
+                getReturnStatementNode(
+                        getSimpleNameReferenceNode("nextRecord")
+                )
+        );
         streamValueNilCheck.addElseBody(streamValueErrorCheck);
 
         function.addIfElseStatement(streamValueNilCheck.getIfElseStatementNode());

@@ -41,6 +41,7 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getReturnTypeDescriptorNode;
 
 public class Function {
@@ -134,11 +135,9 @@ public class Function {
     }
 
     public void addReturnStatement(ExpressionNode expressionNode) {
-        statements = statements.add(NodeFactory.createReturnStatementNode(
-                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURN,
-                expressionNode,
-                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
-        ));
+        statements = statements.add(
+                getReturnStatementNode(expressionNode)
+        );
     }
 
     public void addVariableStatement(VariableDeclarationNode node) {
