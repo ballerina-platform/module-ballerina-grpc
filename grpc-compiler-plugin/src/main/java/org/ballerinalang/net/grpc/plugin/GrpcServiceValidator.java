@@ -43,7 +43,7 @@ import io.ballerina.tools.diagnostics.Diagnostic;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
-import org.ballerinalang.net.grpc.MessageUtils;
+import org.ballerinalang.net.grpc.GrpcConstants;
 
 import java.util.List;
 import java.util.Locale;
@@ -55,6 +55,8 @@ import java.util.Optional;
 public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisContext> {
 
     private static final String GRPC_GENERIC_CALLER = "caller";
+    private static final String GRPC_EXACT_CALLER = "Caller";
+    private static final String GRPC_RETURN_TYPE = "<RPC_RETURN_TYPE>";
 
     @Override
     public void perform(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
@@ -156,14 +158,13 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
         if (parameterNodes.size() == 2) {
             String firstParameter = typeNameFromParameterNode(functionSignatureNode.parameters().get(0));
-            String expectedFirstParameter = MessageUtils.getCallerTypeName(serviceName,
-                    typeNameFromParameterNode(functionSignatureNode.parameters().get(1)));
 
             if (!firstParameter.toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
                         GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_MSG, GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_ID);
-            } else if (!firstParameter.equals(expectedFirstParameter)) {
-                String diagnosticMessage = GrpcConstants.INVALID_CALLER_TYPE_MSG + expectedFirstParameter
+            } else if (!(firstParameter.startsWith(serviceName) && firstParameter.endsWith(GRPC_EXACT_CALLER))) {
+                String expectedCaller = serviceName + GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
+                String diagnosticMessage = GrpcConstants.INVALID_CALLER_TYPE_MSG + expectedCaller
                         + "\" but found \"" + firstParameter + "\"";
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
                         diagnosticMessage, GrpcConstants.INVALID_CALLER_TYPE_ID);
