@@ -163,8 +163,8 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_09");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_service.bal:(27:4,39:5)] expected caller type " +
-                "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloWStringCaller\"";
+        String errMsg = "ERROR [grpc_service.bal:(25:4,37:5)] expected caller type " +
+         "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloWStringCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
@@ -188,8 +188,8 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_11");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_service.bal:(11:4,23:5)] expected caller type " +
-                "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloStringCaller\"";
+        String errMsg = "ERROR [grpc_service.bal:(25:4,37:5)] expected caller type " +
+         "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloStringCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);

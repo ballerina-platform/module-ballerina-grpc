@@ -13,8 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-// This is the server implementation of the server streaming scenario.
-// This is the server implementation of the unary blocking/unblocking scenario.
 import ballerina/grpc;
 import ballerina/log;
 
