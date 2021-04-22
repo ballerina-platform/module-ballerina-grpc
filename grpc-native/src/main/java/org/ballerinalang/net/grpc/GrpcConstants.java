@@ -19,7 +19,6 @@ import com.google.protobuf.DescriptorProtos;
 import io.ballerina.runtime.api.async.StrandMetadata;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -278,45 +277,4 @@ public class GrpcConstants {
     //context message field name constants
     public static final String CONTENT_FIELD = "content";
     public static final String HEADER_FIELD = "headers";
-
-    // Compiler plugin constants
-    public static final String GRPC_ANNOTATION_NAME = "ServiceDescriptor";
-    public static final String BALLERINA_ORG_NAME = "ballerina";
-    public static final String GRPC_PACKAGE_NAME = "grpc";
-
-    /**
-     * Compilation errors: Diagnostic error messages and IDs.
-     */
-    public enum CompilationErrors {
-        UNDEFINED_ANNOTATION("undefined annotation: ", "GRPC_101", DiagnosticSeverity.ERROR),
-        ONLY_REMOTE_FUNCTIONS("only remote functions are allowed inside gRPC services", "GRPC_102",
-                DiagnosticSeverity.ERROR),
-        RETURN_WITH_CALLER("return types are not allowed with the caller", "GRPC_103",
-                DiagnosticSeverity.ERROR),
-        MAX_PARAM_COUNT("the maximum number of parameters to a remote function is 2",
-                "GRPC_104", DiagnosticSeverity.ERROR),
-        TWO_PARAMS_WITHOUT_CALLER("when there are two parameters to a remote function, the first one " +
-         "must be a caller type", "GRPC_105", DiagnosticSeverity.ERROR),
-        INVALID_CALLER_TYPE("expected caller type \"", "GRPC_106", DiagnosticSeverity.ERROR);
-
-        private final String error;
-        private final String errorCode;
-        private final DiagnosticSeverity diagnosticSeverity;
-
-        CompilationErrors(String error, String errorCode, DiagnosticSeverity diagnosticSeverity) {
-            this.error = error;
-            this.errorCode = errorCode;
-            this.diagnosticSeverity = diagnosticSeverity;
-        }
-
-        public String getError() {
-            return error;
-        }
-        public String getErrorCode() {
-            return errorCode;
-        }
-        public DiagnosticSeverity getDiagnosticSeverity() {
-            return this.diagnosticSeverity;
-        }
-    }
 }

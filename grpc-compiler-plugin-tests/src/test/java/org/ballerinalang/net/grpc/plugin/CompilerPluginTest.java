@@ -26,7 +26,6 @@ import io.ballerina.projects.directory.BuildProject;
 import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.environment.EnvironmentBuilder;
 import io.ballerina.tools.diagnostics.Diagnostic;
-import org.ballerinalang.net.grpc.GrpcConstants;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -81,7 +80,7 @@ public class CompilerPluginTest {
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
@@ -97,7 +96,7 @@ public class CompilerPluginTest {
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
@@ -113,7 +112,7 @@ public class CompilerPluginTest {
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
@@ -129,7 +128,7 @@ public class CompilerPluginTest {
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
@@ -145,7 +144,7 @@ public class CompilerPluginTest {
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
@@ -170,7 +169,7 @@ public class CompilerPluginTest {
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
@@ -195,7 +194,7 @@ public class CompilerPluginTest {
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }

@@ -43,7 +43,6 @@ import io.ballerina.tools.diagnostics.Diagnostic;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
-import org.ballerinalang.net.grpc.GrpcConstants;
 
 import java.util.List;
 import java.util.Locale;
@@ -98,17 +97,19 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                 List<TypeSymbol> memberDescriptors = ((UnionTypeSymbol) listenerType).memberTypeDescriptors();
                 for (TypeSymbol typeSymbol : memberDescriptors) {
                     if (typeSymbol.getModule().isPresent() && typeSymbol.getModule().get().id().orgName()
-                            .equals(GrpcConstants.BALLERINA_ORG_NAME) && typeSymbol.getModule()
-                            .flatMap(Symbol::getName).orElse("").equals(GrpcConstants.GRPC_PACKAGE_NAME)) {
+                            .equals(GrpcCompilerPluginConstants.BALLERINA_ORG_NAME) && typeSymbol.getModule()
+                            .flatMap(Symbol::getName).orElse("")
+                            .equals(GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME)) {
 
                         return true;
                     }
                 }
             } else if (listenerType.typeKind() == TypeDescKind.TYPE_REFERENCE
                     && listenerType.getModule().isPresent()
-                    && listenerType.getModule().get().id().orgName().equals(GrpcConstants.BALLERINA_ORG_NAME)
+                    && listenerType.getModule().get().id().orgName()
+                    .equals(GrpcCompilerPluginConstants.BALLERINA_ORG_NAME)
                     && ((TypeReferenceTypeSymbol) listenerType).typeDescriptor().getModule()
-                    .flatMap(Symbol::getName).orElse("").equals(GrpcConstants.GRPC_PACKAGE_NAME)) {
+                    .flatMap(Symbol::getName).orElse("").equals(GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME)) {
 
                 return true;
             }
@@ -124,9 +125,10 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         List<AnnotationSymbol> annotationSymbols = serviceDeclarationSymbol.annotations();
         for (AnnotationSymbol annotationSymbol : annotationSymbols) {
             if (annotationSymbol.getModule().isPresent()
-                    && GrpcConstants.GRPC_PACKAGE_NAME.equals(annotationSymbol.getModule().get().id().moduleName())
+                    && GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME.equals(
+                    annotationSymbol.getModule().get().id().moduleName())
                     && annotationSymbol.getName().isPresent()
-                    && GrpcConstants.GRPC_ANNOTATION_NAME.equals(annotationSymbol.getName().get())) {
+                    && GrpcCompilerPluginConstants.GRPC_ANNOTATION_NAME.equals(annotationSymbol.getName().get())) {
 
                 isServiceDescAnnotationPresents = true;
                 break;
@@ -134,9 +136,10 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         }
         if (!isServiceDescAnnotationPresents) {
             reportErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
-                    (GrpcConstants.CompilationErrors.UNDEFINED_ANNOTATION.getError() +
-                            GrpcConstants.GRPC_PACKAGE_NAME + ":" + GrpcConstants.GRPC_ANNOTATION_NAME),
-                    GrpcConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode());
+                    (GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getError() +
+                            GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME + ":" +
+                            GrpcCompilerPluginConstants.GRPC_ANNOTATION_NAME),
+                    GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode());
         }
     }
 
@@ -147,8 +150,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                 .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
         if (!hasRemoteKeyword) {
             reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                    GrpcConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getError(),
-                    GrpcConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
+                    GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getError(),
+                    GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
         }
     }
 
@@ -163,26 +166,27 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
             if (!firstParameter.toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                        GrpcConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getError(),
-                        GrpcConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
+                        GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getError(),
+                        GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
             } else if (!(firstParameter.startsWith(serviceName) && firstParameter.endsWith(GRPC_EXACT_CALLER))) {
                 String expectedCaller = serviceName + GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
-                String diagnosticMessage = GrpcConstants.CompilationErrors.INVALID_CALLER_TYPE.getError() +
+                String diagnosticMessage = GrpcCompilerPluginConstants.CompilationErrors
+                        .INVALID_CALLER_TYPE.getError() +
                         expectedCaller + "\" but found \"" + firstParameter + "\"";
-                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                        diagnosticMessage, GrpcConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
+                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext, diagnosticMessage,
+                        GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
             } else if (functionSignatureNode.returnTypeDesc().isPresent()) {
                 SyntaxKind returnTypeKind = functionSignatureNode.returnTypeDesc().get().type().kind();
                 if (!SyntaxKind.NIL_TYPE_DESC.name().equals(returnTypeKind.name())) {
                     reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                            GrpcConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
-                            GrpcConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
+                            GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
+                            GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
                 }
             }
         } else if (parameterNodes.size() > 2) {
             reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                    GrpcConstants.CompilationErrors.MAX_PARAM_COUNT.getError(),
-                    GrpcConstants.CompilationErrors.MAX_PARAM_COUNT.getErrorCode());
+                    GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getError(),
+                    GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getErrorCode());
         }
 
     }
