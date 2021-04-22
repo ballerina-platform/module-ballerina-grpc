@@ -117,8 +117,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
     }
 
     private void validateServiceAnnotation(ServiceDeclarationNode serviceDeclarationNode,
-                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext,
-                                          ServiceDeclarationSymbol serviceDeclarationSymbol) {
+                                           SyntaxNodeAnalysisContext syntaxNodeAnalysisContext,
+                                           ServiceDeclarationSymbol serviceDeclarationSymbol) {
 
         boolean isServiceDescAnnotationPresents = false;
         List<AnnotationSymbol> annotationSymbols = serviceDeclarationSymbol.annotations();
@@ -134,24 +134,26 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         }
         if (!isServiceDescAnnotationPresents) {
             reportErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
-                    (GrpcConstants.UNDEFINED_ANNOTATION_MSG + GrpcConstants.GRPC_PACKAGE_NAME + ":" +
-                            GrpcConstants.GRPC_ANNOTATION_NAME), GrpcConstants.UNDEFINED_ANNOTATION_ID);
+                    (GrpcConstants.CompilationErrors.UNDEFINED_ANNOTATION.getError() +
+                            GrpcConstants.GRPC_PACKAGE_NAME + ":" + GrpcConstants.GRPC_ANNOTATION_NAME),
+                    GrpcConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode());
         }
     }
 
     private void validateServiceFunctions(FunctionDefinitionNode functionDefinitionNode,
-                                         SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
+                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
 
         boolean hasRemoteKeyword = functionDefinitionNode.qualifierList().stream()
                 .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
         if (!hasRemoteKeyword) {
             reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                    GrpcConstants.ONLY_REMOTE_FUNCTIONS_MSG, GrpcConstants.ONLY_REMOTE_FUNCTIONS_ID);
+                    GrpcConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getError(),
+                    GrpcConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
         }
     }
 
     private void validateFunctionSignature(FunctionDefinitionNode functionDefinitionNode,
-                                          SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String serviceName) {
+                                           SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String serviceName) {
 
         FunctionSignatureNode functionSignatureNode = functionDefinitionNode.functionSignature();
         SeparatedNodeList<ParameterNode> parameterNodes = functionSignatureNode.parameters();
@@ -161,29 +163,32 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
             if (!firstParameter.toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                        GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_MSG, GrpcConstants.TWO_PARAMS_WITHOUT_CALLER_ID);
+                        GrpcConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getError(),
+                        GrpcConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
             } else if (!(firstParameter.startsWith(serviceName) && firstParameter.endsWith(GRPC_EXACT_CALLER))) {
                 String expectedCaller = serviceName + GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
-                String diagnosticMessage = GrpcConstants.INVALID_CALLER_TYPE_MSG + expectedCaller
-                        + "\" but found \"" + firstParameter + "\"";
+                String diagnosticMessage = GrpcConstants.CompilationErrors.INVALID_CALLER_TYPE.getError() +
+                        expectedCaller + "\" but found \"" + firstParameter + "\"";
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                        diagnosticMessage, GrpcConstants.INVALID_CALLER_TYPE_ID);
+                        diagnosticMessage, GrpcConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
             } else if (functionSignatureNode.returnTypeDesc().isPresent()) {
                 SyntaxKind returnTypeKind = functionSignatureNode.returnTypeDesc().get().type().kind();
                 if (!SyntaxKind.NIL_TYPE_DESC.name().equals(returnTypeKind.name())) {
                     reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                            GrpcConstants.RETURN_WITH_CALLER_MSG, GrpcConstants.RETURN_WITH_CALLER_ID);
+                            GrpcConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
+                            GrpcConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
                 }
             }
         } else if (parameterNodes.size() > 2) {
             reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                    GrpcConstants.MAX_PARAM_COUNT_MSG, GrpcConstants.MAX_PARAM_COUNT_ID);
+                    GrpcConstants.CompilationErrors.MAX_PARAM_COUNT.getError(),
+                    GrpcConstants.CompilationErrors.MAX_PARAM_COUNT.getErrorCode());
         }
 
     }
 
     private void reportErrorDiagnostic(Node node, SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message,
-                                      String diagnosticId) {
+                                       String diagnosticId) {
 
         DiagnosticInfo diagnosticErrInfo = new DiagnosticInfo(diagnosticId, message, DiagnosticSeverity.ERROR);
         Diagnostic diagnostic = DiagnosticFactory.createDiagnostic(diagnosticErrInfo,
