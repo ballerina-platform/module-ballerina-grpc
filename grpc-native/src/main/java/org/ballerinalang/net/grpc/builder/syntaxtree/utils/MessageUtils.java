@@ -142,7 +142,7 @@ public class MessageUtils {
                     // Todo: Add a test case with all the field types (int32, int64 ...)
                     record.addBasicField(field.getFieldType(), field.getFieldName());
                 }
-                messageRecord.addArrayFieldWithDefaultValue(map.getMessageName(), record);
+                messageRecord.addArrayFieldWithDefaultValue(record, map.getMessageName());
             }
         }
         return new Type(
