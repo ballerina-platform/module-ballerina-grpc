@@ -72,12 +72,12 @@ public class Record {
         );
     }
 
-    public void addCustomField(String fieldName, String typeName) {
+    public void addCustomField(String fieldType, String fieldName) {
         fields = fields.add(
                 NodeFactory.createRecordFieldNode(
                         null,
                         null,
-                        getSimpleNameReferenceNode(typeName),
+                        getSimpleNameReferenceNode(fieldType),
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         null,
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
@@ -190,12 +190,12 @@ public class Record {
         );
     }
 
-    public void addArrayFieldWithDefaultValue(String fieldName, Record type) {
+    public void addArrayFieldWithDefaultValue(Record fieldType, String fieldName) {
         fields = fields.add(
                 NodeFactory.createRecordFieldWithDefaultValueNode(
                         null,
                         null,
-                        getArrayTypeDescriptorNode(type),
+                        getArrayTypeDescriptorNode(fieldType),
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
                         getListConstructorExpressionNode(null),
