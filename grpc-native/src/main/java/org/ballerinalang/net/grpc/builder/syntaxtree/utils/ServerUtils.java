@@ -162,7 +162,7 @@ public class ServerUtils {
     private static Function getNextFunction(Method method) {
         Function function = new Function("next");
         Record nextRecord = new Record();
-        nextRecord.addCustomField("value", method.getOutputType());
+        nextRecord.addCustomField(method.getOutputType(), "value");
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         nextRecord.getRecordTypeDescriptorNode(),
@@ -210,7 +210,7 @@ public class ServerUtils {
         );
 
         Record nextRecordRec = new Record();
-        nextRecordRec.addCustomField("value", method.getOutputType());
+        nextRecordRec.addCustomField(method.getOutputType(), "value");
         Map nextRecordMap = new Map();
         nextRecordMap.addTypeCastExpressionField(
                 "value",
