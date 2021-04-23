@@ -124,6 +124,12 @@ dependencies {
     externalJars (group: 'org.wso2.orbit.org.antlr', name: 'antlr4-runtime', version: "${wso2OrbitAntlrVersion}") {
         transitive = false
     }
+    externalJars (group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+    externalJars (group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
 }
 
 clean {

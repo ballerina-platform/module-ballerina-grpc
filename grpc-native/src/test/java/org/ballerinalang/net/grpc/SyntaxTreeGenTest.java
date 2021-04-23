@@ -1,5 +1,8 @@
 package org.ballerinalang.net.grpc;
 
+import io.ballerina.compiler.syntax.tree.SyntaxTree;
+import io.ballerina.tools.text.TextDocument;
+import io.ballerina.tools.text.TextDocuments;
 import org.ballerinalang.net.grpc.protobuf.cmd.GrpcCmd;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -17,21 +20,35 @@ import java.nio.file.Paths;
  */
 public class SyntaxTreeGenTest {
 
-    private static final Path RES_DIR = Paths.get("src/test/resources/input/").toAbsolutePath();
+    private static final Path RES_DIR = Paths.get("src/test/resources/").toAbsolutePath();
     private Path tempDir;
+    private Path inputDir;
+    private Path outputDir;
 
     @BeforeMethod
     public void setup() throws IOException {
-        this.tempDir = Files.createTempDirectory("syntax-tree-gen-" + System.nanoTime());
+        tempDir = Files.createTempDirectory("syntax-tree-gen-" + System.nanoTime());
+        inputDir = RES_DIR.resolve("input");
+        outputDir = RES_DIR.resolve("output");
     }
 
     @Test(description = "Generate syntax tree")
     public void testHelloWorld() {
-        Path protoFilePath = RES_DIR.resolve("helloWorld.proto");
+        Path protoFilePath = inputDir.resolve("helloWorld.proto");
+        Path expectedOutPath = outputDir.resolve("helloWorld_pb.bal");
         Path outputDirPath = tempDir.resolve("stubs");
         generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), "");
 
         Assert.assertTrue(Files.exists(outputDirPath.resolve("helloWorld_pb.bal")));
+
+        String content = null;
+        try {
+            content = Files.readString(expectedOutPath);
+        } catch (IOException e) {
+           Assert.fail("failed to read content of expected bal file", e);
+        }
+        TextDocument textDocument = TextDocuments.from(content);
+        Assert.assertTrue(SyntaxTree.from(textDocument).hasDiagnostics());
     }
 
     private static void generateSourceCode(String sProtoFilePath, String sOutputDirPath, String mode) {
