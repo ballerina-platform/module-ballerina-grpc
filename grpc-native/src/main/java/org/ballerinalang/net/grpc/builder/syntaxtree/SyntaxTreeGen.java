@@ -182,16 +182,11 @@ public class SyntaxTreeGen {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
-    public static SyntaxTree generateSyntaxTree(StubFile stubFile, String mode) {
+    public static SyntaxTree generateSyntaxTree(ServiceStub serviceStub, String mode) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
         NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createEmptyNodeList();
 
         if (GRPC_SERVICE.equals(mode)) {
-            // Todo: parameterize remove hardcoded 0 ?
-            Function function = new Function(stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).
-                    getMethodName());
-            String input = stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).getInputType();
-            String output = stubFile.getStubList().get(0).getServerStreamingFunctions().get(0).getOutputType();
             ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
             imports = AbstractNodeFactory.createNodeList(importForGrpc);
 
@@ -204,7 +199,7 @@ public class SyntaxTreeGen {
             moduleMembers = moduleMembers.add(listener.getListenerDeclarationNode());
 
             Service service = new Service(
-                    new String[]{"\"" + stubFile.getStubList().get(0).getServiceName() + "\""},
+                    new String[]{"\"" + serviceStub.getServiceName() + "\""},
                     new String[]{"ep"}
             );
             Annotation grpcServiceDescriptor = new Annotation("grpc", "ServiceDescriptor");
@@ -214,19 +209,31 @@ public class SyntaxTreeGen {
                     getFunctionCallExpressionNode("getDescriptorMap", new String[]{})
             );
             service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
-            function.addRequiredParameter(getSimpleNameReferenceNode(input), "value");
-            function.addReturns(
-                    getUnionTypeDescriptorNode(
-                            getStreamTypeDescriptorNode(
-                                    getSimpleNameReferenceNode(output),
-                                    // Todo: parametarize identirifer (optionalTypeDescriptor)
-                                    getOptionalTypeDescriptorNode("", "error")
-                            ),
-                            getErrorTypeDescriptorNode()
-                    )
-            );
-            function.addQualifiers(new String[]{"remote"});
-            service.addMember(function.getFunctionDefinitionNode());
+
+            List<Method> methodList = new ArrayList<>();
+            methodList.addAll(serviceStub.getUnaryFunctions());
+            methodList.addAll(serviceStub.getClientStreamingFunctions());
+            methodList.addAll(serviceStub.getServerStreamingFunctions());
+            methodList.addAll(serviceStub.getBidiStreamingFunctions());
+
+            for (Method method : methodList) {
+                Function function = new Function(method.getMethodName());
+                String input = method.getInputType();
+                String output = method.getOutputType();
+                function.addRequiredParameter(getSimpleNameReferenceNode(input), "value");
+                function.addReturns(
+                        getUnionTypeDescriptorNode(
+                                getStreamTypeDescriptorNode(
+                                        getSimpleNameReferenceNode(output),
+                                        // Todo: parametarize identirifer (optionalTypeDescriptor)
+                                        getOptionalTypeDescriptorNode("", "error")
+                                ),
+                                getErrorTypeDescriptorNode()
+                        )
+                );
+                function.addQualifiers(new String[]{"remote"});
+                service.addMember(function.getFunctionDefinitionNode());
+            }
             moduleMembers = moduleMembers.add(service.getServiceDeclarationNode());
         }
         if (GRPC_CLIENT.equals(mode)) {

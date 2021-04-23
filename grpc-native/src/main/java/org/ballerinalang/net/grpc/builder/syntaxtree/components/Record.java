@@ -98,7 +98,7 @@ public class Record {
         );
     }
 
-    public void addStreamField(String fieldName, String streamType, boolean optionalError) {
+    public void addStreamField(String streamType, String fieldName, boolean optionalError) {
         Node lhs;
         Node rhs;
         if (streamType.equals("string")) {
