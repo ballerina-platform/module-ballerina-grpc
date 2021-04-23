@@ -226,21 +226,22 @@ public class BallerinaFileBuilder {
                 if (!stubRootDescriptor.isEmpty()) {
                     stubFileObject.setRootDescriptor(stubRootDescriptor);
                 }
-
+            }
+            for (ServiceStub serviceStub : stubFileObject.getStubList()) {
                 if (GRPC_SERVICE.equals(mode)) {
-                    String serviceFilePath = generateOutputFile(this.balOutPath, serviceDescriptor.getName() +
+                    String serviceFilePath = generateOutputFile(this.balOutPath, serviceStub.getServiceName() +
                             SAMPLE_SERVICE_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject, mode), serviceFilePath);
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(serviceStub, mode), serviceFilePath);
                 }
                 if (GRPC_CLIENT.equals(mode)) {
                     String clientFilePath = generateOutputFile(this.balOutPath,
-                            serviceDescriptor.getName() + SAMPLE_FILE_PREFIX
+                            serviceStub.getServiceName() + SAMPLE_FILE_PREFIX
                     );
-                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject, mode), clientFilePath);
+                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(serviceStub, mode), clientFilePath);
                 }
-                String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-                writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
             }
+            String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
+            writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
         } catch (GrpcServerException e) {
             throw new CodeBuilderException("Message descriptor error. " + e.getMessage());
         } catch (IOException e) {
