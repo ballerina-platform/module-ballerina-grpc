@@ -190,13 +190,14 @@ public class BallerinaFileBuilder {
             }
 
             boolean hasEmptyMessage = false;
-            boolean enableEp = true;
+            // update message types in stub file object
+            stubFileObject.setMessageMap(messageList.stream().collect(Collectors.toMap(Message::getMessageName,
+                        message -> message)));
+
             for (DescriptorProtos.ServiceDescriptorProto serviceDescriptor : serviceDescriptorList) {
                 ServiceStub.Builder serviceStubBuilder = ServiceStub.newBuilder(serviceDescriptor.getName());
                 ServiceFile.Builder sampleServiceBuilder = ServiceFile.newBuilder(serviceDescriptor.getName());
                 List<DescriptorProtos.MethodDescriptorProto> methodList = serviceDescriptor.getMethodList();
-                stubFileObject.setMessageMap(messageList.stream().collect(Collectors.toMap(Message::getMessageName,
-                        message -> message)));
                 for (DescriptorProtos.MethodDescriptorProto methodDescriptorProto : methodList) {
                     String methodID;
                     if (filePackage != null && !filePackage.isEmpty()) {
@@ -221,12 +222,15 @@ public class BallerinaFileBuilder {
                     }
                 }
                 stubFileObject.addServiceStub(serviceStubBuilder.build());
-                stubFileObject.setEnumList(enumList);
-                stubFileObject.setDescriptors(descriptors);
-                if (!stubRootDescriptor.isEmpty()) {
-                    stubFileObject.setRootDescriptor(stubRootDescriptor);
-                }
             }
+            // update enum message types in stub file object
+            stubFileObject.setEnumList(enumList);
+            // update descriptors in stub file object
+            stubFileObject.setDescriptors(descriptors);
+            if (!stubRootDescriptor.isEmpty()) {
+                stubFileObject.setRootDescriptor(stubRootDescriptor);
+            }
+
             for (ServiceStub serviceStub : stubFileObject.getStubList()) {
                 if (GRPC_SERVICE.equals(mode)) {
                     String serviceFilePath = generateOutputFile(this.balOutPath, serviceStub.getServiceName() +
