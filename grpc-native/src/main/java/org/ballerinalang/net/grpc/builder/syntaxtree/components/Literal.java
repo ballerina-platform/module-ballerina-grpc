@@ -18,48 +18,55 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
-import io.ballerina.compiler.syntax.tree.LiteralValueToken;
-import io.ballerina.compiler.syntax.tree.NilLiteralNode;
+import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.BasicLiteralNode;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
-import io.ballerina.compiler.syntax.tree.Token;
-import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * Class representing different types of BasicLiteralNodes.
+ *
+ * @since 0.8.0
+ */
 public class Literal {
 
-    public static LiteralValueToken getLiteralValueToken(String literal) {
-        return NodeFactory.createLiteralValueToken(SyntaxKind.STRING_LITERAL, "\"" + literal +
-                "\"", NodeFactory.createEmptyMinutiaeList(), NodeFactory.createEmptyMinutiaeList());
-    }
-
-    public static LiteralValueToken getLiteralValueToken(int literal) {
-        return NodeFactory.createLiteralValueToken(
-                SyntaxKind.DECIMAL_INTEGER_LITERAL_TOKEN,
-                String.valueOf(literal), NodeFactory.createEmptyMinutiaeList(),
-                NodeFactory.createEmptyMinutiaeList()
+    public static BasicLiteralNode getNumericLiteralNode(int value) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.NUMERIC_LITERAL,
+                NodeFactory.createLiteralValueToken(
+                        SyntaxKind.DECIMAL_INTEGER_LITERAL_TOKEN,
+                        String.valueOf(value), NodeFactory.createEmptyMinutiaeList(),
+                        NodeFactory.createEmptyMinutiaeList()
+                )
         );
     }
 
-    public static Token getLiteralValueToken(boolean literal) {
-        if (literal) {
-            return NodeFactory.createToken(
-                    SyntaxKind.TRUE_KEYWORD,
-                    NodeFactory.createEmptyMinutiaeList(),
-                    NodeFactory.createEmptyMinutiaeList()
+    public static BasicLiteralNode getStringLiteralNode(String value) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.STRING_LITERAL,
+                AbstractNodeFactory.createIdentifierToken("\"" + value + "\"")
+        );
+    }
+
+    public static BasicLiteralNode getBooleanLiteralNode(boolean value) {
+        if (value) {
+            return NodeFactory.createBasicLiteralNode(
+                    SyntaxKind.BOOLEAN_LITERAL,
+                    NodeFactory.createToken(
+                            SyntaxKind.TRUE_KEYWORD,
+                            NodeFactory.createEmptyMinutiaeList(),
+                            NodeFactory.createEmptyMinutiaeList()
+                    )
             );
         } else {
-            return NodeFactory.createToken(
-                    SyntaxKind.FALSE_KEYWORD,
-                    NodeFactory.createEmptyMinutiaeList(),
-                    NodeFactory.createEmptyMinutiaeList()
+            return NodeFactory.createBasicLiteralNode(
+                    SyntaxKind.BOOLEAN_LITERAL,
+                    NodeFactory.createToken(
+                            SyntaxKind.FALSE_KEYWORD,
+                            NodeFactory.createEmptyMinutiaeList(),
+                            NodeFactory.createEmptyMinutiaeList()
+                    )
             );
         }
-    }
-
-    public static NilLiteralNode getNilLiteralNode() {
-        return NodeFactory.createNilLiteralNode(
-                SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
-                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
-        );
     }
 }

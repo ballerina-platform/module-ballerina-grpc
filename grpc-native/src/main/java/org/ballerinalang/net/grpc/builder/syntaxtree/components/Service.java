@@ -21,7 +21,6 @@ package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
-import io.ballerina.compiler.syntax.tree.MetadataNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
@@ -35,18 +34,21 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing ServiceDeclarationNode.
+ *
+ * @since 0.8.0
+ */
 public class Service {
 
-    private NodeList<Token> qualifierList;
-    private MetadataNode metadata;
-    private TypeDescriptorNode typeDescriptor;
+    private final NodeList<Token> qualifierList;
+    private final TypeDescriptorNode typeDescriptor;
     private NodeList<Node> absoluteResourcePath;
-    private SeparatedNodeList<ExpressionNode> expressions;
+    private final SeparatedNodeList<ExpressionNode> expressions;
     private NodeList<Node> members;
     private NodeList<AnnotationNode> annotations;
 
     public Service(String[] resourcePaths, String[] expressionList) {
-        metadata = null;
         typeDescriptor = null;
         qualifierList = NodeFactory.createEmptyNodeList();
         absoluteResourcePath = NodeFactory.createEmptyNodeList();

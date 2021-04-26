@@ -19,6 +19,7 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
@@ -26,14 +27,18 @@ import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.ErrorTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.ListBindingPatternNode;
+import io.ballerina.compiler.syntax.tree.NilTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.ObjectFieldNode;
 import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.ParenthesisedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.ReturnTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
+import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.StreamTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
@@ -50,59 +55,73 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-
+/**
+ * Class representing different types of TypeDescriptorNodes.
+ *
+ * @since 0.8.0
+ */
 public class TypeDescriptor {
 
     public static QualifiedNameReferenceNode getQualifiedNameReferenceNode(String modulePrefix, String identifier) {
         return NodeFactory.createQualifiedNameReferenceNode(
                 AbstractNodeFactory.createIdentifierToken(modulePrefix),
                 SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                AbstractNodeFactory.createIdentifierToken(identifier + " "));
+                AbstractNodeFactory.createIdentifierToken(identifier + " ")
+        );
     }
 
     public static OptionalTypeDescriptorNode getOptionalTypeDescriptorNode(String modulePrefix, String identifier) {
         if (modulePrefix.isEmpty()) {
             return NodeFactory.createOptionalTypeDescriptorNode(
-                    getSimpleNameReferenceNode(identifier), SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK);
+                    getSimpleNameReferenceNode(identifier),
+                    SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK
+            );
         }
         return NodeFactory.createOptionalTypeDescriptorNode(
-                getQualifiedNameReferenceNode(modulePrefix, identifier), SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK);
+                getQualifiedNameReferenceNode(modulePrefix, identifier),
+                SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK
+        );
     }
 
     public static UnionTypeDescriptorNode getUnionTypeDescriptorNode(TypeDescriptorNode lhs, TypeDescriptorNode rhs) {
-        return NodeFactory.createUnionTypeDescriptorNode(lhs, SyntaxTreeConstants.SYNTAX_TREE_PIPE, rhs);
+        return NodeFactory.createUnionTypeDescriptorNode(
+                lhs,
+                SyntaxTreeConstants.SYNTAX_TREE_PIPE,
+                rhs
+        );
     }
 
     public static BuiltinSimpleNameReferenceNode getBuiltinSimpleNameReferenceNode(String name) {
+        SyntaxKind kind;
         switch (name) {
-            case "int" :
-                return NodeFactory.createBuiltinSimpleNameReferenceNode(
-                        SyntaxKind.INT_TYPE_DESC,
-                        AbstractNodeFactory.createIdentifierToken(name + " ")
-                );
-            case "var" :
-                return NodeFactory.createBuiltinSimpleNameReferenceNode(
-                        SyntaxKind.VAR_TYPE_DESC,
-                        AbstractNodeFactory.createIdentifierToken(name + " ")
-                );
-            case "boolean" :
-                return NodeFactory.createBuiltinSimpleNameReferenceNode(
-                        SyntaxKind.BOOLEAN_TYPE_DESC,
-                        AbstractNodeFactory.createIdentifierToken(name + " ")
-                );
+            case "int":
+                kind = SyntaxKind.INT_TYPE_DESC;
+                break;
+            case "var":
+                kind = SyntaxKind.VAR_TYPE_DESC;
+                break;
+            case "boolean":
+                kind = SyntaxKind.BOOLEAN_TYPE_DESC;
+                break;
             default:
-                return NodeFactory.createBuiltinSimpleNameReferenceNode(
-                        SyntaxKind.STRING_TYPE_DESC,
-                        AbstractNodeFactory.createIdentifierToken(name + " "));
+                kind = SyntaxKind.STRING_TYPE_DESC;
         }
+        return NodeFactory.createBuiltinSimpleNameReferenceNode(
+                kind,
+                AbstractNodeFactory.createIdentifierToken(name + " ")
+        );
     }
 
     public static TypeParameterNode getTypeParameterNode(TypeDescriptorNode typeNode) {
-        return NodeFactory.createTypeParameterNode(SyntaxTreeConstants.SYNTAX_TREE_IT, typeNode, SyntaxTreeConstants.SYNTAX_TREE_GT);
+        return NodeFactory.createTypeParameterNode(
+                SyntaxTreeConstants.SYNTAX_TREE_IT,
+                typeNode,
+                SyntaxTreeConstants.SYNTAX_TREE_GT
+        );
     }
 
-    public static ParameterizedTypeDescriptorNode getParameterizedTypeDescriptorNode(String type, TypeDescriptorNode descriptorNode) {
+    public static ParameterizedTypeDescriptorNode getParameterizedTypeDescriptorNode(
+            String type, TypeDescriptorNode descriptorNode) {
         return NodeFactory.createParameterizedTypeDescriptorNode(
                 AbstractNodeFactory.createIdentifierToken(type),
                 getTypeParameterNode(descriptorNode)
@@ -118,6 +137,15 @@ public class TypeDescriptor {
         );
     }
 
+    public static ArrayTypeDescriptorNode getArrayTypeDescriptorNode(Record type) {
+        return NodeFactory.createArrayTypeDescriptorNode(
+                type.getRecordTypeDescriptorNode(),
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
+        );
+    }
+
     public static TypeReferenceNode getTypeReferenceNode(Node typeName) {
         return NodeFactory.createTypeReferenceNode(
                 SyntaxTreeConstants.SYNTAX_TREE_ASTERISK,
@@ -126,8 +154,9 @@ public class TypeDescriptor {
         );
     }
 
-    public static ObjectFieldNode getObjectFieldNode(String visibility, String[] qualifiers, Node typeName, String fieldName) {
-        NodeList qualifierList = NodeFactory.createEmptyNodeList();
+    public static ObjectFieldNode getObjectFieldNode(String visibility, String[] qualifiers, Node typeName,
+                                                     String fieldName) {
+        NodeList<Token> qualifierList = NodeFactory.createEmptyNodeList();
         for (String qualifier : qualifiers) {
             qualifierList = qualifierList.add(AbstractNodeFactory.createIdentifierToken(qualifier + " "));
         }
@@ -157,20 +186,29 @@ public class TypeDescriptor {
                         lhs,
                         comma,
                         rhs,
-                        SyntaxTreeConstants.SYNTAX_TREE_GT));
+                        SyntaxTreeConstants.SYNTAX_TREE_GT
+                )
+        );
     }
 
     public static CaptureBindingPatternNode getCaptureBindingPatternNode(String name) {
-        return NodeFactory.createCaptureBindingPatternNode(AbstractNodeFactory.createIdentifierToken(name));
+        return NodeFactory.createCaptureBindingPatternNode(
+                AbstractNodeFactory.createIdentifierToken(name)
+        );
     }
 
     public static WildcardBindingPatternNode getWildcardBindingPatternNode() {
-        return NodeFactory.createWildcardBindingPatternNode(SyntaxTreeConstants.SYNTAX_TREE_UNDERSCORE);
+        return NodeFactory.createWildcardBindingPatternNode(
+                SyntaxTreeConstants.SYNTAX_TREE_UNDERSCORE
+        );
     }
 
     public static TypedBindingPatternNode getTypedBindingPatternNode(TypeDescriptorNode typeDescriptorNode,
                                                                      BindingPatternNode bindingPatternNode) {
-        return NodeFactory.createTypedBindingPatternNode(typeDescriptorNode, bindingPatternNode);
+        return NodeFactory.createTypedBindingPatternNode(
+                typeDescriptorNode,
+                bindingPatternNode
+        );
     }
 
     public static TupleTypeDescriptorNode getTupleTypeDescriptorNode(SeparatedNodeList<Node> memberTypeDesc) {
@@ -217,5 +255,33 @@ public class TypeDescriptor {
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_ERROR,
                 null
         );
+    }
+
+    public static ReturnTypeDescriptorNode getReturnTypeDescriptorNode(Node type) {
+        NodeList<AnnotationNode> annotations = NodeFactory.createEmptyNodeList();
+        return NodeFactory.createReturnTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURNS,
+                annotations,
+                type
+        );
+    }
+
+    public static ParenthesisedTypeDescriptorNode getParenthesisedTypeDescriptorNode(TypeDescriptorNode typeDesc) {
+        return NodeFactory.createParenthesisedTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                typeDesc,
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+        );
+    }
+
+    public static NilTypeDescriptorNode getNilTypeDescriptorNode() {
+        return NodeFactory.createNilTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
+        );
+    }
+
+    public static SimpleNameReferenceNode getSimpleNameReferenceNode(String name) {
+        return NodeFactory.createSimpleNameReferenceNode(AbstractNodeFactory.createIdentifierToken(name + " "));
     }
 }

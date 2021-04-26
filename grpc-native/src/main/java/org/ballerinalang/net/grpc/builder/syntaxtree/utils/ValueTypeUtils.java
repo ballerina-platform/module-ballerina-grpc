@@ -24,16 +24,26 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
+/**
+ * Utility functions related to ValueType.
+ *
+ * @since 0.8.0
+ */
 public class ValueTypeUtils {
 
-    public static Type getValueTypeStream(String name) {
-        String typeName = "Context" + getCapitalized(name) + "Stream";
+    public static Type getValueTypeStream(String key) {
+        String typeName = "Context" + capitalize(key) + "Stream";
         Record contextStream = new Record();
-        contextStream.addStreamField("content", name, !name.equals("string"));
-        contextStream.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
-                SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
+        contextStream.addStreamField(key, "content", key.equals("string"));
+        contextStream.addMapField(
+                "headers",
+                getUnionTypeDescriptorNode(
+                        SYNTAX_TREE_VAR_STRING,
+                        SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY
+                )
+        );
         return new Type(
                 true,
                 typeName,
@@ -42,15 +52,24 @@ public class ValueTypeUtils {
     }
 
     public static Type getValueType(String key) {
-        String typeName = "Context" + key.substring(0,1).toUpperCase() + key.substring(1);
+        String typeName = "Context" + capitalize(key);
         Record contextString = new Record();
         if (key.equals("string")) {
-            contextString.addStringField("content");
+            contextString.addBasicField(key, "content");
         } else {
-            contextString.addCustomField("content", key);
+            contextString.addCustomField(key, "content");
         }
-        contextString.addMapField("headers", getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING,
-                SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY));
-        return new Type(true, typeName, contextString.getRecordTypeDescriptorNode());
+        contextString.addMapField(
+                "headers",
+                getUnionTypeDescriptorNode(
+                        SYNTAX_TREE_VAR_STRING,
+                        SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY
+                )
+        );
+        return new Type(
+                true,
+                typeName,
+                contextString.getRecordTypeDescriptorNode()
+        );
     }
 }

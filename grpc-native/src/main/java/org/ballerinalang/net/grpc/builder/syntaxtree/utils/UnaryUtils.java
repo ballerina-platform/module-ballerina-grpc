@@ -23,27 +23,25 @@ import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.stub.Method;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getAssignmentStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
@@ -51,25 +49,34 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
+/**
+ * Utility functions related to Unary.
+ *
+ * @since 0.8.0
+ */
 public class UnaryUtils {
 
-    public static FunctionDefinition getUnaryFunction(Method method) {
-        String inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
-                getRequiredParamNode(
+    public static Function getUnaryFunction(Method method) {
+        Function function = new Function(method.getMethodName());
+        String inputCap = capitalize(method.getInputType());
+        function.addRequiredParameter(
+                getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(method.getInputType()),
+                        getSimpleNameReferenceNode("Context" + inputCap)
+                ),
+                "req"
+        );
+        function.addReturns(
+                getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getInputType()),
-                                getSimpleNameReferenceNode("Context" + inputCap)),
-                        "req"));
-        signature.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        Returns.getParenthesisedTypeDescriptorNode(
-                                getUnionTypeDescriptorNode(
-                                        getSimpleNameReferenceNode(method.getOutputType()),
-                                        SYNTAX_TREE_GRPC_ERROR))));
-        FunctionBody body = addUnaryBody(inputCap, method);
+                                getSimpleNameReferenceNode(method.getOutputType()),
+                                SYNTAX_TREE_GRPC_ERROR
+                        )
+                )
+        );
+        addUnaryBody(function, inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -83,31 +90,32 @@ public class UnaryUtils {
                         getListBindingPatternNode(new String[]{"result", "_"})),
                 getSimpleNameReferenceNode("payload")
         );
-        body.addVariableStatement(payload.getVariableDeclarationNode());
-        addUnaryFunctionReturnStatement(body, method);
-        FunctionDefinition definition = new FunctionDefinition(method.getMethodName(),
-                signature.getFunctionSignature(), body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+        function.addVariableStatement(payload.getVariableDeclarationNode());
+        addUnaryFunctionReturnStatement(function, method);
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
-    public static FunctionDefinition getUnaryContextFunction(Method method) {
+    public static Function getUnaryContextFunction(Method method) {
         String inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
         String outCap = method.getOutputType().substring(0, 1).toUpperCase() + method.getOutputType().substring(1);
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
-                getRequiredParamNode(
+        Function function = new Function(method.getMethodName() + "Context");
+        function.addRequiredParameter(
+                getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(method.getInputType()),
+                        getSimpleNameReferenceNode("Context" + inputCap)
+                ),
+                "req"
+        );
+        function.addReturns(
+                getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getInputType()),
-                                getSimpleNameReferenceNode("Context" + inputCap)),
-                        "req"));
-        signature.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        Returns.getParenthesisedTypeDescriptorNode(
-                                getUnionTypeDescriptorNode(
-                                        getSimpleNameReferenceNode("Context" + outCap),
-                                        SYNTAX_TREE_GRPC_ERROR))));
-        FunctionBody body = addUnaryBody(inputCap, method);
+                                getSimpleNameReferenceNode("Context" + outCap),
+                                SYNTAX_TREE_GRPC_ERROR
+                        )
+                )
+        );
+        addUnaryBody(function, inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -121,18 +129,13 @@ public class UnaryUtils {
                         getListBindingPatternNode(new String[]{"result", "respHeaders"})),
                 getSimpleNameReferenceNode("payload")
         );
-        body.addVariableStatement(payload.getVariableDeclarationNode());
-        addUnaryContextFunctionReturnStatement(body, method);
-        FunctionDefinition definition = new FunctionDefinition(
-                method.getMethodName() + "Context",
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+        function.addVariableStatement(payload.getVariableDeclarationNode());
+        addUnaryContextFunctionReturnStatement(function, method);
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
-    private static FunctionBody addUnaryBody(String inputCap, Method method) {
-        FunctionBody body = new FunctionBody();
+    private static void addUnaryBody(Function function, String inputCap, Method method) {
         VariableDeclaration headers = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getParameterizedTypeDescriptorNode(
@@ -141,7 +144,7 @@ public class UnaryUtils {
                         getCaptureBindingPatternNode("headers")),
                 new Map().getMappingConstructorExpressionNode()
         );
-        body.addVariableStatement(headers.getVariableDeclarationNode());
+        function.addVariableStatement(headers.getVariableDeclarationNode());
         TypeDescriptorNode messageType;
         if (method.getInputType().equals("string")) {
             messageType = getBuiltinSimpleNameReferenceNode("string");
@@ -154,25 +157,33 @@ public class UnaryUtils {
                         getCaptureBindingPatternNode("message")),
                 null
         );
-        body.addVariableStatement(message.getVariableDeclarationNode());
+        function.addVariableStatement(message.getVariableDeclarationNode());
         IfElse reqIsContext = new IfElse(
                 getBracedExpressionNode(
                         getTypeTestExpressionNode(
                                 getSimpleNameReferenceNode("req"),
                                 getSimpleNameReferenceNode("Context" + inputCap)
                         )));
-        reqIsContext.addIfAssignmentStatement(
-                "message",
-                getFieldAccessExpressionNode("req", "content"));
-        reqIsContext.addIfAssignmentStatement(
-                "headers",
-                getFieldAccessExpressionNode("req", "headers"));
-        reqIsContext.addElseBody();
-        reqIsContext.addElseAssignmentStatement(
-                "message",
-                getSimpleNameReferenceNode("req")
+        reqIsContext.addIfStatement(
+                getAssignmentStatementNode(
+                        "message",
+                        getFieldAccessExpressionNode("req", "content")
+                )
         );
-        body.addIfElseStatement(reqIsContext.getIfElseStatementNode());
+        reqIsContext.addIfStatement(
+                getAssignmentStatementNode(
+                        "headers",
+                        getFieldAccessExpressionNode("req", "headers")
+                )
+        );
+        reqIsContext.addElseBody();
+        reqIsContext.addElseStatement(
+                getAssignmentStatementNode(
+                        "message",
+                        getSimpleNameReferenceNode("req")
+                )
+        );
+        function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
 
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
@@ -182,17 +193,16 @@ public class UnaryUtils {
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "grpcClient"),
                                 "executeSimpleRPC",
-                                new String[]{"\"" + method.getMethodId() +  "\"", "message", "headers"}
+                                new String[]{"\"" + method.getMethodId() + "\"", "message", "headers"}
                         )
                 )
         );
-        body.addVariableStatement(payload.getVariableDeclarationNode());
-        return body;
+        function.addVariableStatement(payload.getVariableDeclarationNode());
     }
 
-    private static void addUnaryFunctionReturnStatement(FunctionBody body, Method method) {
+    private static void addUnaryFunctionReturnStatement(Function function, Method method) {
         if (method.getOutputType().equals("string")) {
-            body.addReturnStatement(
+            function.addReturnStatement(
                     getMethodCallExpressionNode(
                             getSimpleNameReferenceNode("result"),
                             "toString",
@@ -200,7 +210,7 @@ public class UnaryUtils {
                     )
             );
         } else {
-            body.addReturnStatement(
+            function.addReturnStatement(
                     getTypeCastExpressionNode(
                             method.getOutputType(),
                             getSimpleNameReferenceNode("result")
@@ -209,7 +219,7 @@ public class UnaryUtils {
         }
     }
 
-    private static void addUnaryContextFunctionReturnStatement(FunctionBody body, Method method) {
+    private static void addUnaryContextFunctionReturnStatement(Function function, Method method) {
         Map returnMap = new Map();
         if (method.getOutputType().equals("string")) {
             returnMap.addMethodCallField(
@@ -225,6 +235,6 @@ public class UnaryUtils {
                     getSimpleNameReferenceNode("result"));
         }
         returnMap.addSimpleNameReferenceField("headers", "respHeaders");
-        body.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
+        function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
     }
 }

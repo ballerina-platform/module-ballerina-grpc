@@ -17,6 +17,19 @@ scope = "testOnly"
 artifactId = "grpc"
 version = "@project.version@"
 
+[[platform.java11.dependency]]
+path = "./lib/ballerina-cli-@ballerinalang.version@.jar"
+groupId = "org.ballerinalang"
+scope = "testOnly"
+artifactId = "ballerina-cli"
+version = "@ballerinalang.version@"
+
+[[platform.java11.dependency]]
+path = "./lib/antlr4-runtime-@antlr.version@.jar"
+groupId = "org.wso2.orbit.org.antlr"
+scope = "testOnly"
+artifactId = "antlr4-runtime"
+version = "@antlr.version@"
 
 [[platform.java11.dependency]]
 path = "./lib/http-native-@http.native.version@.jar"
@@ -142,3 +155,15 @@ path = "./lib/handlebars-4.0.6.jar"
 groupId = "com.github.jknack"
 artifactId = "handlebars"
 version = "4.1.2"
+
+[[platform.java11.dependency]]
+path = "./lib/formatter-core-@ballerinalang.version@.jar"
+groupId = "org.ballerinalang"
+artifactId = "formatter-core"
+version = "@ballerinalang.version@"
+
+[[platform.java11.dependency]]
+path = "./lib/ballerina-parser-@ballerinalang.version@.jar"
+groupId = "org.ballerinalang"
+artifactId = "ballerina-parser"
+version = "@ballerinalang.version@"

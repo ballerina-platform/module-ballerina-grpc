@@ -25,6 +25,7 @@ import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.directory.BuildProject;
 import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.environment.EnvironmentBuilder;
+import io.ballerina.tools.diagnostics.Diagnostic;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -76,9 +77,12 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] return types are not allowed with " +
                 "the caller";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
-                diagnostic -> errMsg.equals(diagnostic.toString())));
+                d -> errMsg.equals(d.toString())));
     }
 
     @Test
@@ -89,9 +93,12 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] when there are two parameters to " +
                 "a remote function, the first one must be a caller type";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
-                diagnostic -> errMsg.equals(diagnostic.toString())));
+                d -> errMsg.equals(d.toString())));
     }
 
     @Test
@@ -102,9 +109,12 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(29:0,42:1)] undefined annotation: " +
                 "grpc:ServiceDescriptor";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
-                diagnostic -> errMsg.equals(diagnostic.toString())));
+                d -> errMsg.equals(d.toString())));
     }
 
     @Test
@@ -115,9 +125,12 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(40:4,42:5)] only remote functions are " +
                 "allowed inside gRPC services";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
-                diagnostic -> errMsg.equals(diagnostic.toString())));
+                d -> errMsg.equals(d.toString())));
     }
 
     @Test
@@ -126,17 +139,70 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_07");
         PackageCompilation compilation = currentPackage.getCompilation();
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,39:5)] expected caller type " +
-                "\"HelloWorldStringCaller\" but found \"CustomCaller\"";
+                "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"CustomCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
-                diagnostic -> errMsg.equals(diagnostic.toString())));
+                d -> errMsg.equals(d.toString())));
     }
 
     @Test
     public void testCompilerPluginServerStreamingWithAlias() {
 
         Package currentPackage = loadPackage("package_08");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+    }
+
+    @Test
+    public void testCompilerPluginUnaryWithInvalidCaller() {
+
+        Package currentPackage = loadPackage("package_09");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        String errMsg = "ERROR [grpc_service.bal:(25:4,37:5)] expected caller type " +
+         "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloWStringCaller\"";
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
+        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+                d -> errMsg.equals(d.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginUnaryWithValidCaller() {
+
+        Package currentPackage = loadPackage("package_10");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+    }
+
+    @Test
+    public void testCompilerPluginBidiWithInvalidCaller() {
+
+        Package currentPackage = loadPackage("package_11");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        String errMsg = "ERROR [grpc_service.bal:(25:4,37:5)] expected caller type " +
+         "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloStringCaller\"";
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
+        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+                d -> errMsg.equals(d.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginBidiWithValidCaller() {
+
+        Package currentPackage = loadPackage("package_12");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);

@@ -45,6 +45,10 @@ dependencies {
     testCompile group: 'org.testng', name: 'testng', version: "${testngVersion}"
 }
 
+test {
+    useTestNG() {}
+}
+
 checkstyle {
     toolVersion "${checkstylePluginVersion}"
     configFile rootProject.file("build-config/checkstyle/build/checkstyle.xml")

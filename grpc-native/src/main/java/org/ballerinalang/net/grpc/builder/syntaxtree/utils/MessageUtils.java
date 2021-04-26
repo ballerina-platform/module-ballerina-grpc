@@ -21,15 +21,11 @@ package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.BinaryExpressionNode;
 import io.ballerina.compiler.syntax.tree.ModuleMemberDeclarationNode;
-import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
-import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
 import org.ballerinalang.net.grpc.builder.stub.Field;
 import org.ballerinalang.net.grpc.builder.stub.Message;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Record;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Type;
@@ -40,29 +36,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBinaryExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getOptionalFieldAccessExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBinaryExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getUnaryExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getLiteralValueToken;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns.getReturnTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getUnaryExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getBooleanLiteralNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getNumericLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getCompoundAssignmentStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalizeFirstLetter;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 
+/**
+ * Utility functions related to Message.
+ *
+ * @since 0.8.0
+ */
 public class MessageUtils {
 
-    public static NodeList<ModuleMemberDeclarationNode> getMessageNodes(org.ballerinalang.net.grpc.builder.stub.Message message) {
+    public static NodeList<ModuleMemberDeclarationNode> getMessageNodes(Message message) {
         NodeList<ModuleMemberDeclarationNode> messageMembers = AbstractNodeFactory.createEmptyNodeList();
 
         messageMembers = messageMembers.add(getMessageType(message).getTypeDefinitionNode());
@@ -96,54 +97,52 @@ public class MessageUtils {
         return messageMembers;
     }
 
-    private static Type getMessageType(org.ballerinalang.net.grpc.builder.stub.Message message) {
+    private static Type getMessageType(Message message) {
         Record messageRecord = new Record();
         for (Field field : message.getFieldList()) {
-            String fieldName = field.getFieldName();
-            String defaultValue = field.getDefaultValue();
             switch (field.getFieldType()) {
-                case "string" :
-                    messageRecord.addStringFieldWithDefaultValue(fieldName, defaultValue);
+                case "string":
+                case "int":
+                case "float":
+                case "boolean":
+                    messageRecord.addBasicFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
+                            field.getDefaultValue());
                     break;
-                case "int" :
-                    messageRecord.addIntegerFieldWithDefaultValue(fieldName, defaultValue);
-                    break;
-                case "float" :
-                    messageRecord.addFloatFieldWithDefaultValue(fieldName, defaultValue);
-                    break;
-                case "boolean" :
-                    messageRecord.addBooleanFieldWithDefaultValue(fieldName, defaultValue);
-                    break;
-                case "byte[]" :
-                    messageRecord.addArrayFieldWithDefaultValue(fieldName, "byte");
+                case "byte[]":
+                    messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
                     break;
                 default:
-                    messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), fieldName, defaultValue);
+                    messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
+                            field.getDefaultValue());
             }
         }
         if (message.getOneofFieldMap() != null) {
-            for (Map.Entry<String, List<Field>> oneOfFieldMap : message.getOneofFieldMap().entrySet()) {
-                for (Field field : oneOfFieldMap.getValue()) {
+            for (Map.Entry<String, List<Field>> oneOfField : message.getOneofFieldMap().entrySet()) {
+                for (Field field : oneOfField.getValue()) {
                     switch (field.getFieldType()) {
-                        case "string" :
-                            messageRecord.addOptionalStringField(field.getFieldName());
+                        case "string":
+                        case "int":
+                        case "float":
+                        case "boolean":
+                            messageRecord.addOptionalBasicField(field.getFieldType(), field.getFieldName());
                             break;
-                        case "int" :
-                            messageRecord.addOptionalIntegerField(field.getFieldName());
-                            break;
-                        case "float" :
-                            messageRecord.addOptionalFloatField(field.getFieldName());
-                            break;
-                        case "boolean" :
-                            messageRecord.addOptionalBooleanField(field.getFieldName());
-                            break;
-                        case "byte[]" :
-                            messageRecord.addOptionalArrayField(field.getFieldName(), "byte");
+                        case "byte[]":
+                            messageRecord.addOptionalArrayField(field.getFieldType(), field.getFieldName());
                             break;
                         default:
-                            messageRecord.addOptionalCustomField(field.getFieldName(), field.getFieldType());
+                            messageRecord.addOptionalCustomField(field.getFieldType(), field.getFieldName());
                     }
                 }
+            }
+        }
+        if (message.getMapList() != null) {
+            for (Message map : message.getMapList()) {
+                Record record = new Record();
+                for (Field field : map.getFieldList()) {
+                    // Todo: Add a test case with all the field types (int32, int64 ...)
+                    record.addBasicField(field.getFieldType(), field.getFieldName());
+                }
+                messageRecord.addArrayFieldWithDefaultValue(record, map.getMessageName());
             }
         }
         return new Type(
@@ -152,20 +151,10 @@ public class MessageUtils {
                 messageRecord.getRecordTypeDescriptorNode());
     }
 
-    private static FunctionDefinition getValidationFunction(org.ballerinalang.net.grpc.builder.stub.Message message) {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addReturns(
-                getReturnTypeDescriptorNode(
-                        getBuiltinSimpleNameReferenceNode("boolean")
-                )
-        );
-        signature.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(message.getMessageName()),
-                        "r"
-                )
-        );
-        FunctionBody body = new FunctionBody();
+    private static Function getValidationFunction(Message message) {
+        Function function = new Function("isValid" + capitalizeFirstLetter(message.getMessageName()));
+        function.addReturns(getBuiltinSimpleNameReferenceNode("boolean"));
+        function.addRequiredParameter(getSimpleNameReferenceNode(message.getMessageName()), "r");
         ArrayList<String> counts = new ArrayList<>();
         for (Map.Entry<String, List<Field>> oneOfFieldMap : message.getOneofFieldMap().entrySet()) {
             counts.add(oneOfFieldMap.getKey() + "Count");
@@ -174,9 +163,9 @@ public class MessageUtils {
                             SyntaxTreeConstants.SYNTAX_TREE_VAR_INT,
                             getCaptureBindingPatternNode(oneOfFieldMap.getKey() + "Count")
                     ),
-                    NodeFactory.createBasicLiteralNode(SyntaxKind.NUMERIC_LITERAL, getLiteralValueToken(0))
+                    getNumericLiteralNode(0)
             );
-            body.addVariableStatement(count.getVariableDeclarationNode());
+            function.addVariableStatement(count.getVariableDeclarationNode());
             for (Field field : oneOfFieldMap.getValue()) {
                 IfElse oneOfFieldCheck = new IfElse(
                         getUnaryExpressionNode(
@@ -195,7 +184,7 @@ public class MessageUtils {
                                 1
                         )
                 );
-                body.addIfElseStatement(oneOfFieldCheck.getIfElseStatementNode());
+                function.addIfElseStatement(oneOfFieldCheck.getIfElseStatementNode());
             }
         }
         if (counts.size() > 0) {
@@ -206,44 +195,28 @@ public class MessageUtils {
             );
             countCheck.addIfStatement(
                     getReturnStatementNode(
-                            NodeFactory.createBasicLiteralNode(
-                                    SyntaxKind.BOOLEAN_LITERAL,
-                                    getLiteralValueToken(false)
-                            )
+                            getBooleanLiteralNode(false)
                     )
             );
-            body.addIfElseStatement(countCheck.getIfElseStatementNode());
+            function.addIfElseStatement(countCheck.getIfElseStatementNode());
         }
-        body.addReturnStatement(
-                NodeFactory.createBasicLiteralNode(
-                        SyntaxKind.BOOLEAN_LITERAL,
-                        getLiteralValueToken(true))
+        function.addReturnStatement(
+                getBooleanLiteralNode(true)
         );
-        FunctionDefinition validationFunction = new FunctionDefinition(
-                "isValid" + message.getMessageName(),
-                signature.getFunctionSignature(),
-                body.getFunctionBody()
-        );
-        validationFunction.addQualifiers(new String[]{"isolated"});
-        return validationFunction;
+        function.addQualifiers(new String[]{"isolated"});
+        return function;
     }
 
     private static BinaryExpressionNode getCountCheckBinaryExpression(ArrayList<String> counts) {
         BinaryExpressionNode binaryExpressionNode = getBinaryExpressionNode(
                 getSimpleNameReferenceNode(counts.get(0)),
-                NodeFactory.createBasicLiteralNode(
-                        SyntaxKind.NUMERIC_LITERAL,
-                        getLiteralValueToken(1)
-                ),
+                getNumericLiteralNode(1),
                 SyntaxTreeConstants.SYNTAX_TREE_OPERATOR_GREATER_THAN
         );
-        for (int i = 1; i < counts.size(); i ++) {
+        for (int i = 1; i < counts.size(); i++) {
             BinaryExpressionNode rhs = getBinaryExpressionNode(
                     getSimpleNameReferenceNode(counts.get(i)),
-                    NodeFactory.createBasicLiteralNode(
-                            SyntaxKind.NUMERIC_LITERAL,
-                            getLiteralValueToken(1)
-                    ),
+                    getNumericLiteralNode(1),
                     SyntaxTreeConstants.SYNTAX_TREE_OPERATOR_GREATER_THAN
             );
             binaryExpressionNode = getBinaryExpressionNode(
@@ -255,22 +228,18 @@ public class MessageUtils {
         return binaryExpressionNode;
     }
 
-    private static FunctionDefinition getOneOfFieldSetFunction(String messageName, Field field, List<Field> fields) {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(messageName),
-                        "r"
-                )
+    private static Function getOneOfFieldSetFunction(String messageName, Field field, List<Field> fields) {
+        StringBuilder functionName = new StringBuilder("set" + messageName + "_");
+        for (String s : field.getFieldName().split("_")) {
+            functionName.append(capitalize(s));
+        }
+        Function function = new Function(functionName.toString());
+        function.addRequiredParameter(getSimpleNameReferenceNode(messageName), "r");
+        function.addRequiredParameter(
+                getBuiltinSimpleNameReferenceNode(field.getFieldType()),
+                field.getFieldName()
         );
-        signature.addParameter(
-                getRequiredParamNode(
-                        getBuiltinSimpleNameReferenceNode(field.getFieldType()),
-                        field.getFieldName()
-                )
-        );
-        FunctionBody body = new FunctionBody();
-        body.addAssignmentStatement(
+        function.addAssignmentStatement(
                 getFieldAccessExpressionNode(
                         "r",
                         field.getFieldName()
@@ -279,7 +248,7 @@ public class MessageUtils {
         );
         for (Field oneOfField : fields) {
             if (!oneOfField.getFieldName().equals(field.getFieldName())) {
-                body.addAssignmentStatement(
+                function.addAssignmentStatement(
                         getSimpleNameReferenceNode("_"),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("r"),
@@ -289,16 +258,7 @@ public class MessageUtils {
                 );
             }
         }
-        StringBuilder functionName = new StringBuilder("set" + messageName + "_");
-        for (String s : field.getFieldName().split("_")) {
-            functionName.append(getCapitalized(s));
-        }
-        FunctionDefinition definition = new  FunctionDefinition(
-                functionName.toString(),
-                signature.getFunctionSignature(),
-                body.getFunctionBody()
-        );
-        definition.addQualifiers(new String[]{"isolated"});
-        return definition;
+        function.addQualifiers(new String[]{"isolated"});
+        return function;
     }
 }

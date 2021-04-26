@@ -22,16 +22,21 @@ import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
-import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getLiteralValueToken;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 
+/**
+ * Class representing MappingConstructorExpressionNode.
+ *
+ * @since 0.8.0
+ */
 public class Map {
 
     private final List<Node> fields;
@@ -48,6 +53,20 @@ public class Map {
         );
     }
 
+    public void addField(String fieldName, ExpressionNode field) {
+        if (fields.size() > 0) {
+            fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
+        }
+        fields.add(
+                NodeFactory.createSpecificFieldNode(
+                        null,
+                        NodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_COLON,
+                        field
+                )
+        );
+    }
+
     public void addStringField(String key, String value) {
         if (fields.size() > 0) {
             fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
@@ -55,9 +74,10 @@ public class Map {
         fields.add(
                 NodeFactory.createSpecificFieldNode(
                         null,
-                        NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, getLiteralValueToken(key)),
+                        getStringLiteralNode(key),
                         SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                        NodeFactory.createBasicLiteralNode(SyntaxKind.STRING_LITERAL, getLiteralValueToken(value)))
+                        getStringLiteralNode(value)
+                )
         );
     }
 
@@ -70,7 +90,7 @@ public class Map {
                         null,
                         NodeFactory.createIdentifierToken(key),
                         SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                        Expression.getMethodCallExpressionNode(expression, methodName, args))
+                        getMethodCallExpressionNode(expression, methodName, args))
         );
     }
 
@@ -97,20 +117,6 @@ public class Map {
                         NodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_COLON,
                         getTypeCastExpressionNode(typeCastParam, expression)
-                )
-        );
-    }
-
-    public void addField(String fieldName, ExpressionNode field) {
-        if (fields.size() > 0) {
-            fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
-        }
-        fields.add(
-                NodeFactory.createSpecificFieldNode(
-                        null,
-                        NodeFactory.createIdentifierToken(fieldName),
-                        SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                        field
                 )
         );
     }

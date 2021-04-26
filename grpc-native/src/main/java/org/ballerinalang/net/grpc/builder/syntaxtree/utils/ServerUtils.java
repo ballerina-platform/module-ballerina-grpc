@@ -23,31 +23,28 @@ import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionBody;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionDefinition;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionSignature;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Record;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.Returns;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getExplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.FunctionParam.getRequiredParamNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getBracedExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getNilTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Initializer.getCheckExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
@@ -57,27 +54,33 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getCapitalized;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
+/**
+ * Utility functions related to Server.
+ *
+ * @since 0.8.0
+ */
 public class ServerUtils {
 
-    public static FunctionDefinition getServerStreamingFunction(Method method) {
-        String outCap = getCapitalized(method.getOutputType());
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        "req"));
-        signature.addReturns(
-                // Todo: remove Returns.getReturnTypeDescriptorNode
-                Returns.getReturnTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                getStreamTypeDescriptorNode(
-                                        getSimpleNameReferenceNode(method.getOutputType()),
-                                        SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
-                                SYNTAX_TREE_GRPC_ERROR)));
-        FunctionBody body = getServerBody(method, "_", outCap);
-        body.addReturnStatement(
+    public static Function getServerStreamingFunction(Method method) {
+        Function function = new Function(method.getMethodName());
+        String outCap = capitalize(method.getOutputType());
+        function.addRequiredParameter(
+                getSimpleNameReferenceNode(method.getInputType()),
+                "req"
+        );
+        function.addReturns(
+                getUnionTypeDescriptorNode(
+                        getStreamTypeDescriptorNode(
+                                getSimpleNameReferenceNode(method.getOutputType()),
+                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                        ),
+                        SYNTAX_TREE_GRPC_ERROR
+                )
+        );
+        addServerBody(function, method, "_", outCap);
+        function.addReturnStatement(
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
                                 getSimpleNameReferenceNode(method.getOutputType()),
@@ -86,28 +89,25 @@ public class ServerUtils {
                         new String[]{"outputStream"}
                 )
         );
-        FunctionDefinition definition = new FunctionDefinition(
-                method.getMethodName(),
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
-    public static FunctionDefinition getServerStreamingContextFunction(Method method) {
-        String inputCap = getCapitalized(method.getInputType());
-        String outputCap = getCapitalized(method.getOutputType());
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
-                getRequiredParamNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        "req"));
-        signature.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode("Context" + inputCap + "Stream"),
-                                SYNTAX_TREE_GRPC_ERROR)));
-        FunctionBody body = getServerBody(method, "headers", outputCap);
+    public static Function getServerStreamingContextFunction(Method method) {
+        String inputCap = capitalize(method.getInputType());
+        String outputCap = capitalize(method.getOutputType());
+        Function function = new Function(method.getMethodName() + "Context");
+        function.addRequiredParameter(
+                getSimpleNameReferenceNode(method.getInputType()),
+                "req"
+        );
+        function.addReturns(
+                getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode("Context" + inputCap + "Stream"),
+                        SYNTAX_TREE_GRPC_ERROR
+                )
+        );
+        addServerBody(function, method, "headers", outputCap);
         Map returnMap = new Map();
         returnMap.addField(
                 "content",
@@ -120,17 +120,13 @@ public class ServerUtils {
                 )
         );
         returnMap.addSimpleNameReferenceField("headers", "headers");
-        body.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
-        FunctionDefinition definition = new FunctionDefinition(
-                method.getMethodName() + "Context",
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"isolated", "remote"});
-        return definition;
+        function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        return function;
     }
 
     public static Class getServerStreamClass(Method method) {
-        String outCap = getCapitalized(method.getOutputType());
+        String outCap = capitalize(method.getOutputType());
         Class serverStream = new Class(outCap + "Stream", true);
 
         serverStream.addMember(
@@ -149,106 +145,116 @@ public class ServerUtils {
         return serverStream;
     }
 
-    private static FunctionDefinition getInitFunction() {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addParameter(
-                getRequiredParamNode(
-                        getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
-                        "anydataStream"));
-        FunctionBody body = new FunctionBody();
-        body.addAssignmentStatement(
+    private static Function getInitFunction() {
+        Function function = new Function("init");
+        function.addRequiredParameter(
+                getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
+                "anydataStream"
+        );
+        function.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "anydataStream"),
-                getSimpleNameReferenceNode("anydataStream"));
-        FunctionDefinition definition = new FunctionDefinition(
-                "init",
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"public", "isolated"});
-        return definition;
+                getSimpleNameReferenceNode("anydataStream")
+        );
+        function.addQualifiers(new String[]{"public", "isolated"});
+        return function;
     }
 
-    private static FunctionDefinition getNextFunction(Method method) {
-        FunctionSignature signature = new FunctionSignature();
+    private static Function getNextFunction(Method method) {
+        Function function = new Function("next");
         Record nextRecord = new Record();
-        nextRecord.addCustomField("value", method.getOutputType());
-        signature.addReturns(
-                Returns.getReturnTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                nextRecord.getRecordTypeDescriptorNode(),
-                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL)));
-        FunctionBody body = new FunctionBody();
+        nextRecord.addCustomField(method.getOutputType(), "value");
+        function.addReturns(
+                getUnionTypeDescriptorNode(
+                        nextRecord.getRecordTypeDescriptorNode(),
+                        SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                )
+        );
         VariableDeclaration streamValue = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getBuiltinSimpleNameReferenceNode("var"),
-                        getCaptureBindingPatternNode("streamValue")),
+                        getCaptureBindingPatternNode("streamValue")
+                ),
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "anydataStream"),
                         "next",
-                        new String[]{}));
-        body.addVariableStatement(streamValue.getVariableDeclarationNode());
+                        new String[]{}
+                )
+        );
+        function.addVariableStatement(streamValue.getVariableDeclarationNode());
 
         IfElse streamValueNilCheck = new IfElse(
                 getBracedExpressionNode(
                         getTypeTestExpressionNode(
                                 getSimpleNameReferenceNode("streamValue"),
-                                getNilTypeDescriptorNode()))
+                                getNilTypeDescriptorNode()
+                        )
+                )
         );
-        streamValueNilCheck.addIfReturnStatement(getSimpleNameReferenceNode("streamValue"));
+        streamValueNilCheck.addIfStatement(
+                getReturnStatementNode(
+                        getSimpleNameReferenceNode("streamValue")
+                )
+        );
         IfElse streamValueErrorCheck = new IfElse(
                 getBracedExpressionNode(
                         getTypeTestExpressionNode(
                                 getSimpleNameReferenceNode("streamValue"),
-                                SYNTAX_TREE_GRPC_ERROR))
+                                SYNTAX_TREE_GRPC_ERROR
+                        )
+                )
         );
-        streamValueErrorCheck.addIfReturnStatement(getSimpleNameReferenceNode("streamValue"));
+        streamValueErrorCheck.addIfStatement(
+                getReturnStatementNode(
+                        getSimpleNameReferenceNode("streamValue")
+                )
+        );
 
         Record nextRecordRec = new Record();
-        nextRecordRec.addCustomField("value", method.getOutputType());
+        nextRecordRec.addCustomField(method.getOutputType(), "value");
         Map nextRecordMap = new Map();
         nextRecordMap.addTypeCastExpressionField(
                 "value",
                 method.getOutputType(),
-                getFieldAccessExpressionNode("streamValue", "value"));
+                getFieldAccessExpressionNode("streamValue", "value")
+        );
         VariableDeclaration nextRecordVar = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         nextRecordRec.getRecordTypeDescriptorNode(),
-                        getCaptureBindingPatternNode("nextRecord")),
-                nextRecordMap.getMappingConstructorExpressionNode());
+                        getCaptureBindingPatternNode("nextRecord")
+                ),
+                nextRecordMap.getMappingConstructorExpressionNode()
+        );
         streamValueErrorCheck.addElseBody();
-        streamValueErrorCheck.addElseVariableDeclarationStatement(nextRecordVar.getVariableDeclarationNode());
-        streamValueErrorCheck.addElseReturnStatement(getSimpleNameReferenceNode("nextRecord"));
+        streamValueErrorCheck.addElseStatement(
+                nextRecordVar.getVariableDeclarationNode()
+        );
+        streamValueErrorCheck.addElseStatement(
+                getReturnStatementNode(
+                        getSimpleNameReferenceNode("nextRecord")
+                )
+        );
         streamValueNilCheck.addElseBody(streamValueErrorCheck);
 
-        body.addIfElseStatement(streamValueNilCheck.getIfElseStatementNode());
-
-        FunctionDefinition definition = new FunctionDefinition(
-                "next",
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"public", "isolated"});
-        return definition;
+        function.addIfElseStatement(streamValueNilCheck.getIfElseStatementNode());
+        function.addQualifiers(new String[]{"public", "isolated"});
+        return function;
     }
 
-    private static FunctionDefinition getCloseFunction() {
-        FunctionSignature signature = new FunctionSignature();
-        signature.addReturns(
-                Returns.getReturnTypeDescriptorNode(SYNTAX_TREE_GRPC_ERROR_OPTIONAL));
-        FunctionBody body = new FunctionBody();
-        body.addReturnStatement(
+    private static Function getCloseFunction() {
+        Function function = new Function("close");
+        function.addReturns(SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
+        function.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "anydataStream"),
                         "close",
-                        new String[]{}));
-        FunctionDefinition definition = new FunctionDefinition(
-                "close",
-                signature.getFunctionSignature(),
-                body.getFunctionBody());
-        definition.addQualifiers(new String[]{"public", "isolated"});
-        return definition;
+                        new String[]{}
+                )
+        );
+        function.addQualifiers(new String[]{"public", "isolated"});
+        return function;
     }
 
-    private static FunctionBody getServerBody(Method method, String headers, String outCap) {
-        FunctionBody body = new FunctionBody();
+    private static void addServerBody(Function function, Method method, String headers, String outCap) {
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getBuiltinSimpleNameReferenceNode("var"),
@@ -257,11 +263,11 @@ public class ServerUtils {
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "grpcClient"),
                                 "executeServerStreaming",
-                                new String[]{"\"" + method.getMethodId() +  "\"", "req"}
+                                new String[]{"\"" + method.getMethodId() + "\"", "req"}
                         )
                 )
         );
-        body.addVariableStatement(payload.getVariableDeclarationNode());
+        function.addVariableStatement(payload.getVariableDeclarationNode());
 
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
@@ -276,7 +282,7 @@ public class ServerUtils {
                         getListBindingPatternNode(new String[]{"result", headers})),
                 getSimpleNameReferenceNode("payload")
         );
-        body.addVariableStatement(payloadTuple.getVariableDeclarationNode());
+        function.addVariableStatement(payloadTuple.getVariableDeclarationNode());
 
         VariableDeclaration stream = new VariableDeclaration(
                 getTypedBindingPatternNode(
@@ -285,7 +291,6 @@ public class ServerUtils {
                 ),
                 getExplicitNewExpressionNode(outCap + "Stream", new String[]{"result"})
         );
-        body.addVariableStatement(stream.getVariableDeclarationNode());
-        return body;
+        function.addVariableStatement(stream.getVariableDeclarationNode());
     }
 }

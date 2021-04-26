@@ -16,6 +16,7 @@
 
 import ballerina/file;
 import ballerina/jballerina.java;
+import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -28,9 +29,11 @@ function testUnaryStubGeneration() {
     assertGeneratedSources(protoFilePath, outputDirPath, stubFilePath, serviceFilePath, clientFilePath);
 }
 
-@test:Config {enable:true}
+@test:Config {enable:false}
 function testDirectoryWithSpace() {
     string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, "a b", "helloWorld.proto");
+    io:println("Proto file path: ");
+    io:println(protoFilePath);
     string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, "tool_test2");
     string stubFilePath = checkpanic file:joinPath(outputDirPath, "helloWorld_pb.bal");
     string serviceFilePath = checkpanic file:joinPath(outputDirPath, "helloWorld_sample_service.bal");
