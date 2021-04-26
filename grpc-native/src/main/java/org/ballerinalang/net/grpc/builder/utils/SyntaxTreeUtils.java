@@ -47,6 +47,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.TypeName;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getIncludedRecordParamNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.FunctionParam.getRequiredParamNode;
 
+/**
+ * Temp class holds util methods for testing.
+ *
+ * @since 0.8.0
+ */
 public class SyntaxTreeUtils {
 
     public static SyntaxTree generateSyntaxTree() {
@@ -59,8 +64,10 @@ public class SyntaxTreeUtils {
         // HelloWorldClient:init function
         FunctionSignature initSignature = new FunctionSignature();
         initSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, "url"));
-        initSignature.addParameter(getIncludedRecordParamNode(TypeName.getQualifiedNameReferenceNode("grpc", "ClientConfiguration"), "config"));
-        initSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeName.getOptionalTypeDescriptorNode("grpc", "Error")));
+        initSignature.addParameter(getIncludedRecordParamNode(TypeName.getQualifiedNameReferenceNode("grpc",
+                "ClientConfiguration"), "config"));
+        initSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeName.getOptionalTypeDescriptorNode("grpc",
+                "Error")));
         FunctionBody initBody = new FunctionBody();
         FunctionDefinition initDefinition = new FunctionDefinition("init",
                 initSignature.getFunctionSignature(), initBody.getFunctionBody());
@@ -69,8 +76,11 @@ public class SyntaxTreeUtils {
 
         // HelloWorldClient:hello function
         FunctionSignature helloSignature = new FunctionSignature();
-        helloSignature.addParameter(getRequiredParamNode(TypeName.getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING), "req"));
-        helloSignature.addReturns(Returns.getReturnTypeDescriptorNode(Returns.getParenthesisedTypeDescriptorNode(TypeName.getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
+        helloSignature.addParameter(getRequiredParamNode(TypeName.getUnionTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING), "req"));
+        helloSignature.addReturns(Returns.getReturnTypeDescriptorNode(Returns.getParenthesisedTypeDescriptorNode(
+                TypeName.getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING,
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
         FunctionBody helloBody = new FunctionBody();
         FunctionDefinition helloDefinition = new FunctionDefinition("hello",
                 helloSignature.getFunctionSignature(), helloBody.getFunctionBody());
@@ -79,8 +89,11 @@ public class SyntaxTreeUtils {
 
         // HelloWorldClient:helloContext function
         FunctionSignature helloContextSignature = new FunctionSignature();
-        helloContextSignature.addParameter(getRequiredParamNode(TypeName.getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING), "req"));
-        helloContextSignature.addReturns(Returns.getReturnTypeDescriptorNode(Returns.getParenthesisedTypeDescriptorNode(TypeName.getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING, SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
+        helloContextSignature.addParameter(getRequiredParamNode(TypeName.getUnionTypeDescriptorNode(
+                SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING), "req"));
+        helloContextSignature.addReturns(Returns.getReturnTypeDescriptorNode(Returns.getParenthesisedTypeDescriptorNode(
+                TypeName.getUnionTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING,
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR))));
         FunctionBody helloContextBody = new FunctionBody();
         FunctionDefinition helloContextDefinition = new FunctionDefinition("helloContext",
                 helloContextSignature.getFunctionSignature(), helloContextBody.getFunctionBody());
@@ -90,7 +103,8 @@ public class SyntaxTreeUtils {
         ClassDefinitionNode helloWorldClientClassDefinitionNode = helloWorldClient.getClassDefinitionNode();
 
         // HelloWorldStringCaller class
-        ClassDefinitionNode helloWorldStringCallerClassDefinitionNode = getHelloWorldStringCaller().getClassDefinitionNode();
+        ClassDefinitionNode helloWorldStringCallerClassDefinitionNode =
+                getHelloWorldStringCaller().getClassDefinitionNode();
 
         // ContextString record type
         Record contextStringRecord = new Record();
@@ -99,13 +113,16 @@ public class SyntaxTreeUtils {
 
         // getDescriptorMap function
         FunctionSignature getDescriptorMapSignature = new FunctionSignature();
-        ParameterizedTypeDescriptorNode mapString = NodeFactory.createParameterizedTypeDescriptorNode(AbstractNodeFactory.createIdentifierToken("map"), TypeName.getTypeParameterNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING));
+        ParameterizedTypeDescriptorNode mapString =
+                NodeFactory.createParameterizedTypeDescriptorNode(AbstractNodeFactory.createIdentifierToken("map"),
+                        TypeName.getTypeParameterNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING));
         getDescriptorMapSignature.addReturns(Returns.getReturnTypeDescriptorNode(mapString));
         FunctionBody getDescriptorMapBody = new FunctionBody();
         FunctionDefinition getDescriptorMapDefinition = new FunctionDefinition("getDescriptorMap",
                 getDescriptorMapSignature.getFunctionSignature(), getDescriptorMapBody.getFunctionBody());
         getDescriptorMapDefinition.addQualifiers(new String[]{"isolated"});
-        FunctionDefinitionNode getDescriptorMapFunctionDefinitionNode = getDescriptorMapDefinition.getFunctionDefinitionNode();
+        FunctionDefinitionNode getDescriptorMapFunctionDefinitionNode =
+                getDescriptorMapDefinition.getFunctionDefinitionNode();
 
         // Create module member declaration
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createNodeList(
@@ -128,7 +145,8 @@ public class SyntaxTreeUtils {
 
         // HelloWorldStringCaller:init function
         FunctionSignature initSignature = new FunctionSignature();
-        initSignature.addParameter(getRequiredParamNode(TypeName.getQualifiedNameReferenceNode("grpc", "Caller"), "caller"));
+        initSignature.addParameter(getRequiredParamNode(TypeName.getQualifiedNameReferenceNode("grpc", "Caller"),
+                "caller"));
         FunctionBody initBody = new FunctionBody();
         FunctionDefinition initDefinition = new FunctionDefinition("init",
                 initSignature.getFunctionSignature(), initBody.getFunctionBody());
@@ -137,7 +155,8 @@ public class SyntaxTreeUtils {
 
         // HelloWorldStringCaller:getId function
         FunctionSignature getIdSignature = new FunctionSignature();
-        getIdSignature.addReturns(Returns.getReturnTypeDescriptorNode(NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.INT_TYPE_DESC, AbstractNodeFactory.createIdentifierToken("int"))));
+        getIdSignature.addReturns(Returns.getReturnTypeDescriptorNode(NodeFactory.createBuiltinSimpleNameReferenceNode(
+                SyntaxKind.INT_TYPE_DESC, AbstractNodeFactory.createIdentifierToken("int"))));
         FunctionBody getIdBody = new FunctionBody();
         FunctionDefinition getIdDefinition = new FunctionDefinition("getId",
                 getIdSignature.getFunctionSignature(), getIdBody.getFunctionBody());
@@ -147,7 +166,8 @@ public class SyntaxTreeUtils {
         // HelloWorldStringCaller:sendString function
         FunctionSignature sendStringSignature = new FunctionSignature();
         sendStringSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING, "response"));
-        sendStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeName.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeName.getOptionalTypeDescriptorNode(
+                "grpc", "Error")));
         FunctionBody sendStringBody = new FunctionBody();
         FunctionDefinition sendStringDefinition = new FunctionDefinition("sendString",
                 sendStringSignature.getFunctionSignature(), sendStringBody.getFunctionBody());
@@ -156,8 +176,10 @@ public class SyntaxTreeUtils {
 
         // HelloWorldStringCaller:sendContextString function
         FunctionSignature sendContextStringSignature = new FunctionSignature();
-        sendContextStringSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING, "response"));
-        sendContextStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeName.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendContextStringSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_CONTEXT_STRING,
+                "response"));
+        sendContextStringSignature.addReturns(Returns.getReturnTypeDescriptorNode(
+                TypeName.getOptionalTypeDescriptorNode("grpc", "Error")));
         FunctionBody sendContextStringBody = new FunctionBody();
         FunctionDefinition sendContextStringDefinition = new FunctionDefinition("sendContextString",
                 sendContextStringSignature.getFunctionSignature(), sendContextStringBody.getFunctionBody());
@@ -167,7 +189,8 @@ public class SyntaxTreeUtils {
         // HelloWorldStringCaller:sendError function
         FunctionSignature sendErrorSignature = new FunctionSignature();
         sendErrorSignature.addParameter(getRequiredParamNode(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR, "response"));
-        sendErrorSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeName.getOptionalTypeDescriptorNode("grpc", "Error")));
+        sendErrorSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeName.getOptionalTypeDescriptorNode(
+                "grpc", "Error")));
         FunctionBody sendErrorBody = new FunctionBody();
         FunctionDefinition sendErrorDefinition = new FunctionDefinition("sendError",
                 sendErrorSignature.getFunctionSignature(), sendErrorBody.getFunctionBody());
@@ -176,7 +199,8 @@ public class SyntaxTreeUtils {
 
         // HelloWorldStringCaller:complete function
         FunctionSignature completeSignature = new FunctionSignature();
-        completeSignature.addReturns(Returns.getReturnTypeDescriptorNode(TypeName.getOptionalTypeDescriptorNode("grpc", "Error")));
+        completeSignature.addReturns(Returns.getReturnTypeDescriptorNode(
+                TypeName.getOptionalTypeDescriptorNode("grpc", "Error")));
         FunctionBody completeBody = new FunctionBody();
         FunctionDefinition completeDefinition = new FunctionDefinition("complete",
                 completeSignature.getFunctionSignature(), completeBody.getFunctionBody());

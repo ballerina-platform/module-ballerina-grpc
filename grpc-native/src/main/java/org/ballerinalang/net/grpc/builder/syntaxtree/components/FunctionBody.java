@@ -29,6 +29,11 @@ import io.ballerina.compiler.syntax.tree.StatementNode;
 import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * gRPC function body syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class FunctionBody {
 
     private NodeList<StatementNode> statements;

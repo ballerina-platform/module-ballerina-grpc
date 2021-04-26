@@ -29,6 +29,11 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
 
+/**
+ * gRPC function syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class FunctionDefinition {
     private final SyntaxKind kind = SyntaxKind.OBJECT_METHOD_DEFINITION;
     private NodeList<Token> qualifierList;

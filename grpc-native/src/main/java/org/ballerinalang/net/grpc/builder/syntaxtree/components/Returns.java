@@ -27,6 +27,11 @@ import io.ballerina.compiler.syntax.tree.ReturnTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * gRPC return type syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class Returns {
 
     public static ReturnTypeDescriptorNode getReturnTypeDescriptorNode(Node type) {

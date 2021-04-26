@@ -30,6 +30,11 @@ import io.ballerina.compiler.syntax.tree.TypeParameterNode;
 import io.ballerina.compiler.syntax.tree.UnionTypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
+/**
+ * Type name syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class TypeName {
 
     public static QualifiedNameReferenceNode getQualifiedNameReferenceNode(String modulePrefix, String identifier) {
@@ -49,7 +54,8 @@ public class TypeName {
     }
 
     public static BuiltinSimpleNameReferenceNode getBuiltinSimpleNameReferenceNode(String name) {
-        return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.STREAM_TYPE_DESC, AbstractNodeFactory.createIdentifierToken(name + " "));
+        return NodeFactory.createBuiltinSimpleNameReferenceNode(SyntaxKind.STREAM_TYPE_DESC,
+                AbstractNodeFactory.createIdentifierToken(name + " "));
     }
 
     public static SimpleNameReferenceNode getSimpleNameReferenceNode(String name) {
@@ -57,6 +63,7 @@ public class TypeName {
     }
 
     public static TypeParameterNode getTypeParameterNode(TypeDescriptorNode typeNode) {
-        return NodeFactory.createTypeParameterNode(SyntaxTreeConstants.SYNTAX_TREE_IT, typeNode, SyntaxTreeConstants.SYNTAX_TREE_GT);
+        return NodeFactory.createTypeParameterNode(SyntaxTreeConstants.SYNTAX_TREE_IT, typeNode,
+                SyntaxTreeConstants.SYNTAX_TREE_GT);
     }
 }

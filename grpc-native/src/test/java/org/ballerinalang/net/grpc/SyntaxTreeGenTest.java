@@ -59,6 +59,33 @@ public class SyntaxTreeGenTest {
 //        Assert.assertEquals(actualContent, expectedContent);
     }
 
+    @Test(description = "Test code generation for proto message definition without service")
+    public void testCodeGenProtoMessage() {
+        Path protoFilePath = inputDir.resolve("message.proto");
+        Path expectedOutPath = outputDir.resolve("message_pb.bal");
+        Path outputDirPath = tempDir.resolve("stubs");
+        Path actualOutPath = outputDirPath.resolve("message_pb.bal");
+        generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), "");
+
+        Assert.assertTrue(Files.exists(outputDirPath.resolve("message_pb.bal")));
+        String expectedContent = null;
+        try {
+            expectedContent = Files.readString(expectedOutPath);
+        } catch (IOException e) {
+            Assert.fail("failed to read content of expected bal file", e);
+        }
+        String actualContent = null;
+        try {
+            actualContent = Files.readString(actualOutPath);
+        } catch (IOException e) {
+            Assert.fail("failed to read content of actual bal file", e);
+        }
+        TextDocument textDocument = TextDocuments.from(actualContent);
+        Assert.assertFalse(SyntaxTree.from(textDocument).hasDiagnostics());
+
+        Assert.assertEquals(actualContent, expectedContent);
+    }
+
     private static void generateSourceCode(String sProtoFilePath, String sOutputDirPath, String mode) {
 
         Class<?> grpcCmdClass;

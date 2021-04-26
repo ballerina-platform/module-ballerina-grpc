@@ -27,6 +27,11 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
+/**
+ * gRPC function param syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class FunctionParam {
 
     public static RequiredParameterNode getRequiredParamNode(Node typeName, String name) {

@@ -25,6 +25,11 @@ import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+/**
+ * gRPC object initializer syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class Initializer {
 
     public static CheckExpressionNode getCheckExpressionNode(ExpressionNode expression) {

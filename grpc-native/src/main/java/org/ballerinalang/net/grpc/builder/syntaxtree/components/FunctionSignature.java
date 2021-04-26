@@ -28,6 +28,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * gRPC function signature syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class FunctionSignature {
 
     List<Node> parameters;

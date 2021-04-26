@@ -27,15 +27,23 @@ import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.Token;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
+/**
+ * gRPC imports syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class Imports {
 
     public static ImportDeclarationNode getImportDeclarationNode(String orgName, String moduleName) {
-        Token orgNameToken = AbstractNodeFactory.createIdentifierToken(orgName);
-        ImportOrgNameNode importOrgNameNode = NodeFactory.createImportOrgNameNode(orgNameToken, SyntaxTreeConstants.SYNTAX_TREE_SLASH);
-        Token moduleNameToken = AbstractNodeFactory.createIdentifierToken(moduleName);
-        SeparatedNodeList<IdentifierToken> moduleNodeList = AbstractNodeFactory.createSeparatedNodeList(moduleNameToken);
 
-        return NodeFactory.createImportDeclarationNode(SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_IMPORT, importOrgNameNode,
-                moduleNodeList, null, SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON );
+        Token orgNameToken = AbstractNodeFactory.createIdentifierToken(orgName);
+        ImportOrgNameNode importOrgNameNode = NodeFactory.createImportOrgNameNode(orgNameToken,
+                SyntaxTreeConstants.SYNTAX_TREE_SLASH);
+        Token moduleNameToken = AbstractNodeFactory.createIdentifierToken(moduleName);
+        SeparatedNodeList<IdentifierToken> moduleNodeList =
+                AbstractNodeFactory.createSeparatedNodeList(moduleNameToken);
+
+        return NodeFactory.createImportDeclarationNode(SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_IMPORT,
+                importOrgNameNode, moduleNodeList, null, SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON);
     }
 }

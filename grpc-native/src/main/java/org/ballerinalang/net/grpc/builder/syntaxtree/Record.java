@@ -24,6 +24,11 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.RecordTypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.constants.SyntaxTreeConstants;
 
+/**
+ * gRPC record syntax tree definition class.
+ *
+ * @since 0.8.0
+ */
 public class Record {
 
     private NodeList<Node> fields;
