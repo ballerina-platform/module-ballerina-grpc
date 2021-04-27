@@ -77,6 +77,11 @@ public class SyntaxTreeGenTest {
         assertOutput("helloWorldWithPackage.proto", "helloWorldWithPackage_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a protobuf definition file with reserved names")
+    public void testHelloWorldWithReservedNames() {
+        assertOutput("helloWorldWithReservedNames.proto", "helloWorldWithReservedNames_pb.bal", "");
+    }
+
     @Test(description = "Tests the output for a protobuf definition file with only message types")
     public void testMessage() {
         assertOutput("message.proto", "message_pb.bal", "");
