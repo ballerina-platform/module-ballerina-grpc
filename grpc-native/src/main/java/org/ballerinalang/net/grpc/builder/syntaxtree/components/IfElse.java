@@ -45,11 +45,14 @@ public class IfElse {
     }
 
     public IfElseStatementNode getIfElseStatementNode() {
-        if (elseBody == null && elseStatements.size() > 0) {
-            elseBody = NodeFactory.createBlockStatementNode(
-                    SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
-                    elseStatements,
-                    SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
+        if (elseStatements.size() > 0) {
+            elseBody = NodeFactory.createElseBlockNode(
+                    SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_ELSE,
+                    NodeFactory.createBlockStatementNode(
+                            SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
+                            elseStatements,
+                            SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
+                    )
             );
         }
         return NodeFactory.createIfElseStatementNode(
@@ -68,18 +71,6 @@ public class IfElse {
         this.elseBody = NodeFactory.createElseBlockNode(
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_ELSE,
                 elseBody.getIfElseStatementNode()
-        );
-    }
-
-    // Todo: check and remove this function
-    public void addElseBody() {
-        elseBody = NodeFactory.createElseBlockNode(
-                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_ELSE,
-                NodeFactory.createBlockStatementNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
-                        elseStatements,
-                        SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
-                )
         );
     }
 

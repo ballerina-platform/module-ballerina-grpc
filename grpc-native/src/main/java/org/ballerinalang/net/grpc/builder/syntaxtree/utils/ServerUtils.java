@@ -224,7 +224,6 @@ public class ServerUtils {
                 ),
                 nextRecordMap.getMappingConstructorExpressionNode()
         );
-        streamValueErrorCheck.addElseBody();
         streamValueErrorCheck.addElseStatement(
                 nextRecordVar.getVariableDeclarationNode()
         );

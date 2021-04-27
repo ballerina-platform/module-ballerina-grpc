@@ -176,7 +176,6 @@ public class UnaryUtils {
                         getFieldAccessExpressionNode("req", "headers")
                 )
         );
-        reqIsContext.addElseBody();
         reqIsContext.addElseStatement(
                 getAssignmentStatementNode(
                         "message",
