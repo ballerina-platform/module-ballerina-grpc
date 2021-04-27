@@ -57,6 +57,11 @@ public class SyntaxTreeGenTest {
         assertOutput("helloWorldWithEnum.proto", "helloWorldWithEnum_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a protobuf definition file with map types")
+    public void testHelloWorldWithMap() {
+        assertOutput("helloWorldWithMap.proto", "helloWorldWithMap_pb.bal", "");
+    }
+
     @Test(description = "Tests the output for a protobuf definition file with only message types")
     public void testMessage() {
         assertOutput("message.proto", "message_pb.bal", "");
