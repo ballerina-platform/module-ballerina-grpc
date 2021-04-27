@@ -32,16 +32,20 @@ public class SyntaxTreeGenTest {
         outputDir = RES_DIR.resolve("output");
     }
 
-    @Test(description = "Test helloWorld.proto")
+    @Test(description = "Tests the output for a unary protobuf definition file")
     public void testHelloWorld() {
         assertOutput("helloWorld.proto", "helloWorld_pb.bal", "");
     }
 
-    @Test(description = "Test message.proto")
-    public void testMessage() {
+    @Test(description = "Tests the output for a client streaming protobuf definition file")
+    public void testHelloWorldClientStreaming() {
         assertOutput("message.proto", "message_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a protobuf definition file with only message types")
+    public void testMessage() {
+        assertOutput("message.proto", "message_pb.bal", "");
+    }
 
     private static void generateSourceCode(String sProtoFilePath, String sOutputDirPath, String mode) {
 
