@@ -32,7 +32,7 @@ public class SyntaxTreeGenTest {
         outputDir = RES_DIR.resolve("output");
     }
 
-    @Test(description = "Tests the output for a unary protobuf definition file")
+    @Test(description = "Tests the output for a unary protobuf definition file with message types")
     public void testHelloWorld() {
         assertOutput("helloWorld.proto", "helloWorld_pb.bal", "");
     }
@@ -45,6 +45,11 @@ public class SyntaxTreeGenTest {
     @Test(description = "Tests the output for a client streaming protobuf definition file")
     public void testHelloWorldServerStreaming() {
         assertOutput("helloWorldServerStreaming.proto", "helloWorldServerStreaming_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a unary protobuf definition file of string types")
+    public void testHelloWorldString() {
+        assertOutput("helloWorldString.proto", "helloWorldString_pb.bal", "");
     }
 
     @Test(description = "Tests the output for a protobuf definition file with only message types")
