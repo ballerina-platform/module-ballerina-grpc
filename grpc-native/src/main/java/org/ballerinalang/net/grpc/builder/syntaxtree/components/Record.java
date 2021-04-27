@@ -98,7 +98,7 @@ public class Record {
         );
     }
 
-    public void addStreamField(String streamType, String fieldName, boolean optionalError) {
+    public void addStreamField(String streamType, String fieldName) {
         Node lhs;
         Node rhs;
         if (streamType.equals("string")) {
@@ -106,11 +106,7 @@ public class Record {
         } else {
             lhs = getSimpleNameReferenceNode(streamType);
         }
-        if (optionalError) {
-            rhs = getOptionalTypeDescriptorNode("", "error");
-        } else {
-            rhs = null;
-        }
+        rhs = getOptionalTypeDescriptorNode("", "error");
         fields = fields.add(
                 NodeFactory.createRecordFieldNode(
                         null,

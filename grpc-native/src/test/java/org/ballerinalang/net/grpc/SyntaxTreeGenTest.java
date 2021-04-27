@@ -39,7 +39,12 @@ public class SyntaxTreeGenTest {
 
     @Test(description = "Tests the output for a client streaming protobuf definition file")
     public void testHelloWorldClientStreaming() {
-        assertOutput("message.proto", "message_pb.bal", "");
+        assertOutput("helloWorldClientStreaming.proto", "helloWorldClientStreaming_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a client streaming protobuf definition file")
+    public void testHelloWorldServerStreaming() {
+        assertOutput("helloWorldServerStreaming.proto", "helloWorldServerStreaming_pb.bal", "");
     }
 
     @Test(description = "Tests the output for a protobuf definition file with only message types")
