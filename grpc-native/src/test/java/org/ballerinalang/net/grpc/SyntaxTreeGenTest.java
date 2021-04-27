@@ -32,11 +32,16 @@ public class SyntaxTreeGenTest {
         outputDir = RES_DIR.resolve("output");
     }
 
-    @Test(description = "Generate syntax tree")
-    public void testGeneratedBallerinaCode() {
+    @Test(description = "Test helloWorld.proto")
+    public void testHelloWorld() {
         assertOutput("helloWorld.proto", "helloWorld_pb.bal", "");
+    }
+
+    @Test(description = "Test message.proto")
+    public void testMessage() {
         assertOutput("message.proto", "message_pb.bal", "");
     }
+
 
     private static void generateSourceCode(String sProtoFilePath, String sOutputDirPath, String mode) {
 
