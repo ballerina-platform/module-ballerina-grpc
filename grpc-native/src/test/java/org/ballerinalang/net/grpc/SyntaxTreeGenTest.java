@@ -33,8 +33,9 @@ public class SyntaxTreeGenTest {
     }
 
     @Test(description = "Generate syntax tree")
-    public void testHelloWorld() {
+    public void testGeneratedBallerinaCode() {
         assertOutput("helloWorld.proto", "helloWorld_pb.bal", "");
+        assertOutput("message.proto", "message_pb.bal", "");
     }
 
     private static void generateSourceCode(String sProtoFilePath, String sOutputDirPath, String mode) {
