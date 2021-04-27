@@ -42,6 +42,11 @@ public class SyntaxTreeGenTest {
         assertOutput("helloWorldClientStreaming.proto", "helloWorldClientStreaming_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a protobuf definition file with syntax errors")
+    public void testHelloWorldErrorSyntax() {
+        assertOutputNegative("helloWorldErrorSyntax.proto", "helloWorldClientStreaming_pb.bal", "");
+    }
+
     @Test(description = "Tests the output for a client streaming protobuf definition file")
     public void testHelloWorldServerStreaming() {
         assertOutput("helloWorldServerStreaming.proto", "helloWorldServerStreaming_pb.bal", "");
@@ -134,5 +139,15 @@ public class SyntaxTreeGenTest {
                 actualContent.replaceAll("\\s+", ""),
                 expectedContent.replaceAll("\\s+", "")
         );
+    }
+
+    private static void assertOutputNegative(String input, String output, String mode) {
+        Path protoFilePath = inputDir.resolve(input);
+        Path outputDirPath = tempDir.resolve("stubs");
+        Path outPath = outputDirPath.resolve(output);
+
+        generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), mode);
+
+        Assert.assertFalse(Files.exists(outPath));
     }
 }
