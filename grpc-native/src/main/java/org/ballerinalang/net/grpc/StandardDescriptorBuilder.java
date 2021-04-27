@@ -15,7 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.ballerinalang.net.grpc.proto.definition;
+package org.ballerinalang.net.grpc;
 
 import com.google.protobuf.Descriptors;
 
@@ -29,18 +29,18 @@ public class StandardDescriptorBuilder {
 
     private static Map<String, Descriptors.FileDescriptor> standardLibDescriptor;
 
-    private static final String EMPTY_PROTO_PACKAGE_KEY = "google/protobuf/empty.proto";
-    private static final String ANY_PROTO_PACKAGE_KEY = "google/protobuf/any.proto";
-    private static final String API_PROTO_PACKAGE_KEY = "google/protobuf/api.proto";
-    private static final String DESCRIPTOR_PROTO_PACKAGE_KEY = "google/protobuf/descriptor.proto";
-    private static final String DURATION_PROTO_PACKAGE_KEY = "google/protobuf/duration.proto";
-    private static final String FIELD_MASK_PROTO_PACKAGE_KEY = "google/protobuf/field_mask.proto";
-    private static final String SOURCE_CONTEXT_PROTO_PACKAGE_KEY = "google/protobuf/source_context.proto";
-    private static final String WRAPPERS_PROTO_PACKAGE_KEY = "google/protobuf/wrappers.proto";
-    private static final String STRUCT_PROTO_PACKAGE_KEY = "google/protobuf/struct.proto";
-    private static final String TIMESTAMP_PROTO_PACKAGE_KEY = "google/protobuf/timestamp.proto";
-    private static final String TYPE_PROTO_PACKAGE_KEY = "google/protobuf/type.proto";
-    private static final String COMPILER_PLUGIN_PROTO_PACKAGE_KEY = "google/protobuf/compiler/plugin.proto";
+    public static final String EMPTY_PROTO_PACKAGE_KEY = "google/protobuf/empty.proto";
+    public static final String ANY_PROTO_PACKAGE_KEY = "google/protobuf/any.proto";
+    public static final String API_PROTO_PACKAGE_KEY = "google/protobuf/api.proto";
+    public static final String DESCRIPTOR_PROTO_PACKAGE_KEY = "google/protobuf/descriptor.proto";
+    public static final String DURATION_PROTO_PACKAGE_KEY = "google/protobuf/duration.proto";
+    public static final String FIELD_MASK_PROTO_PACKAGE_KEY = "google/protobuf/field_mask.proto";
+    public static final String SOURCE_CONTEXT_PROTO_PACKAGE_KEY = "google/protobuf/source_context.proto";
+    public static final String WRAPPERS_PROTO_PACKAGE_KEY = "google/protobuf/wrappers.proto";
+    public static final String STRUCT_PROTO_PACKAGE_KEY = "google/protobuf/struct.proto";
+    public static final String TIMESTAMP_PROTO_PACKAGE_KEY = "google/protobuf/timestamp.proto";
+    public static final String TYPE_PROTO_PACKAGE_KEY = "google/protobuf/type.proto";
+    public static final String COMPILER_PLUGIN_PROTO_PACKAGE_KEY = "google/protobuf/compiler/plugin.proto";
 
     static {
         standardLibDescriptor = new HashMap<>();
@@ -65,15 +65,5 @@ public class StandardDescriptorBuilder {
 
     public static Descriptors.FileDescriptor getFileDescriptor(String libName) {
         return standardLibDescriptor.get(libName);
-    }
-
-    public static Descriptors.FileDescriptor[] getFileDescriptors(Object[] libList) {
-        Descriptors.FileDescriptor[] fileDescriptors = new Descriptors.FileDescriptor[libList.length];
-        for (int i = 0; i < libList.length; i++) {
-            if (standardLibDescriptor.containsKey(libList[i])) {
-                fileDescriptors[i] = getFileDescriptor((String) libList[i]);
-            }
-        }
-        return fileDescriptors;
     }
 }

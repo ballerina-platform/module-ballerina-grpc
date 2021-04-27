@@ -40,7 +40,6 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
-import org.ballerinalang.net.grpc.proto.ServiceProtoConstants;
 import org.ballerinalang.net.transport.message.HttpCarbonMessage;
 
 import java.io.IOException;
@@ -71,6 +70,11 @@ public class MessageUtils {
     /** maximum buffer to be read is 16 KB. */
     private static final int MAX_BUFFER_LENGTH = 16384;
     private static final String GOOGLE_PROTOBUF_EMPTY = "google.protobuf.Empty";
+
+    // Invalid wire type.
+    private static final int INVALID_WIRE_TYPE = -1;
+    // Embedded messages, packed repeated fields wire type.
+    private static final int MESSAGE_WIRE_TYPE = 2;
 
     private static final Type HEADER_MAP_TYPE =
                 TypeCreator.createMapType(TypeCreator.createUnionType(Arrays.asList(PredefinedTypes.TYPE_STRING,
@@ -171,7 +175,7 @@ public class MessageUtils {
      */
     static int getFieldWireType(Descriptors.FieldDescriptor.Type fieldType) {
         if (fieldType == null) {
-            return ServiceProtoConstants.INVALID_WIRE_TYPE;
+            return INVALID_WIRE_TYPE;
         }
         Integer wireType = GrpcConstants.WIRE_TYPE_MAP.get(fieldType.toProto());
         if (wireType != null) {
@@ -179,7 +183,7 @@ public class MessageUtils {
         } else {
             // Returns embedded messages, packed repeated fields message type, if field type doesn't map with the
             // predefined proto types.
-            return ServiceProtoConstants.MESSAGE_WIRE_TYPE;
+            return MESSAGE_WIRE_TYPE;
         }
     }
 

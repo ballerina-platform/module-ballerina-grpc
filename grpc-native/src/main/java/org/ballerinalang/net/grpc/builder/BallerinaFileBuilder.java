@@ -42,8 +42,6 @@ import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
 import org.ballerinalang.net.grpc.builder.stub.StubFile;
 import org.ballerinalang.net.grpc.builder.syntaxtree.SyntaxTreeGen;
 import org.ballerinalang.net.grpc.exception.CodeBuilderException;
-import org.ballerinalang.net.grpc.exception.GrpcServerException;
-import org.ballerinalang.net.grpc.proto.definition.EmptyMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +63,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static org.ballerinalang.net.grpc.StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY;
+import static org.ballerinalang.net.grpc.StandardDescriptorBuilder.getFileDescriptor;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.EMPTY_DATA_TYPE;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.FILE_SEPARATOR;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GOOGLE_API_LIB;
@@ -78,7 +78,6 @@ import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.STUB_FIL
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_DIR_PATH_KEY;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_SUFFIX;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATE_DIR;
-import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.PROTO_FILE_EXTENSION;
 
 /**
  * Class is responsible of generating the ballerina stub which is mapping proto definition.
@@ -90,6 +89,9 @@ public class BallerinaFileBuilder {
     private String balOutPath;
     private static final Path resourceDirectory = Paths.get("src").resolve("main").resolve("resources")
             .toAbsolutePath();
+
+    // Proto file extension
+    private static final String PROTO_FILE_EXTENSION = ".proto";
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
@@ -215,8 +217,9 @@ public class BallerinaFileBuilder {
 
                     if (method.containsEmptyType() && !(stubFileObject.isMessageExists(EMPTY_DATA_TYPE))
                             && !hasEmptyMessage) {
-                        Message message = Message.newBuilder(EmptyMessage.newBuilder().getDescriptor().toProto())
-                                .build();
+                        Message message =
+                                Message.newBuilder(getFileDescriptor(EMPTY_PROTO_PACKAGE_KEY).getMessageTypes().get(0)
+                                        .toProto()).build();
                         messageList.add(message);
                         stubFileObject.addMessage(message);
                         hasEmptyMessage = true;
@@ -247,8 +250,6 @@ public class BallerinaFileBuilder {
             }
             String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
             writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
-        } catch (GrpcServerException e) {
-            throw new CodeBuilderException("Message descriptor error. " + e.getMessage());
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error which reading proto file descriptor. " + e.getMessage(), e);
         }
