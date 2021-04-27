@@ -17,8 +17,6 @@
  */
 package org.ballerinalang.net.grpc.builder.balgen;
 
-import java.util.Locale;
-
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 
 /**
@@ -84,32 +82,6 @@ public class BalGenerationUtils {
                         (PACKAGE_SEPARATOR) + 1);
             }
         }
-    }
-
-    /**
-     * This function returns camelcase value of the input string.
-     *
-     * @param name string value
-     * @return camelcase value
-     */
-    public static String toCamelCase(String name) {
-        if (name == null) {
-            return null;
-        }
-        String[] parts = name.split("_");
-        StringBuilder camelCaseString = new StringBuilder();
-        for (String part : parts) {
-            camelCaseString.append(part.substring(0, 1).toUpperCase(Locale.ENGLISH)).append(part.substring(1)
-                    .toLowerCase(Locale.ENGLISH));
-        }
-        return camelCaseString.toString();
-    }
-
-    public static String toPascalCase(String name) {
-        if (name == null) {
-            return null;
-        }
-        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
     /**
