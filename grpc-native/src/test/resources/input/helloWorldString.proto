@@ -17,10 +17,7 @@
  */
 
 syntax = "proto3";
-
-message ByeRequest {
-    string greet = 1;
-}
-message ByeResponse {
-    string say = 1;
+import "google/protobuf/wrappers.proto";
+service helloWorld {
+	rpc hello(google.protobuf.StringValue) returns (google.protobuf.StringValue);
 }

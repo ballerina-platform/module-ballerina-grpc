@@ -18,9 +18,16 @@
 
 syntax = "proto3";
 
-message ByeRequest {
-    string greet = 1;
+service helloWorld {
+    rpc hello(HelloRequest) returns (HelloResponse);
 }
-message ByeResponse {
-    string say = 1;
+
+message HelloRequest {
+    string name = 1;
+    map<string, string> tags = 4;
+}
+
+message HelloResponse {
+    string message = 1;
+    map<string, string> tags = 4;
 }

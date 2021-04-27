@@ -36,7 +36,7 @@ public class ValueTypeUtils {
     public static Type getValueTypeStream(String key) {
         String typeName = "Context" + capitalize(key) + "Stream";
         Record contextStream = new Record();
-        contextStream.addStreamField(key, "content", key.equals("string"));
+        contextStream.addStreamField(key, "content");
         contextStream.addMapField(
                 "headers",
                 getUnionTypeDescriptorNode(

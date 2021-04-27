@@ -94,6 +94,7 @@ public class TypeDescriptor {
     public static BuiltinSimpleNameReferenceNode getBuiltinSimpleNameReferenceNode(String name) {
         SyntaxKind kind;
         switch (name) {
+            // Todo: check for float
             case "int":
                 kind = SyntaxKind.INT_TYPE_DESC;
                 break;

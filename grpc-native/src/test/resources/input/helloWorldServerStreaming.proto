@@ -17,10 +17,13 @@
  */
 
 syntax = "proto3";
-
-message ByeRequest {
-    string greet = 1;
+service helloWorldServerStreaming {
+		rpc lotsOfReplies(HelloRequest) returns (stream HelloResponse);
 }
-message ByeResponse {
-    string say = 1;
+
+message HelloRequest {
+	string name = 1;
+}
+message HelloResponse {
+	string message = 1;
 }

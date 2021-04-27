@@ -32,9 +32,58 @@ public class SyntaxTreeGenTest {
         outputDir = RES_DIR.resolve("output");
     }
 
-    @Test(description = "Generate syntax tree")
-    public void testGeneratedBallerinaCode() {
+    @Test(description = "Tests the output for a unary protobuf definition file with message types")
+    public void testHelloWorld() {
         assertOutput("helloWorld.proto", "helloWorld_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a client streaming protobuf definition file")
+    public void testHelloWorldClientStreaming() {
+        assertOutput("helloWorldClientStreaming.proto", "helloWorldClientStreaming_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a client streaming protobuf definition file")
+    public void testHelloWorldServerStreaming() {
+        assertOutput("helloWorldServerStreaming.proto", "helloWorldServerStreaming_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a unary protobuf definition file of string types")
+    public void testHelloWorldString() {
+        assertOutput("helloWorldString.proto", "helloWorldString_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with enum types")
+    public void testHelloWorldWithEnum() {
+        assertOutput("helloWorldWithEnum.proto", "helloWorldWithEnum_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with map types")
+    public void testHelloWorldWithMap() {
+        assertOutput("helloWorldWithMap.proto", "helloWorldWithMap_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with nested enums")
+    public void testHelloWorldWithNestedEnum() {
+        assertOutput("helloWorldWithNestedEnum.proto", "helloWorldWithNestedEnum_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with nested messages")
+    public void testHelloWorldWithNestedMessage() {
+        assertOutput("helloWorldWithNestedMessage.proto", "helloWorldWithNestedMessage_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with package")
+    public void testHelloWorldWithPackage() {
+        assertOutput("helloWorldWithPackage.proto", "helloWorldWithPackage_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with reserved names")
+    public void testHelloWorldWithReservedNames() {
+        assertOutput("helloWorldWithReservedNames.proto", "helloWorldWithReservedNames_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with only message types")
+    public void testMessage() {
         assertOutput("message.proto", "message_pb.bal", "");
     }
 
