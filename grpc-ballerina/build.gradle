@@ -109,9 +109,6 @@ dependencies {
     externalJars (group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
         transitive = false
     }
-    externalJars (group: 'com.github.jknack', name: 'handlebars', version: "${jknackHandlebarsVersion}") {
-        transitive = false
-    }
     externalJars (group: 'info.picocli', name: 'picocli', version: "${picocliVersion}") {
         transitive = false
     }

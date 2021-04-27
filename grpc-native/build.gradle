@@ -38,7 +38,6 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version: "${commonsLang3Version}"
     compile group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}"
     compile group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}"
-    compile group: 'com.github.jknack', name: 'handlebars', version: "${jknackHandlebarsVersion}"
     compile group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}"
     compile group: 'info.picocli', name: 'picocli', version: "${picocliVersion}"
 
