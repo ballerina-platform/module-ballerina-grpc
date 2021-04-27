@@ -223,10 +223,9 @@ public class BallerinaFileBuilder {
 
     private String generateOutputFile(String outputDir, String fileName) throws CodeBuilderException {
         try {
-            if (outputDir != null) {
-                Files.createDirectories(Paths.get(outputDir));
-            }
+            Files.createDirectories(Paths.get(outputDir, fileName).getParent());
             File file = new File(outputDir, fileName);
+
             if (!file.isFile()) {
                 Files.createFile(Paths.get(file.getAbsolutePath()));
             }
