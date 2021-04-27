@@ -44,7 +44,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_PROXY;
-import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.TMP_DIRECTORY_PATH;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.COMPONENT_IDENTIFIER;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.EMPTY_STRING;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.META_LOCATION;
@@ -56,6 +55,7 @@ import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.TEMP_AP
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.TEMP_COMPILER_DIRECTORY;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.TEMP_GOOGLE_DIRECTORY;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.TEMP_PROTOBUF_DIRECTORY;
+import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.TMP_DIRECTORY_PATH;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.delete;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.downloadFile;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.grantPermission;

@@ -39,7 +39,6 @@ import org.ballerinalang.net.grpc.exception.GrpcServerException;
 import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 import org.ballerinalang.net.grpc.listener.StreamingServerCallHandler;
 import org.ballerinalang.net.grpc.listener.UnaryServerCallHandler;
-import org.ballerinalang.net.grpc.proto.definition.StandardDescriptorBuilder;
 
 import java.io.IOException;
 
@@ -63,9 +62,8 @@ import static org.ballerinalang.net.grpc.MessageUtils.setNestedMessages;
  */
 public class ServicesBuilderUtils {
 
-    public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service,
-                                                               Object servicePath, Object annotationData) throws
-            GrpcServerException {
+    public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
+                                                               Object annotationData) throws GrpcServerException {
 
         Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
         if (fileDescriptor == null) {

@@ -31,8 +31,4 @@ public class GrpcClientException extends Exception {
     public GrpcClientException(String message) {
         super(message);
     }
-
-    public GrpcClientException(Throwable throwable) {
-        super(throwable);
-    }
 }

@@ -52,6 +52,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static org.ballerinalang.net.grpc.StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY;
+import static org.ballerinalang.net.grpc.StandardDescriptorBuilder.getFileDescriptor;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.EMPTY_DATA_TYPE;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.FILE_SEPARATOR;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GOOGLE_API_LIB;
@@ -71,6 +73,9 @@ public class BallerinaFileBuilder {
     private byte[] rootDescriptor;
     private final Set<byte[]> dependentDescriptors;
     private String balOutPath;
+
+    // Proto file extension
+    private static final String PROTO_FILE_EXTENSION = ".proto";
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
@@ -178,8 +183,9 @@ public class BallerinaFileBuilder {
 
                     if (method.containsEmptyType() && !(stubFileObject.isMessageExists(EMPTY_DATA_TYPE))
                             && !hasEmptyMessage) {
-                        Message message = Message.newBuilder(EmptyMessage.newBuilder().getDescriptor().toProto())
-                                .build();
+                        Message message =
+                                Message.newBuilder(getFileDescriptor(EMPTY_PROTO_PACKAGE_KEY).getMessageTypes().get(0)
+                                        .toProto()).build();
                         messageList.add(message);
                         stubFileObject.addMessage(message);
                         hasEmptyMessage = true;
@@ -210,8 +216,6 @@ public class BallerinaFileBuilder {
             }
             String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
             writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
-        } catch (GrpcServerException e) {
-            throw new CodeBuilderException("Message descriptor error. " + e.getMessage());
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error which reading proto file descriptor. " + e.getMessage(), e);
         }
