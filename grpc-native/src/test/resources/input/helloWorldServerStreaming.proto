@@ -17,9 +17,8 @@
  */
 
 syntax = "proto3";
-
-service helloWorldClientStreaming {
-		rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse);
+service helloWorldServerStreaming {
+		rpc lotsOfReplies(HelloRequest) returns (stream HelloResponse);
 }
 
 message HelloRequest {
