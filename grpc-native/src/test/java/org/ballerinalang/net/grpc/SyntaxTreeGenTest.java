@@ -97,6 +97,11 @@ public class SyntaxTreeGenTest {
         assertOutput("message.proto", "message_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a protobuf definition file with dependency")
+    public void testHelloWorldWithDependency() {
+        assertOutput("helloWorldWithDependency.proto", "helloWorldWithDependency_pb.bal", "");
+    }
+
     private static void generateSourceCode(String sProtoFilePath, String sOutputDirPath, String mode) {
 
         Class<?> grpcCmdClass;
