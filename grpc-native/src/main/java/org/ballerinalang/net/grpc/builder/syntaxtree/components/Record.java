@@ -19,6 +19,7 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
@@ -27,6 +28,8 @@ import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getListConstructorExpressionNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getBooleanLiteralNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getNumericLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getArrayTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
@@ -159,6 +162,15 @@ public class Record {
     }
 
     public void addBasicFieldWithDefaultValue(String fieldType, String fieldName, String defaultValue) {
+        ExpressionNode expressionNode;
+        // Todo: check for float
+        if (fieldType.equals("int")) {
+            expressionNode = getNumericLiteralNode(Integer.parseInt(defaultValue));
+        } else if (fieldType.equals("boolean")) {
+            expressionNode = getBooleanLiteralNode(Boolean.parseBoolean(defaultValue));
+        } else {
+            expressionNode = getStringLiteralNode(defaultValue);
+        }
         fields = fields.add(
                 NodeFactory.createRecordFieldWithDefaultValueNode(
                         null,
@@ -166,7 +178,7 @@ public class Record {
                         getBuiltinSimpleNameReferenceNode(fieldType),
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                        getStringLiteralNode(defaultValue),
+                        expressionNode,
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
                 )
         );
