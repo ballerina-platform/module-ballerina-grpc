@@ -72,6 +72,11 @@ public class SyntaxTreeGenTest {
         assertOutput("helloWorldWithNestedMessage.proto", "helloWorldWithNestedMessage_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a protobuf definition file with package")
+    public void testHelloWorldWithPackage() {
+        assertOutput("helloWorldWithPackage.proto", "helloWorldWithPackage_pb.bal", "");
+    }
+
     @Test(description = "Tests the output for a protobuf definition file with only message types")
     public void testMessage() {
         assertOutput("message.proto", "message_pb.bal", "");
