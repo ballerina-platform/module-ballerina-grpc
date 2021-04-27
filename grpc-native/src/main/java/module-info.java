@@ -34,6 +34,7 @@ module io.ballerina.stdlib.grpc {
     requires info.picocli;
     requires io.ballerina.cli;
     exports org.ballerinalang.net.grpc;
+    exports org.ballerinalang.net.grpc.exception;
     exports org.ballerinalang.net.grpc.protobuf.cmd;
     exports org.ballerinalang.net.grpc.nativeimpl;
     exports org.ballerinalang.net.grpc.nativeimpl.caller;
