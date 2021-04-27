@@ -17,22 +17,14 @@
  */
 package org.ballerinalang.net.grpc.builder;
 
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.helper.StringHelpers;
-import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
-import com.github.jknack.handlebars.io.FileTemplateLoader;
 import com.google.api.AnnotationsProto;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.ExtensionRegistry;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
-import io.ballerina.tools.text.TextDocument;
-import io.ballerina.tools.text.TextDocuments;
 import org.apache.commons.lang3.StringUtils;
 import org.ballerinalang.formatter.core.Formatter;
 import org.ballerinalang.formatter.core.FormatterException;
 import org.ballerinalang.net.grpc.builder.balgen.BalGenConstants;
-import org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils;
 import org.ballerinalang.net.grpc.builder.stub.Descriptor;
 import org.ballerinalang.net.grpc.builder.stub.EnumMessage;
 import org.ballerinalang.net.grpc.builder.stub.Message;
@@ -42,23 +34,18 @@ import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
 import org.ballerinalang.net.grpc.builder.stub.StubFile;
 import org.ballerinalang.net.grpc.builder.syntaxtree.SyntaxTreeGen;
 import org.ballerinalang.net.grpc.exception.CodeBuilderException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -75,20 +62,14 @@ import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.SAMPLE_FILE_PREFIX;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.SAMPLE_SERVICE_FILE_PREFIX;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.STUB_FILE_PREFIX;
-import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_DIR_PATH_KEY;
-import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATES_SUFFIX;
-import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.TEMPLATE_DIR;
 
 /**
  * Class is responsible of generating the ballerina stub which is mapping proto definition.
  */
 public class BallerinaFileBuilder {
-    public static final Logger LOG = LoggerFactory.getLogger(BallerinaFileBuilder.class);
     private byte[] rootDescriptor;
-    private Set<byte[]> dependentDescriptors;
+    private final Set<byte[]> dependentDescriptors;
     private String balOutPath;
-    private static final Path resourceDirectory = Paths.get("src").resolve("main").resolve("resources")
-            .toAbsolutePath();
 
     // Proto file extension
     private static final String PROTO_FILE_EXTENSION = ".proto";
@@ -105,29 +86,12 @@ public class BallerinaFileBuilder {
     }
 
     public void build(String mode) throws CodeBuilderException {
-//        SyntaxTree treeDemo = syntaxTreeDemo();
         // compute root descriptor source code.
         computeSourceContent(rootDescriptor, mode);
         // compute dependent descriptor source code.
         for (byte[] descriptorData : dependentDescriptors) {
             computeSourceContent(descriptorData, null);
         }
-    }
-
-    public static SyntaxTree syntaxTreeDemo() {
-        Path sourceFilePath = Paths.get(resourceDirectory.toString(), "helloWorldWithMap_pb.bal");
-        String content = null;
-        try {
-            content = getSourceText(sourceFilePath);
-        } catch (IOException e) {
-            // do something
-        }
-        TextDocument textDocument = TextDocuments.from(content);
-        return SyntaxTree.from(textDocument);
-    }
-
-    private static String getSourceText(Path sourceFilePath) throws IOException {
-        return Files.readString(resourceDirectory.resolve(sourceFilePath));
     }
 
     private void computeSourceContent(byte[] descriptor, String mode) throws CodeBuilderException {
@@ -157,7 +121,6 @@ public class BallerinaFileBuilder {
             String filename = fileDescriptorSet.getName().replace(PROTO_FILE_EXTENSION, "");
             String filePackage = fileDescriptorSet.getPackage();
             StubFile stubFileObject = new StubFile(filename);
-            ServiceFile serviceFile;
 
             if (descriptor == rootDescriptor) {
                 // Add root descriptor.
@@ -279,7 +242,7 @@ public class BallerinaFileBuilder {
      */
     private static void writeOutputFile(SyntaxTree syntaxTree, String outPath)
             throws CodeBuilderException {
-        String content = "";
+        String content;
         try {
             content = Formatter.format(syntaxTree.toSourceCode());
         } catch (FormatterException e) {
@@ -289,118 +252,6 @@ public class BallerinaFileBuilder {
             writer.println(content);
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error while writing output to Ballerina file. " + e.getMessage(), e);
-        }
-    }
-
-    private static Template compileTemplate(String templateName)
-            throws CodeBuilderException {
-        String templatesDirPath = System.getProperty(TEMPLATES_DIR_PATH_KEY, TEMPLATE_DIR);
-        ClassPathTemplateLoader cpTemplateLoader = new ClassPathTemplateLoader((templatesDirPath));
-        FileTemplateLoader fileTemplateLoader = new FileTemplateLoader(templatesDirPath);
-        cpTemplateLoader.setSuffix(TEMPLATES_SUFFIX);
-        fileTemplateLoader.setSuffix(TEMPLATES_SUFFIX);
-        // add handlebars with helpers.
-        Handlebars handlebars = new Handlebars().with(cpTemplateLoader, fileTemplateLoader);
-        handlebars.registerHelpers(StringHelpers.class);
-        handlebars.registerHelper("equals", (object, options) -> {
-            CharSequence result;
-            Object param0 = options.param(0);
-
-            if (param0 == null) {
-                throw new IllegalArgumentException("found n'null', expected 'string'");
-            }
-            if (object != null && object.toString().equals(param0.toString())) {
-                result = options.fn(options.context);
-            } else {
-                result = null;
-            }
-
-            return result;
-        });
-        handlebars.registerHelper("camelcase", (object, options) -> {
-            if (object instanceof String) {
-                return BalGenerationUtils.toCamelCase((String) object);
-            }
-            return "";
-        });
-        handlebars.registerHelper("pascalcase", (object, options) -> {
-            if (object instanceof String) {
-                return BalGenerationUtils.toPascalCase((String) object);
-            }
-            return "";
-        });
-        handlebars.registerHelper("removeSpecialCharacters", (object, options) -> {
-            if (object instanceof String) {
-                String outputType = ((String) object).replaceAll("[^a-zA-Z0-9]", "");
-                if ("byte".equalsIgnoreCase(outputType)) {
-                    outputType = "Bytes";
-                }
-                return BalGenerationUtils.toPascalCase(outputType);
-            }
-            return "";
-        });
-        handlebars.registerHelper("ignoreQuote", (object, options) -> {
-            if (object instanceof String) {
-                String word = (String) object;
-                if (word.startsWith("'")) {
-                    return word.substring(1);
-                }
-            }
-            return object;
-        });
-        handlebars.registerHelper("uppercase", (object, options) -> {
-            if (object instanceof String) {
-                return ((String) object).toUpperCase(Locale.ENGLISH);
-            }
-            return "";
-        });
-        handlebars.registerHelper("not_equal", (object, options) -> {
-            CharSequence result;
-            Object param0 = options.param(0);
-
-            if (param0 == null) {
-                throw new IllegalArgumentException("found n'null', expected 'string'");
-            }
-            if (object == null || !object.toString().equals(param0.toString())) {
-                result = options.fn(options.context);
-            } else {
-                result = null;
-            }
-
-            return result;
-        });
-        handlebars.registerHelper("isNotNull", (object, options) -> {
-            CharSequence result;
-            if (object != null) {
-                result = options.fn(options.context);
-            } else {
-                result = null;
-            }
-            return result;
-        });
-        handlebars.registerHelper("isNull", (object, options) -> {
-            CharSequence result;
-            if (object == null) {
-                result = options.fn(options.context);
-            } else {
-                result = null;
-            }
-            return result;
-        });
-        handlebars.registerHelper("literal", (object, options) -> {
-            if (object instanceof String) {
-                return object;
-            }
-            return "";
-        });
-        // This is enable nested messages. There won't be any infinite scenarios in nested messages.
-        handlebars.infiniteLoops(true);
-        try {
-            return handlebars.compile(templateName);
-        } catch (FileNotFoundException e) {
-            throw new CodeBuilderException("Code generation template file does not exist. " + e.getMessage(), e);
-        } catch (IOException e) {
-            throw new CodeBuilderException("IO error while compiling the template file. " + e.getMessage(), e);
         }
     }
 
