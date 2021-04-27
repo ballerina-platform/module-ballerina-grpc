@@ -21,9 +21,9 @@ import java.nio.file.Paths;
 public class SyntaxTreeGenTest {
 
     private static final Path RES_DIR = Paths.get("src/test/resources/").toAbsolutePath();
-    private Path tempDir;
-    private Path inputDir;
-    private Path outputDir;
+    private static Path tempDir;
+    private static Path inputDir;
+    private static Path outputDir;
 
     @BeforeMethod
     public void setup() throws IOException {
@@ -34,29 +34,7 @@ public class SyntaxTreeGenTest {
 
     @Test(description = "Generate syntax tree")
     public void testHelloWorld() {
-        Path protoFilePath = inputDir.resolve("helloWorld.proto");
-        Path expectedOutPath = outputDir.resolve("helloWorld_pb.bal");
-        Path outputDirPath = tempDir.resolve("stubs");
-        Path actualOutPath = outputDirPath.resolve("helloWorld_pb.bal");
-        generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), "");
-
-        Assert.assertTrue(Files.exists(outputDirPath.resolve("helloWorld_pb.bal")));
-        String expectedContent = null;
-        try {
-            expectedContent = Files.readString(expectedOutPath);
-        } catch (IOException e) {
-           Assert.fail("failed to read content of expected bal file", e);
-        }
-        String actualContent = null;
-        try {
-            actualContent = Files.readString(actualOutPath);
-        } catch (IOException e) {
-            Assert.fail("failed to read content of actual bal file", e);
-        }
-        TextDocument textDocument = TextDocuments.from(actualContent);
-        Assert.assertFalse(SyntaxTree.from(textDocument).hasDiagnostics());
-
-//        Assert.assertEquals(actualContent, expectedContent);
+        assertOutput("helloWorld.proto", "helloWorld_pb.bal", "");
     }
 
     private static void generateSourceCode(String sProtoFilePath, String sOutputDirPath, String mode) {
@@ -76,5 +54,35 @@ public class SyntaxTreeGenTest {
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void assertOutput(String input, String output, String mode) {
+        Path protoFilePath = inputDir.resolve(input);
+        Path expectedOutPath = outputDir.resolve(output);
+        Path outputDirPath = tempDir.resolve("stubs");
+        Path actualOutPath = outputDirPath.resolve(output);
+
+        generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), mode);
+
+        Assert.assertTrue(Files.exists(actualOutPath));
+        String expectedContent = null;
+        try {
+            expectedContent = Files.readString(expectedOutPath);
+        } catch (IOException e) {
+            Assert.fail("failed to read content of expected bal file", e);
+        }
+        String actualContent = null;
+        try {
+            actualContent = Files.readString(actualOutPath);
+        } catch (IOException e) {
+            Assert.fail("failed to read content of actual bal file", e);
+        }
+        TextDocument textDocument = TextDocuments.from(actualContent);
+        Assert.assertFalse(SyntaxTree.from(textDocument).hasDiagnostics());
+
+        Assert.assertEquals(
+                actualContent.replaceAll("\\s+", ""),
+                expectedContent.replaceAll("\\s+", "")
+        );
     }
 }
