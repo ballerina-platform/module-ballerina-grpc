@@ -88,7 +88,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils
  *
  * @since 0.8.0
  */
-public class SyntaxTreeGen {
+public class SyntaxTreeGenerator {
 
     public static SyntaxTree generateSyntaxTree(StubFile stubFile) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
