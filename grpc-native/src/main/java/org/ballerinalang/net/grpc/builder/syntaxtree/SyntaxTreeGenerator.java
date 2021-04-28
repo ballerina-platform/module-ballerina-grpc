@@ -93,9 +93,11 @@ public class SyntaxTreeGenerator {
     public static SyntaxTree generateSyntaxTree(StubFile stubFile) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
-        // Todo: remove imports if there arent any services
-        ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
-        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createNodeList(importForGrpc);
+        NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
+        if (stubFile.getStubList().size() > 0) {
+            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
+            imports = AbstractNodeFactory.createNodeList(importForGrpc);
+        }
 
         for (ServiceStub service : stubFile.getStubList()) {
             List<Class> clientStreamingClasses = new ArrayList<>();
