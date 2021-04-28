@@ -33,11 +33,11 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.TMP_DIRECTORY_PATH;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.DESC_SUFFIX;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.GOOGLE_STANDARD_LIB_API;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.GOOGLE_STANDARD_LIB_PROTOBUF;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.PROTO_SUFFIX;
+import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.TMP_DIRECTORY_PATH;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.generateDescriptor;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.isWindows;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.resolveProtoFolderPath;

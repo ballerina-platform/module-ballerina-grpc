@@ -31,8 +31,4 @@ public class GrpcServerException extends Exception {
     public GrpcServerException(String message) {
         super(message);
     }
-
-    public GrpcServerException(Throwable throwable) {
-        super(throwable);
-    }
 }
