@@ -46,7 +46,9 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.Service;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_SERVICE;
@@ -168,8 +170,8 @@ public class SyntaxTreeGen {
                 getParameterizedTypeDescriptorNode("map", SYNTAX_TREE_VAR_STRING)
         );
         Map descriptorMap = new Map();
-        for (Descriptor descriptor : stubFile.getDescriptors()) {
-            descriptorMap.addStringField(descriptor.getKey(), descriptor.getData());
+        for (java.util.Map.Entry<String, String> descriptor : getSortedDescriptorMap(stubFile).entrySet()) {
+            descriptorMap.addStringField(descriptor.getKey(), descriptor.getValue());
         }
         getDescriptorMap.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
         getDescriptorMap.addQualifiers(new String[]{"isolated"});
@@ -286,5 +288,14 @@ public class SyntaxTreeGen {
         );
         function.addQualifiers(new String[]{"public", "isolated"});
         return function;
+    }
+
+    private static java.util.Map<String, String> getSortedDescriptorMap(StubFile stubFile) {
+        java.util.Map<String, String> map = new HashMap<>();
+
+        for (Descriptor descriptor : stubFile.getDescriptors()) {
+            map.put(descriptor.getKey(), descriptor.getData());
+        }
+        return new TreeMap<>(map);
     }
 }
