@@ -32,7 +32,7 @@ import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.stub.ServiceFile;
 import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
 import org.ballerinalang.net.grpc.builder.stub.StubFile;
-import org.ballerinalang.net.grpc.builder.syntaxtree.SyntaxTreeGen;
+import org.ballerinalang.net.grpc.builder.syntaxtree.SyntaxTreeGenerator;
 import org.ballerinalang.net.grpc.exception.CodeBuilderException;
 import org.ballerinalang.net.grpc.exception.GrpcServerException;
 import org.ballerinalang.net.grpc.proto.definition.EmptyMessage;
@@ -205,17 +205,17 @@ public class BallerinaFileBuilder {
                 if (GRPC_SERVICE.equals(mode)) {
                     String serviceFilePath = generateOutputFile(this.balOutPath, serviceStub.getServiceName() +
                             SAMPLE_SERVICE_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(serviceStub, mode), serviceFilePath);
+                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(serviceStub, mode), serviceFilePath);
                 }
                 if (GRPC_CLIENT.equals(mode)) {
                     String clientFilePath = generateOutputFile(this.balOutPath,
                             serviceStub.getServiceName() + SAMPLE_FILE_PREFIX
                     );
-                    writeOutputFile(SyntaxTreeGen.generateSyntaxTree(serviceStub, mode), clientFilePath);
+                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(serviceStub, mode), clientFilePath);
                 }
             }
             String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-            writeOutputFile(SyntaxTreeGen.generateSyntaxTree(stubFileObject), stubFilePath);
+            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(stubFileObject), stubFilePath);
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error which reading proto file descriptor. " + e.getMessage(), e);
         }
