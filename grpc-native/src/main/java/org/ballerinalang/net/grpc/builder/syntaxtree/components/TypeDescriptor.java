@@ -94,15 +94,20 @@ public class TypeDescriptor {
     public static BuiltinSimpleNameReferenceNode getBuiltinSimpleNameReferenceNode(String name) {
         SyntaxKind kind;
         switch (name) {
-            // Todo: check for float
             case "int":
                 kind = SyntaxKind.INT_TYPE_DESC;
                 break;
-            case "var":
-                kind = SyntaxKind.VAR_TYPE_DESC;
+            case "float":
+                kind = SyntaxKind.DECIMAL_TYPE_DESC;
                 break;
             case "boolean":
                 kind = SyntaxKind.BOOLEAN_TYPE_DESC;
+                break;
+            case "byte":
+                kind = SyntaxKind.BYTE_TYPE_DESC;
+                break;
+            case "var":
+                kind = SyntaxKind.VAR_TYPE_DESC;
                 break;
             default:
                 kind = SyntaxKind.STRING_TYPE_DESC;

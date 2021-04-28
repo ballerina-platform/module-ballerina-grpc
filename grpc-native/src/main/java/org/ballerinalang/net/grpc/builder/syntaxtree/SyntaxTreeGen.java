@@ -93,6 +93,7 @@ public class SyntaxTreeGen {
     public static SyntaxTree generateSyntaxTree(StubFile stubFile) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
+        // Todo: remove imports if there arent any services
         ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
         NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createNodeList(importForGrpc);
 
