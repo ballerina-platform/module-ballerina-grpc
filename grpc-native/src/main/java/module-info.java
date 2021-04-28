@@ -39,7 +39,6 @@ module io.ballerina.stdlib.grpc {
     exports org.ballerinalang.net.grpc.nativeimpl;
     exports org.ballerinalang.net.grpc.nativeimpl.caller;
     exports org.ballerinalang.net.grpc.nativeimpl.client;
-    exports org.ballerinalang.net.grpc.nativeimpl.headers;
     exports org.ballerinalang.net.grpc.nativeimpl.serviceendpoint;
     exports org.ballerinalang.net.grpc.nativeimpl.streamingclient;
 }

@@ -38,11 +38,11 @@ import static org.ballerinalang.net.grpc.protobuf.cmd.SupportOSTypes.WINDOWS;
  * Class for detecting the system operating system version and type.
  * Ref : https://github.com/trustin/os-maven-plugin/blob/master/src/main/java/kr/motd/maven/os/Detector.java
  */
-public abstract class OSDetector {
+abstract class OSDetector {
     
     private static final String UNKNOWN = "unknown";
     
-    public static String getDetectedClassifier() {
+    static String getDetectedClassifier() {
         
         final String osName = System.getProperty(OS_NAME_SYSTEM_PROPERTY);
         final String osArch = System.getProperty(OS_ARCH_SYSTEM_PROPERTY);
