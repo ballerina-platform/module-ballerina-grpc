@@ -48,7 +48,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
@@ -193,66 +192,69 @@ public class ClientUtils {
                         SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                 )
         );
+        VariableDeclaration response = new VariableDeclaration(
+                getTypedBindingPatternNode(
+                        getBuiltinSimpleNameReferenceNode("var"),
+                        getCaptureBindingPatternNode("response")
+                ),
+                getCheckExpressionNode(
+                        getRemoteMethodCallActionNode(
+                                getFieldAccessExpressionNode("self", "sClient"),
+                                "receive",
+                                new String[]{}
+                        )
+                )
+        );
+        function.addVariableStatement(response.getVariableDeclarationNode());
+        IfElse responseCheck = new IfElse(
+                getTypeTestExpressionNode(
+                        getSimpleNameReferenceNode("response"),
+                        getNilTypeDescriptorNode()
+                )
+        );
+        responseCheck.addIfStatement(
+                getReturnStatementNode(
+                        getSimpleNameReferenceNode("response")
+                )
+        );
+        responseCheck.addElseStatement(
+                new VariableDeclaration(
+                        receiveArgsPattern,
+                        getSimpleNameReferenceNode("response")
+                ).getVariableDeclarationNode()
+        );
+        Map returnMap = new Map();
         if (method.getOutputType().equals("string")) {
-            VariableDeclaration receive = new VariableDeclaration(
-                    receiveArgsPattern,
-                    getCheckExpressionNode(
-                            getRemoteMethodCallActionNode(
-                                    getFieldAccessExpressionNode("self", "sClient"),
-                                    "receive", new String[]{}
-                            )
-                    )
+            returnMap.addMethodCallField(
+                    "content",
+                    getSimpleNameReferenceNode("payload"),
+                    "toString",
+                    new String[]{}
             );
-            function.addVariableStatement(receive.getVariableDeclarationNode());
-            function.addReturnStatement(
-                    getMethodCallExpressionNode(
-                            getSimpleNameReferenceNode("payload"),
-                            "toString",
-                            new String[]{}
-                    )
-            );
-        } else {
-            VariableDeclaration response = new VariableDeclaration(
-                    getTypedBindingPatternNode(
-                            getBuiltinSimpleNameReferenceNode("var"),
-                            getCaptureBindingPatternNode("response")
-                    ),
-                    getCheckExpressionNode(
-                            getRemoteMethodCallActionNode(
-                                    getFieldAccessExpressionNode("self", "sClient"),
-                                    "receive",
+            returnMap.addSimpleNameReferenceField("headers", "headers");
+            responseCheck.addElseStatement(
+                    getReturnStatementNode(
+                            getMethodCallExpressionNode(
+                                    getSimpleNameReferenceNode("payload"),
+                                    "toString",
                                     new String[]{}
                             )
                     )
             );
-            function.addVariableStatement(response.getVariableDeclarationNode());
-            IfElse responseCheck = new IfElse(
-                    getTypeTestExpressionNode(
-                            getSimpleNameReferenceNode("response"),
-                            getNilTypeDescriptorNode()
-                    )
+        } else {
+            returnMap.addTypeCastExpressionField(
+                    "content",
+                    method.getOutputType(),
+                    getSimpleNameReferenceNode("payload")
             );
-            responseCheck.addIfStatement(
-                    getReturnStatementNode(
-                            getSimpleNameReferenceNode("response")
-                    )
-            );
-            responseCheck.addElseStatement(
-                    new VariableDeclaration(
-                            receiveArgsPattern,
-                            getSimpleNameReferenceNode("response")
-                    ).getVariableDeclarationNode()
-            );
+            returnMap.addSimpleNameReferenceField("headers", "headers");
             responseCheck.addElseStatement(
                     getReturnStatementNode(
-                            getTypeCastExpressionNode(
-                                    method.getOutputType(),
-                                    getSimpleNameReferenceNode("payload")
-                            )
+                            returnMap.getMappingConstructorExpressionNode()
                     )
             );
-            function.addIfElseStatement(responseCheck.getIfElseStatementNode());
         }
+        function.addIfElseStatement(responseCheck.getIfElseStatementNode());
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
     }
@@ -276,72 +278,60 @@ public class ClientUtils {
                         SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                 )
         );
+        VariableDeclaration response = new VariableDeclaration(
+                getTypedBindingPatternNode(
+                        getBuiltinSimpleNameReferenceNode("var"),
+                        getCaptureBindingPatternNode("response")
+                ),
+                getCheckExpressionNode(
+                        getRemoteMethodCallActionNode(
+                                getFieldAccessExpressionNode("self", "sClient"),
+                                "receive",
+                                new String[]{}
+                        )
+                )
+        );
+        function.addVariableStatement(response.getVariableDeclarationNode());
+        IfElse responseCheck = new IfElse(
+                getTypeTestExpressionNode(
+                        getSimpleNameReferenceNode("response"),
+                        getNilTypeDescriptorNode()
+                )
+        );
+        responseCheck.addIfStatement(
+                getReturnStatementNode(
+                        getSimpleNameReferenceNode("response")
+                )
+        );
+        responseCheck.addElseStatement(
+                new VariableDeclaration(
+                        receiveArgsPattern,
+                        getSimpleNameReferenceNode("response")
+                ).getVariableDeclarationNode()
+        );
+        Map returnMap = new Map();
         if (method.getOutputType().equals("string")) {
-            VariableDeclaration receive = new VariableDeclaration(
-                    receiveArgsPattern,
-                    getCheckExpressionNode(
-                            getRemoteMethodCallActionNode(
-                                    getFieldAccessExpressionNode("self", "sClient"),
-                                    "receive", new String[]{}
-                            )
-                    )
-            );
-            function.addVariableStatement(receive.getVariableDeclarationNode());
-            Map returnMap = new Map();
             returnMap.addMethodCallField(
                     "content",
                     getSimpleNameReferenceNode("payload"),
                     "toString",
                     new String[]{}
             );
-            returnMap.addSimpleNameReferenceField("headers", "headers");
-            function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
         } else {
-            VariableDeclaration response = new VariableDeclaration(
-                    getTypedBindingPatternNode(
-                            getBuiltinSimpleNameReferenceNode("var"),
-                            getCaptureBindingPatternNode("response")
-                    ),
-                    getCheckExpressionNode(
-                            getRemoteMethodCallActionNode(
-                                    getFieldAccessExpressionNode("self", "sClient"),
-                                    "receive",
-                                    new String[]{}
-                            )
-                    )
-            );
-            function.addVariableStatement(response.getVariableDeclarationNode());
-            IfElse responseCheck = new IfElse(
-                    getTypeTestExpressionNode(
-                            getSimpleNameReferenceNode("response"),
-                            getNilTypeDescriptorNode()
-                    )
-            );
-            responseCheck.addIfStatement(
-                    getReturnStatementNode(
-                            getSimpleNameReferenceNode("response")
-                    )
-            );
-            responseCheck.addElseStatement(
-                    new VariableDeclaration(
-                            receiveArgsPattern,
-                            getSimpleNameReferenceNode("response")
-                    ).getVariableDeclarationNode()
-            );
-            Map returnMap = new Map();
             returnMap.addTypeCastExpressionField(
                     "content",
                     method.getOutputType(),
                     getSimpleNameReferenceNode("payload")
             );
             returnMap.addSimpleNameReferenceField("headers", "headers");
-            responseCheck.addElseStatement(
-                    getReturnStatementNode(
-                            returnMap.getMappingConstructorExpressionNode()
-                    )
-            );
-            function.addIfElseStatement(responseCheck.getIfElseStatementNode());
         }
+        returnMap.addSimpleNameReferenceField("headers", "headers");
+        responseCheck.addElseStatement(
+                getReturnStatementNode(
+                        returnMap.getMappingConstructorExpressionNode()
+                )
+        );
+        function.addIfElseStatement(responseCheck.getIfElseStatementNode());
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
     }
