@@ -161,9 +161,11 @@ public class SyntaxTreeGenerator {
         }
 
         // ROOT_DESCRIPTOR
-        Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor(),
-                false);
-        moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
+        if (stubFile.getRootDescriptor() != null) {
+            Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor(),
+                    false);
+            moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
+        }
 
         // getDescriptorMap function
         Function getDescriptorMap = new Function("getDescriptorMap");
