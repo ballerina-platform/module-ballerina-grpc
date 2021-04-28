@@ -168,17 +168,19 @@ public class SyntaxTreeGenerator {
         }
 
         // getDescriptorMap function
-        Function getDescriptorMap = new Function("getDescriptorMap");
-        getDescriptorMap.addReturns(
-                getParameterizedTypeDescriptorNode("map", SYNTAX_TREE_VAR_STRING)
-        );
-        Map descriptorMap = new Map();
-        for (java.util.Map.Entry<String, String> descriptor : getSortedDescriptorMap(stubFile).entrySet()) {
-            descriptorMap.addStringField(descriptor.getKey(), descriptor.getValue());
+        if (stubFile.getDescriptors().size() > 0) {
+            Function getDescriptorMap = new Function("getDescriptorMap");
+            getDescriptorMap.addReturns(
+                    getParameterizedTypeDescriptorNode("map", SYNTAX_TREE_VAR_STRING)
+            );
+            Map descriptorMap = new Map();
+            for (java.util.Map.Entry<String, String> descriptor : getSortedDescriptorMap(stubFile).entrySet()) {
+                descriptorMap.addStringField(descriptor.getKey(), descriptor.getValue());
+            }
+            getDescriptorMap.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
+            getDescriptorMap.addQualifiers(new String[]{"isolated"});
+            moduleMembers = moduleMembers.add(getDescriptorMap.getFunctionDefinitionNode());
         }
-        getDescriptorMap.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
-        getDescriptorMap.addQualifiers(new String[]{"isolated"});
-        moduleMembers = moduleMembers.add(getDescriptorMap.getFunctionDefinitionNode());
 
         Token eofToken = AbstractNodeFactory.createIdentifierToken("");
         ModulePartNode modulePartNode = NodeFactory.createModulePartNode(imports, moduleMembers, eofToken);
