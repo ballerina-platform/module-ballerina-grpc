@@ -52,8 +52,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalizeFirstLetter;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.toPascalCase;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 
 /**
@@ -113,7 +113,7 @@ public class MessageUtils {
                     }
                     break;
                 case "byte[]":
-                    messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
+                    messageRecord.addArrayFieldWithDefaultValue("byte", field.getFieldName());
                     break;
                 default:
                     if (field.getFieldLabel() == null) {
@@ -139,7 +139,7 @@ public class MessageUtils {
                             }
                             break;
                         case "byte[]":
-                            messageRecord.addOptionalArrayField(field.getFieldType(), field.getFieldName());
+                            messageRecord.addOptionalArrayField("byte", field.getFieldName());
                             break;
                         default:
                             if (field.getFieldLabel() == null) {
@@ -245,11 +245,7 @@ public class MessageUtils {
     }
 
     private static Function getOneOfFieldSetFunction(String messageName, Field field, List<Field> fields) {
-        StringBuilder functionName = new StringBuilder("set" + messageName + "_");
-        for (String s : field.getFieldName().split("_")) {
-            functionName.append(capitalize(s));
-        }
-        Function function = new Function(functionName.toString());
+        Function function = new Function("set" + messageName + "_" + toPascalCase(field.getFieldName()));
         function.addRequiredParameter(getSimpleNameReferenceNode(messageName), "r");
         function.addRequiredParameter(
                 getBuiltinSimpleNameReferenceNode(field.getFieldType()),
@@ -269,7 +265,7 @@ public class MessageUtils {
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("r"),
                                 "removeIfHasKey",
-                                new String[]{"\"" + oneOfField.getFieldName() + "\""}
+                                new String[]{"\"" + oneOfField.getFieldName().replaceAll("'", "") + "\""}
                         )
                 );
             }
