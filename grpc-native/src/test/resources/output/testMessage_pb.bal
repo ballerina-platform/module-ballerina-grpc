@@ -1,5 +1,3 @@
-import ballerina/grpc;
-
 public type Test1 record {|
     string name = "";
 |};
