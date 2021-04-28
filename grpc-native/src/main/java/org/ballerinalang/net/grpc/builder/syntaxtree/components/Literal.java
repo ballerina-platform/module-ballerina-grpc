@@ -41,6 +41,17 @@ public class Literal {
         );
     }
 
+    public static BasicLiteralNode getNumericLiteralNode(float value) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.NUMERIC_LITERAL,
+                NodeFactory.createLiteralValueToken(
+                        SyntaxKind.DECIMAL_FLOATING_POINT_LITERAL_TOKEN,
+                        String.valueOf(value), NodeFactory.createEmptyMinutiaeList(),
+                        NodeFactory.createEmptyMinutiaeList()
+                )
+        );
+    }
+
     public static BasicLiteralNode getStringLiteralNode(String value) {
         return NodeFactory.createBasicLiteralNode(
                 SyntaxKind.STRING_LITERAL,

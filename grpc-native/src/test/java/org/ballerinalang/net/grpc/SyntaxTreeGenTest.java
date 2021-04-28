@@ -97,6 +97,11 @@ public class SyntaxTreeGenTest {
         assertOutput("message.proto", "message_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a protobuf definition file with message types with all field types")
+    public void testTestMessage() {
+        assertOutput("testMessage.proto", "testMessage_pb.bal", "");
+    }
+
     @Test(description = "Tests the output for a protobuf definition file with dependency")
     public void testHelloWorldWithDependency() {
         assertOutput("helloWorldWithDependency.proto", "helloWorldWithDependency_pb.bal", "");
