@@ -42,6 +42,11 @@ public class SyntaxTreeGenTest {
         assertOutput("helloWorldClientStreaming.proto", "helloWorldClientStreaming_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a client streaming protobuf definition with string input/output types")
+    public void testHelloWorldClientStreamingString() {
+        assertOutput("helloWorldClientStreamingString.proto", "helloWorldClientStreamingString_pb.bal", "");
+    }
+
     @Test(description = "Tests the output for a protobuf definition file with syntax errors")
     public void testHelloWorldErrorSyntax() {
         assertOutputNegative("helloWorldErrorSyntax.proto", "helloWorldClientStreaming_pb.bal", "");
@@ -55,6 +60,11 @@ public class SyntaxTreeGenTest {
     @Test(description = "Tests the output for a unary protobuf definition file of string types")
     public void testHelloWorldString() {
         assertOutput("helloWorldString.proto", "helloWorldString_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with dependency")
+    public void testHelloWorldWithDependency() {
+        assertOutput("helloWorldWithDependency.proto", "helloWorldWithDependency_pb.bal", "");
     }
 
     @Test(description = "Tests the output for a protobuf definition file with enum types")
@@ -105,11 +115,6 @@ public class SyntaxTreeGenTest {
     @Test(description = "Tests the output for a protobuf definition file with message types with all field types")
     public void testTestMessage() {
         assertOutput("testMessage.proto", "testMessage_pb.bal", "");
-    }
-
-    @Test(description = "Tests the output for a protobuf definition file with dependency")
-    public void testHelloWorldWithDependency() {
-        assertOutput("helloWorldWithDependency.proto", "helloWorldWithDependency_pb.bal", "");
     }
 
     private static void generateSourceCode(String sProtoFilePath, String sOutputDirPath, String mode) {
