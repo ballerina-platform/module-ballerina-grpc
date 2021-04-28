@@ -163,13 +163,18 @@ public class Record {
 
     public void addBasicFieldWithDefaultValue(String fieldType, String fieldName, String defaultValue) {
         ExpressionNode expressionNode;
-        // Todo: check for float
-        if (fieldType.equals("int")) {
-            expressionNode = getNumericLiteralNode(Integer.parseInt(defaultValue));
-        } else if (fieldType.equals("boolean")) {
-            expressionNode = getBooleanLiteralNode(Boolean.parseBoolean(defaultValue));
-        } else {
-            expressionNode = getStringLiteralNode(defaultValue);
+        switch (fieldType) {
+            case "int":
+                expressionNode = getNumericLiteralNode(Integer.parseInt(defaultValue));
+                break;
+            case "float":
+                expressionNode = getNumericLiteralNode(Float.parseFloat(defaultValue));
+                break;
+            case "boolean":
+                expressionNode = getBooleanLiteralNode(Boolean.parseBoolean(defaultValue));
+                break;
+            default:
+                expressionNode = getStringLiteralNode(defaultValue);
         }
         fields = fields.add(
                 NodeFactory.createRecordFieldWithDefaultValueNode(

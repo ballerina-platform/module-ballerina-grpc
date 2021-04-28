@@ -105,15 +105,23 @@ public class MessageUtils {
                 case "int":
                 case "float":
                 case "boolean":
-                    messageRecord.addBasicFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
-                            field.getDefaultValue());
+                    if (field.getFieldLabel() == null) {
+                        messageRecord.addBasicFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
+                                field.getDefaultValue());
+                    } else {
+                        messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
+                    }
                     break;
                 case "byte[]":
                     messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
                     break;
                 default:
-                    messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
-                            field.getDefaultValue());
+                    if (field.getFieldLabel() == null) {
+                        messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
+                                field.getDefaultValue());
+                    } else {
+                        messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
+                    }
             }
         }
         if (message.getOneofFieldMap() != null) {
@@ -124,13 +132,21 @@ public class MessageUtils {
                         case "int":
                         case "float":
                         case "boolean":
-                            messageRecord.addOptionalBasicField(field.getFieldType(), field.getFieldName());
+                            if (field.getFieldLabel() == null) {
+                                messageRecord.addOptionalBasicField(field.getFieldType(), field.getFieldName());
+                            } else {
+                                messageRecord.addOptionalArrayField(field.getFieldType(), field.getFieldName());
+                            }
                             break;
                         case "byte[]":
                             messageRecord.addOptionalArrayField(field.getFieldType(), field.getFieldName());
                             break;
                         default:
-                            messageRecord.addOptionalCustomField(field.getFieldType(), field.getFieldName());
+                            if (field.getFieldLabel() == null) {
+                                messageRecord.addOptionalCustomField(field.getFieldType(), field.getFieldName());
+                            } else {
+                                messageRecord.addOptionalArrayField(field.getFieldType(), field.getFieldName());
+                            }
                     }
                 }
             }
