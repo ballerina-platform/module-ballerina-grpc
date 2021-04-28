@@ -48,6 +48,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
@@ -223,15 +224,7 @@ public class ClientUtils {
                         getSimpleNameReferenceNode("response")
                 ).getVariableDeclarationNode()
         );
-        Map returnMap = new Map();
         if (method.getOutputType().equals("string")) {
-            returnMap.addMethodCallField(
-                    "content",
-                    getSimpleNameReferenceNode("payload"),
-                    "toString",
-                    new String[]{}
-            );
-            returnMap.addSimpleNameReferenceField("headers", "headers");
             responseCheck.addElseStatement(
                     getReturnStatementNode(
                             getMethodCallExpressionNode(
@@ -242,15 +235,12 @@ public class ClientUtils {
                     )
             );
         } else {
-            returnMap.addTypeCastExpressionField(
-                    "content",
-                    method.getOutputType(),
-                    getSimpleNameReferenceNode("payload")
-            );
-            returnMap.addSimpleNameReferenceField("headers", "headers");
             responseCheck.addElseStatement(
                     getReturnStatementNode(
-                            returnMap.getMappingConstructorExpressionNode()
+                            getTypeCastExpressionNode(
+                                    method.getOutputType(),
+                                    getSimpleNameReferenceNode("payload")
+                            )
                     )
             );
         }
@@ -323,7 +313,6 @@ public class ClientUtils {
                     method.getOutputType(),
                     getSimpleNameReferenceNode("payload")
             );
-            returnMap.addSimpleNameReferenceField("headers", "headers");
         }
         returnMap.addSimpleNameReferenceField("headers", "headers");
         responseCheck.addElseStatement(
