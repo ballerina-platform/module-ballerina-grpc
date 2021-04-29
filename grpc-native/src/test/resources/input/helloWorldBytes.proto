@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+package grpcservices;
+
+service byteService {
+	rpc checkBytes (google.protobuf.BytesValue)
+			returns (google.protobuf.BytesValue);
+}
