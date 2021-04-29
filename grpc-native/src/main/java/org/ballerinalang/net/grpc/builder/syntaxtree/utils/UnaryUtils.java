@@ -62,7 +62,7 @@ public class UnaryUtils {
     public static Function getUnaryFunction(Method method) {
         Function function = new Function(method.getMethodName());
         function.addQualifiers(new String[]{"isolated", "remote"});
-        String inputCap = "nil";
+        String inputCap = "Nil";
         if (method.getInputType() != null) {
             inputCap = capitalize(method.getInputType());
             function.addRequiredParameter(
@@ -90,21 +90,21 @@ public class UnaryUtils {
             );
         }
         addUnaryBody(function, inputCap, method);
-        SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
-                getBuiltinSimpleNameReferenceNode("anydata"),
-                SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getParameterizedTypeDescriptorNode(
-                        "map",
-                        getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
-        );
-        VariableDeclaration payload = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        getTupleTypeDescriptorNode(payloadArgs),
-                        getListBindingPatternNode(new String[]{"result", "_"})),
-                getSimpleNameReferenceNode("payload")
-        );
-        function.addVariableStatement(payload.getVariableDeclarationNode());
         if (method.getOutputType() != null) {
+            SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
+                    getBuiltinSimpleNameReferenceNode("anydata"),
+                    SyntaxTreeConstants.SYNTAX_TREE_COMMA,
+                    getParameterizedTypeDescriptorNode(
+                            "map",
+                            getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
+            );
+            VariableDeclaration payload = new VariableDeclaration(
+                    getTypedBindingPatternNode(
+                            getTupleTypeDescriptorNode(payloadArgs),
+                            getListBindingPatternNode(new String[]{"result", "_"})),
+                    getSimpleNameReferenceNode("payload")
+            );
+            function.addVariableStatement(payload.getVariableDeclarationNode());
             addUnaryFunctionReturnStatement(function, method);
         }
         return function;
@@ -113,8 +113,8 @@ public class UnaryUtils {
     public static Function getUnaryContextFunction(Method method) {
         Function function = new Function(method.getMethodName() + "Context");
         function.addQualifiers(new String[]{"isolated", "remote"});
-        String inputCap = "nil";
-        String outCap = "nil";
+        String inputCap = "Nil";
+        String outCap = "Nil";
         if (method.getInputType() != null) {
             inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
             function.addRequiredParameter(
@@ -151,13 +151,22 @@ public class UnaryUtils {
                 getSimpleNameReferenceNode("payload")
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());
-        if (method.getOutputType() != null) {
-            addUnaryContextFunctionReturnStatement(function, method);
-        }
+        addUnaryContextFunctionReturnStatement(function, method);
         return function;
     }
 
     private static void addUnaryBody(Function function, String inputCap, Method method) {
+        if (method.getInputType() == null) {
+            Map empty = new Map();
+            VariableDeclaration message = new VariableDeclaration(
+                    getTypedBindingPatternNode(
+                            getSimpleNameReferenceNode("Empty"),
+                            getCaptureBindingPatternNode("message")
+                    ),
+                    empty.getMappingConstructorExpressionNode()
+            );
+            function.addVariableStatement(message.getVariableDeclarationNode());
+        }
         VariableDeclaration headers = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getParameterizedTypeDescriptorNode(
@@ -243,18 +252,20 @@ public class UnaryUtils {
 
     private static void addUnaryContextFunctionReturnStatement(Function function, Method method) {
         Map returnMap = new Map();
-        if (method.getOutputType().equals("string")) {
-            returnMap.addMethodCallField(
-                    "content",
-                    getSimpleNameReferenceNode("result"),
-                    "toString",
-                    new String[]{}
-            );
-        } else {
-            returnMap.addTypeCastExpressionField(
-                    "content",
-                    method.getOutputType(),
-                    getSimpleNameReferenceNode("result"));
+        if (method.getOutputType() != null) {
+            if (method.getOutputType().equals("string")) {
+                returnMap.addMethodCallField(
+                        "content",
+                        getSimpleNameReferenceNode("result"),
+                        "toString",
+                        new String[]{}
+                );
+            } else {
+                returnMap.addTypeCastExpressionField(
+                        "content",
+                        method.getOutputType(),
+                        getSimpleNameReferenceNode("result"));
+            }
         }
         returnMap.addSimpleNameReferenceField("headers", "respHeaders");
         function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
