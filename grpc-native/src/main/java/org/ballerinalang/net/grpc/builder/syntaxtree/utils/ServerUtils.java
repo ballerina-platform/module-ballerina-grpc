@@ -71,7 +71,12 @@ public class ServerUtils {
                     "req"
             );
         }
-        String outCap = capitalize(method.getOutputType());
+        String outCap;
+        if (method.getOutputType().equals("byte[]")) {
+            outCap = "Bytes";
+        } else {
+            outCap = capitalize(method.getOutputType());
+        }
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
@@ -103,7 +108,12 @@ public class ServerUtils {
                     "req"
             );
         }
-        String outputCap = capitalize(method.getOutputType());
+        String outputCap;
+        if (method.getOutputType().equals("byte[]")) {
+            outputCap = "Bytes";
+        } else {
+            outputCap = capitalize(method.getOutputType());
+        }
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getSimpleNameReferenceNode("Context" + outputCap + "Stream"),
@@ -129,8 +139,13 @@ public class ServerUtils {
     }
 
     public static Class getServerStreamClass(Method method) {
-        String outCap = capitalize(method.getOutputType());
-        Class serverStream = new Class(outCap + "Stream", true);
+        String outputCap;
+        if (method.getOutputType().equals("byte[]")) {
+            outputCap = "Bytes";
+        } else {
+            outputCap = capitalize(method.getOutputType());
+        }
+        Class serverStream = new Class(outputCap + "Stream", true);
 
         serverStream.addMember(
                 getObjectFieldNode(

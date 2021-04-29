@@ -83,7 +83,12 @@ public class CallerUtils {
         caller.addMember(getId.getFunctionDefinitionNode());
 
         if (value != null) {
-            String valueCap = capitalize(value);
+            String valueCap;
+            if (value.equals("byte[]")) {
+                valueCap = "Bytes";
+            } else {
+                valueCap = capitalize(value);
+            }
             Function send = new Function("send" + valueCap);
             send.addRequiredParameter(
                     getSimpleNameReferenceNode(value),
