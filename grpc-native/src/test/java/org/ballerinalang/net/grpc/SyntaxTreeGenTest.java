@@ -55,6 +55,11 @@ public class SyntaxTreeGenTest {
         assertOutput("helloWorld.proto", "helloWorld_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a unary protobuf definition file with bytes input/output types")
+    public void testHelloWorldBytes() {
+        assertOutput("helloWorldBytes.proto", "helloWorldBytes_pb.bal", "");
+    }
+
     @Test(description = "Tests the output for a client streaming protobuf definition file")
     public void testHelloWorldClientStreaming() {
         assertOutput("helloWorldClientStreaming.proto", "helloWorldClientStreaming_pb.bal", "");
