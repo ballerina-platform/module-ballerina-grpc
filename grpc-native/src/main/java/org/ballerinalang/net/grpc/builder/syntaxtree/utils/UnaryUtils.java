@@ -47,6 +47,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
@@ -60,7 +61,8 @@ public class UnaryUtils {
 
     public static Function getUnaryFunction(Method method) {
         Function function = new Function(method.getMethodName());
-        String inputCap = null;
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        String inputCap = "nil";
         if (method.getInputType() != null) {
             inputCap = capitalize(method.getInputType());
             function.addRequiredParameter(
@@ -71,14 +73,22 @@ public class UnaryUtils {
                     "req"
             );
         }
-        function.addReturns(
-                getParenthesisedTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getOutputType()),
-                                SYNTAX_TREE_GRPC_ERROR
-                        )
-                )
-        );
+        if (method.getOutputType() != null) {
+            function.addReturns(
+                    getParenthesisedTypeDescriptorNode(
+                            getUnionTypeDescriptorNode(
+                                    getSimpleNameReferenceNode(method.getOutputType()),
+                                    SYNTAX_TREE_GRPC_ERROR
+                            )
+                    )
+            );
+        } else {
+            function.addReturns(
+                    getParenthesisedTypeDescriptorNode(
+                            SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                    )
+            );
+        }
         addUnaryBody(function, inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
@@ -94,15 +104,17 @@ public class UnaryUtils {
                 getSimpleNameReferenceNode("payload")
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());
-        addUnaryFunctionReturnStatement(function, method);
-        function.addQualifiers(new String[]{"isolated", "remote"});
+        if (method.getOutputType() != null) {
+            addUnaryFunctionReturnStatement(function, method);
+        }
         return function;
     }
 
     public static Function getUnaryContextFunction(Method method) {
         Function function = new Function(method.getMethodName() + "Context");
-        String inputCap = "";
-        String outCap = "";
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        String inputCap = "nil";
+        String outCap = "nil";
         if (method.getInputType() != null) {
             inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
             function.addRequiredParameter(
@@ -139,8 +151,9 @@ public class UnaryUtils {
                 getSimpleNameReferenceNode("payload")
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());
-        addUnaryContextFunctionReturnStatement(function, method);
-        function.addQualifiers(new String[]{"isolated", "remote"});
+        if (method.getOutputType() != null) {
+            addUnaryContextFunctionReturnStatement(function, method);
+        }
         return function;
     }
 
