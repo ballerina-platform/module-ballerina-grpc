@@ -34,8 +34,6 @@ import org.ballerinalang.net.grpc.builder.stub.ServiceStub;
 import org.ballerinalang.net.grpc.builder.stub.StubFile;
 import org.ballerinalang.net.grpc.builder.syntaxtree.SyntaxTreeGenerator;
 import org.ballerinalang.net.grpc.exception.CodeBuilderException;
-import org.ballerinalang.net.grpc.exception.GrpcServerException;
-import org.ballerinalang.net.grpc.proto.definition.EmptyMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -64,7 +62,6 @@ import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.SAMPLE_FILE_PREFIX;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.SAMPLE_SERVICE_FILE_PREFIX;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.STUB_FILE_PREFIX;
-import static org.ballerinalang.net.grpc.proto.ServiceProtoConstants.PROTO_FILE_EXTENSION;
 
 /**
  * Class is responsible of generating the ballerina stub which is mapping proto definition.
