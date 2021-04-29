@@ -1,5 +1,3 @@
-import ballerina/grpc;
-
 public type ByeResponse record {|
     string say = "";
 |};

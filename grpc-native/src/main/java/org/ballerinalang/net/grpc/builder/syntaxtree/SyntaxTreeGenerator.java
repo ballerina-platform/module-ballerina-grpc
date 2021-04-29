@@ -88,13 +88,16 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils
  *
  * @since 0.8.0
  */
-public class SyntaxTreeGen {
+public class SyntaxTreeGenerator {
 
     public static SyntaxTree generateSyntaxTree(StubFile stubFile) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
-        ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
-        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createNodeList(importForGrpc);
+        NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
+        if (stubFile.getStubList().size() > 0) {
+            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
+            imports = AbstractNodeFactory.createNodeList(importForGrpc);
+        }
 
         for (ServiceStub service : stubFile.getStubList()) {
             List<Class> clientStreamingClasses = new ArrayList<>();
@@ -160,22 +163,26 @@ public class SyntaxTreeGen {
         }
 
         // ROOT_DESCRIPTOR
-        Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor(),
-                false);
-        moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
+        if (stubFile.getRootDescriptor() != null) {
+            Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor(),
+                    false);
+            moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
+        }
 
         // getDescriptorMap function
-        Function getDescriptorMap = new Function("getDescriptorMap");
-        getDescriptorMap.addReturns(
-                getParameterizedTypeDescriptorNode("map", SYNTAX_TREE_VAR_STRING)
-        );
-        Map descriptorMap = new Map();
-        for (java.util.Map.Entry<String, String> descriptor : getSortedDescriptorMap(stubFile).entrySet()) {
-            descriptorMap.addStringField(descriptor.getKey(), descriptor.getValue());
+        if (stubFile.getDescriptors().size() > 0) {
+            Function getDescriptorMap = new Function("getDescriptorMap");
+            getDescriptorMap.addReturns(
+                    getParameterizedTypeDescriptorNode("map", SYNTAX_TREE_VAR_STRING)
+            );
+            Map descriptorMap = new Map();
+            for (java.util.Map.Entry<String, String> descriptor : getSortedDescriptorMap(stubFile).entrySet()) {
+                descriptorMap.addStringField(descriptor.getKey(), descriptor.getValue());
+            }
+            getDescriptorMap.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
+            getDescriptorMap.addQualifiers(new String[]{"isolated"});
+            moduleMembers = moduleMembers.add(getDescriptorMap.getFunctionDefinitionNode());
         }
-        getDescriptorMap.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
-        getDescriptorMap.addQualifiers(new String[]{"isolated"});
-        moduleMembers = moduleMembers.add(getDescriptorMap.getFunctionDefinitionNode());
 
         Token eofToken = AbstractNodeFactory.createIdentifierToken("");
         ModulePartNode modulePartNode = NodeFactory.createModulePartNode(imports, moduleMembers, eofToken);

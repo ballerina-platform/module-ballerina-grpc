@@ -32,4 +32,13 @@ public class CommonUtils {
     public static String capitalizeFirstLetter(String name) {
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
+
+    public static String toPascalCase(String str) {
+        StringBuilder pascalCaseOutput = new StringBuilder();
+        for (String s : str.split("_")) {
+            s = s.replaceAll("[^a-zA-Z0-9]", "");
+            pascalCaseOutput.append(capitalize(s));
+        }
+        return pascalCaseOutput.toString();
+    }
 }
