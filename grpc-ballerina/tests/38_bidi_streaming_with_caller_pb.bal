@@ -110,7 +110,7 @@ public client class Chat38StringCaller {
 //    stream<string, error?> content;
 //    map<string|string[]> headers;
 //|};
-//
+
 //public type ContextString record {|
 //    string content;
 //    map<string|string[]> headers;

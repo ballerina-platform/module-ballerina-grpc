@@ -106,6 +106,16 @@ public client class ChatStringCaller {
     }
 }
 
+//public type ContextStringStream record {|
+//    stream<string, error?> content;
+//    map<string|string[]> headers;
+//|};
+//
+//public type ContextString record {|
+//    string content;
+//    map<string|string[]> headers;
+//|};
+
 public type ContextChatMessageStream record {|
     stream<ChatMessage, error?> content;
     map<string|string[]> headers;

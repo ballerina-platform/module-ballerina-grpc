@@ -110,7 +110,7 @@ public client class HelloWorld37StringCaller {
 //    stream<string, error?> content;
 //    map<string|string[]> headers;
 //|};
-//
+
 //public type ContextString record {|
 //    string content;
 //    map<string|string[]> headers;

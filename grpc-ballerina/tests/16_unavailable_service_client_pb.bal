@@ -48,7 +48,7 @@ public client class HelloWorld16Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld/hello", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld16/hello", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {
             content: result.toString(),

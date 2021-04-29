@@ -486,10 +486,10 @@ public type ContextSampleMsg24 record {|
 //    map<string|string[]> headers;
 //|};
 
-public type ContextInt record {|
-    int content;
-    map<string|string[]> headers;
-|};
+//public type ContextInt record {|
+//    int content;
+//    map<string|string[]> headers;
+//|};
 
 public type SampleMsg24 record {|
     string name = "";
