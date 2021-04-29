@@ -25,6 +25,7 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaBasicType;
 
 /**
  * Utility functions related to ValueType.
@@ -57,8 +58,12 @@ public class ValueTypeUtils {
         if (key == null) {
             typeName = "ContextNil";
         } else {
-            typeName = "Context" + capitalize(key);
-            if (key.equals("string")) {
+            if (key.equals("byte[]")) {
+                typeName = "ContextBytes";
+            } else {
+                typeName = "Context" + capitalize(key);
+            }
+            if (isBallerinaBasicType(key)) {
                 contextString.addBasicField(key, "content");
             } else {
                 contextString.addCustomField(key, "content");

@@ -65,11 +65,18 @@ public class ServerUtils {
 
     public static Function getServerStreamingFunction(Method method) {
         Function function = new Function(method.getMethodName());
-        String outCap = capitalize(method.getOutputType());
-        function.addRequiredParameter(
-                getSimpleNameReferenceNode(method.getInputType()),
-                "req"
-        );
+        if (method.getInputType() != null) {
+            function.addRequiredParameter(
+                    getSimpleNameReferenceNode(method.getInputType()),
+                    "req"
+            );
+        }
+        String outCap;
+        if (method.getOutputType().equals("byte[]")) {
+            outCap = "Bytes";
+        } else {
+            outCap = capitalize(method.getOutputType());
+        }
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
@@ -94,16 +101,22 @@ public class ServerUtils {
     }
 
     public static Function getServerStreamingContextFunction(Method method) {
-        String inputCap = capitalize(method.getInputType());
-        String outputCap = capitalize(method.getOutputType());
         Function function = new Function(method.getMethodName() + "Context");
-        function.addRequiredParameter(
-                getSimpleNameReferenceNode(method.getInputType()),
-                "req"
-        );
+        if (method.getInputType() != null) {
+            function.addRequiredParameter(
+                    getSimpleNameReferenceNode(method.getInputType()),
+                    "req"
+            );
+        }
+        String outputCap;
+        if (method.getOutputType().equals("byte[]")) {
+            outputCap = "Bytes";
+        } else {
+            outputCap = capitalize(method.getOutputType());
+        }
         function.addReturns(
                 getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode("Context" + inputCap + "Stream"),
+                        getSimpleNameReferenceNode("Context" + outputCap + "Stream"),
                         SYNTAX_TREE_GRPC_ERROR
                 )
         );
@@ -126,8 +139,13 @@ public class ServerUtils {
     }
 
     public static Class getServerStreamClass(Method method) {
-        String outCap = capitalize(method.getOutputType());
-        Class serverStream = new Class(outCap + "Stream", true);
+        String outputCap;
+        if (method.getOutputType().equals("byte[]")) {
+            outputCap = "Bytes";
+        } else {
+            outputCap = capitalize(method.getOutputType());
+        }
+        Class serverStream = new Class(outputCap + "Stream", true);
 
         serverStream.addMember(
                 getObjectFieldNode(

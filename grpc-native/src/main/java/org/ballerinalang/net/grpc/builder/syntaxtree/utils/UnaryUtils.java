@@ -64,7 +64,11 @@ public class UnaryUtils {
         function.addQualifiers(new String[]{"isolated", "remote"});
         String inputCap = "Nil";
         if (method.getInputType() != null) {
-            inputCap = capitalize(method.getInputType());
+            if (method.getInputType().equals("byte[]")) {
+                inputCap = "Bytes";
+            } else {
+                inputCap = capitalize(method.getInputType());
+            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
@@ -116,7 +120,11 @@ public class UnaryUtils {
         String inputCap = "Nil";
         String outCap = "Nil";
         if (method.getInputType() != null) {
-            inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
+            if (method.getInputType().equals("byte[]")) {
+                inputCap = "Bytes";
+            } else {
+                inputCap = capitalize(method.getInputType());
+            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
@@ -126,7 +134,11 @@ public class UnaryUtils {
             );
         }
         if (method.getOutputType() != null) {
-            outCap = method.getOutputType().substring(0, 1).toUpperCase() + method.getOutputType().substring(1);
+            if (method.getOutputType().equals("byte[]")) {
+                outCap = "Bytes";
+            } else {
+                outCap = capitalize(method.getOutputType());
+            }
         }
         function.addReturns(
                 getParenthesisedTypeDescriptorNode(

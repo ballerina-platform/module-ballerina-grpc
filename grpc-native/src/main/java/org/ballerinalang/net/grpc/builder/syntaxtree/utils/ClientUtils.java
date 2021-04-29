@@ -157,9 +157,15 @@ public class ClientUtils {
     }
 
     private static Function getSendContextFunction(Method method) {
-        Function function = new Function("sendContext" + capitalize(method.getInputType()));
+        String inputCap;
+        if (method.getInputType().equals("byte[]")) {
+            inputCap = "Bytes";
+        } else {
+            inputCap = capitalize(method.getInputType());
+        }
+        Function function = new Function("sendContext" + inputCap);
         function.addRequiredParameter(
-                getSimpleNameReferenceNode("Context" + capitalize(method.getInputType())),
+                getSimpleNameReferenceNode("Context" + inputCap),
                 "message"
         );
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
@@ -262,7 +268,11 @@ public class ClientUtils {
     private static Function getReceiveContextFunction(Method method) {
         String outCap = "Nil";
         if (method.getOutputType() != null) {
-            outCap = capitalize(method.getOutputType());
+            if (method.getOutputType().equals("byte[]")) {
+                outCap = "Bytes";
+            } else {
+                outCap = capitalize(method.getOutputType());
+            }
         }
         Function function = new Function("receiveContext" + outCap);
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
