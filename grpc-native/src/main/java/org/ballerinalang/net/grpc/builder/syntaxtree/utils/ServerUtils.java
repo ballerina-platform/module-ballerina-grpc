@@ -65,11 +65,13 @@ public class ServerUtils {
 
     public static Function getServerStreamingFunction(Method method) {
         Function function = new Function(method.getMethodName());
+        if (method.getInputType() != null) {
+            function.addRequiredParameter(
+                    getSimpleNameReferenceNode(method.getInputType()),
+                    "req"
+            );
+        }
         String outCap = capitalize(method.getOutputType());
-        function.addRequiredParameter(
-                getSimpleNameReferenceNode(method.getInputType()),
-                "req"
-        );
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
@@ -94,16 +96,17 @@ public class ServerUtils {
     }
 
     public static Function getServerStreamingContextFunction(Method method) {
-        String inputCap = capitalize(method.getInputType());
-        String outputCap = capitalize(method.getOutputType());
         Function function = new Function(method.getMethodName() + "Context");
-        function.addRequiredParameter(
-                getSimpleNameReferenceNode(method.getInputType()),
-                "req"
-        );
+        if (method.getInputType() != null) {
+            function.addRequiredParameter(
+                    getSimpleNameReferenceNode(method.getInputType()),
+                    "req"
+            );
+        }
+        String outputCap = capitalize(method.getOutputType());
         function.addReturns(
                 getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode("Context" + inputCap + "Stream"),
+                        getSimpleNameReferenceNode("Context" + outputCap + "Stream"),
                         SYNTAX_TREE_GRPC_ERROR
                 )
         );
