@@ -41,4 +41,17 @@ public class CommonUtils {
         }
         return pascalCaseOutput.toString();
     }
+
+    public static boolean isBallerinaBasicType(String type) {
+        switch (type) {
+            case "string" :
+            case "int" :
+            case "float" :
+            case "boolean" :
+            case "bytes" :
+                return true;
+            default:
+                return false;
+        }
+    }
 }
