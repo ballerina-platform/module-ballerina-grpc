@@ -47,6 +47,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
@@ -60,53 +61,73 @@ public class UnaryUtils {
 
     public static Function getUnaryFunction(Method method) {
         Function function = new Function(method.getMethodName());
-        String inputCap = capitalize(method.getInputType());
-        function.addRequiredParameter(
-                getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        getSimpleNameReferenceNode("Context" + inputCap)
-                ),
-                "req"
-        );
-        function.addReturns(
-                getParenthesisedTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getOutputType()),
-                                SYNTAX_TREE_GRPC_ERROR
-                        )
-                )
-        );
-        addUnaryBody(function, inputCap, method);
-        SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
-                getBuiltinSimpleNameReferenceNode("anydata"),
-                SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getParameterizedTypeDescriptorNode(
-                        "map",
-                        getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
-        );
-        VariableDeclaration payload = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        getTupleTypeDescriptorNode(payloadArgs),
-                        getListBindingPatternNode(new String[]{"result", "_"})),
-                getSimpleNameReferenceNode("payload")
-        );
-        function.addVariableStatement(payload.getVariableDeclarationNode());
-        addUnaryFunctionReturnStatement(function, method);
         function.addQualifiers(new String[]{"isolated", "remote"});
+        String inputCap = "Nil";
+        if (method.getInputType() != null) {
+            inputCap = capitalize(method.getInputType());
+            function.addRequiredParameter(
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode("Context" + inputCap)
+                    ),
+                    "req"
+            );
+        }
+        if (method.getOutputType() != null) {
+            function.addReturns(
+                    getParenthesisedTypeDescriptorNode(
+                            getUnionTypeDescriptorNode(
+                                    getSimpleNameReferenceNode(method.getOutputType()),
+                                    SYNTAX_TREE_GRPC_ERROR
+                            )
+                    )
+            );
+        } else {
+            function.addReturns(
+                    getParenthesisedTypeDescriptorNode(
+                            SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                    )
+            );
+        }
+        addUnaryBody(function, inputCap, method);
+        if (method.getOutputType() != null) {
+            SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
+                    getBuiltinSimpleNameReferenceNode("anydata"),
+                    SyntaxTreeConstants.SYNTAX_TREE_COMMA,
+                    getParameterizedTypeDescriptorNode(
+                            "map",
+                            getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
+            );
+            VariableDeclaration payload = new VariableDeclaration(
+                    getTypedBindingPatternNode(
+                            getTupleTypeDescriptorNode(payloadArgs),
+                            getListBindingPatternNode(new String[]{"result", "_"})),
+                    getSimpleNameReferenceNode("payload")
+            );
+            function.addVariableStatement(payload.getVariableDeclarationNode());
+            addUnaryFunctionReturnStatement(function, method);
+        }
         return function;
     }
 
     public static Function getUnaryContextFunction(Method method) {
-        String inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
-        String outCap = method.getOutputType().substring(0, 1).toUpperCase() + method.getOutputType().substring(1);
         Function function = new Function(method.getMethodName() + "Context");
-        function.addRequiredParameter(
-                getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        getSimpleNameReferenceNode("Context" + inputCap)
-                ),
-                "req"
-        );
+        function.addQualifiers(new String[]{"isolated", "remote"});
+        String inputCap = "Nil";
+        String outCap = "Nil";
+        if (method.getInputType() != null) {
+            inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
+            function.addRequiredParameter(
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode("Context" + inputCap)
+                    ),
+                    "req"
+            );
+        }
+        if (method.getOutputType() != null) {
+            outCap = method.getOutputType().substring(0, 1).toUpperCase() + method.getOutputType().substring(1);
+        }
         function.addReturns(
                 getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
@@ -131,11 +152,21 @@ public class UnaryUtils {
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());
         addUnaryContextFunctionReturnStatement(function, method);
-        function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
     }
 
     private static void addUnaryBody(Function function, String inputCap, Method method) {
+        if (method.getInputType() == null) {
+            Map empty = new Map();
+            VariableDeclaration message = new VariableDeclaration(
+                    getTypedBindingPatternNode(
+                            getSimpleNameReferenceNode("Empty"),
+                            getCaptureBindingPatternNode("message")
+                    ),
+                    empty.getMappingConstructorExpressionNode()
+            );
+            function.addVariableStatement(message.getVariableDeclarationNode());
+        }
         VariableDeclaration headers = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getParameterizedTypeDescriptorNode(
@@ -145,45 +176,46 @@ public class UnaryUtils {
                 new Map().getMappingConstructorExpressionNode()
         );
         function.addVariableStatement(headers.getVariableDeclarationNode());
-        TypeDescriptorNode messageType;
-        if (method.getInputType().equals("string")) {
-            messageType = getBuiltinSimpleNameReferenceNode("string");
-        } else {
-            messageType = getSimpleNameReferenceNode(method.getInputType());
+        if (method.getInputType() != null) {
+            TypeDescriptorNode messageType;
+            if (method.getInputType().equals("string")) {
+                messageType = getBuiltinSimpleNameReferenceNode("string");
+            } else {
+                messageType = getSimpleNameReferenceNode(method.getInputType());
+            }
+            VariableDeclaration message = new VariableDeclaration(
+                    getTypedBindingPatternNode(
+                            messageType,
+                            getCaptureBindingPatternNode("message")),
+                    null
+            );
+            function.addVariableStatement(message.getVariableDeclarationNode());
+            IfElse reqIsContext = new IfElse(
+                    getBracedExpressionNode(
+                            getTypeTestExpressionNode(
+                                    getSimpleNameReferenceNode("req"),
+                                    getSimpleNameReferenceNode("Context" + inputCap)
+                            )));
+            reqIsContext.addIfStatement(
+                    getAssignmentStatementNode(
+                            "message",
+                            getFieldAccessExpressionNode("req", "content")
+                    )
+            );
+            reqIsContext.addIfStatement(
+                    getAssignmentStatementNode(
+                            "headers",
+                            getFieldAccessExpressionNode("req", "headers")
+                    )
+            );
+            reqIsContext.addElseStatement(
+                    getAssignmentStatementNode(
+                            "message",
+                            getSimpleNameReferenceNode("req")
+                    )
+            );
+            function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
         }
-        VariableDeclaration message = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        messageType,
-                        getCaptureBindingPatternNode("message")),
-                null
-        );
-        function.addVariableStatement(message.getVariableDeclarationNode());
-        IfElse reqIsContext = new IfElse(
-                getBracedExpressionNode(
-                        getTypeTestExpressionNode(
-                                getSimpleNameReferenceNode("req"),
-                                getSimpleNameReferenceNode("Context" + inputCap)
-                        )));
-        reqIsContext.addIfStatement(
-                getAssignmentStatementNode(
-                        "message",
-                        getFieldAccessExpressionNode("req", "content")
-                )
-        );
-        reqIsContext.addIfStatement(
-                getAssignmentStatementNode(
-                        "headers",
-                        getFieldAccessExpressionNode("req", "headers")
-                )
-        );
-        reqIsContext.addElseStatement(
-                getAssignmentStatementNode(
-                        "message",
-                        getSimpleNameReferenceNode("req")
-                )
-        );
-        function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
-
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getBuiltinSimpleNameReferenceNode("var"),
@@ -220,18 +252,20 @@ public class UnaryUtils {
 
     private static void addUnaryContextFunctionReturnStatement(Function function, Method method) {
         Map returnMap = new Map();
-        if (method.getOutputType().equals("string")) {
-            returnMap.addMethodCallField(
-                    "content",
-                    getSimpleNameReferenceNode("result"),
-                    "toString",
-                    new String[]{}
-            );
-        } else {
-            returnMap.addTypeCastExpressionField(
-                    "content",
-                    method.getOutputType(),
-                    getSimpleNameReferenceNode("result"));
+        if (method.getOutputType() != null) {
+            if (method.getOutputType().equals("string")) {
+                returnMap.addMethodCallField(
+                        "content",
+                        getSimpleNameReferenceNode("result"),
+                        "toString",
+                        new String[]{}
+                );
+            } else {
+                returnMap.addTypeCastExpressionField(
+                        "content",
+                        method.getOutputType(),
+                        getSimpleNameReferenceNode("result"));
+            }
         }
         returnMap.addSimpleNameReferenceField("headers", "respHeaders");
         function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());

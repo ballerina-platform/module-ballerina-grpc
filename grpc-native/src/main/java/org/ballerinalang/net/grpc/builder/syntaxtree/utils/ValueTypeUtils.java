@@ -52,12 +52,17 @@ public class ValueTypeUtils {
     }
 
     public static Type getValueType(String key) {
-        String typeName = "Context" + capitalize(key);
+        String typeName;
         Record contextString = new Record();
-        if (key.equals("string")) {
-            contextString.addBasicField(key, "content");
+        if (key == null) {
+            typeName = "ContextNil";
         } else {
-            contextString.addCustomField(key, "content");
+            typeName = "Context" + capitalize(key);
+            if (key.equals("string")) {
+                contextString.addBasicField(key, "content");
+            } else {
+                contextString.addCustomField(key, "content");
+            }
         }
         contextString.addMapField(
                 "headers",

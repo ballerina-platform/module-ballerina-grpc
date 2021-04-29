@@ -42,7 +42,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.ca
 public class CallerUtils {
 
     public static Class getCallerClass(String key, String value) {
-        String valueCap = capitalize(value);
         Class caller = new Class(key, true);
         caller.addQualifiers(new String[]{"client"});
 
@@ -83,37 +82,40 @@ public class CallerUtils {
         getId.addQualifiers(new String[]{"public", "isolated"});
         caller.addMember(getId.getFunctionDefinitionNode());
 
-        Function send = new Function("send" + valueCap);
-        send.addRequiredParameter(
-                getSimpleNameReferenceNode(value),
-                "response"
-        );
-        send.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
-        send.addReturnStatement(
-                getRemoteMethodCallActionNode(
-                        getFieldAccessExpressionNode("self", "caller"),
-                        "send",
-                        new String[]{"response"}
-                )
-        );
-        send.addQualifiers(new String[]{"isolated", "remote"});
-        caller.addMember(send.getFunctionDefinitionNode());
+        if (value != null) {
+            String valueCap = capitalize(value);
+            Function send = new Function("send" + valueCap);
+            send.addRequiredParameter(
+                    getSimpleNameReferenceNode(value),
+                    "response"
+            );
+            send.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
+            send.addReturnStatement(
+                    getRemoteMethodCallActionNode(
+                            getFieldAccessExpressionNode("self", "caller"),
+                            "send",
+                            new String[]{"response"}
+                    )
+            );
+            send.addQualifiers(new String[]{"isolated", "remote"});
+            caller.addMember(send.getFunctionDefinitionNode());
 
-        Function sendContext = new Function("sendContext" + valueCap);
-        sendContext.addRequiredParameter(
-                getSimpleNameReferenceNode("Context" + valueCap),
-                "response"
-        );
-        sendContext.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
-        sendContext.addReturnStatement(
-                getRemoteMethodCallActionNode(
-                        getFieldAccessExpressionNode("self", "caller"),
-                        "send",
-                        new String[]{"response"}
-                )
-        );
-        sendContext.addQualifiers(new String[]{"isolated", "remote"});
-        caller.addMember(sendContext.getFunctionDefinitionNode());
+            Function sendContext = new Function("sendContext" + valueCap);
+            sendContext.addRequiredParameter(
+                    getSimpleNameReferenceNode("Context" + valueCap),
+                    "response"
+            );
+            sendContext.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
+            sendContext.addReturnStatement(
+                    getRemoteMethodCallActionNode(
+                            getFieldAccessExpressionNode("self", "caller"),
+                            "send",
+                            new String[]{"response"}
+                    )
+            );
+            sendContext.addQualifiers(new String[]{"isolated", "remote"});
+            caller.addMember(sendContext.getFunctionDefinitionNode());
+        }
 
         Function sendError = new Function("sendError");
         sendError.addRequiredParameter(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR, "response");

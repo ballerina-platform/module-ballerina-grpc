@@ -67,12 +67,27 @@ public class SyntaxTreeGenTest {
 
     @Test(description = "Tests the output for a protobuf definition file with syntax errors")
     public void testHelloWorldErrorSyntax() {
-        assertOutputNegative("helloWorldErrorSyntax.proto", "helloWorldClientStreaming_pb.bal", "");
+        assertOutputNegative("helloWorldErrorSyntax.proto", "helloWorldErrorSyntax_pb.bal", "");
     }
 
-    @Test(description = "Tests the output for a client streaming protobuf definition file")
+    @Test(description = "Tests the output for a protobuf definition file with a service without input")
+    public void testHelloWorldNoInput() {
+        assertOutput("helloWorldNoInput.proto", "helloWorldNoInput_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a protobuf definition file with a service without output")
+    public void testHelloWorldNoOutput() {
+        assertOutput("helloWorldNoOutput.proto", "helloWorldNoOutput_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a server streaming protobuf definition file")
     public void testHelloWorldServerStreaming() {
         assertOutput("helloWorldServerStreaming.proto", "helloWorldServerStreaming_pb.bal", "");
+    }
+
+    @Test(description = "Tests the output for a server streaming protobuf definition with string input/output types")
+    public void testHelloWorldServerStreamingString() {
+        assertOutput("helloWorldServerStreamingString.proto", "helloWorldServerStreamingString_pb.bal", "");
     }
 
     @Test(description = "Tests the output for a unary protobuf definition file of string types")
