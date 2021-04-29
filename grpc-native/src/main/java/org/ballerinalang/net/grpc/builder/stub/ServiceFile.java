@@ -23,14 +23,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Service file definition bean class.
  */
 public class ServiceFile extends AbstractStub {
-    private boolean enableEp = true;
     private String serviceName;
     private List<Method> unaryFunctions = new ArrayList<>();
 
@@ -48,30 +46,6 @@ public class ServiceFile extends AbstractStub {
 
     public String getServiceName() {
         return serviceName;
-    }
-
-    public List<Method> getUnaryFunctions() {
-        return Collections.unmodifiableList(unaryFunctions);
-    }
-
-    public List<Method> getServerStreamingFunctions() {
-        return Collections.unmodifiableList(serverStreamingFunctions);
-    }
-
-    public List<Method> getClientStreamingFunctions() {
-        return Collections.unmodifiableList(clientStreamingFunctions);
-    }
-
-    public List<Method> getBidiStreamingFunctions() {
-        return Collections.unmodifiableList(bidiStreamingFunctions);
-    }
-
-    public void setEnableEp(boolean enableEp) {
-        this.enableEp = enableEp;
-    }
-
-    public boolean isEnableEp() {
-        return enableEp;
     }
 
     /**
