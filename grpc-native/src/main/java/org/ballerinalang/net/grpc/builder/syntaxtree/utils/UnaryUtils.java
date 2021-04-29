@@ -60,14 +60,17 @@ public class UnaryUtils {
 
     public static Function getUnaryFunction(Method method) {
         Function function = new Function(method.getMethodName());
-        String inputCap = capitalize(method.getInputType());
-        function.addRequiredParameter(
-                getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        getSimpleNameReferenceNode("Context" + inputCap)
-                ),
-                "req"
-        );
+        String inputCap = null;
+        if (method.getInputType() != null) {
+            inputCap = capitalize(method.getInputType());
+            function.addRequiredParameter(
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode("Context" + inputCap)
+                    ),
+                    "req"
+            );
+        }
         function.addReturns(
                 getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
@@ -97,16 +100,22 @@ public class UnaryUtils {
     }
 
     public static Function getUnaryContextFunction(Method method) {
-        String inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
-        String outCap = method.getOutputType().substring(0, 1).toUpperCase() + method.getOutputType().substring(1);
         Function function = new Function(method.getMethodName() + "Context");
-        function.addRequiredParameter(
-                getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode(method.getInputType()),
-                        getSimpleNameReferenceNode("Context" + inputCap)
-                ),
-                "req"
-        );
+        String inputCap = "";
+        String outCap = "";
+        if (method.getInputType() != null) {
+            inputCap = method.getInputType().substring(0, 1).toUpperCase() + method.getInputType().substring(1);
+            function.addRequiredParameter(
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode("Context" + inputCap)
+                    ),
+                    "req"
+            );
+        }
+        if (method.getOutputType() != null) {
+            outCap = method.getOutputType().substring(0, 1).toUpperCase() + method.getOutputType().substring(1);
+        }
         function.addReturns(
                 getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
@@ -145,45 +154,46 @@ public class UnaryUtils {
                 new Map().getMappingConstructorExpressionNode()
         );
         function.addVariableStatement(headers.getVariableDeclarationNode());
-        TypeDescriptorNode messageType;
-        if (method.getInputType().equals("string")) {
-            messageType = getBuiltinSimpleNameReferenceNode("string");
-        } else {
-            messageType = getSimpleNameReferenceNode(method.getInputType());
+        if (method.getInputType() != null) {
+            TypeDescriptorNode messageType;
+            if (method.getInputType().equals("string")) {
+                messageType = getBuiltinSimpleNameReferenceNode("string");
+            } else {
+                messageType = getSimpleNameReferenceNode(method.getInputType());
+            }
+            VariableDeclaration message = new VariableDeclaration(
+                    getTypedBindingPatternNode(
+                            messageType,
+                            getCaptureBindingPatternNode("message")),
+                    null
+            );
+            function.addVariableStatement(message.getVariableDeclarationNode());
+            IfElse reqIsContext = new IfElse(
+                    getBracedExpressionNode(
+                            getTypeTestExpressionNode(
+                                    getSimpleNameReferenceNode("req"),
+                                    getSimpleNameReferenceNode("Context" + inputCap)
+                            )));
+            reqIsContext.addIfStatement(
+                    getAssignmentStatementNode(
+                            "message",
+                            getFieldAccessExpressionNode("req", "content")
+                    )
+            );
+            reqIsContext.addIfStatement(
+                    getAssignmentStatementNode(
+                            "headers",
+                            getFieldAccessExpressionNode("req", "headers")
+                    )
+            );
+            reqIsContext.addElseStatement(
+                    getAssignmentStatementNode(
+                            "message",
+                            getSimpleNameReferenceNode("req")
+                    )
+            );
+            function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
         }
-        VariableDeclaration message = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        messageType,
-                        getCaptureBindingPatternNode("message")),
-                null
-        );
-        function.addVariableStatement(message.getVariableDeclarationNode());
-        IfElse reqIsContext = new IfElse(
-                getBracedExpressionNode(
-                        getTypeTestExpressionNode(
-                                getSimpleNameReferenceNode("req"),
-                                getSimpleNameReferenceNode("Context" + inputCap)
-                        )));
-        reqIsContext.addIfStatement(
-                getAssignmentStatementNode(
-                        "message",
-                        getFieldAccessExpressionNode("req", "content")
-                )
-        );
-        reqIsContext.addIfStatement(
-                getAssignmentStatementNode(
-                        "headers",
-                        getFieldAccessExpressionNode("req", "headers")
-                )
-        );
-        reqIsContext.addElseStatement(
-                getAssignmentStatementNode(
-                        "message",
-                        getSimpleNameReferenceNode("req")
-                )
-        );
-        function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
-
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getBuiltinSimpleNameReferenceNode("var"),
