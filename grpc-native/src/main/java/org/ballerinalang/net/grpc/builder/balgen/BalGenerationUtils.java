@@ -56,9 +56,7 @@ public class BalGenerationUtils {
             case ".google.protobuf.Int32Value":
                 return "int";
             case ".google.protobuf.Int64Value":
-            case ".google.protobuf.UInt64Value": {
-                return "int";
-            }
+            case ".google.protobuf.UInt64Value":
             case ".google.protobuf.UInt32Value": {
                 return "int";
             }

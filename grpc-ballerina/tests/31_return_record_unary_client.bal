@@ -24,7 +24,7 @@ public isolated function testUnaryRecordValueReturn() returns Error? {
     if (unionResp is Error) {
         test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
-        SampleMsg31 resMsg = <SampleMsg31>unionResp.content;
+        SampleMsg31 resMsg = unionResp;
         test:assertEquals(resMsg.name, "Ballerina Lang");
         test:assertEquals(resMsg.id, 7);
     }
@@ -40,31 +40,4 @@ public isolated function testUnaryErrorReturn() returns Error? {
     } else {
         test:assertFail("RPC call should return an InvalidArgumentError");
     }
-}
-
-
-public client class HelloWorld31Client {
-    *AbstractClientEndpoint;
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_31, getDescriptorMap31());
-    }
-
-    isolated remote function sayHello(SampleMsg31|ContextSampleMsg31 req) returns (ContextSampleMsg31|Error) {
-        map<string|string[]> headers = {};
-        SampleMsg31 message;
-        if (req is ContextSampleMsg31) {
-            message = req.content;
-            headers = req.headers;
-        } else {
-            message = req;
-        }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld31/sayHello", message, headers);
-        [anydata, map<string|string[]>][result, respHeaders] = payload;
-        return {content: <SampleMsg31>result, headers: respHeaders};
-    }
-
 }

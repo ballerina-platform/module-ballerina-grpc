@@ -40,25 +40,3 @@ function testReceiveStreamingResponse() returns Error? {
         });
     }
 }
-
-public client class HelloWorld45Client {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_6, getDescriptorMap6());
-    }
-
-    isolated remote function lotsOfReplies(string req) returns stream<anydata, Error?>|Error {
-        
-        var payload = check self.grpcClient->executeServerStreaming("grpcservices.HelloWorld45/lotsOfReplies", req);
-        [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
-
-        return result;
-    }
-
-}

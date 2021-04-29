@@ -20,8 +20,8 @@ import ballerina/test;
 @test:Config {enable:true}
 isolated function testBidiStreamingFromReturnRecord() returns Error? {
     HelloWorld34Client helloWorldEp = check new ("http://localhost:9124");
-    SayHelloBidiStreamingClientFromReturn streamingClient;
-    var res = helloWorldEp->sayHello();
+    SayHello34StreamingClient streamingClient;
+    var res = helloWorldEp->sayHello34();
     if (res is Error) {
         test:assertFail("Error from Connector: " + res.message());
         return;
@@ -56,53 +56,4 @@ isolated function testBidiStreamingFromReturnRecord() returns Error? {
         i += 1;
     }
     test:assertEquals(i, 4);
-}
-
-public client class SayHelloBidiStreamingClientFromReturn {
-    private StreamingClient sClient;
-
-    isolated function init(StreamingClient sClient) {
-        self.sClient = sClient;
-    }
-
-    isolated remote function sendSampleMsg34(SampleMsg34 message) returns Error? {
-
-        return self.sClient->send(message);
-    }
-
-    isolated remote function receiveSampleMsg34() returns anydata|Error? {
-        var response = check self.sClient->receive();
-        if (response is ()) {
-            return response;
-        } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
-            return payload;
-        }
-    }
-
-    isolated remote function sendError(Error response) returns Error? {
-        return self.sClient->sendError(response);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.sClient->complete();
-    }
-}
-
-public client class HelloWorld34Client {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_34, getDescriptorMap34());
-    }
-
-    isolated remote function sayHello() returns (SayHelloBidiStreamingClientFromReturn|Error) {
-        StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("HelloWorld34/sayHello");
-        return new SayHelloBidiStreamingClientFromReturn(sClient);
-    }
 }

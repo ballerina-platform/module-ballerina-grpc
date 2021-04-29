@@ -437,11 +437,6 @@ public type ContextTestFloat record {|
     map<string|string[]> headers;
 |};
 
-public type ContextInt record {|
-    int content;
-    map<string|string[]> headers;
-|};
-
 public type ContextTestString record {|
     TestString content;
     map<string|string[]> headers;

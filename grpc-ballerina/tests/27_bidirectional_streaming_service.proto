@@ -17,7 +17,7 @@
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 service ChatFromReturn {
-	rpc chat (stream ChatMessage27)
+	rpc chat27 (stream ChatMessage27)
 			returns (stream google.protobuf.StringValue);
 }
 message ChatMessage27 {

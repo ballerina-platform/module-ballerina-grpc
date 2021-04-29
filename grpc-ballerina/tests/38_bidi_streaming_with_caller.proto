@@ -16,11 +16,11 @@
 
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
-service Chat {
-	rpc chat (stream ChatMessage)
+service Chat38 {
+	rpc chat38 (stream ChatMessage38)
 			returns (stream google.protobuf.StringValue);
 }
-message ChatMessage {
+message ChatMessage38 {
 	string name = 1;
 	string message = 2;
 }

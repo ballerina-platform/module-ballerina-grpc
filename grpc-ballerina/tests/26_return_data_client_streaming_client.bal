@@ -22,7 +22,7 @@ isolated function testClientStreamingFromReturn() returns Error? {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
     HelloWorld26Client helloWorldEp = check new ("http://localhost:9116");
 
-    LotsOfGreetingsStreamingClientFromReturn streamingClient;
+    LotsOfGreetingsStreamingClient streamingClient;
     var res = helloWorldEp->lotsOfGreetings();
     if (res is Error) {
         test:assertFail("Error from Connector: " + res.message());
@@ -33,7 +33,7 @@ isolated function testClientStreamingFromReturn() returns Error? {
     io:println("Initialized connection sucessfully.");
 
     foreach var greet in requests {
-        Error? err = streamingClient->sendstring(greet);
+        Error? err = streamingClient->sendString(greet);
         if (err is Error) {
             test:assertFail("Error from Connector: " + err.message());
         }
@@ -43,68 +43,5 @@ isolated function testClientStreamingFromReturn() returns Error? {
     string? response = check streamingClient->receiveString();
     if response is string {
         test:assertEquals(response, "Ack");
-    }
-}
-
-public client class LotsOfGreetingsStreamingClientFromReturn {
-    private StreamingClient sClient;
-
-    isolated function init(StreamingClient sClient) {
-        self.sClient = sClient;
-    }
-
-    isolated remote function sendstring(string message) returns Error? {
-        
-        return self.sClient->send(message);
-    }
-
-    isolated remote function sendContextString(ContextString message) returns Error? {
-        return self.sClient->send(message);
-    }
-
-    isolated remote function receiveString() returns string|Error? {
-        var response = check self.sClient->receive();
-        if (response is ()) {
-            return response;
-        } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
-            return payload.toString();
-        }
-    }
-
-    isolated remote function receiveContextString() returns ContextString|Error? {
-        var response = check self.sClient->receive();
-        if (response is ()) {
-            return response;
-        } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
-            return {content: payload.toString(), headers: headers};
-        }
-    }
-
-    isolated remote function sendError(Error response) returns Error? {
-        return self.sClient->sendError(response);
-    }
-
-    isolated remote function complete() returns Error? {
-        return self.sClient->complete();
-    }
-}
-
-public client class HelloWorld26Client {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_26, getDescriptorMap26());
-    }
-
-    isolated remote function lotsOfGreetings() returns (LotsOfGreetingsStreamingClientFromReturn|Error) {
-        StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.HelloWorld26/lotsOfGreetings");
-        return new LotsOfGreetingsStreamingClientFromReturn(sClient);
     }
 }

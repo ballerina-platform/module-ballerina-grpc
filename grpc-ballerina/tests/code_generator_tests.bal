@@ -112,6 +112,47 @@ function testUnaryHelloWorldWithInvalidDependency() {
     test:assertFalse(checkpanic file:test(stubFilePath, file:EXISTS));
 }
 
+//@test:Config {enable:true}
+//function testGenerateSourceCode() {
+//    string outputDirPath = "tests/";
+//    //generateSourceCode(outputDirPath + "01_advanced_type_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "02_array_field_type_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "03_bidirectional_streaming_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "04_client_streaming_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "05_invalid_resource_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "06_server_streaming_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "07_unary_server.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "08_unary_service_with_headers.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "09_grpc_secured_unary_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "10_grpc_ssl_server.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "11_grpc_byte_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "12_grpc_enum_test_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "13_grpc_service_with_error_return.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "14_grpc_client_socket_timeout.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "15_grpc_oneof_field_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "16_unavailable_service_client.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "18_grpc_optional_field_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "19_grpc_map_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "20_unary_client_for_anonymous_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "21_grpc_gzip_encoding_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "22_retry_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "23_server_streaming_with_record_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "24_return_data_unary.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "25_return_data_streaming.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "26_return_data_client_streaming.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "27_bidirectional_streaming_service.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "29_unary_jwt.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "30_unary_oauth2.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "31_return_unary.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "32_return_record_server_streaming.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "33_return_record_client_streaming.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "34_return_record_bidi_streaming.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "35_unary_service_with_deadline.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "36_unary_service_with_deadline_propagation.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "37_streaming_with_deadline.proto", outputDirPath);
+//    //generateSourceCode(outputDirPath + "38_bidi_streaming_with_caller.proto", outputDirPath);
+//}
+
 function assertGeneratedSources(string protoFilePath, string outputDirPath, string stubFilePath, string
 serviceFilePath, string clientFilePath) {
     generateSourceCode(protoFilePath, outputDirPath);

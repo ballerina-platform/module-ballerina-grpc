@@ -36,25 +36,3 @@ public function testServerStreamingWithRecord() returns Error? {
         });
     }
 }
-
-public client class helloWorldServerStreamingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_23, getDescriptorMap23());
-    }
-
-    isolated remote function lotsOfReplies(HelloRequest req) returns stream<anydata, Error?>|Error {
-        
-        var payload = check self.grpcClient->executeServerStreaming("helloWorldServerStreaming/lotsOfReplies", req);
-        [stream<anydata, Error?>, map<string|string[]>][result, _] = payload;
-
-        return result;
-    }
-
-}

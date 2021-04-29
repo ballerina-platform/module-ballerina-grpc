@@ -18,7 +18,7 @@ syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 
 service HelloWorld34 {
-	rpc sayHello(stream SampleMsg34) returns (stream SampleMsg34);
+	rpc sayHello34(stream SampleMsg34) returns (stream SampleMsg34);
 }
 
 message SampleMsg34 {
