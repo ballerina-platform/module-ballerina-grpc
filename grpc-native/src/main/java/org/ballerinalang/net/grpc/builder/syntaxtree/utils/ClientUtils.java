@@ -262,7 +262,7 @@ public class ClientUtils {
     private static Function getReceiveContextFunction(Method method) {
         String outCap = "Nil";
         if (method.getOutputType() != null) {
-            outCap = "receiveContext" + capitalize(method.getOutputType());
+            outCap = capitalize(method.getOutputType());
         }
         Function function = new Function("receiveContext" + outCap);
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
