@@ -23,34 +23,19 @@ import java.io.File;
  * Constants that use in .bal file generation.
  */
 public class BalGenConstants {
-    public static final String NEW_LINE_CHARACTER = System.getProperty("line.separator");
-    
+
     public static final String FILE_SEPARATOR = File.separator;
     
     public static final String RESOURCE_SEPARATOR = "/";
-    
-    public static final int SERVICE_INDEX = 0;
-    
-    public static final String BLOCKING_STUB_KEY = "BLOCKING";
-    
-    public static final String NON_BLOCKING_STUB_KEY = "NON-BLOCKING";
-    
-    public static final String DEFAULT_SAMPLE_CONNECTOR_PORT = "9090";
-    
-    public static final String DEFAULT_SAMPLE_CONNECTOR_HOST = "localhost";
-    
+
     public static final String DEFAULT_PACKAGE = "temp";
-    
-    public static final String GRPC_NATIVE_PACKAGE = "ballerina/grpc";
-    
+
     public static final String STUB_FILE_PREFIX = "_pb.bal";
     
     public static final String SAMPLE_FILE_PREFIX = "_sample_client.bal";
 
     public static final String SAMPLE_SERVICE_FILE_PREFIX = "_sample_service.bal";
 
-    public static final String SAMPLE_PROXY_FILE_PREFIX = "_gateway_pb.bal";
-    
     public static final String EMPTY_STRING = "";
     
     public static final String EMPTY_DATA_TYPE = "Empty";
@@ -58,32 +43,12 @@ public class BalGenConstants {
     public static final String PACKAGE_SEPARATOR = ".";
     
     public static final String PACKAGE_SEPARATOR_REGEX = "\\.";
-    
-    public static final String TEMPLATES_SUFFIX = ".mustache";
-    
-    public static final String TEMPLATES_DIR_PATH_KEY = "templates.dir.path";
-    
-    public static final String TEMPLATE_DIR = RESOURCE_SEPARATOR + "templates";
-
-    public static final String STUB_TEMPLATE_NAME = "stub_file";
-
-    public static final String SERVICE_STUB_TEMPLATE_FILE_NAME = "service_stub_file";
-
-    public static final String CLIENT_STUB_TEMPLATE_FILE_NAME = "client_stub_file";
-
-    public static final String STUB_TEMPLATE_FILE_NAME = "stub_file";
 
     public static final String GRPC_CLIENT = "client";
 
     public static final String GRPC_SERVICE = "service";
 
     public static final String GRPC_PROXY = "proxy";
-    
-    public static final String SAMPLE_CLIENT_TEMPLATE_NAME = "client_sample";
-
-    public static final String SAMPLE_SERVICE_TEMPLATE_NAME = "service_sample";
-
-    public static final String SAMPLE_PROXY_TEMPLATE_NAME = "proxy_sample";
 
     public static final String GOOGLE_STANDARD_LIB = "google.protobuf";
 

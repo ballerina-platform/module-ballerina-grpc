@@ -71,20 +71,4 @@ public class Param {
     public String getFieldType() {
         return fieldType;
     }
-
-    public String getParamSource() {
-        return paramSource;
-    }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public boolean getRepeatedParam() {
-        return repeatedParam;
-    }
-
-    public String getQueryAccessName() {
-        return queryAccessName;
-    }
 }
