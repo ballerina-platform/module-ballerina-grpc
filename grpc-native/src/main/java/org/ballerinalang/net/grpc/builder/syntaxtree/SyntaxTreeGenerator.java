@@ -26,6 +26,7 @@ import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
 import io.ballerina.compiler.syntax.tree.Token;
+import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 import org.ballerinalang.net.grpc.builder.stub.Descriptor;
@@ -50,6 +51,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
+import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_SERVICE;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
@@ -69,6 +72,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientClass;
@@ -229,14 +233,33 @@ public class SyntaxTreeGenerator {
                 Function function = new Function(method.getMethodName());
                 String input = method.getInputType();
                 String output = method.getOutputType();
-                function.addRequiredParameter(getSimpleNameReferenceNode(input), "value");
+
+                TypeDescriptorNode inputParam;
+                String inputName;
+                if (method.getMethodType().equals(CLIENT_STREAMING)) {
+                    inputParam = getStreamTypeDescriptorNode(
+                            getSimpleNameReferenceNode(input),
+                            SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                    );
+                    inputName = "clientStream";
+                } else {
+                    inputParam = getSimpleNameReferenceNode(input);
+                    inputName = "value";
+                }
+                function.addRequiredParameter(inputParam, inputName);
+
+                TypeDescriptorNode outputParam;
+                if (method.getMethodType().equals(SERVER_STREAMING)) {
+                    outputParam = getStreamTypeDescriptorNode(
+                            getSimpleNameReferenceNode(output),
+                            getOptionalTypeDescriptorNode("", "error")
+                    );
+                } else {
+                    outputParam = getSimpleNameReferenceNode(output);
+                }
                 function.addReturns(
                         getUnionTypeDescriptorNode(
-                                getStreamTypeDescriptorNode(
-                                        getSimpleNameReferenceNode(output),
-                                        // Todo: parametarize identirifer (optionalTypeDescriptor)
-                                        getOptionalTypeDescriptorNode("", "error")
-                                ),
+                                outputParam,
                                 getErrorTypeDescriptorNode()
                         )
                 );
