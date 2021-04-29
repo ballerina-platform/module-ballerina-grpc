@@ -60,6 +60,11 @@ public class SyntaxTreeGenTest {
         assertOutput("helloWorldClientStreaming.proto", "helloWorldClientStreaming_pb.bal", "");
     }
 
+    @Test(description = "Tests the output for a client streaming protobuf definition file")
+    public void testHelloWorldClientStreamingNoOutput() {
+        assertOutput("helloWorldClientStreamingNoOutput.proto", "helloWorldClientStreamingNoOutput_pb.bal", "");
+    }
+
     @Test(description = "Tests the output for a client streaming protobuf definition with string input/output types")
     public void testHelloWorldClientStreamingString() {
         assertOutput("helloWorldClientStreamingString.proto", "helloWorldClientStreamingString_pb.bal", "");

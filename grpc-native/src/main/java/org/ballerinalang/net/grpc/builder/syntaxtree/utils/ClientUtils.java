@@ -175,7 +175,11 @@ public class ClientUtils {
     }
 
     private static Function getReceiveFunction(Method method) {
-        Function function = new Function("receive" + capitalize(method.getOutputType()));
+        String functionName = "receive";
+        if (method.getOutputType() != null) {
+            functionName = "receive" + capitalize(method.getOutputType());
+        }
+        Function function = new Function(functionName);
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -187,12 +191,16 @@ public class ClientUtils {
         TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
                 getTupleTypeDescriptorNode(receiveArgs),
                 getListBindingPatternNode(new String[]{"payload", "headers"}));
-        function.addReturns(
-                TypeDescriptor.getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode(method.getOutputType()),
-                        SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                )
-        );
+        if (method.getOutputType() != null) {
+            function.addReturns(
+                    TypeDescriptor.getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getOutputType()),
+                            SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                    )
+            );
+        } else {
+            function.addReturns(SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
+        }
         VariableDeclaration response = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getBuiltinSimpleNameReferenceNode("var"),
@@ -224,25 +232,27 @@ public class ClientUtils {
                         getSimpleNameReferenceNode("response")
                 ).getVariableDeclarationNode()
         );
-        if (method.getOutputType().equals("string")) {
-            responseCheck.addElseStatement(
-                    getReturnStatementNode(
-                            getMethodCallExpressionNode(
-                                    getSimpleNameReferenceNode("payload"),
-                                    "toString",
-                                    new String[]{}
-                            )
-                    )
-            );
-        } else {
-            responseCheck.addElseStatement(
-                    getReturnStatementNode(
-                            getTypeCastExpressionNode(
-                                    method.getOutputType(),
-                                    getSimpleNameReferenceNode("payload")
-                            )
-                    )
-            );
+        if (method.getOutputType() != null) {
+            if (method.getOutputType().equals("string")) {
+                responseCheck.addElseStatement(
+                        getReturnStatementNode(
+                                getMethodCallExpressionNode(
+                                        getSimpleNameReferenceNode("payload"),
+                                        "toString",
+                                        new String[]{}
+                                )
+                        )
+                );
+            } else {
+                responseCheck.addElseStatement(
+                        getReturnStatementNode(
+                                getTypeCastExpressionNode(
+                                        method.getOutputType(),
+                                        getSimpleNameReferenceNode("payload")
+                                )
+                        )
+                );
+            }
         }
         function.addIfElseStatement(responseCheck.getIfElseStatementNode());
         function.addQualifiers(new String[]{"isolated", "remote"});
@@ -250,7 +260,11 @@ public class ClientUtils {
     }
 
     private static Function getReceiveContextFunction(Method method) {
-        Function function = new Function("receiveContext" + capitalize(method.getOutputType()));
+        String outCap = "Nil";
+        if (method.getOutputType() != null) {
+            outCap = capitalize(method.getOutputType());
+        }
+        Function function = new Function("receiveContext" + outCap);
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -264,7 +278,7 @@ public class ClientUtils {
         );
         function.addReturns(
                 TypeDescriptor.getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode("Context" + capitalize(method.getOutputType())),
+                        getSimpleNameReferenceNode("Context" + outCap),
                         SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                 )
         );
@@ -300,19 +314,21 @@ public class ClientUtils {
                 ).getVariableDeclarationNode()
         );
         Map returnMap = new Map();
-        if (method.getOutputType().equals("string")) {
-            returnMap.addMethodCallField(
-                    "content",
-                    getSimpleNameReferenceNode("payload"),
-                    "toString",
-                    new String[]{}
-            );
-        } else {
-            returnMap.addTypeCastExpressionField(
-                    "content",
-                    method.getOutputType(),
-                    getSimpleNameReferenceNode("payload")
-            );
+        if (method.getOutputType() != null) {
+            if (method.getOutputType().equals("string")) {
+                returnMap.addMethodCallField(
+                        "content",
+                        getSimpleNameReferenceNode("payload"),
+                        "toString",
+                        new String[]{}
+                );
+            } else {
+                returnMap.addTypeCastExpressionField(
+                        "content",
+                        method.getOutputType(),
+                        getSimpleNameReferenceNode("payload")
+                );
+            }
         }
         returnMap.addSimpleNameReferenceField("headers", "headers");
         responseCheck.addElseStatement(
