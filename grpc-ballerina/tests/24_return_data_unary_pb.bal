@@ -327,11 +327,11 @@ public client class HelloWorld24ByteCaller {
         return self.caller.getId();
     }
 
-    isolated remote function sendBytes(byte[] response) returns Error?  {
+    isolated remote function sendBytes(byte[] response) returns Error? {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextBytes(ContextBytes response) returns Error?  {
+    isolated remote function sendContextBytes(ContextBytes response) returns Error? {
         return self.caller->send(response);
     }
 
