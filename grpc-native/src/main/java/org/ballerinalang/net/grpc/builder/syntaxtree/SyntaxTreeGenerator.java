@@ -234,35 +234,43 @@ public class SyntaxTreeGenerator {
                 String input = method.getInputType();
                 String output = method.getOutputType();
 
-                TypeDescriptorNode inputParam;
-                String inputName;
-                if (method.getMethodType().equals(CLIENT_STREAMING)) {
-                    inputParam = getStreamTypeDescriptorNode(
-                            getSimpleNameReferenceNode(input),
-                            SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                    );
-                    inputName = "clientStream";
-                } else {
-                    inputParam = getSimpleNameReferenceNode(input);
-                    inputName = "value";
+                if (method.getInputType() != null) {
+                    TypeDescriptorNode inputParam;
+                    String inputName;
+                    if (method.getMethodType().equals(CLIENT_STREAMING)) {
+                        inputParam = getStreamTypeDescriptorNode(
+                                getSimpleNameReferenceNode(input),
+                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                        );
+                        inputName = "clientStream";
+                    } else {
+                        inputParam = getSimpleNameReferenceNode(input);
+                        inputName = "value";
+                    }
+                    function.addRequiredParameter(inputParam, inputName);
                 }
-                function.addRequiredParameter(inputParam, inputName);
 
-                TypeDescriptorNode outputParam;
-                if (method.getMethodType().equals(SERVER_STREAMING)) {
-                    outputParam = getStreamTypeDescriptorNode(
-                            getSimpleNameReferenceNode(output),
+                if (method.getOutputType() != null) {
+                    TypeDescriptorNode outputParam;
+                    if (method.getMethodType().equals(SERVER_STREAMING)) {
+                        outputParam = getStreamTypeDescriptorNode(
+                                getSimpleNameReferenceNode(output),
+                                getOptionalTypeDescriptorNode("", "error")
+                        );
+                    } else {
+                        outputParam = getSimpleNameReferenceNode(output);
+                    }
+                    function.addReturns(
+                            getUnionTypeDescriptorNode(
+                                    outputParam,
+                                    getErrorTypeDescriptorNode()
+                            )
+                    );
+                } else {
+                    function.addReturns(
                             getOptionalTypeDescriptorNode("", "error")
                     );
-                } else {
-                    outputParam = getSimpleNameReferenceNode(output);
                 }
-                function.addReturns(
-                        getUnionTypeDescriptorNode(
-                                outputParam,
-                                getErrorTypeDescriptorNode()
-                        )
-                );
                 function.addQualifiers(new String[]{"remote"});
                 service.addMember(function.getFunctionDefinitionNode());
             }
