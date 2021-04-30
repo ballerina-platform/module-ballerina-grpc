@@ -17,9 +17,15 @@
  */
 package org.ballerinalang.net.grpc.testutils;
 
+import io.ballerina.compiler.syntax.tree.SyntaxTree;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.tools.text.TextDocument;
+import io.ballerina.tools.text.TextDocuments;
 import org.ballerinalang.net.grpc.protobuf.cmd.GrpcCmd;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -45,5 +51,28 @@ public class CodeGeneratorUtils {
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean hasDiagnostics(BString filePath) {
+        String content;
+        Path path = Paths.get(filePath.getValue()).toAbsolutePath();
+        try {
+            content = Files.readString(path);
+        } catch (IOException e) {
+            return false;
+        }
+        TextDocument textDocument = TextDocuments.from(content);
+        return SyntaxTree.from(textDocument).hasDiagnostics();
+    }
+
+    public static BString readContent(BString filePath) {
+        Path path = Paths.get(filePath.getValue());
+        String content;
+        try {
+            content = Files.readString(path);
+        } catch (IOException e) {
+            return StringUtils.fromString("");
+        }
+        return StringUtils.fromString(content.replaceAll("\\s+", ""));
     }
 }

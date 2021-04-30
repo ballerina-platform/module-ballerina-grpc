@@ -19,4 +19,6 @@
 module io.ballerina.stdlib.grpc.testutils {
     requires io.ballerina.runtime;
     requires io.ballerina.stdlib.grpc;
+    requires io.ballerina.tools.api;
+    requires io.ballerina.parser;
 }
