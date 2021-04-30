@@ -28,6 +28,8 @@ repositories {
 dependencies {
     compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
     compile project(":grpc-native")
 }
 
