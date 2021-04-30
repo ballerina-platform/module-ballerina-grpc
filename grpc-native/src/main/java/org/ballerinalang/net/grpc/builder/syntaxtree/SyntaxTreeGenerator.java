@@ -250,21 +250,27 @@ public class SyntaxTreeGenerator {
                     function.addRequiredParameter(inputParam, inputName);
                 }
 
-                TypeDescriptorNode outputParam;
-                if (method.getMethodType().equals(SERVER_STREAMING)) {
-                    outputParam = getStreamTypeDescriptorNode(
-                            getSimpleNameReferenceNode(output),
-                            getOptionalTypeDescriptorNode("", "error")
+                if (method.getOutputType() != null) {
+                    TypeDescriptorNode outputParam;
+                    if (method.getMethodType().equals(SERVER_STREAMING)) {
+                        outputParam = getStreamTypeDescriptorNode(
+                                getSimpleNameReferenceNode(output),
+                                getOptionalTypeDescriptorNode("", "error")
+                        );
+                    } else {
+                        outputParam = getSimpleNameReferenceNode(output);
+                    }
+                    function.addReturns(
+                            getUnionTypeDescriptorNode(
+                                    outputParam,
+                                    getErrorTypeDescriptorNode()
+                            )
                     );
                 } else {
-                    outputParam = getSimpleNameReferenceNode(output);
+                    function.addReturns(
+                            getOptionalTypeDescriptorNode("", "error")
+                    );
                 }
-                function.addReturns(
-                        getUnionTypeDescriptorNode(
-                                outputParam,
-                                getErrorTypeDescriptorNode()
-                        )
-                );
                 function.addQualifiers(new String[]{"remote"});
                 service.addMember(function.getFunctionDefinitionNode());
             }
