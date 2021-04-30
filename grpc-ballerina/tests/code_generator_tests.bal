@@ -133,19 +133,26 @@ function testTestMessage() {
     assertGeneratedSources("testMessage.proto", "testMessage_pb.bal", "tool_test23");
 }
 
-function assertGeneratedSources(string input, string output, string outputDir, string? mode = ()) {
+function assertGeneratedSources(string input, string output, string outputDir) {
     string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, input);
     string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
     string expectedFilePath = checkpanic file:joinPath(OUTPUT_BAL_FILE_DIRECTORY, output);
     string actualFilePath = checkpanic file:joinPath(outputDirPath, output);
 
-    generateSourceCode(protoFilePath, outputDirPath, mode);
-
+    generateSourceCode(protoFilePath, outputDirPath);
     test:assertTrue(checkpanic file:test(actualFilePath, file:EXISTS));
-
     test:assertFalse(hasDiagnostics(actualFilePath));
-
     test:assertEquals(readContent(expectedFilePath), readContent(actualFilePath));
+    _ = checkpanic file:remove(actualFilePath);
+    test:assertFalse(checkpanic file:test(actualFilePath, file:EXISTS));
+
+    generateSourceCode(protoFilePath, outputDirPath, "service");
+    test:assertTrue(checkpanic file:test(actualFilePath, file:EXISTS));
+    _ = checkpanic file:remove(actualFilePath);
+    test:assertFalse(checkpanic file:test(actualFilePath, file:EXISTS));
+
+    generateSourceCode(protoFilePath, outputDirPath, "client");
+    test:assertTrue(checkpanic file:test(actualFilePath, file:EXISTS));
 }
 
 function assertGeneratedSourcesNegative(string input, string output, string outputDir, string? mode = ()) {
