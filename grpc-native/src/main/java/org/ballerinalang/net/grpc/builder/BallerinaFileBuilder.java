@@ -166,7 +166,7 @@ public class BallerinaFileBuilder {
 
                 for (DescriptorProtos.MethodDescriptorProto methodDescriptorProto : methodList) {
                     String methodID;
-                    if (filePackage != null && !filePackage.isEmpty()) {
+                    if (!filePackage.isEmpty()) {
                         methodID = filePackage + PACKAGE_SEPARATOR + serviceDescriptor.getName() + "/" +
                                 methodDescriptorProto.getName();
                     } else {
