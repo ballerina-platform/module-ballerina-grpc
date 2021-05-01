@@ -232,6 +232,7 @@ public class SyntaxTreeGenerator {
 
             for (Method method : methodList) {
                 Function function = new Function(method.getMethodName());
+                function.addQualifiers(new String[]{"remote"});
                 String input = method.getInputType();
                 String output = method.getOutputType();
 
@@ -274,16 +275,16 @@ public class SyntaxTreeGenerator {
                             getOptionalTypeDescriptorNode("", "error")
                     );
                 }
-                function.addQualifiers(new String[]{"remote"});
                 service.addMember(function.getFunctionDefinitionNode());
             }
             moduleMembers = moduleMembers.add(service.getServiceDeclarationNode());
         }
         if (GRPC_CLIENT.equals(mode)) {
             Function main = new Function("main");
+            main.addQualifiers(new String[]{"public"});
             ModuleVariable clientEp = new ModuleVariable(
                     getTypedBindingPatternNode(
-                            getSimpleNameReferenceNode("Client"),
+                            getSimpleNameReferenceNode(serviceStub.getServiceName() + "Client"),
                             getCaptureBindingPatternNode("ep")
                     ),
                     getCheckExpressionNode(
