@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
 import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
@@ -237,7 +238,8 @@ public class SyntaxTreeGenerator {
                 if (method.getInputType() != null) {
                     TypeDescriptorNode inputParam;
                     String inputName;
-                    if (method.getMethodType().equals(CLIENT_STREAMING)) {
+                    if (method.getMethodType().equals(CLIENT_STREAMING) ||
+                            method.getMethodType().equals(BIDI_STREAMING)) {
                         inputParam = getStreamTypeDescriptorNode(
                                 getSimpleNameReferenceNode(input),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL
@@ -252,7 +254,8 @@ public class SyntaxTreeGenerator {
 
                 if (method.getOutputType() != null) {
                     TypeDescriptorNode outputParam;
-                    if (method.getMethodType().equals(SERVER_STREAMING)) {
+                    if (method.getMethodType().equals(SERVER_STREAMING) ||
+                            method.getMethodType().equals(BIDI_STREAMING)) {
                         outputParam = getStreamTypeDescriptorNode(
                                 getSimpleNameReferenceNode(output),
                                 getOptionalTypeDescriptorNode("", "error")
