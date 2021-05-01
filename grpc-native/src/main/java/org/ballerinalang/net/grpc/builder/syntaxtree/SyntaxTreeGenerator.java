@@ -54,8 +54,6 @@ import java.util.TreeMap;
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
-import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_CLIENT;
-import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.GRPC_SERVICE;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFunctionCallExpressionNode;
@@ -95,7 +93,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ValueTypeUtils
  */
 public class SyntaxTreeGenerator {
 
-    public static SyntaxTree generateSyntaxTree(StubFile stubFile) {
+    public static SyntaxTree generateSyntaxTreeForServiceSample(StubFile stubFile) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
@@ -196,14 +194,12 @@ public class SyntaxTreeGenerator {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
-    public static SyntaxTree generateSyntaxTree(ServiceStub serviceStub, String mode) {
+    public static SyntaxTree generateSyntaxTreeForServiceSample(ServiceStub serviceStub, boolean addListener) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
-        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createEmptyNodeList();
+        ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
+        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createNodeList(importForGrpc);
 
-        if (GRPC_SERVICE.equals(mode)) {
-            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
-            imports = AbstractNodeFactory.createNodeList(importForGrpc);
-
+        if (addListener) {
             Listener listener = new Listener(
                     "ep",
                     getQualifiedNameReferenceNode("grpc", "Listener"),
@@ -211,90 +207,100 @@ public class SyntaxTreeGenerator {
                     false
             );
             moduleMembers = moduleMembers.add(listener.getListenerDeclarationNode());
+        }
 
-            Service service = new Service(
-                    new String[]{"\"" + serviceStub.getServiceName() + "\""},
-                    new String[]{"ep"}
-            );
-            Annotation grpcServiceDescriptor = new Annotation("grpc", "ServiceDescriptor");
-            grpcServiceDescriptor.addField("descriptor", "ROOT_DESCRIPTOR");
-            grpcServiceDescriptor.addField(
-                    "descMap",
-                    getFunctionCallExpressionNode("getDescriptorMap", new String[]{})
-            );
-            service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
+        Service service = new Service(
+                new String[]{"\"" + serviceStub.getServiceName() + "\""},
+                new String[]{"ep"}
+        );
+        Annotation grpcServiceDescriptor = new Annotation("grpc", "ServiceDescriptor");
+        grpcServiceDescriptor.addField("descriptor", "ROOT_DESCRIPTOR");
+        grpcServiceDescriptor.addField(
+                "descMap",
+                getFunctionCallExpressionNode("getDescriptorMap", new String[]{})
+        );
+        service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
 
-            List<Method> methodList = new ArrayList<>();
-            methodList.addAll(serviceStub.getUnaryFunctions());
-            methodList.addAll(serviceStub.getClientStreamingFunctions());
-            methodList.addAll(serviceStub.getServerStreamingFunctions());
-            methodList.addAll(serviceStub.getBidiStreamingFunctions());
+        List<Method> methodList = new ArrayList<>();
+        methodList.addAll(serviceStub.getUnaryFunctions());
+        methodList.addAll(serviceStub.getClientStreamingFunctions());
+        methodList.addAll(serviceStub.getServerStreamingFunctions());
+        methodList.addAll(serviceStub.getBidiStreamingFunctions());
 
-            for (Method method : methodList) {
-                Function function = new Function(method.getMethodName());
-                function.addQualifiers(new String[]{"remote"});
-                String input = method.getInputType();
-                String output = method.getOutputType();
+        for (Method method : methodList) {
+            Function function = new Function(method.getMethodName());
+            function.addQualifiers(new String[]{"remote"});
+            String input = method.getInputType();
+            String output = method.getOutputType();
 
-                if (method.getInputType() != null) {
-                    TypeDescriptorNode inputParam;
-                    String inputName;
-                    if (method.getMethodType().equals(CLIENT_STREAMING) ||
-                            method.getMethodType().equals(BIDI_STREAMING)) {
-                        inputParam = getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(input),
-                                SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                        );
-                        inputName = "clientStream";
-                    } else {
-                        inputParam = getSimpleNameReferenceNode(input);
-                        inputName = "value";
-                    }
-                    function.addRequiredParameter(inputParam, inputName);
-                }
-
-                if (method.getOutputType() != null) {
-                    TypeDescriptorNode outputParam;
-                    if (method.getMethodType().equals(SERVER_STREAMING) ||
-                            method.getMethodType().equals(BIDI_STREAMING)) {
-                        outputParam = getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(output),
-                                getOptionalTypeDescriptorNode("", "error")
-                        );
-                    } else {
-                        outputParam = getSimpleNameReferenceNode(output);
-                    }
-                    function.addReturns(
-                            getUnionTypeDescriptorNode(
-                                    outputParam,
-                                    getErrorTypeDescriptorNode()
-                            )
+            if (method.getInputType() != null) {
+                TypeDescriptorNode inputParam;
+                String inputName;
+                if (method.getMethodType().equals(CLIENT_STREAMING) ||
+                        method.getMethodType().equals(BIDI_STREAMING)) {
+                    inputParam = getStreamTypeDescriptorNode(
+                            getSimpleNameReferenceNode(input),
+                            SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                     );
+                    inputName = "clientStream";
                 } else {
-                    function.addReturns(
+                    inputParam = getSimpleNameReferenceNode(input);
+                    inputName = "value";
+                }
+                function.addRequiredParameter(inputParam, inputName);
+            }
+
+            if (method.getOutputType() != null) {
+                TypeDescriptorNode outputParam;
+                if (method.getMethodType().equals(SERVER_STREAMING) ||
+                        method.getMethodType().equals(BIDI_STREAMING)) {
+                    outputParam = getStreamTypeDescriptorNode(
+                            getSimpleNameReferenceNode(output),
                             getOptionalTypeDescriptorNode("", "error")
                     );
+                } else {
+                    outputParam = getSimpleNameReferenceNode(output);
                 }
-                service.addMember(function.getFunctionDefinitionNode());
+                function.addReturns(
+                        getUnionTypeDescriptorNode(
+                                outputParam,
+                                getErrorTypeDescriptorNode()
+                        )
+                );
+            } else {
+                function.addReturns(
+                        getOptionalTypeDescriptorNode("", "error")
+                );
             }
-            moduleMembers = moduleMembers.add(service.getServiceDeclarationNode());
+            service.addMember(function.getFunctionDefinitionNode());
         }
-        if (GRPC_CLIENT.equals(mode)) {
-            Function main = new Function("main");
-            main.addQualifiers(new String[]{"public"});
-            ModuleVariable clientEp = new ModuleVariable(
-                    getTypedBindingPatternNode(
-                            getSimpleNameReferenceNode(serviceStub.getServiceName() + "Client"),
-                            getCaptureBindingPatternNode("ep")
-                    ),
-                    getCheckExpressionNode(
-                            getImplicitNewExpressionNode(new String[]{"\"http://localhost:9090\""})
-                    ),
-                    false
-            );
-            moduleMembers = moduleMembers.add(clientEp.getModuleVariableDeclarationNode());
-            moduleMembers = moduleMembers.add(main.getFunctionDefinitionNode());
-        }
+        moduleMembers = moduleMembers.add(service.getServiceDeclarationNode());
+
+        Token eofToken = AbstractNodeFactory.createIdentifierToken("");
+        ModulePartNode modulePartNode = NodeFactory.createModulePartNode(imports, moduleMembers, eofToken);
+        TextDocument textDocument = TextDocuments.from("");
+        SyntaxTree syntaxTree = SyntaxTree.from(textDocument);
+        return syntaxTree.modifyWith(modulePartNode);
+    }
+
+    public static SyntaxTree generateSyntaxTreeForClientSample(ServiceStub serviceStub) {
+        NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
+        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createEmptyNodeList();
+
+        Function main = new Function("main");
+        main.addQualifiers(new String[]{"public"});
+        ModuleVariable clientEp = new ModuleVariable(
+                getTypedBindingPatternNode(
+                        getSimpleNameReferenceNode(serviceStub.getServiceName() + "Client"),
+                        getCaptureBindingPatternNode("ep")
+                ),
+                getCheckExpressionNode(
+                        getImplicitNewExpressionNode(new String[]{"\"http://localhost:9090\""})
+                ),
+                false
+        );
+        moduleMembers = moduleMembers.add(clientEp.getModuleVariableDeclarationNode());
+        moduleMembers = moduleMembers.add(main.getFunctionDefinitionNode());
 
         Token eofToken = AbstractNodeFactory.createIdentifierToken("");
         ModulePartNode modulePartNode = NodeFactory.createModulePartNode(imports, moduleMembers, eofToken);
