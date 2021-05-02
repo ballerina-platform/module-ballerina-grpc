@@ -67,6 +67,16 @@ function testTestMessage() {
     assertGeneratedDataTypeSources("data-types", "testMessage.proto", "testMessage_pb.bal", "tool_test_data_type_12");
 }
 
+@test:Config {enable:true}
+function testHelloWorldErrorSyntax() {
+    assertGeneratedDataTypeSourcesNegative("negative", "helloWorldErrorSyntax.proto", "helloWorldErrorSyntax_pb.bal", "tool_test_data_type_2");
+}
+
+@test:Config {enable:true}
+function testHelloWorldWithInvalidDependency() {
+    assertGeneratedDataTypeSourcesNegative("negative", "helloWorldWithInvalidDependency.proto", "helloWorldWithInvalidDependency_pb.bal", "tool_test_data_type_4");
+}
+
 function assertGeneratedDataTypeSources(string subDir, string protoFile, string stubFile, string outputDir) {
     string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
     string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
@@ -78,4 +88,15 @@ function assertGeneratedDataTypeSources(string subDir, string protoFile, string 
     test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath));
     test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
+}
+
+function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile, string stubFile, string outputDir) {
+    string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
+    string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
+
+    string expectedStubFilePath = checkpanic file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
+    string actualStubFilePath = checkpanic file:joinPath(outputDirPath, stubFile);
+
+    generateSourceCode(protoFilePath, outputDirPath);
+    test:assertFalse(checkpanic file:test(actualStubFilePath, file:EXISTS));
 }

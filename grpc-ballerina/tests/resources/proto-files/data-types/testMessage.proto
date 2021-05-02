@@ -28,9 +28,10 @@ message Test2 {
     float c = 3;
     int32 d = 4;
     int64 e = 5;
-    uint64 f = 6;
-    fixed32 g = 7;
-    fixed64 h = 8;
+    uint32 f = 6;
+    uint64 g = 7;
+    fixed32 h = 8;
+    fixed64 i = 9;
 }
 
 message Test3 {
@@ -39,7 +40,8 @@ message Test3 {
     repeated float c = 3;
     repeated int32 d = 4;
     repeated int64 e = 5;
-    repeated uint64 f = 6;
-    repeated fixed32 g = 7;
-    repeated fixed64 h = 8;
+    repeated uint32 f = 6;
+    repeated uint64 g = 7;
+    repeated fixed32 h = 8;
+    repeated fixed64 i = 9;
 }
