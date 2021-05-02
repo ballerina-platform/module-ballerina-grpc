@@ -35,7 +35,12 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.is
 public class ValueTypeUtils {
 
     public static Type getValueTypeStream(String key) {
-        String typeName = "Context" + capitalize(key) + "Stream";
+        String typeName;
+        if (key.equals("byte[]")) {
+            typeName = "ContextBytesStream";
+        } else {
+            typeName = "Context" + capitalize(key) + "Stream";
+        }
         Record contextStream = new Record();
         contextStream.addStreamField(key, "content");
         contextStream.addMapField(
