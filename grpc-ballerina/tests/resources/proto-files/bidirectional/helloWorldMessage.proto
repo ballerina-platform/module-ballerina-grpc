@@ -18,8 +18,8 @@
 
 syntax = "proto3";
 service helloWorld {
-		rpc hello(HelloRequest) returns (HelloResponse);
-		rpc bye(ByeRequest) returns (ByeResponse);
+		rpc hello(stream HelloRequest) returns (stream HelloResponse);
+		rpc bye(stream ByeRequest) returns (stream ByeResponse);
 }
 message HelloRequest {
 	string name = 1;
