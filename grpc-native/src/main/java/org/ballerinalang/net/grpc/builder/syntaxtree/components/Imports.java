@@ -34,6 +34,10 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
  */
 public class Imports {
 
+    private Imports() {
+
+    }
+
     public static ImportDeclarationNode getImportDeclarationNode(String orgName, String moduleName) {
         Token orgNameToken = AbstractNodeFactory.createIdentifierToken(orgName);
         ImportOrgNameNode importOrgNameNode = NodeFactory.createImportOrgNameNode(

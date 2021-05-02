@@ -36,16 +36,12 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
  */
 public class Constant {
 
-    private Token visibilityQualifier;
     private final Token constKeyWord = AbstractNodeFactory.createIdentifierToken("const ");
     private final TypeDescriptorNode typeDescriptor;
     private final Token variableName;
     private final BasicLiteralNode initializer;
 
-    public Constant(String type, String name, String value, boolean isPublic) {
-        if (isPublic) {
-            visibilityQualifier = AbstractNodeFactory.createIdentifierToken("public ");
-        }
+    public Constant(String type, String name, String value) {
         typeDescriptor = getBuiltinSimpleNameReferenceNode(type);
         variableName = AbstractNodeFactory.createIdentifierToken(name);
         initializer = getStringLiteralNode(value);
@@ -54,7 +50,7 @@ public class Constant {
     public ConstantDeclarationNode getConstantDeclarationNode() {
         return NodeFactory.createConstantDeclarationNode(
                 null,
-                visibilityQualifier,
+                null,
                 constKeyWord,
                 typeDescriptor,
                 variableName,

@@ -24,6 +24,10 @@ import java.io.File;
  */
 public class BalGenConstants {
 
+    private BalGenConstants() {
+
+    }
+
     public static final String FILE_SEPARATOR = File.separator;
 
     public static final String DEFAULT_PACKAGE = "temp";

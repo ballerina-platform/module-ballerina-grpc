@@ -34,15 +34,11 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
  */
 public class ModuleVariable {
 
-    private Token visibilityQualifier;
     private final NodeList<Token> qualifierList;
     private final TypedBindingPatternNode patternNode;
     private final ExpressionNode initializer;
 
-    public ModuleVariable(TypedBindingPatternNode patternNode, ExpressionNode initializer, boolean isPublic) {
-        if (isPublic) {
-            visibilityQualifier = AbstractNodeFactory.createIdentifierToken("public ");
-        }
+    public ModuleVariable(TypedBindingPatternNode patternNode, ExpressionNode initializer) {
         qualifierList = AbstractNodeFactory.createEmptyNodeList();
         this.patternNode = patternNode;
         this.initializer = initializer;
@@ -57,7 +53,7 @@ public class ModuleVariable {
         }
         return NodeFactory.createModuleVariableDeclarationNode(
                 null,
-                visibilityQualifier,
+                null,
                 qualifierList,
                 patternNode,
                 equals,

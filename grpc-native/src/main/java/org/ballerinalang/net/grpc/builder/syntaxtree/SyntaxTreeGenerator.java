@@ -171,8 +171,7 @@ public class SyntaxTreeGenerator {
 
         // ROOT_DESCRIPTOR
         if (stubFile.getRootDescriptor() != null) {
-            Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor(),
-                    false);
+            Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor());
             moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
         }
 
@@ -300,8 +299,7 @@ public class SyntaxTreeGenerator {
                 ),
                 getCheckExpressionNode(
                         getImplicitNewExpressionNode(new String[]{"\"http://localhost:9090\""})
-                ),
-                false
+                )
         );
         moduleMembers = moduleMembers.add(clientEp.getModuleVariableDeclarationNode());
         moduleMembers = moduleMembers.add(main.getFunctionDefinitionNode());

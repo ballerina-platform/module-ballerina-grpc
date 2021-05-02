@@ -23,6 +23,10 @@ import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_
  * Util functions which are use when generating . bal stub
  */
 public class BalGenerationUtils {
+
+    private BalGenerationUtils() {
+
+    }
     
     /**
      * Convert byte array to readable byte string.

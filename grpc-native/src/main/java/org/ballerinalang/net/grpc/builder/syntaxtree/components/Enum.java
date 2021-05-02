@@ -38,15 +38,13 @@ import java.util.List;
 public class Enum {
 
     private final MetadataNode metadata;
-    private Token qualifier;
+    private final Token qualifier;
     private final String name;
     private final List<Node> enumMemberList;
 
-    public Enum(String name, boolean isPublic) {
+    public Enum(String name) {
         this.name = name;
-        if (isPublic) {
-            qualifier = AbstractNodeFactory.createIdentifierToken("public ");
-        }
+        qualifier = AbstractNodeFactory.createIdentifierToken("public ");
         metadata = null;
         enumMemberList = new ArrayList<>();
     }

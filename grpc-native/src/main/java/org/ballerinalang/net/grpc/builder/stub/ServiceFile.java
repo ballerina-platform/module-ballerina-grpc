@@ -25,18 +25,12 @@ import java.util.List;
  * Service file definition bean class.
  */
 public class ServiceFile extends AbstractStub {
-    private final String serviceName;
 
-    private ServiceFile(String serviceName) {
-        this.serviceName = serviceName;
+    private ServiceFile() {
     }
 
     public static ServiceFile.Builder newBuilder(String serviceName) {
         return new ServiceFile.Builder(serviceName);
-    }
-
-    public String getServiceName() {
-        return serviceName;
     }
 
     /**
