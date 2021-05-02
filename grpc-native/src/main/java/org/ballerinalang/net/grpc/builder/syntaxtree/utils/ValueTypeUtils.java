@@ -34,6 +34,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.is
  */
 public class ValueTypeUtils {
 
+    private ValueTypeUtils() {
+
+    }
+
     public static Type getValueTypeStream(String key) {
         String typeName;
         if (key.equals("byte[]")) {

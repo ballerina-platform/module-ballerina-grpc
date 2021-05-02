@@ -25,8 +25,8 @@ import com.google.protobuf.DescriptorProtos;
  * @since 0.982.0
  */
 public class EnumField {
-    private String name;
-    private int number;
+    private final String name;
+    private final int number;
     
     EnumField(String name, int number) {
         this.name = name;
@@ -49,7 +49,7 @@ public class EnumField {
      * Enum Field.Builder.
      */
     public static class Builder {
-        private DescriptorProtos.EnumValueDescriptorProto fieldDescriptor;
+        private final DescriptorProtos.EnumValueDescriptorProto fieldDescriptor;
         
         public EnumField build() {
             return new EnumField(fieldDescriptor.getName(), fieldDescriptor.getNumber());

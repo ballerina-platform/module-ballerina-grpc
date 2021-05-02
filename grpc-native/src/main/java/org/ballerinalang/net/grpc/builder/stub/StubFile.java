@@ -26,8 +26,8 @@ import java.util.List;
  * @since 0.982.0
  */
 public class StubFile extends AbstractStub {
-    private List<ServiceStub> stubList = new ArrayList<>();
-    private String fileName;
+    private final List<ServiceStub> stubList = new ArrayList<>();
+    private final String fileName;
     
     public StubFile(String fileName) {
         this.fileName = fileName;

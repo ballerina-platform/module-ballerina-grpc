@@ -63,6 +63,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.ca
  */
 public class ClientUtils {
 
+    private ClientUtils() {
+
+    }
+
     public static Function getStreamingClientFunction(Method method, boolean bidirectional) {
         String methodName = bidirectional ? "executeBidirectionalStreaming" : "executeClientStreaming";
         String clientName = capitalize(method.getMethodName()) + "StreamingClient";

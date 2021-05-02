@@ -59,6 +59,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.ca
  */
 public class UnaryUtils {
 
+    private UnaryUtils() {
+
+    }
+
     public static Function getUnaryFunction(Method method) {
         Function function = new Function(method.getMethodName());
         function.addQualifiers(new String[]{"isolated", "remote"});

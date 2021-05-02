@@ -18,10 +18,6 @@
 
 package org.ballerinalang.net.grpc.builder.stub;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +25,7 @@ import java.util.List;
  * Service file definition bean class.
  */
 public class ServiceFile extends AbstractStub {
-    private String serviceName;
-    private List<Method> unaryFunctions = new ArrayList<>();
-
-    private List<Method> serverStreamingFunctions = new ArrayList<>();
-    private List<Method> clientStreamingFunctions = new ArrayList<>();
-    private List<Method> bidiStreamingFunctions = new ArrayList<>();
+    private final String serviceName;
 
     private ServiceFile(String serviceName) {
         this.serviceName = serviceName;
@@ -55,42 +46,12 @@ public class ServiceFile extends AbstractStub {
         String serviceName;
         List<Method> methodList = new ArrayList<>();
 
-        private static final Logger log = LoggerFactory.getLogger(ServiceFile.class);
-        private static final PrintStream console = System.err;
-
         private Builder(String serviceName) {
             this.serviceName = serviceName;
         }
 
-        public ServiceFile.Builder addMethod(Method method) {
+        public void addMethod(Method method) {
             methodList.add(method);
-            return this;
-        }
-
-        public ServiceFile build() {
-            ServiceFile serviceFile = new ServiceFile(serviceName);
-            for (Method method : methodList) {
-                switch (method.getMethodType()) {
-                case UNARY:
-                    serviceFile.unaryFunctions.add(method);
-                    break;
-                case SERVER_STREAMING:
-                    serviceFile.serverStreamingFunctions.add(method);
-                    break;
-                case CLIENT_STREAMING:
-                    serviceFile.clientStreamingFunctions.add(method);
-                    break;
-                case BIDI_STREAMING:
-                    serviceFile.bidiStreamingFunctions.add(method);
-                    break;
-                default:
-                    String message = serviceName + "/" + method.getMethodName() + " is not implemented. Method type " +
-                            "is unknown or not supported.";
-                    log.error(message);
-                    console.println(message);
-                }
-            }
-            return serviceFile;
         }
     }
 }

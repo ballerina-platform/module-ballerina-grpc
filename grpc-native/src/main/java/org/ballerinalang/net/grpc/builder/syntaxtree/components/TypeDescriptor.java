@@ -62,6 +62,10 @@ import java.util.List;
  */
 public class TypeDescriptor {
 
+    private TypeDescriptor() {
+
+    }
+
     public static QualifiedNameReferenceNode getQualifiedNameReferenceNode(String modulePrefix, String identifier) {
         return NodeFactory.createQualifiedNameReferenceNode(
                 AbstractNodeFactory.createIdentifierToken(modulePrefix),

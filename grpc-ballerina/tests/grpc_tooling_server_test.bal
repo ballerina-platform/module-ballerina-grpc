@@ -36,10 +36,10 @@ function testServerHelloWorldBoolean() {
     assertGeneratedSources("server", "helloWorldBoolean.proto", "helloWorldBoolean_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_server_4");
 }
 
-//@test:Config {enable:true}
-//function testServerHelloWorldBytes() {
-//    assertGeneratedSources("server", "helloWorldBytes.proto", "helloWorldBytes_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_server_5");
-//}
+@test:Config {enable:true}
+function testServerHelloWorldBytes() {
+    assertGeneratedSources("server", "helloWorldBytes.proto", "helloWorldBytes_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_server_5");
+}
 
 @test:Config {enable:true}
 function testServerHelloWorldMessage() {

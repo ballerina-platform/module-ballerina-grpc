@@ -40,7 +40,7 @@ function assertGeneratedSources(string subDir, string protoFile, string stubFile
     generateSourceCode(protoFilePath, outputDirPath, "service");
     test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath));
-    //test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
+    test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
     test:assertTrue(checkpanic file:test(actualServiceFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualServiceFilePath));
     test:assertEquals(readContent(expectedServiceFilePath), readContent(actualServiceFilePath));
@@ -52,7 +52,7 @@ function assertGeneratedSources(string subDir, string protoFile, string stubFile
     generateSourceCode(protoFilePath, outputDirPath, "client");
     test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath));
-    //test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
+    test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
     test:assertTrue(checkpanic file:test(actualClientFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualClientFilePath));
     test:assertEquals(readContent(expectedClientFilePath), readContent(actualClientFilePath));

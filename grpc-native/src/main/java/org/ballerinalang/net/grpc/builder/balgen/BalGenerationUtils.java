@@ -56,9 +56,7 @@ public class BalGenerationUtils {
             case ".google.protobuf.Int32Value":
                 return "int";
             case ".google.protobuf.Int64Value":
-            case ".google.protobuf.UInt64Value": {
-                return "int";
-            }
+            case ".google.protobuf.UInt64Value":
             case ".google.protobuf.UInt32Value": {
                 return "int";
             }
@@ -80,27 +78,6 @@ public class BalGenerationUtils {
             default: { // to handle structs
                 return protoType.substring(protoType.lastIndexOf
                         (PACKAGE_SEPARATOR) + 1);
-            }
-        }
-    }
-
-    /**
-     * This function checks if the input type is a primitive type or not.
-     *
-     * @param inputType .proto data type
-     * @return true or false.
-     */
-    public static boolean checkPrimitiveType(String inputType) {
-        switch (inputType) {
-            case "string":
-            case "int":
-            case "float":
-            case "boolean":
-            case "byte[]": {
-                return true;
-            }
-            default: { // for null and structs
-                return false;
             }
         }
     }

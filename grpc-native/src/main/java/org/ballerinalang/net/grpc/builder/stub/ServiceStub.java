@@ -34,17 +34,17 @@ import static org.ballerinalang.net.grpc.MessageUtils.getCallerTypeName;
  * @since 0.982.0
  */
 public class ServiceStub {
-    private String serviceName;
-    private List<Method> unaryFunctions = new ArrayList<>();
-    private List<Method> serverStreamingFunctions = new ArrayList<>();
+    private final String serviceName;
+    private final List<Method> unaryFunctions = new ArrayList<>();
+    private final List<Method> serverStreamingFunctions = new ArrayList<>();
     //both client streaming and bidirectional streaming have same client side behaviour.
-    private List<Method> clientStreamingFunctions = new ArrayList<>();
+    private final List<Method> clientStreamingFunctions = new ArrayList<>();
 
-    private List<Method> bidiStreamingFunctions = new ArrayList<>();
-    private Map<String, String> callerMap = new HashMap<>();
+    private final List<Method> bidiStreamingFunctions = new ArrayList<>();
+    private final Map<String, String> callerMap = new HashMap<>();
     // this map uses to generate content context record types. Boolean value contains whether the content is stream
     // type or not.
-    private Map<String, Boolean> valueTypeMap = new HashMap<>();
+    private final Map<String, Boolean> valueTypeMap = new HashMap<>();
 
     private ServiceStub(String serviceName) {
         this.serviceName = serviceName;

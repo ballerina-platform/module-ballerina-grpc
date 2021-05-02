@@ -63,6 +63,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.ca
  */
 public class ServerUtils {
 
+    private ServerUtils() {
+
+    }
+
     public static Function getServerStreamingFunction(Method method) {
         Function function = new Function(method.getMethodName());
         if (method.getInputType() != null) {

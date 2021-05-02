@@ -33,10 +33,10 @@ import static org.ballerinalang.net.grpc.GrpcConstants.REGEX_DOT_SEPERATOR;
  * @since 0.982.0
  */
 public class Field {
-    private String fieldType;
-    private String fieldLabel;
-    private String fieldName;
-    private String defaultValue;
+    private final String fieldType;
+    private final String fieldLabel;
+    private final String fieldName;
+    private final String defaultValue;
 
     private Field(String fieldName, String fieldType, String fieldLabel, String defaultValue) {
         this.fieldName = fieldName;
@@ -69,7 +69,7 @@ public class Field {
      * Field Definition.Builder.
      */
     public static class Builder {
-        private DescriptorProtos.FieldDescriptorProto fieldDescriptor;
+        private final DescriptorProtos.FieldDescriptorProto fieldDescriptor;
 
         public Field build() {
             String fieldType = fieldDescriptor.getTypeName();
