@@ -1,4 +1,4 @@
-// Copyright (c) 2020 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -23,18 +23,8 @@ function testHelloWorldWithDependency() {
 }
 
 @test:Config {enable:true}
-function testHelloWorldErrorSyntax() {
-    assertGeneratedDataTypeSourcesNegative("data-types", "helloWorldErrorSyntax.proto", "helloWorldErrorSyntax_pb.bal", "tool_test_data_type_2");
-}
-
-@test:Config {enable:true}
 function testHelloWorldWithEnum() {
     assertGeneratedDataTypeSources("data-types", "helloWorldWithEnum.proto", "helloWorldWithEnum_pb.bal", "tool_test_data_type_3");
-}
-
-@test:Config {enable:true}
-function testHelloWorldWithInvalidDependency() {
-    assertGeneratedDataTypeSourcesNegative("data-types", "helloWorldWithInvalidDependency.proto", "helloWorldWithInvalidDependency_pb.bal", "tool_test_data_type_4");
 }
 
 @test:Config {enable:true}
@@ -88,15 +78,4 @@ function assertGeneratedDataTypeSources(string subDir, string protoFile, string 
     test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath));
     test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
-}
-
-function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile, string stubFile, string outputDir) {
-    string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
-    string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
-
-    string expectedStubFilePath = checkpanic file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
-    string actualStubFilePath = checkpanic file:joinPath(outputDirPath, stubFile);
-
-    generateSourceCode(protoFilePath, outputDirPath);
-    test:assertFalse(checkpanic file:test(actualStubFilePath, file:EXISTS));
 }
