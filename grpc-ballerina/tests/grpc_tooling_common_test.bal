@@ -114,6 +114,8 @@ function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile,
     test:assertFalse(checkpanic file:test(actualStubFilePath, file:EXISTS));
 }
 
+// This test case is to generate stub files for all grpc tests. we can use this to verify the generated output files
+// manually.
 //@test:Config {enable:true}
 //function testGenerateSourceCode() {
 //    string outputDirPath = "tests/";
