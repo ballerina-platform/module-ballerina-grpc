@@ -98,9 +98,9 @@ public type ContextPlaceOrderResponse record {|
 public type PlaceOrderRequest record {|
     string user_id = "";
     string user_currency = "";
-    Address2? address = ();
+    Address2 address = {};
     string email = "";
-    CreditCardInfo? credit_card = ();
+    CreditCardInfo credit_card = {};
 |};
 
 public type Address2 record {|

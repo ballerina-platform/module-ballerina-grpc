@@ -97,7 +97,7 @@ public type ContextOrderInfo record {|
 
 public type OrderInfo record {|
     string id = "";
-    Mode? mode = ();
+    Mode mode = r;
 |};
 
 public enum Mode {
