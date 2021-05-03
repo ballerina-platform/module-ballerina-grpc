@@ -9,7 +9,6 @@ listener grpc:Listener ep = new (9090);
 service "helloWorld" on ep {
 
     remote function hello(stream<boolean, grpc:Error?> clientStream) returns stream<boolean, error?>|error {
-
     }
 }
 
