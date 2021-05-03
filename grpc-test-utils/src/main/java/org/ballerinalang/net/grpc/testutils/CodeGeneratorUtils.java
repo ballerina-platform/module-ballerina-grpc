@@ -41,9 +41,11 @@ public class CodeGeneratorUtils {
             grpcCmdClass = Class.forName("org.ballerinalang.net.grpc.protobuf.cmd.GrpcCmd");
             GrpcCmd grpcCmd = (GrpcCmd) grpcCmdClass.newInstance();
             Path protoFilePath = Paths.get(sProtoFilePath.getValue());
-            Path outputDirPath = Paths.get(sOutputDirPath.getValue());
-            grpcCmd.setBalOutPath(outputDirPath.toAbsolutePath().toString());
             grpcCmd.setProtoPath(protoFilePath.toAbsolutePath().toString());
+            if (!sOutputDirPath.getValue().equals("")) {
+                Path outputDirPath = Paths.get(sOutputDirPath.getValue());
+                grpcCmd.setBalOutPath(outputDirPath.toAbsolutePath().toString());
+            }
             if (mode instanceof BString) {
                 grpcCmd.setMode(((BString)mode).getValue());
             }

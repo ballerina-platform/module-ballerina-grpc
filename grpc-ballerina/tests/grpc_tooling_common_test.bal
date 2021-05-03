@@ -68,6 +68,11 @@ function testTestMessage() {
 }
 
 @test:Config {enable:true}
+function testWithoutOutputDir() {
+    assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal", "");
+}
+
+@test:Config {enable:true}
 function testHelloWorldErrorSyntax() {
     assertGeneratedDataTypeSourcesNegative("negative", "helloWorldErrorSyntax.proto", "helloWorldErrorSyntax_pb.bal", "tool_test_data_type_2");
 }
@@ -80,14 +85,22 @@ function testHelloWorldWithInvalidDependency() {
 function assertGeneratedDataTypeSources(string subDir, string protoFile, string stubFile, string outputDir) {
     string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
     string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
+    string tempDirPath = checkpanic file:joinPath(file:getCurrentDir(), "temp");
 
     string expectedStubFilePath = checkpanic file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
-    string actualStubFilePath = checkpanic file:joinPath(outputDirPath, stubFile);
-
-    generateSourceCode(protoFilePath, outputDirPath);
-    test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
-    test:assertFalse(hasDiagnostics(actualStubFilePath));
-    test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
+    string actualStubFilePath;
+    if (outputDir == "") {
+        actualStubFilePath = checkpanic file:joinPath(tempDirPath, stubFile);
+        generateSourceCode(protoFilePath, "");
+        test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
+        test:assertFalse(hasDiagnostics(actualStubFilePath));
+    } else {
+        actualStubFilePath = checkpanic file:joinPath(outputDirPath, stubFile);
+        generateSourceCode(protoFilePath, outputDirPath);
+        test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
+        test:assertFalse(hasDiagnostics(actualStubFilePath));
+        test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
+    }
 }
 
 function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile, string stubFile, string outputDir) {
