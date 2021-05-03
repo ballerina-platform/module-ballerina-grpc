@@ -120,6 +120,12 @@ public class Message {
                 }
             }
 
+            List<EnumMessage> enumList = new ArrayList<>();
+            for (DescriptorProtos.EnumDescriptorProto enumDescriptorProto : messageDescriptor.getEnumTypeList()) {
+                EnumMessage enumMessage = EnumMessage.newBuilder(enumDescriptorProto).build();
+                enumList.add(enumMessage);
+            }
+
             List<Field> fieldList = new ArrayList<>();
             Map<String, List<Field>> oneofFieldMap = new HashMap<>();
             for (DescriptorProtos.FieldDescriptorProto fieldDescriptorProto : messageDescriptor.getFieldList()) {
@@ -131,11 +137,6 @@ public class Message {
                 } else if (!mapNames.contains(field.getFieldType())) {
                     fieldList.add(field);
                 }
-            }
-            List<EnumMessage> enumList = new ArrayList<>();
-            for (DescriptorProtos.EnumDescriptorProto enumDescriptorProto : messageDescriptor.getEnumTypeList()) {
-                EnumMessage enumMessage = EnumMessage.newBuilder(enumDescriptorProto).build();
-                enumList.add(enumMessage);
             }
 
             Message message = new Message(messageDescriptor.getName(), fieldList);

@@ -280,7 +280,7 @@ public type ZZZ record {|
     int gg = 0;
     boolean hh = false;
     string ii = "";
-    AAA? jj = ();
+    AAA jj = {};
     byte[] kk = [];
     float one_a?;
     float one_b?;
