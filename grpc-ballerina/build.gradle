@@ -109,9 +109,6 @@ dependencies {
     externalJars (group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
         transitive = false
     }
-    externalJars (group: 'com.github.jknack', name: 'handlebars', version: "${jknackHandlebarsVersion}") {
-        transitive = false
-    }
     externalJars (group: 'info.picocli', name: 'picocli', version: "${picocliVersion}") {
         transitive = false
     }
@@ -122,6 +119,12 @@ dependencies {
         transitive = false
     }
     externalJars (group: 'org.wso2.orbit.org.antlr', name: 'antlr4-runtime', version: "${wso2OrbitAntlrVersion}") {
+        transitive = false
+    }
+    externalJars (group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+    externalJars (group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}") {
         transitive = false
     }
 }

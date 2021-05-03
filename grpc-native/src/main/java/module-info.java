@@ -29,15 +29,16 @@ module io.ballerina.stdlib.grpc {
     requires java.logging;
     requires io.ballerina.lang;
     requires io.ballerina.tools.api;
+    requires io.ballerina.parser;
+    requires io.ballerina.formatter.core;
     requires info.picocli;
-    requires handlebars;
     requires io.ballerina.cli;
     exports org.ballerinalang.net.grpc;
+    exports org.ballerinalang.net.grpc.exception;
     exports org.ballerinalang.net.grpc.protobuf.cmd;
     exports org.ballerinalang.net.grpc.nativeimpl;
     exports org.ballerinalang.net.grpc.nativeimpl.caller;
     exports org.ballerinalang.net.grpc.nativeimpl.client;
-    exports org.ballerinalang.net.grpc.nativeimpl.headers;
     exports org.ballerinalang.net.grpc.nativeimpl.serviceendpoint;
     exports org.ballerinalang.net.grpc.nativeimpl.streamingclient;
 }

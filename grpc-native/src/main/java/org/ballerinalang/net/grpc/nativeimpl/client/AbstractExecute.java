@@ -35,9 +35,6 @@ abstract class AbstractExecute {
 
     static MethodDescriptor.MethodType getMethodType(Descriptors.MethodDescriptor
                                                       methodDescriptor) throws GrpcClientException {
-        if (methodDescriptor == null) {
-            throw new GrpcClientException("Error while processing method type. Method descriptor cannot be null.");
-        }
         DescriptorProtos.MethodDescriptorProto methodDescriptorProto = methodDescriptor.toProto();
         return MessageUtils.getMethodType(methodDescriptorProto);
     }

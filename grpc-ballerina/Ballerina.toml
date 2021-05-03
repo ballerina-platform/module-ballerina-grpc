@@ -149,9 +149,14 @@ groupId = "com.google.api.grpc"
 artifactId = "proto-google-common-protos"
 version = "1.17.0"
 
+[[platform.java11.dependency]]
+path = "./lib/formatter-core-@ballerinalang.version@.jar"
+groupId = "org.ballerinalang"
+artifactId = "formatter-core"
+version = "@ballerinalang.version@"
 
 [[platform.java11.dependency]]
-path = "./lib/handlebars-4.0.6.jar"
-groupId = "com.github.jknack"
-artifactId = "handlebars"
-version = "4.1.2"
+path = "./lib/ballerina-parser-@ballerinalang.version@.jar"
+groupId = "org.ballerinalang"
+artifactId = "ballerina-parser"
+version = "@ballerinalang.version@"
