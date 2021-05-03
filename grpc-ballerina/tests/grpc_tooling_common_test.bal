@@ -94,6 +94,7 @@ function assertGeneratedDataTypeSources(string subDir, string protoFile, string 
         generateSourceCode(protoFilePath, "");
         test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
         test:assertFalse(hasDiagnostics(actualStubFilePath));
+        checkpanic file:remove(tempDirPath, option = file:RECURSIVE);
     } else {
         actualStubFilePath = checkpanic file:joinPath(outputDirPath, stubFile);
         generateSourceCode(protoFilePath, outputDirPath);
