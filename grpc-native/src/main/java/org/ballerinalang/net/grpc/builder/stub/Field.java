@@ -26,6 +26,7 @@ import java.util.Map;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.DOT;
 import static org.ballerinalang.net.grpc.GrpcConstants.REGEX_DOT_SEPERATOR;
+import static org.ballerinalang.net.grpc.builder.BallerinaFileBuilder.enumDefaultValueMap;
 
 /**
  * Field definition bean class.
@@ -95,6 +96,9 @@ public class Field {
             if (Arrays.stream(RESERVED_LITERAL_NAMES).anyMatch(fieldName::equalsIgnoreCase) || Names.ERROR.value
                     .equalsIgnoreCase(fieldName)) {
                 fieldName = "'" + fieldName;
+            }
+            if (fieldDescriptor.getType().equals(DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM)) {
+                fieldDefaultValue = enumDefaultValueMap.get(fieldType);
             }
             return new Field(fieldName, fieldType, fieldLabel, fieldDefaultValue);
         }

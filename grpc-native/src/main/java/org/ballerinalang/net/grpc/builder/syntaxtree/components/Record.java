@@ -33,7 +33,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.g
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getArrayTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
@@ -223,10 +222,10 @@ public class Record {
                     NodeFactory.createRecordFieldWithDefaultValueNode(
                             null,
                             null,
-                            getOptionalTypeDescriptorNode("", fieldType),
+                            getSimpleNameReferenceNode(fieldType),
                             AbstractNodeFactory.createIdentifierToken(fieldName),
                             SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
-                            getNilTypeDescriptorNode(),
+                            new Map().getMappingConstructorExpressionNode(),
                             SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
                     )
             );
@@ -240,6 +239,18 @@ public class Record {
                                 AbstractNodeFactory.createIdentifierToken(fieldName),
                                 SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
                                 getListConstructorExpressionNode(null),
+                                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                        )
+                );
+            } else {
+                fields = fields.add(
+                        NodeFactory.createRecordFieldWithDefaultValueNode(
+                                null,
+                                null,
+                                getSimpleNameReferenceNode(fieldType),
+                                AbstractNodeFactory.createIdentifierToken(fieldName),
+                                SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                                getSimpleNameReferenceNode(defaultValue),
                                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
                         )
                 );

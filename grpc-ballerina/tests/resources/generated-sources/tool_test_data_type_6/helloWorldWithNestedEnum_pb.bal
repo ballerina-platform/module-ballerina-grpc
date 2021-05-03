@@ -322,7 +322,7 @@ public type ByeRequest record {|
 
 public type HelloResponse record {|
     string message = "";
-    sentiment? mode = ();
+    sentiment mode = happy;
     
 |};
 

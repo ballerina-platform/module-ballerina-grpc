@@ -22,6 +22,8 @@ import com.google.protobuf.DescriptorProtos;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.ballerinalang.net.grpc.builder.BallerinaFileBuilder.enumDefaultValueMap;
+
 /**
  * Enum Message Definition.
  *
@@ -55,10 +57,15 @@ public class EnumMessage {
         private final DescriptorProtos.EnumDescriptorProto enumDescriptor;
     
         public EnumMessage build() {
+            int index = 0;
             List<EnumField> fieldList = new ArrayList<>();
             for (DescriptorProtos.EnumValueDescriptorProto fieldDescriptor : enumDescriptor.getValueList()) {
                 EnumField field = EnumField.newBuilder(fieldDescriptor).build();
                 fieldList.add(field);
+                if (index == 0) {
+                    enumDefaultValueMap.put(enumDescriptor.getName(), field.getName());
+                }
+                index++;
             }
             return new EnumMessage(enumDescriptor.getName(), fieldList);
         }

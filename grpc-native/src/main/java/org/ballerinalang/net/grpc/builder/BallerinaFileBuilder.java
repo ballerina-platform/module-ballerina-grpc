@@ -45,7 +45,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -73,6 +75,7 @@ public class BallerinaFileBuilder {
 
     // Proto file extension
     private static final String PROTO_FILE_EXTENSION = ".proto";
+    public static Map<String, String> enumDefaultValueMap = new HashMap<>();
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
@@ -135,16 +138,16 @@ public class BallerinaFileBuilder {
                 }
             }
 
-            // read message types.
-            for (DescriptorProtos.DescriptorProto descriptorProto : messageTypeList) {
-                Message message = Message.newBuilder(descriptorProto).build();
-                messageList.add(message);
-            }
-
             // read enum types.
             for (DescriptorProtos.EnumDescriptorProto descriptorProto : enumDescriptorProtos) {
                 EnumMessage enumMessage = EnumMessage.newBuilder(descriptorProto).build();
                 enumList.add(enumMessage);
+            }
+
+            // read message types.
+            for (DescriptorProtos.DescriptorProto descriptorProto : messageTypeList) {
+                Message message = Message.newBuilder(descriptorProto).build();
+                messageList.add(message);
             }
 
             // write definition objects to ballerina files.
