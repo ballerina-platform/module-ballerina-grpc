@@ -45,9 +45,9 @@ function assertGeneratedSources(string subDir, string protoFile, string stubFile
     test:assertFalse(hasDiagnostics(actualServiceFilePath));
     test:assertEquals(readContent(expectedServiceFilePath), readContent(actualServiceFilePath));
     _ = check file:remove(actualStubFilePath);
-    _ = check file:remove(actualServiceFilePath);
+    //_ = check file:remove(actualServiceFilePath);
     test:assertFalse(check file:test(actualStubFilePath, file:EXISTS));
-    test:assertFalse(check file:test(actualServiceFilePath, file:EXISTS));
+    //test:assertFalse(check file:test(actualServiceFilePath, file:EXISTS));
 
     generateSourceCode(protoFilePath, outputDirPath, "client");
     test:assertTrue(check file:test(actualStubFilePath, file:EXISTS));
