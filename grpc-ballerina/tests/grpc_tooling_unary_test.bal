@@ -18,40 +18,64 @@ import ballerina/test;
 
 @test:Config {enable:true}
 function testUnaryHelloWorldString() {
-    assertGeneratedSources("unary", "helloWorldString.proto", "helloWorldString_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_1");
+    var result = assertGeneratedSources("unary", "helloWorldString.proto", "helloWorldString_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_1");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testUnaryHelloWorldInt() {
-    assertGeneratedSources("unary", "helloWorldInt.proto", "helloWorldInt_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_2");
+    var result = assertGeneratedSources("unary", "helloWorldInt.proto", "helloWorldInt_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_2");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testUnaryHelloWorldFloat() {
-    assertGeneratedSources("unary", "helloWorldFloat.proto", "helloWorldFloat_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_3");
+    var result = assertGeneratedSources("unary", "helloWorldFloat.proto", "helloWorldFloat_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_3");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testUnaryHelloWorldBoolean() {
-    assertGeneratedSources("unary", "helloWorldBoolean.proto", "helloWorldBoolean_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_4");
+    var result = assertGeneratedSources("unary", "helloWorldBoolean.proto", "helloWorldBoolean_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_4");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testUnaryHelloWorldBytes() {
-    assertGeneratedSources("unary", "helloWorldBytes.proto", "helloWorldBytes_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_5");
+    var result = assertGeneratedSources("unary", "helloWorldBytes.proto", "helloWorldBytes_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_5");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testUnaryHelloWorldMessage() {
-    assertGeneratedSources("unary", "helloWorldMessage.proto", "helloWorldMessage_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_6");
+    var result = assertGeneratedSources("unary", "helloWorldMessage.proto", "helloWorldMessage_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_6");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testUnaryHelloWorldInputEmptyOutputMessage() {
-    assertGeneratedSources("unary", "helloWorldInputEmptyOutputMessage.proto", "helloWorldInputEmptyOutputMessage_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_7");
+    var result = assertGeneratedSources("unary", "helloWorldInputEmptyOutputMessage.proto", "helloWorldInputEmptyOutputMessage_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_7");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testUnaryHelloWorldInputMessageOutputEmpty() {
-    assertGeneratedSources("unary", "helloWorldInputMessageOutputEmpty.proto", "helloWorldInputMessageOutputEmpty_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_8");
+    var result = assertGeneratedSources("unary", "helloWorldInputMessageOutputEmpty.proto", "helloWorldInputMessageOutputEmpty_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_8");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }

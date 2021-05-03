@@ -18,30 +18,48 @@ import ballerina/test;
 
 @test:Config {enable:true}
 function testBidirectionalHelloWorldString() {
-    assertGeneratedSources("bidirectional", "helloWorldString.proto", "helloWorldString_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_1");
+    var result = assertGeneratedSources("bidirectional", "helloWorldString.proto", "helloWorldString_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_1");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testBidirectionalHelloWorldInt() {
-    assertGeneratedSources("bidirectional", "helloWorldInt.proto", "helloWorldInt_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_2");
+    var result = assertGeneratedSources("bidirectional", "helloWorldInt.proto", "helloWorldInt_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_2");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testBidirectionalHelloWorldFloat() {
-    assertGeneratedSources("bidirectional", "helloWorldFloat.proto", "helloWorldFloat_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_3");
+    var result = assertGeneratedSources("bidirectional", "helloWorldFloat.proto", "helloWorldFloat_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_3");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testBidirectionalHelloWorldBoolean() {
-    assertGeneratedSources("bidirectional", "helloWorldBoolean.proto", "helloWorldBoolean_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_4");
+    var result = assertGeneratedSources("bidirectional", "helloWorldBoolean.proto", "helloWorldBoolean_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_4");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testBidirectionalHelloWorldBytes() {
-    assertGeneratedSources("bidirectional", "helloWorldBytes.proto", "helloWorldBytes_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_5");
+    var result = assertGeneratedSources("bidirectional", "helloWorldBytes.proto", "helloWorldBytes_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_5");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testBidirectionalHelloWorldMessage() {
-    assertGeneratedSources("bidirectional", "helloWorldMessage.proto", "helloWorldMessage_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_6");
+    var result = assertGeneratedSources("bidirectional", "helloWorldMessage.proto", "helloWorldMessage_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_bidirectional_6");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }

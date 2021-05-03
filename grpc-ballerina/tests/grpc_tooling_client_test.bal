@@ -18,35 +18,56 @@ import ballerina/test;
 
 @test:Config {enable:true}
 function testClientHelloWorldString() {
-    assertGeneratedSources("client", "helloWorldString.proto", "helloWorldString_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_1");
+    var result = assertGeneratedSources("client", "helloWorldString.proto", "helloWorldString_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_1");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testClientHelloWorldInt() {
-    assertGeneratedSources("client", "helloWorldInt.proto", "helloWorldInt_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_2");
+    var result = assertGeneratedSources("client", "helloWorldInt.proto", "helloWorldInt_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_2");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testClientHelloWorldFloat() {
-    assertGeneratedSources("client", "helloWorldFloat.proto", "helloWorldFloat_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_3");
+    var result = assertGeneratedSources("client", "helloWorldFloat.proto", "helloWorldFloat_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_3");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testClientHelloWorldBoolean() {
-    assertGeneratedSources("client", "helloWorldBoolean.proto", "helloWorldBoolean_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_4");
+    var result = assertGeneratedSources("client", "helloWorldBoolean.proto", "helloWorldBoolean_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_4");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testClientHelloWorldBytes() {
-    assertGeneratedSources("client", "helloWorldBytes.proto", "helloWorldBytes_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_5");
+    var result = assertGeneratedSources("client", "helloWorldBytes.proto", "helloWorldBytes_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_5");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testClientHelloWorldMessage() {
-    assertGeneratedSources("client", "helloWorldMessage.proto", "helloWorldMessage_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_6");
+    var result = assertGeneratedSources("client", "helloWorldMessage.proto", "helloWorldMessage_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_6");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testClientHelloWorldInputMessageOutputEmpty() {
-    assertGeneratedSources("client", "helloWorldInputMessageOutputEmpty.proto", "helloWorldInputMessageOutputEmpty_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_7");
+    var result = assertGeneratedSources("client", "helloWorldInputMessageOutputEmpty.proto", "helloWorldInputMessageOutputEmpty_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_client_7");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }

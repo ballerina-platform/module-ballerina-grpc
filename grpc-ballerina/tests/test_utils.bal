@@ -18,54 +18,54 @@ import ballerina/file;
 import ballerina/jballerina.java;
 import ballerina/test;
 
-function assertGeneratedSources(string subDir, string protoFile, string stubFile, string serviceFile, string clientFile, string outputDir) {
-    string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
-    string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
+function assertGeneratedSources(string subDir, string protoFile, string stubFile, string serviceFile, string clientFile, string outputDir) returns error? {
+    string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
+    string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
 
-    string expectedStubFilePath = checkpanic file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
-    string expectedServiceFilePath = checkpanic file:joinPath(BAL_FILE_DIRECTORY, outputDir, serviceFile);
-    string expectedClientFilePath = checkpanic file:joinPath(BAL_FILE_DIRECTORY, outputDir, clientFile);
+    string expectedStubFilePath = check file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
+    string expectedServiceFilePath = check file:joinPath(BAL_FILE_DIRECTORY, outputDir, serviceFile);
+    string expectedClientFilePath = check file:joinPath(BAL_FILE_DIRECTORY, outputDir, clientFile);
 
-    string actualStubFilePath = checkpanic file:joinPath(outputDirPath, stubFile);
-    string actualServiceFilePath = checkpanic file:joinPath(outputDirPath, serviceFile);
-    string actualClientFilePath = checkpanic file:joinPath(outputDirPath, clientFile);
+    string actualStubFilePath = check file:joinPath(outputDirPath, stubFile);
+    string actualServiceFilePath = check file:joinPath(outputDirPath, serviceFile);
+    string actualClientFilePath = check file:joinPath(outputDirPath, clientFile);
 
     generateSourceCode(protoFilePath, outputDirPath);
-    test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
+    test:assertTrue(check file:test(actualStubFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath));
     test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
-    _ = checkpanic file:remove(actualStubFilePath);
-    test:assertFalse(checkpanic file:test(actualStubFilePath, file:EXISTS));
+    _ = check file:remove(actualStubFilePath);
+    test:assertFalse(check file:test(actualStubFilePath, file:EXISTS));
 
     generateSourceCode(protoFilePath, outputDirPath, "service");
-    test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
+    test:assertTrue(check file:test(actualStubFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath));
     test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
-    test:assertTrue(checkpanic file:test(actualServiceFilePath, file:EXISTS));
+    test:assertTrue(check file:test(actualServiceFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualServiceFilePath));
     test:assertEquals(readContent(expectedServiceFilePath), readContent(actualServiceFilePath));
-    _ = checkpanic file:remove(actualStubFilePath);
-    _ = checkpanic file:remove(actualServiceFilePath);
-    test:assertFalse(checkpanic file:test(actualStubFilePath, file:EXISTS));
-    test:assertFalse(checkpanic file:test(actualServiceFilePath, file:EXISTS));
+    _ = check file:remove(actualStubFilePath);
+    _ = check file:remove(actualServiceFilePath);
+    test:assertFalse(check file:test(actualStubFilePath, file:EXISTS));
+    test:assertFalse(check file:test(actualServiceFilePath, file:EXISTS));
 
     generateSourceCode(protoFilePath, outputDirPath, "client");
-    test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
+    test:assertTrue(check file:test(actualStubFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath));
     test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
-    test:assertTrue(checkpanic file:test(actualClientFilePath, file:EXISTS));
+    test:assertTrue(check file:test(actualClientFilePath, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualClientFilePath));
     test:assertEquals(readContent(expectedClientFilePath), readContent(actualClientFilePath));
 }
 
-function assertGeneratedSourcesNegative(string input, string output, string outputDir, string? mode = ()) {
-    string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, input);
-    string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
-    string stubFilePath = checkpanic file:joinPath(outputDirPath, output);
+function assertGeneratedSourcesNegative(string input, string output, string outputDir, string? mode = ()) returns error? {
+    string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, input);
+    string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
+    string stubFilePath = check file:joinPath(outputDirPath, output);
 
     generateSourceCode(protoFilePath, outputDirPath, mode);
 
-    test:assertFalse(checkpanic file:test(stubFilePath, file:EXISTS));
+    test:assertFalse(check file:test(stubFilePath, file:EXISTS));
 }
 
 public function generateSourceCode(string protoFilePath, string outputDirPath, string? mode = ()) = @java:Method {

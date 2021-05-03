@@ -19,100 +19,139 @@ import ballerina/test;
 
 @test:Config {enable:true}
 function testHelloWorldWithDependency() {
-    assertGeneratedDataTypeSources("data-types", "helloWorldWithDependency.proto", "helloWorldWithDependency_pb.bal", "tool_test_data_type_1");
+    var result = assertGeneratedDataTypeSources("data-types", "helloWorldWithDependency.proto", "helloWorldWithDependency_pb.bal", "tool_test_data_type_1");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testHelloWorldWithEnum() {
-    assertGeneratedDataTypeSources("data-types", "helloWorldWithEnum.proto", "helloWorldWithEnum_pb.bal", "tool_test_data_type_3");
+    var result = assertGeneratedDataTypeSources("data-types", "helloWorldWithEnum.proto", "helloWorldWithEnum_pb.bal", "tool_test_data_type_3");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testHelloWorldWithMap() {
-    assertGeneratedDataTypeSources("data-types", "helloWorldWithMap.proto", "helloWorldWithMap_pb.bal", "tool_test_data_type_5");
+    var result = assertGeneratedDataTypeSources("data-types", "helloWorldWithMap.proto", "helloWorldWithMap_pb.bal", "tool_test_data_type_5");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testHelloWorldWithNestedEnum() {
-    assertGeneratedDataTypeSources("data-types", "helloWorldWithNestedEnum.proto", "helloWorldWithNestedEnum_pb.bal", "tool_test_data_type_6");
+    var result = assertGeneratedDataTypeSources("data-types", "helloWorldWithNestedEnum.proto", "helloWorldWithNestedEnum_pb.bal", "tool_test_data_type_6");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testHelloWorldWithNestedMessage() {
-    assertGeneratedDataTypeSources("data-types", "helloWorldWithNestedMessage.proto", "helloWorldWithNestedMessage_pb.bal", "tool_test_data_type_7");
+    var result = assertGeneratedDataTypeSources("data-types", "helloWorldWithNestedMessage.proto", "helloWorldWithNestedMessage_pb.bal", "tool_test_data_type_7");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testHelloWorldWithPackage() {
-    assertGeneratedDataTypeSources("data-types", "helloWorldWithPackage.proto", "helloWorldWithPackage_pb.bal", "tool_test_data_type_8");
+    var result = assertGeneratedDataTypeSources("data-types", "helloWorldWithPackage.proto", "helloWorldWithPackage_pb.bal", "tool_test_data_type_8");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testHelloWorldWithReservedNames() {
-    assertGeneratedDataTypeSources("data-types", "helloWorldWithReservedNames.proto", "helloWorldWithReservedNames_pb.bal", "tool_test_data_type_9");
+    var result = assertGeneratedDataTypeSources("data-types", "helloWorldWithReservedNames.proto", "helloWorldWithReservedNames_pb.bal", "tool_test_data_type_9");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testMessage() {
-    assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal", "tool_test_data_type_10");
+    var result = assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal", "tool_test_data_type_10");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testOneofFieldService() {
-    assertGeneratedDataTypeSources("data-types", "oneof_field_service.proto", "oneof_field_service_pb.bal", "tool_test_data_type_11");
+    var result = assertGeneratedDataTypeSources("data-types", "oneof_field_service.proto", "oneof_field_service_pb.bal", "tool_test_data_type_11");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testTestMessage() {
-    assertGeneratedDataTypeSources("data-types", "testMessage.proto", "testMessage_pb.bal", "tool_test_data_type_12");
+    var result = assertGeneratedDataTypeSources("data-types", "testMessage.proto", "testMessage_pb.bal", "tool_test_data_type_12");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testWithoutOutputDir() {
-    assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal", "");
+    var result = assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal", "");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testHelloWorldErrorSyntax() {
-    assertGeneratedDataTypeSourcesNegative("negative", "helloWorldErrorSyntax.proto", "helloWorldErrorSyntax_pb.bal", "tool_test_data_type_2");
+    var result = assertGeneratedDataTypeSourcesNegative("negative", "helloWorldErrorSyntax.proto", "helloWorldErrorSyntax_pb.bal", "tool_test_data_type_2");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
 @test:Config {enable:true}
 function testHelloWorldWithInvalidDependency() {
-    assertGeneratedDataTypeSourcesNegative("negative", "helloWorldWithInvalidDependency.proto", "helloWorldWithInvalidDependency_pb.bal", "tool_test_data_type_4");
+    var result = assertGeneratedDataTypeSourcesNegative("negative", "helloWorldWithInvalidDependency.proto", "helloWorldWithInvalidDependency_pb.bal", "tool_test_data_type_4");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
 }
 
-function assertGeneratedDataTypeSources(string subDir, string protoFile, string stubFile, string outputDir) {
-    string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
-    string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
-    string tempDirPath = checkpanic file:joinPath(file:getCurrentDir(), "temp");
+function assertGeneratedDataTypeSources(string subDir, string protoFile, string stubFile, string outputDir) returns error? {
+    string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
+    string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
+    string tempDirPath = check file:joinPath(file:getCurrentDir(), "temp");
 
-    string expectedStubFilePath = checkpanic file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
+    string expectedStubFilePath = check file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
     string actualStubFilePath;
     if (outputDir == "") {
-        actualStubFilePath = checkpanic file:joinPath(tempDirPath, stubFile);
+        actualStubFilePath = check file:joinPath(tempDirPath, stubFile);
         generateSourceCode(protoFilePath, "");
-        test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
+        test:assertTrue(check file:test(actualStubFilePath, file:EXISTS));
         test:assertFalse(hasDiagnostics(actualStubFilePath));
         checkpanic file:remove(tempDirPath, option = file:RECURSIVE);
     } else {
-        actualStubFilePath = checkpanic file:joinPath(outputDirPath, stubFile);
+        actualStubFilePath = check file:joinPath(outputDirPath, stubFile);
         generateSourceCode(protoFilePath, outputDirPath);
-        test:assertTrue(checkpanic file:test(actualStubFilePath, file:EXISTS));
+        test:assertTrue(check file:test(actualStubFilePath, file:EXISTS));
         test:assertFalse(hasDiagnostics(actualStubFilePath));
         test:assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
     }
 }
 
-function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile, string stubFile, string outputDir) {
-    string protoFilePath = checkpanic file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
-    string outputDirPath = checkpanic file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
+function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile, string stubFile, string outputDir) returns error? {
+    string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
+    string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
 
-    string expectedStubFilePath = checkpanic file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
-    string actualStubFilePath = checkpanic file:joinPath(outputDirPath, stubFile);
+    string expectedStubFilePath = check file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
+    string actualStubFilePath = check file:joinPath(outputDirPath, stubFile);
 
     generateSourceCode(protoFilePath, outputDirPath);
-    test:assertFalse(checkpanic file:test(actualStubFilePath, file:EXISTS));
+    test:assertFalse(check file:test(actualStubFilePath, file:EXISTS));
 }
 
 // This test case is to generate stub files for all grpc tests. we can use this to verify the generated output files
