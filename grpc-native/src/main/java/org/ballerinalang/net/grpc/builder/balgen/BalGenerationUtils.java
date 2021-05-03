@@ -27,7 +27,7 @@ public class BalGenerationUtils {
     private BalGenerationUtils() {
 
     }
-    
+
     /**
      * Convert byte array to readable byte string.
      *

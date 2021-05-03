@@ -23,7 +23,7 @@ isolated function testCallWithingDeadline() returns Error? {
     time:Utc current = time:utcNow();
     time:Utc deadline = time:utcAddSeconds(current, 300);
     map<string|string[]> headers = setDeadline(deadline);
-    var context = helloWorldClient->callWithingDeadlineContext({content: "WSO2", headers: headers});
+    var context = helloWorldClient->callWithinDeadlineContext({content: "WSO2", headers: headers});
     if (context is ContextString) {
         test:assertEquals(context.content, "Ack");
     } else {
@@ -44,76 +44,3 @@ isolated function testCallExceededDeadline() returns Error? {
         test:assertFail("Expected DeadlineExceededError not found");
     }
 }
-
-public client class HelloWorld35Client {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_35, getDescriptorMap35());
-    }
-
-    isolated remote function callWithingDeadline(string|ContextString req) returns (string|Error) {
-        
-        map<string|string[]> headers = {};
-        string message;
-        if (req is ContextString) {
-            message = req.content;
-            headers = req.headers;
-        } else {
-            message = req;
-        }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld35/callWithingDeadline", message, headers);
-        [anydata, map<string|string[]>][result, _] = payload;
-        return result.toString();
-    }
-    isolated remote function callWithingDeadlineContext(string|ContextString req) returns (ContextString|Error) {
-        
-        map<string|string[]> headers = {};
-        string message;
-        if (req is ContextString) {
-            message = req.content;
-            headers = req.headers;
-        } else {
-            message = req;
-        }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld35/callWithingDeadline", message, headers);
-        [anydata, map<string|string[]>][result, respHeaders] = payload;
-        return {content: result.toString(), headers: respHeaders};
-    }
-
-    isolated remote function callExceededDeadline(string|ContextString req) returns (string|Error) {
-        
-        map<string|string[]> headers = {};
-        string message;
-        if (req is ContextString) {
-            message = req.content;
-            headers = req.headers;
-        } else {
-            message = req;
-        }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld35/callExceededDeadline", message, headers);
-        [anydata, map<string|string[]>][result, _] = payload;
-        return result.toString();
-    }
-    isolated remote function callExceededDeadlineContext(string|ContextString req) returns (ContextString|Error) {
-        
-        map<string|string[]> headers = {};
-        string message;
-        if (req is ContextString) {
-            message = req.content;
-            headers = req.headers;
-        } else {
-            message = req;
-        }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld35/callExceededDeadline", message, headers);
-        [anydata, map<string|string[]>][result, respHeaders] = payload;
-        return {content: result.toString(), headers: respHeaders};
-    }
-
-}
-

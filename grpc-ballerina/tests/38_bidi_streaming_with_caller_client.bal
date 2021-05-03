@@ -18,21 +18,21 @@ import ballerina/io;
 import ballerina/test;
 
 // Client endpoint configuration.
-ChatClient chatEp = check new("http://localhost:9128");
+Chat38Client chatEp = check new("http://localhost:9128");
 
 @test:Config {enable:true}
 public function testBidiStreamingServerResponseCount () returns error? {
     // Executes the RPC call and receives the customized streaming client.
-    ChatStreamingClient streamingClient = check chatEp->chat();
+    Chat38StreamingClient streamingClient = check chatEp->chat38();
 
     // Sends multiple messages to the server.
-    ChatMessage[] messages = [
+    ChatMessage38[] messages = [
         {name: "Sam", message: "Hi"},
         {name: "Ann", message: "Hey"},
         {name: "John", message: "Hello"}
     ];
-    foreach ChatMessage msg in messages {
-        check streamingClient->sendChatMessage(msg);
+    foreach ChatMessage38 msg in messages {
+        check streamingClient->sendChatMessage38(msg);
     }
     // Once all the messages are sent, the client sends the message to notify the server about the completion.
     check streamingClient->complete();

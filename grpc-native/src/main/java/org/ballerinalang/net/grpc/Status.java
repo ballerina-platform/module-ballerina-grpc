@@ -17,13 +17,10 @@
  */
 package org.ballerinalang.net.grpc;
 
-import org.ballerinalang.net.grpc.exception.StatusException;
 import org.ballerinalang.net.grpc.exception.StatusRuntimeException;
 
 import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -39,8 +36,8 @@ import java.util.TreeMap;
 public final class Status implements Serializable {
 
     private static final long serialVersionUID = -1L;
-    public static final StatusMessageMarshaller MESSAGE_MARSHALLER = new StatusMessageMarshaller();
-    public static final StatusCodeMarshaller CODE_MARSHALLER = new StatusCodeMarshaller();
+    static final StatusMessageMarshaller MESSAGE_MARSHALLER = new StatusMessageMarshaller();
+    static final StatusCodeMarshaller CODE_MARSHALLER = new StatusCodeMarshaller();
 
     private final Code code;
     private final String description;
@@ -140,7 +137,7 @@ public final class Status implements Serializable {
 
         Code(int value) {
             this.value = value;
-            this.valueAscii = Integer.toString(value).getBytes(Charset.forName("US-ASCII"));
+            this.valueAscii = Integer.toString(value).getBytes(StandardCharsets.US_ASCII);
         }
 
         /**
@@ -178,7 +175,7 @@ public final class Status implements Serializable {
                         + replaced.getCode().name() + " & " + code.name());
             }
         }
-        return Collections.unmodifiableList(new ArrayList<>(canonicalizer.values()));
+        return List.copyOf(canonicalizer.values());
     }
 
     /**
@@ -228,8 +225,8 @@ public final class Status implements Serializable {
             default:
                 break;
         }
-        return Code.UNKNOWN.toStatus().withDescription("Unknown code " + new String(asciiCodeValue, Charset
-                .forName("US-ASCII")));
+        return Code.UNKNOWN.toStatus().withDescription("Unknown code " + new String(asciiCodeValue,
+                StandardCharsets.US_ASCII));
     }
 
     /**
@@ -254,9 +251,7 @@ public final class Status implements Serializable {
         }
         Throwable cause = t;
         while (cause != null) {
-            if (cause instanceof StatusException) {
-                return ((StatusException) cause).getStatus();
-            } else if (cause instanceof StatusRuntimeException) {
+            if (cause instanceof StatusRuntimeException) {
                 return ((StatusRuntimeException) cause).getStatus();
             }
             cause = cause.getCause();
@@ -314,7 +309,7 @@ public final class Status implements Serializable {
      * @param additionalDetail error description.
      * @return status instance.
      */
-    public Status augmentDescription(String additionalDetail) {
+    Status augmentDescription(String additionalDetail) {
         if (additionalDetail == null) {
             return this;
         } else if (this.description == null) {
@@ -338,7 +333,7 @@ public final class Status implements Serializable {
      *
      * @return status description.
      */
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
@@ -360,7 +355,7 @@ public final class Status implements Serializable {
         return Code.OK == code;
     }
 
-    public String getReason() {
+    String getReason() {
         return GrpcConstants.STATUS_ERROR_MAP.get(code.value());
     }
 
@@ -383,13 +378,13 @@ public final class Status implements Serializable {
     /**
      * Status Code Marshaller.
      */
-    protected static final class StatusCodeMarshaller {
+    static final class StatusCodeMarshaller {
 
-        public byte[] toAsciiString(Status status) {
+        byte[] toAsciiString(Status status) {
             return status.getCode().valueAscii();
         }
 
-        public Status parseAsciiString(byte[] serialized) {
+        Status parseAsciiString(byte[] serialized) {
             return fromCodeValue(serialized);
         }
     }
@@ -397,13 +392,13 @@ public final class Status implements Serializable {
     /**
      * Status Message Marshaller.
      */
-    protected static final class StatusMessageMarshaller {
+    static final class StatusMessageMarshaller {
 
         private static final byte[] HEX =
                 {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-        public byte[] toAsciiString(String value) {
-            byte[] valueBytes = value.getBytes(Charset.forName("UTF-8"));
+        byte[] toAsciiString(String value) {
+            byte[] valueBytes = value.getBytes(StandardCharsets.UTF_8);
             for (int i = 0; i < valueBytes.length; i++) {
                 byte b = valueBytes[i];
                 // If there are only non escaping characters, skip the slow path.

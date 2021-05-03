@@ -20,12 +20,13 @@ import ballerina/test;
 
 @test:Config {enable:true}
 isolated function testBidiStreamingFromReturn() returns Error? {
-    StreamingClient streamingClient = new;
-    ChatClientFromReturn chatEp = check new ("http://localhost:9117");
+    Chat27StreamingClient streamingClient;
+    ChatFromReturnClient chatEp = check new ("http://localhost:9117");
     // Executing unary non-blocking call registering server message listener.
-    var res = chatEp->chat();
+    var res = chatEp->chat27();
     if (res is Error) {
         io:println(string `Error from Connector: ${res.message()}`);
+        return;
     } else {
         streamingClient = res;
     }
@@ -37,39 +38,21 @@ isolated function testBidiStreamingFromReturn() returns Error? {
         {name:"Jack", message:"How are you"}
     ];
     foreach ChatMessage27 msg in messages {
-        error? r = streamingClient->send(msg);
+        error? r = streamingClient->sendChatMessage27(msg);
     }
     error? r = streamingClient->complete();
     int i = 0;
     string[] expectedOutput = ["Hi Sam", "Hey Ann", "Hello John", "How are you Jack"];
-    var result = streamingClient->receive();
+    var result = streamingClient->receiveString();
     while !(result is ()) {
         io:println(result);
         if (result is Error) {
             test:assertFail("Unexpected output in the stream");
         } else {
-            [anydata, map<string|string[]>][content, headers] = result;
-            test:assertEquals(content.toString(), expectedOutput[i]);
+            test:assertEquals(result, expectedOutput[i]);
         }
-        result = streamingClient->receive();
+        result = streamingClient->receiveString();
         i += 1;
     }
     test:assertEquals(i, 4);
-}
-
-public client class ChatClientFromReturn {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_27, getDescriptorMap27());
-    }
-
-    isolated remote function chat() returns (StreamingClient|Error) {
-        return self.grpcClient->executeBidirectionalStreaming("ChatFromReturn/chat");
-    }
 }

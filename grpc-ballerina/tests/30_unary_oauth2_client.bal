@@ -18,7 +18,7 @@ import ballerina/test;
 
 @test:Config {enable:true}
 public isolated function testStringValueReturnWithOauth2() returns Error? {
-    HelloWorld30BlockingClient helloWorldEp = check new ("http://localhost:9120");
+    HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};
 
     OAuth2ClientCredentialsGrantConfig config = {
@@ -49,33 +49,6 @@ public isolated function testStringValueReturnWithOauth2() returns Error? {
     if (unionResp is Error) {
         test:assertFail(msg = unionResp.message());
     } else {
-        test:assertEquals(unionResp.content, "Hello WSO2");
+        test:assertEquals(unionResp, "Hello WSO2");
     }
-}
-
-public client class HelloWorld30BlockingClient {
-
-    *AbstractClientEndpoint;
-
-    private Client grpcClient;
-
-    public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        // initialize client endpoint.
-        self.grpcClient = check new(url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_30, getDescriptorMap30());
-    }
-
-    isolated remote function testStringValueReturn(string|ContextString req) returns ContextString|Error {
-        string message;
-        map<string|string[]> headers = {};
-        if (req is ContextString) {
-            message = req.content;
-            headers = req.headers;
-        } else {
-            message = req;
-        }
-        [anydata, map<string|string[]>][result, requestHeaders] = check self.grpcClient->executeSimpleRPC("HelloWorld30/testStringValueReturn", message, headers);
-        return  {content: result.toString(), headers: requestHeaders};
-    }
-
 }

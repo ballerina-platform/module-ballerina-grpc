@@ -33,13 +33,13 @@ public class BalGenConstants {
     public static final String DEFAULT_PACKAGE = "temp";
 
     public static final String STUB_FILE_PREFIX = "_pb.bal";
-    
+
     public static final String SAMPLE_FILE_PREFIX = "_sample_client.bal";
 
     public static final String SAMPLE_SERVICE_FILE_PREFIX = "_sample_service.bal";
-    
+
     public static final String EMPTY_DATA_TYPE = "Empty";
-    
+
     public static final String PACKAGE_SEPARATOR = ".";
 
     public static final String GRPC_CLIENT = "client";

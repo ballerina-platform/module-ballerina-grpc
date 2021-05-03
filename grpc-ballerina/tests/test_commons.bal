@@ -25,17 +25,6 @@ const string PRIVATE_KEY_PATH = "tests/resources/private.key";
 const string PROTO_FILE_DIRECTORY = "tests/resources/proto-files/";
 const string BAL_FILE_DIRECTORY = "tests/resources/generated-sources/";
 const string GENERATED_SOURCES_DIRECTORY = "build/generated-sources/";
-public type Empty record {};
-
-public type Request record {
-    string name = "";
-    string message = "";
-    int age = 0;
-};
-
-public type Response record {
-    string resp = "";
-};
 
 type IntTypedesc typedesc<int>;
 type BooleanTypedesc typedesc<boolean>;
@@ -47,12 +36,3 @@ type TestFloatTypedesc typedesc<TestFloat>;
 type TestStructTypedesc typedesc<TestStruct>;
 type ResponseTypedesc typedesc<Response>;
 type RequestTypedesc typedesc<Request>;
-
-public type ContextString record {|
-    string content;
-    map<string|string[]> headers;
-|};
-
-public type ContextNil record {|
-    map<string|string[]> headers;
-|};
