@@ -42,4 +42,9 @@ message ByeRequest {
 }
 message ByeResponse {
     string say = 1;
+    Baz baz = 2;
+}
+
+message Baz {
+    string age = 1;
 }
