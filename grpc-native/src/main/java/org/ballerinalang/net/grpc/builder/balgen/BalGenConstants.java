@@ -24,25 +24,23 @@ import java.io.File;
  */
 public class BalGenConstants {
 
+    private BalGenConstants() {
+
+    }
+
     public static final String FILE_SEPARATOR = File.separator;
-    
-    public static final String RESOURCE_SEPARATOR = "/";
 
     public static final String DEFAULT_PACKAGE = "temp";
 
     public static final String STUB_FILE_PREFIX = "_pb.bal";
-    
+
     public static final String SAMPLE_FILE_PREFIX = "_sample_client.bal";
 
     public static final String SAMPLE_SERVICE_FILE_PREFIX = "_sample_service.bal";
 
-    public static final String EMPTY_STRING = "";
-    
     public static final String EMPTY_DATA_TYPE = "Empty";
-    
+
     public static final String PACKAGE_SEPARATOR = ".";
-    
-    public static final String PACKAGE_SEPARATOR_REGEX = "\\.";
 
     public static final String GRPC_CLIENT = "client";
 
@@ -53,22 +51,4 @@ public class BalGenConstants {
     public static final String GOOGLE_STANDARD_LIB = "google.protobuf";
 
     public static final String GOOGLE_API_LIB = "google.api";
-
-    public static final String HTTP_PATTERN_NOT_SET = "PATTERN_NOT_SET";
-
-    public static final String INITIAL_PARENT_PREFIX = "new";
-
-    public static final String QUERY_PARAMETER = "query";
-
-    public static final String PATH_PARAMETER = "path";
-
-    public static final String MESSAGE_PARAMETER = "message";
-
-    public static final String BODY_PARAMETER = "body";
-
-    public static final String PRIMITIVE_FIELD_NAME = "value";
-
-    public static final String PATH_PARAMETER_PATTERN_REGEX = "(?<=\\{)([^}]+)(?=})";
-
-    public static final int PARENT_SPLITTING_INDEX = 1;
 }
