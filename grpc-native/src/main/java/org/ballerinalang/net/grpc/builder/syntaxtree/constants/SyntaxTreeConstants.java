@@ -33,6 +33,10 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
  */
 public class SyntaxTreeConstants {
 
+    private SyntaxTreeConstants() {
+
+    }
+
     public static final Token SYNTAX_TREE_SEMICOLON = AbstractNodeFactory.createIdentifierToken(";");
     public static final Token SYNTAX_TREE_COLON = AbstractNodeFactory.createIdentifierToken(":");
     public static final Token SYNTAX_TREE_OPEN_BRACE = AbstractNodeFactory.createIdentifierToken("{");

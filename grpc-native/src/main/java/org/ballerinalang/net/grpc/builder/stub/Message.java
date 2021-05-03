@@ -31,7 +31,7 @@ import java.util.Map;
  * @since 0.982.0
  */
 public class Message {
-    private List<Field> fieldList;
+    private final List<Field> fieldList;
     private String messageName;
     private Map<String, List<Field>> oneofFieldMap;
     private List<EnumMessage> enumList;
@@ -95,7 +95,7 @@ public class Message {
      * Message Definition.Builder.
      */
     public static class Builder {
-        private DescriptorProtos.DescriptorProto messageDescriptor;
+        private final DescriptorProtos.DescriptorProto messageDescriptor;
 
         public Message build() {
             List<Message> nestedMessageList = new ArrayList<>();

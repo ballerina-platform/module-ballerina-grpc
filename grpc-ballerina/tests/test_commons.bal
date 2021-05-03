@@ -22,8 +22,8 @@ const string TRUSTSTORE_PATH = "tests/resources/ballerinaTruststore.p12";
 const string PUBLIC_CRT_PATH = "tests/resources/public.crt";
 const string PRIVATE_KEY_PATH = "tests/resources/private.key";
 
-const string PROTO_FILE_DIRECTORY = "tests/resources/input/";
-const string OUTPUT_BAL_FILE_DIRECTORY = "tests/resources/output/";
+const string PROTO_FILE_DIRECTORY = "tests/resources/proto-files/";
+const string BAL_FILE_DIRECTORY = "tests/resources/generated-sources/";
 const string GENERATED_SOURCES_DIRECTORY = "build/generated-sources/";
 
 type IntTypedesc typedesc<int>;

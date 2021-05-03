@@ -54,6 +54,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
  */
 public class Expression {
 
+    private Expression() {
+
+    }
+
     public static FieldAccessExpressionNode getFieldAccessExpressionNode(String var, String fieldName) {
         return NodeFactory.createFieldAccessExpressionNode(
                 getSimpleNameReferenceNode(var),

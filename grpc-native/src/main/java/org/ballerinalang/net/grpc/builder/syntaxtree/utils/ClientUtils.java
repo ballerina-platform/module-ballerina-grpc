@@ -63,6 +63,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.ca
  */
 public class ClientUtils {
 
+    private ClientUtils() {
+
+    }
+
     public static Function getStreamingClientFunction(Method method, boolean bidirectional) {
         String methodName = bidirectional ? "executeBidirectionalStreaming" : "executeClientStreaming";
         String clientName = capitalize(method.getMethodName()) + "StreamingClient";
@@ -139,7 +143,13 @@ public class ClientUtils {
     }
 
     private static Function getSendFunction(Method method) {
-        Function function = new Function("send" + capitalize(method.getInputType()));
+        String inputCap;
+        if (method.getInputType().equals("byte[]")) {
+            inputCap = "Bytes";
+        } else {
+            inputCap = capitalize(method.getInputType());
+        }
+        Function function = new Function("send" + inputCap);
         function.addRequiredParameter(
                 getSimpleNameReferenceNode(method.getInputType()),
                 "message"
@@ -183,7 +193,13 @@ public class ClientUtils {
     private static Function getReceiveFunction(Method method) {
         String functionName = "receive";
         if (method.getOutputType() != null) {
-            functionName = "receive" + capitalize(method.getOutputType());
+            String outCap;
+            if (method.getOutputType().equals("byte[]")) {
+                outCap = "Bytes";
+            } else {
+                outCap = capitalize(method.getOutputType());
+            }
+            functionName = "receive" + outCap;
         }
         Function function = new Function(functionName);
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(

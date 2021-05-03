@@ -38,6 +38,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
  */
 public class Statement {
 
+    private Statement() {
+
+    }
+
     public static AssignmentStatementNode getAssignmentStatementNode(String varRef, ExpressionNode expression) {
         return NodeFactory.createAssignmentStatementNode(
                 getSimpleNameReferenceNode(varRef),

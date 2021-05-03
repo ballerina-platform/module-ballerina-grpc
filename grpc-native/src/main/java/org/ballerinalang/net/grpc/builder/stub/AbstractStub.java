@@ -54,10 +54,6 @@ public abstract class AbstractStub {
         return messageMap;
     }
 
-    public void addEnumMessage(EnumMessage message) {
-        enumList.add(message);
-    }
-
     public List<EnumMessage> getEnumList() {
         return enumList;
     }
@@ -68,10 +64,6 @@ public abstract class AbstractStub {
 
     public void setRootDescriptor(String rootDescriptor) {
         this.rootDescriptor = rootDescriptor;
-    }
-
-    public void addDescriptor(Descriptor descriptor) {
-        descriptors.add(descriptor);
     }
 
     public void setDescriptors(Set<Descriptor> descriptors) {

@@ -28,8 +28,8 @@ import java.util.List;
  * @since 0.982.0
  */
 public class EnumMessage {
-    private List<EnumField> fieldList;
-    private String messageName;
+    private final List<EnumField> fieldList;
+    private final String messageName;
 
     private EnumMessage(String messageName, List<EnumField> fieldList) {
         this.messageName = messageName;
@@ -52,7 +52,7 @@ public class EnumMessage {
      * Enum Message.Builder.
      */
     public static class Builder {
-        private DescriptorProtos.EnumDescriptorProto enumDescriptor;
+        private final DescriptorProtos.EnumDescriptorProto enumDescriptor;
     
         public EnumMessage build() {
             List<EnumField> fieldList = new ArrayList<>();

@@ -23,7 +23,11 @@ import static org.ballerinalang.net.grpc.builder.balgen.BalGenConstants.PACKAGE_
  * Util functions which are use when generating . bal stub
  */
 public class BalGenerationUtils {
-    
+
+    private BalGenerationUtils() {
+
+    }
+
     /**
      * Convert byte array to readable byte string.
      *
@@ -78,27 +82,6 @@ public class BalGenerationUtils {
             default: { // to handle structs
                 return protoType.substring(protoType.lastIndexOf
                         (PACKAGE_SEPARATOR) + 1);
-            }
-        }
-    }
-
-    /**
-     * This function checks if the input type is a primitive type or not.
-     *
-     * @param inputType .proto data type
-     * @return true or false.
-     */
-    public static boolean checkPrimitiveType(String inputType) {
-        switch (inputType) {
-            case "string":
-            case "int":
-            case "float":
-            case "boolean":
-            case "byte[]": {
-                return true;
-            }
-            default: { // for null and structs
-                return false;
             }
         }
     }

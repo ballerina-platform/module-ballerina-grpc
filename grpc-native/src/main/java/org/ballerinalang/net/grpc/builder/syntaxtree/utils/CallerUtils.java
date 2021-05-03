@@ -41,6 +41,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.ca
  */
 public class CallerUtils {
 
+    private CallerUtils() {
+
+    }
+
     public static Class getCallerClass(String key, String value) {
         Class caller = new Class(key, true);
         caller.addQualifiers(new String[]{"client"});

@@ -198,21 +198,24 @@ public class BallerinaFileBuilder {
                 stubFileObject.setRootDescriptor(stubRootDescriptor);
             }
 
+            int serviceIndex = 0;
             for (ServiceStub serviceStub : stubFileObject.getStubList()) {
                 if (GRPC_SERVICE.equals(mode)) {
                     String serviceFilePath = generateOutputFile(this.balOutPath, serviceStub.getServiceName() +
                             SAMPLE_SERVICE_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(serviceStub, mode), serviceFilePath);
+                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTreeForServiceSample(serviceStub,
+                            serviceIndex == 0), serviceFilePath);
                 }
                 if (GRPC_CLIENT.equals(mode)) {
                     String clientFilePath = generateOutputFile(this.balOutPath,
                             serviceStub.getServiceName() + SAMPLE_FILE_PREFIX
                     );
-                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(serviceStub, mode), clientFilePath);
+                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTreeForClientSample(serviceStub), clientFilePath);
                 }
+                serviceIndex++;
             }
             String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(stubFileObject), stubFilePath);
+            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTreeForServiceSample(stubFileObject), stubFilePath);
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error which reading proto file descriptor. " + e.getMessage(), e);
         }

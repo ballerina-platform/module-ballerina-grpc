@@ -31,8 +31,8 @@ import static org.ballerinalang.net.grpc.builder.balgen.BalGenerationUtils.bytes
  * @since 0.982.0
  */
 public class Descriptor {
-    private String descriptorKey;
-    private String descriptorData;
+    private final String descriptorKey;
+    private final String descriptorData;
     
     private Descriptor(String descriptorKey, String descriptorData) {
         this.descriptorKey = descriptorKey;

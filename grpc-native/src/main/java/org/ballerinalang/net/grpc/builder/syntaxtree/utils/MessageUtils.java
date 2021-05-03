@@ -63,6 +63,10 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getE
  */
 public class MessageUtils {
 
+    private MessageUtils() {
+
+    }
+
     public static NodeList<ModuleMemberDeclarationNode> getMessageNodes(Message message) {
         NodeList<ModuleMemberDeclarationNode> messageMembers = AbstractNodeFactory.createEmptyNodeList();
 

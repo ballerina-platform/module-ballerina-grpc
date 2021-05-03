@@ -30,6 +30,10 @@ import io.ballerina.compiler.syntax.tree.SyntaxKind;
  */
 public class Literal {
 
+    private Literal() {
+
+    }
+
     public static BasicLiteralNode getNumericLiteralNode(int value) {
         return NodeFactory.createBasicLiteralNode(
                 SyntaxKind.NUMERIC_LITERAL,
