@@ -133,7 +133,7 @@ function assertGeneratedDataTypeSources(string subDir, string protoFile, string 
         generateSourceCode(protoFilePath, "");
         test:assertTrue(check file:test(actualStubFilePath, file:EXISTS));
         test:assertFalse(hasDiagnostics(actualStubFilePath));
-        checkpanic file:remove(tempDirPath, option = file:RECURSIVE);
+        check file:remove(tempDirPath, option = file:RECURSIVE);
     } else {
         actualStubFilePath = check file:joinPath(outputDirPath, stubFile);
         generateSourceCode(protoFilePath, outputDirPath);
