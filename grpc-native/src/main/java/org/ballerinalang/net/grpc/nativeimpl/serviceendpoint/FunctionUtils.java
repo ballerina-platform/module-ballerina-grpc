@@ -65,6 +65,9 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionUtils.class);
 
+    private FunctionUtils() {
+    }
+
     /**
      * Extern function to initialize gRPC service listener.
      *

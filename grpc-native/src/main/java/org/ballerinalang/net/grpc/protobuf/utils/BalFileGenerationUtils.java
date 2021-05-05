@@ -39,7 +39,10 @@ import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.EMPTY_S
  */
 public class BalFileGenerationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(BalFileGenerationUtils.class);
-    
+
+    private BalFileGenerationUtils() {
+    }
+
     /**
      * Execute command and generate file descriptor.
      *

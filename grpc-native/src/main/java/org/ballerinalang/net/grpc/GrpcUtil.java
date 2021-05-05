@@ -84,6 +84,9 @@ import static org.ballerinalang.net.http.HttpConstants.SERVER_NAME;
  */
 public class GrpcUtil {
 
+    private GrpcUtil() {
+    }
+
     private static final Logger log = LoggerFactory.getLogger(GrpcUtil.class);
 
     public static ConnectionManager getConnectionManager(BMap<BString, Long> poolStruct) {

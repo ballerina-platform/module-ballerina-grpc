@@ -1,2 +1,7 @@
 ignore:
   - "grpc-test-utils"
+
+coverage:
+  precision: 2
+  round: down
+  range: "60...80"
