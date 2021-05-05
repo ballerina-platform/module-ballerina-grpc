@@ -66,6 +66,9 @@ import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
  */
 public class FunctionUtils extends AbstractExecute {
 
+    private FunctionUtils() {
+    }
+
     /**
      * Extern function to initialize global connection pool.
      *

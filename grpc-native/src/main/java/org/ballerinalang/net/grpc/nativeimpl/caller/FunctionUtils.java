@@ -51,6 +51,9 @@ import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
 public class FunctionUtils {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionUtils.class);
 
+    private FunctionUtils() {
+    }
+
     /**
      * Extern function to inform the caller, server finished sending messages.
      *

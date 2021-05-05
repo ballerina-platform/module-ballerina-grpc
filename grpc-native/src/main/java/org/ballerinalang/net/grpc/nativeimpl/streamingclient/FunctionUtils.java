@@ -54,6 +54,9 @@ public class FunctionUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionUtils.class);
 
+    private FunctionUtils() {
+    }
+
     /**
      * Extern function to send a streaming request messages to the server.
      *
