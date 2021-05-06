@@ -37,7 +37,7 @@ public class GrpcCompilerPluginConstants {
         UNDEFINED_ANNOTATION("undefined annotation: ", "GRPC_101", DiagnosticSeverity.ERROR),
         ONLY_REMOTE_FUNCTIONS("only remote functions are allowed inside gRPC services", "GRPC_102",
                 DiagnosticSeverity.ERROR),
-        RETURN_WITH_CALLER("return types are not allowed with the caller", "GRPC_103",
+        RETURN_WITH_CALLER("only `error?` return type is allowed with the caller", "GRPC_103",
                 DiagnosticSeverity.ERROR),
         MAX_PARAM_COUNT("the maximum number of parameters to a remote function is 2",
                 "GRPC_104", DiagnosticSeverity.ERROR),

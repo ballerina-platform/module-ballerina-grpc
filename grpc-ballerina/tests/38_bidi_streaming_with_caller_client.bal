@@ -39,12 +39,15 @@ public function testBidiStreamingServerResponseCount () returns error? {
     // Receives the server stream response iteratively.
     int i = 0;
     var result = streamingClient->receiveString();
-    while !(result is ()) {
-        if !(result is Error) {
-            io:println(result);
-        }
+    while !((result is ()) ||  (result is Error)) {
+        io:println(result);
         result = streamingClient->receiveString();
         i += 1;
     }
     test:assertEquals(i, 3, "Server response message count is not equal to 3");
+    if (result is Error) {
+        test:assertEquals(result.message(), "Request Aborted.");
+    } else {
+        test:assertFail("Client should receive an error response");
+    }
 }
