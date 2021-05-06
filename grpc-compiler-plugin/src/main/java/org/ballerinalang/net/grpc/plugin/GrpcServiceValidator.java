@@ -31,12 +31,14 @@ import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
 import io.ballerina.compiler.syntax.tree.IncludedRecordParameterNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeList;
+import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterNode;
 import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
 import io.ballerina.compiler.syntax.tree.RestParameterNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.ServiceDeclarationNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
+import io.ballerina.compiler.syntax.tree.UnionTypeDescriptorNode;
 import io.ballerina.projects.plugins.AnalysisTask;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.tools.diagnostics.Diagnostic;
@@ -176,11 +178,38 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext, diagnosticMessage,
                         GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
             } else if (functionSignatureNode.returnTypeDesc().isPresent()) {
-                SyntaxKind returnTypeKind = functionSignatureNode.returnTypeDesc().get().type().kind();
-                if (!SyntaxKind.NIL_TYPE_DESC.name().equals(returnTypeKind.name())) {
-                    reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                            GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
-                            GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
+                Node returnTypeNode = functionSignatureNode.returnTypeDesc().get().type();
+                if (!(SyntaxKind.NIL_TYPE_DESC == returnTypeNode.kind())) {
+                    if (SyntaxKind.OPTIONAL_TYPE_DESC == returnTypeNode.kind() &&
+                            ((OptionalTypeDescriptorNode) returnTypeNode).children().size() == 2) {
+                        for (Node value : ((OptionalTypeDescriptorNode) returnTypeNode).children()) {
+                            if (!(value.kind() == SyntaxKind.ERROR_TYPE_DESC ||
+                                    value.kind() == SyntaxKind.QUESTION_MARK_TOKEN)) {
+                                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                                        GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
+                                        GrpcCompilerPluginConstants.CompilationErrors
+                                                .RETURN_WITH_CALLER.getErrorCode());
+                                break;
+                            }
+                        }
+                    } else if (SyntaxKind.UNION_TYPE_DESC == returnTypeNode.kind() &&
+                            ((UnionTypeDescriptorNode) returnTypeNode).children().size() == 3) {
+                        for (Node value : ((UnionTypeDescriptorNode) returnTypeNode).children()) {
+                            if (!(value.kind() == SyntaxKind.ERROR_TYPE_DESC || value.kind() == SyntaxKind.PIPE_TOKEN ||
+                                    value.kind() == SyntaxKind.NIL_TYPE_DESC)) {
+                                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                                        GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
+                                        GrpcCompilerPluginConstants.CompilationErrors
+                                                .RETURN_WITH_CALLER.getErrorCode());
+                                break;
+                            }
+                        }
+                    } else {
+                        reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                                GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
+                                GrpcCompilerPluginConstants.CompilationErrors
+                                        .RETURN_WITH_CALLER.getErrorCode());
+                    }
                 }
             }
         } else if (parameterNodes.size() > 2) {

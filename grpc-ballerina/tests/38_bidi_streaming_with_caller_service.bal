@@ -34,6 +34,6 @@ service "Chat38" on new Listener(9128) {
         });
         log:printInfo("client messages", count = i);
         // Once the client sends a notification to indicate the end of the stream, 'EOS' is returned by the stream.
-        // return responses.toStream();
+        return error AbortedError("Request Aborted.");
     }
 }

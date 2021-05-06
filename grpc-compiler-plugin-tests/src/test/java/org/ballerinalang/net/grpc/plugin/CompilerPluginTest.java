@@ -29,7 +29,6 @@ import io.ballerina.tools.diagnostics.Diagnostic;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -40,7 +39,6 @@ public class CompilerPluginTest {
 
     private static final Path RESOURCE_DIRECTORY = Paths.get("src", "test", "resources", "test-src")
             .toAbsolutePath();
-    private static final PrintStream OUT = System.out;
     private static final Path DISTRIBUTION_PATH = Paths.get("build", "target", "ballerina-distribution")
             .toAbsolutePath();
 
@@ -74,8 +72,8 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_03");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] return types are not allowed with " +
-                "the caller";
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] only `error?` return type is allowed " +
+                "with the caller";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
@@ -197,6 +195,14 @@ public class CompilerPluginTest {
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
         Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginBidiWithValidCallerErrorReturn() {
+        Package currentPackage = loadPackage("package_13");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
     }
 
     @Test
