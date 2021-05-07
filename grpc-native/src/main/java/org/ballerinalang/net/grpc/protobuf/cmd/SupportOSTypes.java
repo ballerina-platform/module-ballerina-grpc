@@ -21,6 +21,10 @@ package org.ballerinalang.net.grpc.protobuf.cmd;
  * OS types which is supported by this tool.
  */
 class SupportOSTypes {
+
+    private SupportOSTypes() {
+    }
+
     static final String AIX = "aix";
     static final String HPUX = "hpux";
     static final String OS400 = "os400";

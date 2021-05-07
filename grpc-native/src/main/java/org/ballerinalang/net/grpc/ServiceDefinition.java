@@ -76,7 +76,7 @@ public final class ServiceDefinition {
         try {
             return fileDescriptor = getFileDescriptor(rootDescriptor, descriptorMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
-            throw new GrpcClientException("Error while generating service descriptor : ", e);
+            throw new GrpcClientException("Error while generating service descriptor : " + e.getMessage(), e);
         }
     }
 
