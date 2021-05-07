@@ -26,7 +26,6 @@ import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.RecordType;
-import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.StringUtils;
@@ -40,7 +39,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
 import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByType;
 import static org.ballerinalang.net.grpc.MessageUtils.setNestedMessages;
 import static org.ballerinalang.net.grpc.MethodDescriptor.generateFullMethodName;
@@ -195,20 +193,11 @@ public final class ServiceDefinition {
         if (functionReturnType.getTag() == TypeTags.UNION_TAG) {
             UnionType unionReturnType = (UnionType) functionReturnType;
             Type firstParamType = unionReturnType.getMemberTypes().get(0);
-            if (firstParamType.getTag() == TypeTags.TUPLE_TAG) {
-                TupleType tupleType = (TupleType) firstParamType;
-                return tupleType.getTupleTypes().get(0);
-            } else if ("Headers".equals(firstParamType.getName()) &&
-                    firstParamType.getPackage() != null &&
-                    PROTOCOL_PACKAGE_GRPC.equals(firstParamType.getPackage().getName())) {
-                return PredefinedTypes.TYPE_NULL;
-            } else {
-                if (isContextRecordByType(firstParamType)) {
-                    RecordType recordParamType = (RecordType) firstParamType;
-                    return recordParamType.getFields().get("content").getFieldType();
-                }
-                return firstParamType;
+            if (isContextRecordByType(firstParamType)) {
+                RecordType recordParamType = (RecordType) firstParamType;
+                return recordParamType.getFields().get("content").getFieldType();
             }
+            return firstParamType;
         }
         return null;
     }
@@ -228,12 +217,6 @@ public final class ServiceDefinition {
                         return paramType;
                     }
                 }
-            }
-            if ("Headers".equals(inputType.getName()) && inputType.getPackage() != null &&
-                    PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
-                return PredefinedTypes.TYPE_NULL;
-            } else {
-                return inputParams[0];
             }
         }
         return PredefinedTypes.TYPE_NULL;
