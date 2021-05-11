@@ -15,7 +15,7 @@
 // under the License.
 
 
-# Service descriptor data generated at the compile time. This is for internal use.
+# Service descriptor data generated at the compile time.
 #
 # + descriptor - Service descriptor, which should be set at the compile time
 # + descMap - Service dependent descriptor map, which should be set at the compile time
@@ -24,5 +24,5 @@ public type ServiceDescriptorData record {|
     map<anydata> descMap = {};
 |};
 
-# Service descriptor annotation. This is for internal use.
+# Service descriptor annotation.
 public annotation ServiceDescriptorData ServiceDescriptor on service;

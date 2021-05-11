@@ -26,14 +26,14 @@ public class ClientBearerTokenAuthHandler {
 
     BearerTokenConfig config;
 
-    # Initializes the `grpc:ClientBearerTokenAuthHandler` object.
+    # Initializes the Bearer token auth handler for client authentication.
     #
-    # + config - The `grpc:BearerTokenConfig` instance
+    # + config - The Bearer token
     public isolated function init(BearerTokenConfig config) {
         self.config = config;
     }
 
-    # Enrich the headers with the relevant authentication requirements.
+    # Enriches the headers with the relevant authentication requirements.
     #
     # + headers - The headers map `map<string|string[]>` as an input
     # + return - The Bearer tokes as a `string` or else an `grpc:ClientAuthError` in case of an error

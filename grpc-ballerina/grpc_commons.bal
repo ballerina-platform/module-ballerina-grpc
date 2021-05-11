@@ -44,7 +44,7 @@ public enum CertValidationType {
    OCSP_STAPLING
 }
 
-# Options to compress using gzip or deflate.
+# Represents compression options.
 #
 # `AUTO`: When service behaves as a HTTP gateway inbound request/response accept-encoding option is set as the
 #         outbound request/response accept-encoding/content-encoding option

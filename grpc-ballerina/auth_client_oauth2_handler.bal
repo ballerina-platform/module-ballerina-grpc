@@ -39,14 +39,14 @@ public client class ClientOAuth2Handler {
 
     oauth2:ClientOAuth2Provider provider;
 
-    # Initializes the `grpc:ClientOAuth2Handler` object.
+    # Initializes the OAuth2 handler for client authentication.
     #
-    # + config - The `grpc:OAuth2GrantConfig` instance
+    # + config - OAuth2 refresh token grant configurations
     public isolated function init(OAuth2GrantConfig config) {
         self.provider = new(config);
     }
 
-    # Enrich the headers with the relevant authentication requirements.
+    # Enriches the headers with the relevant authentication requirements.
     #
     # + headers - The headers map `map<string|string[]>` as an input
     # + return - The updated headers map `map<string|string[]>` instance or else an `grpc:ClientAuthError` in case of an error

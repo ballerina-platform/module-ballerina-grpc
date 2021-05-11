@@ -35,7 +35,7 @@ public type PoolConfiguration record {|
 |};
 
 //This is a hack to get the global map initialized, without involving locking.
-public class ConnectionManager {
+class ConnectionManager {
     public PoolConfiguration & readonly poolConfig = {};
 
     public isolated function init() {

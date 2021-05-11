@@ -17,7 +17,7 @@
 import ballerina/crypto;
 import ballerina/jballerina.java;
 
-# Represents server listener where one or more services can be registered. so that ballerina program can offer
+# The server listener where one or more services can be registered. so that ballerina program can offer
 # service through this listener.
 public class Listener {
 
@@ -78,9 +78,12 @@ public class Listener {
     }
 
     # Gets called when the endpoint is being initialized during the module init time.
+    # ```ballerina
+    # listener grpc:Listener listenerEp = new (9092);
+    # ```
     #
-    # + port - Listener port
-    # + config - The `grpc:ListenerConfiguration` of the endpoint
+    # + port - The listener port
+    # + config - The listener endpoint configuration
     public isolated function init(int port, *ListenerConfiguration config) returns error? {
         self.config = config;
         self.port = port;
@@ -162,10 +165,10 @@ const int MAX_PIPELINED_REQUESTS = 10;
 # Constant for the default listener endpoint timeout
 const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 
-# Represents the gRPC server endpoint configuration.
+# Configurations for managing gRPC server endpoint.
 #
 # + host - The server hostname
-# + secureSocket - The SSL configurations for the client endpoint
+# + secureSocket - The SSL configurations for the server endpoint
 # + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
 #                   disable the timeout
 public type ListenerConfiguration record {|
@@ -174,7 +177,7 @@ public type ListenerConfiguration record {|
     decimal timeout = DEFAULT_LISTENER_TIMEOUT;
 |};
 
-# Configures the SSL/TLS options to be used for HTTP service.
+# Configurations for facilitating secure communication for gRPC server endpoint.
 #
 # + key - Configurations associated with `crypto:KeyStore` or combination of certificate and private key of the server
 # + mutualSsl - Configures associated with mutual SSL operations
