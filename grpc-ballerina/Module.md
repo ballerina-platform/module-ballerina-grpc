@@ -6,7 +6,7 @@ gRPC is an inter-process communication technology that allows you to connect, in
 
 When you develop a gRPC application the first thing you do is define a service definition using Protocol Buffers.
 
-### Protocol buffers
+### Protocol Buffers
 This is a mechanism to serialize the structured data introduced by Google and used by the gRPC framework. Defining the service using Protocol Buffers includes defining remote methods in the service and defining message types that are sent across the network. A sample service definition is shown below.
 
 ```proto
