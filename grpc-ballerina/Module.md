@@ -1,6 +1,6 @@
 ## Module Overview
 
-This module provides an implementation for setting up, connection and interacting with gRPC endpoints. 
+This module provides an implementation for connecting and interacting with gRPC endpoints. 
 
 gRPC is an inter-process communication technology that allows you to connect, invoke and operate distributed heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and It uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC, highly efficient on wire and a simple service definition framework.
 
@@ -100,7 +100,8 @@ Here the message stream is ended with a `()` value.
     HelloWorldClient helloworldClient = new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
-    stream<string, grpc:Error?>|grpc:Error result = helloworldClient->lotsOfReplies("Ballerina");
+    stream<string, grpc:Error?>|grpc:Error result = 
+                                    helloworldClient->lotsOfReplies("Ballerina");
 ```
 
 #### Client streaming RPC
@@ -121,7 +122,8 @@ The code snippet given below contains a service that receives a sequence of requ
 service HelloWorld on new grpc:Listener(9090) {
 
     //This `resource` is triggered when a new client connection is initialized.
-    remote function lotsOfGreetings(stream<string, grpc:Error?> clientStream) returns string|error {
+    remote function lotsOfGreetings(stream<string, grpc:Error?> clientStream) 
+                                                        returns string|error {
         //Iterate through the client stream
         error? e = clientStream.forEach(function(string name) {
             // Handle the message sent from the stream here
@@ -144,7 +146,8 @@ The code snippet given below calls the above service using the auto-generated Ba
     HelloWorldClient helloworldClient = new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
-    LotsOfGreetingsStreamingClient|grpc:Error streamingClient = helloworldClient->lotsOfGreetings();
+    LotsOfGreetingsStreamingClient|grpc:Error streamingClient = 
+                                        helloworldClient->lotsOfGreetings();
 
     // Send multiple messages to the server.
     string[] greets = ["Hi", "Hey", "GM"];
@@ -152,7 +155,8 @@ The code snippet given below calls the above service using the auto-generated Ba
         grpc:Error? connErr = streamingClient->sendstring(greet + " " + "Ballerina");
     }
 
-    // Once all the messages are sent, the client notifies the server by closing the stream.
+    // Once all the messages are sent, the client notifies the server 
+    // by closing the stream.
     grpc:Error? result = streamingClient->complete();
     // Receive the message from the server.
     string|grpc:Error response = streamingClient->receiveString();
@@ -176,11 +180,13 @@ The code snippet given below includes a service that handles bidirectional strea
 service Chat on new grpc:Listener(9090) {
 
     //This `resource` is triggered when a new caller connection is initialized.
-    remote function chat(ChatStringCaller caller, stream<ChatMessage, grpc:Error?> clientStream) {
+    remote function chat(ChatStringCaller caller, 
+                                    stream<ChatMessage, grpc:Error?> clientStream) {
         //Iterate through the client stream
         error? e = clientStream.forEach(function(ChatMessage chatMsg) {
             // Handle the streamed messages sent from the client here
-            grpc:Error? err = caller->sendString(string `${chatMsg.name}: ${chatMsg.message}`);
+            grpc:Error? err = caller->sendString(
+                                    string `${chatMsg.name}: ${chatMsg.message}`);
         });
         //A nil value is returned once the client has competed streaming
         if (e is ()) {
@@ -208,7 +214,8 @@ The code snippet given below calls the above service using the auto-generated Ba
         grpc:Error? connErr = streamingClient->sendChatMessage(mes);
     }
 
-    // Once all the messages are sent, the server notifies the caller with a `complete` message.
+    // Once all the messages are sent, the server notifies the caller 
+    // with a `complete` message.
     grpc:Error? result = streamingClient->complete();
     ...
 
@@ -282,7 +289,8 @@ public type ContextString record {|
     // Read Response content.
     string content = result.content);
     // Read Response header value.
-    string headerValue = check grpc:getHeader(result.headers, "server_header_key"));
+    string headerValue = check grpc:getHeader(result.headers, 
+                                                    "server_header_key"));
 ```
 
 ##### Using Headers in server side
@@ -294,10 +302,12 @@ service "HelloWorld" on new grpc:Listener(9090) {
         string message = "Hello " + request.content;
 
         // Read custom headers in request message.
-        string reqHeader = check grpc:getHeader(request.headers, "client_header_key");
+        string reqHeader = check grpc:getHeader(request.headers, 
+                                                        "client_header_key");
 
         // Sends response with custom headers.
-        return {content: message, headers: {server_header_key: "Response Header value"}};
+        return {content: message, 
+                        headers: {server_header_key: "Response Header value"}};
     }
 }
 ```
