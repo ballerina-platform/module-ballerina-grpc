@@ -37,7 +37,7 @@ def distributionBinPath = project.projectDir.absolutePath + "/build/target/extra
 def originalBallerinaToml = ballerinaTomlFile.text
 def originalDependenciesToml = dependenciesTomlFile.text
 def originalCompilerPluginToml = compilerPluginTomlFile.text
-def testCoverageParam = "--code-coverage --includes=org.ballerinalang.net.grpc.*:ballerina.*"
+def testCoverageParam = "--code-coverage --jacoco-xml --includes=org.ballerinalang.net.grpc.*:ballerina.grpc.*"
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
