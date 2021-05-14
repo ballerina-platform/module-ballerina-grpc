@@ -43,7 +43,7 @@ service HelloWorld {
           returns (google.protobuf.StringValue);
 }
 ```
-##### Creating the server
+##### Creating the Server
 The code snippet given below contains a service that sends a response to each request.
 
 ```ballerina
@@ -56,7 +56,7 @@ service HelloWorld on new grpc:Listener(9090)  {
    }
 }
 ```
-##### Creating the client
+##### Creating the Client
 The code snippet given below calls the above service in a synchronized manner using an auto-generated Ballerina stub.
 
 ```ballerina
@@ -77,7 +77,7 @@ service HelloWorld {
           returns (stream google.protobuf.StringValue);
 }
 ```
-##### Creating the server
+##### Creating the Server
 The code snippet given below contains a service that sends a sequence of responses to each request.
 
 ```ballerina
@@ -91,7 +91,7 @@ service HelloWorld on new grpc:Listener(9090) {
 }
 ```
 
-##### Creating the client
+##### Creating the Client
 The code snippet given below calls the above service using the auto-generated Ballerina client stub and reads multiple server responses using a stream.
 Here the message stream is ended with a `()` value.
 
@@ -114,7 +114,7 @@ service HelloWorld {
 }
 ```
 
-##### Creating the server
+##### Creating the Server
 The code snippet given below contains a service that receives a sequence of requests from the client and sends a single response in return.
 
 ```ballerina
@@ -135,7 +135,7 @@ service HelloWorld on new grpc:Listener(9090) {
 }
 ```
 
-##### Creating the client
+##### Creating the Client
 The code snippet given below calls the above service using the auto-generated Ballerina client stub and sends multiple request messages from the server.
 
 ```ballerina
@@ -169,7 +169,7 @@ service Chat {
           returns (stream google.protobuf.StringValue);
 }
 ```
-##### Creating the server
+##### Creating the Server
 The code snippet given below includes a service that handles bidirectional streaming.
 
 ```ballerina
@@ -191,7 +191,7 @@ service Chat on new grpc:Listener(9090) {
     }
 }
 ```
-##### Creating the client
+##### Creating the Client
 The code snippet given below calls the above service using the auto-generated Ballerina client stub and sends multiple request messages to the server and receives multiple responses from the server.
 
 ```ballerina
@@ -228,7 +228,7 @@ The code snippet given below calls the above service using the auto-generated Ba
 The Ballerina gRPC module allows the use TLS in communication. This setting expects a secure socket to be 
 set in the connection configuration as shown below.
 
-##### Configuring TLS in server side
+##### Configuring TLS in Server Side
 
 ```ballerina
 // Server endpoint configuration with the SSL configurations.
@@ -247,7 +247,7 @@ service HelloWorld on ep {
 }
 ```
 
-##### Configuring TLS in client side
+##### Configuring TLS in Client Side
 
 ```ballerina
     // Client endpoint configuration with SSL configurations.
@@ -270,7 +270,7 @@ public type ContextString record {|
 |};
 ```
 
-##### Using Headers in client side
+##### Using Headers in Client Side
 
 ```ballerina
     // Set the custom headers to the request.
@@ -285,7 +285,7 @@ public type ContextString record {|
                                                     "server_header_key");
 ```
 
-##### Using Headers in server side
+##### Using Headers in Server Side
 
 ```ballerina
 service "HelloWorld" on new grpc:Listener(9090) {
@@ -310,7 +310,7 @@ Deadlines allow gRPC clients to specify how long they are willing to wait for an
  terminated with the error `DEADLINE_EXCEEDED`. In Ballerina, deadline value is set directly to the headers and send
   it via request headers.
 
-##### Setting a deadline in request headers
+##### Setting a Deadline in Request Headers
 
 ```ballerina
     time:Utc current = time:utcNow();
@@ -318,7 +318,7 @@ Deadlines allow gRPC clients to specify how long they are willing to wait for an
     map<string|string[]> headers = grpc:setDeadline(deadline);
 ```
 
-##### Checking deadlines
+##### Checking Deadlines
 
 ```ballerina
     boolean cancel = check grpc:isCancelled(request.headers);
