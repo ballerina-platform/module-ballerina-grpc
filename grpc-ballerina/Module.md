@@ -1,4 +1,4 @@
-## Module Overview
+## Overview
 
 This module provides an implementation for connecting and interacting with gRPC endpoints. 
 
@@ -32,7 +32,7 @@ For the guide on how to generate Ballerina code for Protocol Buffers definition,
 
 ### gRPC Communication Patterns
 The common communication pattern between client and server is simple request-response style communication. However, with gRPC, you can leverage different inter-process communication patterns other than the simple request-response pattern.
-This module supports four fundamental communication patterns used in gRPC-based applications: simple RPC(unary RPC), server streaming, client streaming, and bidirectional streaming.
+This module supports four fundamental communication patterns used in gRPC-based applications: simple RPC(unary RPC), server streaming RPC, client streaming RPC, and bidirectional streaming RPC.
 
 #### Simple RPC (Unary RPC) 
 In this pattern, the client invokes a remote function of a server and sends a single request to the server. The server sends a single response in return to the client along with status details.
@@ -49,7 +49,7 @@ The code snippet given below contains a service that sends a response to each re
 ```ballerina
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090)  {
-   // A resource that accepts a string message.
+   // The function accepts a string message.
    remote function hello(string name) returns string|error {
        // Send the response to the client.
        return "Hi " + name + "! Greetings from gRPC service!");
@@ -61,10 +61,10 @@ The code snippet given below calls the above service in a synchronized manner us
 
 ```ballerina
 // Use ‘HelloWorldClient’ to execute the call in the synchronized mode.
-HelloWorldClient helloClient = new("http://localhost:9090");
+HelloWorldClient helloClient = check new("http://localhost:9090");
 
 // Call the service remote function using a client stub.
-string|grpc:Error responseFromServer = helloClient->hello("Ballerina");
+string responseFromServer = check helloClient->hello("Ballerina");
 ```
 
 #### Server streaming RPC
@@ -97,11 +97,11 @@ Here the message stream is ended with a `()` value.
 
 ```ballerina
    // Client endpoint configurations.
-    HelloWorldClient helloworldClient = new("http://localhost:9090");
+    HelloWorldClient helloworldClient = check new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
-    stream<string, grpc:Error?>|grpc:Error result = 
-                                    helloworldClient->lotsOfReplies("Ballerina");
+    stream<string, grpc:Error?> result = 
+                                check helloworldClient->lotsOfReplies("Ballerina");
 ```
 
 #### Client streaming RPC
@@ -121,19 +121,16 @@ The code snippet given below contains a service that receives a sequence of requ
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090) {
 
-    //This `resource` is triggered when a new client connection is initialized.
+    // This function is triggered when a new client connection is initialized.
     remote function lotsOfGreetings(stream<string, grpc:Error?> clientStream) 
                                                         returns string|error {
-        //Iterate through the client stream
-        error? e = clientStream.forEach(function(string name) {
+        // Iterate through the client stream
+        check clientStream.forEach(function(string name) {
             // Handle the message sent from the stream here
         });
-        //A nil value is returned once the client stream is ended
-        if (e is ()) {
-            return "Ack";
-        } else if (e is error) {
-            // Handle the error sent by the client here
-        }
+        // A nil value is returned once the client stream is ended
+        // Return server response to the client.
+        return "Ack";
     }
 }
 ```
@@ -143,11 +140,11 @@ The code snippet given below calls the above service using the auto-generated Ba
 
 ```ballerina
     // Client endpoint configurations.
-    HelloWorldClient helloworldClient = new("http://localhost:9090");
+    HelloWorldClient helloworldClient = check new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
-    LotsOfGreetingsStreamingClient|grpc:Error streamingClient = 
-                                        helloworldClient->lotsOfGreetings();
+    LotsOfGreetingsStreamingClient streamingClient = 
+                                        check helloworldClient->lotsOfGreetings();
 
     // Send multiple messages to the server.
     string[] greets = ["Hi", "Hey", "GM"];
@@ -183,17 +180,14 @@ service Chat on new grpc:Listener(9090) {
     remote function chat(ChatStringCaller caller, 
                                     stream<ChatMessage, grpc:Error?> clientStream) {
         //Iterate through the client stream
-        error? e = clientStream.forEach(function(ChatMessage chatMsg) {
+        check clientStream.forEach(function(ChatMessage chatMsg) {
             // Handle the streamed messages sent from the client here
             grpc:Error? err = caller->sendString(
                                     string `${chatMsg.name}: ${chatMsg.message}`);
         });
-        //A nil value is returned once the client has competed streaming
-        if (e is ()) {
-            // Handle once the client has completed streaming
-        } else if (e is error) {
-            // Handle the error sent by the client here
-        }
+        // A nil value is returned once the client stream is ended
+        // Handle once the client has completed streaming
+        caller->complete();
     }
 }
 ```
@@ -202,10 +196,10 @@ The code snippet given below calls the above service using the auto-generated Ba
 
 ```ballerina
    // Client endpoint configurations.
-    ChatClient chatClient = new("http://localhost:9090");
+    ChatClient chatClient = check new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
-    ChatStreamingClient|grpc:Error streamingClient = = chatClient->chat();
+    ChatStreamingClient streamingClient = check chatClient->chat();
 
     // Send multiple messages to the server.
     string[] greets = ["Hi", "Hey", "GM"];
@@ -220,11 +214,9 @@ The code snippet given below calls the above service using the auto-generated Ba
     ...
 
     // Receive the server stream response iteratively.
-    string|grpc:Error result = streamingClient->receiveString();
+    string? result = check streamingClient->receiveString();
     while !(result is ()) {
-        if !(result is grpc:Error) {
-            io:println(result);
-        }
+        io:println(result);
         result = streamingClient->receiveString();
     }
 ```
@@ -259,7 +251,7 @@ service HelloWorld on ep {
 
 ```ballerina
     // Client endpoint configuration with SSL configurations.
-    HelloWorldClient helloWorldClient = new ("https://localhost:9090", {
+    HelloWorldClient helloWorldClient = check new ("https://localhost:9090", {
         secureSocket: {
             cert: "../resource/path/to/public.crt"
         }
@@ -287,10 +279,10 @@ public type ContextString record {|
     // Execute the remote call.
     ContextString result = check ep->helloContext(requestMessage);
     // Read Response content.
-    string content = result.content);
+    string content = result.content;
     // Read Response header value.
     string headerValue = check grpc:getHeader(result.headers, 
-                                                    "server_header_key"));
+                                                    "server_header_key");
 ```
 
 ##### Using Headers in server side
@@ -305,7 +297,7 @@ service "HelloWorld" on new grpc:Listener(9090) {
         string reqHeader = check grpc:getHeader(request.headers, 
                                                         "client_header_key");
 
-        // Sends response with custom headers.
+        // Send response with custom headers.
         return {content: message, 
                         headers: {server_header_key: "Response Header value"}};
     }

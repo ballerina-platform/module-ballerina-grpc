@@ -6,8 +6,6 @@ The gRPC library is one of the standard library packages of the<a target="_blank
 This package provides support for the gRPC messaging protocol. gRPC is an inter-process communication technology
  that allows you to connect, invoke and operate distributed heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and It uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC, highly efficient on wire and a simple service definition framework.
 
-For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/).
-
 ### Report Issues
 
 To report bugs, request new features, start new discussions, view project boards, etc. please visit Ballerina
@@ -15,6 +13,6 @@ To report bugs, request new features, start new discussions, view project boards
 
 ### Useful Links
 
-- Discuss about code changes of the Ballerina project in [ballerina-dev@googlegroups.com](mailto:ballerina-dev@googlegroups.com).
+- Discuss code changes of the Ballerina project in [ballerina-dev@googlegroups.com](mailto:ballerina-dev@googlegroups.com).
 - Chat live with us via our [Slack channel](https://ballerina.io/community/slack/).
 - Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.
