@@ -59,10 +59,10 @@ public class Listener {
     # error? result = listenerEp.attach(helloService);
     # ```
     #
-    # + s - The type of the service to be registered
+    # + grpcService - The type of the service to be registered
     # + name - Name of the service
     # + return - An `error` if encounters an error while attaching the service or else `()`
-    public isolated function attach(Service s, string[]|string? name = ()) returns error? {
+    public isolated function attach(Service grpcService, string[]|string? name = ()) returns error? {
         return externRegister(self, s, name);
     }
 
@@ -72,9 +72,9 @@ public class Listener {
     # error? result = listenerEp.detach(helloService);
     # ```
     #
-    # + s - The service to be detached
+    # + grpcService - The service to be detached
     # + return - An `error` if occurred during detaching of a service or else `()`
-    public isolated function detach(Service s) returns error? {
+    public isolated function detach(Service grpcService) returns error? {
     }
 
     # Gets called when the endpoint is being initialized during the module init time.
