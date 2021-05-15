@@ -16,10 +16,10 @@
 
 import ballerina/jballerina.java;
 
-final configurable int maxActiveConnections = -1;
-final configurable int maxIdleConnections = 1000;
-final configurable decimal waitTime = 60;
-final configurable int maxActiveStreamsPerConnection = 50;
+configurable int maxActiveConnections = -1;
+configurable int maxIdleConnections = 1000;
+configurable decimal waitTime = 60;
+configurable int maxActiveStreamsPerConnection = 50;
 
 # Configurations for managing the gRPC client connection pool.
 #
