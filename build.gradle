@@ -160,7 +160,6 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'java'
 
     configurations {
         ballerinaStdLibs
@@ -168,9 +167,9 @@ subprojects {
     }
     dependencies {
         /* JBallerina Tools */
-        jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
-            transitive = false
-        }
+        // jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
+        //     transitive = false
+        // }
 
         /* Standard libraries */
         ballerinaStdLibs "org.ballerinalang:io-ballerina:${stdlibIoVersion}"
