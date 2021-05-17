@@ -63,7 +63,7 @@ public class Listener {
     # + name - Name of the service
     # + return - An `error` if encounters an error while attaching the service or else `()`
     public isolated function attach(Service grpcService, string[]|string? name = ()) returns error? {
-        return externRegister(self, s, name);
+        return externRegister(self, grpcService, name);
     }
 
     # Detaches an HTTP or WebSocket service from the listener. Note that detaching a WebSocket service would not affect
