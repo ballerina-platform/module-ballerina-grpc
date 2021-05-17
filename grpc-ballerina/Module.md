@@ -13,15 +13,15 @@ This is a mechanism to serialize the structured data introduced by Google and us
 syntax = "proto3";
 
 service Helloworld {
-     rpc hello(HelloRequest) returns (HelloResponse);
+    rpc hello(HelloRequest) returns (HelloResponse);
 }
 
 message HelloRequest {
-  string name = 1;
+    string name = 1;
 }
 
 message HelloResponse {
-  string message = 1;
+    string message = 1;
 }
 ```
 
@@ -49,11 +49,11 @@ The code snippet given below contains a service that sends a response to each re
 ```ballerina
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090)  {
-   // The function accepts a string message.
-   remote function hello(string name) returns string|error {
-       // Send the response to the client.
-       return "Hi " + name + "! Greetings from gRPC service!");
-   }
+    // The function accepts a string message.
+    remote function hello(string name) returns string|error {
+        // Send the response to the client.
+        return "Hi " + name + "! Greetings from gRPC service!");
+    }
 }
 ```
 ##### Creating the Client
@@ -83,10 +83,10 @@ The code snippet given below contains a service that sends a sequence of respons
 ```ballerina
 // The gRPC service is attached to the listener.
 service HelloWorld on new grpc:Listener(9090) {
-   remote function lotsOfReplies(string name) returns stream<string, grpc:Error?> {
-       string[] greets = ["Hi " + name, "Welcome " + name];
-       // Send multiple responses to the client.
-       return greets.toStream();
+    remote function lotsOfReplies(string name) returns stream<string, grpc:Error?> {
+        string[] greets = ["Hi " + name, "Welcome " + name];
+        // Send multiple responses to the client.
+        return greets.toStream();
    }
 }
 ```
@@ -195,7 +195,7 @@ service Chat on new grpc:Listener(9090) {
 The code snippet given below calls the above service using the auto-generated Ballerina client stub and sends multiple request messages to the server and receives multiple responses from the server.
 
 ```ballerina
-   // Client endpoint configurations.
+    // Client endpoint configurations.
     ChatClient chatClient = check new("http://localhost:9090");
 
     // Execute the service streaming call by registering a message listener.
