@@ -74,3 +74,22 @@ public isolated function testStringValueReturnWithInvalidBasicAuth() returns Err
         test:assertFail(msg = "Expected grpc:Error not found.");
     }
 }
+
+@test:Config {enable:true}
+public isolated function testStringValueReturnWithBasicAuthWithEmpty() returns Error? {
+    HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
+    map<string|string[]> requestHeaders = {};
+
+    CredentialsConfig config = {
+        username: "",
+        password: "1234"
+    };
+
+    ClientBasicAuthHandler handler = new (config);
+    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+    if (result is ClientAuthError) {
+        test:assertEquals(result.message(), "Failed to enrich request with Basic Auth token.");
+    } else {
+        test:assertFail(msg = "Expected grpc:Error not found.");
+    }
+}
