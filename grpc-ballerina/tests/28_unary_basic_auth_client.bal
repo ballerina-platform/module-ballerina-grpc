@@ -88,7 +88,7 @@ public isolated function testStringValueReturnWithBasicAuthWithEmpty() returns E
     ClientBasicAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
     if (result is ClientAuthError) {
-        test:assertEquals(result.message(), "Failed to enrich request with Basic Auth token.");
+        test:assertEquals(result.message(), "Failed to enrich request with Basic Auth token. Username or password cannot be empty.");
     } else {
         test:assertFail(msg = "Expected grpc:Error not found.");
     }
