@@ -14,9 +14,6 @@
  * limitations under the License.
  *
  */
-
-import org.apache.tools.ant.taskdefs.condition.Os
-
 buildscript {
     repositories {
         maven {
@@ -51,7 +48,7 @@ def originalCompilerPluginToml = compilerPluginTomlFile.text
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
-        def splitVersion = extVersion.split('-');
+        def splitVersion = extVersion.split('-')
         if (splitVersion.length > 3) {
             def strippedValues = splitVersion[0..-4]
             return strippedValues.join('-')
@@ -65,7 +62,7 @@ def stripBallerinaExtensionVersion(String extVersion) {
 
 apply plugin: 'io.ballerina.plugin'
 
-ballerina{
+ballerina {
     module = packageName
     langVersion = ballerinaLangVersion
     testCoverageParam = "--code-coverage --includes=org.ballerinalang.net.grpc.*:ballerina.*"
@@ -77,70 +74,70 @@ configurations {
 
 dependencies {
 
-    externalJars (group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}") {
+    externalJars(group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-common', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-common', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-buffer', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-buffer', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-transport', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-transport', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-resolver', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-resolver', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-handler', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-handler', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-codec', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-codec', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-handler-proxy', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-handler-proxy', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-codec-http2', version: "${nettyVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-codec-http2', version: "${nettyVersion}") {
         transitive = false
     }
-    externalJars (group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
+    externalJars(group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.wso2.orbit.org.yaml', name: 'snakeyaml', version: "${wso2SnakeYamlVersion}") {
+    externalJars(group: 'org.wso2.orbit.org.yaml', name: 'snakeyaml', version: "${wso2SnakeYamlVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: "${bouncycastleVersion}") {
+    externalJars(group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: "${bouncycastleVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: "${bouncycastleVersion}") {
+    externalJars(group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: "${bouncycastleVersion}") {
         transitive = false
     }
-    externalJars (group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: "${nettyTcnativeVersion}") {
+    externalJars(group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: "${nettyTcnativeVersion}") {
         transitive = false
     }
-    externalJars (group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
+    externalJars(group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
         transitive = false
     }
-    externalJars (group: 'info.picocli', name: 'picocli', version: "${picocliVersion}") {
+    externalJars(group: 'info.picocli', name: 'picocli', version: "${picocliVersion}") {
         transitive = false
     }
-    externalJars (group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}") {
+    externalJars(group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
+    externalJars(group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.wso2.orbit.org.antlr', name: 'antlr4-runtime', version: "${wso2OrbitAntlrVersion}") {
+    externalJars(group: 'org.wso2.orbit.org.antlr', name: 'antlr4-runtime', version: "${wso2OrbitAntlrVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}") {
+    externalJars(group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}") {
+    externalJars(group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}") {
         transitive = false
     }
 }
