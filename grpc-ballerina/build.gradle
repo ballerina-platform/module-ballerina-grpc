@@ -33,12 +33,10 @@ description = 'Ballerina - gRPC Ballerina Generator'
 
 def packageName = "grpc"
 def packageOrg = "ballerina"
-def platform = "java11"
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
 def dependenciesTomlFile = new File("$project.projectDir/Dependencies.toml")
 def compilerPluginTomlFile = new File("$project.projectDir/CompilerPlugin.toml")
-def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 // external jar file which need to pack to distribution
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
 def targetNativeJar = file("$project.rootDir/${packageName}-native/build/libs/${packageName}-native-${project.version}.jar")
@@ -63,6 +61,7 @@ def stripBallerinaExtensionVersion(String extVersion) {
 apply plugin: 'io.ballerina.plugin'
 
 ballerina {
+    packageOrganization = packageOrg
     module = packageName
     langVersion = ballerinaLangVersion
     testCoverageParam = "--code-coverage --includes=org.ballerinalang.net.grpc.*:ballerina.*"
@@ -142,7 +141,7 @@ dependencies {
     }
 }
 
-task updateTomlVersions {
+task updateTomlFiles {
     doLast {
         def stdlibDependentCryptoVersion = stripBallerinaExtensionVersion(project.stdlibCryptoVersion)
         def stdlibDependentHttpVersion = stripBallerinaExtensionVersion(project.stdlibHttpVersion)
@@ -177,7 +176,7 @@ task updateTomlVersions {
     }
 }
 
-task revertTomlFile {
+task revertTomlFiles {
     doLast {
         ballerinaTomlFile.text = originalBallerinaToml
         dependenciesTomlFile.text = originalDependenciesToml
@@ -216,7 +215,7 @@ publishing {
 }
 
 
-updateTomlVersions.dependsOn copyStdlibs
+updateTomlFiles.dependsOn copyStdlibs
 
 build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-test-utils:build"
