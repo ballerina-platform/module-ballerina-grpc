@@ -21,17 +21,17 @@ public class ClientBasicAuthHandler {
 
     auth:ClientBasicAuthProvider provider;
 
-    # Initializes the `http:ClientBasicAuthHandler` object.
+    # Initializes the Basic Auth handler for client authentication.
     #
-    # + config - The `http:CredentialsConfig` instance
+    # + config - The Basic Auth credentials
     public isolated function init(CredentialsConfig config) {
         self.provider = new(config);
     }
 
-    # Enrich the headers with the relevant authentication requirements.
+    # Enriches the headers with the relevant authentication requirements.
     #
-    # + headers - The headers map `map<string|string[]>` as an input
-    # + return - The updated headers map `map<string|string[]>` instance or else an `grpc:ClientAuthError` in case of an error
+    # + headers - The `map<string|string[]>` headers map  as an input
+    # + return - The updated `map<string|string[]>` headers map  instance or else a `grpc:ClientAuthError` in case of an error
     public isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|auth:Error result = self.provider.generateToken();
         if (result is auth:Error) {

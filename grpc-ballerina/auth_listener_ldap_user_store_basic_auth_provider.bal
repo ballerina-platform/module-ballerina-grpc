@@ -21,9 +21,9 @@ public client class ListenerLdapUserStoreBasicAuthProvider {
 
     auth:ListenerLdapUserStoreBasicAuthProvider provider;
 
-    # Initializes the `grpc:ListenerLdapUserStoreBasicAuthProvider` object.
+    # Initializes the LDAP user store Basic Auth handler for listener authentication.
     #
-    # + config - The `grpc:LdapUserStoreConfig` instance
+    # + config - LDAP user store configurations
     public isolated function init(LdapUserStoreConfig config) {
         self.provider = new(config);
     }

@@ -17,36 +17,36 @@
 //Package defines the canonical error codes used by gRPC.
 
 # The gRPC error status code: 0 OK.
-public const int OK = 0;
+const int OK = 0;
 # The gRPC error status code: 1 Canceled.
-public const int CANCELED = 1;
+const int CANCELED = 1;
 # The gRPC error status code: 2 Unknown.
-public const int UNKNOWN = 2;
+const int UNKNOWN = 2;
 # The gRPC error status code: 3 Invalid Argument.
-public const int INVALID_ARGUMENT = 3;
+const int INVALID_ARGUMENT = 3;
 # The gRPC error status code: 4 Deadline Exceeded.
-public const int DEADLINE_EXCEEDED = 4;
+const int DEADLINE_EXCEEDED = 4;
 # The gRPC error status code: 5 Not Found.
-public const int NOT_FOUND = 5;
+const int NOT_FOUND = 5;
 # The gRPC error status code: 6 Already Exists.
-public const int ALREADY_EXISTS = 6;
+const int ALREADY_EXISTS = 6;
 # The gRPC error status code: 7 Permission Denied.
-public const int PERMISSION_DENIED = 7;
+const int PERMISSION_DENIED = 7;
 # The gRPC error status code: 8 Resource Exhausted.
-public const int RESOURCE_EXHAUSTED = 8;
+const int RESOURCE_EXHAUSTED = 8;
 # The gRPC error status code: 9 Failed Precondition.
-public const int FAILED_PRECONDITION = 9;
+const int FAILED_PRECONDITION = 9;
 # The gRPC error status code: 10 Aborted.
-public const int ABORTED = 10;
+const int ABORTED = 10;
 # The gRPC error status code: 11 Out of Range.
-public const int OUT_OF_RANGE = 11;
+const int OUT_OF_RANGE = 11;
 # The gRPC error status code: 12 Unimplemented.
-public const int UNIMPLEMENTED = 12;
+const int UNIMPLEMENTED = 12;
 # The gRPC error status code: 13 Internal.
-public const int INTERNAL = 13;
+const int INTERNAL = 13;
 # The gRPC error status code: 14 Unavailable.
-public const int UNAVAILABLE = 14;
+const int UNAVAILABLE = 14;
 # The gRPC error status code: 15 Data Loss.
-public const int DATA_LOSS = 15;
+const int DATA_LOSS = 15;
 # The gRPC error status code: 16 Unauthenticated.
-public const int UNAUTHENTICATED = 16;
+const int UNAUTHENTICATED = 16;

@@ -22,9 +22,9 @@ public client class ListenerOAuth2Handler {
     oauth2:ListenerOAuth2Provider provider;
     string scopeKey;
 
-    # Initializes the `grpc:ListenerOAuth2Handler` object.
+    # Initializes the OAuth2 handler for the listener authentication.
     #
-    # + config - The `grpc:OAuth2IntrospectionConfig` instance
+    # + config - OAuth2 introspection server configurations
     public isolated function init(OAuth2IntrospectionConfig config) {
         self.scopeKey = config.scopeKey;
         self.provider = new(config);

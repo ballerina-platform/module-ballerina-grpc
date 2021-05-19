@@ -22,9 +22,9 @@ public class ListenerJwtAuthHandler {
     jwt:ListenerJwtAuthProvider provider;
     string scopeKey;
 
-    # Initializes the `grpc:ListenerJwtAuthHandler` object.
+    # Initializes the JWT auth handler for the listener authentication.
     #
-    # + config - The `grpc:JwtValidatorConfig` instance
+    # + config - JWT validator configurations
     public isolated function init(JwtValidatorConfig config) {
         self.scopeKey = config.scopeKey;
         self.provider = new(config);
