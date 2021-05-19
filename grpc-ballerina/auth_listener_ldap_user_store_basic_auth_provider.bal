@@ -26,7 +26,7 @@ public client class ListenerLdapUserStoreBasicAuthProvider {
 
     auth:ListenerLdapUserStoreBasicAuthProvider provider;
 
-    # Initializes the LDAP user store basic auth handler for listener authentication.
+    # Initializes the LDAP user store Basic Auth handler for listener authentication.
     #
     # + config - LDAP user store configurations
     public isolated function init(LdapUserStoreConfig config) {

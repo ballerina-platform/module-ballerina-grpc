@@ -26,8 +26,8 @@ public const string DEALINE_HEADER = "deadline";
 # map<string|string[]> headers = grpc:setDeadline(deadline);
 # ```
 #
-# + deadline - The deadline time value(this should be an specific time not a duration)
-# + headerMap - Optional header map (If this is not specified, it creates a new header set)
+# + deadline - The deadline time value (this should be a specific time and not a duration)
+# + headerMap - Optional header map (if this is not specified, it creates a new header set)
 # + return - The header map that includes the deadline
 public isolated function setDeadline(time:Utc deadline, map<string|string[]> headerMap = {}) returns map<string|string[]> {
     string deadlineStringValue = time:utcToString(deadline);
@@ -35,13 +35,13 @@ public isolated function setDeadline(time:Utc deadline, map<string|string[]> hea
     return headerMap;
 }
 
-# Checks whether the deadline already exceeded or not.
+# Checks whether the deadline is already exceeded or not.
 # ```ballerina
 # boolean|time:Error isCancelled = grpc:isCancelled(map<string|string[]> headerMap);
 # ```
 #
 # + headerMap - Optional header map sent by the client
-# + return - `true` when deadline exceeded, return `false` when the deadline is not exceeded, or return a `time:Error` when `deadline` parsing error occurred
+# + return - `true` when the deadline is exceeded, `false` when the deadline is not exceeded, or else a `time:Error` when a `deadline`-parsing error occurred
 public isolated function isCancelled(map<string|string[]> headerMap) returns boolean|time:Error {
     time:Utc currentTime = time:utcNow();
     string|string[]? deadlineStringValue = headerMap[DEALINE_HEADER];
@@ -58,13 +58,13 @@ public isolated function isCancelled(map<string|string[]> headerMap) returns boo
     return false;
 }
 
-# Returns the deadline value as `time:Utc`. This can be used to get the deadline and propagate the deadline to the  subsequest internal calls.
+# Returns the deadline value as `time:Utc`. This can be used to get the deadline and propagate it to subsequent internal calls.
 # ```ballerina
 # time:Utc?|time:Error deadline = grpc:getDeadline(map<string|string[]> headerMap);
 # ```
 #
 # + headerMap - Optional header map sent by the client
-# + return - `deadline` value when deadline correctly specified, return `()` when the deadline is not specified, or return a `time:Error` when `deadline` parsing error occurred
+# + return - `deadline` value when the deadline is correctly specified, `()` when the deadline is not specified, or else a `time:Error` when a `deadline`-parsing error occurred
 public isolated function getDeadline(map<string|string[]> headerMap) returns time:Utc?|time:Error {
     string|string[]? deadlineStringValue = headerMap[DEALINE_HEADER];
     if (deadlineStringValue is string) {

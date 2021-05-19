@@ -30,7 +30,7 @@ public class ListenerJwtAuthHandler {
     jwt:ListenerJwtAuthProvider provider;
     string scopeKey;
 
-    # Initializes the JWT auth handler for listener authentication.
+    # Initializes the JWT auth handler for the listener authentication.
     #
     # + config - JWT validator configurations
     public isolated function init(JwtValidatorConfig config) {

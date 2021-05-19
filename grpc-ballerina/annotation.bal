@@ -18,7 +18,7 @@
 # Service descriptor data generated at the compile time.
 #
 # + descriptor - Service descriptor, which should be set at the compile time
-# + descMap - Service dependent descriptor map, which should be set at the compile time
+# + descMap - Service-dependent descriptor map, which should be set at the compile time
 public type ServiceDescriptorData record {|
     string descriptor = "";
     map<anydata> descMap = {};

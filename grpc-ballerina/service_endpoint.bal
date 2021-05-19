@@ -17,8 +17,8 @@
 import ballerina/crypto;
 import ballerina/jballerina.java;
 
-# The server listener where one or more services can be registered. so that ballerina program can offer
-# service through this listener.
+# The server listener of which one or more services can be registered so that the Ballerina program can offer
+# a service through this listener.
 public class Listener {
 
     private int port = 0;
@@ -61,7 +61,7 @@ public class Listener {
     #
     # + grpcService - The type of the service to be registered
     # + name - Name of the service
-    # + return - An `error` if encounters an error while attaching the service or else `()`
+    # + return - An `error` if an error occurs while attaching the service or else `()`
     public isolated function attach(Service grpcService, string[]|string? name = ()) returns error? {
         return externRegister(self, grpcService, name);
     }
@@ -73,7 +73,7 @@ public class Listener {
     # ```
     #
     # + grpcService - The service to be detached
-    # + return - An `error` if occurred during detaching of a service or else `()`
+    # + return - An `error` if an error occurred during the detaching of the service or else `()`
     public isolated function detach(Service grpcService) returns error? {
     }
 
@@ -165,7 +165,7 @@ const int MAX_PIPELINED_REQUESTS = 10;
 # Constant for the default listener endpoint timeout
 const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 
-# Configurations for managing gRPC server endpoint.
+# Configurations for managing the gRPC server endpoint.
 #
 # + host - The server hostname
 # + secureSocket - The SSL configurations for the server endpoint
@@ -177,10 +177,10 @@ public type ListenerConfiguration record {|
     decimal timeout = DEFAULT_LISTENER_TIMEOUT;
 |};
 
-# Configurations for facilitating secure communication for gRPC server endpoint.
+# Configurations for facilitating secure communication for the gRPC server endpoint.
 #
-# + key - Configurations associated with `crypto:KeyStore` or combination of certificate and private key of the server
-# + mutualSsl - Configures associated with mutual SSL operations
+# + key - Configurations associated with a `crypto:KeyStore` or combination of a certificate and private key of the server
+# + mutualSsl - Configurations associated with mutual SSL operations
 # + protocol - SSL/TLS protocol related options
 # + certValidation - Certificate validation against OCSP_CRL, OCSP_STAPLING related options
 # + ciphers - List of ciphers to be used

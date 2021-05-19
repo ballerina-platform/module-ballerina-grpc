@@ -16,9 +16,9 @@
 
 import ballerina/jballerina.java;
 
-# The base client used in the generated client code to provide remote functions for interacting with caller.
+# The base client used in the generated client code to provide remote functions for interacting with the caller.
 #
-# + instanceId - The connection id
+# + instanceId - The connection ID
 # + remoteDetails - The remote details
 # + local - The local details
 public client class Caller {

@@ -21,7 +21,7 @@
 # string|grpc:Error result = grpc:getHeader(headerMap, "content-type");
 # ```
 #
-# + headerMap - The header map instance.
+# + headerMap - The header map instance
 # + headerName - The header name
 # + return - First header value if exists or else error
 public isolated function getHeader(map<string|string[]> headerMap, string headerName) returns string|Error {
@@ -44,7 +44,7 @@ public isolated function getHeader(map<string|string[]> headerMap, string header
 # string[]|grpc:Error result = grpc:getHeaders(headerMap, "content-type");
 # ```
 #
-# + headerMap - The header map instance.
+# + headerMap - The header map instance
 # + headerName - The header name
 # + return - Header value array
 public isolated function getHeaders(map<string|string[]> headerMap, string headerName) returns string[]|Error {

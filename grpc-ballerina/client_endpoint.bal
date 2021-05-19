@@ -18,13 +18,13 @@ import ballerina/crypto;
 import ballerina/lang.runtime as runtime;
 import ballerina/jballerina.java;
 
-# The base client used in the generated client code to provide the capability for initiating contact and executing remote calls with a remote gRPC service.
+# The base client used in the generated client code to provide the capability for initiating the contact and executing remote calls with a remote gRPC service.
 public client class Client {
 
     private ClientConfiguration config = {};
     private string url;
 
-    # Gets invoked to initialize the endpoint. During initialization, the configurations provided through the `config`
+    # Gets invoked to initialize the endpoint. During the initialization, the configurations provided through the `config`
     # record are used for the endpoint initialization.
     # ```ballerina
     # HelloWorldClient helloWorldClient = check new("http://localhost:9091");
@@ -53,7 +53,7 @@ public client class Client {
         return externInitStub(self, clientEndpoint, descriptorKey, descriptorMap);
     }
 
-    # Calls when executing an unary gRPC service.
+    # Calls when executing a unary gRPC service.
     # ```ballerina
     # [anydata, map<string|string[]>]|grpc:Error result = grpcClient->executeSimpleRPC("HelloWorld/hello", req, headers);
     # ```
@@ -186,15 +186,15 @@ isolated function externExecuteBidirectionalStreaming(Client clientEndpoint, str
 } external;
 
 
-# Represents the abstract gRPC client endpoint. This abstract object is used in generated client.
+# Represents the abstract gRPC client endpoint. This abstract object is used in the generated client.
 public type AbstractClientEndpoint object {};
 
 final ErrorType[] & readonly defaultErrorTypes = [InternalError];
 
-# Configurations for facilitating retry capability of gRPC client .
+# Configurations for facilitating the retry capability of the gRPC client.
 #
-# + retryCount - Maximum number of retry attempts in an failure scenario
-# + interval - Initial interval(in seconds) between retry attempts
+# + retryCount - Maximum number of retry attempts in a failure scenario
+# + interval - Initial interval(in seconds) between the retry attempts
 # + maxInterval - Maximum interval(in seconds) between two retry attempts
 # + backoffFactor - Retry interval will be multiplied by this factor, in between retry attempts
 # + errorTypes - Error types which should be considered as failure scenarios to retry
@@ -206,7 +206,7 @@ public type RetryConfiguration record {|
    ErrorType[] errorTypes = defaultErrorTypes;
 |};
 
-# Configurations for managing gRPC client endpoint.
+# Configurations for managing the gRPC client endpoint.
 #
 # + timeout - The maximum time to wait(in seconds) for a response before closing the connection
 # + poolConfig - Connection pool configuration
@@ -224,7 +224,7 @@ public type ClientConfiguration record {|
 # Configurations for facilitating secure communication with a remote gRPC endpoint.
 #
 # + enable - Enable SSL validation
-# + cert - Configurations associated with `crypto:TrustStore` or single certificate file that the client trusts
+# + cert - Configurations associated with the `crypto:TrustStore` or a single certificate file that the client trusts
 # + key - Configurations associated with `crypto:KeyStore` or combination of certificate and private key of the client
 # + protocol - SSL/TLS protocol related options
 # + certValidation - Certificate validation against OCSP_CRL, OCSP_STAPLING related options

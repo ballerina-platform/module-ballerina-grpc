@@ -46,7 +46,7 @@ public enum CertValidationType {
 
 # Represents compression options.
 #
-# `AUTO`: When service behaves as a HTTP gateway inbound request/response accept-encoding option is set as the
+# `AUTO`: When the service behaves as a HTTP gateway, the inbound request/response accept-encoding option is set as the
 #         outbound request/response accept-encoding/content-encoding option
 # `ALWAYS`: Always set accept-encoding/content-encoding in outbound request/response
 # `NEVER`: Never set accept-encoding/content-encoding header in outbound request/response
