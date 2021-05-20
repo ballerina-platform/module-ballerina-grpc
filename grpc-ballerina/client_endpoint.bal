@@ -19,9 +19,9 @@ import ballerina/lang.runtime as runtime;
 import ballerina/jballerina.java;
 
 # The base client used in the generated client code to provide the capability for initiating the contact and executing remote calls with a remote gRPC service.
-public client class Client {
+public isolated client class Client {
 
-    private ClientConfiguration config = {};
+    private final readonly & ClientConfiguration config;
     private string url;
 
     # Gets invoked to initialize the endpoint. During the initialization, the configurations provided through the `config`
@@ -34,7 +34,7 @@ public client class Client {
     # + config - - The client endpoint configurations
     # + return - A `grpc:Error` if an error occurs while initializing the client or else `()`
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
-        self.config = config;
+        self.config = config.cloneReadOnly();
         self.url = url;
         return externInit(self, self.url, self.config, globalGrpcClientConnPool);
     }
