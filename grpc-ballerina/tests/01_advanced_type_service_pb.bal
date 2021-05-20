@@ -15,10 +15,10 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class HelloWorldClient {
+public isolated client class HelloWorldClient {
     *AbstractClientEndpoint;
 
-    private Client grpcClient;
+    private final Client grpcClient;
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
