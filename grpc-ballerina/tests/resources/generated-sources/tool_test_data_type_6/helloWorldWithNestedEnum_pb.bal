@@ -1,6 +1,6 @@
 import ballerina/grpc;
 
-public client class helloWorldWithNestedEnumClient {
+public isolated client class helloWorldWithNestedEnumClient {
     *grpc:AbstractClientEndpoint;
 
     private grpc:Client grpcClient;
@@ -149,7 +149,7 @@ public type ContextHelloRequest record {|
     map<string|string[]> headers;
 |};
 
-public client class helloFooWithNestedEnumClient {
+public isolated client class helloFooWithNestedEnumClient {
     *grpc:AbstractClientEndpoint;
 
     private grpc:Client grpcClient;

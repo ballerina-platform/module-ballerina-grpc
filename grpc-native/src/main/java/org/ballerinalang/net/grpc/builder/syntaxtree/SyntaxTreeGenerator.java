@@ -97,7 +97,7 @@ public class SyntaxTreeGenerator {
 
     }
 
-    public static SyntaxTree generateSyntaxTreeForServiceSample(StubFile stubFile) {
+    public static SyntaxTree generateSyntaxTree(StubFile stubFile) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
@@ -111,7 +111,7 @@ public class SyntaxTreeGenerator {
             List<Class> serverStreamingClasses = new ArrayList<>();
             List<Class> bidirectionalStreamingClasses = new ArrayList<>();
             Class client = new Class(service.getServiceName() + "Client", true);
-            client.addQualifiers(new String[]{"client"});
+            client.addQualifiers(new String[]{"isolated", "client"});
 
             client.addMember(getTypeReferenceNode(getQualifiedNameReferenceNode("grpc", "AbstractClientEndpoint")));
             client.addMember(getObjectFieldNode("private", new String[]{},

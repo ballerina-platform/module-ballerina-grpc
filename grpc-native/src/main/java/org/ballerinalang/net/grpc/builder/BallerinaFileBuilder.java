@@ -217,7 +217,7 @@ public class BallerinaFileBuilder {
                 serviceIndex++;
             }
             String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTreeForServiceSample(stubFileObject), stubFilePath);
+            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(stubFileObject), stubFilePath);
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error which reading proto file descriptor. " + e.getMessage(), e);
         }

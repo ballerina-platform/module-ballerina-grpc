@@ -1,6 +1,6 @@
 import ballerina/grpc;
 
-public client class helloWorldWithPackageClient {
+public isolated client class helloWorldWithPackageClient {
     *grpc:AbstractClientEndpoint;
 
     private grpc:Client grpcClient;

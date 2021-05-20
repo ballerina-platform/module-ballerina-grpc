@@ -1,6 +1,6 @@
 import ballerina/grpc;
 
-public client class OneofFieldServiceClient {
+public isolated client class OneofFieldServiceClient {
     *grpc:AbstractClientEndpoint;
 
     private grpc:Client grpcClient;
