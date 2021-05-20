@@ -19,7 +19,7 @@ import ballerina/jballerina.java;
 
 # The server listener of which one or more services can be registered so that the Ballerina program can offer
 # a service through this listener.
-public class Listener {
+public isolated class Listener {
 
     private int port = 0;
     private ListenerConfiguration config = {};
@@ -85,7 +85,7 @@ public class Listener {
     # + port - The listener port
     # + config - The listener endpoint configuration
     public isolated function init(int port, *ListenerConfiguration config) returns error? {
-        self.config = config;
+        self.config = config.cloneReadOnly();
         self.port = port;
         return externInitEndpoint(self);
     }
