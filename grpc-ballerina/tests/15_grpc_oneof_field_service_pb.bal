@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class OneofFieldServiceClient {
+public isolated client class OneofFieldServiceClient {
     *AbstractClientEndpoint;
 
     private Client grpcClient;

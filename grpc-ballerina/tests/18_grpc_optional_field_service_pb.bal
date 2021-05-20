@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class CheckoutServiceClient {
+public isolated client class CheckoutServiceClient {
     *AbstractClientEndpoint;
 
     private Client grpcClient;

@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class RetryServiceClient {
+public isolated client class RetryServiceClient {
     *AbstractClientEndpoint;
 
     private Client grpcClient;

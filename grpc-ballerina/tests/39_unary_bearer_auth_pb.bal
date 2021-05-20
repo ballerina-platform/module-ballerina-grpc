@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-public client class HelloWorld39Client {
+public isolated client class HelloWorld39Client {
 
     *AbstractClientEndpoint;
 

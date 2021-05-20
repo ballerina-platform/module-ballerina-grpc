@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class Chat38Client {
+public isolated client class Chat38Client {
     *AbstractClientEndpoint;
 
     private Client grpcClient;

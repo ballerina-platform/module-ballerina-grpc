@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class helloWorldServerStreamingClient {
+public isolated client class helloWorldServerStreamingClient {
     *AbstractClientEndpoint;
 
     private Client grpcClient;

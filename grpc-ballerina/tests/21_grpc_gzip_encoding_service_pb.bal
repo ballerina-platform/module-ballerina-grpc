@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class OrderManagementClient {
+public isolated client class OrderManagementClient {
     *AbstractClientEndpoint;
 
     private Client grpcClient;

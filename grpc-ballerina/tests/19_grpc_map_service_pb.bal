@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class NegotiatorClient {
+public isolated client class NegotiatorClient {
     *AbstractClientEndpoint;
 
     private Client grpcClient;

@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class byteServiceClient {
+public isolated client class byteServiceClient {
     *AbstractClientEndpoint;
 
     private Client grpcClient;

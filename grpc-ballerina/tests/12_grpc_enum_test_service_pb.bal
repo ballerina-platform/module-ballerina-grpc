@@ -15,7 +15,7 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class testEnumServiceClient {
+public isolated client class testEnumServiceClient {
     *AbstractClientEndpoint;
 
     private Client grpcClient;
