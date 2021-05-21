@@ -18,7 +18,7 @@
 public isolated client class HelloWorld36S1Client {
     *AbstractClientEndpoint;
 
-    private Client grpcClient;
+    private final Client grpcClient;
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
@@ -93,7 +93,7 @@ public client class HelloWorld36S1StringCaller {
 public client class HelloWorld36S2Client {
     *AbstractClientEndpoint;
 
-    private Client grpcClient;
+    private final Client grpcClient;
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);

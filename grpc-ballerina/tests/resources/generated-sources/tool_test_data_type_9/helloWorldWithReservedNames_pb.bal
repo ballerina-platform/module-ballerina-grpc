@@ -3,7 +3,7 @@ import ballerina/grpc;
 public isolated client class helloWorldWithReservedNamesClient {
     *grpc:AbstractClientEndpoint;
 
-    private grpc:Client grpcClient;
+    private final grpc:Client grpcClient;
 
     public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         self.grpcClient = check new (url, config);

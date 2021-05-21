@@ -114,7 +114,7 @@ public class SyntaxTreeGenerator {
             client.addQualifiers(new String[]{"isolated", "client"});
 
             client.addMember(getTypeReferenceNode(getQualifiedNameReferenceNode("grpc", "AbstractClientEndpoint")));
-            client.addMember(getObjectFieldNode("private", new String[]{},
+            client.addMember(getObjectFieldNode("private", new String[]{"final"},
                     getQualifiedNameReferenceNode("grpc", "Client"), "grpcClient"));
             client.addMember(getInitFunction().getFunctionDefinitionNode());
 
