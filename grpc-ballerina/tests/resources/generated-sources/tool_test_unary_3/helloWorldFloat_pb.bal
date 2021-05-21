@@ -1,9 +1,9 @@
 import ballerina/grpc;
 
-public client class helloWorldClient {
+public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
 
-    private grpc:Client grpcClient;
+    private final grpc:Client grpcClient;
 
     public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         self.grpcClient = check new (url, config);

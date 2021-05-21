@@ -29,19 +29,10 @@ service "CheckoutService" on checkoutep {
 
         var addr = value.address;
         log:printInfo("Address: " + addr.toString());
-        if addr is Address2 {
-            PlaceOrderResponse response = {'order: "This is a address"};
-            var result = caller->sendPlaceOrderResponse(response);
-            if (result is error) {
-                log:printError("Error while sending response.", 'error = result);
-            }
-        } else {
-            log:printInfo("value of Address: " + addr.toString());
-            PlaceOrderResponse response = {'order: "This is not an address: " + addr.toString()};
-            var result = caller->sendPlaceOrderResponse(response);
-            if (result is error) {
-                log:printError("Error while sending response.", 'error = result);
-            }
+        PlaceOrderResponse response = {'order: "This is a address"};
+        var result = caller->sendPlaceOrderResponse(response);
+        if (result is error) {
+            log:printError("Error while sending response.", 'error = result);
         }
         var complete = caller->complete();
         if (complete is error) {
