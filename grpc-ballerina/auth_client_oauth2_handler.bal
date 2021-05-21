@@ -31,7 +31,8 @@ public client class ClientOAuth2Handler {
     # Enriches the headers with the relevant authentication requirements.
     #
     # + headers - The `map<string|string[]>` headers map  as an input
-    # + return - The updated map<string|string[]>` headers map  instance or else a `grpc:ClientAuthError` in case of an error
+    # + return - The updated `map<string|string[]>` headers map  instance or else a `grpc:ClientAuthError` in case of
+    # an error
     remote isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|oauth2:Error result = self.provider.generateToken();
         if (result is oauth2:Error) {
