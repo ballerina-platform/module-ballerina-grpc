@@ -17,16 +17,16 @@
 import ballerina/jwt;
 
 # Defines the JWT auth handler for listener authentication.
-public class ListenerJwtAuthHandler {
+public isolated class ListenerJwtAuthHandler {
 
-    jwt:ListenerJwtAuthProvider provider;
-    string scopeKey;
+    private final jwt:ListenerJwtAuthProvider provider;
+    private final string & readonly scopeKey;
 
     # Initializes the JWT auth handler for the listener authentication.
     #
     # + config - JWT validator configurations
     public isolated function init(JwtValidatorConfig config) {
-        self.scopeKey = config.scopeKey;
+        self.scopeKey = config.scopeKey.cloneReadOnly();
         self.provider = new(config);
     }
 
