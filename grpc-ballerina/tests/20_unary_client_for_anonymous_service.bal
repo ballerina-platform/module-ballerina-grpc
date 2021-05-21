@@ -62,7 +62,7 @@ function afterFunc() {
 }
 
 // Blocking endpoint.
-public client class HelloWorld20Client {
+public isolated client class HelloWorld20Client {
 
     *AbstractClientEndpoint;
 

@@ -70,7 +70,7 @@ public isolated function testBidiStreamingInChatClient() returns Error? {
     checkpanic ep->complete();
 }
 
-public client class Chat17Client {
+public isolated  client class Chat17Client {
 
     *AbstractClientEndpoint;
 
