@@ -65,7 +65,7 @@ ballerina {
     packageOrganization = packageOrg
     module = packageName
     langVersion = ballerinaLangVersion
-    testCoverageParam = "--code-coverage --includes=org.ballerinalang.net.grpc.*:ballerina.*"
+    testCoverageParam = "--code-coverage --coverage-format=xml --includes=org.ballerinalang.net.grpc.*:ballerina.grpc.*"
 }
 
 configurations {
