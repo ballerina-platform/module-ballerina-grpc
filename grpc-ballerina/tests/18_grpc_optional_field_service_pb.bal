@@ -50,10 +50,7 @@ public isolated client class CheckoutServiceClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.CheckoutService/PlaceOrder", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
-        return {
-            content: <PlaceOrderResponse>result,
-            headers: respHeaders
-        };
+        return {content: <PlaceOrderResponse>result, headers: respHeaders};
     }
 }
 

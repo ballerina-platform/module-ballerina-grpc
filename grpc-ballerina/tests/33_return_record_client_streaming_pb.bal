@@ -62,10 +62,7 @@ public client class SayHelloStreamingClient {
             return response;
         } else {
             [anydata, map<string|string[]>] [payload, headers] = response;
-            return {
-                content: <SampleMsg33>payload,
-                headers: headers
-            };
+            return {content: <SampleMsg33>payload, headers: headers};
         }
     }
 
