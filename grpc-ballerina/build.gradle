@@ -186,13 +186,15 @@ task revertTomlFiles {
 }
 
 task copyExternalJars {
-    copy {
-        from targetNativeJar
-        into file("$artifactLibParent/libs")
-    }
-    copy {
-        from externalGoogleProtosCommonJar
-        into file("$artifactLibParent/libs")
+    doLast {
+        copy {
+            from targetNativeJar
+            into file("$artifactLibParent/libs")
+        }
+        copy {
+            from externalGoogleProtosCommonJar
+            into file("$artifactLibParent/libs")
+        }
     }
 }
 
@@ -225,5 +227,7 @@ test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-test-utils:build"
 test.dependsOn ":${packageName}-compiler-plugin:build"
 
+publishToMavenLocal.dependsOn copyExternalJars
+publish.dependsOn copyExternalJars
 publishToMavenLocal.dependsOn build
 publish.dependsOn build
