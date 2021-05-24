@@ -153,11 +153,13 @@ task updateTomlFiles {
         def stdlibDependentTimeVersion = stripBallerinaExtensionVersion(project.stdlibTimeVersion)
         def stdlibDependentOsVersion = stripBallerinaExtensionVersion(project.stdlibOsVersion)
         def stdlibDependentNettyVersion = project.nettyVersion
+        def stdlibDependentNettyTcnativeVersion = project.nettyTcnativeVersion
 
         def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
         newBallerinaToml = newBallerinaToml.replace("@netty.version@", stdlibDependentNettyVersion)
+        newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", stdlibDependentNettyTcnativeVersion)
         newBallerinaToml = newBallerinaToml.replace("@antlr.version@", wso2OrbitAntlrVersion)
         newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
         ballerinaTomlFile.text = newBallerinaToml
