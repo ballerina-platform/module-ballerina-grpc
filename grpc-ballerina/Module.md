@@ -1,6 +1,6 @@
 ## Overview
 
-This module provides an implementation for connecting and interacting with gRPC endpoints. 
+This module provides APIs for connecting and interacting with gRPC endpoints. 
 
 gRPC is an inter-process communication technology that allows you to connect, invoke, and operate distributed, heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC highly efficient on wire and a simple service definition framework.
 
