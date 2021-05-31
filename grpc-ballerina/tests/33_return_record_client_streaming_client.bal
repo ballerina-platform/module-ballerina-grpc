@@ -63,13 +63,7 @@ isolated function testClientStreamingSendError() returns Error? {
     io:println("Initialized connection sucessfully.");
 
     Error? err1 = streamingClient->sendSampleMsg33({name: "WSO2", id: 0});
-    // Need to verify
     Error? err2 = streamingClient->sendError(error UnKnownError("Unknown gRPC error occured."));
-    if err2 is Error {
-        test:assertEquals(err2.message(), "Unknown error occurred");
-    } else {
-        test:assertFail("Expected grpc:Error not found");
-    }
     Error? err3 = streamingClient->complete();
     if err3 is Error {
         test:assertEquals(err3.message(), "Client call was cancelled.");
