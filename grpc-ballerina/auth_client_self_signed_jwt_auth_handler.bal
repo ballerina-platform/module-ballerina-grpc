@@ -17,21 +17,21 @@
 import ballerina/jwt;
 
 # Defines the self signed JWT handler for client authentication.
-public class ClientSelfSignedJwtAuthHandler {
+public isolated class ClientSelfSignedJwtAuthHandler {
 
-    jwt:ClientSelfSignedJwtAuthProvider provider;
+    private final jwt:ClientSelfSignedJwtAuthProvider provider;
 
-    # Initializes the `grpc:ClientSelfSignedJwtAuthProvider` object.
+    # Initializes the self-signed JWT handler for client authentication.
     #
-    # + config - The `grpc:JwtIssuerConfig` instance
+    # + config - JWT issuer configurations
     public isolated function init(JwtIssuerConfig config) {
         self.provider = new(config);
     }
 
-    # Enrich the headers with the relevant authentication requirements.
+    # Enriches the headers with the relevant authentication requirements.
     #
-    # + headers - The headers map `map<string|string[]>` as an input
-    # + return - The updated headers map `map<string|string[]>` instance or else an `grpc:ClientAuthError` in case of an error
+    # + headers - The `map<string|string[]>` headers map  as an input
+    # + return - The updated `map<string|string[]>`headers map  instance or else a `grpc:ClientAuthError` in case of an error
     public isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|jwt:Error result = self.provider.generateToken();
         if (result is jwt:Error) {

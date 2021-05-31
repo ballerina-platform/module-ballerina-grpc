@@ -70,11 +70,11 @@ public isolated function testBidiStreamingInChatClient() returns Error? {
     checkpanic ep->complete();
 }
 
-public client class Chat17Client {
+public isolated  client class Chat17Client {
 
     *AbstractClientEndpoint;
 
-    private Client grpcClient;
+    private final Client grpcClient;
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.

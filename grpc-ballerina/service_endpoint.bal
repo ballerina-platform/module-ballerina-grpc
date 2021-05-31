@@ -17,9 +17,9 @@
 import ballerina/crypto;
 import ballerina/jballerina.java;
 
-# Represents server listener where one or more services can be registered. so that ballerina program can offer
-# service through this listener.
-public class Listener {
+# The server listener of which one or more services can be registered so that the Ballerina program can offer
+# a service through this listener.
+public isolated class Listener {
 
     private int port = 0;
     private ListenerConfiguration config = {};
@@ -59,11 +59,11 @@ public class Listener {
     # error? result = listenerEp.attach(helloService);
     # ```
     #
-    # + s - The type of the service to be registered
+    # + grpcService - The type of the service to be registered
     # + name - Name of the service
-    # + return - An `error` if encounters an error while attaching the service or else `()`
-    public isolated function attach(Service s, string[]|string? name = ()) returns error? {
-        return externRegister(self, s, name);
+    # + return - An `error` if an error occurs while attaching the service or else `()`
+    public isolated function attach(Service grpcService, string[]|string? name = ()) returns error? {
+        return externRegister(self, grpcService, name);
     }
 
     # Detaches an HTTP or WebSocket service from the listener. Note that detaching a WebSocket service would not affect
@@ -72,17 +72,20 @@ public class Listener {
     # error? result = listenerEp.detach(helloService);
     # ```
     #
-    # + s - The service to be detached
-    # + return - An `error` if occurred during detaching of a service or else `()`
-    public isolated function detach(Service s) returns error? {
+    # + grpcService - The service to be detached
+    # + return - An `error` if an error occurred during the detaching of the service or else `()`
+    public isolated function detach(Service grpcService) returns error? {
     }
 
     # Gets called when the endpoint is being initialized during the module init time.
+    # ```ballerina
+    # listener grpc:Listener listenerEp = new (9092);
+    # ```
     #
-    # + port - Listener port
-    # + config - The `grpc:ListenerConfiguration` of the endpoint
+    # + port - The listener port
+    # + config - The listener endpoint configuration
     public isolated function init(int port, *ListenerConfiguration config) returns error? {
-        self.config = config;
+        self.config = config.cloneReadOnly();
         self.port = port;
         return externInitEndpoint(self);
     }
@@ -162,10 +165,10 @@ const int MAX_PIPELINED_REQUESTS = 10;
 # Constant for the default listener endpoint timeout
 const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 
-# Represents the gRPC server endpoint configuration.
+# Configurations for managing the gRPC server endpoint.
 #
 # + host - The server hostname
-# + secureSocket - The SSL configurations for the client endpoint
+# + secureSocket - The SSL configurations for the server endpoint
 # + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
 #                   disable the timeout
 public type ListenerConfiguration record {|
@@ -174,10 +177,10 @@ public type ListenerConfiguration record {|
     decimal timeout = DEFAULT_LISTENER_TIMEOUT;
 |};
 
-# Configures the SSL/TLS options to be used for HTTP service.
+# Configurations for facilitating secure communication for the gRPC server endpoint.
 #
-# + key - Configurations associated with `crypto:KeyStore` or combination of certificate and private key of the server
-# + mutualSsl - Configures associated with mutual SSL operations
+# + key - Configurations associated with a `crypto:KeyStore` or combination of a certificate and private key of the server
+# + mutualSsl - Configurations associated with mutual SSL operations
 # + protocol - SSL/TLS protocol related options
 # + certValidation - Certificate validation against OCSP_CRL, OCSP_STAPLING related options
 # + ciphers - List of ciphers to be used

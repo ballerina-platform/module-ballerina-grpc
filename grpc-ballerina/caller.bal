@@ -16,9 +16,9 @@
 
 import ballerina/jballerina.java;
 
-# Provides the gRPC remote functions for interacting with caller.
+# The base client used in the generated client code to provide remote functions for interacting with the caller.
 #
-# + instanceId - The connection id
+# + instanceId - The connection ID
 # + remoteDetails - The remote details
 # + local - The local details
 public client class Caller {
@@ -40,7 +40,7 @@ public client class Caller {
 
     # Sends the outbound response to the caller.
     # ```ballerina
-    # grpc:Error? err = caller->send(message, headers);
+    # grpc:Error? err = caller->send(message);
     # ```
     #
     # + res - - The outbound response message
@@ -71,7 +71,7 @@ public client class Caller {
 
     # Sends a server error to the caller.
     # ```ballerina
-    # grpc:Error? result = caller->sendError(grpc:ABORTED, "Operation aborted", headers);
+    # grpc:Error? result = caller->sendError(error grpc:AbortedError("Operation aborted"));
     # ```
     #
     # + err - Error instance.
