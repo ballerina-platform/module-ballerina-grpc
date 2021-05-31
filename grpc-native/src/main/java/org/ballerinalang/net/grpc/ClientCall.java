@@ -206,7 +206,7 @@ public final class ClientCall {
             throw new IllegalStateException("Client call did not start properly.");
         }
         if (cancelCalled) {
-            throw new IllegalStateException("Client call was called.");
+            throw new IllegalStateException("Client call was cancelled.");
         }
         if (halfCloseCalled) {
             throw new IllegalStateException("Client call was already closed.");
