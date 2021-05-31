@@ -16,7 +16,8 @@
 
 import ballerina/jballerina.java;
 
-# Provides the gRPC streaming client actions for interacting with the gRPC server.
+# The base client used in the generated client code to provide the gRPC streaming client actions for
+# interacting  with the gRPC server.
 public client class StreamingClient {
     stream<anydata, Error?>? serverStream = ();
 
@@ -52,7 +53,7 @@ public client class StreamingClient {
         return streamSendError(self, err);
     }
 
-    # Used to receive the server response only in client streaming and bidirectional streaming.
+    # Receives server responses in client streaming and bidirectional streaming.
     # ```ballerina
     # anydata|grpc:Error? result = streamingClient->receive();
     # ```

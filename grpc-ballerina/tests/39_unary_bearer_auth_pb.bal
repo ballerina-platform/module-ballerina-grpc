@@ -14,11 +14,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
-public client class HelloWorld39Client {
+public isolated client class HelloWorld39Client {
 
     *AbstractClientEndpoint;
 
-    private Client grpcClient;
+    private final Client grpcClient;
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         // initialize client endpoint.

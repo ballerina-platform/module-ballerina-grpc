@@ -15,21 +15,21 @@
 // under the License.
 
 # Defines the Bearer token auth handler for client authentication.
-public class ClientBearerTokenAuthHandler {
+public isolated class ClientBearerTokenAuthHandler {
 
-    BearerTokenConfig config;
+    private final BearerTokenConfig & readonly config;
 
-    # Initializes the `grpc:ClientBearerTokenAuthHandler` object.
+    # Initializes the Bearer token auth handler for client authentication.
     #
-    # + config - The `grpc:BearerTokenConfig` instance
+    # + config - The Bearer token
     public isolated function init(BearerTokenConfig config) {
-        self.config = config;
+        self.config = config.cloneReadOnly();
     }
 
-    # Enrich the headers with the relevant authentication requirements.
+    # Enriches the headers with the relevant authentication requirements.
     #
-    # + headers - The headers map `map<string|string[]>` as an input
-    # + return - The Bearer tokes as a `string` or else an `grpc:ClientAuthError` in case of an error
+    # + headers - The `map<string|string[]>` headers map  as an input
+    # + return - The Bearer token as a `string` or else a `grpc:ClientAuthError` in case of an error
     public isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string token = AUTH_SCHEME_BEARER + " " + self.config.token;
         headers[AUTH_HEADER] = [token];

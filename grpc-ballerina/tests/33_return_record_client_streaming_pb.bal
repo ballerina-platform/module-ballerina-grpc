@@ -15,10 +15,10 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class HelloWorld33Client {
+public isolated client class HelloWorld33Client {
     *AbstractClientEndpoint;
 
-    private Client grpcClient;
+    private final Client grpcClient;
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
@@ -62,10 +62,7 @@ public client class SayHelloStreamingClient {
             return response;
         } else {
             [anydata, map<string|string[]>] [payload, headers] = response;
-            return {
-                content: <SampleMsg33>payload,
-                headers: headers
-            };
+            return {content: <SampleMsg33>payload, headers: headers};
         }
     }
 

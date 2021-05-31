@@ -15,10 +15,10 @@
 // under the License.
 // This is server implementation for bidirectional streaming scenario
 
-public client class OneofFieldServiceClient {
+public isolated client class OneofFieldServiceClient {
     *AbstractClientEndpoint;
 
-    private Client grpcClient;
+    private final Client grpcClient;
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
@@ -50,10 +50,7 @@ public client class OneofFieldServiceClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
-        return {
-            content: <Response1>result,
-            headers: respHeaders
-        };
+        return {content: <Response1>result, headers: respHeaders};
     }
 
     isolated remote function testOneofField(ZZZ|ContextZZZ req) returns (ZZZ|Error) {
@@ -81,10 +78,7 @@ public client class OneofFieldServiceClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
-        return {
-            content: <ZZZ>result,
-            headers: respHeaders
-        };
+        return {content: <ZZZ>result, headers: respHeaders};
     }
 }
 

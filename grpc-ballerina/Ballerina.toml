@@ -130,10 +130,10 @@ version = "1.61"
 
 
 [[platform.java11.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-2.0.25.Final.jar"
+path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@.jar"
 groupId = "io.netty"
 artifactId = "netty-tcnative-boringssl-static"
-version = "2.0.25.Final"
+version = "@nettytcnative.version@"
 
 
 [[platform.java11.dependency]]

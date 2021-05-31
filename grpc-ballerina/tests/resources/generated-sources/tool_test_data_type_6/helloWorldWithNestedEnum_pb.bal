@@ -1,9 +1,9 @@
 import ballerina/grpc;
 
-public client class helloWorldWithNestedEnumClient {
+public isolated client class helloWorldWithNestedEnumClient {
     *grpc:AbstractClientEndpoint;
 
-    private grpc:Client grpcClient;
+    private final grpc:Client grpcClient;
 
     public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         self.grpcClient = check new (url, config);
@@ -149,10 +149,10 @@ public type ContextHelloRequest record {|
     map<string|string[]> headers;
 |};
 
-public client class helloFooWithNestedEnumClient {
+public isolated client class helloFooWithNestedEnumClient {
     *grpc:AbstractClientEndpoint;
 
-    private grpc:Client grpcClient;
+    private final grpc:Client grpcClient;
 
     public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         self.grpcClient = check new (url, config);
