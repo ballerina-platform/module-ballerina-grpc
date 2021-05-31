@@ -15,10 +15,10 @@
 // under the License.
 import ballerina/test;
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 public isolated function testBidiStreamingWithCustomError() returns Error? {
     ChatWithCallerClient chatClient = check new ("http://localhost:9140");
-    Call1StreamingClient streamingCaller = check chatClient->call1();
+    CallStreamingClient streamingCaller = check chatClient->call();
     check streamingCaller->sendChatMessage40({
         name: "John",
         message: "Hello Lisa"
@@ -30,21 +30,3 @@ public isolated function testBidiStreamingWithCustomError() returns Error? {
         test:assertEquals(content.message(), "Unknown gRPC error occured.");
     }
 }
-
-//@test:Config {enable: true}
-//public isolated function testBidiStreamingWithCustomHeaders() returns Error? {
-//    ChatWithCallerClient chatClient = check new("http://localhost:9140");
-//    Call2StreamingClient streamingCaller = check chatClient->call2();
-//    ContextChatMessage40 msg = {
-//        content: {name: "John", message: "Hello Lisa"},
-//        headers: {entry1: ["value1", "value2", "value3"]}
-//    };
-//    check streamingCaller->sendContextChatMessage40(msg);
-//    string|Error? content = streamingCaller->receiveString();
-//    if content is string || content is () {
-//        test:assertEquals(content, "Unknown gRPC error occured.");
-//    } else {
-//        test:assertEquals(content.message(), "Unknown gRPC error occured.");
-//    }
-//
-//}

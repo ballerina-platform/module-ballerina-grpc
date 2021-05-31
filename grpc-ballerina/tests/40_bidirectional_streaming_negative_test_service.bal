@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 import ballerina/log;
-import ballerina/io;
 
 listener Listener ep40 = new (9140);
 
@@ -24,16 +23,7 @@ listener Listener ep40 = new (9140);
 }
 service "ChatWithCaller" on ep40 {
 
-    isolated remote function call1(stream<ChatMessage40, Error?> clientStream) returns stream<string, error?>|error {
-        log:printInfo("Invoke the call1 RPC");
-        return error UnKnownError("Unknown gRPC error occured.");
-    }
-    isolated remote function call2(ContextChatMessage40Stream clientStreamContext) returns stream<string, error?>|error {
-        log:printInfo("Invoke the call2 RPC");
-        io:println(clientStreamContext);
-        return (<string[]>clientStreamContext.headers.get("entry1")).toStream();
-    }
-    isolated remote function call3(stream<ChatMessage40, Error?> clientStream) returns stream<string, error?>|error {
+    isolated remote function call(stream<ChatMessage40, Error?> clientStream) returns stream<string, error?>|error {
         log:printInfo("Invoke the call1 RPC");
         return error UnKnownError("Unknown gRPC error occured.");
     }
