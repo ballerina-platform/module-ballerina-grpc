@@ -51,6 +51,8 @@ isolated function testCheckErrorForRetry() {
     AlreadyExistsError alreadyExistsError = error AlreadyExistsError("Mocking AlreadyExistsError");
     PermissionDeniedError permissionDeniedError = error PermissionDeniedError("Mocking PermissionDeniedError");
     UnauthenticatedError unauthenticatedError = error UnauthenticatedError("Mocking UnauthenticatedError");
+    ResourceExhaustedError resourceExhaustedError = error ResourceExhaustedError("Mocking ResourceExhaustedError");
+    FailedPreconditionError failedPreconditionError = error FailedPreconditionError("Mocking FailedPreconditionError");
     AbortedError abortedError = error AbortedError("Mocking AbortedError");
     OutOfRangeError outOfRangeError = error OutOfRangeError("Mocking OutOfRangeError");
     UnimplementedError unimplementedError = error UnimplementedError("Mocking UnimplementedError");
@@ -68,7 +70,10 @@ isolated function testCheckErrorForRetry() {
     test:assertTrue(checkErrorForRetry(alreadyExistsError, errorTypes));
     test:assertTrue(checkErrorForRetry(permissionDeniedError, errorTypes));
     test:assertTrue(checkErrorForRetry(unauthenticatedError, errorTypes));
+    test:assertTrue(checkErrorForRetry(resourceExhaustedError, errorTypes));
+    test:assertTrue(checkErrorForRetry(failedPreconditionError, errorTypes));
     test:assertTrue(checkErrorForRetry(abortedError, errorTypes));
+    test:assertTrue(checkErrorForRetry(outOfRangeError, errorTypes));
     test:assertTrue(checkErrorForRetry(unimplementedError, errorTypes));
     test:assertTrue(checkErrorForRetry(internalError, errorTypes));
     test:assertTrue(checkErrorForRetry(dataLossError, errorTypes));
