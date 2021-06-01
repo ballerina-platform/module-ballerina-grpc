@@ -113,6 +113,16 @@ isolated function testGetHeaderWithMissingValue() {
 }
 
 @test:Config {enable: true}
+isolated function testGetHeaderWithStringArray() returns Error? {
+    map<string|string[]> headers = {
+        "h1": "v1",
+        "h2": ["v2", "v3"]
+    };
+    string val = check getHeader(headers, "h2");
+    test:assertEquals(val, "v2");
+}
+
+@test:Config {enable: true}
 isolated function testGetHeadersWithStringArray() returns Error? {
     map<string|string[]> headers = {
         "h1": "v1",
@@ -148,5 +158,6 @@ isolated function testMatchScopes() returns Error? {
     test:assertTrue(matchScopes("write", ["read", "write", "execute"]));
     test:assertTrue(matchScopes(["read", "write", "execute"], ["read", "write", "execute"]));
     test:assertFalse(matchScopes(["write", "execute"], ["read"]));
+    test:assertFalse(matchScopes(["write", "execute"], "read"));
 }
 
