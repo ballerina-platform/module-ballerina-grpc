@@ -83,3 +83,70 @@ isolated function testCheckErrorForRetry() {
 
     test:assertFalse(checkErrorForRetry(allRetryAttemptsFailed, negativeErrorTypes));
 }
+
+@test:Config {enable: true}
+isolated function testGetHeaderWithMissingValue() {
+    map<string|string[]> headers = {
+        "h1": "v1",
+        "h2": []
+    };
+    string|Error err1 = getHeader(headers, "h3");
+    if err1 is string {
+        test:assertFail("Expected grpc:Error not found");
+    } else {
+        test:assertEquals(err1.message(), "Header does not exist for h3");
+    }
+
+    string|Error err2 = getHeader(headers, "h2");
+    if err2 is string {
+        test:assertFail("Expected grpc:Error not found");
+    } else {
+        test:assertEquals(err2.message(), "Header value does not exist for h2");
+    }
+
+    string[]|Error err3 = getHeaders(headers, "h3");
+    if err3 is string[] {
+        test:assertFail("Expected grpc:Error not found");
+    } else {
+        test:assertEquals(err3.message(), "Header does not exist for h3");
+    }
+}
+
+@test:Config {enable: true}
+isolated function testGetHeadersWithStringArray() returns Error? {
+    map<string|string[]> headers = {
+        "h1": "v1",
+        "h2": ["v2", "v3"]
+    };
+    string[] val = check getHeaders(headers, "h2");
+    test:assertEquals(val, ["v2", "v3"]);
+}
+
+@test:Config {enable: true}
+isolated function testPrepareAuthError() returns Error? {
+    ClientAuthError authError = prepareClientAuthError("Error message", ());
+    test:assertEquals(authError.message(), "Error message");
+}
+
+@test:Config {enable: true}
+isolated function testExtractCredential() returns Error? {
+    map<string|string[]> headers = {
+        authorization: "sample"
+    };
+    string|Error err = extractCredential(headers);
+    if err is string {
+        test:assertFail("Expected grpc:Error not found");
+    } else {
+        test:assertEquals(err.message(), "Empty authentication header.");
+    }
+}
+
+@test:Config {enable: true}
+isolated function testMatchScopes() returns Error? {
+    test:assertTrue(matchScopes("read", "read"));
+    test:assertTrue(matchScopes(["read", "write", "execute"], "write"));
+    test:assertTrue(matchScopes("write", ["read", "write", "execute"]));
+    test:assertTrue(matchScopes(["read", "write", "execute"], ["read", "write", "execute"]));
+    test:assertFalse(matchScopes(["write", "execute"], ["read"]));
+}
+
