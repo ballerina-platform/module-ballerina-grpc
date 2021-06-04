@@ -25,7 +25,7 @@ public isolated client class ClientOAuth2Handler {
     #
     # + config - OAuth2 refresh token grant configurations
     public isolated function init(OAuth2GrantConfig config) {
-        self.provider = new(config);
+        self.provider = new (config);
     }
 
     # Enriches the headers with the relevant authentication requirements.
@@ -35,11 +35,12 @@ public isolated client class ClientOAuth2Handler {
     # an error
     remote isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|oauth2:Error result = self.provider.generateToken();
-        if (result is oauth2:Error) {
+        if (result is string) {
+            string token = AUTH_SCHEME_BEARER + " " + result;
+            headers[AUTH_HEADER] = [token];
+            return headers;
+        } else {
             return prepareClientAuthError("Failed to enrich request with OAuth2 token.", result);
         }
-        string token = AUTH_SCHEME_BEARER + " " + checkpanic result;
-        headers[AUTH_HEADER] = [token];
-        return headers;
     }
 }

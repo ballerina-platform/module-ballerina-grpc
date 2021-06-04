@@ -13,34 +13,36 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+import ballerina/auth;
 
-import ballerina/jwt;
+# Represents file user store configurations for Basic Auth authentication.
+public type FileUserStoreConfig record {|
+    *auth:FileUserStoreConfig;
+|};
 
-# Defines the JWT auth handler for listener authentication.
-public isolated class ListenerJwtAuthHandler {
+# Defines the file store Basic Auth handler for listener authentication.
+public class ListenerFileUserStoreBasicAuthHandler {
 
-    private final jwt:ListenerJwtAuthProvider provider;
-    private final string & readonly scopeKey;
+    auth:ListenerFileUserStoreBasicAuthProvider provider;
 
-    # Initializes the JWT auth handler for the listener authentication.
+    # Initializes the `http:ListenerFileUserStoreBasicAuthHandler` object.
     #
-    # + config - JWT validator configurations
-    public isolated function init(JwtValidatorConfig config) {
-        self.scopeKey = config.scopeKey.cloneReadOnly();
+    # + config - The `http:FileUserStoreConfig` instance
+    public isolated function init(FileUserStoreConfig config = {}) {
         self.provider = new (config);
     }
 
     # Authenticates with the relevant authentication requirements.
     #
     # + headers - The headers map `map<string|string[]>` as an input
-    # + return - The `jwt:Payload` instance or else an `UnauthenticatedError` error
-    public isolated function authenticate(map<string|string[]> headers) returns jwt:Payload|UnauthenticatedError {
+    # + return - The `auth:UserDetails` instance or else an `UnauthenticatedError` error
+    public isolated function authenticate(map<string|string[]> headers) returns auth:UserDetails|UnauthenticatedError {
         string|Error credential = extractCredential(headers);
         if (credential is Error) {
             return error UnauthenticatedError(credential.message());
         } else {
-            jwt:Payload|jwt:Error details = self.provider.authenticate(credential);
-            if (details is jwt:Payload) {
+            auth:UserDetails|auth:Error details = self.provider.authenticate(credential);
+            if (details is auth:UserDetails) {
                 return details;
             } else {
                 return error UnauthenticatedError(details.message());
@@ -50,16 +52,15 @@ public isolated class ListenerJwtAuthHandler {
 
     # Authorizes with the relevant authorization requirements.
     #
-    # + jwtPayload - The `jwt:Payload` instance which is received from authentication results
+    # + userDetails - The `auth:UserDetails` instance which is received from authentication results
     # + expectedScopes - The expected scopes as `string` or `string[]`
     # + return - `()`, if it is successful or else a `PermissionDeniedError` error
-    public isolated function authorize(jwt:Payload jwtPayload, string|string[] expectedScopes) returns PermissionDeniedError? {
-        string scopeKey = self.scopeKey;
-        var actualScope = jwtPayload[scopeKey];
-        if (actualScope is string) {
-            boolean matched = matchScopes(actualScope, expectedScopes);
+    public isolated function authorize(auth:UserDetails userDetails, string|string[] expectedScopes) returns PermissionDeniedError? {
+        string[]? actualScopes = userDetails?.scopes;
+        if (actualScopes is string[]) {
+            boolean matched = matchScopes(actualScopes, expectedScopes);
             if (matched) {
-                return;
+                return ();
             }
         }
         return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);
