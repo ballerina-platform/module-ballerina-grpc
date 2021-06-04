@@ -28,15 +28,15 @@ service "HelloWorld28" on ep28 {
             return error AbortedError("AUTH_HEADER header is missing");
         } else {
             ListenerFileUserStoreBasicAuthHandler handler = new;
-            auth:UserDetails|UnauthenticatedError authResult = handler.authenticate(request.headers);
-            if (authResult is UnauthenticatedError) {
-                return authResult;
+            auth:UserDetails|UnauthenticatedError authnResult = handler.authenticate(request.headers);
+            if (authnResult is UnauthenticatedError) {
+                return authnResult;
             } else {
-                PermissionDeniedError? authrzResult = handler.authorize(<auth:UserDetails>authResult, "write");
-                if (authrzResult is ()) {
+                PermissionDeniedError? authzResult = handler.authorize(<auth:UserDetails>authnResult, "write");
+                if (authzResult is ()) {
                     return "Hello WSO2";
                 } else {
-                    return authrzResult;
+                    return authzResult;
                 }
             }
         }
