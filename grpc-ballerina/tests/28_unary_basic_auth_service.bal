@@ -13,6 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+import ballerina/auth;
 
 listener Listener ep28 = new (9118);
 
@@ -25,11 +26,19 @@ service "HelloWorld28" on ep28 {
     isolated remote function testStringValueReturn(ContextString request) returns string|error {
         if !request.headers.hasKey(AUTH_HEADER) {
             return error AbortedError("AUTH_HEADER header is missing");
-        } else if request.headers.get(AUTH_HEADER) == "Basic YWRtaW46MTIz" {
-            return "Hello WSO2";
         } else {
-            return error UnauthenticatedError(string `Invalid basic auth token: ${<string>request.headers.get(
-            AUTH_HEADER)}`);
+            ListenerFileUserStoreBasicAuthHandler handler = new;
+            auth:UserDetails|UnauthenticatedError authResult = handler.authenticate(request.headers);
+            if (authResult is UnauthenticatedError) {
+                return authResult;
+            } else {
+                PermissionDeniedError? authrzResult = handler.authorize(<auth:UserDetails>authResult, "write");
+                if (authrzResult is ()) {
+                    return "Hello WSO2";
+                } else {
+                    return authrzResult;
+                }
+            }
         }
     }
 }

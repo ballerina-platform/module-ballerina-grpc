@@ -69,13 +69,13 @@ public isolated function testStringValueReturnWithInvalidBasicAuth() returns Err
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
     if (response is Error) {
-        test:assertEquals(response.message(), "Invalid basic auth token: Basic YWRtaW46MTIzNA==");
+        test:assertEquals(response.message(), "Failed to authenticate username 'admin' from file user store.");
     } else {
         test:assertFail(msg = "Expected grpc:Error not found.");
     }
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 public isolated function testStringValueReturnWithBasicAuthWithEmpty() returns Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {};
