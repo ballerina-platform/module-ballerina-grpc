@@ -42,10 +42,11 @@ public class ListenerFileUserStoreBasicAuthHandler {
             return error UnauthenticatedError(credential.message());
         } else {
             auth:UserDetails|auth:Error details = self.provider.authenticate(credential);
-            if (details is auth:Error) {
+            if (details is auth:UserDetails) {
+                return details;
+            } else {
                 return error UnauthenticatedError(details.message());
             }
-            return checkpanic details;
         }
     }
 

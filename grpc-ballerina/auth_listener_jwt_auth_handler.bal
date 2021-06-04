@@ -27,7 +27,7 @@ public isolated class ListenerJwtAuthHandler {
     # + config - JWT validator configurations
     public isolated function init(JwtValidatorConfig config) {
         self.scopeKey = config.scopeKey.cloneReadOnly();
-        self.provider = new(config);
+        self.provider = new (config);
     }
 
     # Authenticates with the relevant authentication requirements.
@@ -40,10 +40,11 @@ public isolated class ListenerJwtAuthHandler {
             return error UnauthenticatedError(credential.message());
         } else {
             jwt:Payload|jwt:Error details = self.provider.authenticate(credential);
-            if (details is jwt:Error) {
+            if (details is jwt:Payload) {
+                return details;
+            } else {
                 return error UnauthenticatedError(details.message());
             }
-            return checkpanic details;
         }
     }
 

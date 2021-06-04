@@ -25,7 +25,7 @@ public isolated client class ListenerLdapUserStoreBasicAuthProvider {
     #
     # + config - LDAP user store configurations
     public isolated function init(LdapUserStoreConfig config) {
-        self.provider = new(config);
+        self.provider = new (config);
     }
 
     # Authenticates with the relevant authentication requirements.
@@ -38,10 +38,11 @@ public isolated client class ListenerLdapUserStoreBasicAuthProvider {
             return error UnauthenticatedError(credential.message());
         } else {
             auth:UserDetails|auth:Error details = self.provider.authenticate(credential);
-            if (details is auth:Error) {
+            if (details is auth:UserDetails) {
+                return details;
+            } else {
                 return error UnauthenticatedError(details.message());
             }
-            return checkpanic details;
         }
     }
 

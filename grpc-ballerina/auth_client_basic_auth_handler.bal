@@ -25,7 +25,7 @@ public isolated class ClientBasicAuthHandler {
     #
     # + config - The Basic Auth credentials
     public isolated function init(CredentialsConfig config) {
-        self.provider = new(config);
+        self.provider = new (config);
     }
 
     # Enriches the headers with the relevant authentication requirements.
@@ -34,11 +34,12 @@ public isolated class ClientBasicAuthHandler {
     # + return - The updated `map<string|string[]>` headers map  instance or else a `grpc:ClientAuthError` in case of an error
     public isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|auth:Error result = self.provider.generateToken();
-        if (result is auth:Error) {
+        if (result is string) {
+            string token = AUTH_SCHEME_BASIC + " " + result;
+            headers[AUTH_HEADER] = [token];
+            return headers;
+        } else {
             return prepareClientAuthError("Failed to enrich request with Basic Auth token.", result);
         }
-        string token = AUTH_SCHEME_BASIC + " " + checkpanic result;
-        headers[AUTH_HEADER] = [token];
-        return headers;
     }
 }

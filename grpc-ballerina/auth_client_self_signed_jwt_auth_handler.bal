@@ -25,7 +25,7 @@ public isolated class ClientSelfSignedJwtAuthHandler {
     #
     # + config - JWT issuer configurations
     public isolated function init(JwtIssuerConfig config) {
-        self.provider = new(config);
+        self.provider = new (config);
     }
 
     # Enriches the headers with the relevant authentication requirements.
@@ -34,11 +34,12 @@ public isolated class ClientSelfSignedJwtAuthHandler {
     # + return - The updated `map<string|string[]>`headers map  instance or else a `grpc:ClientAuthError` in case of an error
     public isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|jwt:Error result = self.provider.generateToken();
-        if (result is jwt:Error) {
+        if (result is string) {
+            string token = AUTH_SCHEME_BEARER + " " + result;
+            headers[AUTH_HEADER] = [token];
+            return headers;
+        } else {
             return prepareClientAuthError("Failed to enrich request with JWT.", result);
         }
-        string token = AUTH_SCHEME_BEARER + " " + checkpanic result;
-        headers[AUTH_HEADER] = [token];
-        return headers;
     }
 }
