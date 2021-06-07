@@ -9,7 +9,6 @@ groupId = "ballerina"
 artifactId = "grpc"
 version = "@project.version@"
 
-
 [[platform.java11.dependency]]
 path = "../grpc-test-utils/build/libs/grpc-test-utils-@project.version@.jar"
 groupId = "org.ballerinalang"
@@ -37,13 +36,11 @@ groupId = "org.ballerinalang"
 artifactId = "http-native"
 version = "@http.native.version@"
 
-
 [[platform.java11.dependency]]
 path = "./lib/netty-common-@netty.version@.jar"
 groupId = "io.netty"
 artifactId = "netty-common"
 version = "@netty.version@"
-
 
 [[platform.java11.dependency]]
 path = "./lib/netty-buffer-@netty.version@.jar"
@@ -51,13 +48,11 @@ groupId = "io.netty"
 artifactId = "netty-buffer"
 version = "@netty.version@"
 
-
 [[platform.java11.dependency]]
 path = "./lib/netty-transport-@netty.version@.jar"
 groupId = "io.netty"
 artifactId = "netty-transport"
 version = "@netty.version@"
-
 
 [[platform.java11.dependency]]
 path = "./lib/netty-resolver-@netty.version@.jar"
@@ -65,13 +60,11 @@ groupId = "io.netty"
 artifactId = "netty-resolver"
 version = "@netty.version@"
 
-
 [[platform.java11.dependency]]
 path = "./lib/netty-handler-@netty.version@.jar"
 groupId = "io.netty"
 artifactId = "netty-handler"
 version = "@netty.version@"
-
 
 [[platform.java11.dependency]]
 path = "./lib/netty-codec-http-@netty.version@.jar"
@@ -79,13 +72,11 @@ groupId = "io.netty"
 artifactId = "netty-codec-http"
 version = "@netty.version@"
 
-
 [[platform.java11.dependency]]
 path = "./lib/netty-codec-@netty.version@.jar"
 groupId = "io.netty"
 artifactId = "netty-codec"
 version = "@netty.version@"
-
 
 [[platform.java11.dependency]]
 path = "./lib/netty-handler-proxy-@netty.version@.jar"
@@ -93,13 +84,11 @@ groupId = "io.netty"
 artifactId = "netty-handler-proxy"
 version = "@netty.version@"
 
-
 [[platform.java11.dependency]]
 path = "./lib/netty-codec-http2-@netty.version@.jar"
 groupId = "io.netty"
 artifactId = "netty-codec-http2"
 version = "@netty.version@"
-
 
 [[platform.java11.dependency]]
 path = "./lib/commons-pool-1.5.6.wso2v1.jar"
@@ -107,20 +96,11 @@ groupId = "commons-pool.wso2"
 artifactId = "commons-pool"
 version = "1.5.6.wso2v1"
 
-
-[[platform.java11.dependency]]
-path = "./lib/snakeyaml-1.16.0.wso2v1.jar"
-groupId = "org.wso2.orbit.org.yaml"
-artifactId = "snakeyaml"
-version = "1.16.0.wso2v1"
-
-
 [[platform.java11.dependency]]
 path = "./lib/bcprov-jdk15on-1.61.jar"
 groupId = "org.bouncycastle"
 artifactId = "bcprov-jdk15on"
 version = "1.61"
-
 
 [[platform.java11.dependency]]
 path = "./lib/bcpkix-jdk15on-1.61.jar"
@@ -128,20 +108,17 @@ groupId = "org.bouncycastle"
 artifactId = "bcpkix-jdk15on"
 version = "1.61"
 
-
 [[platform.java11.dependency]]
 path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@.jar"
 groupId = "io.netty"
 artifactId = "netty-tcnative-boringssl-static"
 version = "@nettytcnative.version@"
 
-
 [[platform.java11.dependency]]
 path = "./lib/protobuf-java-3.9.1.jar"
 groupId = "com.google.protobuf"
 artifactId = "protobuf-java"
 version = "3.9.1"
-
 
 [[platform.java11.dependency]]
 path = "./lib/proto-google-common-protos-1.17.0.jar"
