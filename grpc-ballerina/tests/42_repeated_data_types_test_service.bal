@@ -119,5 +119,16 @@ service "DataTypesService" on ep42 {
         ];
         return arr.toStream();
     }
+    remote function helloWithBytesArray(string value) returns stream<BytesArrMsg, error?>|error {
+        log:printInfo(value);
+        BytesArrMsg[] arr = [
+            {note: "note1", arr: "A".toBytes()},
+            {note: "note2", arr: "B".toBytes()},
+            {note: "note3", arr: "C".toBytes()},
+            {note: "note4", arr: "D".toBytes()},
+            {note: "note5", arr: "E".toBytes()}
+        ];
+        return arr.toStream();
+    }
 }
 

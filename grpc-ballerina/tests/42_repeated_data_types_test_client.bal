@@ -152,4 +152,19 @@ function testServerStreamingWithDifferentTypes() returns Error? {
         c9 += 1;
     });
     test:assertEquals(c9, 5);
+
+    stream<BytesArrMsg, Error?> bytesStrm = check ep->helloWithBytesArray("bytes");
+    int c10 = 0;
+    BytesArrMsg[] bytesArr = [
+        {note: "note1", arr: "A".toBytes()},
+        {note: "note2", arr: "B".toBytes()},
+        {note: "note3", arr: "C".toBytes()},
+        {note: "note4", arr: "D".toBytes()},
+        {note: "note5", arr: "E".toBytes()}
+    ];
+    error? e10 = bytesStrm.forEach(function(BytesArrMsg msg) {
+        test:assertEquals(bytesArr[c10], msg);
+        c10 += 1;
+    });
+    test:assertEquals(c10, 5);
 }

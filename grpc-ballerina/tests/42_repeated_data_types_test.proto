@@ -27,6 +27,7 @@ service DataTypesService {
 	rpc helloWithDoubleArray(google.protobuf.StringValue) returns (stream DoubleArrMsg);
 	rpc helloWithStringArray(google.protobuf.StringValue) returns (stream StringArrMsg);
 	rpc helloWithBooleanArray(google.protobuf.StringValue) returns (stream BooleanArrMsg);
+	rpc helloWithBytesArray(google.protobuf.StringValue) returns (stream BytesArrMsg);
 }
 
 message Int32ArrMsg {
@@ -64,4 +65,8 @@ message StringArrMsg {
 message BooleanArrMsg {
 	string note = 1;
 	repeated bool arr = 2;
+}
+message BytesArrMsg {
+	string note = 1;
+	repeated bytes arr = 2;
 }
