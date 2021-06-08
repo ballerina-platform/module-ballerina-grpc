@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
+import ballerina/log;
 
 int TIMEOUT = 5000;
 int requestCount = 0;
@@ -35,7 +35,7 @@ service "RetryService" on retryListener {
             clientName = <@untainted>value;
         }
         requestCount += 1;
-        io:println(clientName + ": Attetmpt No. " + requestCount.toString());
+        log:printInfo(clientName + ": Attetmpt No. " + requestCount.toString());
         if (requestCount < 4) {
             match value {
                 "CancelledError" => {

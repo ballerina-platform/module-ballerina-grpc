@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
 RetryConfiguration retryConfig = {
@@ -40,7 +39,6 @@ final RetryServiceClient failingRetryClient = check new("http://localhost:9112",
 function testRetry() {
     var result = retryClient->getResult("UnavailableError");
     if (result is Error) {
-        io:println(result);
         test:assertFail(result.toString());
     } else {
         test:assertEquals(result, "Total Attempts: 4");
@@ -48,7 +46,6 @@ function testRetry() {
 
     result = retryClient->getResult("InternalError");
     if (result is Error) {
-        io:println(result);
         test:assertFail(result.toString());
     } else {
         test:assertEquals(result, "Total Attempts: 4");
@@ -59,7 +56,6 @@ function testRetry() {
 function testRetryFailingClient() {
     var result = failingRetryClient->getResult("FailingRetryClient");
     if (result is Error) {
-        io:println(result);
         test:assertEquals(result.message(), "Maximum retry attempts completed without getting a result");
     } else {
         test:assertFail(result);

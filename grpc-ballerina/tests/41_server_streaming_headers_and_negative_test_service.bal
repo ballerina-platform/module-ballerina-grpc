@@ -13,7 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import ballerina/io;
+import ballerina/log;
 
 listener Listener ep41 = new (9141);
 
@@ -21,7 +21,7 @@ listener Listener ep41 = new (9141);
 service "Chat41" on ep41 {
 
     remote function call1(ChatMessage41 value) returns ContextStringStream|error {
-        io:println(value);
+        log:printInfo(value.toString());
         string[] arr = ["a", "b", "c"];
         map<string> headers = {
             h1: "v1"
