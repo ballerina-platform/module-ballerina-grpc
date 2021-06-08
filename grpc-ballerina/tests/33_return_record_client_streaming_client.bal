@@ -41,10 +41,33 @@ isolated function testClientStreamingFromReturnRecord() returns Error? {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
-    checkpanic streamingClient->complete();
+    check streamingClient->complete();
     io:println("Completed successfully");
     var response = check streamingClient->receiveContextSampleMsg33();
     if response is ContextSampleMsg33 {
         test:assertEquals(<SampleMsg33>response.content, {name: "WSO2", id: 1});
+    }
+}
+
+@test:Config {enable:true}
+isolated function testClientStreamingSendError() returns Error? {
+    HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
+    SayHelloStreamingClient streamingClient;
+    var res = helloWorldEp->sayHello();
+    if (res is Error) {
+        test:assertFail("Error from Connector: " + res.message());
+        return;
+    } else {
+        streamingClient = res;
+    }
+    io:println("Initialized connection sucessfully.");
+
+    Error? err1 = streamingClient->sendSampleMsg33({name: "WSO2", id: 0});
+    Error? err2 = streamingClient->sendError(error UnKnownError("Unknown gRPC error occured."));
+    Error? err3 = streamingClient->complete();
+    if err3 is Error {
+        test:assertEquals(err3.message(), "Client call was cancelled.");
+    } else {
+        test:assertFail("Expected grpc:Error not found");
     }
 }

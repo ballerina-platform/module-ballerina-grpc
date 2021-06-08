@@ -17,12 +17,25 @@
 import ballerina/io;
 import ballerina/test;
 
-final HelloWorldClient helloWorldClient = check new("http://localhost:9091");
+
+final HelloWorldClient helloWorldClient = check new("http://localhost:9091", poolConfig = {});
 
 type PersonTypedesc typedesc<Person>;
 type StockQuoteTypedesc typedesc<StockQuote>;
 type StockQuotesTypedesc typedesc<StockQuotes>;
 type StockNamesTypedesc typedesc<StockNames>;
+
+@test:Config {enable:true}
+function testHttpsClientInitWithoutSecureSocketConfig() {
+    HelloWorldClient|Error errorClient = new("https://localhost:9091");
+    if (errorClient is Error) {
+        test:assertEquals(errorClient.message(), "To enable https you need to configure secureSocket record");
+    } else {
+        test:assertFail("Secure client initialization without secure socket should fail.");
+    }
+}
+
+
 
 @test:Config {enable:true}
 function testSendNestedStruct() {

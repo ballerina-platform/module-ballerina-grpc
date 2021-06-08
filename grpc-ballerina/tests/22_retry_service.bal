@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
+import ballerina/log;
 
 int TIMEOUT = 5000;
 int requestCount = 0;
@@ -28,20 +28,70 @@ listener Listener retryListener = new (9112);
     descMap: getDescriptorMap22()
 }
 service "RetryService" on retryListener {
-    remote function getResult(RetryServiceStringCaller caller, string value) {
+    remote function getResult(string value) returns string|error {
         // Identifying the client to maintain state to track retry attempts.
         if (clientName != value) {
             requestCount = 0;
             clientName = <@untainted>value;
         }
         requestCount += 1;
-        io:println(clientName + ": Attetmpt No. " + requestCount.toString());
+        log:printInfo(clientName + ": Attetmpt No. " + requestCount.toString());
         if (requestCount < 4) {
-            error? sendResult = caller->sendError(error InternalError("Mocking Internal Error"));
-            error? completeResult = caller->complete();
+            match value {
+                "CancelledError" => {
+                    return error CancelledError("Mocking Cancelled Error");
+                }
+                "UnKnownError" => {
+                    return error UnKnownError("Mocking UnKnown Error");
+                }
+                "InvalidArgumentError" => {
+                    return error InvalidArgumentError("Mocking InvalidArgument Error");
+                }
+                "DeadlineExceededError" => {
+                    return error DeadlineExceededError("Mocking DeadlineExceeded Error");
+                }
+                "NotFoundError" => {
+                    return error NotFoundError("Mocking NotFound Error");
+                }
+                "AlreadyExistsError" => {
+                    return error AlreadyExistsError("Mocking AlreadyExists Error");
+                }
+                "PermissionDeniedError" => {
+                    return error PermissionDeniedError("Mocking PermissionDenied Error");
+                }
+                "UnauthenticatedError" => {
+                    return error UnauthenticatedError("Mocking Unauthenticated Error");
+                }
+                "ResourceExhaustedError" => {
+                    return error UnauthenticatedError("Mocking ResourceExhausted Error");
+                }
+                "FailedPreconditionError" => {
+                    return error FailedPreconditionError("Mocking FailedPrecondition Error");
+                }
+                "AbortedError" => {
+                    return error AbortedError("Mocking Aborted Error");
+                }
+                "OutOfRangeError" => {
+                    return error OutOfRangeError("Mocking OutOfRange Error");
+                }
+                "UnimplementedError" => {
+                    return error OutOfRangeError("Mocking Unimplemented Error");
+                }
+                "InternalError" => {
+                    return error InternalError("Mocking Internal Error");
+                }
+                "DataLossError" => {
+                    return error DataLossError("Mocking DataLoss Error");
+                }
+                "UnavailableError" => {
+                    return error UnavailableError("Mocking Unavailable Error");
+                }
+                _ => {
+                    return error("Mocking Generic Error");
+                }
+            }
         } else {
-            error? sendResult = caller->sendString("Total Attempts: " + requestCount.toString());
-            error? completeResult = caller->complete();
+            return "Total Attempts: " + requestCount.toString();
         }
     }
 }
