@@ -23,6 +23,10 @@ import java.io.File;
  * Bal Generation Tool contants class.
  */
 public class BalGenerationConstants {
+
+    private BalGenerationConstants() {
+    }
+
     public static final String OS_NAME_SYSTEM_PROPERTY = "os.name";
     public static final String OS_ARCH_SYSTEM_PROPERTY = "os.arch";
     public static final String FILE_SEPARATOR = File.separator;

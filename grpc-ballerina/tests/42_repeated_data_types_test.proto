@@ -1,0 +1,72 @@
+// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+//
+// WSO2 Inc. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+service DataTypesService {
+	rpc helloWithInt32Array(google.protobuf.StringValue) returns (stream Int32ArrMsg);
+	rpc helloWithInt64Array(google.protobuf.StringValue) returns (stream Int64ArrMsg);
+	rpc helloWithUnsignedInt64Array(google.protobuf.StringValue) returns (stream UnsignedInt64ArrMsg);
+	rpc helloWithFixed32Array(google.protobuf.StringValue) returns (stream Fixed32ArrMsg);
+	rpc helloWithFixed64Array(google.protobuf.StringValue) returns (stream Fixed64ArrMsg);
+	rpc helloWithFloatArray(google.protobuf.StringValue) returns (stream FloatArrMsg);
+	rpc helloWithDoubleArray(google.protobuf.StringValue) returns (stream DoubleArrMsg);
+	rpc helloWithStringArray(google.protobuf.StringValue) returns (stream StringArrMsg);
+	rpc helloWithBooleanArray(google.protobuf.StringValue) returns (stream BooleanArrMsg);
+	rpc helloWithBytesArray(google.protobuf.StringValue) returns (stream BytesArrMsg);
+}
+
+message Int32ArrMsg {
+	string note = 1;
+	repeated int32 arr = 2;
+}
+message Int64ArrMsg {
+	string note = 1;
+	repeated int64 arr = 2;
+}
+message UnsignedInt64ArrMsg {
+	string note = 1;
+	repeated uint64 arr = 2;
+}
+message Fixed32ArrMsg {
+	string note = 1;
+	repeated fixed32 arr = 2;
+}
+message Fixed64ArrMsg {
+	string note = 1;
+	repeated fixed64 arr = 2;
+}
+message FloatArrMsg {
+	string note = 1;
+	repeated float arr = 2;
+}
+message DoubleArrMsg {
+	string note = 1;
+	repeated double arr = 2;
+}
+message StringArrMsg {
+	string note = 1;
+	repeated string arr = 2;
+}
+message BooleanArrMsg {
+	string note = 1;
+	repeated bool arr = 2;
+}
+message BytesArrMsg {
+	string note = 1;
+	repeated bytes arr = 2;
+}

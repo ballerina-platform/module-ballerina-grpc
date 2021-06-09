@@ -25,8 +25,6 @@ listener Listener checkoutep = new (9108);
 service "CheckoutService" on checkoutep {
 
     isolated remote function PlaceOrder(CheckoutServicePlaceOrderResponseCaller caller, PlaceOrderRequest value) {
-        log:printInfo("PlaceOrderRequest: " + value.toString());
-
         var addr = value.address;
         log:printInfo("Address: " + addr.toString());
         PlaceOrderResponse response = {'order: "This is a address"};

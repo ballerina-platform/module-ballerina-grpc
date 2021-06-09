@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/test;
 
 RetryConfiguration retryConfig = {
@@ -24,10 +23,6 @@ RetryConfiguration retryConfig = {
     backoffFactor: 2,
     errorTypes: [UnavailableError, InternalError]
 };
-ClientConfiguration clientConfig = {
-    timeout: 1,
-    retryConfiguration: retryConfig
-};
 
 RetryConfiguration failingRetryConfig = {
     retryCount: 2,
@@ -36,19 +31,21 @@ RetryConfiguration failingRetryConfig = {
     backoffFactor: 2,
     errorTypes: [UnavailableError, InternalError]
 };
-ClientConfiguration failingClientConfig = {
-    timeout: 1,
-    retryConfiguration: failingRetryConfig
-};
 
 final RetryServiceClient retryClient = check new("http://localhost:9112", timeout = 1, retryConfiguration = retryConfig);
 final RetryServiceClient failingRetryClient = check new("http://localhost:9112", timeout = 1, retryConfiguration = failingRetryConfig);
 
 @test:Config {enable:true}
 function testRetry() {
-    var result = retryClient->getResult("RetryClient");
+    var result = retryClient->getResult("UnavailableError");
     if (result is Error) {
-        io:println(result);
+        test:assertFail(result.toString());
+    } else {
+        test:assertEquals(result, "Total Attempts: 4");
+    }
+
+    result = retryClient->getResult("InternalError");
+    if (result is Error) {
         test:assertFail(result.toString());
     } else {
         test:assertEquals(result, "Total Attempts: 4");
@@ -59,7 +56,6 @@ function testRetry() {
 function testRetryFailingClient() {
     var result = failingRetryClient->getResult("FailingRetryClient");
     if (result is Error) {
-        io:println(result);
         test:assertEquals(result.message(), "Maximum retry attempts completed without getting a result");
     } else {
         test:assertFail(result);

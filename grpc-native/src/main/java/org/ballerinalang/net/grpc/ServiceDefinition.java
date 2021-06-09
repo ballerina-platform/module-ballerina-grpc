@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
 import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByType;
 import static org.ballerinalang.net.grpc.MessageUtils.setNestedMessages;
 import static org.ballerinalang.net.grpc.MethodDescriptor.generateFullMethodName;
@@ -83,7 +82,7 @@ public final class ServiceDefinition {
         try {
             return fileDescriptor = getFileDescriptor(rootDescriptor, descriptorMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
-            throw new GrpcClientException("Error while generating service descriptor : ", e);
+            throw new GrpcClientException("Error while generating service descriptor : " + e.getMessage(), e);
         }
     }
 
@@ -251,20 +250,11 @@ public final class ServiceDefinition {
         if (functionReturnType.getTag() == TypeTags.UNION_TAG) {
             UnionType unionReturnType = (UnionType) functionReturnType;
             Type firstParamType = unionReturnType.getMemberTypes().get(0);
-            if (firstParamType.getTag() == TypeTags.TUPLE_TAG) {
-                TupleType tupleType = (TupleType) firstParamType;
-                return tupleType.getTupleTypes().get(0);
-            } else if ("Headers".equals(firstParamType.getName()) &&
-                    firstParamType.getPackage() != null &&
-                    PROTOCOL_PACKAGE_GRPC.equals(firstParamType.getPackage().getName())) {
-                return PredefinedTypes.TYPE_NULL;
-            } else {
-                if (isContextRecordByType(firstParamType)) {
-                    RecordType recordParamType = (RecordType) firstParamType;
-                    return recordParamType.getFields().get("content").getFieldType();
-                }
-                return firstParamType;
+            if (isContextRecordByType(firstParamType)) {
+                RecordType recordParamType = (RecordType) firstParamType;
+                return recordParamType.getFields().get("content").getFieldType();
             }
+            return firstParamType;
         }
         return null;
     }
@@ -285,12 +275,6 @@ public final class ServiceDefinition {
                         return paramType;
                     }
                 }
-            }
-            if ("Headers".equals(inputType.getName()) && inputType.getPackage() != null &&
-                    PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
-                return PredefinedTypes.TYPE_NULL;
-            } else {
-                return inputParams[0];
             }
         }
         return PredefinedTypes.TYPE_NULL;
