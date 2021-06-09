@@ -108,9 +108,9 @@ public class SyntaxTreeGenerator {
             imports = AbstractNodeFactory.createNodeList(importForGrpc);
         }
 
-        List<Class> clientStreamingClasses = new ArrayList<>();
+        java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();
         java.util.Map<String, Class> serverStreamingClasses = new LinkedHashMap<>();
-        List<Class> bidirectionalStreamingClasses = new ArrayList<>();
+        java.util.Map<String, Class> bidirectionalStreamingClasses = new LinkedHashMap<>();
         java.util.Map<String, Class> callerClasses = new LinkedHashMap<>();
         java.util.Map<String, Type> valueTypes = new LinkedHashMap<>();
         java.util.Map<String, Type> valueTypeStreams = new LinkedHashMap<>();
@@ -130,7 +130,7 @@ public class SyntaxTreeGenerator {
             }
             for (Method method : service.getClientStreamingFunctions()) {
                 client.addMember(getStreamingClientFunction(method, false).getFunctionDefinitionNode());
-                clientStreamingClasses.add(getStreamingClientClass(method));
+                clientStreamingClasses.put(method.getMethodName(), getStreamingClientClass(method));
             }
             for (Method method : service.getServerStreamingFunctions()) {
                 client.addMember(getServerStreamingFunction(method).getFunctionDefinitionNode());
@@ -139,7 +139,7 @@ public class SyntaxTreeGenerator {
             }
             for (Method method : service.getBidiStreamingFunctions()) {
                 client.addMember(getStreamingClientFunction(method, true).getFunctionDefinitionNode());
-                bidirectionalStreamingClasses.add(getStreamingClientClass(method));
+                bidirectionalStreamingClasses.put(method.getMethodName(), getStreamingClientClass(method));
             }
             moduleMembers = moduleMembers.add(client.getClassDefinitionNode());
 
@@ -154,14 +154,14 @@ public class SyntaxTreeGenerator {
             }
         }
 
-        for (Class streamingClient : clientStreamingClasses) {
-            moduleMembers = moduleMembers.add(streamingClient.getClassDefinitionNode());
+        for (java.util.Map.Entry<String, Class> streamingClient : clientStreamingClasses.entrySet()) {
+            moduleMembers = moduleMembers.add(streamingClient.getValue().getClassDefinitionNode());
         }
         for (java.util.Map.Entry<String, Class> streamingServer : serverStreamingClasses.entrySet()) {
             moduleMembers = moduleMembers.add(streamingServer.getValue().getClassDefinitionNode());
         }
-        for (Class streamingBidirectional : bidirectionalStreamingClasses) {
-            moduleMembers = moduleMembers.add(streamingBidirectional.getClassDefinitionNode());
+        for (java.util.Map.Entry<String, Class> streamingBidirectional : bidirectionalStreamingClasses.entrySet()) {
+            moduleMembers = moduleMembers.add(streamingBidirectional.getValue().getClassDefinitionNode());
         }
         for (java.util.Map.Entry<String, Class> callerClass : callerClasses.entrySet()) {
             moduleMembers = moduleMembers.add(callerClass.getValue().getClassDefinitionNode());
