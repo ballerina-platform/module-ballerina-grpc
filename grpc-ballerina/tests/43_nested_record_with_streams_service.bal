@@ -19,11 +19,11 @@ listener Listener ep43 = new (9143);
 @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_43, descMap: getDescriptorMap43()}
 service "NestedMsgService" on ep43 {
 
-    isolated remote function nestedMsgUnary(string value) returns NestedMsg|error {
+    isolated remote function nestedMsgUnary(string value) returns error|NestedMsg {
         return {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}};
     }
 
-    isolated remote function nestedMsgServerStreaming(string value) returns stream<NestedMsg, error?>|error {
+    isolated remote function nestedMsgServerStreaming(string value) returns error|stream<NestedMsg, error?> {
         NestedMsg[] messages = [
             {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}}, 
             {name: "Name 02", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 2}}}}, 
@@ -34,11 +34,11 @@ service "NestedMsgService" on ep43 {
         return messages.toStream();
     }
 
-    isolated remote function nestedMsgClientStreaming(stream<NestedMsg, Error?> clientStream) returns string|error {
+    isolated remote function nestedMsgClientStreaming(stream<NestedMsg, Error?> clientStream) returns error|string {
         return "Ack 43";
     }
 
-    isolated remote function nestedMsgBidirectionalStreaming(stream<NestedMsg, Error?> clientStream) returns stream<NestedMsg, error?>|error {
+    isolated remote function nestedMsgBidirectionalStreaming(stream<NestedMsg, Error?> clientStream) returns error|stream<NestedMsg, error?> {
         NestedMsg[] messages = [
             {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}}, 
             {name: "Name 02", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 2}}}}, 
