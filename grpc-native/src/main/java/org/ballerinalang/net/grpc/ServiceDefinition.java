@@ -23,9 +23,12 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.types.ErrorType;
 import io.ballerina.runtime.api.types.MethodType;
+import io.ballerina.runtime.api.types.NullType;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.RecordType;
+import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
@@ -38,6 +41,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
@@ -59,10 +64,11 @@ public final class ServiceDefinition {
     private Descriptors.FileDescriptor fileDescriptor;
 
     public ServiceDefinition(String rootDescriptor, BMap<BString, Object> descriptorMap) {
+
         this.rootDescriptor = rootDescriptor;
         this.descriptorMap = descriptorMap;
     }
-    
+
     /**
      * Returns file descriptor of the gRPC service.
      *
@@ -70,6 +76,7 @@ public final class ServiceDefinition {
      * @throws GrpcClientException if an error occur while generating service descriptor.
      */
     public Descriptors.FileDescriptor getDescriptor() throws GrpcClientException {
+
         if (fileDescriptor != null) {
             return fileDescriptor;
         }
@@ -82,10 +89,11 @@ public final class ServiceDefinition {
 
     private Descriptors.FileDescriptor getFileDescriptor(String rootDescriptor, BMap<BString, Object> descriptorMap)
             throws InvalidProtocolBufferException, Descriptors.DescriptorValidationException, GrpcClientException {
+
         byte[] descriptor = hexStringToByteArray(rootDescriptor);
         if (descriptor.length == 0) {
             throw new GrpcClientException("Error while reading the service proto descriptor. input descriptor " +
-                                                  "string is null.");
+                    "string is null.");
         }
         DescriptorProtos.FileDescriptorProto descriptorProto = DescriptorProtos.FileDescriptorProto.parseFrom
                 (descriptor);
@@ -101,7 +109,7 @@ public final class ServiceDefinition {
                 BString bRootDescriptor = (BString) descriptorMap
                         .get(StringUtils.fromString(dependency.toString(StandardCharsets.UTF_8)));
                 fileDescriptors[i++] =
-                        getFileDescriptor(bRootDescriptor.getValue() , descriptorMap);
+                        getFileDescriptor(bRootDescriptor.getValue(), descriptorMap);
             }
         }
         if (fileDescriptors.length > 0 && i == 0) {
@@ -112,6 +120,7 @@ public final class ServiceDefinition {
     }
 
     private Descriptors.ServiceDescriptor getServiceDescriptor(String clientTypeName) throws GrpcClientException {
+
         Descriptors.FileDescriptor descriptor = getDescriptor();
 
         if (descriptor.getFile().getServices().isEmpty()) {
@@ -144,6 +153,7 @@ public final class ServiceDefinition {
 
     public Map<String, MethodDescriptor> getMethodDescriptors(ObjectType clientEndpointType)
             throws GrpcClientException {
+
         Map<String, MethodDescriptor> descriptorMap = new HashMap<>();
         Descriptors.ServiceDescriptor serviceDescriptor = getServiceDescriptor(clientEndpointType.getName());
         MethodType[] attachedFunctions = clientEndpointType.getMethods();
@@ -169,6 +179,9 @@ public final class ServiceDefinition {
             String fullMethodName = generateFullMethodName(serviceDescriptor.getFullName(), methodName);
             Type requestType = getInputParameterType(methodDescriptor, attachedFunction);
             Type responseType = getReturnParameterType(methodDescriptor, attachedFunction);
+            if (responseType == null) {
+                responseType = getStreamDataType(methodDescriptor, attachedFunction, resMessage.getName());
+            }
             MethodDescriptor descriptor =
                     MethodDescriptor.newBuilder()
                             .setType(MessageUtils.getMethodType(methodDescriptor.toProto()))
@@ -186,7 +199,50 @@ public final class ServiceDefinition {
         return Collections.unmodifiableMap(descriptorMap);
     }
 
+    private Type getStreamDataType(Descriptors.MethodDescriptor methodDescriptor, MethodType attachedFunction,
+                                   String typeOfStream) {
+
+        Type functionReturnType = attachedFunction.getType().getReturnParameterType();
+        UnionType unionReturnType = (UnionType) functionReturnType;
+        Type streamParameterType = unionReturnType.getMemberTypes().get(0);
+        if (streamParameterType instanceof ErrorType && unionReturnType.getMemberTypes().size() > 1) {
+            streamParameterType = unionReturnType.getMemberTypes().get(1);
+        }
+
+        if (methodDescriptor.isClientStreaming() && methodDescriptor.isServerStreaming()
+                && streamParameterType instanceof ObjectType) {
+            return getStreamDataTypeFromBidirectionalStream((ObjectType) streamParameterType);
+        }
+
+        if (streamParameterType instanceof StreamType) {
+            Type streamType = ((StreamType) streamParameterType).getConstrainedType();
+            if (streamType.getName().equals(typeOfStream)) {
+                return streamType;
+            }
+        }
+        return null;
+    }
+
+    private Type getStreamDataTypeFromBidirectionalStream(ObjectType streamingClient) {
+
+        MethodType[] methodTypes = streamingClient.getMethods();
+        for (MethodType methodType : methodTypes) {
+            if (methodType.getName().contains(GrpcConstants.RECEIVE_ENTRY)
+                    && !methodType.getName().toLowerCase(Locale.ROOT).contains(GrpcConstants.CONTEXT_ENTRY)) {
+
+                List<Type> returnTypes = ((UnionType) methodType.getType().getReturnType()).getMemberTypes();
+                for (Type returnType : returnTypes) {
+                    if (!(returnType instanceof ErrorType) && !(returnType instanceof NullType)) {
+                        return returnType;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     private Type getReturnParameterType(Descriptors.MethodDescriptor methodDescriptor, MethodType attachedFunction) {
+
         if (methodDescriptor.isClientStreaming() || methodDescriptor.isServerStreaming()) {
             // For all streaming patterns, we can't derive the type from the function.
             return null;
@@ -214,6 +270,7 @@ public final class ServiceDefinition {
     }
 
     private Type getInputParameterType(Descriptors.MethodDescriptor methodDescriptor, MethodType attachedFunction) {
+
         if (methodDescriptor.isClientStreaming()) {
             // For client streaming and bidirectional streaming, we can't derive the type from the function.
             return null;

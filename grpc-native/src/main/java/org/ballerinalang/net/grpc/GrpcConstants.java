@@ -77,6 +77,8 @@ public class GrpcConstants {
     public static final String CLIENT_CONNECTOR = "ClientConnector";
     public static final String ENDPOINT_URL = "url";
     public static final String MESSAGE_HEADERS = "MessageHeaders";
+    public static final String RECEIVE_ENTRY = "receive";
+    public static final String CONTEXT_ENTRY = "context";
 
     public static final String SERVICE_STUB = "Stub";
     public static final String METHOD_DESCRIPTORS = "MethodDescriptors";
