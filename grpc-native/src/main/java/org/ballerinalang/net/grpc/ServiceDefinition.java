@@ -29,7 +29,6 @@ import io.ballerina.runtime.api.types.NullType;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;
-import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.StringUtils;
