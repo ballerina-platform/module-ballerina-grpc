@@ -1,0 +1,35 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+service Chat {
+    rpc call1 (Msg) returns (google.protobuf.StringValue);
+	rpc call2 (Msg) returns (google.protobuf.StringValue);
+
+	rpc call3 (Msg) returns (stream google.protobuf.StringValue);
+	rpc call4 (Msg) returns (stream google.protobuf.StringValue);
+
+	rpc call5 (stream google.protobuf.StringValue) returns (Msg);
+	rpc call6 (stream google.protobuf.StringValue) returns (Msg);
+
+	rpc call7 (stream google.protobuf.StringValue) returns (stream Msg);
+	rpc call8 (stream google.protobuf.StringValue) returns (stream Msg);
+}
+
+service Chat2 {
+    rpc call1 (Msg) returns (google.protobuf.StringValue);
+	rpc call2 (Msg) returns (google.protobuf.StringValue);
+
+	rpc call3 (Msg) returns (stream google.protobuf.StringValue);
+	rpc call4 (Msg) returns (stream google.protobuf.StringValue);
+
+	rpc call5 (stream google.protobuf.StringValue) returns (Msg);
+	rpc call6 (stream google.protobuf.StringValue) returns (Msg);
+
+	rpc call7 (stream google.protobuf.StringValue) returns (stream Msg);
+	rpc call8 (stream google.protobuf.StringValue) returns (stream Msg);
+}
+
+message Msg {
+	string name = 1;
+	string message = 2;
+}
