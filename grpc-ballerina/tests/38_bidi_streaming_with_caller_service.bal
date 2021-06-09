@@ -21,7 +21,7 @@ import ballerina/log;
     descMap: getDescriptorMap38()
 }
 service "Chat38" on new Listener(9128) {
-    remote function chat38(ChatStringCaller caller, stream<ChatMessage38, Error> clientStream)
+    remote function chat38(Chat38StringCaller caller, stream<ChatMessage38, Error> clientStream)
                             returns error? {
         log:printInfo("Invoke the chat RPC");
         string[] responses = [];
