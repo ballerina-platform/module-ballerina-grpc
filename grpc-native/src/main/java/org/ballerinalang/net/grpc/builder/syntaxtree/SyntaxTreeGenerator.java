@@ -108,7 +108,7 @@ public class SyntaxTreeGenerator {
 
         for (ServiceStub service : stubFile.getStubList()) {
             List<Class> clientStreamingClasses = new ArrayList<>();
-            List<Class> serverStreamingClasses = new ArrayList<>();
+            java.util.Map<String, Class> serverStreamingClasses = new HashMap<>();
             List<Class> bidirectionalStreamingClasses = new ArrayList<>();
             Class client = new Class(service.getServiceName() + "Client", true);
             client.addQualifiers(new String[]{"isolated", "client"});
@@ -129,7 +129,7 @@ public class SyntaxTreeGenerator {
             for (Method method : service.getServerStreamingFunctions()) {
                 client.addMember(getServerStreamingFunction(method).getFunctionDefinitionNode());
                 client.addMember(getServerStreamingContextFunction(method).getFunctionDefinitionNode());
-                serverStreamingClasses.add(getServerStreamClass(method));
+                serverStreamingClasses.put(method.getOutputType(), getServerStreamClass(method));
             }
             for (Method method : service.getBidiStreamingFunctions()) {
                 client.addMember(getStreamingClientFunction(method, true).getFunctionDefinitionNode());
@@ -140,8 +140,8 @@ public class SyntaxTreeGenerator {
             for (Class streamingClient : clientStreamingClasses) {
                 moduleMembers = moduleMembers.add(streamingClient.getClassDefinitionNode());
             }
-            for (Class streamingServer : serverStreamingClasses) {
-                moduleMembers = moduleMembers.add(streamingServer.getClassDefinitionNode());
+            for (java.util.Map.Entry<String, Class> streamingServer : serverStreamingClasses.entrySet()) {
+                moduleMembers = moduleMembers.add(streamingServer.getValue().getClassDefinitionNode());
             }
             for (Class streamingBidirectional : bidirectionalStreamingClasses) {
                 moduleMembers = moduleMembers.add(streamingBidirectional.getClassDefinitionNode());
