@@ -171,13 +171,18 @@ public client class HelloWorldHelloResponseCaller {
     }
 }
 
-public type ContextByeResponse record {|
-    ByeResponse content;
+public type ContextByeRequestStream record {|
+    stream<ByeRequest, error?> content;
     map<string|string[]> headers;
 |};
 
-public type ContextByeRequestStream record {|
-    stream<ByeRequest, error?> content;
+public type ContextHelloRequestStream record {|
+    stream<HelloRequest, error?> content;
+    map<string|string[]> headers;
+|};
+
+public type ContextByeResponse record {|
+    ByeResponse content;
     map<string|string[]> headers;
 |};
 
@@ -188,11 +193,6 @@ public type ContextByeRequest record {|
 
 public type ContextHelloResponse record {|
     HelloResponse content;
-    map<string|string[]> headers;
-|};
-
-public type ContextHelloRequestStream record {|
-    stream<HelloRequest, error?> content;
     map<string|string[]> headers;
 |};
 

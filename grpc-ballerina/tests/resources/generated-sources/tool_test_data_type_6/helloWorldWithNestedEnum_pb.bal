@@ -73,82 +73,6 @@ public isolated client class helloWorldWithNestedEnumClient {
     }
 }
 
-public client class HelloWorldWithNestedEnumByeResponseCaller {
-    private grpc:Caller caller;
-
-    public isolated function init(grpc:Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function sendByeResponse(ByeResponse response) returns grpc:Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendContextByeResponse(ContextByeResponse response) returns grpc:Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(grpc:Error response) returns grpc:Error? {
-        return self.caller->sendError(response);
-    }
-
-    isolated remote function complete() returns grpc:Error? {
-        return self.caller->complete();
-    }
-}
-
-public client class HelloWorldWithNestedEnumHelloResponseCaller {
-    private grpc:Caller caller;
-
-    public isolated function init(grpc:Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function sendHelloResponse(HelloResponse response) returns grpc:Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendContextHelloResponse(ContextHelloResponse response) returns grpc:Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(grpc:Error response) returns grpc:Error? {
-        return self.caller->sendError(response);
-    }
-
-    isolated remote function complete() returns grpc:Error? {
-        return self.caller->complete();
-    }
-}
-
-public type ContextByeResponse record {|
-    ByeResponse content;
-    map<string|string[]> headers;
-|};
-
-public type ContextByeRequest record {|
-    ByeRequest content;
-    map<string|string[]> headers;
-|};
-
-public type ContextHelloResponse record {|
-    HelloResponse content;
-    map<string|string[]> headers;
-|};
-
-public type ContextHelloRequest record {|
-    HelloRequest content;
-    map<string|string[]> headers;
-|};
-
 public isolated client class helloFooWithNestedEnumClient {
     *grpc:AbstractClientEndpoint;
 
@@ -219,6 +143,62 @@ public isolated client class helloFooWithNestedEnumClient {
             content: <ByeResponse>result,
             headers: respHeaders
         };
+    }
+}
+
+public client class HelloWorldWithNestedEnumByeResponseCaller {
+    private grpc:Caller caller;
+
+    public isolated function init(grpc:Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function sendByeResponse(ByeResponse response) returns grpc:Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendContextByeResponse(ContextByeResponse response) returns grpc:Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(grpc:Error response) returns grpc:Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns grpc:Error? {
+        return self.caller->complete();
+    }
+}
+
+public client class HelloWorldWithNestedEnumHelloResponseCaller {
+    private grpc:Caller caller;
+
+    public isolated function init(grpc:Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function sendHelloResponse(HelloResponse response) returns grpc:Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendContextHelloResponse(ContextHelloResponse response) returns grpc:Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(grpc:Error response) returns grpc:Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns grpc:Error? {
+        return self.caller->complete();
     }
 }
 
