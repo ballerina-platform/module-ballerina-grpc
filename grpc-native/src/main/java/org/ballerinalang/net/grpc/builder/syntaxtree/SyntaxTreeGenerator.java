@@ -44,10 +44,12 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.Listener;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.ModuleVariable;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Service;
+import org.ballerinalang.net.grpc.builder.syntaxtree.components.Type;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -106,10 +108,14 @@ public class SyntaxTreeGenerator {
             imports = AbstractNodeFactory.createNodeList(importForGrpc);
         }
 
+        java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();
+        java.util.Map<String, Class> serverStreamingClasses = new LinkedHashMap<>();
+        java.util.Map<String, Class> bidirectionalStreamingClasses = new LinkedHashMap<>();
+        java.util.Map<String, Class> callerClasses = new LinkedHashMap<>();
+        java.util.Map<String, Type> valueTypes = new LinkedHashMap<>();
+        java.util.Map<String, Type> valueTypeStreams = new LinkedHashMap<>();
+
         for (ServiceStub service : stubFile.getStubList()) {
-            List<Class> clientStreamingClasses = new ArrayList<>();
-            List<Class> serverStreamingClasses = new ArrayList<>();
-            List<Class> bidirectionalStreamingClasses = new ArrayList<>();
             Class client = new Class(service.getServiceName() + "Client", true);
             client.addQualifiers(new String[]{"isolated", "client"});
 
@@ -124,41 +130,48 @@ public class SyntaxTreeGenerator {
             }
             for (Method method : service.getClientStreamingFunctions()) {
                 client.addMember(getStreamingClientFunction(method, false).getFunctionDefinitionNode());
-                clientStreamingClasses.add(getStreamingClientClass(method));
+                clientStreamingClasses.put(method.getMethodName(), getStreamingClientClass(method));
             }
             for (Method method : service.getServerStreamingFunctions()) {
                 client.addMember(getServerStreamingFunction(method).getFunctionDefinitionNode());
                 client.addMember(getServerStreamingContextFunction(method).getFunctionDefinitionNode());
-                serverStreamingClasses.add(getServerStreamClass(method));
+                serverStreamingClasses.put(method.getOutputType(), getServerStreamClass(method));
             }
             for (Method method : service.getBidiStreamingFunctions()) {
                 client.addMember(getStreamingClientFunction(method, true).getFunctionDefinitionNode());
-                bidirectionalStreamingClasses.add(getStreamingClientClass(method));
+                bidirectionalStreamingClasses.put(method.getMethodName(), getStreamingClientClass(method));
             }
             moduleMembers = moduleMembers.add(client.getClassDefinitionNode());
 
-            for (Class streamingClient : clientStreamingClasses) {
-                moduleMembers = moduleMembers.add(streamingClient.getClassDefinitionNode());
-            }
-            for (Class streamingServer : serverStreamingClasses) {
-                moduleMembers = moduleMembers.add(streamingServer.getClassDefinitionNode());
-            }
-            for (Class streamingBidirectional : bidirectionalStreamingClasses) {
-                moduleMembers = moduleMembers.add(streamingBidirectional.getClassDefinitionNode());
-            }
-
             for (java.util.Map.Entry<String, String> caller : service.getCallerMap().entrySet()) {
-                moduleMembers = moduleMembers.add(getCallerClass(caller.getKey(), caller.getValue())
-                        .getClassDefinitionNode());
+                callerClasses.put(caller.getKey(), getCallerClass(caller.getKey(), caller.getValue()));
             }
             for (java.util.Map.Entry<String, Boolean> valueType : service.getValueTypeMap().entrySet()) {
                 if (valueType.getValue()) {
-                    moduleMembers = moduleMembers.add(getValueTypeStream(valueType.getKey()).getTypeDefinitionNode());
+                    valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey()));
                 }
-                moduleMembers = moduleMembers.add(getValueType(valueType.getKey()).getTypeDefinitionNode());
+                valueTypes.put(valueType.getKey(), getValueType(valueType.getKey()));
             }
         }
 
+        for (java.util.Map.Entry<String, Class> streamingClient : clientStreamingClasses.entrySet()) {
+            moduleMembers = moduleMembers.add(streamingClient.getValue().getClassDefinitionNode());
+        }
+        for (java.util.Map.Entry<String, Class> streamingServer : serverStreamingClasses.entrySet()) {
+            moduleMembers = moduleMembers.add(streamingServer.getValue().getClassDefinitionNode());
+        }
+        for (java.util.Map.Entry<String, Class> streamingBidirectional : bidirectionalStreamingClasses.entrySet()) {
+            moduleMembers = moduleMembers.add(streamingBidirectional.getValue().getClassDefinitionNode());
+        }
+        for (java.util.Map.Entry<String, Class> callerClass : callerClasses.entrySet()) {
+            moduleMembers = moduleMembers.add(callerClass.getValue().getClassDefinitionNode());
+        }
+        for (java.util.Map.Entry<String, Type> valueTypeStream : valueTypeStreams.entrySet()) {
+            moduleMembers = moduleMembers.add(valueTypeStream.getValue().getTypeDefinitionNode());
+        }
+        for (java.util.Map.Entry<String, Type> valueType : valueTypes.entrySet()) {
+            moduleMembers = moduleMembers.add(valueType.getValue().getTypeDefinitionNode());
+        }
         for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
             for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
                 moduleMembers = moduleMembers.add(messageNode);

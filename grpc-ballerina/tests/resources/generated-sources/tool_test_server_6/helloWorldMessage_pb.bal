@@ -162,6 +162,11 @@ public type ContextByeResponseStream record {|
     map<string|string[]> headers;
 |};
 
+public type ContextHelloResponseStream record {|
+    stream<HelloResponse, error?> content;
+    map<string|string[]> headers;
+|};
+
 public type ContextByeResponse record {|
     ByeResponse content;
     map<string|string[]> headers;
@@ -169,11 +174,6 @@ public type ContextByeResponse record {|
 
 public type ContextByeRequest record {|
     ByeRequest content;
-    map<string|string[]> headers;
-|};
-
-public type ContextHelloResponseStream record {|
-    stream<HelloResponse, error?> content;
     map<string|string[]> headers;
 |};
 

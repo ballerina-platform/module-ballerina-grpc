@@ -98,6 +98,14 @@ function testTestMessage() {
 }
 
 @test:Config {enable:true}
+function testHelloWorldWithDuplicateInputOutput() {
+    var result = assertGeneratedDataTypeSources("data-types", "helloWorldWithDuplicateInputOutput.proto", "helloWorldWithDuplicateInputOutput_pb.bal", "tool_test_data_type_13");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
+}
+
+@test:Config {enable:true}
 function testWithoutOutputDir() {
     var result = assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal", "");
     if (result is error) {

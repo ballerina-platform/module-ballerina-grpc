@@ -84,12 +84,12 @@ public client class HelloWorldHelloResponseCaller {
     }
 }
 
-public type ContextNil record {|
+public type ContextHelloResponseStream record {|
+    stream<HelloResponse, error?> content;
     map<string|string[]> headers;
 |};
 
-public type ContextHelloResponseStream record {|
-    stream<HelloResponse, error?> content;
+public type ContextNil record {|
     map<string|string[]> headers;
 |};
 
