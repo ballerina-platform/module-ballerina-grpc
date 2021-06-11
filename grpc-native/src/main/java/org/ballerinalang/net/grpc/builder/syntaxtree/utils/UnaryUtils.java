@@ -39,7 +39,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getMapTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
@@ -102,9 +102,12 @@ public class UnaryUtils {
             SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                     getBuiltinSimpleNameReferenceNode("anydata"),
                     SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                    getParameterizedTypeDescriptorNode(
-                            "map",
-                            getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
+                    getMapTypeDescriptorNode(
+                            getUnionTypeDescriptorNode(
+                                    SYNTAX_TREE_VAR_STRING,
+                                    SYNTAX_TREE_VAR_STRING_ARRAY
+                            )
+                    )
             );
             VariableDeclaration payload = new VariableDeclaration(
                     getTypedBindingPatternNode(
@@ -156,9 +159,11 @@ public class UnaryUtils {
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getParameterizedTypeDescriptorNode(
-                        "map",
-                        getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
+                getMapTypeDescriptorNode(
+                        getUnionTypeDescriptorNode(
+                                SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY
+                        )
+                )
         );
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
@@ -185,9 +190,12 @@ public class UnaryUtils {
         }
         VariableDeclaration headers = new VariableDeclaration(
                 getTypedBindingPatternNode(
-                        getParameterizedTypeDescriptorNode(
-                                "map",
-                                getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY)),
+                        getMapTypeDescriptorNode(
+                                getUnionTypeDescriptorNode(
+                                        SYNTAX_TREE_VAR_STRING,
+                                        SYNTAX_TREE_VAR_STRING_ARRAY
+                                )
+                        ),
                         getCaptureBindingPatternNode("headers")),
                 new Map().getMappingConstructorExpressionNode()
         );

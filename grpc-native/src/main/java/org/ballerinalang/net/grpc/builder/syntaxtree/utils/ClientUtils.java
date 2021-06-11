@@ -41,9 +41,9 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getMapTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
@@ -205,9 +205,11 @@ public class ClientUtils {
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getParameterizedTypeDescriptorNode(
-                        "map",
-                        getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY)
+                getMapTypeDescriptorNode(
+                        getUnionTypeDescriptorNode(
+                                SYNTAX_TREE_VAR_STRING,
+                                SYNTAX_TREE_VAR_STRING_ARRAY
+                        )
                 )
         );
         TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
@@ -294,8 +296,11 @@ public class ClientUtils {
         SeparatedNodeList<Node> receiveArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getParameterizedTypeDescriptorNode("map",
-                        getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY)
+                getMapTypeDescriptorNode(
+                        getUnionTypeDescriptorNode(
+                                SYNTAX_TREE_VAR_STRING,
+                                SYNTAX_TREE_VAR_STRING_ARRAY
+                        )
                 )
         );
         TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
