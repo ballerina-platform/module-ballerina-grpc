@@ -41,9 +41,9 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getMapTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
@@ -293,9 +293,12 @@ public class ServerUtils {
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
-                getParameterizedTypeDescriptorNode(
-                        "map",
-                        getUnionTypeDescriptorNode(SYNTAX_TREE_VAR_STRING, SYNTAX_TREE_VAR_STRING_ARRAY))
+                getMapTypeDescriptorNode(
+                        getUnionTypeDescriptorNode(
+                                SYNTAX_TREE_VAR_STRING,
+                                SYNTAX_TREE_VAR_STRING_ARRAY
+                        )
+                )
         );
         VariableDeclaration payloadTuple = new VariableDeclaration(
                 getTypedBindingPatternNode(

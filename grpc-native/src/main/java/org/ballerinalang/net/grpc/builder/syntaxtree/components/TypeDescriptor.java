@@ -24,9 +24,9 @@ import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
-import io.ballerina.compiler.syntax.tree.ErrorTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.ListBindingPatternNode;
+import io.ballerina.compiler.syntax.tree.MapTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.NilTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
@@ -45,7 +45,6 @@ import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TupleTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.TypeCastExpressionNode;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
-import io.ballerina.compiler.syntax.tree.TypeParameterNode;
 import io.ballerina.compiler.syntax.tree.TypeReferenceNode;
 import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.UnionTypeDescriptorNode;
@@ -122,19 +121,11 @@ public class TypeDescriptor {
         );
     }
 
-    public static TypeParameterNode getTypeParameterNode(TypeDescriptorNode typeNode) {
-        return NodeFactory.createTypeParameterNode(
-                SyntaxTreeConstants.SYNTAX_TREE_IT,
-                typeNode,
-                SyntaxTreeConstants.SYNTAX_TREE_GT
-        );
-    }
-
-    public static ParameterizedTypeDescriptorNode getParameterizedTypeDescriptorNode(
-            String type, TypeDescriptorNode descriptorNode) {
+    public static ParameterizedTypeDescriptorNode getErrorTypeDescriptorNode() {
         return NodeFactory.createParameterizedTypeDescriptorNode(
-                AbstractNodeFactory.createIdentifierToken(type),
-                getTypeParameterNode(descriptorNode)
+                SyntaxKind.ERROR_TYPE_DESC,
+                AbstractNodeFactory.createIdentifierToken("error"),
+                null
         );
     }
 
@@ -260,13 +251,6 @@ public class TypeDescriptor {
         );
     }
 
-    public static ErrorTypeDescriptorNode getErrorTypeDescriptorNode() {
-        return NodeFactory.createErrorTypeDescriptorNode(
-                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_ERROR,
-                null
-        );
-    }
-
     public static ReturnTypeDescriptorNode getReturnTypeDescriptorNode(Node type) {
         NodeList<AnnotationNode> annotations = NodeFactory.createEmptyNodeList();
         return NodeFactory.createReturnTypeDescriptorNode(
@@ -293,5 +277,16 @@ public class TypeDescriptor {
 
     public static SimpleNameReferenceNode getSimpleNameReferenceNode(String name) {
         return NodeFactory.createSimpleNameReferenceNode(AbstractNodeFactory.createIdentifierToken(name + " "));
+    }
+
+    public static MapTypeDescriptorNode getMapTypeDescriptorNode(TypeDescriptorNode descriptorNode) {
+        return NodeFactory.createMapTypeDescriptorNode(
+                AbstractNodeFactory.createIdentifierToken("map"),
+                NodeFactory.createTypeParameterNode(
+                        SyntaxTreeConstants.SYNTAX_TREE_IT,
+                        descriptorNode,
+                        SyntaxTreeConstants.SYNTAX_TREE_GT
+                )
+        );
     }
 }

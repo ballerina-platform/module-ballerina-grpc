@@ -33,8 +33,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.g
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Literal.getStringLiteralNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getArrayTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getMapTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParameterizedTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 
@@ -92,7 +92,7 @@ public class Record {
                 NodeFactory.createRecordFieldNode(
                         null,
                         null,
-                        getParameterizedTypeDescriptorNode("map", descriptorNode),
+                        getMapTypeDescriptorNode(descriptorNode),
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         null,
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
