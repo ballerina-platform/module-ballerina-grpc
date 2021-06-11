@@ -13,6 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/auth;
 
 # Represents file user store configurations for Basic Auth authentication.
@@ -21,9 +22,9 @@ public type FileUserStoreConfig record {|
 |};
 
 # Defines the file store Basic Auth handler for listener authentication.
-public class ListenerFileUserStoreBasicAuthHandler {
+public isolated class ListenerFileUserStoreBasicAuthHandler {
 
-    auth:ListenerFileUserStoreBasicAuthProvider provider;
+    private final auth:ListenerFileUserStoreBasicAuthProvider provider;
 
     # Initializes the `http:ListenerFileUserStoreBasicAuthHandler` object.
     #
