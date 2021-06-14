@@ -7,7 +7,7 @@ This package provides support for the gRPC messaging protocol. gRPC is an inter-
 
 ### Report Issues
 
-To report bugs, request new features, start new discussions, view project boards, etc., go to the <a target="_blank" href="https://github.com/ballerina-platform/ballerina-standard-library">Ballerina Standard Library parent repository</a>.
+To report bugs, request new features, start new discussions, view project boards, etc., go to the <a target="_blank" href="https://github.com/ballerina-platform/ballerina-standard-library">Ballerina standard library parent repository</a>.
 
 ### Useful Links
 
