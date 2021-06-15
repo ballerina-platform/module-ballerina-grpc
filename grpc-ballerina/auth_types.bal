@@ -68,6 +68,11 @@ public type OAuth2RefreshTokenGrantConfig record {|
 # Represents OAuth2 grant configurations for OAuth2 authentication.
 public type OAuth2GrantConfig OAuth2ClientCredentialsGrantConfig|OAuth2PasswordGrantConfig|OAuth2RefreshTokenGrantConfig;
 
+# Represents file user store configurations for Basic Auth authentication.
+public type FileUserStoreConfig record {|
+    *auth:FileUserStoreConfig;
+|};
+
 # Represents LDAP user store configurations for Basic Auth authentication.
 public type LdapUserStoreConfig record {|
     *auth:LdapUserStoreConfig;
