@@ -331,7 +331,12 @@ public class ServicesBuilderUtils {
             return ((StreamType) inputType).getConstrainedType();
         } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
                 ((RecordType) inputType).getFields().size() == 2) {
-            return ((RecordType) inputType).getFields().get("content").getFieldType();
+            Type contentType = ((RecordType) inputType).getFields().get("content").getFieldType();
+
+            if (contentType instanceof StreamType) {
+                return ((StreamType) contentType).getConstrainedType();
+            }
+            return contentType;
         } else {
             return inputType;
         }
