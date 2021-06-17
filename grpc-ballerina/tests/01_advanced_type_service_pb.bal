@@ -332,10 +332,10 @@ public type ContextNil record {|
     map<string|string[]> headers;
 |};
 
-public type ContextString record {|
-    string content;
-    map<string|string[]> headers;
-|};
+//public type ContextString record {|
+//    string content;
+//    map<string|string[]> headers;
+//|};
 
 public type ContextStockRequest record {|
     StockRequest content;

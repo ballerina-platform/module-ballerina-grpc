@@ -40,29 +40,29 @@ public isolated client class HelloWorld45Client {
     }
 }
 
-public class StringStream {
-    private stream<anydata, Error?> anydataStream;
-
-    public isolated function init(stream<anydata, Error?> anydataStream) {
-        self.anydataStream = anydataStream;
-    }
-
-    public isolated function next() returns record {|string value;|}|Error? {
-        var streamValue = self.anydataStream.next();
-        if (streamValue is ()) {
-            return streamValue;
-        } else if (streamValue is Error) {
-            return streamValue;
-        } else {
-            record {|string value;|} nextRecord = {value: <string>streamValue.value};
-            return nextRecord;
-        }
-    }
-
-    public isolated function close() returns Error? {
-        return self.anydataStream.close();
-    }
-}
+//public class StringStream {
+//    private stream<anydata, Error?> anydataStream;
+//
+//    public isolated function init(stream<anydata, Error?> anydataStream) {
+//        self.anydataStream = anydataStream;
+//    }
+//
+//    public isolated function next() returns record {|string value;|}|Error? {
+//        var streamValue = self.anydataStream.next();
+//        if (streamValue is ()) {
+//            return streamValue;
+//        } else if (streamValue is Error) {
+//            return streamValue;
+//        } else {
+//            record {|string value;|} nextRecord = {value: <string>streamValue.value};
+//            return nextRecord;
+//        }
+//    }
+//
+//    public isolated function close() returns Error? {
+//        return self.anydataStream.close();
+//    }
+//}
 
 public client class HelloWorld45StringCaller {
     private Caller caller;
@@ -92,10 +92,10 @@ public client class HelloWorld45StringCaller {
     }
 }
 
-public type ContextStringStream record {|
-    stream<string, error?> content;
-    map<string|string[]> headers;
-|};
+//public type ContextStringStream record {|
+//    stream<string, error?> content;
+//    map<string|string[]> headers;
+//|};
 
 //public type ContextString record {|
 //    string content;
