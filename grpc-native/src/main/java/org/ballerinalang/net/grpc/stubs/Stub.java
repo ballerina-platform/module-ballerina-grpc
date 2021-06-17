@@ -338,6 +338,9 @@ public class Stub extends AbstractStub {
 
         @Override
         public void onNext(Message value) {
+            if (value.getHeaders() != null) {
+                call.injectHeaders(value.getHeaders());
+            }
             call.sendMessage(value);
         }
 

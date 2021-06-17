@@ -24,6 +24,7 @@ import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
+import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
 import org.ballerinalang.net.grpc.ServerConnectorListener;
@@ -52,6 +53,7 @@ import static org.ballerinalang.net.grpc.GrpcConstants.MESSAGE_QUEUE;
 import static org.ballerinalang.net.grpc.GrpcConstants.SERVER_CONNECTOR;
 import static org.ballerinalang.net.grpc.GrpcConstants.SERVICE_REGISTRY_BUILDER;
 import static org.ballerinalang.net.grpc.GrpcUtil.getListenerConfig;
+import static org.ballerinalang.net.grpc.MessageUtils.createHeaderMap;
 import static org.ballerinalang.net.grpc.nativeimpl.caller.FunctionUtils.externComplete;
 import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_PORT;
 
@@ -171,6 +173,9 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
         BlockingQueue<?> messageQueue = (BlockingQueue<?>) streamIterator.getNativeData(MESSAGE_QUEUE);
         try {
             Message nextMessage = (Message) messageQueue.take();
+            if (nextMessage.getHeaders() != null) {
+                streamIterator.addNativeData(GrpcConstants.HEADERS, createHeaderMap(nextMessage.getHeaders()));
+            }
             if (nextMessage.isError()) {
                 return MessageUtils.getConnectorError(nextMessage.getError());
             } else {

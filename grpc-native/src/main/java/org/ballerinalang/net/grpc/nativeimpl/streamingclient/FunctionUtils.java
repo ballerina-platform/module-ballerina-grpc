@@ -24,9 +24,11 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.GrpcConstants;
 import org.ballerinalang.net.grpc.Message;
 import org.ballerinalang.net.grpc.MessageUtils;
@@ -42,6 +44,8 @@ import static org.ballerinalang.net.grpc.GrpcConstants.REQUEST_SENDER;
 import static org.ballerinalang.net.grpc.GrpcConstants.STATUS_ERROR_MAP;
 import static org.ballerinalang.net.grpc.GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.getKeyByValue;
+import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
+import static org.ballerinalang.net.grpc.MessageUtils.createHeaderMap;
 import static org.ballerinalang.net.grpc.MessageUtils.getMappingHttpStatusCode;
 import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -64,7 +68,7 @@ public class FunctionUtils {
      * @param responseValue    message.
      * @return Error if there is an error while sending message to the server, else returns nil.
      */
-    public static Object streamSend(BObject streamConnection, Object responseValue) {
+    public static Object streamSend(BObject streamConnection, Object responseValue, BMap headerValues) {
 
         StreamObserver requestSender = (StreamObserver) streamConnection.getNativeData(GrpcConstants.REQUEST_SENDER);
         if (requestSender == null) {
@@ -76,6 +80,8 @@ public class FunctionUtils {
                     .REQUEST_MESSAGE_DEFINITION);
             try {
                 Message requestMessage = new Message(inputType.getName(), responseValue);
+                HttpHeaders headers = convertToHttpHeaders(headerValues);
+                requestMessage.setHeaders(headers);
                 requestSender.onNext(requestMessage);
             } catch (Exception e) {
                 LOG.error("Error while sending request message to server.", e);
@@ -176,10 +182,12 @@ public class FunctionUtils {
                     BObject streamIterator = ValueCreator.createObjectValue(getModule(),
                             GrpcConstants.ITERATOR_OBJECT_NAME, new Object[1]);
                     streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, messageQueue);
+                    streamingConnection.addNativeData(GrpcConstants.ITERATOR_OBJECT_ENTRY, streamIterator);
                     return ValueCreator.createStreamValue(TypeCreator.createStreamType(PredefinedTypes.TYPE_ANYDATA),
                             streamIterator);
                 } else {
                     Message nextMessage = (Message) messageQueue.take();
+                    streamingConnection.addNativeData(GrpcConstants.HEADERS, createHeaderMap(nextMessage.getHeaders()));
                     if (nextMessage.isError()) {
                         return MessageUtils.getConnectorError(nextMessage.getError());
                     } else {
@@ -197,10 +205,17 @@ public class FunctionUtils {
      * Extern function to get response header values of streaming clientg.
      *
      * @param streamingConnection streaming connection instance.
+     * @param isBidirectional     indicate the RPC call is bidirectional or not.
      * @return In client streaming, return false and in bidi-streaming, return true.
      */
-    public static Object externGetHeaderMap(BObject streamingConnection) {
-
+    public static Object externGetHeaderMap(BObject streamingConnection, boolean isBidirectional) {
+        // For bidirectional streaming cases, read the headers from streaming object.
+        // For client streaming cases, read the headers from connection object.
+        if (isBidirectional) {
+            BObject streamingIterator = (BObject) streamingConnection.getNativeData(
+                    GrpcConstants.ITERATOR_OBJECT_ENTRY);
+            return streamingIterator.getNativeData(GrpcConstants.HEADERS);
+        }
         return streamingConnection.getNativeData(GrpcConstants.HEADERS);
     }
 }

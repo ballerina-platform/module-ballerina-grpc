@@ -105,9 +105,7 @@ public final class ServerCall {
         outboundMessage.framer().setCompressor(compressor);
         outboundMessage.removeHeader(MESSAGE_ACCEPT_ENCODING);
         String advertisedEncodings = String.join(",", decompressorRegistry.getAdvertisedMessageEncodings());
-        if (advertisedEncodings != null) {
-            outboundMessage.setHeader(MESSAGE_ACCEPT_ENCODING, advertisedEncodings);
-        }
+        outboundMessage.setHeader(MESSAGE_ACCEPT_ENCODING, advertisedEncodings);
         if (headers != null) {
             for (Map.Entry<String, String> headerEntry : headers.entries()) {
                 outboundMessage.setHeader(headerEntry.getKey(), headerEntry.getValue());
@@ -146,6 +144,14 @@ public final class ServerCall {
             close(ex.getStatus(), new DefaultHttpHeaders());
         } catch (Exception e) {
             close(Status.fromThrowable(e), new DefaultHttpHeaders());
+        }
+    }
+
+    public void injectHeaders(HttpHeaders headers) {
+        if (this.outboundMessage != null) {
+            if (headers != null) {
+                headers.forEach(entry -> this.outboundMessage.setHeader(entry.getKey(), entry.getValue()));
+            }
         }
     }
 
@@ -229,7 +235,7 @@ public final class ServerCall {
                 return;
             }
             try {
-                Message request = call.method.parseRequest(message);
+                Message request = call.method.parseRequest(message); // place
                 request.setHeaders(call.inboundMessage.getHeaders());
                 listener.onMessage(request);
             } catch (StatusRuntimeException ex) {

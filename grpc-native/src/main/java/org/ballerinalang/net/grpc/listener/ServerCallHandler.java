@@ -110,6 +110,7 @@ public abstract class ServerCallHandler {
                 throw Status.Code.CANCELLED.toStatus().withDescription("call already cancelled").asRuntimeException();
             }
             if (!sentHeaders) {
+                call.injectHeaders(response.getHeaders());
                 call.sendHeaders(response.getHeaders());
                 sentHeaders = true;
             }
@@ -220,6 +221,10 @@ public abstract class ServerCallHandler {
             }
             BMap contentContext;
             if (signatureParamSize >= 1 && (signatureParams.get(0).getTag() == TypeTags.RECORD_TYPE_TAG) &&
+                    signatureParams.get(signatureParamSize - 1).getName().contains("Stream")) {
+                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
+                        getContextStreamTypeName(resource.getRpcInputType()), valueMap);
+            } else if (signatureParamSize > 1 && (signatureParams.get(1).getTag() == TypeTags.RECORD_TYPE_TAG) &&
                     signatureParams.get(signatureParamSize - 1).getName().contains("Stream")) {
                 contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
                         getContextStreamTypeName(resource.getRpcInputType()), valueMap);

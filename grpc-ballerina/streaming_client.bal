@@ -27,9 +27,10 @@ public client class StreamingClient {
     # ```
     #
     # + res - The inbound request message
+    # + headers - The headers need to be sent
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    isolated remote function send(anydata res) returns Error? {
-        return streamSend(self, res);
+    isolated remote function send(anydata res, map<string|string[]> headers = {}) returns Error? {
+        return streamSend(self, res, headers);
     }
 
     # Informs the server when the caller has sent all the messages.
@@ -64,7 +65,7 @@ public client class StreamingClient {
         if (externIsBidirectional(self)) {
             if (self.serverStream is stream<anydata, Error?>) {
                 var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
-                var headerMap = externGetHeaderMap(self);
+                var headerMap = externGetHeaderMap(self, true);
                 if (headerMap is map<string|string[]>) {
                     headers = headerMap;
                 }
@@ -78,7 +79,7 @@ public client class StreamingClient {
                 if (result is stream<anydata, Error?>) {
                     self.serverStream = result;
                     var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
-                    var headerMap = externGetHeaderMap(self);
+                    var headerMap = externGetHeaderMap(self, true);
                     if (headerMap is map<string|string[]>) {
                         headers = headerMap;
                     }
@@ -95,7 +96,7 @@ public client class StreamingClient {
             }
         } else {
            var result = externReceive(self);
-           var headerMap = externGetHeaderMap(self);
+           var headerMap = externGetHeaderMap(self, false);
            if (headerMap is map<string|string[]>) {
                headers = headerMap;
            }
@@ -110,7 +111,7 @@ public client class StreamingClient {
     }
 }
 
-isolated function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
+isolated function streamSend(StreamingClient streamConnection, anydata res, map<string|string[]> headers) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
@@ -135,7 +136,7 @@ isolated function externIsBidirectional(StreamingClient streamConnection) return
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
-isolated function externGetHeaderMap(StreamingClient streamConnection) returns map<string|string[]>? =
+isolated function externGetHeaderMap(StreamingClient streamConnection, boolean isBidirectional) returns map<string|string[]>? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
