@@ -18,9 +18,6 @@
 
 package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
-import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
-import io.ballerina.compiler.syntax.tree.NodeFactory;
-import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Class;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
@@ -70,12 +67,7 @@ public class CallerUtils {
         caller.addMember(init.getFunctionDefinitionNode());
 
         Function getId = new Function("getId");
-        getId.addReturns(
-                NodeFactory.createBuiltinSimpleNameReferenceNode(
-                        SyntaxKind.INT_TYPE_DESC,
-                        AbstractNodeFactory.createIdentifierToken("int")
-                )
-        );
+        getId.addReturns(TypeDescriptor.getBuiltinSimpleNameReferenceNode("int"));
         getId.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "caller"),
@@ -152,10 +144,7 @@ public class CallerUtils {
         caller.addMember(complete.getFunctionDefinitionNode());
 
         Function isCancelled = new Function("isCancelled");
-        isCancelled.addReturns(NodeFactory.createBuiltinSimpleNameReferenceNode(
-                SyntaxKind.BOOLEAN_TYPE_DESC,
-                AbstractNodeFactory.createIdentifierToken("boolean")
-        ));
+        isCancelled.addReturns(TypeDescriptor.getBuiltinSimpleNameReferenceNode("boolean"));
         isCancelled.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "caller"),
