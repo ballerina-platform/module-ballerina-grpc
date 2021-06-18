@@ -456,6 +456,10 @@ public client class ChatMsgCaller {
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class ChatStringCaller {
@@ -483,6 +487,10 @@ public client class ChatStringCaller {
 
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -512,6 +520,10 @@ public client class Chat2StringCaller {
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class Chat2MsgCaller {
@@ -539,6 +551,10 @@ public client class Chat2MsgCaller {
 
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 

@@ -172,6 +172,10 @@ public client class HelloWorldWithNestedEnumByeResponseCaller {
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class HelloWorldWithNestedEnumHelloResponseCaller {
@@ -199,6 +203,10 @@ public client class HelloWorldWithNestedEnumHelloResponseCaller {
 
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -228,6 +236,10 @@ public client class HelloFooWithNestedEnumHelloResponseCaller {
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class HelloFooWithNestedEnumByeResponseCaller {
@@ -255,6 +267,10 @@ public client class HelloFooWithNestedEnumByeResponseCaller {
 
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 

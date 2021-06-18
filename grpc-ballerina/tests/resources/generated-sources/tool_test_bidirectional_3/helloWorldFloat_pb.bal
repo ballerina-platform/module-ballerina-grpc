@@ -89,6 +89,10 @@ public client class HelloWorldFloatCaller {
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public type ContextFloatStream record {|
