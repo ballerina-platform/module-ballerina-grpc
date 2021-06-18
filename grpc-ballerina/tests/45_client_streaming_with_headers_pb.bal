@@ -97,7 +97,7 @@ public client class ClientStrStreamingClient {
     }
 
     isolated remote function sendContextHSReq(ContextHSReq message) returns Error? {
-        return self.sClient->send(message.content, message.headers);
+        return self.sClient->send(message);
     }
 
     isolated remote function receiveHSRes() returns HSRes|Error? {
@@ -165,7 +165,7 @@ public client class BidirectionalStrStreamingClient {
     }
 
     isolated remote function sendContextHSReq(ContextHSReq message) returns Error? {
-        return self.sClient->send(message.content, message.headers);
+        return self.sClient->send(message);
     }
 
     isolated remote function receiveHSRes() returns HSRes|Error? {
