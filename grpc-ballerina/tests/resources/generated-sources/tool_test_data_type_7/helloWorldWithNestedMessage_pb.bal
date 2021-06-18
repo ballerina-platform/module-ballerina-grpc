@@ -99,6 +99,10 @@ public client class HelloWorldWithNestedMessageHelloResponseCaller {
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class HelloWorldWithNestedMessageByeResponseCaller {
@@ -126,6 +130,10 @@ public client class HelloWorldWithNestedMessageByeResponseCaller {
 
     isolated remote function complete() returns grpc:Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 

@@ -151,6 +151,21 @@ public class CallerUtils {
         complete.addQualifiers(new String[]{"isolated", "remote"});
         caller.addMember(complete.getFunctionDefinitionNode());
 
+        Function isCancelled = new Function("isCancelled");
+        isCancelled.addReturns(NodeFactory.createBuiltinSimpleNameReferenceNode(
+                SyntaxKind.BOOLEAN_TYPE_DESC,
+                AbstractNodeFactory.createIdentifierToken("boolean")
+        ));
+        isCancelled.addReturnStatement(
+                getMethodCallExpressionNode(
+                        getFieldAccessExpressionNode("self", "caller"),
+                        "isCancelled",
+                        new String[]{}
+                )
+        );
+        isCancelled.addQualifiers(new String[]{"public", "isolated"});
+        caller.addMember(isCancelled.getFunctionDefinitionNode());
+
         return caller;
     }
 }
