@@ -27,10 +27,9 @@ public client class StreamingClient {
     # ```
     #
     # + res - The inbound request message
-    # + headers - The headers need to be sent
     # + return - A `grpc:Error` if an error occurs while sending the response or else `()`
-    isolated remote function send(anydata res, map<string|string[]> headers = {}) returns Error? {
-        return streamSend(self, res, headers);
+    isolated remote function send(anydata res) returns Error? {
+        return streamSend(self, res);
     }
 
     # Informs the server when the caller has sent all the messages.
@@ -111,7 +110,7 @@ public client class StreamingClient {
     }
 }
 
-isolated function streamSend(StreamingClient streamConnection, anydata res, map<string|string[]> headers) returns Error? =
+isolated function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
 @java:Method {
     'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;

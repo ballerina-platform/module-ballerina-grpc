@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -47,6 +48,7 @@ import static org.ballerinalang.net.grpc.GrpcConstants.getKeyByValue;
 import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
 import static org.ballerinalang.net.grpc.MessageUtils.createHeaderMap;
 import static org.ballerinalang.net.grpc.MessageUtils.getMappingHttpStatusCode;
+import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
 import static org.ballerinalang.net.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
@@ -68,7 +70,7 @@ public class FunctionUtils {
      * @param responseValue    message.
      * @return Error if there is an error while sending message to the server, else returns nil.
      */
-    public static Object streamSend(BObject streamConnection, Object responseValue, BMap headerValues) {
+    public static Object streamSend(BObject streamConnection, Object responseValue) {
 
         StreamObserver requestSender = (StreamObserver) streamConnection.getNativeData(GrpcConstants.REQUEST_SENDER);
         if (requestSender == null) {
@@ -79,7 +81,15 @@ public class FunctionUtils {
             Descriptors.Descriptor inputType = (Descriptors.Descriptor) streamConnection.getNativeData(GrpcConstants
                     .REQUEST_MESSAGE_DEFINITION);
             try {
-                Message requestMessage = new Message(inputType.getName(), responseValue);
+                Object content;
+                BMap headerValues = null;
+                if (isContextRecordByValue(responseValue)) {
+                    content = ((BMap) responseValue).get(StringUtils.fromString("content"));
+                    headerValues = ((BMap) responseValue).getMapValue(StringUtils.fromString("headers"));
+                } else {
+                    content = responseValue;
+                }
+                Message requestMessage = new Message(inputType.getName(), content);
                 HttpHeaders headers = convertToHttpHeaders(headerValues);
                 requestMessage.setHeaders(headers);
                 requestSender.onNext(requestMessage);
