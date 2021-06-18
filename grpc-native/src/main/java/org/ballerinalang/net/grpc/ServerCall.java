@@ -150,7 +150,7 @@ public final class ServerCall {
     public void injectHeaders(HttpHeaders headers) {
         if (this.outboundMessage != null) {
             if (headers != null) {
-                headers.forEach(entry -> this.outboundMessage.setHeader(entry.getKey(), entry.getValue()));
+                this.outboundMessage.setHeaders(headers);
             }
         }
     }
