@@ -144,14 +144,6 @@ public final class ServerCall {
         }
     }
 
-    public void injectHeaders(HttpHeaders headers) {
-        if (this.outboundMessage != null) {
-            if (headers != null) {
-                this.outboundMessage.setHeaders(headers);
-            }
-        }
-    }
-
     public void setCompression(String compressorName) {
         // Added here to give a better error message.
         if (sendHeadersCalled) {
