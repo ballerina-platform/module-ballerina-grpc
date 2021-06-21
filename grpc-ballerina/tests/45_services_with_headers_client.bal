@@ -24,7 +24,7 @@ function testUnaryWithHeadersContext() returns error? {
 
     ContextHSRes res = check ep->unaryContext({content: reqMsg, headers: headers});
     test:assertEquals(res.content, reqMsg);
-    test:assertEquals(res.headers["unary-res-header"], "2233445677");
+    test:assertEquals(res.headers["unary-res-header"], ["abcde", "fgh"]);
 }
 
 @test:Config {enable: true}
@@ -34,7 +34,7 @@ function testServerStreamingWithHeadersContext() returns error? {
     map<string|string[]> headers = {"server-steaming-req-header": ["1234567890", "2233445677"]};
 
     ContextHSResStream res = check ep->serverStrContext({content: reqMsg, headers: headers});
-    test:assertEquals(res.headers["server-steaming-res-header"], "2233445677");
+    test:assertEquals(res.headers["server-steaming-res-header"], ["1234567890","2233445677"]);
 
 }
 
@@ -60,7 +60,7 @@ function testClientStreamingWithContextHeaders() returns error? {
     ContextHSRes? res = check streamingClient->receiveContextHSRes();
     if res is ContextHSRes {
         test:assertEquals(res.content, {name: "Ann", message: "Hey"});
-        test:assertEquals(res.headers["client-steaming-res-header"], "2233445677");
+        test:assertEquals(res.headers["client-steaming-res-header"], ["1234567890","2233445677"]);
     } else {
         test:assertFail(msg = "Expected output not found");
     }
@@ -88,7 +88,7 @@ function testBidirectionalStreamingWithContextHeaders() returns error? {
     ContextHSRes? res = check streamingClient->receiveContextHSRes();
     if res is ContextHSRes {
         test:assertEquals(res.content, {name: "Ann", message: "Hey"});
-        test:assertEquals(res.headers["bidi-steaming-res-header"], "2233445677");
+        test:assertEquals(res.headers["bidi-steaming-res-header"], ["1234567890","2233445677"]);
     } else {
         test:assertFail(msg = "Expected output not found");
     }
