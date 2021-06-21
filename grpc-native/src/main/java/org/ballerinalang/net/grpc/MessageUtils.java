@@ -520,7 +520,7 @@ public class MessageUtils {
                     headers.set(key.toString(), headerValue.toString());
                 } else if (headerValue instanceof BArray) {
                     for (String value : ((BArray) headerValue).getStringArray()) {
-                        headers.set(key.toString(), value);
+                        headers.add(key.toString(), value);
                     }
                 }
             }

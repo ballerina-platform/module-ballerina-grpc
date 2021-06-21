@@ -61,6 +61,7 @@ public class GrpcConstants {
     public static final String COMPLETED_MESSAGE = "completedMessage";
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String ITERATOR_OBJECT_NAME = "StreamIterator";
+    public static final String ITERATOR_OBJECT_ENTRY = "streamIterator";
 
     // Service Descriptor Annotation
     public static final String DESCRIPTOR_MAP = "getDescriptorMap";

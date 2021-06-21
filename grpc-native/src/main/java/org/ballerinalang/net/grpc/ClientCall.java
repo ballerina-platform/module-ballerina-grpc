@@ -126,6 +126,14 @@ public final class ClientCall {
         }
     }
 
+    public void injectHeaders(HttpHeaders headers) {
+        if (this.outboundMessage != null) {
+            if (headers != null) {
+                headers.forEach(entry -> this.outboundMessage.setHeader(entry.getKey(), entry.getValue()));
+            }
+        }
+    }
+
     /**
      * Start a call, using {@code responseListener} for processing response messages.
      *
