@@ -108,6 +108,42 @@ public class OutboundMessage {
     }
 
     /**
+     * Add a header to the response.
+     *
+     * @param key   header name
+     * @param value value of the header
+     * @return OutboundMessage object
+     */
+    public OutboundMessage addHeader(String key, String value) {
+
+        responseMessage.addHeader(key, value);
+        return this;
+    }
+
+    /**
+     * Add a header to the response.
+     *
+     * @param key   header name
+     * @param value value of the header
+     * @return OutboundMessage object
+     */
+    public OutboundMessage addHeader(String key, Object value) {
+
+        responseMessage.addHeader(key, value);
+        return this;
+    }
+
+    /**
+     * Add a set of headers to the response.
+     *
+     * @param httpHeaders set of headers that needs to be set.
+     */
+    public void addHeaders(HttpHeaders httpHeaders) {
+
+        responseMessage.addHeaders(httpHeaders);
+    }
+
+    /**
      * Get a property of the CarbonMessage.
      *
      * @param key Property key
