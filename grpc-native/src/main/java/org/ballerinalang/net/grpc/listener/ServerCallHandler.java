@@ -110,7 +110,6 @@ public abstract class ServerCallHandler {
                 throw Status.Code.CANCELLED.toStatus().withDescription("call already cancelled").asRuntimeException();
             }
             if (!sentHeaders) {
-                call.injectHeaders(response.getHeaders());
                 call.sendHeaders(response.getHeaders());
                 sentHeaders = true;
             }
