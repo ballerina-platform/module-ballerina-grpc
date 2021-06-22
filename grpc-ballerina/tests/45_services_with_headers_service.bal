@@ -28,7 +28,7 @@ service "HeadersService" on ep45 {
         } else {
             string headerValue = check getHeader(req.headers, "unary-req-header");
             log:printInfo("Request Header: " + headerValue);
-            responseHeaders["unary-res-header"] = ["1234567890", "2233445677"];
+            responseHeaders["unary-res-header"] = ["abcde", "fgh"];
         }
         check caller->sendContextHSRes({content: req.content, headers: responseHeaders});
         check caller->complete();

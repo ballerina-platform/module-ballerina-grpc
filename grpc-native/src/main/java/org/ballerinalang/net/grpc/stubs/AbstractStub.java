@@ -31,7 +31,6 @@ import org.ballerinalang.net.transport.message.HttpCarbonMessage;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -89,9 +88,7 @@ public abstract class AbstractStub {
             setOutboundReqProperties(carbonMessage, url, port, host);
             setOutboundReqHeaders(carbonMessage, port, host);
             if (httpHeaders != null) {
-                for (Map.Entry<String, String> headerEntry : httpHeaders.entries()) {
-                    carbonMessage.setHeader(headerEntry.getKey(), headerEntry.getValue());
-                }
+                carbonMessage.addHeaders(httpHeaders);
             }
             return new OutboundMessage(carbonMessage);
         } catch (MalformedURLException e) {

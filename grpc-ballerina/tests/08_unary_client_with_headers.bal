@@ -53,6 +53,6 @@ function testHeadersInBlockingClient() returns Error? {
         map<string|string[]> resHeaders = unionResp.headers;
         io:println("Client Got Response : ");
         io:println(result);
-        test:assertEquals(check getHeader(resHeaders, "x-id"), "2233445677");
+        test:assertEquals(check getHeaders(resHeaders, "x-id"), ["0987654321","1234567890","2233445677"]);
     }
 }

@@ -494,9 +494,11 @@ public class MessageUtils {
      * @return Ballerina Header Map.
      */
     public static BMap createHeaderMap(HttpHeaders httpHeaders) {
+
         BMap headerMap = ValueCreator.createMapValue(HEADER_MAP_TYPE);
         for (String key : httpHeaders.names()) {
-            String[] values = httpHeaders.getAll(key).toArray(new String[0]);
+            String[] values = Arrays.stream(httpHeaders.getAll(key).toArray(new String[0]))
+                    .distinct().toArray(String[]::new);
             if (values.length == 1) {
                 headerMap.put(fromString(key.toLowerCase(Locale.getDefault())), fromString(values[0]));
             } else {
