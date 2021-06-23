@@ -14,9 +14,17 @@
 // specific language governing permissions and limitations
 // under the License.
 
-syntax = "proto3";
-import "google/protobuf/wrappers.proto";
+import ballerina/test;
+import ballerina/log;
 
-service AnonService {
-	rpc hello (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+@test:Config {enable: true}
+function testAnonymousService() returns error? {
+    log:printInfo("Starting the AnonService");
+    check ep20.attach(AnonService, "AnonService");
+    check ep20.'start();
+
+    AnonServiceClient annonServiceClient = check new ("http://localhost:9110");
+    string resp = check annonServiceClient->hello("WSO2");
+    test:assertEquals(resp, "Hello Ballerina");
+    check ep20.immediateStop();
 }
