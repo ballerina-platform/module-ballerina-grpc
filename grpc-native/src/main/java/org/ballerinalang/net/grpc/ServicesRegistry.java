@@ -62,6 +62,11 @@ public class ServicesRegistry {
         // Store per-service first, to make sure services are added/replaced atomically.
         private final HashMap<String, ServerServiceDefinition> services = new LinkedHashMap<>();
 
+        public HashMap<String, ServerServiceDefinition> getServices() {
+
+            return services;
+        }
+
         public void addService(ServerServiceDefinition service) {
             services.put(service.getServiceDescriptor().getName(), service);
         }

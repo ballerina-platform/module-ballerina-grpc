@@ -151,6 +151,10 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
     public static Object externStart(BObject listener) {
         ServicesRegistry.Builder servicesRegistryBuilder = getServiceRegistryBuilder(listener);
 
+        if (servicesRegistryBuilder.getServices().isEmpty()) {
+            return null;
+        }
+
         if (!isConnectorStarted(listener)) {
             return startServerConnector(listener, servicesRegistryBuilder.build());
         }
