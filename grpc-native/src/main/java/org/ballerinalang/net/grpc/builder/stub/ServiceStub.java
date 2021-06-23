@@ -114,8 +114,8 @@ public class ServiceStub {
                         serviceStub.serverStreamingFunctions.add(method);
                         break;
                     case CLIENT_STREAMING:
-                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.TRUE);
                         serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.FALSE);
+                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.TRUE);
                         serviceStub.clientStreamingFunctions.add(method);
                         break;
                     case BIDI_STREAMING:

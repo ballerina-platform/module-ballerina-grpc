@@ -95,6 +95,11 @@ public client class HelloWorldStringCaller {
     }
 }
 
+public type ContextStringStream record {|
+    stream<string, error?> content;
+    map<string|string[]> headers;
+|};
+
 public type ContextString record {|
     string content;
     map<string|string[]> headers;

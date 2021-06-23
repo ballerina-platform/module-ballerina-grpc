@@ -95,6 +95,11 @@ public client class HelloWorldBooleanCaller {
     }
 }
 
+public type ContextBooleanStream record {|
+    stream<boolean, error?> content;
+    map<string|string[]> headers;
+|};
+
 public type ContextBoolean record {|
     boolean content;
     map<string|string[]> headers;
