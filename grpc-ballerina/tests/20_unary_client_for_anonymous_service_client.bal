@@ -28,3 +28,16 @@ function testAnonymousService() returns error? {
     test:assertEquals(resp, "Hello Ballerina");
     check ep20.immediateStop();
 }
+
+@test:Config {dependsOn: [testAnonymousService], enable: true}
+function testAnonymousServiceMultipleTimes() returns error? {
+    log:printInfo("Starting the AnonService");
+    check ep20.attach(AnonService, "AnonService");
+    check ep20.'start();
+    check ep20.'start();
+
+    AnonServiceClient annonServiceClient = check new ("http://localhost:9110");
+    string resp = check annonServiceClient->hello("WSO2");
+    test:assertEquals(resp, "Hello Ballerina");
+    check ep20.immediateStop();
+}
