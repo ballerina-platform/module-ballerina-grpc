@@ -17,7 +17,6 @@
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 
-service HelloService {
-	rpc hello (google.protobuf.StringValue)
-			returns (google.protobuf.StringValue);
+service AnonService {
+	rpc hello (google.protobuf.StringValue) returns (google.protobuf.StringValue);
 }

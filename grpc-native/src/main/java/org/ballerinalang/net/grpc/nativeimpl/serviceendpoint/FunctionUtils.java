@@ -149,7 +149,15 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
      * @return Error if there is an error while starting the server, else returns nil.
      */
     public static Object externStart(BObject listener) {
+
         ServicesRegistry.Builder servicesRegistryBuilder = getServiceRegistryBuilder(listener);
+
+        if (servicesRegistryBuilder.getServices().isEmpty()) {
+            long port = listener.getIntValue(StringUtils.fromString("port"));
+            LOG.warn("The listener start is terminated because no attached services found in the " +
+                    "listener with port {}", port);
+            return null;
+        }
 
         if (!isConnectorStarted(listener)) {
             return startServerConnector(listener, servicesRegistryBuilder.build());
