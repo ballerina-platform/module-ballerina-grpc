@@ -41,3 +41,15 @@ function testAnonymousServiceMultipleTimes() returns error? {
     test:assertEquals(resp, "Hello Ballerina");
     check ep20.immediateStop();
 }
+
+@test:Config {dependsOn: [testAnonymousServiceMultipleTimes], enable: true}
+function testAnonymousUnregisteredService() returns error? {
+    log:printInfo("Starting the unregistered service");
+    error? err = ep20.attach(unregisteredService);
+    if err is error {
+        test:assertEquals(err.message(), "Error when initializing service register builder. Invalid service path. " + 
+            "Service path cannot be nil");
+    } else {
+        test:assertFail("Expecter internal error not found");
+    }
+}

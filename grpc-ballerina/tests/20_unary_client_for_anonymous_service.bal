@@ -24,3 +24,11 @@ service object {
     }
 };
 
+service object {} unregisteredService = @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20, descMap: getDescriptorMap20()} 
+service object {
+
+    remote isolated function hello1(string value) returns string|error {
+        return "Hello Ballerina";
+    }
+};
+
