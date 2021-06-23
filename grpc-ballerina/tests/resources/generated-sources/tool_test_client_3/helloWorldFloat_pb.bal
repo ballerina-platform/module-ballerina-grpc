@@ -95,6 +95,11 @@ public client class HelloWorldFloatCaller {
     }
 }
 
+public type ContextFloatStream record {|
+    stream<float, error?> content;
+    map<string|string[]> headers;
+|};
+
 public type ContextFloat record {|
     float content;
     map<string|string[]> headers;

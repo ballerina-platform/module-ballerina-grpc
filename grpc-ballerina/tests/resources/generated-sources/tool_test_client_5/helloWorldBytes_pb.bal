@@ -95,6 +95,11 @@ public client class HelloWorldByteCaller {
     }
 }
 
+public type ContextBytesStream record {|
+    stream<byte[], error?> content;
+    map<string|string[]> headers;
+|};
+
 public type ContextBytes record {|
     byte[] content;
     map<string|string[]> headers;
