@@ -11,14 +11,30 @@ public isolated client class helloWorldClient {
     }
 
     isolated remote function hello(byte[]|ContextBytes req) returns stream<byte[], grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+        map<string|string[]> headers = {};
+        byte[] message;
+        if (req is ContextBytes) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         BytesStream outputStream = new BytesStream(result);
         return new stream<byte[], grpc:Error?>(outputStream);
     }
 
     isolated remote function helloContext(byte[]|ContextBytes req) returns ContextBytesStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+        map<string|string[]> headers = {};
+        byte[] message;
+        if (req is ContextBytes) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         BytesStream outputStream = new BytesStream(result);
         return {

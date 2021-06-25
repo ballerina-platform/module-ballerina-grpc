@@ -11,14 +11,18 @@ public isolated client class helloWorldClient {
     }
 
     isolated remote function testNoInputOutputStruct() returns stream<HelloResponse, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("grpcservices.helloWorld/testNoInputOutputStruct", req);
+        Empty message = {};
+        map<string|string[]> headers = {};
+        var payload = check self.grpcClient->executeServerStreaming("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         HelloResponseStream outputStream = new HelloResponseStream(result);
         return new stream<HelloResponse, grpc:Error?>(outputStream);
     }
 
     isolated remote function testNoInputOutputStructContext() returns ContextHelloResponseStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("grpcservices.helloWorld/testNoInputOutputStruct", req);
+        Empty message = {};
+        map<string|string[]> headers = {};
+        var payload = check self.grpcClient->executeServerStreaming("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         HelloResponseStream outputStream = new HelloResponseStream(result);
         return {

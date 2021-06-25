@@ -11,14 +11,30 @@ public isolated client class helloWorldClient {
     }
 
     isolated remote function hello(string|ContextString req) returns stream<string, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
     isolated remote function helloContext(string|ContextString req) returns ContextStringStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+        map<string|string[]> headers = {};
+        string message;
+        if (req is ContextString) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);
         return {

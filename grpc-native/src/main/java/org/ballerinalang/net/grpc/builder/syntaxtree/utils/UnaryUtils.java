@@ -21,23 +21,14 @@ package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
-import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import org.ballerinalang.net.grpc.builder.stub.Method;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
-import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getAssignmentStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getMapTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
@@ -50,6 +41,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
 /**
@@ -97,7 +89,7 @@ public class UnaryUtils {
                     )
             );
         }
-        addUnaryBody(function, inputCap, method);
+        addClientCallBody(function, inputCap, method);
         if (method.getOutputType() != null) {
             SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                     getBuiltinSimpleNameReferenceNode("anydata"),
@@ -155,7 +147,7 @@ public class UnaryUtils {
                         )
                 )
         );
-        addUnaryBody(function, inputCap, method);
+        addClientCallBody(function, inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -174,85 +166,6 @@ public class UnaryUtils {
         function.addVariableStatement(payload.getVariableDeclarationNode());
         addUnaryContextFunctionReturnStatement(function, method);
         return function;
-    }
-
-    private static void addUnaryBody(Function function, String inputCap, Method method) {
-        if (method.getInputType() == null) {
-            Map empty = new Map();
-            VariableDeclaration message = new VariableDeclaration(
-                    getTypedBindingPatternNode(
-                            getSimpleNameReferenceNode("Empty"),
-                            getCaptureBindingPatternNode("message")
-                    ),
-                    empty.getMappingConstructorExpressionNode()
-            );
-            function.addVariableStatement(message.getVariableDeclarationNode());
-        }
-        VariableDeclaration headers = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        getMapTypeDescriptorNode(
-                                getUnionTypeDescriptorNode(
-                                        SYNTAX_TREE_VAR_STRING,
-                                        SYNTAX_TREE_VAR_STRING_ARRAY
-                                )
-                        ),
-                        getCaptureBindingPatternNode("headers")),
-                new Map().getMappingConstructorExpressionNode()
-        );
-        function.addVariableStatement(headers.getVariableDeclarationNode());
-        if (method.getInputType() != null) {
-            TypeDescriptorNode messageType;
-            if (method.getInputType().equals("string")) {
-                messageType = getBuiltinSimpleNameReferenceNode("string");
-            } else {
-                messageType = getSimpleNameReferenceNode(method.getInputType());
-            }
-            VariableDeclaration message = new VariableDeclaration(
-                    getTypedBindingPatternNode(
-                            messageType,
-                            getCaptureBindingPatternNode("message")),
-                    null
-            );
-            function.addVariableStatement(message.getVariableDeclarationNode());
-            IfElse reqIsContext = new IfElse(
-                    getBracedExpressionNode(
-                            getTypeTestExpressionNode(
-                                    getSimpleNameReferenceNode("req"),
-                                    getSimpleNameReferenceNode("Context" + inputCap)
-                            )));
-            reqIsContext.addIfStatement(
-                    getAssignmentStatementNode(
-                            "message",
-                            getFieldAccessExpressionNode("req", "content")
-                    )
-            );
-            reqIsContext.addIfStatement(
-                    getAssignmentStatementNode(
-                            "headers",
-                            getFieldAccessExpressionNode("req", "headers")
-                    )
-            );
-            reqIsContext.addElseStatement(
-                    getAssignmentStatementNode(
-                            "message",
-                            getSimpleNameReferenceNode("req")
-                    )
-            );
-            function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
-        }
-        VariableDeclaration payload = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        getBuiltinSimpleNameReferenceNode("var"),
-                        getCaptureBindingPatternNode("payload")),
-                getCheckExpressionNode(
-                        getRemoteMethodCallActionNode(
-                                getFieldAccessExpressionNode("self", "grpcClient"),
-                                "executeSimpleRPC",
-                                new String[]{"\"" + method.getMethodId() + "\"", "message", "headers"}
-                        )
-                )
-        );
-        function.addVariableStatement(payload.getVariableDeclarationNode());
     }
 
     private static void addUnaryFunctionReturnStatement(Function function, Method method) {

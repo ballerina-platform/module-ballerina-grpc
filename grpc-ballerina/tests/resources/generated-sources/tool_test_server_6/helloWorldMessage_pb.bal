@@ -11,14 +11,30 @@ public isolated client class helloWorldClient {
     }
 
     isolated remote function hello(HelloRequest|ContextHelloRequest req) returns stream<HelloResponse, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+        map<string|string[]> headers = {};
+        HelloRequest message;
+        if (req is ContextHelloRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         HelloResponseStream outputStream = new HelloResponseStream(result);
         return new stream<HelloResponse, grpc:Error?>(outputStream);
     }
 
     isolated remote function helloContext(HelloRequest|ContextHelloRequest req) returns ContextHelloResponseStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+        map<string|string[]> headers = {};
+        HelloRequest message;
+        if (req is ContextHelloRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         HelloResponseStream outputStream = new HelloResponseStream(result);
         return {
@@ -28,14 +44,30 @@ public isolated client class helloWorldClient {
     }
 
     isolated remote function bye(ByeRequest|ContextByeRequest req) returns stream<ByeResponse, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/bye", req);
+        map<string|string[]> headers = {};
+        ByeRequest message;
+        if (req is ContextByeRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/bye", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         ByeResponseStream outputStream = new ByeResponseStream(result);
         return new stream<ByeResponse, grpc:Error?>(outputStream);
     }
 
     isolated remote function byeContext(ByeRequest|ContextByeRequest req) returns ContextByeResponseStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/bye", req);
+        map<string|string[]> headers = {};
+        ByeRequest message;
+        if (req is ContextByeRequest) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/bye", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         ByeResponseStream outputStream = new ByeResponseStream(result);
         return {
