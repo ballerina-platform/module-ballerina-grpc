@@ -31,6 +31,7 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getExplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
@@ -67,8 +68,9 @@ public class ClientUtils {
 
     }
 
-    public static Function getStreamingClientFunction(Method method, boolean bidirectional) {
-        String methodName = bidirectional ? "executeBidirectionalStreaming" : "executeClientStreaming";
+    public static Function getStreamingClientFunction(Method method) {
+        String methodName = method.getMethodType().equals(BIDI_STREAMING) ? "executeBidirectionalStreaming" :
+                "executeClientStreaming";
         String clientName = capitalize(method.getMethodName()) + "StreamingClient";
         Function function = new Function(method.getMethodName());
         function.addReturns(
