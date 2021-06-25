@@ -69,9 +69,18 @@ public class ServerUtils {
 
     public static Function getServerStreamingFunction(Method method) {
         Function function = new Function(method.getMethodName());
+        String inputCap;
         if (method.getInputType() != null) {
+            if (method.getInputType().equals("byte[]")) {
+                inputCap = "Bytes";
+            } else {
+                inputCap = capitalize(method.getInputType());
+            }
             function.addRequiredParameter(
-                    getSimpleNameReferenceNode(method.getInputType()),
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode("Context" + inputCap)
+                    ),
                     "req"
             );
         }
@@ -106,9 +115,18 @@ public class ServerUtils {
 
     public static Function getServerStreamingContextFunction(Method method) {
         Function function = new Function(method.getMethodName() + "Context");
+        String inputCap;
         if (method.getInputType() != null) {
+            if (method.getInputType().equals("byte[]")) {
+                inputCap = "Bytes";
+            } else {
+                inputCap = capitalize(method.getInputType());
+            }
             function.addRequiredParameter(
-                    getSimpleNameReferenceNode(method.getInputType()),
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode("Context" + inputCap)
+                    ),
                     "req"
             );
         }

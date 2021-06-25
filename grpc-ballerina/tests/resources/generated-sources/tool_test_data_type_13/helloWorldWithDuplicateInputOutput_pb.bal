@@ -76,28 +76,28 @@ public isolated client class ChatClient {
         return new Call6StreamingClient(sClient);
     }
 
-    isolated remote function call3(Msg req) returns stream<string, grpc:Error?>|grpc:Error {
+    isolated remote function call3(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("Chat/call3", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call3Context(Msg req) returns ContextStringStream|grpc:Error {
+    isolated remote function call3Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("Chat/call3", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: headers};
     }
 
-    isolated remote function call4(Msg req) returns stream<string, grpc:Error?>|grpc:Error {
+    isolated remote function call4(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("Chat/call4", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call4Context(Msg req) returns ContextStringStream|grpc:Error {
+    isolated remote function call4Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("Chat/call4", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);
@@ -191,28 +191,28 @@ public isolated client class Chat2Client {
         return new Call6StreamingClient(sClient);
     }
 
-    isolated remote function call3(Msg req) returns stream<string, grpc:Error?>|grpc:Error {
+    isolated remote function call3(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call3Context(Msg req) returns ContextStringStream|grpc:Error {
+    isolated remote function call3Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: headers};
     }
 
-    isolated remote function call4(Msg req) returns stream<string, grpc:Error?>|grpc:Error {
+    isolated remote function call4(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call4Context(Msg req) returns ContextStringStream|grpc:Error {
+    isolated remote function call4Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);

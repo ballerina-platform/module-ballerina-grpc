@@ -10,14 +10,14 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
     }
 
-    isolated remote function hello(boolean req) returns stream<boolean, grpc:Error?>|grpc:Error {
+    isolated remote function hello(boolean|ContextBoolean req) returns stream<boolean, grpc:Error?>|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         BooleanStream outputStream = new BooleanStream(result);
         return new stream<boolean, grpc:Error?>(outputStream);
     }
 
-    isolated remote function helloContext(boolean req) returns ContextBooleanStream|grpc:Error {
+    isolated remote function helloContext(boolean|ContextBoolean req) returns ContextBooleanStream|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         BooleanStream outputStream = new BooleanStream(result);

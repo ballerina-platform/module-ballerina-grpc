@@ -10,14 +10,14 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
     }
 
-    isolated remote function hello(float req) returns stream<float, grpc:Error?>|grpc:Error {
+    isolated remote function hello(float|ContextFloat req) returns stream<float, grpc:Error?>|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         FloatStream outputStream = new FloatStream(result);
         return new stream<float, grpc:Error?>(outputStream);
     }
 
-    isolated remote function helloContext(float req) returns ContextFloatStream|grpc:Error {
+    isolated remote function helloContext(float|ContextFloat req) returns ContextFloatStream|grpc:Error {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         FloatStream outputStream = new FloatStream(result);
