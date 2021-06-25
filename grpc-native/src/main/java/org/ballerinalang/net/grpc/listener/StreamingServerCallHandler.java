@@ -29,6 +29,7 @@ import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.ballerinalang.net.grpc.Message;
+import org.ballerinalang.net.grpc.MessageUtils;
 import org.ballerinalang.net.grpc.ServerCall;
 import org.ballerinalang.net.grpc.ServiceResource;
 import org.ballerinalang.net.grpc.StreamObserver;
@@ -155,6 +156,15 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         }
     }
 
+    /**
+     * Checks whether service method has a response message.
+     *
+     * @return true if method response is empty, false otherwise
+     */
+    private boolean isEmptyResponse() {
+        return methodDescriptor != null && MessageUtils.isEmptyResponse(methodDescriptor.getOutputType());
+    }
+
     void onStreamInvoke(ServiceResource resource, BStream requestStream, HttpHeaders headers,
                         StreamObserver responseObserver, ObserverContext context) {
         Object[] requestParams = computeResourceParams(resource, requestStream, headers, responseObserver);
@@ -163,7 +173,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
         StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(resource.getRuntime(),
-                responseObserver, this.methodDescriptor.getOutputType(), context);
+                responseObserver, isEmptyResponse(), this.methodDescriptor.getOutputType(), context);
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
                                                 ON_MESSAGE_METADATA, callback, properties, resource.getReturnType(),
                 requestParams);

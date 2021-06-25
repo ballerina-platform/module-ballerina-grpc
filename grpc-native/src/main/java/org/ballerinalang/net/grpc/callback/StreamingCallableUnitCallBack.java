@@ -33,6 +33,7 @@ import org.ballerinalang.net.grpc.listener.ServerCallHandler;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 import static org.ballerinalang.net.grpc.GrpcConstants.CONTENT_FIELD;
+import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 import static org.ballerinalang.net.grpc.GrpcConstants.HEADER_FIELD;
 import static org.ballerinalang.net.grpc.MessageUtils.convertToHttpHeaders;
 import static org.ballerinalang.net.grpc.MessageUtils.isContextRecordByValue;
@@ -47,14 +48,16 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
 
     private Runtime runtime;
     private StreamObserver responseSender;
+    private boolean emptyResponse;
     private Descriptors.Descriptor outputType;
     private ObserverContext observerContext;
 
-    public StreamingCallableUnitCallBack(Runtime runtime, StreamObserver responseSender,
+    public StreamingCallableUnitCallBack(Runtime runtime, StreamObserver responseSender, boolean isEmptyResponse,
                                          Descriptors.Descriptor outputType, ObserverContext context) {
         available.acquireUninterruptibly();
         this.runtime = runtime;
         this.responseSender = responseSender;
+        this.emptyResponse = isEmptyResponse;
         this.observerContext = context;
         this.outputType = outputType;
     }
@@ -103,13 +106,17 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             // to client via caller object, but connection is not closed already by calling complete function.
             // Hence closing the connection.
             if (content == null) {
-                responseSender.onCompleted();
+                if (this.emptyResponse) {
+                    Message responseMessage = new Message(EMPTY_DATATYPE_NAME, null);
+                    responseMessage.setHeaders(headers);
+                    responseSender.onNext(responseMessage);
+                }
             } else {
                 Message responseMessage = new Message(outputType.getName(), content);
                 responseMessage.setHeaders(headers);
                 responseSender.onNext(responseMessage);
-                responseSender.onCompleted();
             }
+            responseSender.onCompleted();
         }
     }
 
