@@ -76,29 +76,61 @@ public isolated client class ChatClient {
         return new Call6StreamingClient(sClient);
     }
 
-    isolated remote function call3(Msg req) returns stream<string, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("Chat/call3", req);
+    isolated remote function call3(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
+        map<string|string[]> headers = {};
+        Msg message;
+        if (req is ContextMsg) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call3Context(Msg req) returns ContextStringStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("Chat/call3", req);
+    isolated remote function call3Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
+        map<string|string[]> headers = {};
+        Msg message;
+        if (req is ContextMsg) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: headers};
     }
 
-    isolated remote function call4(Msg req) returns stream<string, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("Chat/call4", req);
+    isolated remote function call4(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
+        map<string|string[]> headers = {};
+        Msg message;
+        if (req is ContextMsg) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call4Context(Msg req) returns ContextStringStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("Chat/call4", req);
+    isolated remote function call4Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
+        map<string|string[]> headers = {};
+        Msg message;
+        if (req is ContextMsg) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: headers};
@@ -191,29 +223,61 @@ public isolated client class Chat2Client {
         return new Call6StreamingClient(sClient);
     }
 
-    isolated remote function call3(Msg req) returns stream<string, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", req);
+    isolated remote function call3(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
+        map<string|string[]> headers = {};
+        Msg message;
+        if (req is ContextMsg) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call3Context(Msg req) returns ContextStringStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", req);
+    isolated remote function call3Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
+        map<string|string[]> headers = {};
+        Msg message;
+        if (req is ContextMsg) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: headers};
     }
 
-    isolated remote function call4(Msg req) returns stream<string, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", req);
+    isolated remote function call4(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
+        map<string|string[]> headers = {};
+        Msg message;
+        if (req is ContextMsg) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         StringStream outputStream = new StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call4Context(Msg req) returns ContextStringStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", req);
+    isolated remote function call4Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
+        map<string|string[]> headers = {};
+        Msg message;
+        if (req is ContextMsg) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         StringStream outputStream = new StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: headers};

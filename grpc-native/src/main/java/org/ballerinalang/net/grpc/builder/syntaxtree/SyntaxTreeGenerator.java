@@ -129,7 +129,7 @@ public class SyntaxTreeGenerator {
                 client.addMember(getUnaryContextFunction(method).getFunctionDefinitionNode());
             }
             for (Method method : service.getClientStreamingFunctions()) {
-                client.addMember(getStreamingClientFunction(method, false).getFunctionDefinitionNode());
+                client.addMember(getStreamingClientFunction(method).getFunctionDefinitionNode());
                 clientStreamingClasses.put(method.getMethodName(), getStreamingClientClass(method));
             }
             for (Method method : service.getServerStreamingFunctions()) {
@@ -138,7 +138,7 @@ public class SyntaxTreeGenerator {
                 serverStreamingClasses.put(method.getOutputType(), getServerStreamClass(method));
             }
             for (Method method : service.getBidiStreamingFunctions()) {
-                client.addMember(getStreamingClientFunction(method, true).getFunctionDefinitionNode());
+                client.addMember(getStreamingClientFunction(method).getFunctionDefinitionNode());
                 bidirectionalStreamingClasses.put(method.getMethodName(), getStreamingClientClass(method));
             }
             moduleMembers = moduleMembers.add(client.getClassDefinitionNode());

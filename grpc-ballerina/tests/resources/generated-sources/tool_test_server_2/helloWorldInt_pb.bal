@@ -10,15 +10,31 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
     }
 
-    isolated remote function hello(int req) returns stream<int, grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+    isolated remote function hello(int|ContextInt req) returns stream<int, grpc:Error?>|grpc:Error {
+        map<string|string[]> headers = {};
+        int message;
+        if (req is ContextInt) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         IntStream outputStream = new IntStream(result);
         return new stream<int, grpc:Error?>(outputStream);
     }
 
-    isolated remote function helloContext(int req) returns ContextIntStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+    isolated remote function helloContext(int|ContextInt req) returns ContextIntStream|grpc:Error {
+        map<string|string[]> headers = {};
+        int message;
+        if (req is ContextInt) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         IntStream outputStream = new IntStream(result);
         return {

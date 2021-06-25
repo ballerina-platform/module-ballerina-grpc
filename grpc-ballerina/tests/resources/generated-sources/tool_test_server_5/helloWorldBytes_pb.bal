@@ -10,15 +10,31 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
     }
 
-    isolated remote function hello(byte[] req) returns stream<byte[], grpc:Error?>|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+    isolated remote function hello(byte[]|ContextBytes req) returns stream<byte[], grpc:Error?>|grpc:Error {
+        map<string|string[]> headers = {};
+        byte[] message;
+        if (req is ContextBytes) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         BytesStream outputStream = new BytesStream(result);
         return new stream<byte[], grpc:Error?>(outputStream);
     }
 
-    isolated remote function helloContext(byte[] req) returns ContextBytesStream|grpc:Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", req);
+    isolated remote function helloContext(byte[]|ContextBytes req) returns ContextBytesStream|grpc:Error {
+        map<string|string[]> headers = {};
+        byte[] message;
+        if (req is ContextBytes) {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
         BytesStream outputStream = new BytesStream(result);
         return {

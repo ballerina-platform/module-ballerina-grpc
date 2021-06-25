@@ -31,11 +31,9 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclarat
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getExplicitNewExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
@@ -54,6 +52,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 
 /**
@@ -69,9 +68,18 @@ public class ServerUtils {
 
     public static Function getServerStreamingFunction(Method method) {
         Function function = new Function(method.getMethodName());
+        String inputCap = "Nil";
         if (method.getInputType() != null) {
+            if (method.getInputType().equals("byte[]")) {
+                inputCap = "Bytes";
+            } else {
+                inputCap = capitalize(method.getInputType());
+            }
             function.addRequiredParameter(
-                    getSimpleNameReferenceNode(method.getInputType()),
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode("Context" + inputCap)
+                    ),
                     "req"
             );
         }
@@ -90,7 +98,7 @@ public class ServerUtils {
                         SYNTAX_TREE_GRPC_ERROR
                 )
         );
-        addServerBody(function, method, "_", outCap);
+        addServerBody(function, method, inputCap, outCap, "_");
         function.addReturnStatement(
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
@@ -106,9 +114,18 @@ public class ServerUtils {
 
     public static Function getServerStreamingContextFunction(Method method) {
         Function function = new Function(method.getMethodName() + "Context");
+        String inputCap = "Nil";
         if (method.getInputType() != null) {
+            if (method.getInputType().equals("byte[]")) {
+                inputCap = "Bytes";
+            } else {
+                inputCap = capitalize(method.getInputType());
+            }
             function.addRequiredParameter(
-                    getSimpleNameReferenceNode(method.getInputType()),
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode("Context" + inputCap)
+                    ),
                     "req"
             );
         }
@@ -124,7 +141,7 @@ public class ServerUtils {
                         SYNTAX_TREE_GRPC_ERROR
                 )
         );
-        addServerBody(function, method, "headers", outputCap);
+        addServerBody(function, method, inputCap, outputCap, "headers");
         Map returnMap = new Map();
         returnMap.addField(
                 "content",
@@ -275,21 +292,9 @@ public class ServerUtils {
         return function;
     }
 
-    private static void addServerBody(Function function, Method method, String headers, String outCap) {
-        VariableDeclaration payload = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        getBuiltinSimpleNameReferenceNode("var"),
-                        getCaptureBindingPatternNode("payload")),
-                getCheckExpressionNode(
-                        getRemoteMethodCallActionNode(
-                                getFieldAccessExpressionNode("self", "grpcClient"),
-                                "executeServerStreaming",
-                                new String[]{"\"" + method.getMethodId() + "\"", "req"}
-                        )
-                )
-        );
-        function.addVariableStatement(payload.getVariableDeclarationNode());
-
+    private static void addServerBody(Function function, Method method, String inputCap, String outCap,
+                                      String headers) {
+        addClientCallBody(function, inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getStreamTypeDescriptorNode(SYNTAX_TREE_VAR_ANYDATA, SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
