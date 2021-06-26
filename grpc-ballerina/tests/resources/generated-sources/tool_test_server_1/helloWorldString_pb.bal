@@ -35,11 +35,11 @@ public isolated client class helloWorldClient {
             message = req;
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
-        [stream<anydata, grpc:Error?>, map<string|string[]>] [result, headers] = payload;
+        [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         StringStream outputStream = new StringStream(result);
         return {
             content: new stream<string, grpc:Error?>(outputStream),
-            headers: headers
+            headers: respHeaders
         };
     }
 }
