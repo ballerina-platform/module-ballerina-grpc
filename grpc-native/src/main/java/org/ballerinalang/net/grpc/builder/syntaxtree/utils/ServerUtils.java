@@ -141,7 +141,7 @@ public class ServerUtils {
                         SYNTAX_TREE_GRPC_ERROR
                 )
         );
-        addServerBody(function, method, inputCap, outputCap, "headers");
+        addServerBody(function, method, inputCap, outputCap, "respHeaders");
         Map returnMap = new Map();
         returnMap.addField(
                 "content",
@@ -153,7 +153,7 @@ public class ServerUtils {
                         new String[]{"outputStream"}
                 )
         );
-        returnMap.addSimpleNameReferenceField("headers", "headers");
+        returnMap.addSimpleNameReferenceField("headers", "respHeaders");
         function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
