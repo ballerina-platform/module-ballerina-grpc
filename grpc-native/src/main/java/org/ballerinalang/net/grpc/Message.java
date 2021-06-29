@@ -142,7 +142,7 @@ public class Message {
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG) {
             bBMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
             bMessage = bBMap;
-        } else if (messageName.equals("Timestamp")) {
+        } else if (type.getTag() == TypeTags.INTERSECTION_TAG) {
             TupleType tupleType = TypeCreator.createTupleType(
                     Arrays.asList(PredefinedTypes.TYPE_INT, PredefinedTypes.TYPE_DECIMAL));
             bArray = ValueCreator.createTupleValue(tupleType);

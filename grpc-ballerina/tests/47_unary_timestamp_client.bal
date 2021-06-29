@@ -21,16 +21,16 @@ import ballerina/time;
 isolated function testUnaryTimestampWithGreeting() returns error? {
     UnaryTimestampServiceClient utsClient = check new ("http://localhost:9147");
     Greeting greeting = check utsClient->getGreeting("Hello");
-    [int, decimal] & readonly time = [1196676930, 0.12];
-    Greeting expectedGreeting = {"name": "Hello","time": time};
+    time:Utc customTime = [1196676930, 0.12];
+    Greeting expectedGreeting = {"name": "Hello","time": customTime};
     test:assertEquals(greeting, expectedGreeting);
 }
 
 @test:Config {enable: true}
 function testUnaryTimestampWithBidiGreeting() returns error? {
     UnaryTimestampServiceClient utsClient = check new ("http://localhost:9147");
-    [int, decimal] & readonly time = [1228302930, 0.12];
-    Greeting expectedGreeting = {"name": "Hello", "time": time};
+    time:Utc customTime = [1228302930, 0.12];
+    Greeting expectedGreeting = {"name": "Hello", "time": customTime};
     Greeting greeting = check utsClient->getBiGreeting(expectedGreeting);
     test:assertEquals(greeting, expectedGreeting);
 }
