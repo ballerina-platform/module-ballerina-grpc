@@ -190,7 +190,7 @@ public class GrpcCmd implements BLauncherCmd {
             Path descFilePath = createServiceDescriptorFile();
             try {
                 root = DescriptorsGenerator.generateRootDescriptor(this.protocExePath,
-                        escapeSpaceCharacter(protoPath), descFilePath.toAbsolutePath().toString());
+                        getAbsolutePath(protoPath), descFilePath.toAbsolutePath().toString());
             } catch (CodeGeneratorException e) {
                 String errorMessage = "Error occurred when generating proto descriptor. " + e.getMessage();
                 LOG.error("Error occurred when generating proto descriptor.", e);
@@ -206,7 +206,7 @@ public class GrpcCmd implements BLauncherCmd {
             LOG.debug("Successfully generated root descriptor.");
             try {
                 dependant = DescriptorsGenerator.generateDependentDescriptor(this.protocExePath,
-                        escapeSpaceCharacter(protoPath), descFilePath.toAbsolutePath().toString());
+                        getAbsolutePath(protoPath), descFilePath.toAbsolutePath().toString());
             } catch (CodeGeneratorException e) {
                 String errorMessage = "Error occurred when generating dependent proto descriptor. " + e.getMessage();
                 LOG.error(errorMessage, e);
@@ -279,8 +279,9 @@ public class GrpcCmd implements BLauncherCmd {
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
-    private String escapeSpaceCharacter(String protoPath) {
-        return Paths.get(protoPath.replace(WHITESPACE_CHARACTOR, WHITESPACE_REPLACEMENT)).toAbsolutePath().toString();
+    private String getAbsolutePath(String protoPath) {
+
+        return Paths.get(protoPath).toAbsolutePath().toString();
     }
     
     /**

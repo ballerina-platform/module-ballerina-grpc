@@ -38,6 +38,7 @@ import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.GOOGLE_
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.GOOGLE_STANDARD_LIB_PROTOBUF;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.PROTO_SUFFIX;
 import static org.ballerinalang.net.grpc.protobuf.BalGenerationConstants.TMP_DIRECTORY_PATH;
+import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.escapeSpaces;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.generateDescriptor;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.isWindows;
 import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.resolveProtoFolderPath;
@@ -46,10 +47,12 @@ import static org.ballerinalang.net.grpc.protobuf.utils.BalFileGenerationUtils.r
  * Class for generate file descriptors for proto files.
  */
 class DescriptorsGenerator {
+
     private static final Logger LOG = LoggerFactory.getLogger(DescriptorsGenerator.class);
-    
+
     static Set<byte[]> generateDependentDescriptor(String exePath, String rootProtoPath, String
             rootDescriptorPath) throws CodeGeneratorException {
+
         Set<byte[]> dependentDescSet = new HashSet<>();
         File tempDir = new File(TMP_DIRECTORY_PATH);
         File initialFile = new File(rootDescriptorPath);
@@ -90,9 +93,9 @@ class DescriptorsGenerator {
                     protoPath = new File(tempDir, dependentFilePath).getAbsolutePath();
                     protoFolderPath = tempDir.getAbsolutePath();
                 }
-                
-                String command = new ProtocCommandBuilder(exePath, protoPath, protoFolderPath, dependentDescFile
-                        .getAbsolutePath()).build();
+
+                String command = new ProtocCommandBuilder(exePath, escapeSpaces(protoPath),
+                        escapeSpaces(protoFolderPath), escapeSpaces(dependentDescFile.getAbsolutePath())).build();
                 generateDescriptor(command);
                 File childFile = new File(tempDir, relativeDescFilepath);
                 try (InputStream childStream = new FileInputStream(childFile)) {
@@ -129,8 +132,9 @@ class DescriptorsGenerator {
      */
     static byte[] generateRootDescriptor(String exePath, String protoPath, String descriptorPath)
             throws CodeGeneratorException {
-        String command = new ProtocCommandBuilder
-                (exePath, protoPath, resolveProtoFolderPath(protoPath), descriptorPath).build();
+
+        String command = new ProtocCommandBuilder(exePath, escapeSpaces(protoPath),
+                escapeSpaces(resolveProtoFolderPath(protoPath)), escapeSpaces(descriptorPath)).build();
         generateDescriptor(command);
         File initialFile = new File(descriptorPath);
         try (InputStream targetStream = new FileInputStream(initialFile)) {
