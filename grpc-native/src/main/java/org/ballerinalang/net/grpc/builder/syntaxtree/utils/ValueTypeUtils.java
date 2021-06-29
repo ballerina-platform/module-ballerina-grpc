@@ -75,7 +75,7 @@ public class ValueTypeUtils {
             }
             if (isBallerinaBasicType(key)) {
                 contextString.addBasicField(key, "content");
-            }  else {
+            } else {
                 contextString.addCustomField(getMethodInputOutputType(key), "content");
             }
         }
