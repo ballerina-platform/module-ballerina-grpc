@@ -121,7 +121,7 @@ public class MessageUtils {
                     messageRecord.addArrayFieldWithDefaultValue("byte", field.getFieldName());
                     break;
                 case "Timestamp":
-                    messageRecord.addCustomField(getTimestampType(), field.getFieldName());
+                    messageRecord.addCustomFieldWithDefaultValue(getTimestampType(), field.getFieldName(), "[0, 0.0d]");
                     break;
                 default:
                     if (field.getFieldLabel() == null) {
