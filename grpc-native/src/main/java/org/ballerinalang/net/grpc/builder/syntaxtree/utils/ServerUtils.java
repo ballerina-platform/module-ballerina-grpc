@@ -54,7 +54,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getMethodInputOutputType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestamp;
 
 /**
@@ -79,7 +79,7 @@ public class ServerUtils {
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(getMethodInputOutputType(method.getInputType())),
+                            getSimpleNameReferenceNode(getType(method.getInputType())),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
                     "req"
@@ -94,7 +94,7 @@ public class ServerUtils {
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(getMethodInputOutputType(method.getOutputType())),
+                                getSimpleNameReferenceNode(getType(method.getOutputType())),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         SYNTAX_TREE_GRPC_ERROR
@@ -104,7 +104,7 @@ public class ServerUtils {
         function.addReturnStatement(
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(getMethodInputOutputType(method.getOutputType())),
+                                getSimpleNameReferenceNode(getType(method.getOutputType())),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         new String[]{"outputStream"}
@@ -125,7 +125,7 @@ public class ServerUtils {
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(getMethodInputOutputType(method.getInputType())),
+                            getSimpleNameReferenceNode(getType(method.getInputType())),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
                     "req"
@@ -149,7 +149,7 @@ public class ServerUtils {
                 "content",
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(getMethodInputOutputType(method.getOutputType())),
+                                getSimpleNameReferenceNode(getType(method.getOutputType())),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         new String[]{"outputStream"}
@@ -203,7 +203,7 @@ public class ServerUtils {
     private static Function getNextFunction(Method method) {
         Function function = new Function("next");
         Record nextRecord = new Record();
-        nextRecord.addCustomField(getMethodInputOutputType(method.getOutputType()), "value");
+        nextRecord.addCustomField(getType(method.getOutputType()), "value");
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         nextRecord.getRecordTypeDescriptorNode(),
@@ -251,12 +251,12 @@ public class ServerUtils {
         );
 
         Record nextRecordRec = new Record();
-        nextRecordRec.addCustomField(getMethodInputOutputType(method.getOutputType()), "value");
+        nextRecordRec.addCustomField(getType(method.getOutputType()), "value");
         Map nextRecordMap = new Map();
         if (isTimestamp(method.getOutputType())) {
             nextRecordMap.addTypeCastExpressionField(
                     "value",
-                    getMethodInputOutputType(method.getOutputType()),
+                    getType(method.getOutputType()),
                     getMethodCallExpressionNode(
                             getFieldAccessExpressionNode("streamValue", "value"),
                             "cloneReadOnly", new String[]{}

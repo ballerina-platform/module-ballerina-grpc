@@ -114,7 +114,7 @@ public class CommonUtils {
             if (method.getInputType().equals("string")) {
                 messageType = getBuiltinSimpleNameReferenceNode("string");
             } else {
-                messageType = getSimpleNameReferenceNode(getMethodInputOutputType(method.getInputType()));
+                messageType = getSimpleNameReferenceNode(getType(method.getInputType()));
             }
             VariableDeclaration message = new VariableDeclaration(
                     getTypedBindingPatternNode(
@@ -175,7 +175,7 @@ public class CommonUtils {
         return type.equals("Timestamp");
     }
 
-    public static String getMethodInputOutputType(String type) {
+    public static String getType(String type) {
         if (type == null) {
             return type;
         } else if (isTimestamp(type)) {

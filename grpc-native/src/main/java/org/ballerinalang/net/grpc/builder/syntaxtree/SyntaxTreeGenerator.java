@@ -79,7 +79,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CallerUtils.ge
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.GOOGLE_PROTOBUF_TIMESTAMP_PROTO;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getMethodInputOutputType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestamp;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
@@ -274,8 +274,8 @@ public class SyntaxTreeGenerator {
         for (Method method : methodList) {
             Function function = new Function(method.getMethodName());
             function.addQualifiers(new String[]{"remote"});
-            String input = getMethodInputOutputType(method.getInputType());
-            String output = getMethodInputOutputType(method.getOutputType());
+            String input = getType(method.getInputType());
+            String output = getType(method.getOutputType());
 
             if (method.getInputType() != null) {
                 TypeDescriptorNode inputParam;

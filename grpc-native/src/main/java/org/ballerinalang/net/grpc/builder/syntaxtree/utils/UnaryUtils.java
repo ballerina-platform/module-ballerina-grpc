@@ -43,7 +43,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getMethodInputOutputType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestamp;
 
 /**
@@ -70,7 +70,7 @@ public class UnaryUtils {
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(
-                                    getMethodInputOutputType(method.getInputType())
+                                    getType(method.getInputType())
                             ),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
@@ -82,7 +82,7 @@ public class UnaryUtils {
                     getParenthesisedTypeDescriptorNode(
                             getUnionTypeDescriptorNode(
                                     getSimpleNameReferenceNode(
-                                            getMethodInputOutputType(method.getOutputType())
+                                            getType(method.getOutputType())
                                     ),
                                     SYNTAX_TREE_GRPC_ERROR
                             )
@@ -132,7 +132,7 @@ public class UnaryUtils {
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(getMethodInputOutputType(method.getInputType())),
+                            getSimpleNameReferenceNode(getType(method.getInputType())),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
                     "req"
@@ -186,7 +186,7 @@ public class UnaryUtils {
         } else if (isTimestamp(method.getOutputType())) {
             function.addReturnStatement(
                     getTypeCastExpressionNode(
-                            getMethodInputOutputType(method.getOutputType()),
+                            getType(method.getOutputType()),
                             getMethodCallExpressionNode(
                                     getSimpleNameReferenceNode("result"),
                                     "cloneReadOnly",
@@ -217,7 +217,7 @@ public class UnaryUtils {
             } else if (isTimestamp(method.getOutputType())) {
                 returnMap.addTypeCastExpressionField(
                         "content",
-                        getMethodInputOutputType(method.getOutputType()),
+                        getType(method.getOutputType()),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("result"),
                                 "cloneReadOnly",

@@ -25,7 +25,7 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getMethodInputOutputType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaBasicType;
 
 /**
@@ -47,7 +47,7 @@ public class ValueTypeUtils {
             typeName = "Context" + capitalize(key) + "Stream";
         }
         Record contextStream = new Record();
-        contextStream.addStreamField(getMethodInputOutputType(key), "content");
+        contextStream.addStreamField(getType(key), "content");
         contextStream.addMapField(
                 "headers",
                 getUnionTypeDescriptorNode(
@@ -76,7 +76,7 @@ public class ValueTypeUtils {
             if (isBallerinaBasicType(key)) {
                 contextString.addBasicField(key, "content");
             } else {
-                contextString.addCustomField(getMethodInputOutputType(key), "content");
+                contextString.addCustomField(getType(key), "content");
             }
         }
         contextString.addMapField(
