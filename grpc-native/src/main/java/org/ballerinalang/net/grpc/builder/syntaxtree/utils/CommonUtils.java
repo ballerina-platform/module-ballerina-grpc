@@ -48,6 +48,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
  */
 public class CommonUtils {
 
+    public static final String GOOGLE_PROTOBUF_TIMESTAMP_PROTO = "google/protobuf/timestamp.proto";
+
     private CommonUtils() {
 
     }
@@ -112,7 +114,7 @@ public class CommonUtils {
             if (method.getInputType().equals("string")) {
                 messageType = getBuiltinSimpleNameReferenceNode("string");
             } else {
-                messageType = getSimpleNameReferenceNode(method.getInputType());
+                messageType = getSimpleNameReferenceNode(getMethodInputOutputType(method.getInputType()));
             }
             VariableDeclaration message = new VariableDeclaration(
                     getTypedBindingPatternNode(
@@ -160,5 +162,25 @@ public class CommonUtils {
                 )
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());
+    }
+
+    public static String getTimestampType() {
+        return "time:Utc";
+    }
+
+    public static boolean isTimestamp(String type) {
+        if (type == null) {
+            return false;
+        }
+        return type.equals("Timestamp");
+    }
+
+    public static String getMethodInputOutputType(String type) {
+        if (type == null) {
+            return type;
+        } else if (isTimestamp(type)) {
+            return getTimestampType();
+        }
+        return type;
     }
 }

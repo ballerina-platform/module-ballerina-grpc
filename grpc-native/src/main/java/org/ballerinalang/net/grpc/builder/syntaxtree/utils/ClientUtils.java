@@ -56,6 +56,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getMethodInputOutputType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestamp;
 
 /**
  * Utility functions related to Client.
@@ -153,7 +155,7 @@ public class ClientUtils {
         }
         Function function = new Function("send" + inputCap);
         function.addRequiredParameter(
-                getSimpleNameReferenceNode(method.getInputType()),
+                getSimpleNameReferenceNode(getMethodInputOutputType(method.getInputType())),
                 "message"
         );
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
@@ -220,7 +222,7 @@ public class ClientUtils {
         if (method.getOutputType() != null) {
             function.addReturns(
                     TypeDescriptor.getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(method.getOutputType()),
+                            getSimpleNameReferenceNode(getMethodInputOutputType(method.getOutputType())),
                             SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                     )
             );
@@ -266,6 +268,19 @@ public class ClientUtils {
                                         getSimpleNameReferenceNode("payload"),
                                         "toString",
                                         new String[]{}
+                                )
+                        )
+                );
+            } else if (isTimestamp(method.getOutputType())) {
+                responseCheck.addElseStatement(
+                        getReturnStatementNode(
+                                getTypeCastExpressionNode(
+                                        getMethodInputOutputType(method.getOutputType()),
+                                        getMethodCallExpressionNode(
+                                                getSimpleNameReferenceNode("payload"),
+                                                "cloneReadOnly",
+                                                new String[]{}
+                                        )
                                 )
                         )
                 );
@@ -354,6 +369,16 @@ public class ClientUtils {
                         getSimpleNameReferenceNode("payload"),
                         "toString",
                         new String[]{}
+                );
+            } else if (isTimestamp(method.getOutputType())) {
+                returnMap.addTypeCastExpressionField(
+                        "content",
+                        getMethodInputOutputType(method.getOutputType()),
+                        getMethodCallExpressionNode(
+                                getSimpleNameReferenceNode("payload"),
+                                "cloneReadOnly",
+                                new String[]{}
+                        )
                 );
             } else {
                 returnMap.addTypeCastExpressionField(

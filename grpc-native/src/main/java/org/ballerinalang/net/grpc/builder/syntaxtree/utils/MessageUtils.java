@@ -53,6 +53,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalizeFirstLetter;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getTimestampType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.toPascalCase;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 
@@ -119,6 +120,9 @@ public class MessageUtils {
                 case "byte[]":
                     messageRecord.addArrayFieldWithDefaultValue("byte", field.getFieldName());
                     break;
+                case "Timestamp":
+                    messageRecord.addCustomField(getTimestampType(), field.getFieldName());
+                    break;
                 default:
                     if (field.getFieldLabel() == null) {
                         messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
@@ -144,6 +148,9 @@ public class MessageUtils {
                             break;
                         case "byte[]":
                             messageRecord.addOptionalArrayField("byte", field.getFieldName());
+                            break;
+                        case "Timestamp":
+                            messageRecord.addOptionalCustomField(getTimestampType(), field.getFieldName());
                             break;
                         default:
                             if (field.getFieldLabel() == null) {
