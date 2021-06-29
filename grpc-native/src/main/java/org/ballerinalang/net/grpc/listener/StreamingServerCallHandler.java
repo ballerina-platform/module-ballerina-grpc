@@ -60,9 +60,15 @@ public class StreamingServerCallHandler extends ServerCallHandler {
 
     public StreamingServerCallHandler(Descriptors.MethodDescriptor methodDescriptor, ServiceResource resource,
                                       Type inputType) throws GrpcServerException {
+
         super(methodDescriptor);
         if (resource == null) {
-            throw new GrpcServerException("Streaming service resource doesn't exist.");
+            String serviceType = "Client streaming";
+            if (methodDescriptor.isServerStreaming() && methodDescriptor.isClientStreaming()) {
+                serviceType = "Bidirectional streaming";
+            }
+            throw new GrpcServerException(serviceType + " remote function '" + methodDescriptor.getFullName() +
+                    "' does not exist.");
         }
         this.resource = resource;
         this.inputType = inputType;
