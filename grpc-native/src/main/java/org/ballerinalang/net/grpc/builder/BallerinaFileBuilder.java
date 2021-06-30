@@ -76,6 +76,7 @@ public class BallerinaFileBuilder {
     // Proto file extension
     private static final String PROTO_FILE_EXTENSION = ".proto";
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
+    public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
@@ -89,15 +90,15 @@ public class BallerinaFileBuilder {
     }
 
     public void build(String mode) throws CodeBuilderException {
-        // compute root descriptor source code.
-        computeSourceContent(rootDescriptor, mode);
         // compute dependent descriptor source code.
         for (byte[] descriptorData : dependentDescriptors) {
-            computeSourceContent(descriptorData, null);
+            computeSourceContent(descriptorData, null, false);
         }
+        // compute root descriptor source code.
+        computeSourceContent(rootDescriptor, mode, true);
     }
 
-    private void computeSourceContent(byte[] descriptor, String mode) throws CodeBuilderException {
+    private void computeSourceContent(byte[] descriptor, String mode, boolean isRoot) throws CodeBuilderException {
         try (InputStream targetStream = new ByteArrayInputStream(descriptor)) {
             // define extension register and register custom option
             ExtensionRegistry extensionRegistry = ExtensionRegistry.newInstance();
@@ -191,7 +192,11 @@ public class BallerinaFileBuilder {
                         hasEmptyMessage = true;
                     }
                 }
-                stubFileObject.addServiceStub(serviceStubBuilder.build());
+                ServiceStub serviceStub = serviceStubBuilder.build();
+                stubFileObject.addServiceStub(serviceStub);
+                if (!isRoot) {
+                    dependentValueTypeMap.putAll(serviceStub.getValueTypeMap());
+                }
             }
             // update enum message types in stub file object
             stubFileObject.setEnumList(enumList);
@@ -217,7 +222,7 @@ public class BallerinaFileBuilder {
                 serviceIndex++;
             }
             String stubFilePath = generateOutputFile(this.balOutPath, filename + STUB_FILE_PREFIX);
-            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(stubFileObject), stubFilePath);
+            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(stubFileObject, isRoot), stubFilePath);
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error which reading proto file descriptor. " + e.getMessage(), e);
         }

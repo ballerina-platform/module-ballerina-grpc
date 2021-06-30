@@ -106,6 +106,18 @@ function testHelloWorldWithDuplicateInputOutput() {
 }
 
 @test:Config {enable:true}
+function testHelloWorldChild() {
+    var result1 = assertGeneratedDataTypeSources("data-types", "child.proto", "child_pb.bal", "tool_test_data_type_14");
+    if result1 is error {
+        test:assertFail("Failed to assert generated child_pb.bal");
+    }
+    var result2 = assertGeneratedDataTypeSources("data-types", "child.proto", "child_pb.bal", "tool_test_data_type_14");
+    if result2 is error {
+        test:assertFail("Failed to assert generated child_pb.bal");
+    }
+}
+
+@test:Config {enable:true}
 function testWithoutOutputDir() {
     var result = assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal", "");
     if (result is error) {
