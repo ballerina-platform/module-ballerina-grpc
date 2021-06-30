@@ -40,7 +40,7 @@ public class UnaryServerCallHandler extends ServerCallHandler {
 
         super(methodDescriptor);
         if (resource == null) {
-            String serviceType = "Unary";
+            String serviceType = "Simple";
             if (methodDescriptor.isServerStreaming()) {
                 serviceType = "Server streaming";
             }
