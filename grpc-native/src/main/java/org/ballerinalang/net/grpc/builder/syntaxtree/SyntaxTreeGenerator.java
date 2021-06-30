@@ -81,8 +81,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CallerUtils.ge
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.GOOGLE_PROTOBUF_TIMESTAMP_PROTO;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInStub;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInStub;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
