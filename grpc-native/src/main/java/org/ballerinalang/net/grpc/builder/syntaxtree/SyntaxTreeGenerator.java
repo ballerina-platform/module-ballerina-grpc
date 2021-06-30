@@ -48,8 +48,10 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.Type;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -79,7 +81,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CallerUtils.ge
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.GOOGLE_PROTOBUF_TIMESTAMP_PROTO;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestampType;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInStub;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
@@ -106,19 +109,18 @@ public class SyntaxTreeGenerator {
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
         if (stubFile.getStubList().size() > 0) {
-            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
-            ImportDeclarationNode importForTime = null;
-            for (Object desc : stubFile.getDescriptors().toArray()) {
-                if (((Descriptor) desc).getKey().equals(GOOGLE_PROTOBUF_TIMESTAMP_PROTO)) {
-                    importForTime = Imports.getImportDeclarationNode("ballerina", "time");
-                    break;
-                }
+            Collection<ImportDeclarationNode> nodes = new LinkedHashSet<>();
+            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode(
+                    "ballerina", "grpc"
+            );
+            nodes.add(importForGrpc);
+            if (checkForImportsInStub(stubFile, GOOGLE_PROTOBUF_TIMESTAMP_PROTO)) {
+                ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
+                        "ballerina", "time"
+                );
+                nodes.add(importForTime);
             }
-            if (importForTime == null) {
-                imports = AbstractNodeFactory.createNodeList(importForGrpc);
-            } else {
-                imports = AbstractNodeFactory.createNodeList(importForGrpc, importForTime);
-            }
+            imports = AbstractNodeFactory.createNodeList(nodes);
         }
 
         java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();
@@ -225,8 +227,9 @@ public class SyntaxTreeGenerator {
 
     public static SyntaxTree generateSyntaxTreeForServiceSample(ServiceStub serviceStub, boolean addListener) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
+        Collection<ImportDeclarationNode> nodes = new LinkedHashSet<>();
         ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
-        ImportDeclarationNode importForTime = null;
+        nodes.add(importForGrpc);
 
         List<Method> methodList = new ArrayList<>();
         methodList.addAll(serviceStub.getUnaryFunctions());
@@ -234,19 +237,13 @@ public class SyntaxTreeGenerator {
         methodList.addAll(serviceStub.getServerStreamingFunctions());
         methodList.addAll(serviceStub.getBidiStreamingFunctions());
 
-        for (Method method : methodList) {
-            if (isTimestampType(method.getInputType()) || isTimestampType(method.getOutputType())) {
-                importForTime = Imports.getImportDeclarationNode("ballerina", "time");
-                break;
-            }
+        if (checkForImportsInServices(methodList, "time:Utc")) {
+            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
+                    "ballerina", "time"
+            );
+            nodes.add(importForTime);
         }
-
-        NodeList<ImportDeclarationNode> imports;
-        if (importForTime == null) {
-            imports = AbstractNodeFactory.createNodeList(importForGrpc);
-        } else {
-            imports = AbstractNodeFactory.createNodeList(importForGrpc, importForTime);
-        }
+        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createNodeList(nodes);
 
         if (addListener) {
             Listener listener = new Listener(
