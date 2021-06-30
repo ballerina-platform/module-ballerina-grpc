@@ -47,7 +47,7 @@ function testAnonymousUnregisteredService() returns error? {
     log:printInfo("Starting the unregistered service");
     error? err = ep20.attach(unregisteredService);
     if err is error {
-        test:assertEquals(err.message(), "Error when initializing service register builder. Invalid service path. " + 
+        test:assertEquals(err.message(), "Error while registering the service. Invalid service path. " + 
             "Service path cannot be nil");
     } else {
         test:assertFail("Expected internal error not found");
@@ -56,13 +56,13 @@ function testAnonymousUnregisteredService() returns error? {
 
 @test:Config {dependsOn: [testAnonymousUnregisteredService], enable: true}
 function testAnonymousServiceWithoutRPCImplemented() returns error? {
-    string msg1 = "Error when initializing service register builder. " + 
-    "Unary remote function 'AnonService1.hello2' does not exist.";
-    string msg2 = "Error when initializing service register builder. " + 
+    string msg1 = "Error while registering the service. " + 
+    "Simple remote function 'AnonService1.hello2' does not exist.";
+    string msg2 = "Error while registering the service. " + 
     "Server streaming remote function 'AnonService2.hello2' does not exist.";
-    string msg3 = "Error when initializing service register builder. " + 
+    string msg3 = "Error while registering the service. " + 
     "Client streaming remote function 'AnonService3.hello2' does not exist.";
-    string msg4 = "Error when initializing service register builder. " + 
+    string msg4 = "Error while registering the service. " + 
     "Bidirectional streaming remote function 'AnonService4.hello2' does not exist.";
 
     var err1 = ep20.attach(IncompleteService, "AnonService1");
