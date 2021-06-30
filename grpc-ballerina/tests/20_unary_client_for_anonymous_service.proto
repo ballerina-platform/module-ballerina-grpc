@@ -17,6 +17,22 @@
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 
-service AnonService {
-	rpc hello (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+service AnonService1 {
+	rpc hello1 (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc hello2 (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+}
+
+service AnonService2 {
+	rpc hello1 (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc hello2 (google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
+}
+
+service AnonService3 {
+	rpc hello1 (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc hello2 (stream google.protobuf.StringValue) returns (google.protobuf.StringValue);
+}
+
+service AnonService4 {
+	rpc hello1 (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc hello2 (stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
 }

@@ -37,9 +37,15 @@ public class UnaryServerCallHandler extends ServerCallHandler {
 
     public UnaryServerCallHandler(Descriptors.MethodDescriptor methodDescriptor, ServiceResource resource)
             throws GrpcServerException {
+
         super(methodDescriptor);
         if (resource == null) {
-            throw new GrpcServerException("Unary service resource doesn't exist.");
+            String serviceType = "Simple";
+            if (methodDescriptor.isServerStreaming()) {
+                serviceType = "Server streaming";
+            }
+            throw new GrpcServerException(serviceType + " remote function '" + methodDescriptor.getFullName() +
+                    "' does not exist.");
         }
         this.resource = resource;
     }

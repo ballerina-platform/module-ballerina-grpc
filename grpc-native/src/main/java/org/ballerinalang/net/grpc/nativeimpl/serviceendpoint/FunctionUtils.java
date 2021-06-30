@@ -119,8 +119,8 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
             }
         } catch (GrpcServerException e) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
-                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error when " +
-                            "initializing service register builder. " + e.getLocalizedMessage())));
+                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while registering " +
+                     "the service. " + e.getLocalizedMessage())));
         }
     }
 
