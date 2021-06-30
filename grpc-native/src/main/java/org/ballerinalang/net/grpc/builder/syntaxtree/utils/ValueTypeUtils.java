@@ -25,7 +25,6 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstan
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaBasicType;
 
 /**
@@ -43,11 +42,13 @@ public class ValueTypeUtils {
         String typeName;
         if (key.equals("byte[]")) {
             typeName = "ContextBytesStream";
+        } else if (key.equals("time:Utc")) {
+            typeName = "ContextTimestampStream";
         } else {
             typeName = "Context" + capitalize(key) + "Stream";
         }
         Record contextStream = new Record();
-        contextStream.addStreamField(getType(key), "content");
+        contextStream.addStreamField(key, "content");
         contextStream.addMapField(
                 "headers",
                 getUnionTypeDescriptorNode(
@@ -70,13 +71,15 @@ public class ValueTypeUtils {
         } else {
             if (key.equals("byte[]")) {
                 typeName = "ContextBytes";
+            } else if (key.equals("time:Utc")) {
+                typeName = "ContextTimestamp";
             } else {
                 typeName = "Context" + capitalize(key);
             }
             if (isBallerinaBasicType(key)) {
                 contextString.addBasicField(key, "content");
             } else {
-                contextString.addCustomField(getType(key), "content");
+                contextString.addCustomField(key, "content");
             }
         }
         contextString.addMapField(

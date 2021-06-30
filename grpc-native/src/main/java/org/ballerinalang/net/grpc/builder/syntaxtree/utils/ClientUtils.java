@@ -56,8 +56,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestamp;
 
 /**
  * Utility functions related to Client.
@@ -150,12 +148,14 @@ public class ClientUtils {
         String inputCap;
         if (method.getInputType().equals("byte[]")) {
             inputCap = "Bytes";
+        } else if (method.getInputType().equals("time:Utc")) {
+            inputCap = "Timestamp";
         } else {
             inputCap = capitalize(method.getInputType());
         }
         Function function = new Function("send" + inputCap);
         function.addRequiredParameter(
-                getSimpleNameReferenceNode(getType(method.getInputType())),
+                getSimpleNameReferenceNode(method.getInputType()),
                 "message"
         );
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
@@ -174,6 +174,8 @@ public class ClientUtils {
         String inputCap;
         if (method.getInputType().equals("byte[]")) {
             inputCap = "Bytes";
+        } else if (method.getInputType().equals("time:Utc")) {
+            inputCap = "Timestamp";
         } else {
             inputCap = capitalize(method.getInputType());
         }
@@ -200,6 +202,8 @@ public class ClientUtils {
             String outCap;
             if (method.getOutputType().equals("byte[]")) {
                 outCap = "Bytes";
+            } else if (method.getOutputType().equals("time:Utc")) {
+                outCap = "Timestamp";
             } else {
                 outCap = capitalize(method.getOutputType());
             }
@@ -222,7 +226,7 @@ public class ClientUtils {
         if (method.getOutputType() != null) {
             function.addReturns(
                     TypeDescriptor.getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(getType(method.getOutputType())),
+                            getSimpleNameReferenceNode(method.getOutputType()),
                             SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                     )
             );
@@ -271,11 +275,11 @@ public class ClientUtils {
                                 )
                         )
                 );
-            } else if (isTimestamp(method.getOutputType())) {
+            } else if (method.getOutputType().equals("time:Utc")) {
                 responseCheck.addElseStatement(
                         getReturnStatementNode(
                                 getTypeCastExpressionNode(
-                                        getType(method.getOutputType()),
+                                        method.getOutputType(),
                                         getMethodCallExpressionNode(
                                                 getSimpleNameReferenceNode("payload"),
                                                 "cloneReadOnly",
@@ -305,6 +309,8 @@ public class ClientUtils {
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("byte[]")) {
                 outCap = "Bytes";
+            } else if (method.getOutputType().equals("time:Utc")) {
+                outCap = "Timestamp";
             } else {
                 outCap = capitalize(method.getOutputType());
             }
@@ -370,10 +376,10 @@ public class ClientUtils {
                         "toString",
                         new String[]{}
                 );
-            } else if (isTimestamp(method.getOutputType())) {
+            } else if (method.getOutputType().equals("time:Utc")) {
                 returnMap.addTypeCastExpressionField(
                         "content",
-                        getType(method.getOutputType()),
+                        method.getOutputType(),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("payload"),
                                 "cloneReadOnly",

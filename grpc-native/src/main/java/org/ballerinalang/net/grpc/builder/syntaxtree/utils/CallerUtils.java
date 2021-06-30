@@ -30,7 +30,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescr
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
 
 /**
  * Utility functions related to Caller.
@@ -83,12 +82,14 @@ public class CallerUtils {
             String valueCap;
             if (value.equals("byte[]")) {
                 valueCap = "Bytes";
+            } else if (value.equals("time:Utc")) {
+                valueCap = "Timestamp";
             } else {
                 valueCap = capitalize(value);
             }
             Function send = new Function("send" + valueCap);
             send.addRequiredParameter(
-                    getSimpleNameReferenceNode(getType(value)),
+                    getSimpleNameReferenceNode(value),
                     "response"
             );
             send.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);

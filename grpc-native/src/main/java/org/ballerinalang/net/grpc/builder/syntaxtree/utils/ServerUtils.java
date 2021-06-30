@@ -54,8 +54,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestamp;
 
 /**
  * Utility functions related to Server.
@@ -74,12 +72,14 @@ public class ServerUtils {
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
-            } else {
+            } else if (method.getInputType().equals("time:Utc")) {
+                inputCap = "Timestamp";
+            }  else {
                 inputCap = capitalize(method.getInputType());
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(getType(method.getInputType())),
+                            getSimpleNameReferenceNode(method.getInputType()),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
                     "req"
@@ -88,13 +88,15 @@ public class ServerUtils {
         String outCap;
         if (method.getOutputType().equals("byte[]")) {
             outCap = "Bytes";
+        } else if (method.getOutputType().equals("time:Utc")) {
+            outCap = "Timestamp";
         } else {
             outCap = capitalize(method.getOutputType());
         }
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(getType(method.getOutputType())),
+                                getSimpleNameReferenceNode(method.getOutputType()),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         SYNTAX_TREE_GRPC_ERROR
@@ -104,7 +106,7 @@ public class ServerUtils {
         function.addReturnStatement(
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(getType(method.getOutputType())),
+                                getSimpleNameReferenceNode(method.getOutputType()),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         new String[]{"outputStream"}
@@ -120,12 +122,14 @@ public class ServerUtils {
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
+            } else if (method.getInputType().equals("time:Utc")) {
+                inputCap = "Timestamp";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(getType(method.getInputType())),
+                            getSimpleNameReferenceNode(method.getInputType()),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
                     "req"
@@ -134,6 +138,8 @@ public class ServerUtils {
         String outputCap;
         if (method.getOutputType().equals("byte[]")) {
             outputCap = "Bytes";
+        } else if (method.getOutputType().equals("time:Utc")) {
+            outputCap = "Timestamp";
         } else {
             outputCap = capitalize(method.getOutputType());
         }
@@ -149,7 +155,7 @@ public class ServerUtils {
                 "content",
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(getType(method.getOutputType())),
+                                getSimpleNameReferenceNode(method.getOutputType()),
                                 SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         new String[]{"outputStream"}
@@ -165,6 +171,8 @@ public class ServerUtils {
         String outputCap;
         if (method.getOutputType().equals("byte[]")) {
             outputCap = "Bytes";
+        } else if (method.getOutputType().equals("time:Utc")) {
+            outputCap = "Timestamp";
         } else {
             outputCap = capitalize(method.getOutputType());
         }
@@ -203,7 +211,7 @@ public class ServerUtils {
     private static Function getNextFunction(Method method) {
         Function function = new Function("next");
         Record nextRecord = new Record();
-        nextRecord.addCustomField(getType(method.getOutputType()), "value");
+        nextRecord.addCustomField(method.getOutputType(), "value");
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         nextRecord.getRecordTypeDescriptorNode(),
@@ -251,12 +259,12 @@ public class ServerUtils {
         );
 
         Record nextRecordRec = new Record();
-        nextRecordRec.addCustomField(getType(method.getOutputType()), "value");
+        nextRecordRec.addCustomField(method.getOutputType(), "value");
         Map nextRecordMap = new Map();
-        if (isTimestamp(method.getOutputType())) {
+        if (method.getOutputType().equals("time:Utc")) {
             nextRecordMap.addTypeCastExpressionField(
                     "value",
-                    getType(method.getOutputType()),
+                    method.getOutputType(),
                     getMethodCallExpressionNode(
                             getFieldAccessExpressionNode("streamValue", "value"),
                             "cloneReadOnly", new String[]{}

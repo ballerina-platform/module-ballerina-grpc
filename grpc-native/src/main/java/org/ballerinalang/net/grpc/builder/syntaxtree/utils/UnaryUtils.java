@@ -43,8 +43,6 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestamp;
 
 /**
  * Utility functions related to Unary.
@@ -64,13 +62,15 @@ public class UnaryUtils {
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
+            } else if (method.getInputType().equals("time:Utc")) {
+                inputCap = "Timestamp";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(
-                                    getType(method.getInputType())
+                                    method.getInputType()
                             ),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
@@ -82,7 +82,7 @@ public class UnaryUtils {
                     getParenthesisedTypeDescriptorNode(
                             getUnionTypeDescriptorNode(
                                     getSimpleNameReferenceNode(
-                                            getType(method.getOutputType())
+                                            method.getOutputType()
                                     ),
                                     SYNTAX_TREE_GRPC_ERROR
                             )
@@ -127,12 +127,14 @@ public class UnaryUtils {
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
+            } else if (method.getInputType().equals("time:Utc")) {
+                inputCap = "Timestamp";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(getType(method.getInputType())),
+                            getSimpleNameReferenceNode(method.getInputType()),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
                     "req"
@@ -141,6 +143,8 @@ public class UnaryUtils {
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("byte[]")) {
                 outCap = "Bytes";
+            } else if (method.getOutputType().equals("time:Utc")) {
+                outCap = "Timestamp";
             } else {
                 outCap = capitalize(method.getOutputType());
             }
@@ -183,10 +187,10 @@ public class UnaryUtils {
                             new String[]{}
                     )
             );
-        } else if (isTimestamp(method.getOutputType())) {
+        } else if (method.getOutputType().equals("time:Utc")) {
             function.addReturnStatement(
                     getTypeCastExpressionNode(
-                            getType(method.getOutputType()),
+                            method.getOutputType(),
                             getMethodCallExpressionNode(
                                     getSimpleNameReferenceNode("result"),
                                     "cloneReadOnly",
@@ -214,10 +218,10 @@ public class UnaryUtils {
                         "toString",
                         new String[]{}
                 );
-            } else if (isTimestamp(method.getOutputType())) {
+            } else if (method.getOutputType().equals("time:Utc")) {
                 returnMap.addTypeCastExpressionField(
                         "content",
-                        getType(method.getOutputType()),
+                        method.getOutputType(),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("result"),
                                 "cloneReadOnly",

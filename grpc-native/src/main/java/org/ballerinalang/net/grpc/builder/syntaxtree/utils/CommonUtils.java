@@ -114,7 +114,7 @@ public class CommonUtils {
             if (method.getInputType().equals("string")) {
                 messageType = getBuiltinSimpleNameReferenceNode("string");
             } else {
-                messageType = getSimpleNameReferenceNode(getType(method.getInputType()));
+                messageType = getSimpleNameReferenceNode(method.getInputType());
             }
             VariableDeclaration message = new VariableDeclaration(
                     getTypedBindingPatternNode(
@@ -164,23 +164,10 @@ public class CommonUtils {
         function.addVariableStatement(payload.getVariableDeclarationNode());
     }
 
-    public static String getTimestampType() {
-        return "time:Utc";
-    }
-
-    public static boolean isTimestamp(String type) {
-        if (type == null) {
-            return false;
+    public static boolean isTimestampType(String type) {
+        if (type != null && type.equals("time:Utc")) {
+            return true;
         }
-        return type.equals("Timestamp");
-    }
-
-    public static String getType(String type) {
-        if (type == null) {
-            return type;
-        } else if (isTimestamp(type)) {
-            return getTimestampType();
-        }
-        return type;
+        return false;
     }
 }

@@ -79,8 +79,7 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CallerUtils.ge
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientFunction;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.GOOGLE_PROTOBUF_TIMESTAMP_PROTO;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.getType;
-import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestamp;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.isTimestampType;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
@@ -236,7 +235,7 @@ public class SyntaxTreeGenerator {
         methodList.addAll(serviceStub.getBidiStreamingFunctions());
 
         for (Method method : methodList) {
-            if (isTimestamp(method.getInputType()) || isTimestamp(method.getOutputType())) {
+            if (isTimestampType(method.getInputType()) || isTimestampType(method.getOutputType())) {
                 importForTime = Imports.getImportDeclarationNode("ballerina", "time");
                 break;
             }
@@ -274,8 +273,8 @@ public class SyntaxTreeGenerator {
         for (Method method : methodList) {
             Function function = new Function(method.getMethodName());
             function.addQualifiers(new String[]{"remote"});
-            String input = getType(method.getInputType());
-            String output = getType(method.getOutputType());
+            String input = method.getInputType();
+            String output = method.getOutputType();
 
             if (method.getInputType() != null) {
                 TypeDescriptorNode inputParam;
