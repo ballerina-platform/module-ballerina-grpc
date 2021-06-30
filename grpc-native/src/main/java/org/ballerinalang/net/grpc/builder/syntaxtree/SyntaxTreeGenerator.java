@@ -56,6 +56,7 @@ import java.util.TreeMap;
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
+import static org.ballerinalang.net.grpc.builder.BallerinaFileBuilder.dependentValueTypeMap;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getFunctionCallExpressionNode;
@@ -99,7 +100,7 @@ public class SyntaxTreeGenerator {
 
     }
 
-    public static SyntaxTree generateSyntaxTree(StubFile stubFile) {
+    public static SyntaxTree generateSyntaxTree(StubFile stubFile, boolean isRoot) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
@@ -147,10 +148,12 @@ public class SyntaxTreeGenerator {
                 callerClasses.put(caller.getKey(), getCallerClass(caller.getKey(), caller.getValue()));
             }
             for (java.util.Map.Entry<String, Boolean> valueType : service.getValueTypeMap().entrySet()) {
-                if (valueType.getValue()) {
-                    valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey()));
+                if (!(isRoot && dependentValueTypeMap.containsKey(valueType.getKey()))) {
+                    if (valueType.getValue()) {
+                        valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey()));
+                    }
+                    valueTypes.put(valueType.getKey(), getValueType(valueType.getKey()));
                 }
-                valueTypes.put(valueType.getKey(), getValueType(valueType.getKey()));
             }
         }
 
