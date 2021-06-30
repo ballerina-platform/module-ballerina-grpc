@@ -25,6 +25,14 @@ function testUnaryHelloWorldString() {
 }
 
 @test:Config {enable:true}
+function testUnaryHelloWorldStringWithSpace() {
+    var result = assertGeneratedSources("unary/with space", "helloWorldString.proto", "helloWorldString_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_1");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
+}
+
+@test:Config {enable:true}
 function testUnaryHelloWorldInt() {
     var result = assertGeneratedSources("unary", "helloWorldInt.proto", "helloWorldInt_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_2");
     if (result is error) {
