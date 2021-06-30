@@ -48,10 +48,8 @@ import org.ballerinalang.net.grpc.builder.syntaxtree.components.Type;
 import org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -109,18 +107,16 @@ public class SyntaxTreeGenerator {
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
         if (stubFile.getStubList().size() > 0) {
-            Collection<ImportDeclarationNode> nodes = new LinkedHashSet<>();
             ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode(
                     "ballerina", "grpc"
             );
-            nodes.add(importForGrpc);
+            imports = imports.add(importForGrpc);
             if (checkForImportsInStub(stubFile, GOOGLE_PROTOBUF_TIMESTAMP_PROTO)) {
                 ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
                         "ballerina", "time"
                 );
-                nodes.add(importForTime);
+                imports = imports.add(importForTime);
             }
-            imports = AbstractNodeFactory.createNodeList(nodes);
         }
 
         java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();
@@ -227,9 +223,9 @@ public class SyntaxTreeGenerator {
 
     public static SyntaxTree generateSyntaxTreeForServiceSample(ServiceStub serviceStub, boolean addListener) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
-        Collection<ImportDeclarationNode> nodes = new LinkedHashSet<>();
+        NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
         ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
-        nodes.add(importForGrpc);
+        imports = imports.add(importForGrpc);
 
         List<Method> methodList = new ArrayList<>();
         methodList.addAll(serviceStub.getUnaryFunctions());
@@ -241,9 +237,8 @@ public class SyntaxTreeGenerator {
             ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
                     "ballerina", "time"
             );
-            nodes.add(importForTime);
+            imports = imports.add(importForTime);
         }
-        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createNodeList(nodes);
 
         if (addListener) {
             Listener listener = new Listener(
