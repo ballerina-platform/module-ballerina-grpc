@@ -82,7 +82,7 @@ function testUnaryHelloWorldInputMessageOutputEmpty() {
 
 @test:Config {enable:true}
 function testUnaryHelloWorldTimestamp() {
-    var result = assertGeneratedSources("unary", "helloWorldTimestamp.proto", "helloWorldTimestamp_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_9");
+    var result = assertGeneratedSources("unary", "helloWorldTimestamp.proto", "helloWorldTimestamp_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_unary_10");
     if (result is error) {
         test:assertFail("Failed to assert generated sources");
     }
