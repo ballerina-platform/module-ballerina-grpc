@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/io;
-import ballerina/lang.'int;
 import ballerina/lang.'float;
 import ballerina/grpc;
 
