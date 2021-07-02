@@ -19,6 +19,7 @@ import ballerina/lang.'float;
 import ballerina/grpc;
 
 type FeatureArray Feature[];
+
 final readonly & Feature[] FEATURES = check populateFeatures();
 configurable string featuresFilePath = "./resources/route_guide_db.json";
 RouteNote[] ROUTE_NOTES = [];
@@ -64,7 +65,6 @@ function calculateDistance(Point p1, Point p2) returns int {
     return <int>distance;
 }
 
-
 isolated function pointExistsInFeatures(Feature[] features, Point point) returns boolean {
     foreach Feature feature in features {
         if feature.location == point {
@@ -72,15 +72,6 @@ isolated function pointExistsInFeatures(Feature[] features, Point point) returns
         }
     }
     return false;
-}
-
-isolated function featureFromPoint(Point point) returns Feature?|error {
-    foreach Feature feature in FEATURES {
-        if feature.location == point {
-            return feature;
-        }
-    }
-    return ();
 }
 
 isolated function populateFeatures() returns readonly & Feature[]|error {
