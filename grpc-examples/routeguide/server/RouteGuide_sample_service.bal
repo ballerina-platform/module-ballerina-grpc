@@ -32,12 +32,18 @@ service "RouteGuide" on ep {
     }
 
     remote function ListFeatures(Rectangle rectangle) returns stream<Feature, grpc:Error?>|error {
-        Feature[] selectedFeatures = [];
-        foreach Feature feature in FEATURES {
-            if inRange(feature.location, rectangle) {
-                selectedFeatures.push(feature);
-            }
-        }
+        int left = int:min(rectangle.lo.longitude, rectangle.hi.longitude);
+        int right = int:max(rectangle.lo.longitude, rectangle.hi.longitude);
+        int top = int:max(rectangle.lo.latitude, rectangle.hi.latitude);
+        int bottom = int:min(rectangle.lo.latitude, rectangle.hi.latitude);
+
+        Feature[] selectedFeatures = from var feature in FEATURES
+                where feature.location.longitude >= left
+                where feature.location.longitude <= right
+                where feature.location.latitude >= bottom
+                where feature.location.latitude <= top
+                select feature;
+                
         return selectedFeatures.toStream();
     }
 
