@@ -97,6 +97,6 @@ isolated function featureFromPoint(Point point) returns Feature?|error {
 
 isolated function populateFeatures() returns readonly & Feature[]|error {
     json locationsJson = check io:fileReadJson(featuresFilePath);
-    Feature[] features = check locationsJson.cloneWithType(FeatureArray);
+    Feature[] features = check locationsJson.cloneWithType();
     return features.cloneReadOnly();
 }
