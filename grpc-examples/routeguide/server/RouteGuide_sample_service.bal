@@ -23,12 +23,12 @@ listener grpc:Listener ep = new (8980);
 service "RouteGuide" on ep {
 
     isolated remote function GetFeature(Point point) returns Feature|error {
-        Feature?|error feature = featureFromPoint(point);
-        if feature is Feature || feature is error {
-            return feature;
-        } else {
-            return {location: point, name: ""};
+        foreach Feature feature in FEATURES {
+            if feature.location == point {
+                return feature;
+            }
         }
+        return {location: point, name: ""};
     }
 
     remote function ListFeatures(Rectangle rectangle) returns stream<Feature, grpc:Error?>|error {
@@ -38,12 +38,12 @@ service "RouteGuide" on ep {
         int bottom = int:min(rectangle.lo.latitude, rectangle.hi.latitude);
 
         Feature[] selectedFeatures = from var feature in FEATURES
-                where feature.location.longitude >= left
-                where feature.location.longitude <= right
-                where feature.location.latitude >= bottom
-                where feature.location.latitude <= top
-                select feature;
-                
+            where feature.location.longitude >= left
+            where feature.location.longitude <= right
+            where feature.location.latitude >= bottom
+            where feature.location.latitude <= top
+            select feature;
+
         return selectedFeatures.toStream();
     }
 
