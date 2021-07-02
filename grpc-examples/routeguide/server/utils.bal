@@ -65,17 +65,6 @@ function calculateDistance(Point p1, Point p2) returns int {
     return <int>distance;
 }
 
-isolated function inRange(Point point, Rectangle rectangle) returns boolean {
-    int left = 'int:min(rectangle.lo.longitude, rectangle.hi.longitude);
-    int right = 'int:max(rectangle.lo.longitude, rectangle.hi.longitude);
-    int top = 'int:max(rectangle.lo.latitude, rectangle.hi.latitude);
-    int bottom = 'int:min(rectangle.lo.latitude, rectangle.hi.latitude);
-
-    if point.longitude >= left && point.longitude <= right && point.latitude >= bottom && point.latitude <= top {
-        return true;
-    }
-    return false;
-}
 
 isolated function pointExistsInFeatures(Feature[] features, Point point) returns boolean {
     foreach Feature feature in features {
