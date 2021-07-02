@@ -27,7 +27,7 @@ service "RouteGuide" on ep {
         if feature is Feature || feature is error {
             return feature;
         } else {
-            return {location: {latitude: 0, longitude: 0}, name: ""};
+            return {location: point, name: ""};
         }
     }
 
