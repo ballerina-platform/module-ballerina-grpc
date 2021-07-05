@@ -6,7 +6,7 @@ Route guide is the standard example that has been used in the gRPC documentation
 
 ## Implementation
 
-This is the server and client implementation of the route guide example using the Ballerina package. The four RPC calls in this example are as follows:
+This example is the server and client implementation of the route guide example using the Ballerina package. The four RPC calls in this example are as follows:
 
 1. GetFeature
    - This is a simple RPC call. It returns a feature description for a given point. Here, the client sends a request to the server, and the server responds with a single response, similar to a typical function call.
