@@ -78,6 +78,8 @@ public class BalGenerationUtils {
             }
             case ".google.protobuf.Empty": {
                 return null;
+            } case ".google.protobuf.Timestamp": {
+                return "time:Utc";
             }
             default: { // to handle structs
                 return protoType.substring(protoType.lastIndexOf

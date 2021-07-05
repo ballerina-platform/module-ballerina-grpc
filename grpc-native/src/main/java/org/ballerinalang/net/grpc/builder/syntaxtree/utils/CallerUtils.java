@@ -82,6 +82,8 @@ public class CallerUtils {
             String valueCap;
             if (value.equals("byte[]")) {
                 valueCap = "Bytes";
+            } else if (value.equals("time:Utc")) {
+                valueCap = "Timestamp";
             } else {
                 valueCap = capitalize(value);
             }

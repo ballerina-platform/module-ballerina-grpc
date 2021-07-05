@@ -148,6 +148,8 @@ public class ClientUtils {
         String inputCap;
         if (method.getInputType().equals("byte[]")) {
             inputCap = "Bytes";
+        } else if (method.getInputType().equals("time:Utc")) {
+            inputCap = "Timestamp";
         } else {
             inputCap = capitalize(method.getInputType());
         }
@@ -172,6 +174,8 @@ public class ClientUtils {
         String inputCap;
         if (method.getInputType().equals("byte[]")) {
             inputCap = "Bytes";
+        } else if (method.getInputType().equals("time:Utc")) {
+            inputCap = "Timestamp";
         } else {
             inputCap = capitalize(method.getInputType());
         }
@@ -198,6 +202,8 @@ public class ClientUtils {
             String outCap;
             if (method.getOutputType().equals("byte[]")) {
                 outCap = "Bytes";
+            } else if (method.getOutputType().equals("time:Utc")) {
+                outCap = "Timestamp";
             } else {
                 outCap = capitalize(method.getOutputType());
             }
@@ -269,6 +275,19 @@ public class ClientUtils {
                                 )
                         )
                 );
+            } else if (method.getOutputType().equals("time:Utc")) {
+                responseCheck.addElseStatement(
+                        getReturnStatementNode(
+                                getTypeCastExpressionNode(
+                                        method.getOutputType(),
+                                        getMethodCallExpressionNode(
+                                                getSimpleNameReferenceNode("payload"),
+                                                "cloneReadOnly",
+                                                new String[]{}
+                                        )
+                                )
+                        )
+                );
             } else {
                 responseCheck.addElseStatement(
                         getReturnStatementNode(
@@ -290,6 +309,8 @@ public class ClientUtils {
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("byte[]")) {
                 outCap = "Bytes";
+            } else if (method.getOutputType().equals("time:Utc")) {
+                outCap = "Timestamp";
             } else {
                 outCap = capitalize(method.getOutputType());
             }
@@ -354,6 +375,16 @@ public class ClientUtils {
                         getSimpleNameReferenceNode("payload"),
                         "toString",
                         new String[]{}
+                );
+            } else if (method.getOutputType().equals("time:Utc")) {
+                returnMap.addTypeCastExpressionField(
+                        "content",
+                        method.getOutputType(),
+                        getMethodCallExpressionNode(
+                                getSimpleNameReferenceNode("payload"),
+                                "cloneReadOnly",
+                                new String[]{}
+                        )
                 );
             } else {
                 returnMap.addTypeCastExpressionField(

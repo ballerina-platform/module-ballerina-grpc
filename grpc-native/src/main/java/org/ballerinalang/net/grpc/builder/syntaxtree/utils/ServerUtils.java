@@ -72,7 +72,9 @@ public class ServerUtils {
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
-            } else {
+            } else if (method.getInputType().equals("time:Utc")) {
+                inputCap = "Timestamp";
+            }  else {
                 inputCap = capitalize(method.getInputType());
             }
             function.addRequiredParameter(
@@ -86,6 +88,8 @@ public class ServerUtils {
         String outCap;
         if (method.getOutputType().equals("byte[]")) {
             outCap = "Bytes";
+        } else if (method.getOutputType().equals("time:Utc")) {
+            outCap = "Timestamp";
         } else {
             outCap = capitalize(method.getOutputType());
         }
@@ -118,6 +122,8 @@ public class ServerUtils {
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
+            } else if (method.getInputType().equals("time:Utc")) {
+                inputCap = "Timestamp";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
@@ -132,6 +138,8 @@ public class ServerUtils {
         String outputCap;
         if (method.getOutputType().equals("byte[]")) {
             outputCap = "Bytes";
+        } else if (method.getOutputType().equals("time:Utc")) {
+            outputCap = "Timestamp";
         } else {
             outputCap = capitalize(method.getOutputType());
         }
@@ -163,6 +171,8 @@ public class ServerUtils {
         String outputCap;
         if (method.getOutputType().equals("byte[]")) {
             outputCap = "Bytes";
+        } else if (method.getOutputType().equals("time:Utc")) {
+            outputCap = "Timestamp";
         } else {
             outputCap = capitalize(method.getOutputType());
         }
@@ -251,11 +261,22 @@ public class ServerUtils {
         Record nextRecordRec = new Record();
         nextRecordRec.addCustomField(method.getOutputType(), "value");
         Map nextRecordMap = new Map();
-        nextRecordMap.addTypeCastExpressionField(
-                "value",
-                method.getOutputType(),
-                getFieldAccessExpressionNode("streamValue", "value")
-        );
+        if (method.getOutputType().equals("time:Utc")) {
+            nextRecordMap.addTypeCastExpressionField(
+                    "value",
+                    method.getOutputType(),
+                    getMethodCallExpressionNode(
+                            getFieldAccessExpressionNode("streamValue", "value"),
+                            "cloneReadOnly", new String[]{}
+                    )
+            );
+        } else {
+            nextRecordMap.addTypeCastExpressionField(
+                    "value",
+                    method.getOutputType(),
+                    getFieldAccessExpressionNode("streamValue", "value")
+            );
+        }
         VariableDeclaration nextRecordVar = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         nextRecordRec.getRecordTypeDescriptorNode(),
