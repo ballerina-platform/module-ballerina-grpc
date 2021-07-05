@@ -28,7 +28,7 @@ $ bal run
 ```
 
 In another terminal, run the client as follows.
-```
+```sh
 // Run the route guide client
 $ cd grpc-examples/routeguide/client
 $ bal run
