@@ -38,6 +38,7 @@ service "RouteGuide" on ep {
         int bottom = int:min(rectangle.lo.latitude, rectangle.hi.latitude);
 
         Feature[] selectedFeatures = from var feature in FEATURES
+            where feature.name != ""
             where feature.location.longitude >= left
             where feature.location.longitude <= right
             where feature.location.latitude >= bottom
@@ -61,7 +62,7 @@ service "RouteGuide" on ep {
             }
 
             if lastPoint is Point {
-                distance = calculateDistance(<Point>lastPoint, p);
+                distance += calculateDistance(<Point>lastPoint, p);
             }
             lastPoint = p;
         });
@@ -71,12 +72,23 @@ service "RouteGuide" on ep {
     }
 
     remote function RouteChat(RouteGuideRouteNoteCaller caller, stream<RouteNote, grpc:Error?> clientNotesStream) returns error? {
-        check clientNotesStream.forEach(function(RouteNote note) {
-            future<error?> f1 = start sendRouteNotesFromLocation(caller, note.location);
+        check clientNotesStream.forEach(function(RouteNote receivedNote) {
+            string pointKey = keyFromPoint(receivedNote.location);
             lock {
-                ROUTE_NOTES.push(note);
+                RouteNote[]? routeNotes = ROUTE_NOTES_MAP[pointKey];
+                if routeNotes is RouteNote[] {
+                    foreach RouteNote sendNote in routeNotes {
+                        grpc:Error? e = caller->sendRouteNote(sendNote);
+                        if e is grpc:Error {
+                            grpc:Error? sendErr = caller->sendError(e);
+                        }
+                    }
+                    routeNotes.push(receivedNote);
+                    ROUTE_NOTES_MAP[pointKey] = routeNotes;
+                } else {
+                    ROUTE_NOTES_MAP[pointKey] = [receivedNote];
+                }
             }
-            error? waitErr = wait f1;
         });
     }
 }

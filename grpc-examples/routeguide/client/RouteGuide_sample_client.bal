@@ -28,7 +28,7 @@ public function main() returns error? {
         lo: {latitude: 400000000, longitude: -750000000},
         hi: {latitude: 420000000, longitude: -730000000}
     };
-    io:println(`ListFeatures: lowLat=${rectangle.lo.latitude},  lowLon=${rectangle.lo.latitude}, hiLat=${rectangle.hi.latitude},  hiLon=${rectangle.hi.latitude}`);
+    io:println(`ListFeatures: lowLat=${rectangle.lo.latitude},  lowLon=${rectangle.lo.longitude}, hiLat=${rectangle.hi.latitude},  hiLon=${rectangle.hi.longitude}`);
     stream<Feature, grpc:Error?> features = check ep->ListFeatures(rectangle);
     error? e = features.forEach(function(Feature f) {
         io:println(`Result: lat=${f.location.latitude}, lon=${f.location.longitude}`);
@@ -54,7 +54,9 @@ public function main() returns error? {
     RouteNote[] routeNotes = [
         {location: {latitude: 406109563, longitude: -742186778}, message: "m1"}, 
         {location: {latitude: 411733222, longitude: -744228360}, message: "m2"}, 
-        {location: {latitude: 406109563, longitude: -742186778}, message: "m3"}
+        {location: {latitude: 406109563, longitude: -742186778}, message: "m3"}, 
+        {location: {latitude: 411733222, longitude: -744228360}, message: "m4"}, 
+        {location: {latitude: 411733222, longitude: -744228360}, message: "m5"}
     ];
     RouteChatStreamingClient routeClient = check ep->RouteChat();
     foreach RouteNote n in routeNotes {

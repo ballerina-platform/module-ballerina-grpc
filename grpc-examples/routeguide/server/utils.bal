@@ -16,37 +16,19 @@
 
 import ballerina/io;
 import ballerina/lang.'float;
-import ballerina/grpc;
 
 type FeatureArray Feature[];
 
 final readonly & Feature[] FEATURES = check populateFeatures();
 configurable string featuresFilePath = "./resources/route_guide_db.json";
-RouteNote[] ROUTE_NOTES = [];
+map<RouteNote[]> ROUTE_NOTES_MAP = {};
 
-function sendRouteNotesFromLocation(RouteGuideRouteNoteCaller caller, Point location) {
-    lock {
-        foreach RouteNote note in ROUTE_NOTES {
-            if note.location == location {
-                grpc:Error? e = caller->sendRouteNote(note);
-                if e is grpc:Error {
-                    grpc:Error? sendErr = caller->sendError(e);
-                }
-            }
-        }
-    }
-}
-
-function addRouteNotes(stream<RouteNote, grpc:Error?> clientStream) returns error? {
-    check clientStream.forEach(function(RouteNote note) {
-        lock {
-            ROUTE_NOTES.push(note);
-        }
-    });
+function keyFromPoint(Point p) returns string {
+    return string `${p.latitude} ${p.longitude}`;
 }
 
 isolated function toRadians(float f) returns float {
-    return f * 'float:PI / 180.0;
+    return f * 0.017453292519943295;
 }
 
 function calculateDistance(Point p1, Point p2) returns int {
@@ -67,7 +49,7 @@ function calculateDistance(Point p1, Point p2) returns int {
 
 isolated function pointExistsInFeatures(Feature[] features, Point point) returns boolean {
     foreach Feature feature in features {
-        if feature.location == point {
+        if feature.name != "" && feature.location == point {
             return true;
         }
     }
