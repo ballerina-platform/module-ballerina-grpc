@@ -60,7 +60,7 @@ task copyPackageBala {
 
 clean {
     examples.forEach { example ->
-//        delete "${projectDir}/${example}/target"
+        delete "${projectDir}/${example}/target"
     }
 }
 
