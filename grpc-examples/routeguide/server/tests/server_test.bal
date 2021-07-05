@@ -18,12 +18,12 @@ import ballerina/test;
 import ballerina/io;
 import ballerina/grpc;
 
-@test:Config{}
+@test:Config {}
 function serverTest() returns error? {
     RouteGuideClient ep = check new ("http://localhost:8980");
     // Simple RPC
     Feature feature = check ep->GetFeature({latitude: 406109563, longitude: -742186778});
-    Feature expectedFeature = {name:"4001 Tremley Point Road, Linden, NJ 07036, USA", location:{latitude:406109563, longitude:-742186778}};
+    Feature expectedFeature = {name: "4001 Tremley Point Road, Linden, NJ 07036, USA", location: {latitude: 406109563, longitude: -742186778}};
     test:assertEquals(feature, expectedFeature);
 
     // Server streaming
@@ -37,7 +37,7 @@ function serverTest() returns error? {
     error? e = features.forEach(function(Feature f) {
         serverStreamingCount += 1;
     });
-    test:assertEquals(serverStreamingCount, 100);
+    test:assertEquals(serverStreamingCount, 64);
 
     // Client streaming
     Point[] points = [
@@ -53,15 +53,17 @@ function serverTest() returns error? {
     RouteSummary? routeSummary = check recordRouteStrmClient->receiveRouteSummary();
     if routeSummary is RouteSummary {
         test:assertEquals(routeSummary.point_count, 3);
-        test:assertEquals(routeSummary.feature_count, 2);
-        test:assertEquals(routeSummary.distance, 3697192);
+        test:assertEquals(routeSummary.feature_count, 1);
+        test:assertEquals(routeSummary.distance, 3762036);
     }
 
     // Bidirectional streaming
     RouteNote[] routeNotes = [
         {location: {latitude: 406109563, longitude: -742186778}, message: "m1"}, 
         {location: {latitude: 411733222, longitude: -744228360}, message: "m2"}, 
-        {location: {latitude: 406109563, longitude: -742186778}, message: "m3"}
+        {location: {latitude: 406109563, longitude: -742186778}, message: "m3"}, 
+        {location: {latitude: 411733222, longitude: -744228360}, message: "m4"}, 
+        {location: {latitude: 411733222, longitude: -744228360}, message: "m5"}
     ];
     RouteChatStreamingClient routeClient = check ep->RouteChat();
     foreach RouteNote n in routeNotes {
