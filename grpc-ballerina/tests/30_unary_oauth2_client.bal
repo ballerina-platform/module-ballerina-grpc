@@ -139,7 +139,7 @@ public isolated function testStringValueReturnWithOauth2EmptyAuthHeader() return
     if (unionResp is Error) {
         test:assertEquals(unionResp.message(), "Empty authentication header.");
     } else {
-        test:assertFail(msg = "Expected a Permission denied error.");
+        test:assertFail(msg = "Expected an unauthenticated error.");
     }
 }
 
@@ -155,7 +155,7 @@ public isolated function testStringValueReturnWithOauth2InvalidAuthHeader() retu
     if (unionResp is Error) {
         test:assertEquals(unionResp.message(), "Unauthenticated");
     } else {
-        test:assertFail(msg = "Expected a Permission denied error.");
+        test:assertFail(msg = "Expected an unauthenticated error.");
     }
 }
 
@@ -171,6 +171,6 @@ public isolated function testStringValueReturnWithOauth2InvalidAuthHeaderFormat(
     if (unionResp is Error) {
         test:assertEquals(unionResp.message(), "Unauthenticated");
     } else {
-        test:assertFail(msg = "Expected a Permission denied error.");
+        test:assertFail(msg = "Expected an unauthenticated error.");
     }
 }
