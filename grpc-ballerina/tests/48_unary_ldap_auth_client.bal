@@ -16,7 +16,10 @@
 
 import ballerina/test;
 
-@test:Config {enable: true}
+@test:Config {
+    enable: true,
+    groups: ["ldap"]
+}
 public isolated function testStringValueReturnWithLdapAuth() returns Error? {
     HelloWorld48Client helloWorldEp = check new ("http://localhost:9148");
     map<string|string[]> requestHeaders = {};
@@ -46,7 +49,10 @@ public isolated function testStringValueReturnWithLdapAuth() returns Error? {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {
+    enable: true,
+    groups: ["ldap"]
+}
 public isolated function testStringValueReturnWithInvalidLdapAuth() returns Error? {
     HelloWorld48Client helloWorldEp = check new ("http://localhost:9148");
     map<string|string[]> requestHeaders = {};
