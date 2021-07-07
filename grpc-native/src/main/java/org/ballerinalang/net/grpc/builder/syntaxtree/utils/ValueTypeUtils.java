@@ -42,6 +42,8 @@ public class ValueTypeUtils {
         String typeName;
         if (key.equals("byte[]")) {
             typeName = "ContextBytesStream";
+        } else if (key.equals("time:Utc")) {
+            typeName = "ContextTimestampStream";
         } else {
             typeName = "Context" + capitalize(key) + "Stream";
         }
@@ -69,6 +71,8 @@ public class ValueTypeUtils {
         } else {
             if (key.equals("byte[]")) {
                 typeName = "ContextBytes";
+            } else if (key.equals("time:Utc")) {
+                typeName = "ContextTimestamp";
             } else {
                 typeName = "Context" + capitalize(key);
             }

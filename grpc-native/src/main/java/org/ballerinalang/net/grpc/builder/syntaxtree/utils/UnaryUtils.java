@@ -62,12 +62,16 @@ public class UnaryUtils {
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
+            } else if (method.getInputType().equals("time:Utc")) {
+                inputCap = "Timestamp";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode(
+                                    method.getInputType()
+                            ),
                             getSimpleNameReferenceNode("Context" + inputCap)
                     ),
                     "req"
@@ -77,7 +81,9 @@ public class UnaryUtils {
             function.addReturns(
                     getParenthesisedTypeDescriptorNode(
                             getUnionTypeDescriptorNode(
-                                    getSimpleNameReferenceNode(method.getOutputType()),
+                                    getSimpleNameReferenceNode(
+                                            method.getOutputType()
+                                    ),
                                     SYNTAX_TREE_GRPC_ERROR
                             )
                     )
@@ -121,6 +127,8 @@ public class UnaryUtils {
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
+            } else if (method.getInputType().equals("time:Utc")) {
+                inputCap = "Timestamp";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
@@ -135,6 +143,8 @@ public class UnaryUtils {
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("byte[]")) {
                 outCap = "Bytes";
+            } else if (method.getOutputType().equals("time:Utc")) {
+                outCap = "Timestamp";
             } else {
                 outCap = capitalize(method.getOutputType());
             }
@@ -177,6 +187,17 @@ public class UnaryUtils {
                             new String[]{}
                     )
             );
+        } else if (method.getOutputType().equals("time:Utc")) {
+            function.addReturnStatement(
+                    getTypeCastExpressionNode(
+                            method.getOutputType(),
+                            getMethodCallExpressionNode(
+                                    getSimpleNameReferenceNode("result"),
+                                    "cloneReadOnly",
+                                    new String[]{}
+                            )
+                    )
+            );
         } else {
             function.addReturnStatement(
                     getTypeCastExpressionNode(
@@ -196,6 +217,16 @@ public class UnaryUtils {
                         getSimpleNameReferenceNode("result"),
                         "toString",
                         new String[]{}
+                );
+            } else if (method.getOutputType().equals("time:Utc")) {
+                returnMap.addTypeCastExpressionField(
+                        "content",
+                        method.getOutputType(),
+                        getMethodCallExpressionNode(
+                                getSimpleNameReferenceNode("result"),
+                                "cloneReadOnly",
+                                new String[]{}
+                        )
                 );
             } else {
                 returnMap.addTypeCastExpressionField(

@@ -19,11 +19,15 @@
 package org.ballerinalang.net.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
+import org.ballerinalang.net.grpc.builder.stub.Descriptor;
 import org.ballerinalang.net.grpc.builder.stub.Method;
+import org.ballerinalang.net.grpc.builder.stub.StubFile;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Function;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.IfElse;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.Map;
 import org.ballerinalang.net.grpc.builder.syntaxtree.components.VariableDeclaration;
+
+import java.util.List;
 
 import static org.ballerinalang.net.grpc.MethodDescriptor.MethodType.UNARY;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
@@ -47,6 +51,8 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
  * @since 0.8.0
  */
 public class CommonUtils {
+
+    public static final String GOOGLE_PROTOBUF_TIMESTAMP_PROTO = "google/protobuf/timestamp.proto";
 
     private CommonUtils() {
 
@@ -160,5 +166,30 @@ public class CommonUtils {
                 )
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());
+    }
+
+    public static boolean checkForImportsInStub(StubFile stubFile, String type) {
+        for (Object desc : stubFile.getDescriptors().toArray()) {
+            if (((Descriptor) desc).getKey().equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkForImportsInServices(List<Method> methodList, String type) {
+        for (Method method : methodList) {
+            if (isType(method.getInputType(), type) || isType(method.getOutputType(), type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isType(String methodType, String type) {
+        if (methodType != null && methodType.equals(type)) {
+            return true;
+        }
+        return false;
     }
 }
