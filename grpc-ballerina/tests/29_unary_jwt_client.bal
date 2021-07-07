@@ -54,3 +54,76 @@ public isolated function testStringValueReturnWithJwt() returns Error? {
         test:assertEquals(unionResp, "Hello WSO2");
     }
 }
+
+@test:Config {enable:true}
+public isolated function testStringValueReturnWithUnauthorizedJwt() returns Error? {
+    HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
+    map<string|string[]> requestHeaders = {};
+
+    JwtIssuerConfig config = {
+        username: "admin",
+        issuer: "wso2",
+        audience: ["ballerina"],
+        customClaims: { "scope": "delete" },
+        signatureConfig: {
+            config: {
+                keyStore: {
+                    path: KEYSTORE_PATH,
+                    password: "ballerina"
+                },
+                keyAlias: "ballerina",
+                keyPassword: "ballerina"
+            }
+        }
+    };
+    ClientSelfSignedJwtAuthHandler handler = new(config);
+    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+    if (result is ClientAuthError) {
+        test:assertFail(msg = "Test Failed! " + result.message());
+    } else {
+        requestHeaders = result;
+    }
+
+    requestHeaders["x-id"] = ["0987654321"];
+    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    if (unionResp is Error) {
+        test:assertEquals(unionResp.message(), "Permission denied");
+    } else {
+        test:assertFail(msg = "Expected an error.");
+    }
+}
+
+@test:Config {enable:true}
+public isolated function testStringValueReturnWithInvalidHeaderJwt() returns Error? {
+    HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
+    map<string|string[]> requestHeaders = {
+        "x-id": "0987654321",
+        "authorization": "bearer invalid"
+    };
+
+    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    if (unionResp is Error) {
+        test:assertEquals(unionResp.message(), "Credential format does not match to JWT format.");
+    } else {
+        test:assertFail(msg = "Expected an error.");
+    }
+}
+
+@test:Config {enable:true}
+public isolated function testStringValueReturnWithEmptyHeaderJwt() returns Error? {
+    HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
+    map<string|string[]> requestHeaders = {
+        "x-id": "0987654321",
+        "authorization": "bearer "
+    };
+
+    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    if (unionResp is Error) {
+        test:assertEquals(unionResp.message(), "Empty authentication header.");
+    } else {
+        test:assertFail(msg = "Expected an error.");
+    }
+}

@@ -79,3 +79,56 @@ public isolated function testStringValueReturnWithInvalidLdapAuth() returns Erro
         test:assertFail(msg = "Expected grpc:Error not found.");
     }
 }
+
+@test:Config {
+    groups: ["ldap"]
+}
+public isolated function testStringValueReturnWithEmptyLdapAuth() returns Error? {
+    HelloWorld49Client helloWorldEp = check new ("http://localhost:9149");
+    map<string|string[]> requestHeaders = {
+        "authorization": "Bearer "
+    };
+
+    ContextString requestMessage = {
+        content: "WSO2",
+        headers: requestHeaders
+    };
+    var response = helloWorldEp->testStringValueReturn(requestMessage);
+    if (response is Error) {
+        test:assertEquals(response.message(), "Empty authentication header.");
+    } else {
+        test:assertFail(msg = "Expected grpc:Error not found.");
+    }
+}
+
+@test:Config {
+    groups: ["ldap"]
+}
+public isolated function testStringValueReturnWithUnauthorizedLdapAuth() returns Error? {
+    HelloWorld49Client helloWorldEp = check new ("http://localhost:9149");
+    map<string|string[]> requestHeaders = {};
+
+    CredentialsConfig config = {
+        username: "bob",
+        password: "bobgreen@123"
+    };
+
+    ClientBasicAuthHandler handler = new (config);
+    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+    if (result is ClientAuthError) {
+        test:assertFail(msg = "Test Failed! " + result.message());
+    } else {
+        requestHeaders = result;
+    }
+
+    ContextString requestMessage = {
+        content: "WSO2",
+        headers: requestHeaders
+    };
+    var response = helloWorldEp->testStringValueReturn(requestMessage);
+    if (response is Error) {
+        test:assertEquals(response.message(), "Permission denied");
+    } else {
+        test:assertFail(msg = "Expected grpc:Error not found.");
+    }
+}

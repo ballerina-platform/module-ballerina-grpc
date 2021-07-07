@@ -45,4 +45,4 @@ jobs:
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
           JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
-        run: ./gradlew.bat build --scan --no-daemon -Pdisable=ldap
+        run: ./gradlew.bat test -Pdisable=ldap

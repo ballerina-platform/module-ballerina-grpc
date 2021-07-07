@@ -40,5 +40,4 @@ dn: cn=developer,ou=Groups,dc=avix,dc=lk
 changetype: add
 cn: developer
 objectClass: groupOfNames
-member: uid=bob,ou=Users,dc=avix,dc=lk
 member: uid=alice,ou=Users,dc=avix,dc=lk
