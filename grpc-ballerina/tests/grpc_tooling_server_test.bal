@@ -71,3 +71,11 @@ function testServerHelloWorldInputEmptyOutputMessage() {
         test:assertFail("Failed to assert generated sources");
     }
 }
+
+@test:Config {enable:true}
+function testServerHelloWorldTimestamp() {
+    var result = assertGeneratedSources("server", "helloWorldTimestamp.proto", "helloWorldTimestamp_pb.bal", "helloWorld_sample_service.bal", "helloWorld_sample_client.bal", "tool_test_server_8");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
+}

@@ -119,6 +119,9 @@ public class MessageUtils {
                 case "byte[]":
                     messageRecord.addArrayFieldWithDefaultValue("byte", field.getFieldName());
                     break;
+                case "Timestamp":
+                    messageRecord.addCustomFieldWithDefaultValue("time:Utc", field.getFieldName(), "[0, 0.0d]");
+                    break;
                 default:
                     if (field.getFieldLabel() == null) {
                         messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
@@ -144,6 +147,9 @@ public class MessageUtils {
                             break;
                         case "byte[]":
                             messageRecord.addOptionalArrayField("byte", field.getFieldName());
+                            break;
+                        case "Timestamp":
+                            messageRecord.addOptionalCustomField("time:Utc", field.getFieldName());
                             break;
                         default:
                             if (field.getFieldLabel() == null) {

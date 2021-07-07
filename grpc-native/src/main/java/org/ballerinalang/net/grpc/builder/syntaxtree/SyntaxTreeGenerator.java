@@ -79,6 +79,9 @@ import static org.ballerinalang.net.grpc.builder.syntaxtree.constants.SyntaxTree
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientClass;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ClientUtils.getStreamingClientFunction;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.GOOGLE_PROTOBUF_TIMESTAMP_PROTO;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
+import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInStub;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static org.ballerinalang.net.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
@@ -105,8 +108,16 @@ public class SyntaxTreeGenerator {
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
         if (stubFile.getStubList().size() > 0) {
-            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
-            imports = AbstractNodeFactory.createNodeList(importForGrpc);
+            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode(
+                    "ballerina", "grpc"
+            );
+            imports = imports.add(importForGrpc);
+            if (checkForImportsInStub(stubFile, GOOGLE_PROTOBUF_TIMESTAMP_PROTO)) {
+                ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
+                        "ballerina", "time"
+                );
+                imports = imports.add(importForTime);
+            }
         }
 
         java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();
@@ -215,8 +226,22 @@ public class SyntaxTreeGenerator {
 
     public static SyntaxTree generateSyntaxTreeForServiceSample(ServiceStub serviceStub, boolean addListener) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
+        NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
         ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
-        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createNodeList(importForGrpc);
+        imports = imports.add(importForGrpc);
+
+        List<Method> methodList = new ArrayList<>();
+        methodList.addAll(serviceStub.getUnaryFunctions());
+        methodList.addAll(serviceStub.getClientStreamingFunctions());
+        methodList.addAll(serviceStub.getServerStreamingFunctions());
+        methodList.addAll(serviceStub.getBidiStreamingFunctions());
+
+        if (checkForImportsInServices(methodList, "time:Utc")) {
+            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
+                    "ballerina", "time"
+            );
+            imports = imports.add(importForTime);
+        }
 
         if (addListener) {
             Listener listener = new Listener(
@@ -239,12 +264,6 @@ public class SyntaxTreeGenerator {
                 getFunctionCallExpressionNode("getDescriptorMap", new String[]{})
         );
         service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
-
-        List<Method> methodList = new ArrayList<>();
-        methodList.addAll(serviceStub.getUnaryFunctions());
-        methodList.addAll(serviceStub.getClientStreamingFunctions());
-        methodList.addAll(serviceStub.getServerStreamingFunctions());
-        methodList.addAll(serviceStub.getBidiStreamingFunctions());
 
         for (Method method : methodList) {
             Function function = new Function(method.getMethodName());

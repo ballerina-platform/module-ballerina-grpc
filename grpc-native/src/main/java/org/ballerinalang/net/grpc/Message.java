@@ -26,6 +26,7 @@ import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.RecordType;
+import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.StringUtils;
@@ -35,6 +36,9 @@ import io.ballerina.runtime.api.values.BString;
 import io.netty.handler.codec.http.HttpHeaders;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +52,10 @@ public class Message {
     private static final String GOOGLE_PROTOBUF_ANY = "google.protobuf.Any";
     private static final String GOOGLE_PROTOBUF_ANY_VALUE = "google.protobuf.Any.value";
     private static final String GOOGLE_PROTOBUF_ANY_TYPE_URL = "google.protobuf.Any.type_url";
+    private static final String GOOGLE_PROTOBUF_TIMESTAMP = "google.protobuf.Timestamp";
+    private static final String GOOGLE_PROTOBUF_TIMESTAMP_SECONDS = "google.protobuf.Timestamp.seconds";
+    private static final String GOOGLE_PROTOBUF_TIMESTAMP_NANOS = "google.protobuf.Timestamp.nanos";
+    public static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
 
     private String messageName;
     private int memoizedSize = -1;
@@ -130,9 +138,15 @@ public class Message {
         }
 
         BMap<BString, Object> bBMap = null;
+        BArray bArray = null;
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG) {
             bBMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
             bMessage = bBMap;
+        } else if (type.getTag() == TypeTags.INTERSECTION_TAG) {
+            TupleType tupleType = TypeCreator.createTupleType(
+                    Arrays.asList(PredefinedTypes.TYPE_INT, PredefinedTypes.TYPE_DECIMAL));
+            bArray = ValueCreator.createTupleValue(tupleType);
+            bMessage = bArray;
         }
 
         if (input == null) {
@@ -251,6 +265,9 @@ public class Message {
                             } else {
                                 bBMap.put(bFieldName, input.readInt64());
                             }
+                        } else if (bArray != null
+                                && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP_SECONDS)) {
+                            bArray.add(0, input.readInt64());
                         } else {
                             bMessage = input.readInt64();
                         }
@@ -291,6 +308,11 @@ public class Message {
                             } else {
                                 bBMap.put(bFieldName, input.readInt32());
                             }
+                        } else if (bArray != null
+                                && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP_NANOS)) {
+                            BigDecimal nanos = new BigDecimal(input.readInt32())
+                                    .divide(ANALOG_GIGA, MathContext.DECIMAL128);
+                            bArray.add(1, ValueCreator.createDecimalValue(nanos));
                         } else {
                             bMessage = input.readInt32();
                         }
@@ -492,8 +514,11 @@ public class Message {
         }
 
         BMap<BString, Object> bBMap = null;
+        BArray bArray = null;
         if (bMessage instanceof BMap) {
             bBMap = (BMap<BString, Object>) bMessage;
+        } else if (bMessage instanceof BArray) {
+            bArray = (BArray) bMessage;
         }
         for (Descriptors.FieldDescriptor fieldDescriptor : messageDescriptor.getFields()) {
             BString bFieldName = StringUtils.fromString(fieldDescriptor.getName());
@@ -545,6 +570,9 @@ public class Message {
                         }
                     } else if (bMessage instanceof Long) {
                         output.writeInt64(fieldDescriptor.getNumber(), (long) bMessage);
+                    } else if (bMessage instanceof BArray
+                            && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP_SECONDS)) {
+                        output.writeInt64(fieldDescriptor.getNumber(), (long) (bArray.get(0)));
                     }
                     break;
                 }
@@ -578,6 +606,11 @@ public class Message {
                         }
                     } else if (bMessage instanceof Long) {
                         output.writeInt32(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                    } else if (bMessage instanceof BArray
+                            && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP_NANOS)) {
+                        BigDecimal nanos = new BigDecimal((bArray).get(1)
+                                .toString()).multiply(ANALOG_GIGA);
+                        output.writeInt32(fieldDescriptor.getNumber(), nanos.intValue());
                     }
                     break;
                 }
@@ -651,6 +684,13 @@ public class Message {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
                         Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof BArray
+                                && fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP)) {
+                            BArray valueArray = (BArray) bValue;
+                            Message message = new Message(fieldDescriptor.getMessageType(), valueArray);
+                            output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
+                            output.writeUInt32NoTag(message.getSerializedSize());
+                            message.writeTo(output);
+                        } else if (bValue instanceof BArray
                                 && !fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY_VALUE)) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
@@ -779,6 +819,11 @@ public class Message {
                     } else if (bMessage instanceof Long) {
                         size += com.google.protobuf.CodedOutputStream.computeInt64Size(fieldDescriptor
                                 .getNumber(), (long) bMessage);
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP_SECONDS)
+                            && bMessage instanceof BArray) {
+                        BArray array = (BArray) bMessage;
+                        size += com.google.protobuf.CodedOutputStream.computeInt64Size(fieldDescriptor
+                                .getNumber(), array.getInt(0));
                     }
                     break;
                 }
@@ -817,6 +862,13 @@ public class Message {
                     } else if (bMessage instanceof Long) {
                         size += com.google.protobuf.CodedOutputStream.computeInt32Size(fieldDescriptor
                                 .getNumber(), getIntValue(bMessage));
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP_NANOS)
+                            && bMessage instanceof BArray) {
+                        BArray array = (BArray) bMessage;
+                        BigDecimal nanos = new BigDecimal(array.get(1)
+                                .toString()).multiply(ANALOG_GIGA, MathContext.DECIMAL128);
+                        size += com.google.protobuf.CodedOutputStream.computeInt32Size(fieldDescriptor
+                                .getNumber(), nanos.intValue());
                     }
                     break;
                 }
@@ -900,6 +952,11 @@ public class Message {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
                         Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof BArray
+                                && fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP)) {
+                            BArray valueArray = (BArray) bValue;
+                            Message message = new Message(fieldDescriptor.getMessageType(), valueArray);
+                            size += computeMessageSize(fieldDescriptor, message);
+                        } else if (bValue instanceof BArray
                                 && !fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
