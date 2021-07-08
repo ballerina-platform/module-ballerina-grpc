@@ -26,24 +26,24 @@ dependencies {
     checkstyle project(':build-config:checkstyle')
     checkstyle "com.puppycrawl.tools:checkstyle:${checkstylePluginVersion}"
 
-    compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
-    compile group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
-    compile group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
-    compile group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}"
-    compile (group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
+    implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
+    implementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
+    implementation group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
+    implementation group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}"
+    implementation (group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
         exclude group: 'org.ballerinalang', module: 'maven-resolver'
     }
-    compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    compile group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}"
-    compile group: 'org.ballerinalang', name: 'ballerina-config', version: "${ballerinaLangVersion}"
-    compile group: 'org.slf4j', name: 'slf4j-jdk14', version: "${slf4jVersion}"
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: "${commonsLang3Version}"
-    compile group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}"
-    compile group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}"
-    compile group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}"
-    compile group: 'info.picocli', name: 'picocli', version: "${picocliVersion}"
+    implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
+    implementation group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}"
+    implementation group: 'org.ballerinalang', name: 'ballerina-config', version: "${ballerinaLangVersion}"
+    implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: "${slf4jVersion}"
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: "${commonsLang3Version}"
+    implementation group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}"
+    implementation group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}"
+    implementation group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}"
+    implementation group: 'info.picocli', name: 'picocli', version: "${picocliVersion}"
 
-    testCompile group: 'org.testng', name: 'testng', version: "${testngVersion}"
+    testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
 }
 
 checkstyle {
