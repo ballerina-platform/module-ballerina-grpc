@@ -35,8 +35,6 @@ function testHttpsClientInitWithoutSecureSocketConfig() {
     }
 }
 
-
-
 @test:Config {enable:true}
 function testSendNestedStruct() {
     Person p = {name:"Sam", address:{postalCode:10300, state:"Western", country:"Sri Lanka"}};

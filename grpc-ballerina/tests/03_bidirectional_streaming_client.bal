@@ -77,3 +77,140 @@ isolated function testBidiStreaming() returns Error? {
 
     checkpanic ep->complete();
 }
+
+@test:Config {enable:true}
+isolated function testBidiStreamingInvalidSecureSocketConfigs() returns Error? {
+    ChatStreamingClient ep;
+    ChatClient|Error result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: "",
+                password: "ballerina"
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        test:assertEquals(result.message(), "KeyStore file location must be provided for secure connection.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+    
+    result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: ""
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        test:assertEquals(result.message(), "KeyStore password must be provided for secure connection.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+
+    result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
+                path: "",
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        test:assertEquals(result.message(), "TrustStore file location must be provided for secure connection.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+
+    result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: ""
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        test:assertEquals(result.message(), "TrustStore password must be provided for secure connection.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testBidiStreamingNullCertField() returns Error? {
+    ChatStreamingClient ep;
+    ChatClient|Error result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: "KEYSTORE_PATH",
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        string expectedError = "Need to configure 'crypto:TrustStore' or 'cert' with client SSL certificates file.";
+        test:assertEquals(result.message(), expectedError);
+    } else {
+        test:assertFail("Expected an error");
+    }
+
+}
+
+// @test:Config {enable:true}
+// isolated function testBidiStreamingDisableSecureSocket() returns Error? {
+//     ChatStreamingClient ep;
+//     ChatClient|Error result = new ("http://localhost:9093", {
+//         secureSocket: {
+//             enable: false
+//         }
+//     });
+//     if result is Error {
+//         test:assertEquals(result.message(), "KeyStore file location must be provided for secure connection.");
+//     } else {
+//         test:assertFail("Expected an error");
+//     }
+
+// }
