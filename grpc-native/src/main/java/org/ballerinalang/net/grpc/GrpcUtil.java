@@ -400,8 +400,8 @@ public class GrpcUtil {
             sslConfiguration.setValidateCertEnabled(true);
         }
         long cacheSize = certValidation.getIntValue(SECURESOCKET_CONFIG_CERT_VALIDATION_CACHE_SIZE).intValue();
-        long cacheValidityPeriod = ((BDecimal) certValidation.get(
-                SECURESOCKET_CONFIG_CERT_VALIDATION_CACHE_VALIDITY_PERIOD)).intValue();
+        long cacheValidityPeriod = certValidation.getIntValue(
+                SECURESOCKET_CONFIG_CERT_VALIDATION_CACHE_VALIDITY_PERIOD).intValue();
         if (cacheValidityPeriod != 0) {
             sslConfiguration.setCacheValidityPeriod(Math.toIntExact(cacheValidityPeriod));
         }
