@@ -116,3 +116,21 @@ isolated function testUnaryClientWithNegativeTimeout() returns Error? {
         }
     }
 }
+
+@test:Config {enable:true}
+isolated function testUnaryClientWithOverflowingTimeout() returns Error? {
+    HelloWorld100Client|Error hClient = new ("http://localhost:9097", {
+        timeout: 2147483699
+    });
+    if hClient is Error {
+        test:assertFail(hClient.message());
+    } else {
+        string name = "WSO2";
+        string|Error unionResp = hClient->hello(name);
+        if (unionResp is Error) {
+            test:assertFail(string `Error from Connector: ${unionResp.message()}`);
+        } else {
+            test:assertEquals(unionResp, "Hello WSO2");
+        }
+    }
+}
