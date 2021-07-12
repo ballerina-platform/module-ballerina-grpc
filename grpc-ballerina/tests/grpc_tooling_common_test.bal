@@ -106,8 +106,16 @@ function testHelloWorldWithDuplicateInputOutput() {
 }
 
 @test:Config {enable:true}
-function testHelloWorldWithDurationType() {
-    var result = assertGeneratedSources("data-types", "duration_type.proto", "duration_type_pb.bal", "DurationHandler_sample_service.bal", "DurationHandler_sample_client.bal", "tool_test_data_type_15");
+function testHelloWorldWithDurationType1() {
+    var result = assertGeneratedSources("data-types", "duration_type1.proto", "duration_type1_pb.bal", "DurationHandler_sample_service.bal", "DurationHandler_sample_client.bal", "tool_test_data_type_15");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
+}
+
+@test:Config {enable:true}
+function testHelloWorldWithDurationType2() {
+    var result = assertGeneratedSources("data-types", "duration_type2.proto", "duration_type2_pb.bal", "DurationHandler_sample_service.bal", "DurationHandler_sample_client.bal", "tool_test_data_type_16");
     if (result is error) {
         test:assertFail("Failed to assert generated sources");
     }
