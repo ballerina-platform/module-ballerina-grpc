@@ -29,8 +29,8 @@ listener Listener ep3 = new (9093, {
         mutualSsl: {
             verifyClient: REQUIRE,
             cert: {
-            path: TRUSTSTORE_PATH,
-            password: "ballerina"
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
             }
         },
         protocol: {

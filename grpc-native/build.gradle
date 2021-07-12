@@ -18,6 +18,7 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'jacoco'
 }
 
 description = 'Ballerina - gRPC Java Native'
@@ -43,7 +44,40 @@ dependencies {
     implementation group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}"
     implementation group: 'info.picocli', name: 'picocli', version: "${picocliVersion}"
 
+//    implementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+    testImplementation group: 'org.mockito', name:'mockito-inline', version: "${mockitoVersion}"
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: "${mockitoVersion}"
     testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+}
+
+test {
+    useTestNG() {
+        suites 'src/test/resources/testng.xml'
+    }
+    testLogging.showStandardStreams = true
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "${jacocoVersion}"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled true
+    }
 }
 
 checkstyle {
