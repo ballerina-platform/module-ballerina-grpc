@@ -74,7 +74,9 @@ public class ServerUtils {
                 inputCap = "Bytes";
             } else if (method.getInputType().equals("time:Utc")) {
                 inputCap = "Timestamp";
-            }  else {
+            } else if (method.getInputType().equals("time:Seconds")) {
+                inputCap = "Duration";
+            } else {
                 inputCap = capitalize(method.getInputType());
             }
             function.addRequiredParameter(
@@ -90,6 +92,8 @@ public class ServerUtils {
             outCap = "Bytes";
         } else if (method.getOutputType().equals("time:Utc")) {
             outCap = "Timestamp";
+        } else if (method.getOutputType().equals("time:Seconds")) {
+            outCap = "Duration";
         } else {
             outCap = capitalize(method.getOutputType());
         }
@@ -124,6 +128,8 @@ public class ServerUtils {
                 inputCap = "Bytes";
             } else if (method.getInputType().equals("time:Utc")) {
                 inputCap = "Timestamp";
+            } else if (method.getInputType().equals("time:Seconds")) {
+                inputCap = "Duration";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
@@ -140,6 +146,8 @@ public class ServerUtils {
             outputCap = "Bytes";
         } else if (method.getOutputType().equals("time:Utc")) {
             outputCap = "Timestamp";
+        } else if (method.getOutputType().equals("time:Seconds")) {
+            outputCap = "Duration";
         } else {
             outputCap = capitalize(method.getOutputType());
         }
@@ -173,6 +181,8 @@ public class ServerUtils {
             outputCap = "Bytes";
         } else if (method.getOutputType().equals("time:Utc")) {
             outputCap = "Timestamp";
+        } else if (method.getOutputType().equals("time:Seconds")) {
+            outputCap = "Duration";
         } else {
             outputCap = capitalize(method.getOutputType());
         }
