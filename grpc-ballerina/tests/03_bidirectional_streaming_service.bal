@@ -20,26 +20,26 @@ import ballerina/log;
 
 // Server endpoint configuration
 listener Listener ep3 = new (9093, {
-      host: "localhost",
-      secureSocket: {
-          key: {
-              path: KEYSTORE_PATH,
-              password: "ballerina"
-          },
-          mutualSsl: {
-              verifyClient: REQUIRE,
-              cert: {
-                path: TRUSTSTORE_PATH,
-                password: "ballerina"
-              }
-          },
-          protocol: {
-              name: TLS,
-              versions: ["TLSv1.2","TLSv1.1"]
-          },
-          ciphers:["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
-      }
-  });
+    host: "localhost",
+    secureSocket: {
+        key: {
+            path: KEYSTORE_PATH,
+            password: "ballerina"
+        },
+        mutualSsl: {
+            verifyClient: REQUIRE,
+            cert: {
+            path: TRUSTSTORE_PATH,
+            password: "ballerina"
+            }
+        },
+        protocol: {
+            name: TLS,
+            versions: ["TLSv1.2","TLSv1.1"]
+        },
+        ciphers:["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+    }
+});
 
 @tainted map<ChatStringCaller> connectionsMap = {};
 boolean initialized = false;

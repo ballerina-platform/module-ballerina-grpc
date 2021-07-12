@@ -32,7 +32,7 @@ import ballerina/test;
 // }
 
 @test:Config {enable: true}
-function testIsCancelledNegative() returns error? {
+function testCallerIsCancelled() returns error? {
     HelloWorld50Client hClient = check new ("http://localhost:9150");
     SendStringStreamingClient strClient = check hClient->sendString();
     check strClient->sendString("Test1");

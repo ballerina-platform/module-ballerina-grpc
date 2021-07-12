@@ -313,6 +313,36 @@ isolated function testBidiStreamingWithNoPublicCertFile() returns Error? {
     }
 }
 
+@test:Config {enable:true}
+isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns Error? {
+    ChatClient chatClient = check new ("https://localhost", {
+        secureSocket: {
+            key: {
+                certFile: PUBLIC_CRT_PATH,
+                keyFile: PRIVATE_KEY_PATH
+            },
+            cert: PUBLIC_CRT_PATH,
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    ChatStreamingClient strClient = check chatClient->chat();
+    ChatMessage mes1 = {name:"Sam", message:"Hi"};
+    Error? connErr = strClient->sendChatMessage(mes1);
+    if (connErr is Error) {
+        test:assertFail(string `Error from Connector: ${connErr.message()}`);
+    }
+    string|Error? res = strClient->receiveString();
+    if (res is Error) {
+        test:assertEquals(res.message(), "Connection refused: localhost/127.0.0.1:443");
+    } else {
+        test:assertFail(msg = "Expected an error");
+    }
+}
+
 
 // @test:Config {enable:true}
 // isolated function testBidiStreamingWithCertValidation() returns Error? {
