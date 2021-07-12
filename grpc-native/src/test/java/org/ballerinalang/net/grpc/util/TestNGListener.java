@@ -51,8 +51,7 @@ public class TestNGListener extends TestListenerAdapter {
 
     @Override
     public void onTestSuccess(ITestResult tr) {
-        String testCase = tr.getName();
-        LoggerFactory.getLogger(tr.getTestClass().getRealClass()).info("Test successful: " + testCase);
+        // ignore
     }
 
     @Override
