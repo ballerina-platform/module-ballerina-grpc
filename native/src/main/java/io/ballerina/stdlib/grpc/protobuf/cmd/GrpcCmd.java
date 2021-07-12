@@ -60,15 +60,13 @@ public class GrpcCmd implements BLauncherCmd {
 
     private static final PrintStream outStream = System.out;
     private static final String PROTO_EXTENSION = "proto";
-    private static final String WHITESPACE_CHARACTOR = " ";
-    private static final String WHITESPACE_REPLACEMENT = "\\ ";
 
     private CommandLine parentCmdParser;
 
     @CommandLine.Option(names = {"-h", "--help"}, hidden = true)
     private boolean helpFlag;
 
-    @CommandLine.Option(names = {"--input"}, description = "Input .proto file")
+    @CommandLine.Option(names = {"--input"}, description = "Input .proto file(s)")
     private String protoPath;
 
     @CommandLine.Option(names = {"--mode"},
@@ -118,14 +116,40 @@ public class GrpcCmd implements BLauncherCmd {
             return;
         }
 
-        // check input protobuf file path
-        Optional<String> pathExtension = getFileExtension(protoPath);
-        if (pathExtension.isEmpty() ||
-                !PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
-            String errorMessage = "Invalid proto file path. Please input valid proto file location.";
-            outStream.println(errorMessage);
-            return;
+        File input = new File(protoPath);
+        if (input.isDirectory()) {
+            // Multiple proto files
+            File[] protoFiles = input.listFiles();
+            if (protoFiles == null) {
+                String errorMessage = "Input proto files directory is empty. Please input valid proto file location.";
+                outStream.println(errorMessage);
+            } else {
+                for (File protoFile : protoFiles) {
+                    // check input protobuf file path
+                    Optional<String> pathExtension = getFileExtension(protoFile.getPath());
+                    if (!PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
+                        String errorMessage = "Invalid proto file path: " + protoFile.getPath() +
+                                ". Please input valid proto file location.";
+                        outStream.println(errorMessage);
+                        return;
+                    }
+                    generateBalFile(protoFile.getPath());
+                }
+            }
+        } else {
+            // Single proto file
+            // check input protobuf file path
+            Optional<String> pathExtension = getFileExtension(protoPath);
+            if (!PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
+                String errorMessage = "Invalid proto file path. Please input valid proto file location.";
+                outStream.println(errorMessage);
+                return;
+            }
+            generateBalFile(protoPath);
         }
+    }
+
+    private void generateBalFile(String protoPath) {
         if (!Files.isReadable(Paths.get(protoPath))) {
             String errorMessage = "Provided service proto file is not readable. Please input valid proto file " +
                     "location.";

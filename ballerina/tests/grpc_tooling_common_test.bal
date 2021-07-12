@@ -157,6 +157,34 @@ function testHelloWorldWithInvalidDependency() {
     }
 }
 
+@test:Config {enable:true}
+function testProtoDirectory() returns error? {
+    string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, "proto-dir");
+    string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, "tool_test_proto_dir");
+
+    generateSourceCode(protoFilePath, outputDirPath);
+
+    string expectedStubFilePath1 = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "helloWorldBoolean_pb.bal");
+    string expectedStubFilePath2 = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "helloWorldInt_pb.bal");
+    string expectedStubFilePath3 = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "helloWorldString_pb.bal");
+
+    string actualStubFilePath1 = check file:joinPath(outputDirPath, "helloWorldBoolean_pb.bal");
+    string actualStubFilePath2 = check file:joinPath(outputDirPath, "helloWorldInt_pb.bal");
+    string actualStubFilePath3 = check file:joinPath(outputDirPath, "helloWorldString_pb.bal");
+
+    test:assertTrue(check file:test(actualStubFilePath1, file:EXISTS));
+    test:assertFalse(hasDiagnostics(actualStubFilePath1));
+    test:assertEquals(readContent(expectedStubFilePath1), readContent(actualStubFilePath1));
+
+    test:assertTrue(check file:test(actualStubFilePath2, file:EXISTS));
+    test:assertFalse(hasDiagnostics(actualStubFilePath2));
+    test:assertEquals(readContent(expectedStubFilePath2), readContent(actualStubFilePath2));
+
+    test:assertTrue(check file:test(actualStubFilePath3, file:EXISTS));
+    test:assertFalse(hasDiagnostics(actualStubFilePath3));
+    test:assertEquals(readContent(expectedStubFilePath3), readContent(actualStubFilePath3));
+}
+
 function assertGeneratedDataTypeSources(string subDir, string protoFile, string stubFile, string outputDir) returns error? {
     string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
     string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
