@@ -20,7 +20,7 @@ import ballerina/test;
     groups: ["ldap"]
 }
 public isolated function testStringValueReturnWithLdapAuth() returns Error? {
-    HelloWorld49Client helloWorldEp = check new ("http://localhost:9149");
+    HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
     map<string|string[]> requestHeaders = {};
 
     CredentialsConfig config = {
@@ -52,7 +52,7 @@ public isolated function testStringValueReturnWithLdapAuth() returns Error? {
     groups: ["ldap"]
 }
 public isolated function testStringValueReturnWithInvalidLdapAuth() returns Error? {
-    HelloWorld49Client helloWorldEp = check new ("http://localhost:9149");
+    HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
     map<string|string[]> requestHeaders = {};
 
     CredentialsConfig config = {
@@ -84,7 +84,7 @@ public isolated function testStringValueReturnWithInvalidLdapAuth() returns Erro
     groups: ["ldap"]
 }
 public isolated function testStringValueReturnWithEmptyLdapAuth() returns Error? {
-    HelloWorld49Client helloWorldEp = check new ("http://localhost:9149");
+    HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
     map<string|string[]> requestHeaders = {
         "authorization": "Bearer "
     };
@@ -105,7 +105,7 @@ public isolated function testStringValueReturnWithEmptyLdapAuth() returns Error?
     groups: ["ldap"]
 }
 public isolated function testStringValueReturnWithUnauthorizedLdapAuth() returns Error? {
-    HelloWorld49Client helloWorldEp = check new ("http://localhost:9149");
+    HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
     map<string|string[]> requestHeaders = {};
 
     CredentialsConfig config = {

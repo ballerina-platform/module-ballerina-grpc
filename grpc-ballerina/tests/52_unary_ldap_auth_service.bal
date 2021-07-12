@@ -16,13 +16,13 @@
 
 import ballerina/auth;
 
-listener Listener ep49 = new (9149);
+listener Listener ep52 = new (9152);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_49,
-    descMap: getDescriptorMap49()
+    descriptor: ROOT_DESCRIPTOR_52,
+    descMap: getDescriptorMap52()
 }
-service "HelloWorld49" on ep49 {
+service "HelloWorld52" on ep52 {
 
     isolated remote function testStringValueReturn(ContextString request) returns string|error {
         LdapUserStoreConfig config = {
