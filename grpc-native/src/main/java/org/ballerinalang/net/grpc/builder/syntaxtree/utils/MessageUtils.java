@@ -122,6 +122,9 @@ public class MessageUtils {
                 case "Timestamp":
                     messageRecord.addCustomFieldWithDefaultValue("time:Utc", field.getFieldName(), "[0, 0.0d]");
                     break;
+                case "Duration":
+                    messageRecord.addCustomFieldWithDefaultValue("time:Seconds", field.getFieldName(), "0.0d");
+                    break;
                 default:
                     if (field.getFieldLabel() == null) {
                         messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
@@ -150,6 +153,9 @@ public class MessageUtils {
                             break;
                         case "Timestamp":
                             messageRecord.addOptionalCustomField("time:Utc", field.getFieldName());
+                            break;
+                        case "Duration":
+                            messageRecord.addOptionalCustomField("time:Seconds", field.getFieldName());
                             break;
                         default:
                             if (field.getFieldLabel() == null) {

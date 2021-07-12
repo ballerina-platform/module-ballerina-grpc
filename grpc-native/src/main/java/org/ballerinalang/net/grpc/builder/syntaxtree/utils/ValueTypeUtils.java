@@ -44,6 +44,8 @@ public class ValueTypeUtils {
             typeName = "ContextBytesStream";
         } else if (key.equals("time:Utc")) {
             typeName = "ContextTimestampStream";
+        } else if (key.equals("time:Seconds")) {
+            typeName = "ContextDurationStream";
         } else {
             typeName = "Context" + capitalize(key) + "Stream";
         }
@@ -73,6 +75,8 @@ public class ValueTypeUtils {
                 typeName = "ContextBytes";
             } else if (key.equals("time:Utc")) {
                 typeName = "ContextTimestamp";
+            } else if (key.equals("time:Seconds")) {
+                typeName = "ContextDuration";
             } else {
                 typeName = "Context" + capitalize(key);
             }
