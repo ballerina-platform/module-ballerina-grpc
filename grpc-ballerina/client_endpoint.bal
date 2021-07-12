@@ -157,32 +157,32 @@ isolated function generateMethodId(string? pkgName, string svcName, string rpcNa
 isolated function externInit(Client clientEndpoint, string url, ClientConfiguration config, PoolConfiguration
 globalPoolConfig)
                 returns Error? = @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 isolated function externInitStub(Client genericEndpoint, AbstractClientEndpoint clientEndpoint, string descriptorKey,
                                  map<any> descriptorMap) returns Error? = @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 isolated function externExecuteSimpleRPC(Client clientEndpoint, string methodID, anydata payload, map<string|string[]> headers)
                 returns ([anydata, map<string|string[]>]|Error) = @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 isolated function externExecuteServerStreaming(Client clientEndpoint, string methodID, anydata payload,
                 map<string|string[]> headers) returns [stream<anydata, Error?>, map<string|string[]>]|Error = @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 isolated function externExecuteClientStreaming(Client clientEndpoint, string methodID, map<string|string[]> headers)
                returns StreamingClient|Error = @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 isolated function externExecuteBidirectionalStreaming(Client clientEndpoint, string methodID, map<string|string[]> headers)
                returns StreamingClient|Error = @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 

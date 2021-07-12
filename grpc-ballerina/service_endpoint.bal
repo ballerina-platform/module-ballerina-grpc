@@ -131,32 +131,32 @@ class StreamIterator {
 
 isolated function externInitEndpoint(Listener listenerObject) returns error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 isolated function externRegister(Listener listenerObject, service object {} serviceType, string[]|string? name) returns error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 isolated function externStart(Listener listenerObject) returns error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 isolated function externStop(Listener listenerObject) returns error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 isolated function nextResult(StreamIterator iterator) returns anydata|handle|error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 isolated function closeStream(StreamIterator iterator) returns error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
 # Maximum number of requests that can be processed at a given time on a single connection.

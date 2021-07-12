@@ -69,16 +69,16 @@ function assertGeneratedSourcesNegative(string input, string output, string outp
 }
 
 public function generateSourceCode(string protoFilePath, string outputDirPath, string? mode = ()) = @java:Method {
-    'class: "org.ballerinalang.net.grpc.testutils.CodeGeneratorUtils",
+    'class: "io.ballerina.stdlib.grpc.testutils.CodeGeneratorUtils",
     name: "generateSourceCode"
 } external;
 
 public function hasDiagnostics(string filePath) returns boolean = @java:Method {
-    'class: "org.ballerinalang.net.grpc.testutils.CodeGeneratorUtils",
+    'class: "io.ballerina.stdlib.grpc.testutils.CodeGeneratorUtils",
     name: "hasDiagnostics"
 } external;
 
 public function readContent(string filePath) returns string = @java:Method {
-    'class: "org.ballerinalang.net.grpc.testutils.CodeGeneratorUtils",
+    'class: "io.ballerina.stdlib.grpc.testutils.CodeGeneratorUtils",
     name: "readContent"
 } external;

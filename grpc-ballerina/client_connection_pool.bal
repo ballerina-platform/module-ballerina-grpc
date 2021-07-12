@@ -49,7 +49,7 @@ class ConnectionManager {
 
 isolated function externInitGlobalPool(ConnectionManager connectionManager, PoolConfiguration poolConfig) =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.client.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 ConnectionManager connectionManager = new;

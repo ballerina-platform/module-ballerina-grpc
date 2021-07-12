@@ -112,30 +112,30 @@ public client class StreamingClient {
 
 isolated function streamSend(StreamingClient streamConnection, anydata res) returns Error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
 isolated function streamComplete(StreamingClient streamConnection) returns Error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
 isolated function streamSendError(StreamingClient streamConnection, Error err) returns Error? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
 isolated function externReceive(StreamingClient streamConnection) returns anydata|stream<anydata, Error>|Error =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
 isolated function externIsBidirectional(StreamingClient streamConnection) returns boolean =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
 isolated function externGetHeaderMap(StreamingClient streamConnection, boolean isBidirectional) returns map<string|string[]>? =
 @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.streamingclient.FunctionUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;

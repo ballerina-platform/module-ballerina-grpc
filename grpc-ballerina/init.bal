@@ -21,5 +21,5 @@ function init() {
 }
 
 function setModule() = @java:Method {
-    'class: "org.ballerinalang.net.grpc.nativeimpl.ModuleUtils"
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils"
 } external;
