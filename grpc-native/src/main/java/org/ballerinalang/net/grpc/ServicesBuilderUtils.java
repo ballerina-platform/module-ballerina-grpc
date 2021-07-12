@@ -42,6 +42,7 @@ import org.ballerinalang.net.grpc.listener.UnaryServerCallHandler;
 
 import java.io.IOException;
 
+import static org.ballerinalang.net.grpc.GrpcConstants.DURATION_MESSAGE;
 import static org.ballerinalang.net.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 import static org.ballerinalang.net.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
 import static org.ballerinalang.net.grpc.GrpcConstants.WRAPPER_BOOL_MESSAGE;
@@ -303,6 +304,8 @@ public class ServicesBuilderUtils {
             return PredefinedTypes.TYPE_NULL;
         } else if (protoType.equalsIgnoreCase(WRAPPER_BYTES_MESSAGE)) {
             return TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE);
+        } else if (protoType.equals(DURATION_MESSAGE)) {
+            return PredefinedTypes.TYPE_DECIMAL;
         } else {
             return TypeCreator.createRecordType(protoType, module, 0, true,
                     TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));

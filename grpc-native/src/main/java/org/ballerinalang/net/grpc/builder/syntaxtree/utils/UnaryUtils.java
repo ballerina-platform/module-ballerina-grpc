@@ -64,6 +64,8 @@ public class UnaryUtils {
                 inputCap = "Bytes";
             } else if (method.getInputType().equals("time:Utc")) {
                 inputCap = "Timestamp";
+            } else if (method.getInputType().equals("time:Seconds")) {
+                inputCap = "Duration";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
@@ -129,6 +131,8 @@ public class UnaryUtils {
                 inputCap = "Bytes";
             } else if (method.getInputType().equals("time:Utc")) {
                 inputCap = "Timestamp";
+            } else if (method.getInputType().equals("time:Seconds")) {
+                inputCap = "Duration";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
@@ -145,6 +149,8 @@ public class UnaryUtils {
                 outCap = "Bytes";
             } else if (method.getOutputType().equals("time:Utc")) {
                 outCap = "Timestamp";
+            } else if (method.getOutputType().equals("time:Seconds")) {
+                outCap = "Duration";
             } else {
                 outCap = capitalize(method.getOutputType());
             }

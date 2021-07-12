@@ -84,6 +84,8 @@ public class CallerUtils {
                 valueCap = "Bytes";
             } else if (value.equals("time:Utc")) {
                 valueCap = "Timestamp";
+            } else if (value.equals("time:Seconds")) {
+                valueCap = "Duration";
             } else {
                 valueCap = capitalize(value);
             }
