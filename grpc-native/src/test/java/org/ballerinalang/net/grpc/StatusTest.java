@@ -39,5 +39,27 @@ public class StatusTest {
         } catch (IllegalArgumentException e) {
             Assert.assertEquals(e.getMessage(), "Cause is null");
         }
+        Throwable t = new IllegalStateException();
+        t.initCause(new IllegalArgumentException());
+        Status status = Status.fromThrowable(t);
+        Assert.assertEquals(status.getDescription(), null);
+    }
+
+    @Test(description = "Test which will read text records from a given channel using async io framework")
+    public void testFromCodeValueInt() {
+        Status status = Status.fromCodeValue(-1);
+        Assert.assertEquals(status.getDescription(), "Unknown code -1");
+        status = Status.fromCodeValue(19);
+        Assert.assertEquals(status.getDescription(), "Unknown code 19");
+    }
+
+    @Test(description = "Test which will read text records from a given channel using async io framework")
+    public void testFromCodeValueSlow() {
+        byte[] asciiCodeValue = {'a'};
+        Status status = Status.CODE_MARSHALLER.parseAsciiString(asciiCodeValue);
+        Assert.assertEquals(status.getDescription(), "Unknown code a");
+        asciiCodeValue = new byte[]{'a', 'b'};
+        status = Status.CODE_MARSHALLER.parseAsciiString(asciiCodeValue);
+        Assert.assertEquals(status.getDescription(), "Unknown code ab");
     }
 }
