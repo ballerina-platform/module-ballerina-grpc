@@ -33,12 +33,12 @@ module io.ballerina.stdlib.grpc {
     requires io.ballerina.formatter.core;
     requires info.picocli;
     requires io.ballerina.cli;
-    exports org.ballerinalang.net.grpc;
-    exports org.ballerinalang.net.grpc.exception;
-    exports org.ballerinalang.net.grpc.protobuf.cmd;
-    exports org.ballerinalang.net.grpc.nativeimpl;
-    exports org.ballerinalang.net.grpc.nativeimpl.caller;
-    exports org.ballerinalang.net.grpc.nativeimpl.client;
-    exports org.ballerinalang.net.grpc.nativeimpl.serviceendpoint;
-    exports org.ballerinalang.net.grpc.nativeimpl.streamingclient;
+    exports io.ballerina.stdlib.grpc;
+    exports io.ballerina.stdlib.grpc.exception;
+    exports io.ballerina.stdlib.grpc.protobuf.cmd;
+    exports io.ballerina.stdlib.grpc.nativeimpl;
+    exports io.ballerina.stdlib.grpc.nativeimpl.caller;
+    exports io.ballerina.stdlib.grpc.nativeimpl.client;
+    exports io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint;
+    exports io.ballerina.stdlib.grpc.nativeimpl.streamingclient;
 }
