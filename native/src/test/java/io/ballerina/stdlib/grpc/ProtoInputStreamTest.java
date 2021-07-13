@@ -1,7 +1,5 @@
 package io.ballerina.stdlib.grpc;
 
-//import org.testng.annotations.Test;
-
 import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 import org.testng.annotations.Test;
 
@@ -12,10 +10,6 @@ import static io.ballerina.stdlib.grpc.MessageUtils.createHttpCarbonMessage;
 
 /**
  * Interface to initiate processing of incoming remote calls.
- * <p>
- * Referenced from grpc-java implementation.
- * <p>
- * @since 0.980.0
  */
 public class ProtoInputStreamTest {
 
