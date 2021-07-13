@@ -34,9 +34,9 @@ import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.grpc.exception.GrpcClientException;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.stubs.Stub;
-import org.ballerinalang.net.http.HttpConnectionManager;
-import org.ballerinalang.net.http.HttpConstants;
-import org.ballerinalang.net.http.HttpUtil;
+import io.ballerina.stdlib.http.api.HttpConnectionManager;
+import io.ballerina.stdlib.http.api.HttpConstants;
+import io.ballerina.stdlib.http.api.HttpUtil;
 import org.ballerinalang.net.transport.contract.Constants;
 import org.ballerinalang.net.transport.contract.HttpClientConnector;
 import org.ballerinalang.net.transport.contract.config.SenderConfiguration;
@@ -57,7 +57,7 @@ import static io.ballerina.stdlib.grpc.GrpcUtil.populatePoolingConfig;
 import static io.ballerina.stdlib.grpc.GrpcUtil.populateSenderConfigurations;
 import static io.ballerina.stdlib.grpc.MessageUtils.convertToHttpHeaders;
 import static io.ballerina.stdlib.grpc.Status.Code.INTERNAL;
-import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
+import static io.ballerina.stdlib.http.api.HttpConstants.CONNECTION_MANAGER;
 
 /**
  * Utility methods represents actions for the client.

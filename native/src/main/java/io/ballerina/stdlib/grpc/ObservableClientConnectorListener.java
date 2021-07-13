@@ -22,7 +22,7 @@ import io.ballerina.runtime.observability.ObserverContext;
 import org.ballerinalang.net.transport.contract.exceptions.ClientConnectorException;
 import org.ballerinalang.net.transport.message.HttpCarbonMessage;
 
-import static org.ballerinalang.net.http.HttpConstants.RESPONSE_STATUS_CODE_FIELD;
+import static io.ballerina.stdlib.http.api.HttpConstants.RESPONSE_STATUS_CODE_FIELD;
 
 /**
  * Observable Client Connector Listener.

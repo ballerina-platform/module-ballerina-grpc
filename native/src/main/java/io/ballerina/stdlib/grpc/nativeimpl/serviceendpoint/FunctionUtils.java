@@ -35,8 +35,8 @@ import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.grpc.exception.GrpcServerException;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.nativeimpl.AbstractGrpcNativeFunction;
-import org.ballerinalang.net.http.HttpConnectionManager;
-import org.ballerinalang.net.http.HttpConstants;
+import io.ballerina.stdlib.http.api.HttpConnectionManager;
+import io.ballerina.stdlib.http.api.HttpConstants;
 import org.ballerinalang.net.transport.contract.ServerConnector;
 import org.ballerinalang.net.transport.contract.ServerConnectorFuture;
 import org.ballerinalang.net.transport.contract.config.ListenerConfiguration;
@@ -48,7 +48,7 @@ import java.util.concurrent.Semaphore;
 
 import static io.ballerina.stdlib.grpc.GrpcUtil.getListenerConfig;
 import static io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils.externComplete;
-import static org.ballerinalang.net.http.HttpConstants.ENDPOINT_CONFIG_PORT;
+import static io.ballerina.stdlib.http.api.HttpConstants.ENDPOINT_CONFIG_PORT;
 
 /**
  * Utility methods represents lifecycle functions of the service listener.

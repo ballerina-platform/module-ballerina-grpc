@@ -23,7 +23,7 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.stubs.AbstractStub;
-import org.ballerinalang.net.http.HttpConstants;
+import io.ballerina.stdlib.http.api.HttpConstants;
 import org.ballerinalang.net.transport.contract.Constants;
 import org.ballerinalang.net.transport.contract.HttpClientConnector;
 import org.ballerinalang.net.transport.contract.HttpResponseFuture;
@@ -42,7 +42,7 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_TYPE_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MESSAGE_ACCEPT_ENCODING;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MESSAGE_ENCODING;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TE_KEY;
-import static org.ballerinalang.net.http.HttpConstants.HTTP_VERSION;
+import static io.ballerina.stdlib.http.api.HttpConstants.HTTP_VERSION;
 
 /**
  * This class handles a call to a remote method.

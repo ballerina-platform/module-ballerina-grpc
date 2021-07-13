@@ -24,8 +24,8 @@ import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
 import org.ballerinalang.config.ConfigRegistry;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
-import org.ballerinalang.net.http.HttpConstants;
-import org.ballerinalang.net.http.HttpUtil;
+import io.ballerina.stdlib.http.api.HttpConstants;
+import io.ballerina.stdlib.http.api.HttpUtil;
 import org.ballerinalang.net.transport.contract.Constants;
 import org.ballerinalang.net.transport.contract.config.ListenerConfiguration;
 import org.ballerinalang.net.transport.contract.config.Parameter;
@@ -55,13 +55,13 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.SECURESOCKET_CONFIG_CERT_VA
 import static io.ballerina.stdlib.grpc.GrpcConstants.SECURESOCKET_CONFIG_CERT_VALIDATION_TYPE_OCSP_STAPLING;
 import static io.ballerina.stdlib.grpc.GrpcConstants.SECURESOCKET_CONFIG_CIPHERS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.SECURESOCKET_CONFIG_DISABLE_SSL;
-import static org.ballerinalang.net.http.HttpConstants.ANN_CONFIG_ATTR_SSL_ENABLED_PROTOCOLS;
-import static org.ballerinalang.net.http.HttpConstants.CONNECTION_MANAGER;
-import static org.ballerinalang.net.http.HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION;
-import static org.ballerinalang.net.http.HttpConstants.LISTENER_CONFIGURATION;
-import static org.ballerinalang.net.http.HttpConstants.PKCS_STORE_TYPE;
-import static org.ballerinalang.net.http.HttpConstants.PROTOCOL_HTTPS;
-import static org.ballerinalang.net.http.HttpConstants.SERVER_NAME;
+import static io.ballerina.stdlib.http.api.HttpConstants.ANN_CONFIG_ATTR_SSL_ENABLED_PROTOCOLS;
+import static io.ballerina.stdlib.http.api.HttpConstants.CONNECTION_MANAGER;
+import static io.ballerina.stdlib.http.api.HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION;
+import static io.ballerina.stdlib.http.api.HttpConstants.LISTENER_CONFIGURATION;
+import static io.ballerina.stdlib.http.api.HttpConstants.PKCS_STORE_TYPE;
+import static io.ballerina.stdlib.http.api.HttpConstants.PROTOCOL_HTTPS;
+import static io.ballerina.stdlib.http.api.HttpConstants.SERVER_NAME;
 
 /**
  * Utility class providing utility methods for gRPC listener and client endpoint.

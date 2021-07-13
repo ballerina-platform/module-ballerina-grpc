@@ -24,7 +24,7 @@ import io.ballerina.stdlib.grpc.Message;
 import io.ballerina.stdlib.grpc.MessageUtils;
 import io.ballerina.stdlib.grpc.OutboundMessage;
 import io.ballerina.stdlib.grpc.Status;
-import org.ballerinalang.net.http.HttpConstants;
+import io.ballerina.stdlib.http.api.HttpConstants;
 import org.ballerinalang.net.transport.contract.Constants;
 import org.ballerinalang.net.transport.contract.HttpClientConnector;
 import org.ballerinalang.net.transport.message.HttpCarbonMessage;
