@@ -74,7 +74,7 @@ configurations {
 
 dependencies {
 
-    externalJars(group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}") {
+    externalJars(group: 'io.ballerina.stdlib', name: 'http-native', version: "${stdlibHttpVersion}") {
         transitive = false
     }
     externalJars(group: 'io.netty', name: 'netty-common', version: "${nettyVersion}") {
@@ -149,15 +149,17 @@ task updateTomlFiles {
         def stdlibDependentRegexVersion = stripBallerinaExtensionVersion(project.stdlibRegexVersion)
         def stdlibDependentTimeVersion = stripBallerinaExtensionVersion(project.stdlibTimeVersion)
         def stdlibDependentOsVersion = stripBallerinaExtensionVersion(project.stdlibOsVersion)
-        def stdlibDependentNettyVersion = project.nettyVersion
-        def stdlibDependentNettyTcnativeVersion = project.nettyTcnativeVersion
 
         def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
-        newBallerinaToml = newBallerinaToml.replace("@netty.version@", stdlibDependentNettyVersion)
-        newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", stdlibDependentNettyTcnativeVersion)
-        newBallerinaToml = newBallerinaToml.replace("@antlr.version@", wso2OrbitAntlrVersion)
+        newBallerinaToml = newBallerinaToml.replace("@netty.version@", project.nettyVersion)
+        newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", project.nettyTcnativeVersion)
+        newBallerinaToml = newBallerinaToml.replace("@antlr.version@", project.wso2OrbitAntlrVersion)
+        newBallerinaToml = newBallerinaToml.replace("@commons.pool.version@", project.wso2CommonsPoolVersion)
+        newBallerinaToml = newBallerinaToml.replace("@bouncy.castle.version@", project.bouncycastleVersion)
+        newBallerinaToml = newBallerinaToml.replace("@protobuf.java.version@", project.protobufJavaVersion)
+        newBallerinaToml = newBallerinaToml.replace("@proto.google.commons.version@", project.protoGoogleCommonsVersion)
         newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
         ballerinaTomlFile.text = newBallerinaToml
 
