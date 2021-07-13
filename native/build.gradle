@@ -23,7 +23,7 @@ plugins {
 description = 'Ballerina - gRPC Java Native'
 
 dependencies {
-    checkstyle project(':build-config:checkstyle')
+    checkstyle project(':checkstyle')
     checkstyle "com.puppycrawl.tools:checkstyle:${checkstylePluginVersion}"
 
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
@@ -34,7 +34,7 @@ dependencies {
         exclude group: 'org.ballerinalang', module: 'maven-resolver'
     }
     implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    implementation group: 'org.ballerinalang', name: 'http-native', version: "${stdlibHttpVersion}"
+    implementation group: 'io.ballerina.stdlib', name: 'http-native', version: "${stdlibHttpVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-config', version: "${ballerinaLangVersion}"
     implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: "${slf4jVersion}"
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: "${commonsLang3Version}"
@@ -52,7 +52,7 @@ checkstyle {
     configProperties = ["suppressionFile" : file("${rootDir}/build-config/checkstyle/build/suppressions.xml")]
 }
 
-checkstyleMain.dependsOn(":build-config:checkstyle:downloadMultipleFiles")
+checkstyleMain.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
 
 def excludePattern = '**/module-info.java'
 tasks.withType(Checkstyle) {
