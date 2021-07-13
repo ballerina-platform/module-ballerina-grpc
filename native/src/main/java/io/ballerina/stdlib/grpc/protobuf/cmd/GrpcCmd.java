@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Class to implement "grpc" command for ballerina.
@@ -120,20 +122,22 @@ public class GrpcCmd implements BLauncherCmd {
         File input = new File(protoPath);
         if (input.isDirectory()) {
             // Multiple proto files
-            File[] files = input.listFiles();
-            if (files == null) {
-                String errorMessage = "Input proto files directory is empty. " +
+            List<String> protoFiles;
+            try {
+                protoFiles = getProtoFiles(Paths.get(input.getAbsolutePath()));
+            } catch (IOException e) {
+                String errorMessage = "Failed to find proto files in the directory. " +
+                        "Please input a valid proto files directory.";
+                outStream.println(errorMessage);
+                return;
+            }
+            if (protoFiles.size() == 0) {
+                String errorMessage = "Input directory does not contain any proto files. " +
                         "Please input a valid proto files directory.";
                 outStream.println(errorMessage);
             } else {
-                File[] protoFiles = getProtoFiles(files);
-                if (protoFiles.length == 0) {
-                    String errorMessage = "Input directory does not contain any proto files. " +
-                            "Please input a valid proto files directory.";
-                    outStream.println(errorMessage);
-                }
-                for (File protoFile : protoFiles) {
-                    generateBalFile(protoFile.getPath());
+                for (String protoFile : protoFiles) {
+                    generateBalFile(protoFile);
                 }
             }
         } else {
@@ -149,16 +153,19 @@ public class GrpcCmd implements BLauncherCmd {
         }
     }
 
-    private File[] getProtoFiles(File[] files) {
-        ArrayList<File> protoFiles = new ArrayList<>();
-        for (File file : files) {
-            Optional<String> pathExtension = getFileExtension(file.getPath());
-            if (PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
-                protoFiles.add(file);
-            }
+    private List<String> getProtoFiles(Path path) throws IOException {
+        if (!Files.isDirectory(path)) {
+            throw new IllegalArgumentException("Path must be a directory!");
         }
-        File[] protoFilesArray = new File[protoFiles.size()];
-        return protoFiles.toArray(protoFilesArray);
+        List<String> result;
+        try (Stream<Path> walk = Files.walk(path, 1)) {
+            result = walk
+                    .filter(p -> !Files.isDirectory(p))
+                    .map(p -> p.toString().toLowerCase())
+                    .filter(f -> f.endsWith("proto"))
+                    .collect(Collectors.toList());
+        }
+        return result;
     }
 
     private void generateBalFile(String protoPath) {
@@ -206,7 +213,7 @@ public class GrpcCmd implements BLauncherCmd {
             if (msg.toString().isEmpty()) {
                 outStream.println("Successfully extracted library files.");
             } else {
-                outStream.println(msg.toString());
+                outStream.println(msg);
                 return;
             }
 
@@ -259,11 +266,11 @@ public class GrpcCmd implements BLauncherCmd {
             LOG.error("Error generating ballerina file.", e);
             msg.append("Error generating ballerina file.").append(e.getMessage())
                     .append(BalGenerationConstants.NEW_LINE_CHARACTER);
-            outStream.println(msg.toString());
+            outStream.println(msg);
             return;
         }
         msg.append("Successfully generated ballerina file.").append(BalGenerationConstants.NEW_LINE_CHARACTER);
-        outStream.println(msg.toString());
+        outStream.println(msg);
     }
 
     /**
