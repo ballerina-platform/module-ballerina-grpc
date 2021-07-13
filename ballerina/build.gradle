@@ -14,6 +14,9 @@
  * limitations under the License.
  *
  */
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         maven {
@@ -198,6 +201,48 @@ task copyExternalJars {
     }
 }
 
+task startLdapServer() {
+    doLast {
+        def stdOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
+            standardOutput = stdOut
+        }
+        if (!stdOut.toString().contains("openldap-server")) {
+            println "Starting LDAP server."
+            exec {
+                commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml up -d"
+                standardOutput = stdOut
+            }
+            println stdOut.toString()
+            sleep(5 * 1000)
+        } else {
+            println "LDAP server is already running."
+        }
+    }
+}
+
+task stopLdapServer() {
+    doLast {
+        def stdOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
+            standardOutput = stdOut
+        }
+        if (stdOut.toString().contains("openldap-server")) {
+            println "Stopping LDAP server."
+            exec {
+                commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml rm -svf"
+                standardOutput = stdOut
+            }
+            println stdOut.toString()
+            sleep(5 * 1000)
+        } else {
+            println "LDAP server is not started."
+        }
+    }
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
@@ -220,12 +265,20 @@ publishing {
 
 updateTomlFiles.dependsOn copyStdlibs
 
+if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+    test.dependsOn startLdapServer
+}
+
 build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-test-utils:build"
 build.dependsOn ":${packageName}-compiler-plugin:build"
 test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-test-utils:build"
 test.dependsOn ":${packageName}-compiler-plugin:build"
+
+if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+    build.finalizedBy stopLdapServer
+}
 
 publishToMavenLocal.dependsOn copyExternalJars
 publish.dependsOn copyExternalJars
