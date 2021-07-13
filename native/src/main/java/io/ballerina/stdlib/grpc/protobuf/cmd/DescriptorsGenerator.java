@@ -19,9 +19,9 @@ package io.ballerina.stdlib.grpc.protobuf.cmd;
 
 import com.google.protobuf.DescriptorProtos;
 import io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants;
+import io.ballerina.stdlib.grpc.protobuf.exception.CodeGeneratorException;
 import io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils;
 import io.ballerina.stdlib.grpc.protobuf.utils.ProtocCommandBuilder;
-import io.ballerina.stdlib.grpc.protobuf.exception.CodeGeneratorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

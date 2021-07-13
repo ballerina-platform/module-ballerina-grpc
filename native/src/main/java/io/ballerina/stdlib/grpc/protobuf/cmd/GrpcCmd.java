@@ -18,12 +18,12 @@
 package io.ballerina.stdlib.grpc.protobuf.cmd;
 
 import io.ballerina.cli.BLauncherCmd;
-import io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants;
-import io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants;
-import io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils;
 import io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder;
+import io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants;
 import io.ballerina.stdlib.grpc.exception.CodeBuilderException;
+import io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants;
 import io.ballerina.stdlib.grpc.protobuf.exception.CodeGeneratorException;
+import io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;

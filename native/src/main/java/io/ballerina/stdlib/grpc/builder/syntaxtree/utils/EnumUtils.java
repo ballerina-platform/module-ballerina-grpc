@@ -18,9 +18,9 @@
 
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
-import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Enum;
 import io.ballerina.stdlib.grpc.builder.stub.EnumField;
 import io.ballerina.stdlib.grpc.builder.stub.EnumMessage;
+import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Enum;
 
 /**
  * Utility functions related to Enum.

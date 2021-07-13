@@ -19,9 +19,9 @@
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Class;
-import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor;
+import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;

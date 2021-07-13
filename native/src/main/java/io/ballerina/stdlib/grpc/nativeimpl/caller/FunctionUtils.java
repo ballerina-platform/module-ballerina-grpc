@@ -24,8 +24,6 @@ import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
 import io.ballerina.stdlib.grpc.MessageUtils;
@@ -33,6 +31,8 @@ import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.grpc.StreamObserver;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.listener.ServerCallHandler;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

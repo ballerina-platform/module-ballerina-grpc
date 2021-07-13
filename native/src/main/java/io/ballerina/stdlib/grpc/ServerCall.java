@@ -18,11 +18,11 @@
 package io.ballerina.stdlib.grpc;
 
 import io.ballerina.runtime.observability.ObserverContext;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.listener.ServerCallHandler;
 import io.ballerina.stdlib.http.transport.contract.exceptions.ServerConnectorException;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.HttpHeaders;
 
 import java.io.InputStream;
 import java.util.Arrays;

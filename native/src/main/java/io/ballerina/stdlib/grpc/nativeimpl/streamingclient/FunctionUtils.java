@@ -32,10 +32,10 @@ import io.ballerina.runtime.observability.ObserverContext;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
 import io.ballerina.stdlib.grpc.MessageUtils;
-import io.ballerina.stdlib.grpc.StreamObserver;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.ballerina.stdlib.grpc.Status;
+import io.ballerina.stdlib.grpc.StreamObserver;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

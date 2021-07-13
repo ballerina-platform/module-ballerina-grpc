@@ -20,11 +20,11 @@ package io.ballerina.stdlib.grpc.listener;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.stdlib.grpc.Message;
-import io.ballerina.stdlib.grpc.ServiceResource;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.ballerina.stdlib.grpc.ServerCall;
+import io.ballerina.stdlib.grpc.ServiceResource;
 import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.grpc.exception.GrpcServerException;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
 
 /**
  * Interface to initiate processing of incoming remote calls for unary services.

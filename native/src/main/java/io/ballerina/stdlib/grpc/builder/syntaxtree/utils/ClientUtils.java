@@ -24,11 +24,11 @@ import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Class;
-import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaration;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.IfElse;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Map;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor;
+import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaration;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;

@@ -15,12 +15,12 @@
  */
 package io.ballerina.stdlib.grpc;
 
+import io.ballerina.stdlib.http.transport.contract.HttpClientConnectorListener;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.LastHttpContent;
-import io.ballerina.stdlib.http.transport.contract.HttpClientConnectorListener;
-import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;

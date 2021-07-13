@@ -22,8 +22,8 @@ import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
-import io.ballerina.stdlib.grpc.StreamObserver;
 import io.ballerina.stdlib.grpc.Status;
+import io.ballerina.stdlib.grpc.StreamObserver;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 
 import java.util.concurrent.Semaphore;

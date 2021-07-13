@@ -31,6 +31,8 @@ import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.DefaultHttpResponse;
@@ -39,8 +41,6 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
-import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.io.IOException;
 import java.io.InputStream;

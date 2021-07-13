@@ -24,7 +24,6 @@ import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.ballerina.stdlib.grpc.DataContext;
 import io.ballerina.stdlib.grpc.Message;
 import io.ballerina.stdlib.grpc.MessageUtils;
@@ -43,6 +42,7 @@ import io.ballerina.stdlib.http.transport.contract.config.SenderConfiguration;
 import io.ballerina.stdlib.http.transport.contractimpl.sender.channel.pool.ConnectionManager;
 import io.ballerina.stdlib.http.transport.contractimpl.sender.channel.pool.PoolConfiguration;
 import io.ballerina.stdlib.http.transport.message.HttpConnectorUtil;
+import io.netty.handler.codec.http.HttpHeaders;
 
 import java.net.MalformedURLException;
 import java.net.URL;

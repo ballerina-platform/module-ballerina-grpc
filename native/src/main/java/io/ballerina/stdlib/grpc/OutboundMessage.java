@@ -17,11 +17,11 @@
  */
 package io.ballerina.stdlib.grpc;
 
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.LastHttpContent;
-import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;

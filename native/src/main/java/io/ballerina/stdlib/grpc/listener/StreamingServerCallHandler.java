@@ -30,12 +30,12 @@ import io.ballerina.runtime.observability.ObserverContext;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
 import io.ballerina.stdlib.grpc.MessageUtils;
+import io.ballerina.stdlib.grpc.ServerCall;
 import io.ballerina.stdlib.grpc.ServiceResource;
 import io.ballerina.stdlib.grpc.StreamObserver;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.ballerina.stdlib.grpc.ServerCall;
 import io.ballerina.stdlib.grpc.callback.StreamingCallableUnitCallBack;
 import io.ballerina.stdlib.grpc.exception.GrpcServerException;
+import io.netty.handler.codec.http.HttpHeaders;
 
 import java.util.HashMap;
 import java.util.Map;

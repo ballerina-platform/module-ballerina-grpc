@@ -29,24 +29,24 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObservabilityConstants;
 import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
+import io.ballerina.stdlib.grpc.CallStreamObserver;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
 import io.ballerina.stdlib.grpc.MessageUtils;
+import io.ballerina.stdlib.grpc.ServerCall;
 import io.ballerina.stdlib.grpc.ServiceResource;
+import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.grpc.StreamObserver;
+import io.ballerina.stdlib.grpc.callback.UnaryCallableUnitCallBack;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
-import io.ballerina.stdlib.grpc.CallStreamObserver;
-import io.ballerina.stdlib.grpc.ServerCall;
-import io.ballerina.stdlib.grpc.Status;
-import io.ballerina.stdlib.grpc.callback.UnaryCallableUnitCallBack;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Map.entry;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
+import static java.util.Map.entry;
 
 /**
  * Interface to initiate processing of incoming remote calls.

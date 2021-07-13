@@ -25,16 +25,16 @@ import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.stdlib.grpc.MessageUtils;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.ballerina.stdlib.grpc.CallStreamObserver;
 import io.ballerina.stdlib.grpc.ClientCall;
 import io.ballerina.stdlib.grpc.DataContext;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
+import io.ballerina.stdlib.grpc.MessageUtils;
 import io.ballerina.stdlib.grpc.MethodDescriptor;
 import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.http.transport.contract.HttpClientConnector;
+import io.netty.handler.codec.http.HttpHeaders;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;

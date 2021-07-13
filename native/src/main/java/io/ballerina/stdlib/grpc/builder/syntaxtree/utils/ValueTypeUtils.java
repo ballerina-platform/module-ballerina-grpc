@@ -19,8 +19,8 @@
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Record;
-import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Type;
+import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;

@@ -15,12 +15,12 @@
  */
 package io.ballerina.stdlib.grpc;
 
+import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
-import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
-import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
