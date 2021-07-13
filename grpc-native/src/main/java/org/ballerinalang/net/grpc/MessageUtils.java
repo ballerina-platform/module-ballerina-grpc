@@ -80,10 +80,6 @@ public class MessageUtils {
                 TypeCreator.createMapType(TypeCreator.createUnionType(Arrays.asList(PredefinedTypes.TYPE_STRING,
                         TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING))));
 
-    public static BObject getHeaderObject() {
-        return ValueCreator.createObjectValue(getModule(), "Headers");
-    }
-
     static boolean headersRequired(MethodType functionType, Type rpcInputType) {
         if (functionType == null || functionType.getParameterTypes() == null) {
             throw new RuntimeException("Invalid resource input arguments");
