@@ -94,10 +94,6 @@ public abstract class ServerCallHandler {
             call.setMessageCompression(enable);
         }
 
-        public void setCompression(String compression) {
-            call.setCompression(compression);
-        }
-
         @Override
         public void onNext(Message response) {
             if (cancelled) {
