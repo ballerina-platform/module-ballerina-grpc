@@ -12,20 +12,22 @@ plugins {
 }
 
 rootProject.name = 'grpc'
-include(':build-config:checkstyle')
-include (':grpc-native')
-include ('grpc-test-utils')
-include ('grpc-ballerina')
-include ('grpc-compiler-plugin')
-include ('grpc-compiler-plugin-tests')
-include ('grpc-examples')
 
-project(':build-config:checkstyle').projectDir = file('build-config/checkstyle')
-project(':grpc-native').projectDir = file('grpc-native')
-project(':grpc-test-utils').projectDir = file('grpc-test-utils')
-project(':grpc-compiler-plugin').projectDir = file('grpc-compiler-plugin')
-project(':grpc-ballerina').projectDir = file('grpc-ballerina')
-project(':grpc-compiler-plugin-tests').projectDir = file('grpc-compiler-plugin-tests')
+include ':checkstyle'
+include ':grpc-native'
+include ':grpc-test-utils'
+include ':grpc-ballerina'
+include ':grpc-compiler-plugin'
+include ':grpc-compiler-plugin-tests'
+include ':grpc-examples'
+
+project(':checkstyle').projectDir = file("build-config${File.separator}checkstyle")
+project(':grpc-native').projectDir = file('native')
+project(':grpc-test-utils').projectDir = file('test-utils')
+project(':grpc-ballerina').projectDir = file('ballerina')
+project(':grpc-compiler-plugin').projectDir = file('compiler-plugin')
+project(':grpc-compiler-plugin-tests').projectDir = file('compiler-plugin-tests')
+project(':grpc-examples').projectDir = file('examples')
 
 gradleEnterprise {
     buildScan {

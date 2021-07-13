@@ -1,0 +1,233 @@
+/*
+ * Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+buildscript {
+    repositories {
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/plugin-gradle'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+    }
+    dependencies {
+        classpath "io.ballerina:plugin-gradle:${project.ballerinaGradlePluginVersion}"
+    }
+}
+
+description = 'Ballerina - gRPC Ballerina Generator'
+
+def packageName = "grpc"
+def packageOrg = "ballerina"
+def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
+def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
+def dependenciesTomlFile = new File("$project.projectDir/Dependencies.toml")
+def compilerPluginTomlFile = new File("$project.projectDir/CompilerPlugin.toml")
+def artifactLibParent = file("$project.projectDir/build/lib_parent/")
+// external jar file which need to pack to distribution
+def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
+def targetNativeJar = file("$project.rootDir/${packageName}-native/build/libs/${packageName}-native-${project.version}.jar")
+def originalBallerinaToml = ballerinaTomlFile.text
+def originalDependenciesToml = dependenciesTomlFile.text
+def originalCompilerPluginToml = compilerPluginTomlFile.text
+
+def stripBallerinaExtensionVersion(String extVersion) {
+    if (extVersion.matches(project.ext.timestampedVersionRegex)) {
+        def splitVersion = extVersion.split('-')
+        if (splitVersion.length > 3) {
+            def strippedValues = splitVersion[0..-4]
+            return strippedValues.join('-')
+        } else {
+            return extVersion
+        }
+    } else {
+        return extVersion.replace("${project.ext.snapshotVersion}", "")
+    }
+}
+
+apply plugin: 'io.ballerina.plugin'
+
+ballerina {
+    packageOrganization = packageOrg
+    module = packageName
+    langVersion = ballerinaLangVersion
+}
+
+configurations {
+    externalJars
+}
+
+dependencies {
+
+    externalJars(group: 'io.ballerina.stdlib', name: 'http-native', version: "${stdlibHttpVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-common', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-buffer', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-transport', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-resolver', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-handler', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-codec', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-handler-proxy', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-codec-http2', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: "${bouncycastleVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: "${bouncycastleVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: "${nettyTcnativeVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'info.picocli', name: 'picocli', version: "${picocliVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.wso2.orbit.org.antlr', name: 'antlr4-runtime', version: "${wso2OrbitAntlrVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+}
+
+task updateTomlFiles {
+    doLast {
+        def stdlibDependentCryptoVersion = stripBallerinaExtensionVersion(project.stdlibCryptoVersion)
+        def stdlibDependentHttpVersion = stripBallerinaExtensionVersion(project.stdlibHttpVersion)
+        def stdlibDependentAuthVersion = stripBallerinaExtensionVersion(project.stdlibOAuth2Version)
+        def stdlibDependentJwtVersion = stripBallerinaExtensionVersion(project.stdlibJwtVersion)
+        def stdlibDependentOAuth2Version = stripBallerinaExtensionVersion(project.stdlibOAuth2Version)
+        def stdlibDependentRegexVersion = stripBallerinaExtensionVersion(project.stdlibRegexVersion)
+        def stdlibDependentTimeVersion = stripBallerinaExtensionVersion(project.stdlibTimeVersion)
+        def stdlibDependentOsVersion = stripBallerinaExtensionVersion(project.stdlibOsVersion)
+
+        def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
+        newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
+        newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
+        newBallerinaToml = newBallerinaToml.replace("@netty.version@", project.nettyVersion)
+        newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", project.nettyTcnativeVersion)
+        newBallerinaToml = newBallerinaToml.replace("@antlr.version@", project.wso2OrbitAntlrVersion)
+        newBallerinaToml = newBallerinaToml.replace("@commons.pool.version@", project.wso2CommonsPoolVersion)
+        newBallerinaToml = newBallerinaToml.replace("@bouncy.castle.version@", project.bouncycastleVersion)
+        newBallerinaToml = newBallerinaToml.replace("@protobuf.java.version@", project.protobufJavaVersion)
+        newBallerinaToml = newBallerinaToml.replace("@proto.google.commons.version@", project.protoGoogleCommonsVersion)
+        newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
+        ballerinaTomlFile.text = newBallerinaToml
+
+        def newDependencyConfig = dependenciesTomlFile.text.replace("@stdlib.crypto.version@", stdlibDependentCryptoVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.auth.version@", stdlibDependentAuthVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.jwt.version@", stdlibDependentJwtVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.time.version@", stdlibDependentTimeVersion)
+        newDependencyConfig = newDependencyConfig.replace("@stdlib.os.version@", stdlibDependentOsVersion)
+        dependenciesTomlFile.text = newDependencyConfig
+
+        def newCompilerPluginToml = compilerPluginTomlFile.text.replace("@project.version@", project.version)
+        compilerPluginTomlFile.text = newCompilerPluginToml
+    }
+}
+
+task revertTomlFiles {
+    doLast {
+        ballerinaTomlFile.text = originalBallerinaToml
+        dependenciesTomlFile.text = originalDependenciesToml
+        compilerPluginTomlFile.text = originalCompilerPluginToml
+    }
+}
+
+task copyExternalJars {
+    doLast {
+        copy {
+            from targetNativeJar
+            into file("$artifactLibParent/libs")
+        }
+        copy {
+            from externalGoogleProtosCommonJar
+            into file("$artifactLibParent/libs")
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact source: createArtifactZip, extension: 'zip'
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ballerina-platform/module-${packageOrg}-${packageName}")
+            credentials {
+                username = System.getenv("publishUser")
+                password = System.getenv("publishPAT")
+            }
+        }
+    }
+}
+
+
+updateTomlFiles.dependsOn copyStdlibs
+
+build.dependsOn ":${packageName}-native:build"
+build.dependsOn ":${packageName}-test-utils:build"
+build.dependsOn ":${packageName}-compiler-plugin:build"
+test.dependsOn ":${packageName}-native:build"
+test.dependsOn ":${packageName}-test-utils:build"
+test.dependsOn ":${packageName}-compiler-plugin:build"
+
+publishToMavenLocal.dependsOn copyExternalJars
+publish.dependsOn copyExternalJars
+publishToMavenLocal.dependsOn build
+publish.dependsOn build
