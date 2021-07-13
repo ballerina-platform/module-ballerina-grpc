@@ -60,7 +60,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternInitStubNullRootDescriptor() {
-        BObject genericEndpoint = getBObject();
+        BObject genericEndpoint = getBObject(null);
         Object result = FunctionUtils.externInitStub(genericEndpoint, null, null, null);
         assertEquals(((BError) result).getErrorMessage().getValue(), "Error while initializing connector. " +
                 "message descriptor keys not exist. Please check the generated sub file");
@@ -75,7 +75,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteSimpleRPCNullConnectionStub() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
 
         Object result = FunctionUtils.externExecuteSimpleRPC(null, clientEndpoint, null, null, null);
         assertEquals(((BError) result).getErrorMessage().getValue(),
@@ -84,7 +84,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteSimpleRPCNullMethodName() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
 
         Object result = FunctionUtils.externExecuteSimpleRPC(null, clientEndpoint, null, null, null);
@@ -94,7 +94,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteSimpleRPCNullDescriptor() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
         BString methodName = StringUtils.fromString("test");
 
@@ -113,7 +113,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteServerStreamingNullConnectionStub() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         
         Object result = FunctionUtils.externExecuteServerStreaming(null, clientEndpoint, null, null, null);
         assertEquals(((BError) result).getErrorMessage().getValue(),
@@ -123,7 +123,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteServerStreamingNullMethodName() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
 
         Object result = FunctionUtils.externExecuteServerStreaming(null, clientEndpoint, null, null, null);
@@ -133,7 +133,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteServerStreamingNullDescriptor() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
         BString methodName = StringUtils.fromString("test");
 
@@ -144,7 +144,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteServerStreamingNullMethodDescriptor() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
         clientEndpoint.addNativeData(METHOD_DESCRIPTORS, new HashMap<String, MethodDescriptor>());
         BString methodName = StringUtils.fromString("test");
@@ -164,7 +164,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteClientStreamingNullConnectionStub() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
 
         Object result = FunctionUtils.externExecuteClientStreaming(null, clientEndpoint, null, null);
         assertEquals(((BError) result).getErrorMessage().getValue(),
@@ -174,7 +174,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteClientStreamingNullMethodName() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
 
         Object result = FunctionUtils.externExecuteClientStreaming(null, clientEndpoint, null, null);
@@ -184,7 +184,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteClientStreamingNullDescriptor() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
         BString methodName = StringUtils.fromString("test");
 
@@ -195,7 +195,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteClientStreamingNullMethodDescriptor() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
         clientEndpoint.addNativeData(METHOD_DESCRIPTORS, new HashMap<String, MethodDescriptor>());
         BString methodName = StringUtils.fromString("test");
@@ -215,7 +215,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteBidirectionalStreamingNullConnectionStub() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
 
         Object result = FunctionUtils.externExecuteBidirectionalStreaming(null, clientEndpoint, null, null);
         assertEquals(((BError) result).getErrorMessage().getValue(),
@@ -225,7 +225,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteBidirectionalStreamingNullMethodName() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
 
         Object result = FunctionUtils.externExecuteBidirectionalStreaming(null, clientEndpoint, null, null);
@@ -235,7 +235,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteBidirectionalStreamingNullDescriptor() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
         BString methodName = StringUtils.fromString("test");
 
@@ -246,7 +246,7 @@ public class FunctionUtilsTest {
 
     @Test()
     public void testExternExecuteBidirectionalStreamingNullMethodDescriptor() {
-        BObject clientEndpoint = getBObject();
+        BObject clientEndpoint = getBObject(null);
         clientEndpoint.addNativeData(SERVICE_STUB, new Stub(null, null));
         clientEndpoint.addNativeData(METHOD_DESCRIPTORS, new HashMap<String, MethodDescriptor>());
         BString methodName = StringUtils.fromString("test");

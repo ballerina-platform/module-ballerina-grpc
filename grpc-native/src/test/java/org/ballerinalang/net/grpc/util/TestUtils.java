@@ -1,6 +1,8 @@
 package org.ballerinalang.net.grpc.util;
 
 import io.ballerina.runtime.api.creators.ErrorCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.types.Field;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
@@ -14,6 +16,7 @@ import io.ballerina.runtime.internal.scheduling.Scheduler;
 import io.ballerina.runtime.internal.scheduling.Strand;
 import io.ballerina.runtime.internal.values.MapValue;
 import io.ballerina.runtime.internal.values.ValueCreator;
+import org.ballerinalang.net.grpc.nativeimpl.ModuleUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +55,7 @@ public class TestUtils {
         };
     }
 
-    public static BObject getBObject() {
+    public static BObject getBObject(Map<String, Field> fieldMap) {
         return new BObject() {
             private final HashMap<String, Object> nativeData = new HashMap();
 
@@ -70,7 +73,11 @@ public class TestUtils {
 
             @Override
             public ObjectType getType() {
-
+                if (fieldMap != null) {
+                    ObjectType type = TypeCreator.createObjectType("testObjectType", ModuleUtils.getModule(), 0);
+                    type.setFields(fieldMap);
+                    return type;
+                }
                 return null;
             }
 
@@ -94,8 +101,7 @@ public class TestUtils {
 
             @Override
             public BString getStringValue(BString bString) {
-
-                return null;
+                return (BString) nativeData.get(bString.getValue());
             }
 
             @Override
@@ -106,8 +112,7 @@ public class TestUtils {
 
             @Override
             public BMap getMapValue(BString bString) {
-
-                return null;
+                return (BMap) nativeData.get(bString.getValue());
             }
 
             @Override
