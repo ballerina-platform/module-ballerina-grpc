@@ -23,6 +23,7 @@ public class MessageFramerTest {
         try {
             framer.writePayload(stream);
             framer.flush();
+            framer.close();
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -39,6 +40,7 @@ public class MessageFramerTest {
             InputStream stream = new ByteArrayInputStream("Test Message".getBytes());
             framer.writePayload(stream);
             framer.flush();
+            framer.dispose();
         } catch (Exception e) {
             fail(e.getMessage());
         }
