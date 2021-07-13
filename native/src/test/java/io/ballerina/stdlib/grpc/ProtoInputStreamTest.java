@@ -43,4 +43,11 @@ public class ProtoInputStreamTest {
         pis = new ProtoInputStream(message);
         assertEquals(pis.message(), message);
     }
+
+    @Test()
+    public void testAvailable() {
+        Message message = new Message(new IllegalStateException("Illegal test case"));
+        ProtoInputStream pis = new ProtoInputStream(message);
+        assertEquals(pis.available(), 0);
+    }
 }
