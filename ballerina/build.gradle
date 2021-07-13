@@ -65,7 +65,6 @@ ballerina {
     packageOrganization = packageOrg
     module = packageName
     langVersion = ballerinaLangVersion
-    testCoverageParam = "--code-coverage --coverage-format=xml"
 }
 
 configurations {
