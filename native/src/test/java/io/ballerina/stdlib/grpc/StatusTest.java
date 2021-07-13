@@ -62,4 +62,31 @@ public class StatusTest {
         status = Status.CODE_MARSHALLER.parseAsciiString(asciiCodeValue);
         assertEquals(status.getDescription(), "Unknown code ab");
     }
+
+    @Test()
+    public void testAugmentDescription() {
+        Status status = Status.fromCodeValue(Status.Code.OK.value());
+        Status result = status.augmentDescription(null);
+        assertEquals(result, status);
+
+        result = status.augmentDescription("Additional description");
+        assertEquals(result.getDescription(), "Additional description");
+
+        status = status.withDescription("StatusOK");
+        result = status.augmentDescription("Additional description");
+        assertEquals(result.getDescription(), "StatusOK\nAdditional description");
+    }
+
+    @Test()
+    public void testToString() {
+        Status status = Status.fromCodeValue(Status.Code.OK.value());
+        status = status.withDescription("StatusOK");
+        assertEquals(status.toString(), "Status{ code OK, description StatusOK, cause null}");
+    }
+
+    @Test()
+    public void testToAsciiString() {
+        byte[] bytes = Status.MESSAGE_MARSHALLER.toAsciiString("Test~String");
+        assertEquals(new String(bytes), "Test%7EString");
+    }
 }
