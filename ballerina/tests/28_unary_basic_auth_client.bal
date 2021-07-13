@@ -93,3 +93,22 @@ public isolated function testStringValueReturnWithBasicAuthWithEmpty() returns E
         test:assertFail(msg = "Expected grpc:Error not found.");
     }
 }
+
+@test:Config {enable: true}
+public isolated function testStringValueReturnWithBasicAuthWithInvalidHeader() returns Error? {
+    HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
+    map<string|string[]> requestHeaders = {
+        "authorization": "Bearer "
+    };
+
+    ContextString requestMessage = {
+        content: "WSO2",
+        headers: requestHeaders
+    };
+    var response = helloWorldEp->testStringValueReturn(requestMessage);
+    if (response is Error) {
+        test:assertEquals(response.message(), "Empty authentication header.");
+    } else {
+        test:assertFail(msg = "Expected an error");
+    }
+}
