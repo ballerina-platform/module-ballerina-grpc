@@ -20,7 +20,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
-import org.ballerinalang.net.transport.message.HttpCarbonMessage;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

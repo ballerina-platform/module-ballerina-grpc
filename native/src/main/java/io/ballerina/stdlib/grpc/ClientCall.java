@@ -24,9 +24,9 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.stubs.AbstractStub;
 import io.ballerina.stdlib.http.api.HttpConstants;
-import org.ballerinalang.net.transport.contract.Constants;
-import org.ballerinalang.net.transport.contract.HttpClientConnector;
-import org.ballerinalang.net.transport.contract.HttpResponseFuture;
+import io.ballerina.stdlib.http.transport.contract.Constants;
+import io.ballerina.stdlib.http.transport.contract.HttpClientConnector;
+import io.ballerina.stdlib.http.transport.contract.HttpResponseFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

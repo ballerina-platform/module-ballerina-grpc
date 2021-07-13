@@ -18,9 +18,9 @@ package io.ballerina.stdlib.grpc;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.ballerinalang.net.transport.contract.HttpResponseFuture;
-import org.ballerinalang.net.transport.contract.exceptions.ServerConnectorException;
-import org.ballerinalang.net.transport.message.HttpCarbonMessage;
+import io.ballerina.stdlib.http.transport.contract.HttpResponseFuture;
+import io.ballerina.stdlib.http.transport.contract.exceptions.ServerConnectorException;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.io.InputStream;
 import java.util.Map;

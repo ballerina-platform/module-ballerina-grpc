@@ -19,8 +19,8 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.LastHttpContent;
-import org.ballerinalang.net.transport.contract.HttpClientConnectorListener;
-import org.ballerinalang.net.transport.message.HttpCarbonMessage;
+import io.ballerina.stdlib.http.transport.contract.HttpClientConnectorListener;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;

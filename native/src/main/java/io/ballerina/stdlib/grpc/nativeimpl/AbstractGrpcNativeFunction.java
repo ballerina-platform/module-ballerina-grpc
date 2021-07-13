@@ -20,7 +20,7 @@ package io.ballerina.stdlib.grpc.nativeimpl;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.ServicesRegistry;
-import org.ballerinalang.net.transport.contract.ServerConnector;
+import io.ballerina.stdlib.http.transport.contract.ServerConnector;
 
 /**
  * Abstract class of gRPC service endpoint extern functions.

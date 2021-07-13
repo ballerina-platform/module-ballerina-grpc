@@ -40,7 +40,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
-import org.ballerinalang.net.transport.message.HttpCarbonMessage;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.io.IOException;
 import java.io.InputStream;

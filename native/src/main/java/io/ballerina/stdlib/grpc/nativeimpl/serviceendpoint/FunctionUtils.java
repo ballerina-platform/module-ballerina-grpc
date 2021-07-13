@@ -37,9 +37,9 @@ import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.nativeimpl.AbstractGrpcNativeFunction;
 import io.ballerina.stdlib.http.api.HttpConnectionManager;
 import io.ballerina.stdlib.http.api.HttpConstants;
-import org.ballerinalang.net.transport.contract.ServerConnector;
-import org.ballerinalang.net.transport.contract.ServerConnectorFuture;
-import org.ballerinalang.net.transport.contract.config.ListenerConfiguration;
+import io.ballerina.stdlib.http.transport.contract.ServerConnector;
+import io.ballerina.stdlib.http.transport.contract.ServerConnectorFuture;
+import io.ballerina.stdlib.http.transport.contract.config.ListenerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

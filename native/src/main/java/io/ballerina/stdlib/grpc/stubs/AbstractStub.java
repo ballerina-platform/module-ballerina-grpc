@@ -25,9 +25,9 @@ import io.ballerina.stdlib.grpc.MessageUtils;
 import io.ballerina.stdlib.grpc.OutboundMessage;
 import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.http.api.HttpConstants;
-import org.ballerinalang.net.transport.contract.Constants;
-import org.ballerinalang.net.transport.contract.HttpClientConnector;
-import org.ballerinalang.net.transport.message.HttpCarbonMessage;
+import io.ballerina.stdlib.http.transport.contract.Constants;
+import io.ballerina.stdlib.http.transport.contract.HttpClientConnector;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 
 import java.net.MalformedURLException;
 import java.net.URL;

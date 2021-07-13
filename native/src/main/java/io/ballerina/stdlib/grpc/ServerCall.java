@@ -22,7 +22,7 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.listener.ServerCallHandler;
-import org.ballerinalang.net.transport.contract.exceptions.ServerConnectorException;
+import io.ballerina.stdlib.http.transport.contract.exceptions.ServerConnectorException;
 
 import java.io.InputStream;
 import java.util.Arrays;

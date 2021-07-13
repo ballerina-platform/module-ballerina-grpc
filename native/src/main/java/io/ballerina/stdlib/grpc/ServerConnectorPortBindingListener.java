@@ -17,7 +17,7 @@
  */
 package io.ballerina.stdlib.grpc;
 
-import org.ballerinalang.net.transport.contract.PortBindingEventListener;
+import io.ballerina.stdlib.http.transport.contract.PortBindingEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

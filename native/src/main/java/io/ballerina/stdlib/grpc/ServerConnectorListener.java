@@ -23,8 +23,8 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.http.api.HttpConstants;
 import io.ballerina.stdlib.http.api.HttpUtil;
-import org.ballerinalang.net.transport.contract.HttpConnectorListener;
-import org.ballerinalang.net.transport.message.HttpCarbonMessage;
+import io.ballerina.stdlib.http.transport.contract.HttpConnectorListener;
+import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -37,12 +37,12 @@ import io.ballerina.stdlib.grpc.stubs.Stub;
 import io.ballerina.stdlib.http.api.HttpConnectionManager;
 import io.ballerina.stdlib.http.api.HttpConstants;
 import io.ballerina.stdlib.http.api.HttpUtil;
-import org.ballerinalang.net.transport.contract.Constants;
-import org.ballerinalang.net.transport.contract.HttpClientConnector;
-import org.ballerinalang.net.transport.contract.config.SenderConfiguration;
-import org.ballerinalang.net.transport.contractimpl.sender.channel.pool.ConnectionManager;
-import org.ballerinalang.net.transport.contractimpl.sender.channel.pool.PoolConfiguration;
-import org.ballerinalang.net.transport.message.HttpConnectorUtil;
+import io.ballerina.stdlib.http.transport.contract.Constants;
+import io.ballerina.stdlib.http.transport.contract.HttpClientConnector;
+import io.ballerina.stdlib.http.transport.contract.config.SenderConfiguration;
+import io.ballerina.stdlib.http.transport.contractimpl.sender.channel.pool.ConnectionManager;
+import io.ballerina.stdlib.http.transport.contractimpl.sender.channel.pool.PoolConfiguration;
+import io.ballerina.stdlib.http.transport.message.HttpConnectorUtil;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -34,7 +34,7 @@ import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
 import io.ballerina.stdlib.grpc.MethodDescriptor;
 import io.ballerina.stdlib.grpc.Status;
-import org.ballerinalang.net.transport.contract.HttpClientConnector;
+import io.ballerina.stdlib.http.transport.contract.HttpClientConnector;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
