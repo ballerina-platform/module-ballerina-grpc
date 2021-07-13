@@ -5,7 +5,6 @@ package io.ballerina.stdlib.grpc;
 import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 import org.testng.annotations.Test;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
