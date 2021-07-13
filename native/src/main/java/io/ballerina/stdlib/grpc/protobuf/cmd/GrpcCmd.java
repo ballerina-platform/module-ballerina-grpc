@@ -154,14 +154,11 @@ public class GrpcCmd implements BLauncherCmd {
     }
 
     private List<String> getProtoFiles(Path path) throws IOException {
-        if (!Files.isDirectory(path)) {
-            throw new IllegalArgumentException("Path must be a directory!");
-        }
         List<String> result;
         try (Stream<Path> walk = Files.walk(path, 1)) {
             result = walk
                     .filter(p -> !Files.isDirectory(p))
-                    .map(p -> p.toString().toLowerCase())
+                    .map(p -> p.toString())
                     .filter(f -> f.endsWith("proto"))
                     .collect(Collectors.toList());
         }
