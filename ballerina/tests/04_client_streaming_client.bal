@@ -45,3 +45,30 @@ isolated function testClientStreaming() returns Error? {
     anydata response = checkpanic ep->receiveString();
     test:assertEquals(<string> response, "Ack");
 }
+
+@test:Config {enable:true}
+isolated function testClientStreamingSendMessageAfterError() returns Error? {
+    HelloWorld7Client helloWorldEp = check new ("http://localhost:9094");
+    LotsOfGreetingsStreamingClient res = check helloWorldEp->lotsOfGreetings();
+
+    check res->sendError(error AbortedError("Aborted for testing"));
+    Error? err = res->sendString("Hey");
+    if (err is Error) {
+        test:assertEquals(err.message(), "Client call was already cancelled.");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testClientStreamingSendMessageAfterComplete() returns Error? {
+    ClientConfiguration config = {
+        compression: COMPRESSION_ALWAYS
+    };
+    HelloWorld7Client helloWorldEp = check new ("http://localhost:9094", config);
+    LotsOfGreetingsStreamingClient res = check helloWorldEp->lotsOfGreetings();
+    Error? err = res->sendString("Hey");
+    check res->complete();
+    err = res->sendString("Hey");
+    if (err is Error) {
+        test:assertEquals(err.message(), "Client call was already closed.");
+    }
+}

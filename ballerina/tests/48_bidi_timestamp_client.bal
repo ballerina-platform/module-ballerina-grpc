@@ -86,7 +86,7 @@ isolated function testBidiTimestampWithBidiTime() returns error? {
 }
 
 @test:Config {enable: true}
-isolated function testbIdITimestampWithBidiTimeContext() returns error? {
+isolated function testBiDiTimestampWithBidiTimeContext() returns error? {
 
     BidiStreamingTimestampServiceClient utsClient = check new ("http://localhost:9148");
     BidiStreamingExchangeTimeStreamingClient streamingClient = check utsClient->bidiStreamingExchangeTime();

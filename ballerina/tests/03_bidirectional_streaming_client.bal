@@ -77,3 +77,268 @@ isolated function testBidiStreaming() returns Error? {
 
     checkpanic ep->complete();
 }
+
+@test:Config {enable:true}
+isolated function testBidiStreamingInvalidSecureSocketConfigs() returns Error? {
+    ChatStreamingClient ep;
+    ChatClient|Error result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: "",
+                password: "ballerina"
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        test:assertEquals(result.message(), "KeyStore file location must be provided for secure connection.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+
+    result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: ""
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        test:assertEquals(result.message(), "KeyStore password must be provided for secure connection.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+
+    result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
+                path: "",
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        test:assertEquals(result.message(), "TrustStore file location must be provided for secure connection.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+
+    result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: ""
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        test:assertEquals(result.message(), "TrustStore password must be provided for secure connection.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testBidiStreamingNullCertField() returns Error? {
+    ChatStreamingClient ep;
+    ChatClient|Error result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        string expectedError = "Need to configure 'crypto:TrustStore' or 'cert' with client SSL certificates file.";
+        test:assertEquals(result.message(), expectedError);
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testBidiStreamingWithPublicCertPrivateKey() returns Error? {
+    ChatClient chatEp = check new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                certFile: PUBLIC_CRT_PATH,
+                keyFile: PRIVATE_KEY_PATH
+            },
+            cert: PUBLIC_CRT_PATH,
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    ChatStreamingClient ep = check chatEp->chat();
+    ChatMessage mes1 = {name:"Sam", message:"Hi"};
+    Error? connErr = ep->sendChatMessage(mes1);
+    if (connErr is Error) {
+        test:assertFail(string `Error from Connector: ${connErr.message()}`);
+    }
+
+    string|Error? responseMsg = ep->receiveString();
+    if responseMsg is string {
+        test:assertEquals(responseMsg, "Sam: Hi");
+    } else if responseMsg is error {
+        test:assertFail(msg = responseMsg.message());
+    } else {
+        test:assertFail(msg = "Expected a string value");
+    }
+    check ep->complete();
+}
+
+@test:Config {enable:true}
+isolated function testBidiStreamingWithNoCertFile() returns Error? {
+    ChatStreamingClient ep;
+    ChatClient|Error result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                certFile: "",
+                keyFile: PRIVATE_KEY_PATH
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        string expectedError = "Certificate file location must be provided for secure connection.";
+        test:assertEquals(result.message(), expectedError);
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testBidiStreamingWithNoKeyFile() returns Error? {
+    ChatStreamingClient ep;
+    ChatClient|Error result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                certFile: PUBLIC_CRT_PATH,
+                keyFile: ""
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        string expectedError = "Private key file location must be provided for secure connection.";
+        test:assertEquals(result.message(), expectedError);
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testBidiStreamingWithNoPublicCertFile() returns Error? {
+    ChatStreamingClient ep;
+    ChatClient|Error result = new ("https://localhost:9093", {
+        secureSocket: {
+            key: {
+                certFile: PUBLIC_CRT_PATH,
+                keyFile: PRIVATE_KEY_PATH
+            },
+            cert: "",
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    if result is Error {
+        string expectedError = "Certificate file location must be provided for secure connection.";
+        test:assertEquals(result.message(), expectedError);
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns Error? {
+    ChatClient chatClient = check new ("https://localhost", {
+        secureSocket: {
+            key: {
+                certFile: PUBLIC_CRT_PATH,
+                keyFile: PRIVATE_KEY_PATH
+            },
+            cert: PUBLIC_CRT_PATH,
+            protocol:{
+                name: TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
+    });
+    ChatStreamingClient strClient = check chatClient->chat();
+    ChatMessage mes1 = {name:"Sam", message:"Hi"};
+    Error? connErr = strClient->sendChatMessage(mes1);
+    if (connErr is Error) {
+        test:assertFail(string `Error from Connector: ${connErr.message()}`);
+    }
+    string|Error? res = strClient->receiveString();
+    if (res is Error) {
+        test:assertEquals(res.message(), "Connection refused: localhost/127.0.0.1:443");
+    } else {
+        test:assertFail(msg = "Expected an error");
+    }
+}
