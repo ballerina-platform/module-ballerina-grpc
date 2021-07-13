@@ -180,8 +180,8 @@ public abstract class ServerCallHandler {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
-                                                GrpcConstants.ON_MESSAGE_METADATA, callback, properties, resource.getReturnType(),
-                requestParams);
+                GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                resource.getReturnType(), requestParams);
     }
 
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,

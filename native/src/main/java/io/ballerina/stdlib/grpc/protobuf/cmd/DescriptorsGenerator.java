@@ -59,8 +59,9 @@ class DescriptorsGenerator {
                             "filepath is not defined properly. Filepath: " + dependentFilePath);
                 }
                 String protoFilename = protoFilePath.toString();
-                String descFilename = protoFilename.endsWith(BalGenerationConstants.PROTO_SUFFIX) ? protoFilename.replace(BalGenerationConstants.PROTO_SUFFIX,
-                        BalGenerationConstants.DESC_SUFFIX) : null;
+                String descFilename = protoFilename.endsWith(BalGenerationConstants.PROTO_SUFFIX) ?
+                        protoFilename.replace(BalGenerationConstants.PROTO_SUFFIX, BalGenerationConstants.DESC_SUFFIX)
+                        : null;
                 if (descFilename == null) {
                     throw new CodeGeneratorException("Error occurred while reading proto descriptor. Dependent " +
                             "filepath is not defined properly. Filepath: " + dependentFilePath);
@@ -86,7 +87,8 @@ class DescriptorsGenerator {
                 }
 
                 String command = new ProtocCommandBuilder(exePath, BalFileGenerationUtils.escapeSpaces(protoPath),
-                        BalFileGenerationUtils.escapeSpaces(protoFolderPath), BalFileGenerationUtils.escapeSpaces(dependentDescFile.getAbsolutePath())).build();
+                        BalFileGenerationUtils.escapeSpaces(protoFolderPath),
+                        BalFileGenerationUtils.escapeSpaces(dependentDescFile.getAbsolutePath())).build();
                 BalFileGenerationUtils.generateDescriptor(command);
                 File childFile = new File(tempDir, relativeDescFilepath);
                 try (InputStream childStream = new FileInputStream(childFile)) {
@@ -125,7 +127,8 @@ class DescriptorsGenerator {
             throws CodeGeneratorException {
 
         String command = new ProtocCommandBuilder(exePath, BalFileGenerationUtils.escapeSpaces(protoPath),
-                BalFileGenerationUtils.escapeSpaces(BalFileGenerationUtils.resolveProtoFolderPath(protoPath)), BalFileGenerationUtils.escapeSpaces(descriptorPath)).build();
+                BalFileGenerationUtils.escapeSpaces(BalFileGenerationUtils.resolveProtoFolderPath(protoPath)),
+                BalFileGenerationUtils.escapeSpaces(descriptorPath)).build();
         BalFileGenerationUtils.generateDescriptor(command);
         File initialFile = new File(descriptorPath);
         try (InputStream targetStream = new FileInputStream(initialFile)) {

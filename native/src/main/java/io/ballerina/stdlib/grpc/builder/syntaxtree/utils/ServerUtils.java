@@ -187,8 +187,8 @@ public class ServerUtils {
                 getObjectFieldNode(
                         "private",
                         new String[]{},
-                        getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA, SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
-                        "anydataStream"));
+                        getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
+                                SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL), "anydataStream"));
 
         serverStream.addMember(getInitFunction().getFunctionDefinitionNode());
 
@@ -202,8 +202,8 @@ public class ServerUtils {
     private static Function getInitFunction() {
         Function function = new Function("init");
         function.addRequiredParameter(
-                getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA, SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
-                "anydataStream"
+                getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL), "anydataStream"
         );
         function.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "anydataStream"),
@@ -320,10 +320,11 @@ public class ServerUtils {
 
     private static void addServerBody(Function function, Method method, String inputCap, String outCap,
                                       String headers) {
+
         addClientCallBody(function, inputCap, method);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
-                getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA, SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL),
-                SyntaxTreeConstants.SYNTAX_TREE_COMMA,
+                getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL), SyntaxTreeConstants.SYNTAX_TREE_COMMA,
                 getMapTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
                                 SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING,

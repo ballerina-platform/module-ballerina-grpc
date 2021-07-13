@@ -159,7 +159,8 @@ public class GrpcUtil {
         if (key != null) {
             evaluateKeyField(key, senderConfiguration);
         }
-        BMap<BString, Object> protocol = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_PROTOCOL);
+        BMap<BString, Object> protocol = getBMapValueIfPresent(secureSocket,
+                GrpcConstants.SECURESOCKET_CONFIG_PROTOCOL);
         if (protocol != null) {
             evaluateProtocolField(protocol, senderConfiguration, clientParamList);
         }
@@ -251,14 +252,16 @@ public class GrpcUtil {
         BMap<BString, Object> key = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_KEY);
         assert key != null; // This validation happens at Ballerina level
         evaluateKeyField(key, listenerConfiguration);
-        BMap<BString, Object> mutualSsl = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_MUTUAL_SSL);
+        BMap<BString, Object> mutualSsl = getBMapValueIfPresent(secureSocket,
+                GrpcConstants.SECURESOCKET_CONFIG_MUTUAL_SSL);
         if (mutualSsl != null) {
             String verifyClient = mutualSsl.getStringValue(GrpcConstants.SECURESOCKET_CONFIG_VERIFY_CLIENT).getValue();
             listenerConfiguration.setVerifyClient(verifyClient);
             Object cert = mutualSsl.get(SECURESOCKET_CONFIG_CERT);
             evaluateCertField(cert, listenerConfiguration);
         }
-        BMap<BString, Object> protocol = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_PROTOCOL);
+        BMap<BString, Object> protocol = getBMapValueIfPresent(secureSocket,
+                GrpcConstants.SECURESOCKET_CONFIG_PROTOCOL);
         if (protocol != null) {
             evaluateProtocolField(protocol, listenerConfiguration, serverParamList);
         }
@@ -290,7 +293,8 @@ public class GrpcUtil {
                         .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("KeyStore file location " +
                                 "must be provided for secure connection.")));
             }
-            String keyStorePassword = key.getStringValue(GrpcConstants.SECURESOCKET_CONFIG_KEYSTORE_PASSWORD).getValue();
+            String keyStorePassword = key.getStringValue(GrpcConstants.SECURESOCKET_CONFIG_KEYSTORE_PASSWORD)
+                    .getValue();
             if (keyStorePassword.isBlank()) {
                 throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                         .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("KeyStore password must " +
@@ -332,8 +336,10 @@ public class GrpcUtil {
     private static void evaluateCertField(Object cert, SslConfiguration sslConfiguration) {
         if (cert instanceof BMap) {
             BMap<BString, BString> trustStore = (BMap<BString, BString>) cert;
-            String trustStoreFile = trustStore.getStringValue(GrpcConstants.SECURESOCKET_CONFIG_TRUSTSTORE_FILE_PATH).getValue();
-            String trustStorePassword = trustStore.getStringValue(GrpcConstants.SECURESOCKET_CONFIG_TRUSTSTORE_PASSWORD).getValue();
+            String trustStoreFile = trustStore.getStringValue(GrpcConstants.SECURESOCKET_CONFIG_TRUSTSTORE_FILE_PATH)
+                    .getValue();
+            String trustStorePassword = trustStore.getStringValue(GrpcConstants.SECURESOCKET_CONFIG_TRUSTSTORE_PASSWORD)
+                    .getValue();
             if (trustStoreFile.isBlank()) {
                 throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                         .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("TrustStore file " +
@@ -367,7 +373,8 @@ public class GrpcUtil {
         List<String> sslEnabledProtocolsValueList = Arrays.asList(
                 protocol.getArrayValue(GrpcConstants.SECURESOCKET_CONFIG_PROTOCOL_VERSIONS).getStringArray());
         if (!sslEnabledProtocolsValueList.isEmpty()) {
-            String sslEnabledProtocols = sslEnabledProtocolsValueList.stream().collect(Collectors.joining(",", "", ""));
+            String sslEnabledProtocols = sslEnabledProtocolsValueList.stream().collect(
+                    Collectors.joining(",", "", ""));
             Parameter serverProtocols = new Parameter(ANN_CONFIG_ATTR_SSL_ENABLED_PROTOCOLS, sslEnabledProtocols);
             paramList.add(serverProtocols);
         }
@@ -400,7 +407,8 @@ public class GrpcUtil {
         Object[] ciphersArray = ciphers.getStringArray();
         List<Object> ciphersList = Arrays.asList(ciphersArray);
         if (ciphersList.size() > 0) {
-            String ciphersString = ciphersList.stream().map(Object::toString).collect(Collectors.joining(",", "", ""));
+            String ciphersString = ciphersList.stream().map(Object::toString).collect(
+                    Collectors.joining(",", "", ""));
             Parameter serverParameters = new Parameter(HttpConstants.CIPHERS, ciphersString);
             paramList.add(serverParameters);
         }
@@ -417,7 +425,8 @@ public class GrpcUtil {
                 GrpcConstants.SECURESOCKET_CONFIG_SESSION_TIMEOUT));
         sslConfiguration.setSslHandshakeTimeOut(getLongValueOrDefault(secureSocket,
                 GrpcConstants.SECURESOCKET_CONFIG_HANDSHAKE_TIMEOUT));
-        String enableSessionCreation = String.valueOf(secureSocket.getBooleanValue(GrpcConstants.SECURESOCKET_CONFIG_SHARE_SESSION));
+        String enableSessionCreation = String.valueOf(secureSocket.getBooleanValue(
+                GrpcConstants.SECURESOCKET_CONFIG_SHARE_SESSION));
         Parameter enableSessionCreationParam = new Parameter(GrpcConstants.SECURESOCKET_CONFIG_SHARE_SESSION.getValue(),
                 enableSessionCreation);
         paramList.add(enableSessionCreationParam);

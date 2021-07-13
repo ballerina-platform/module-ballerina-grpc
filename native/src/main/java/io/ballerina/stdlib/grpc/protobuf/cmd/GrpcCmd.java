@@ -92,8 +92,10 @@ public class GrpcCmd implements BLauncherCmd {
      * @param resourceName ie.: "/wrapper.proto"
      */
     private static void exportResource(String resourceName, ClassLoader classLoader) throws CodeGeneratorException {
+
         try (InputStream initialStream = classLoader.getResourceAsStream(resourceName);
-             OutputStream resStreamOut = new FileOutputStream(new File(BalGenerationConstants.TMP_DIRECTORY_PATH, resourceName))) {
+             OutputStream resStreamOut = new FileOutputStream(
+                     new File(BalGenerationConstants.TMP_DIRECTORY_PATH, resourceName))) {
             if (initialStream == null) {
                 throw new CodeGeneratorException("Cannot get resource file \"" + resourceName + "\" from Jar file.");
             }
@@ -219,7 +221,8 @@ public class GrpcCmd implements BLauncherCmd {
             ballerinaFileBuilder.build(this.mode);
         } catch (CodeBuilderException e) {
             LOG.error("Error generating ballerina file.", e);
-            msg.append("Error generating ballerina file.").append(e.getMessage()).append(BalGenerationConstants.NEW_LINE_CHARACTER);
+            msg.append("Error generating ballerina file.").append(e.getMessage())
+                    .append(BalGenerationConstants.NEW_LINE_CHARACTER);
             outStream.println(msg.toString());
             return;
         }
@@ -233,7 +236,9 @@ public class GrpcCmd implements BLauncherCmd {
      * @return Temporary Created meta file.
      */
     private Path createServiceDescriptorFile() {
-        Path descriptorDirPath = Paths.get(BalGenerationConstants.TMP_DIRECTORY_PATH, BalGenerationConstants.META_LOCATION);
+
+        Path descriptorDirPath = Paths.get(BalGenerationConstants.TMP_DIRECTORY_PATH,
+                BalGenerationConstants.META_LOCATION);
         try {
             Files.createDirectories(descriptorDirPath);
             return Files.createFile(descriptorDirPath.resolve(getProtoFileName() + "-descriptor.desc"));
@@ -247,9 +252,12 @@ public class GrpcCmd implements BLauncherCmd {
      * Create directories to copy dependent proto files.
      */
     private void createProtoPackageDirectories() {
-        Path protobufCompilerDirPath = Paths.get(BalGenerationConstants.TMP_DIRECTORY_PATH, BalGenerationConstants.TEMP_GOOGLE_DIRECTORY, BalGenerationConstants.TEMP_PROTOBUF_DIRECTORY,
+
+        Path protobufCompilerDirPath = Paths.get(BalGenerationConstants.TMP_DIRECTORY_PATH,
+                BalGenerationConstants.TEMP_GOOGLE_DIRECTORY, BalGenerationConstants.TEMP_PROTOBUF_DIRECTORY,
                 BalGenerationConstants.TEMP_COMPILER_DIRECTORY);
-        Path protobufApiDirPath =  Paths.get(BalGenerationConstants.TMP_DIRECTORY_PATH, BalGenerationConstants.TEMP_GOOGLE_DIRECTORY, BalGenerationConstants.TEMP_API_DIRECTORY);
+        Path protobufApiDirPath = Paths.get(BalGenerationConstants.TMP_DIRECTORY_PATH,
+                BalGenerationConstants.TEMP_GOOGLE_DIRECTORY, BalGenerationConstants.TEMP_API_DIRECTORY);
         try {
             Files.createDirectories(protobufCompilerDirPath);
             Files.createDirectories(protobufApiDirPath);
@@ -274,6 +282,7 @@ public class GrpcCmd implements BLauncherCmd {
      * Download the protoc executor.
      */
     private void downloadProtocexe() throws IOException, CodeGeneratorException {
+
         if (protocExePath == null) {
             String protocFilename = "protoc-" + protocVersion
                     + "-" + OSDetector.getDetectedClassifier() + BalGenerationConstants.PROTOC_PLUGIN_EXE_PREFIX;
@@ -281,8 +290,10 @@ public class GrpcCmd implements BLauncherCmd {
             protocExePath = protocExeFile.getAbsolutePath(); // if file already exists will do nothing
             if (!protocExeFile.exists()) {
                 outStream.println("Downloading protoc executor file - " + protocFilename);
-                String protocDownloadurl = BalGenerationConstants.PROTOC_PLUGIN_EXE_URL_SUFFIX + protocVersion + "/" + protocFilename;
-                File tempDownloadFile = new File(BalGenerationConstants.TMP_DIRECTORY_PATH, protocFilename + ".download");
+                String protocDownloadurl = BalGenerationConstants.PROTOC_PLUGIN_EXE_URL_SUFFIX +
+                        protocVersion + "/" + protocFilename;
+                File tempDownloadFile = new File(
+                        BalGenerationConstants.TMP_DIRECTORY_PATH, protocFilename + ".download");
                 try {
                     BalFileGenerationUtils.downloadFile(new URL(protocDownloadurl), tempDownloadFile);
                     Files.move(tempDownloadFile.toPath(), protocExeFile.toPath());

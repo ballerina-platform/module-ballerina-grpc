@@ -78,8 +78,10 @@ public class StreamingServerCallHandler extends ServerCallHandler {
     }
 
     private StreamObserver invoke(StreamObserver responseObserver, ServerCall call) {
+
         ObserverContext context = call.getObserverContext();
-        BObject streamIterator = ValueCreator.createObjectValue(getModule(), GrpcConstants.ITERATOR_OBJECT_NAME, new Object[1]);
+        BObject streamIterator = ValueCreator.createObjectValue(getModule(),
+                GrpcConstants.ITERATOR_OBJECT_NAME, new Object[1]);
         BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
         streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, messageQueue);
         streamIterator.addNativeData(GrpcConstants.CLIENT_ENDPOINT_RESPONSE_OBSERVER, responseObserver);
@@ -169,6 +171,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
 
     void onStreamInvoke(ServiceResource resource, BStream requestStream, HttpHeaders headers,
                         StreamObserver responseObserver, ObserverContext context) {
+
         Object[] requestParams = computeResourceParams(resource, requestStream, headers, responseObserver);
         Map<String, Object> properties = new HashMap<>();
         if (ObserveUtils.isObservabilityEnabled()) {
@@ -177,7 +180,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(resource.getRuntime(),
                 responseObserver, isEmptyResponse(), this.methodDescriptor.getOutputType(), context);
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
-                                                GrpcConstants.ON_MESSAGE_METADATA, callback, properties, resource.getReturnType(),
-                requestParams);
+                GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                resource.getReturnType(), requestParams);
     }
 }

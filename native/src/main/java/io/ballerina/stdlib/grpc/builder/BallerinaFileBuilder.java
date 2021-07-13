@@ -142,8 +142,8 @@ public class BallerinaFileBuilder {
             // write definition objects to ballerina files.
             if (this.balOutPath == null) {
                 this.balOutPath = StringUtils.isNotBlank(fileDescriptorSet.getPackage()) ?
-                        fileDescriptorSet.getPackage().replace(BalGenConstants.PACKAGE_SEPARATOR, BalGenConstants.FILE_SEPARATOR) : BalGenConstants
-                        .DEFAULT_PACKAGE;
+                        fileDescriptorSet.getPackage().replace(BalGenConstants.PACKAGE_SEPARATOR,
+                                BalGenConstants.FILE_SEPARATOR) : BalGenConstants.DEFAULT_PACKAGE;
             }
 
             boolean hasEmptyMessage = false;
@@ -173,8 +173,9 @@ public class BallerinaFileBuilder {
                     if (method.containsEmptyType() && !(stubFileObject.isMessageExists(BalGenConstants.EMPTY_DATA_TYPE))
                             && !hasEmptyMessage) {
                         Message message =
-                                Message.newBuilder(StandardDescriptorBuilder.getFileDescriptor(StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY).getMessageTypes().get(0)
-                                        .toProto()).build();
+                                Message.newBuilder(StandardDescriptorBuilder.getFileDescriptor(
+                                        StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY).getMessageTypes()
+                                        .get(0).toProto()).build();
                         messageList.add(message);
                         stubFileObject.addMessage(message);
                         hasEmptyMessage = true;
@@ -209,7 +210,8 @@ public class BallerinaFileBuilder {
                 }
                 serviceIndex++;
             }
-            String stubFilePath = generateOutputFile(this.balOutPath, filename + BalGenConstants.STUB_FILE_PREFIX);
+            String stubFilePath = generateOutputFile(this.balOutPath,
+                    filename + BalGenConstants.STUB_FILE_PREFIX);
             writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(stubFileObject, isRoot), stubFilePath);
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error which reading proto file descriptor. " + e.getMessage(), e);

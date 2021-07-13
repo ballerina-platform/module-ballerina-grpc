@@ -56,11 +56,12 @@ import static io.ballerina.stdlib.http.api.HttpConstants.ENDPOINT_CONFIG_PORT;
  * @since 1.0.0
  */
 
-public class FunctionUtils  extends AbstractGrpcNativeFunction  {
+public class FunctionUtils extends AbstractGrpcNativeFunction {
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionUtils.class);
 
     private FunctionUtils() {
+
     }
 
     /**
@@ -70,6 +71,7 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
      * @return Error if there is an error while initializing the service listener, else returns nil.
      */
     public static Object externInitEndpoint(BObject listenerObject) {
+
         BMap serviceEndpointConfig = listenerObject.getMapValue(HttpConstants.SERVICE_ENDPOINT_CONFIG);
         long port = listenerObject.getIntValue(ENDPOINT_CONFIG_PORT);
         try {
@@ -92,12 +94,13 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
      * Extern function to register service to service listener.
      *
      * @param listenerObject service listener instance.
-     * @param service service instance.
-     * @param servicePath service path.
+     * @param service        service instance.
+     * @param servicePath    service path.
      * @return Error if there is an error while registering the service, else returns nil.
      */
     public static Object externRegister(BObject listenerObject, BObject service,
                                         Object servicePath) {
+
         ServicesRegistry.Builder servicesRegistryBuilder = getServiceRegistryBuilder(listenerObject);
         try {
             if (servicesRegistryBuilder == null) {
@@ -107,17 +110,19 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
             } else {
                 servicesRegistryBuilder.addService(ServicesBuilderUtils.getServiceDefinition(
                         Runtime.getCurrentRuntime(), service, servicePath,
-                        service.getType().getAnnotation(StringUtils.fromString(GrpcConstants.ANN_SERVICE_DESCRIPTOR_FQN))));
+                        service.getType().getAnnotation(
+                                StringUtils.fromString(GrpcConstants.ANN_SERVICE_DESCRIPTOR_FQN))));
                 return null;
             }
         } catch (GrpcServerException e) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while registering " +
-                     "the service. " + e.getLocalizedMessage())));
+                            "the service. " + e.getLocalizedMessage())));
         }
     }
 
     private static Object startServerConnector(BObject listener, ServicesRegistry servicesRegistry) {
+
         ServerConnector serverConnector = getServerConnector(listener);
         ServerConnectorFuture serverConnectorFuture = serverConnector.start();
         serverConnectorFuture.setHttpConnectorListener(new ServerConnectorListener(servicesRegistry));
@@ -165,17 +170,20 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
      * @return Error if there is an error while starting the server, else returns nil.
      */
     public static Object externStop(BObject serverEndpoint) {
+
         getServerConnector(serverEndpoint).stop();
         serverEndpoint.addNativeData(HttpConstants.CONNECTOR_STARTED, false);
         return null;
     }
 
     public static Object nextResult(BObject streamIterator) {
+
         BlockingQueue<?> messageQueue = (BlockingQueue<?>) streamIterator.getNativeData(GrpcConstants.MESSAGE_QUEUE);
         try {
             Message nextMessage = (Message) messageQueue.take();
             if (nextMessage.getHeaders() != null) {
-                streamIterator.addNativeData(GrpcConstants.HEADERS, MessageUtils.createHeaderMap(nextMessage.getHeaders()));
+                streamIterator.addNativeData(GrpcConstants.HEADERS,
+                        MessageUtils.createHeaderMap(nextMessage.getHeaders()));
             }
             if (nextMessage.isError()) {
                 return MessageUtils.getConnectorError(nextMessage.getError());
@@ -191,8 +199,10 @@ public class FunctionUtils  extends AbstractGrpcNativeFunction  {
     }
 
     public static Object closeStream(Environment env, BObject streamIterator) {
+
         Semaphore listenerSemaphore = (Semaphore) streamIterator.getNativeData(GrpcConstants.MESSAGE_QUEUE);
-        BObject clientEndpoint = (BObject) streamIterator.getNativeData(GrpcConstants.CLIENT_ENDPOINT_RESPONSE_OBSERVER);
+        BObject clientEndpoint = (BObject) streamIterator.getNativeData(
+                GrpcConstants.CLIENT_ENDPOINT_RESPONSE_OBSERVER);
         Object errorVal = streamIterator.getNativeData(GrpcConstants.ERROR_MESSAGE);
         BError returnError;
         if (errorVal instanceof BError) {

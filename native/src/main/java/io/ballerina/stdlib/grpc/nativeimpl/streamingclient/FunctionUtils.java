@@ -102,6 +102,7 @@ public class FunctionUtils {
      * @return Error if there is an error while sending error message to the server, else returns nil.
      */
     public static Object streamSendError(Environment env, BObject streamingConnection, BError errorValue) {
+
         StreamObserver requestSender = (StreamObserver) streamingConnection.getNativeData(GrpcConstants.REQUEST_SENDER);
         if (requestSender == null) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
@@ -109,7 +110,8 @@ public class FunctionUtils {
                             "error. endpoint does not exist")));
         } else {
             try {
-                Integer statusCode = GrpcConstants.getKeyByValue(GrpcConstants.STATUS_ERROR_MAP, errorValue.getType().getName());
+                Integer statusCode = GrpcConstants.getKeyByValue(GrpcConstants.STATUS_ERROR_MAP,
+                        errorValue.getType().getName());
                 if (statusCode == null) {
                     statusCode = Status.Code.INTERNAL.value();
                 }
@@ -118,7 +120,8 @@ public class FunctionUtils {
                 // Add message content to observer context.
                 ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
                 observerContext.addTag(GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE,
-                        MessageUtils.getMappingHttpStatusCode(statusCode) + " : " + errorValue.getErrorMessage().getValue());
+                        MessageUtils.getMappingHttpStatusCode(statusCode) + " : " +
+                                errorValue.getErrorMessage().getValue());
 
             } catch (Exception e) {
                 LOG.error("Error while sending error to server.", e);
@@ -189,7 +192,8 @@ public class FunctionUtils {
                             streamIterator);
                 } else {
                     Message nextMessage = (Message) messageQueue.take();
-                    streamingConnection.addNativeData(GrpcConstants.HEADERS, MessageUtils.createHeaderMap(nextMessage.getHeaders()));
+                    streamingConnection.addNativeData(GrpcConstants.HEADERS,
+                            MessageUtils.createHeaderMap(nextMessage.getHeaders()));
                     if (nextMessage.isError()) {
                         return MessageUtils.getConnectorError(nextMessage.getError());
                     } else {
