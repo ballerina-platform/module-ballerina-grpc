@@ -62,6 +62,7 @@ test {
             }
         }
     }
+    finalizedBy jacocoTestReport
 }
 
 jacoco {
