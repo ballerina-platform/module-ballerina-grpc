@@ -89,4 +89,12 @@ public class StatusTest {
         byte[] bytes = Status.MESSAGE_MARSHALLER.toAsciiString("Test~String");
         assertEquals(new String(bytes), "Test%7EString");
     }
+
+    @Test()
+    public void testWithCause() {
+        Throwable throwable = new IllegalArgumentException("Illegal test argument");
+        Status status = Status.fromThrowable(throwable);
+        Status result = status.withCause(throwable);
+        assertEquals(result, status);
+    }
 }

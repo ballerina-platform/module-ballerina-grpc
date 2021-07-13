@@ -337,7 +337,7 @@ isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns Error
     }
     string|Error? res = strClient->receiveString();
     if (res is Error) {
-        test:assertEquals(res.message(), "Connection refused: localhost/127.0.0.1:443");
+        test:assertTrue(res.message().startsWith("Connection refused: "));
     } else {
         test:assertFail(msg = "Expected an error");
     }
