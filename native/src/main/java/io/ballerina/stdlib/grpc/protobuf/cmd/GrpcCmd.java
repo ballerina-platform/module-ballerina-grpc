@@ -119,20 +119,19 @@ public class GrpcCmd implements BLauncherCmd {
         File input = new File(protoPath);
         if (input.isDirectory()) {
             // Multiple proto files
-            File[] protoFiles = input.listFiles();
-            if (protoFiles == null) {
-                String errorMessage = "Input proto files directory is empty. Please input valid proto file location.";
+            File[] files = input.listFiles();
+            if (files == null) {
+                String errorMessage = "Input proto files directory is empty. " +
+                        "Please input a valid proto files directory.";
                 outStream.println(errorMessage);
             } else {
+                File[] protoFiles = getProtoFiles(files);
+                if (protoFiles.length == 0) {
+                    String errorMessage = "Input directory does not contain any proto files. " +
+                            "Please input a valid proto files directory.";
+                    outStream.println(errorMessage);
+                }
                 for (File protoFile : protoFiles) {
-                    // check input protobuf file path
-                    Optional<String> pathExtension = getFileExtension(protoFile.getPath());
-                    if (!PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
-                        String errorMessage = "Invalid proto file path: " + protoFile.getPath() +
-                                ". Please input valid proto file location.";
-                        outStream.println(errorMessage);
-                        return;
-                    }
                     generateBalFile(protoFile.getPath());
                 }
             }
@@ -147,6 +146,18 @@ public class GrpcCmd implements BLauncherCmd {
             }
             generateBalFile(protoPath);
         }
+    }
+
+    private File[] getProtoFiles(File[] files) {
+        ArrayList<File> protoFiles = new ArrayList<>();
+        for (File file : files) {
+            Optional<String> pathExtension = getFileExtension(file.getPath());
+            if (PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
+                protoFiles.add(file);
+            }
+        }
+        File[] protoFilesArray = new File[protoFiles.size()];
+        return protoFiles.toArray(protoFilesArray);
     }
 
     private void generateBalFile(String protoPath) {
@@ -393,5 +404,3 @@ public class GrpcCmd implements BLauncherCmd {
     }
 
 }
-
-
