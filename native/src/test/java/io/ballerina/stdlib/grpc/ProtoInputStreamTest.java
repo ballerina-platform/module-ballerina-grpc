@@ -31,14 +31,14 @@ import static org.testng.Assert.fail;
 public class ProtoInputStreamTest {
 
     @Test()
-    public void testRead() {
+    public void testReadWithExceptionMessage() {
         Message message = new Message(new IllegalStateException("Illegal test case"));
         ProtoInputStream pis = new ProtoInputStream(message);
         assertEquals(pis.read(), -1);
     }
 
     @Test()
-    public void testReadBytes() {
+    public void testReadBytesWithExceptionMessage() {
         Message message = new Message(new IllegalStateException("Illegal test case"));
         ProtoInputStream pis = new ProtoInputStream(message);
         try {
@@ -49,7 +49,7 @@ public class ProtoInputStreamTest {
     }
 
     @Test()
-    public void testMessage() {
+    public void testMessageNullCase() {
         ProtoInputStream pis = new ProtoInputStream(null);
         try {
             pis.message();
@@ -63,7 +63,7 @@ public class ProtoInputStreamTest {
     }
 
     @Test()
-    public void testAvailable() {
+    public void testAvailableWithExceptionMessage() {
         Message message = new Message(new IllegalStateException("Illegal test case"));
         ProtoInputStream pis = new ProtoInputStream(message);
         assertEquals(pis.available(), 0);
