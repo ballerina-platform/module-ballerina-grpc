@@ -25,7 +25,7 @@ final HelloWorld100Client helloWorld7BlockingEp = check new ("http://localhost:9
 function testUnaryBlockingClient() {
     string name = "WSO2";
     string|Error unionResp = helloWorld7BlockingEp->hello(name);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -38,7 +38,7 @@ function testUnaryBlockingClient() {
 function testUnaryBlockingIntClient() {
     int age = 10;
     int|Error unionResp = helloWorld7BlockingEp->testInt(age);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
@@ -51,7 +51,7 @@ function testUnaryBlockingIntClient() {
 function testUnaryBlockingFloatClient() {
     float salary = 1000.5;
     float|Error unionResp = helloWorld7BlockingEp->testFloat(salary);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
@@ -64,7 +64,7 @@ function testUnaryBlockingFloatClient() {
 function testUnaryBlockingBoolClient() {
     boolean isAvailable = false;
     boolean|Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
@@ -77,7 +77,7 @@ function testUnaryBlockingBoolClient() {
 function testUnaryBlockingReceiveRecord() {
     string msg = "WSO2";
     Response|Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
@@ -90,7 +90,7 @@ function testUnaryBlockingReceiveRecord() {
 function testUnaryBlockingStructClient() {
     Request req = {name:"Sam", message:"Testing."};
     Response|Error unionResp = helloWorld7BlockingEp->testStruct(req);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");
@@ -109,7 +109,7 @@ isolated function testUnaryClientWithNegativeTimeout() returns Error? {
     } else {
         string name = "WSO2";
         string|Error unionResp = hClient->hello(name);
-        if (unionResp is Error) {
+        if unionResp is Error {
             test:assertFail(string `Error from Connector: ${unionResp.message()}`);
         } else {
             test:assertEquals(unionResp, "Hello WSO2");
@@ -127,7 +127,7 @@ isolated function testUnaryClientWithOverflowingTimeout() returns Error? {
     } else {
         string name = "WSO2";
         string|Error unionResp = hClient->hello(name);
-        if (unionResp is Error) {
+        if unionResp is Error {
             test:assertFail(string `Error from Connector: ${unionResp.message()}`);
         } else {
             test:assertEquals(unionResp, "Hello WSO2");

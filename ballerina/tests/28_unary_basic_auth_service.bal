@@ -29,11 +29,11 @@ service "HelloWorld28" on ep28 {
         } else {
             ListenerFileUserStoreBasicAuthHandler handler = new;
             auth:UserDetails|UnauthenticatedError authnResult = handler.authenticate(request.headers);
-            if (authnResult is UnauthenticatedError) {
+            if authnResult is UnauthenticatedError {
                 return authnResult;
             } else {
                 PermissionDeniedError? authzResult = handler.authorize(<auth:UserDetails>authnResult, "write");
-                if (authzResult is ()) {
+                if authzResult is () {
                     return "Hello WSO2";
                 } else {
                     return authzResult;

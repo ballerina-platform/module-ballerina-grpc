@@ -22,7 +22,7 @@ isolated function testSendAndReceiveEnum() returns Error? {
 
     OrderInfo orderReq = { id:"100500", mode:r };
     var addResponse = blockingEp->testEnum(orderReq);
-    if (addResponse is Error) {
+    if addResponse is Error {
         test:assertFail(string `Error from Connector: ${addResponse.message()}`);
     } else {
         test:assertEquals(addResponse, "r");

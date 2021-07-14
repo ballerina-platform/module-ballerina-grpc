@@ -22,7 +22,7 @@ isolated function testBidiStreamingFromReturnRecord() returns Error? {
     HelloWorld34Client helloWorldEp = check new ("http://localhost:9124");
     SayHello34StreamingClient streamingClient;
     var res = helloWorldEp->sayHello34();
-    if (res is Error) {
+    if res is Error {
         test:assertFail("Error from Connector: " + res.message());
         return;
     } else {
@@ -37,7 +37,7 @@ isolated function testBidiStreamingFromReturnRecord() returns Error? {
     ];
     foreach SampleMsg34 r in requests {
         Error? err = streamingClient->sendSampleMsg34(r);
-        if (err is Error) {
+        if err is Error {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
@@ -47,7 +47,7 @@ isolated function testBidiStreamingFromReturnRecord() returns Error? {
     int i = 0;
     while !(result is ()) {
         io:println(result);
-        if (result is SampleMsg34) {
+        if result is SampleMsg34 {
             test:assertEquals(<SampleMsg34> result, requests[i]);
         } else {
             test:assertFail("Unexpected output in the stream");

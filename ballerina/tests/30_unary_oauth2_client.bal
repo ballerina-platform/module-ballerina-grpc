@@ -37,7 +37,7 @@ isolated function testStringValueReturnWithOAuth2() returns Error? {
     };
     ClientOAuth2Handler handler = new(config);
     map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -46,7 +46,7 @@ isolated function testStringValueReturnWithOAuth2() returns Error? {
     requestHeaders["x-id"] = ["0987654321"];
     ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(msg = unionResp.message());
     } else {
         test:assertEquals(unionResp, "Hello WSO2");
@@ -76,7 +76,7 @@ isolated function testStringValueReturnWithOAuth2PasswordGrantConfig() returns E
     };
     ClientOAuth2Handler handler = new(config);
     map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -85,7 +85,7 @@ isolated function testStringValueReturnWithOAuth2PasswordGrantConfig() returns E
     requestHeaders["x-id"] = ["0987654321"];
     ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(msg = unionResp.message());
     } else {
         test:assertEquals(unionResp, "Hello WSO2");
@@ -113,7 +113,7 @@ isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig() retur
     };
     ClientOAuth2Handler handler = new(config);
     map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -121,9 +121,9 @@ isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig() retur
 
     string oldToken = "";
     string|string[] headerValue = requestHeaders.get("authorization");
-    if (headerValue is string) {
+    if headerValue is string {
         oldToken = headerValue;
-    } else if (headerValue.length() > 0) {
+    } else if headerValue.length() > 0 {
         oldToken = headerValue[0];
     }
 
@@ -145,7 +145,7 @@ isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig() retur
 
     ClientOAuth2Handler refreshHandler = new(refreshConfig);
     result = refreshHandler->enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -154,7 +154,7 @@ isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig() retur
     requestHeaders["x-id"] = ["0987654321"];
     ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(msg = unionResp.message());
     } else {
         test:assertEquals(unionResp, "Hello WSO2");
@@ -182,7 +182,7 @@ isolated function testStringValueReturnWithOAuth2NoScope() returns Error? {
     };
     ClientOAuth2Handler handler = new(config);
     map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -191,7 +191,7 @@ isolated function testStringValueReturnWithOAuth2NoScope() returns Error? {
     requestHeaders["x-id"] = ["0987654321"];
     ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNoScope(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(msg = unionResp.message());
     } else {
         test:assertEquals(unionResp, "Hello WSO2");
@@ -219,7 +219,7 @@ isolated function testStringValueReturnWithOAuth2WithInvalidScopeKey() returns E
     };
     ClientOAuth2Handler handler = new(config);
     map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -228,7 +228,7 @@ isolated function testStringValueReturnWithOAuth2WithInvalidScopeKey() returns E
     requestHeaders["x-id"] = ["0987654321"];
     ContextString requestMessage = {content: "Invalid", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNegative(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "Permission denied");
     } else {
         test:assertFail(msg = "Expected a Permission denied error.");
@@ -244,7 +244,7 @@ isolated function testStringValueReturnWithOAuth2EmptyAuthHeader() returns Error
     };
     ContextString requestMessage = {content: "scp", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNegative(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "Empty authentication header.");
     } else {
         test:assertFail(msg = "Expected an unauthenticated error.");
@@ -260,7 +260,7 @@ isolated function testStringValueReturnWithOAuth2InvalidAuthHeader() returns Err
     };
     ContextString requestMessage = {content: "scp", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNegative(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "Unauthenticated");
     } else {
         test:assertFail(msg = "Expected an unauthenticated error.");
@@ -276,7 +276,7 @@ isolated function testStringValueReturnWithOAuth2InvalidAuthHeaderFormat() retur
     };
     ContextString requestMessage = {content: "scp", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNegative(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "Unauthenticated");
     } else {
         test:assertFail(msg = "Expected an unauthenticated error.");

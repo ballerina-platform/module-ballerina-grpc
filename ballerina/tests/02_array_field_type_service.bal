@@ -34,7 +34,7 @@ service "HelloWorld3" on ep2 {
             result = result + number;
         }
         Error? err = caller->sendInt(result);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("Result: " + result.toString());
@@ -50,7 +50,7 @@ service "HelloWorld3" on ep2 {
             result = result + "," + value;
         }
         Error? err = caller->sendString(result);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("Result: " + result);
@@ -66,7 +66,7 @@ service "HelloWorld3" on ep2 {
             result = result + value;
         }
         Error? err = caller->sendFloat(result);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("Result: " + result.toString());
@@ -82,7 +82,7 @@ service "HelloWorld3" on ep2 {
             result = result || value;
         }
         Error? err = caller->sendBoolean(result);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("Result: " + result.toString());
@@ -98,7 +98,7 @@ service "HelloWorld3" on ep2 {
             result = result + "," + <string> value.name;
         }
         Error? err = caller->sendString(result);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("Result: " + result);
@@ -109,7 +109,7 @@ service "HelloWorld3" on ep2 {
     isolated remote function testIntArrayOutput(HelloWorld3TestIntCaller caller) {
         TestInt intArray = {values:[1, 2, 3, 4, 5]};
         Error? err = caller->sendTestInt(intArray);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println(intArray);
@@ -120,7 +120,7 @@ service "HelloWorld3" on ep2 {
     isolated remote function testStringArrayOutput(HelloWorld3TestStringCaller caller) {
         TestString stringArray = {values:["A", "B", "C"]};
         Error? err = caller->sendTestString(stringArray);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println(stringArray);
@@ -131,7 +131,7 @@ service "HelloWorld3" on ep2 {
     isolated remote function testFloatArrayOutput(HelloWorld3TestFloatCaller caller) {
         TestFloat floatArray = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
         Error? err = caller->sendTestFloat(floatArray);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println(floatArray);
@@ -142,7 +142,7 @@ service "HelloWorld3" on ep2 {
     isolated remote function testBooleanArrayOutput(HelloWorld3TestBooleanCaller caller) {
         TestBoolean booleanArray = {values:[true, false, true]};
         Error? err = caller->sendTestBoolean(booleanArray);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println(booleanArray);
@@ -155,7 +155,7 @@ service "HelloWorld3" on ep2 {
         A a2 = {name:"John"};
         TestStruct structArray = {values:[a1, a2]};
         Error? err = caller->sendTestStruct(structArray);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println(structArray);

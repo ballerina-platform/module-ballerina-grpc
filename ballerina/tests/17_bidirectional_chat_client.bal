@@ -42,7 +42,7 @@ isolated function testBidiStreamingInChatClient() returns Error? {
     StreamingClient ep;
     // Executes unary non-blocking call registering server message listener.
     var res = chatEp->chat();
-    if (res is Error) {
+    if res is Error {
         test:assertFail(string `Error from Connector: ${res.message()}`);
         return;
     } else {
@@ -52,7 +52,7 @@ isolated function testBidiStreamingInChatClient() returns Error? {
     // Produces a message to the specified subject.
     ChatMessage mes = {name: "Sam", message: "Hi"};
     Error? result = ep->send(mes);
-    if (result is Error) {
+    if result is Error {
         test:assertFail(string `Error from Connector: ${result.message()}`);
     }
 

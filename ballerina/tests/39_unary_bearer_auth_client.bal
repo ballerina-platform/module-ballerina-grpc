@@ -24,7 +24,7 @@ isolated function testStringValueReturnWithBearerTokenAuth() returns Error? {
 
     ClientBearerTokenAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -35,7 +35,7 @@ isolated function testStringValueReturnWithBearerTokenAuth() returns Error? {
         headers: requestHeaders
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if (response is Error) {
+    if response is Error {
         test:assertFail(msg = response.message());
     } else {
         test:assertEquals(response, "Hello WSO2");
@@ -51,7 +51,7 @@ isolated function testStringValueReturnWithInvalidBearerTokenAuth() returns Erro
 
     ClientBearerTokenAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -62,7 +62,7 @@ isolated function testStringValueReturnWithInvalidBearerTokenAuth() returns Erro
         headers: requestHeaders
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if (response is Error) {
+    if response is Error {
         test:assertEquals(response.message(), "Invalid basic auth token: Bearer ABCD");
     } else {
         test:assertFail(msg = "Expected grpc:Error not found.");

@@ -29,11 +29,11 @@ service "CheckoutService" on checkoutep {
         log:printInfo("Address: " + addr.toString());
         PlaceOrderResponse response = {'order: "This is a address"};
         var result = caller->sendPlaceOrderResponse(response);
-        if (result is error) {
+        if result is error {
             log:printError("Error while sending response.", 'error = result);
         }
         var complete = caller->complete();
-        if (complete is error) {
+        if complete is error {
             log:printError("Error while completing the response.", 'error = complete);
         }
     }

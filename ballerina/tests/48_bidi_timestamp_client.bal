@@ -28,7 +28,7 @@ isolated function testBidiTimestampWithGreeting() returns error? {
     check streamingClient->complete();
     foreach string msg in messages {
         BiDiGreeting? greeting = check streamingClient->receiveBiDiGreeting();
-        if (greeting is BiDiGreeting) {
+        if greeting is BiDiGreeting {
             time:Utc customTime = [1354533210, 0.472];
             BiDiGreeting expectedGreeting = {"name": msg,"time": customTime};
             test:assertEquals(greeting, expectedGreeting);
@@ -54,7 +54,7 @@ isolated function testBiDiTimestampWithBidiGreeting() returns error? {
     check streamingClient->complete();
     foreach string msg in messages {
         BiDiGreeting? greeting = check streamingClient->receiveBiDiGreeting();
-        if (greeting is BiDiGreeting) {
+        if greeting is BiDiGreeting {
             time:Utc customTime = [1354533210, 0.472];
             BiDiGreeting expectedGreeting = {"name": msg,"time": customTime};
             test:assertEquals(greeting, expectedGreeting);
@@ -78,7 +78,7 @@ isolated function testBidiTimestampWithBidiTime() returns error? {
 
     time:Utc expectedTime = check time:utcFromString("2021-12-03T11:13:30.472Z");
     time:Utc? result = check streamingClient->receiveTimestamp();
-    if (result is time:Utc) {
+    if result is time:Utc {
         test:assertEquals(result, expectedTime);
     } else {
         test:assertFail("Invalid time received");
@@ -106,7 +106,7 @@ isolated function testBiDiTimestampWithBidiTimeContext() returns error? {
 
     time:Utc expectedTime = check time:utcFromString("2021-12-03T11:13:30.472Z");
     ContextTimestamp? result = check streamingClient->receiveContextTimestamp();
-    if (result is ContextTimestamp) {
+    if result is ContextTimestamp {
         test:assertEquals(result.content, expectedTime);
     } else {
         test:assertFail("Invalid time received");

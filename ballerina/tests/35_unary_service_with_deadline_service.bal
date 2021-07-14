@@ -29,8 +29,8 @@ service "HelloWorld35" on ep35 {
     remote isolated function callWithinDeadline(ContextString request) returns ContextString|Error {
         log:printInfo("Invoked callWithingDeadline");
         var cancel = isCancelled(request.headers);
-        if (cancel is boolean) {
-            if (cancel) {
+        if cancel is boolean {
+            if cancel {
                 return error DeadlineExceededError("Exceeded the configured deadline");
             } else {
                 return {content: "Ack", headers: {}};
@@ -44,8 +44,8 @@ service "HelloWorld35" on ep35 {
         io:println(request);
         runtime:sleep(10);
         var cancel = isCancelled(request.headers);
-        if (cancel is boolean) {
-            if (cancel) {
+        if cancel is boolean {
+            if cancel {
                 return error DeadlineExceededError("Exceeded the configured deadline");
             } else {
                 return {content: "Ack", headers: {}};

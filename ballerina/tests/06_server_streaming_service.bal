@@ -31,7 +31,7 @@ service "HelloWorld45" on ep6 {
         string[] greets = ["Hi", "Hey", "GM"];
         foreach var greet in greets {
             Error? err = caller->sendString(greet + " " + name);
-            if (err is Error) {
+            if err is Error {
                 io:println("Error from Connector: " + err.message());
             } else {
                 io:println("send reply: " + greet + " " + name);

@@ -42,7 +42,7 @@ isolated function testBidiStreaming() returns Error? {
     });
     // Executing unary non-blocking call registering server message listener.
     var res = chatEp->chat();
-    if (res is Error) {
+    if res is Error {
         io:println(string `Error from Connector: ${res.message()}`);
         return;
     } else {
@@ -51,7 +51,7 @@ isolated function testBidiStreaming() returns Error? {
     runtime:sleep(1);
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
     Error? connErr = ep->sendChatMessage(mes1);
-    if (connErr is Error) {
+    if connErr is Error {
         test:assertFail(string `Error from Connector: ${connErr.message()}`);
     }
 
@@ -64,14 +64,14 @@ isolated function testBidiStreaming() returns Error? {
 
     ChatMessage mes2 = {name:"Sam", message:"GM"};
     connErr = ep->sendChatMessage(mes2);
-    if (connErr is Error) {
+    if connErr is Error {
         test:assertFail(string `Error from Connector: ${connErr.message()}`);
     }
 
     responseMsg = ep->receiveString();
-    if (responseMsg is string) {
+    if responseMsg is string {
         test:assertEquals(responseMsg, "Sam: GM");
-    } else if (responseMsg is Error) {
+    } else if responseMsg is Error {
         test:assertFail(msg = responseMsg.message());
     }
 
@@ -217,7 +217,7 @@ isolated function testBidiStreamingWithPublicCertPrivateKey() returns Error? {
     ChatStreamingClient ep = check chatEp->chat();
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
     Error? connErr = ep->sendChatMessage(mes1);
-    if (connErr is Error) {
+    if connErr is Error {
         test:assertFail(string `Error from Connector: ${connErr.message()}`);
     }
 
@@ -332,11 +332,11 @@ isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns Error
     ChatStreamingClient strClient = check chatClient->chat();
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
     Error? connErr = strClient->sendChatMessage(mes1);
-    if (connErr is Error) {
+    if connErr is Error {
         test:assertFail(string `Error from Connector: ${connErr.message()}`);
     }
     string|Error? res = strClient->receiveString();
-    if (res is Error) {
+    if res is Error {
         test:assertTrue(res.message().startsWith("Connection refused: "));
     } else {
         test:assertFail(msg = "Expected an error");

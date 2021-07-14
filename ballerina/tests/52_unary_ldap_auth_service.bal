@@ -52,11 +52,11 @@ service "HelloWorld52" on ep52 {
         } else {
             ListenerLdapUserStoreBasicAuthHandler handler = new(config);
             auth:UserDetails|UnauthenticatedError authnResult = handler->authenticate(request.headers);
-            if (authnResult is UnauthenticatedError) {
+            if authnResult is UnauthenticatedError {
                 return authnResult;
             } else {
                 PermissionDeniedError? authzResult = handler->authorize(<auth:UserDetails>authnResult, "developer");
-                if (authzResult is ()) {
+                if authzResult is () {
                     return "Hello WSO2";
                 } else {
                     return authzResult;

@@ -38,14 +38,14 @@ final RetryServiceClient failingRetryClient = check new("http://localhost:9112",
 @test:Config {enable:true}
 function testRetry() {
     var result = retryClient->getResult("UnavailableError");
-    if (result is Error) {
+    if result is Error {
         test:assertFail(result.toString());
     } else {
         test:assertEquals(result, "Total Attempts: 4");
     }
 
     result = retryClient->getResult("InternalError");
-    if (result is Error) {
+    if result is Error {
         test:assertFail(result.toString());
     } else {
         test:assertEquals(result, "Total Attempts: 4");
@@ -55,7 +55,7 @@ function testRetry() {
 @test:Config {enable:true}
 function testRetryFailingClient() {
     var result = failingRetryClient->getResult("FailingRetryClient");
-    if (result is Error) {
+    if result is Error {
         test:assertEquals(result.message(), "Maximum retry attempts completed without getting a result");
     } else {
         test:assertFail(result);

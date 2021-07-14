@@ -39,7 +39,7 @@ isolated function testStringValueReturnWithJwt() returns Error? {
     };
     ClientSelfSignedJwtAuthHandler handler = new(config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -48,7 +48,7 @@ isolated function testStringValueReturnWithJwt() returns Error? {
     requestHeaders["x-id"] = ["0987654321"];
     ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(msg = unionResp.message());
     } else {
         test:assertEquals(unionResp, "Hello WSO2");
@@ -78,7 +78,7 @@ isolated function testStringValueReturnWithUnauthorizedJwt() returns Error? {
     };
     ClientSelfSignedJwtAuthHandler handler = new(config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -87,7 +87,7 @@ isolated function testStringValueReturnWithUnauthorizedJwt() returns Error? {
     requestHeaders["x-id"] = ["0987654321"];
     ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "Permission denied");
     } else {
         test:assertFail(msg = "Expected an error.");
@@ -104,7 +104,7 @@ isolated function testStringValueReturnWithInvalidHeaderJwt() returns Error? {
 
     ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "Credential format does not match to JWT format.");
     } else {
         test:assertFail(msg = "Expected an error.");
@@ -121,7 +121,7 @@ isolated function testStringValueReturnWithEmptyHeaderJwt() returns Error? {
 
     ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "Empty authentication header.");
     } else {
         test:assertFail(msg = "Expected an error.");

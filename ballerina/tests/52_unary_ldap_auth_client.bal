@@ -31,7 +31,7 @@ isolated function testStringValueReturnWithLdapAuth() returns Error? {
 
     ClientBasicAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -42,7 +42,7 @@ isolated function testStringValueReturnWithLdapAuth() returns Error? {
         headers: requestHeaders
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if (response is Error) {
+    if response is Error {
         test:assertFail(msg = response.message());
     } else {
         test:assertEquals(response, "Hello WSO2");
@@ -64,7 +64,7 @@ isolated function testStringValueReturnWithInvalidLdapAuth() returns Error? {
 
     ClientBasicAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -75,7 +75,7 @@ isolated function testStringValueReturnWithInvalidLdapAuth() returns Error? {
         headers: requestHeaders
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if (response is Error) {
+    if response is Error {
         test:assertEquals(response.message(), "Failed to authenticate username '" + config.username + "' with LDAP user store.");
     } else {
         test:assertFail(msg = "Expected grpc:Error not found.");
@@ -97,7 +97,7 @@ isolated function testStringValueReturnWithEmptyLdapAuth() returns Error? {
         headers: requestHeaders
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if (response is Error) {
+    if response is Error {
         test:assertEquals(response.message(), "Empty authentication header.");
     } else {
         test:assertFail(msg = "Expected grpc:Error not found.");
@@ -119,7 +119,7 @@ isolated function testStringValueReturnWithUnauthorizedLdapAuth() returns Error?
 
     ClientBasicAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -130,7 +130,7 @@ isolated function testStringValueReturnWithUnauthorizedLdapAuth() returns Error?
         headers: requestHeaders
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if (response is Error) {
+    if response is Error {
         test:assertEquals(response.message(), "Permission denied");
     } else {
         test:assertFail(msg = "Expected grpc:Error not found.");

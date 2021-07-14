@@ -23,7 +23,7 @@ isolated function testErrorResponse() returns Error? {
     HelloWorld13Client helloWorld13BlockingEp = check new("http://localhost:9103");
     var unionResp = helloWorld13BlockingEp->hello(name);
 
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "Details");
     } else {
         test:assertFail(unionResp);

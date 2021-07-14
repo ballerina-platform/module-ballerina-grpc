@@ -41,7 +41,7 @@ service "UnaryTimestampService" on ep47 {
     
     remote function getBiTime(UnaryTimestampServiceTimestampCaller caller, time:Utc value) returns time:Utc|error? {
         time:Utc expectedTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
-        if (expectedTime == value) {
+        if expectedTime == value {
             time:Utc sendingTime = check time:utcFromString("2012-12-03T11:13:30.472Z");
             check caller->sendTimestamp(sendingTime);
             check caller->complete();

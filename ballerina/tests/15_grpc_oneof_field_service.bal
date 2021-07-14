@@ -24,7 +24,7 @@ service "OneofFieldService" on new Listener(9105) {
 
     isolated remote function hello(OneofFieldServiceResponse1Caller caller, Request1 value) {
         string? request = "";
-        if (value?.first_name is string) {
+        if value?.first_name is string {
             request = value?.first_name;
         } else {
             request = value?.last_name;

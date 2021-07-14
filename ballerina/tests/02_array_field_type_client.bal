@@ -26,7 +26,7 @@ function testSendIntArray() {
     io:println(req);
     int|Error unionResp = helloWorld3Client->testIntArrayInput(req);
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -42,7 +42,7 @@ function testSendStringArray() {
     io:println(req);
     string|Error unionResp = helloWorld3Client->testStringArrayInput(req);
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -58,7 +58,7 @@ function testSendFloatArray() {
     io:println(req);
     float|Error unionResp = helloWorld3Client->testFloatArrayInput(req);
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -74,7 +74,7 @@ function testSendBooleanArray() {
     io:println(req);
     boolean|Error unionResp = helloWorld3Client->testBooleanArrayInput(req);
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -89,7 +89,7 @@ function testSendStructArray() {
     io:println("testStructArrayInput: input:");
     io:println(testStruct);
     string|Error unionResp = helloWorld3Client->testStructArrayInput(testStruct);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -103,7 +103,7 @@ function testReceiveIntArray() {
     io:println("testIntArrayOutput: No input:");
     TestInt|Error unionResp = helloWorld3Client->testIntArrayOutput();
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -121,7 +121,7 @@ function testReceiveIntArray() {
 function testReceiveStringArray() {
     io:println("testStringArrayOutput: No input:");
     TestString|Error unionResp = helloWorld3Client->testStringArrayOutput();
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -138,7 +138,7 @@ function testReceiveFloatArray() {
     io:println("testFloatArrayOutput: No input:");
     TestFloat|Error unionResp = helloWorld3Client->testFloatArrayOutput();
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -155,7 +155,7 @@ function testReceiveBooleanArray() {
     io:println("testBooleanArrayOutput: No input:");
     TestBoolean|Error unionResp = helloWorld3Client->testBooleanArrayOutput();
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -172,7 +172,7 @@ function testReceiveStructArray() {
     io:println("testStructArrayOutput: No input:");
     TestStruct|Error unionResp = helloWorld3Client->testStructArrayOutput();
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");

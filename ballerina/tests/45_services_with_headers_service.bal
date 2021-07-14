@@ -22,7 +22,7 @@ service "HeadersService" on ep45 {
 
     remote function unary(HeadersServiceHSResCaller caller, ContextHSReq req) returns error? {
         map<string|string[]> responseHeaders = {};
-        if (!req.headers.hasKey("unary-req-header")) {
+        if !req.headers.hasKey("unary-req-header") {
             Error? err = caller->sendError(error AbortedError("unary-req-header header is missing"));
             return;
         } else {
@@ -36,7 +36,7 @@ service "HeadersService" on ep45 {
 
     remote function serverStr(HeadersServiceHSResCaller caller, ContextHSReq req) returns error? {
         map<string|string[]> responseHeaders = {};
-        if (!req.headers.hasKey("server-steaming-req-header")) {
+        if !req.headers.hasKey("server-steaming-req-header") {
             Error? err = caller->sendError(error AbortedError("server-steaming-req-header header is missing"));
             return;
         } else {
@@ -59,7 +59,7 @@ service "HeadersService" on ep45 {
 
     remote function clientStr(HeadersServiceHSResCaller caller, ContextHSReqStream req) returns error? {
         map<string|string[]> responseHeaders = {};
-        if (!req.headers.hasKey("client-steaming-req-header")) {
+        if !req.headers.hasKey("client-steaming-req-header") {
             Error? err = caller->sendError(error AbortedError("client-steaming-req-header header is missing"));
             return;
         } else {
@@ -70,7 +70,7 @@ service "HeadersService" on ep45 {
         int i = 0;
         error? e = req.content.forEach(function(HSReq req) {
             HSRes res = {name: req.name, message: req.message};
-            if (i == 0) {
+            if i == 0 {
                 checkpanic caller->sendContextHSRes({content: res, headers: responseHeaders});
                 checkpanic caller->complete();
                 return;
@@ -80,7 +80,7 @@ service "HeadersService" on ep45 {
 
     remote function bidirectionalStr(HeadersServiceHSResCaller caller, ContextHSReqStream req) returns error? {
         map<string|string[]> responseHeaders = {};
-        if (!req.headers.hasKey("bidi-steaming-req-header")) {
+        if !req.headers.hasKey("bidi-steaming-req-header") {
             Error? err = caller->sendError(error AbortedError("bidi-steaming-req-header header is missing"));
             return;
         } else {
@@ -91,7 +91,7 @@ service "HeadersService" on ep45 {
         int i = 0;
         error? e = req.content.forEach(function(HSReq req) {
             HSRes res = {name: req.name, message: req.message};
-            if (i == 0) {
+            if i == 0 {
                 checkpanic caller->sendContextHSRes({content: res, headers: responseHeaders});
             } else {
                 checkpanic caller->sendHSRes(res);

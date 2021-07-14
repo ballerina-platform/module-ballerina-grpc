@@ -25,7 +25,7 @@ function testReceiveStreamingResponseFromReturn() returns Error? {
     HelloWorld25Client helloWorldEp = check new("http://localhost:9115");
 
     var result = helloWorldEp->lotsOfReplies(name);
-    if (result is Error) {
+    if result is Error {
         test:assertFail("Error from Connector: " + result.message());
     } else {
         io:println("Connected successfully");

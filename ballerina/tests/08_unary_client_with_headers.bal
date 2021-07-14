@@ -27,14 +27,14 @@ function testHeadersInUnaryClient() {
     ContextString requestMessage = {content: "WSO2", headers:  {"x-id": "0987654321"}};
     // Executing unary blocking call
     ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         string result = unionResp.content;
         map<string|string[]> resHeaders = unionResp.headers;
         io:println("Client Got Response : ");
         io:println(result);
-        if (resHeaders.hasKey("x-id")) {
+        if resHeaders.hasKey("x-id") {
             _ = resHeaders.remove("x-id");
         }
         test:assertEquals(result, "Hello WSO2");
@@ -46,7 +46,7 @@ function testHeadersInBlockingClient() returns Error? {
     ContextString requestMessage = {content: "WSO2", headers: {"x-id": "0987654321"}};
     // Executing unary blocking call
     ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         string result = unionResp.content;

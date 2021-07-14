@@ -23,7 +23,7 @@ function testReceiveStreamingResponseFromReturnWithBasicAuth() returns Error? {
     HelloWorld32Client helloWorldEp = check new("http://localhost:9122");
 
     var result = helloWorldEp->sayHello(reqMsg);
-    if (result is Error) {
+    if result is Error {
         test:assertFail("Error from Connector: " + result.message());
     } else {
         io:println("Connected successfully");
@@ -48,7 +48,7 @@ function testReceiveStreamingResponseWithHeaders() returns Error? {
     HelloWorld32Client helloWorldEp = check new("http://localhost:9222");
 
     var result = helloWorldEp->sayHelloContext(reqMsg);
-    if (result is Error) {
+    if result is Error {
         test:assertFail("Error from Connector: " + result.message());
     } else {
         io:println("Connected successfully");
@@ -65,7 +65,7 @@ function testReceiveStreamingResponseWithHeaders() returns Error? {
         });
         test:assertEquals(count, 4);
         var resHeaderValue = getHeader(result.headers, "zzz");
-        if (resHeaderValue is Error) {
+        if resHeaderValue is Error {
             test:assertFail("Error reading response headers: " + resHeaderValue.message());
         } else {
             test:assertEquals(resHeaderValue, "yyy");

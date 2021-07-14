@@ -28,29 +28,29 @@ service "Negotiator" on negotiatorep {
     isolated remote function handshake(NegotiatorHandshakeResponseCaller caller, HandshakeRequest value) {
         log:printInfo(string `Handshake request: ${value.toString()}`);
 
-        if (value.jsonStr != "") {
+        if value.jsonStr != "" {
             error? sendError = caller->sendError(error InvalidArgumentError("jsonStr should be an empty string."));
             return;
         }
-        if (value.programHash != "") {
+        if value.programHash != "" {
             error? sendError = caller->sendError(error InvalidArgumentError("programHash should be an empty string."));
             return;
         }
-        if (value.userId != "") {
+        if value.userId != "" {
             error? sendError = caller->sendError(error InvalidArgumentError("userId should be an empty string."));
             return;
         }
-        if (value.instanceId != "") {
+        if value.instanceId != "" {
             error? sendError = caller->sendError(error InvalidArgumentError("instanceId should be an empty string."));
             return;
         }
-        if (value.applicationId != "") {
+        if value.applicationId != "" {
             error? sendError = caller->sendError(error InvalidArgumentError("applicationId should be an empty string."));
             return;
         }
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
         error? send = caller->sendHandshakeResponse(response);
-        if (send is error) {
+        if send is error {
             log:printError("Error while sending the response.", 'error = send);
         } else {
             error? complete = caller->complete();
@@ -60,13 +60,13 @@ service "Negotiator" on negotiatorep {
     isolated remote function publishMetrics(NegotiatorNilCaller caller, MetricsPublishRequest value) {
         log:printInfo(string `publishMetrics request: ${value.toString()}`);
 
-        if (value.metrics.length() < 0) {
+        if value.metrics.length() < 0 {
             error? sendError = caller->sendError(error InvalidArgumentError("metrics cannot be an empty array."));
             return;
         }
         foreach var metric in value.metrics {
             log:printInfo(string `metric value: ${metric.toString()}`);
-            if (metric.tags.length() < 0) {
+            if metric.tags.length() < 0 {
                 error? sendError = caller->sendError(error InvalidArgumentError("tags cannot be an empty array."));
                 return;
             }

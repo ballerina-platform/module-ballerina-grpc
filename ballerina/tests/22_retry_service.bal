@@ -30,13 +30,13 @@ listener Listener retryListener = new (9112);
 service "RetryService" on retryListener {
     remote function getResult(string value) returns string|error {
         // Identifying the client to maintain state to track retry attempts.
-        if (clientName != value) {
+        if clientName != value {
             requestCount = 0;
             clientName = <@untainted>value;
         }
         requestCount += 1;
         log:printInfo(clientName + ": Attetmpt No. " + requestCount.toString());
-        if (requestCount < 4) {
+        if requestCount < 4 {
             match value {
                 "CancelledError" => {
                     return error CancelledError("Mocking Cancelled Error");

@@ -25,7 +25,7 @@ isolated function testGzipEncoding() returns Error? {
     headers["grpc-encoding"] = "gzip";
     ContextOrder reqOrder = {content: 'order, headers: headers};
     string|error result = OrderMgtBlockingEp->addOrder(reqOrder);
-    if (result is error) {
+    if result is error {
         test:assertFail(string `Error from Connector: ${result.message()}`);
     } else {
         test:assertEquals(result, "Order is added 101");

@@ -23,7 +23,7 @@ final HelloWorld98Client helloWorld5BlockingEp = check new ("http://localhost:90
 function testInvalidRemoteMethod() {
     string name = "WSO2";
     string|Error unionResp = helloWorld5BlockingEp->hello(name);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertEquals(unionResp.message(), "No registered method descriptor for " +
                                                                "'grpcservices.HelloWorld98/hello1'");
     } else {
@@ -37,7 +37,7 @@ function testInvalidRemoteMethod() {
 function testInvalidInputParameter() {
     string age = "";
     int|Error unionResp = helloWorld5BlockingEp->testInt(age);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client got response : ");

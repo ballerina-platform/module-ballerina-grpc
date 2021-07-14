@@ -25,7 +25,7 @@ listener Listener ep12 = new (9102, {
 service "testEnumService" on ep12 {
     isolated remote function testEnum(TestEnumServiceStringCaller caller, OrderInfo orderReq) {
         string permission = "";
-        if (orderReq.mode == r) {
+        if orderReq.mode == r {
             permission = "r";
         }
         checkpanic caller->sendString(permission);

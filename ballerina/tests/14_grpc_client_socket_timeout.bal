@@ -29,7 +29,7 @@ service "HelloWorld14" on new Listener(9104) {
         runtime:sleep(2);
         // Sends response message with headers.
         Error? err = caller->sendString(message);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         }
 

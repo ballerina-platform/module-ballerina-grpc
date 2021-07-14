@@ -19,7 +19,7 @@ import ballerina/test;
 @test:Config {enable: true}
 function testClientFunctionUtilsMalformedUrl() returns error? {
     HelloWorld51Client|Error hClient = new ("localhost:9151");
-    if (hClient is Error) {
+    if hClient is Error {
         test:assertEquals(hClient.message(), "Malformed URL: localhost:9151");
     } else {
         test:assertFail(msg = "Expected an error");
@@ -30,25 +30,25 @@ function testClientFunctionUtilsMalformedUrl() returns error? {
 function testClientFunctionUtilsInvalidRPCCall() returns error? {
     HelloWorld51Client hClient = check new ("http://localhost:9151");
     string|Error unaryResult = hClient->stringUnary("Hey");
-    if (unaryResult is Error) {
+    if unaryResult is Error {
         test:assertEquals(unaryResult.message(), "Error while executing the client call. Method type BIDI_STREAMING not supported");
     } else {
         test:assertFail(msg = "Expected an error");
     }
     StringClientStreamingStreamingClient|Error clientResult = hClient->stringClientStreaming();
-    if (clientResult is Error) {
+    if clientResult is Error {
         test:assertEquals(clientResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
     } else {
         test:assertFail(msg = "Expected an error");
     }
     stream<string, Error?>|Error serverResult = hClient->stringServerStreaming("Hey");
-    if (serverResult is Error) {
+    if serverResult is Error {
         test:assertEquals(serverResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
     } else {
         test:assertFail(msg = "Expected an error");
     }
     StringBiDiStreamingClient|Error biDiResult = hClient->stringBiDi();
-    if (biDiResult is Error) {
+    if biDiResult is Error {
         test:assertEquals(biDiResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
     } else {
         test:assertFail(msg = "Expected an error");
