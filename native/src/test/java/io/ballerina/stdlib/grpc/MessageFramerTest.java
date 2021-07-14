@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static io.ballerina.stdlib.grpc.MessageUtils.createHttpCarbonMessage;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 /**
@@ -43,6 +44,7 @@ public class MessageFramerTest {
             framer.writePayload(stream);
             framer.flush();
             framer.close();
+            assertEquals(stream.available(), 0);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -61,6 +63,7 @@ public class MessageFramerTest {
             framer.writePayload(stream);
             framer.flush();
             framer.dispose();
+            assertEquals(stream.available(), 0);
         } catch (Exception e) {
             fail(e.getMessage());
         }
