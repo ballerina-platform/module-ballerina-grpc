@@ -29,25 +29,25 @@ function testClientFunctionUtilsMalformedUrl() returns error? {
 @test:Config {enable: true}
 function testClientFunctionUtilsInvalidRPCCall() returns error? {
     HelloWorld51Client hClient = check new ("http://localhost:9151");
-    string|Error unaryResult = hClient->sendStringUnary("Hey");
+    string|Error unaryResult = hClient->stringUnary("Hey");
     if (unaryResult is Error) {
         test:assertEquals(unaryResult.message(), "Error while executing the client call. Method type BIDI_STREAMING not supported");
     } else {
         test:assertFail(msg = "Expected an error");
     }
-    SendStringClientStreamingStreamingClient|Error clientResult = hClient->sendStringClientStreaming();
+    StringClientStreamingStreamingClient|Error clientResult = hClient->stringClientStreaming();
     if (clientResult is Error) {
         test:assertEquals(clientResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
     } else {
         test:assertFail(msg = "Expected an error");
     }
-    stream<string, Error?>|Error serverResult = hClient->sendStringServerStreaming("Hey");
+    stream<string, Error?>|Error serverResult = hClient->stringServerStreaming("Hey");
     if (serverResult is Error) {
         test:assertEquals(serverResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
     } else {
         test:assertFail(msg = "Expected an error");
     }
-    SendStringBiDiStreamingClient|Error biDiResult = hClient->sendStringBiDi();
+    StringBiDiStreamingClient|Error biDiResult = hClient->stringBiDi();
     if (biDiResult is Error) {
         test:assertEquals(biDiResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
     } else {

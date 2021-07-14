@@ -19,8 +19,8 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
 service HelloWorld51 {
-	rpc sendStringBiDi(stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
-	rpc sendStringClientStreaming(stream google.protobuf.StringValue) returns (google.protobuf.StringValue);
-	rpc sendStringServerStreaming(google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
-	rpc sendStringUnary(google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc stringBiDi(stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
+	rpc stringClientStreaming(stream google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc stringServerStreaming(google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
+	rpc stringUnary(google.protobuf.StringValue) returns (google.protobuf.StringValue);
 }
