@@ -22,12 +22,12 @@ service "HelloWorld50" on ep50 {
 
     remote function sendString(HelloWorld50StringCaller caller,
      stream<string, Error?> clientStream) returns error? {
-        error? e = clientStream.forEach(function(string value) {
-            checkpanic caller->sendString("From Service");
-        });
+        record {|string value;|}|Error? result = clientStream.next();
+        result = clientStream.next();
         if caller.isCancelled() {
             cancelled = true;
         }
+        result = clientStream.next();
         check caller->complete();
     }
 

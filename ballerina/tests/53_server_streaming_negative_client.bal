@@ -19,12 +19,13 @@ import ballerina/test;
 isolated function testServerStreamingNegative() returns error? {
     helloWorld53Client ep = check new ("http://localhost:9153");
     stream<string, Error?> strm = check ep->hello53("hey");
-    var content = check strm.next();
-    if content is record {| string value; |} || content is () {
-        test:assertEquals(content["value"], "a");
+    record {| string value; |}|Error? content = strm.next();
+    if content is Error {
+        test:assertFail(msg = content.message());
     } else {
-        test:assertFail(msg = "Fail");
+        test:assertEquals(content["value"], "a");
     }
+    
     check strm.close();
     record {| string value; |}|Error? result = strm.next();
     if result is Error {
@@ -39,14 +40,4 @@ isolated function testServerStreamingNegative() returns error? {
     } else {
         test:assertFail(msg = "Expected an error");
     }
-}
-
-@test:Config {enable: true}
-isolated function testClientGenerateMethodId() returns error? {
-    // helloWorld53Client ep = check new ("http://localhost:9153");
-    string result = generateMethodId((), "testService", "testRPC");
-    test:assertEquals(result, "testService/testRPC");
-
-    result = generateMethodId("testPackage", "testService", "testRPC");
-    test:assertEquals(result, "testPackage.testService/testRPC");
 }

@@ -15,6 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 package io.ballerina.stdlib.grpc;
 
 import org.testng.annotations.Test;
@@ -23,15 +24,11 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 /**
- * Interface to initiate processing of incoming remote calls.
- * <p>
- * Referenced from grpc-java implementation.
- * <p>
- * @since 0.980.0
+ * A test class to test Status class functions.
  */
 public class StatusTest {
 
-    @Test(description = "Test which will read text records from a given channel using async io framework")
+    @Test()
     public void testFromThrowable() {
         try {
             Status.fromThrowable(null);
@@ -45,7 +42,7 @@ public class StatusTest {
         assertEquals(status.getDescription(), null);
     }
 
-    @Test(description = "Test which will read text records from a given channel using async io framework")
+    @Test()
     public void testFromCodeValueInt() {
         Status status = Status.fromCodeValue(-1);
         assertEquals(status.getDescription(), "Unknown code -1");
@@ -53,7 +50,7 @@ public class StatusTest {
         assertEquals(status.getDescription(), "Unknown code 19");
     }
 
-    @Test(description = "Test which will read text records from a given channel using async io framework")
+    @Test()
     public void testFromCodeValueSlow() {
         byte[] asciiCodeValue = {'a'};
         Status status = Status.CODE_MARSHALLER.parseAsciiString(asciiCodeValue);

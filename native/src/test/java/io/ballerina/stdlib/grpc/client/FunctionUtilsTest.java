@@ -40,11 +40,7 @@ import static io.ballerina.stdlib.grpc.util.TestUtils.getValueCreatorWithErrorVa
 import static org.testng.Assert.assertEquals;
 
 /**
- * Interface to initiate processing of incoming remote calls.
- * <p>
- * Referenced from grpc-java implementation.
- * <p>
- * @since 0.980.0
+ * A test class to test FuntionUtils class functions.
  */
 public class FunctionUtilsTest {
     

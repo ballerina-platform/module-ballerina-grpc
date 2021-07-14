@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.BlockingQueue;
 
 import static io.ballerina.stdlib.grpc.GrpcUtil.getListenerConfig;
+import static io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils.externComplete;
 import static io.ballerina.stdlib.http.api.HttpConstants.ENDPOINT_CONFIG_PORT;
 
 /**
@@ -206,7 +207,9 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
         if (errorVal instanceof BError) {
             returnError = (BError) errorVal;
         } else {
-//            externComplete(env, clientEndpoint);
+            if (clientEndpoint != null) {
+                externComplete(env, clientEndpoint);
+            }
             returnError = null;
         }
         messageQueue.clear();
