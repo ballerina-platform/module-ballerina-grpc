@@ -124,7 +124,7 @@ public class GrpcCmd implements BLauncherCmd {
             // Multiple proto files
             List<String> protoFiles;
             try {
-                protoFiles = getProtoFiles(Paths.get(input.getAbsolutePath()));
+                protoFiles = getProtoFiles(Paths.get(input.getPath()));
             } catch (IOException e) {
                 String errorMessage = "Failed to find proto files in the directory. " +
                         "Please input a valid proto files directory.";
@@ -159,7 +159,7 @@ public class GrpcCmd implements BLauncherCmd {
             result = walk
                     .filter(p -> !Files.isDirectory(p))
                     .map(p -> p.toString())
-                    .filter(f -> f.endsWith("proto"))
+                    .filter(f -> f.endsWith(".proto"))
                     .collect(Collectors.toList());
         }
         return result;
