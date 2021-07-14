@@ -19,7 +19,7 @@ import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
 @test:Config {enable:true}
-public isolated function testBidiStreamingInChatClient() returns Error? {
+isolated function testBidiStreamingInChatClient() returns Error? {
 
     //Client endpoint configuration.
     Chat17Client chatEp = check new("https://localhost:9093",

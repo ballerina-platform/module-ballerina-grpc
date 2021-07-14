@@ -16,7 +16,7 @@
 import ballerina/test;
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithBearerTokenAuth() returns Error? {
+isolated function testStringValueReturnWithBearerTokenAuth() returns Error? {
     HelloWorld39Client helloWorldEp = check new ("http://localhost:9129");
     map<string|string[]> requestHeaders = {};
 
@@ -43,7 +43,7 @@ public isolated function testStringValueReturnWithBearerTokenAuth() returns Erro
 }
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithInvalidBearerTokenAuth() returns Error? {
+isolated function testStringValueReturnWithInvalidBearerTokenAuth() returns Error? {
     HelloWorld39Client helloWorldEp = check new ("http://localhost:9129");
     map<string|string[]> requestHeaders = {};
 

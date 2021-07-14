@@ -17,7 +17,7 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public isolated function testUnaryRecordValueReturn() returns Error? {
+isolated function testUnaryRecordValueReturn() returns Error? {
     HelloWorld31Client ep = check new ("http://localhost:9121");
     SampleMsg31 reqMsg = {name: "WSO2", id: 8};
     var unionResp = ep->sayHello(reqMsg);
@@ -31,7 +31,7 @@ public isolated function testUnaryRecordValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public isolated function testUnaryErrorReturn() returns Error? {
+isolated function testUnaryErrorReturn() returns Error? {
     HelloWorld31Client ep = check new ("http://localhost:9121");
     SampleMsg31 reqMsg = {id: 8};
     var unionResp = ep->sayHello(reqMsg);

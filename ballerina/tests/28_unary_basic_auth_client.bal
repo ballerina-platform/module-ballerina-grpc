@@ -16,7 +16,7 @@
 import ballerina/test;
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithBasicAuth() returns Error? {
+isolated function testStringValueReturnWithBasicAuth() returns Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {};
 
@@ -46,7 +46,7 @@ public isolated function testStringValueReturnWithBasicAuth() returns Error? {
 }
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithInvalidBasicAuth() returns Error? {
+isolated function testStringValueReturnWithInvalidBasicAuth() returns Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {};
 
@@ -76,7 +76,7 @@ public isolated function testStringValueReturnWithInvalidBasicAuth() returns Err
 }
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithBasicAuthWithEmpty() returns Error? {
+isolated function testStringValueReturnWithBasicAuthWithEmpty() returns Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {};
 
@@ -95,7 +95,7 @@ public isolated function testStringValueReturnWithBasicAuthWithEmpty() returns E
 }
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithBasicAuthWithInvalidHeader() returns Error? {
+isolated function testStringValueReturnWithBasicAuthWithInvalidHeader() returns Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {
         "authorization": "Bearer "

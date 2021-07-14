@@ -17,7 +17,7 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithJwt() returns Error? {
+isolated function testStringValueReturnWithJwt() returns Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {};
 
@@ -56,7 +56,7 @@ public isolated function testStringValueReturnWithJwt() returns Error? {
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithUnauthorizedJwt() returns Error? {
+isolated function testStringValueReturnWithUnauthorizedJwt() returns Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {};
 
@@ -95,7 +95,7 @@ public isolated function testStringValueReturnWithUnauthorizedJwt() returns Erro
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithInvalidHeaderJwt() returns Error? {
+isolated function testStringValueReturnWithInvalidHeaderJwt() returns Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {
         "x-id": "0987654321",
@@ -112,7 +112,7 @@ public isolated function testStringValueReturnWithInvalidHeaderJwt() returns Err
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithEmptyHeaderJwt() returns Error? {
+isolated function testStringValueReturnWithEmptyHeaderJwt() returns Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {
         "x-id": "0987654321",

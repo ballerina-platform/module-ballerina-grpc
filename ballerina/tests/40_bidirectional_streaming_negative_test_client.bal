@@ -16,7 +16,7 @@
 import ballerina/test;
 
 @test:Config {enable: true}
-public isolated function testBidiStreamingWithCustomError() returns Error? {
+isolated function testBidiStreamingWithCustomError() returns Error? {
     ChatWithCallerClient chatClient = check new ("http://localhost:9140");
     CallStreamingClient streamingCaller = check chatClient->call();
     check streamingCaller->sendChatMessage40({

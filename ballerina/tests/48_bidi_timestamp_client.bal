@@ -39,7 +39,7 @@ isolated function testBidiTimestampWithGreeting() returns error? {
 }
 
 @test:Config {enable: true}
-function testBiDiTimestampWithBidiGreeting() returns error? {
+isolated function testBiDiTimestampWithBidiGreeting() returns error? {
     BidiStreamingTimestampServiceClient utsClient = check new ("http://localhost:9148");
     BidiStreamingGreetBothStreamingClient streamingClient = check utsClient->bidiStreamingGreetBoth();
     

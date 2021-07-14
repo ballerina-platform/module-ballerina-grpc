@@ -18,7 +18,7 @@ import ballerina/test;
 import ballerina/lang.'string as langstring;
 
 @test:Config {enable:true}
-public isolated function testStringValueReturn() returns Error? {
+isolated function testStringValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     var unionResp = helloWorldBlockingEp->testStringValueReturn("WSO2");
     if (unionResp is Error) {
@@ -29,7 +29,7 @@ public isolated function testStringValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public isolated function testFloatValueReturn() returns Error? {
+isolated function testFloatValueReturn() returns Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     float n = 4.5;
     var unionResp = helloWorldBlockingEp->testFloatValueReturn(n);

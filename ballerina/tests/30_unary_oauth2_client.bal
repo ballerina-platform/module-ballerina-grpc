@@ -17,7 +17,7 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithOAuth2() returns Error? {
+isolated function testStringValueReturnWithOAuth2() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};
 
@@ -54,7 +54,7 @@ public isolated function testStringValueReturnWithOAuth2() returns Error? {
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithOAuth2PasswordGrantConfig() returns Error? {
+isolated function testStringValueReturnWithOAuth2PasswordGrantConfig() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};
 
@@ -93,7 +93,7 @@ public isolated function testStringValueReturnWithOAuth2PasswordGrantConfig() re
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig() returns Error? {
+isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};
 
@@ -162,7 +162,7 @@ public isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig(
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithOAuth2NoScope() returns Error? {
+isolated function testStringValueReturnWithOAuth2NoScope() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};
 
@@ -199,7 +199,7 @@ public isolated function testStringValueReturnWithOAuth2NoScope() returns Error?
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithOAuth2WithInvalidScopeKey() returns Error? {
+isolated function testStringValueReturnWithOAuth2WithInvalidScopeKey() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};
 
@@ -236,7 +236,7 @@ public isolated function testStringValueReturnWithOAuth2WithInvalidScopeKey() re
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithOAuth2EmptyAuthHeader() returns Error? {
+isolated function testStringValueReturnWithOAuth2EmptyAuthHeader() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {
         "x-id": "0987654321",
@@ -252,7 +252,7 @@ public isolated function testStringValueReturnWithOAuth2EmptyAuthHeader() return
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithOAuth2InvalidAuthHeader() returns Error? {
+isolated function testStringValueReturnWithOAuth2InvalidAuthHeader() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {
         "x-id": "0987654321",
@@ -268,7 +268,7 @@ public isolated function testStringValueReturnWithOAuth2InvalidAuthHeader() retu
 }
 
 @test:Config {enable:true}
-public isolated function testStringValueReturnWithOAuth2InvalidAuthHeaderFormat() returns Error? {
+isolated function testStringValueReturnWithOAuth2InvalidAuthHeaderFormat() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {
         "x-id": "0987654321",
