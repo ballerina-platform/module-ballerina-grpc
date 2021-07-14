@@ -203,42 +203,46 @@ task copyExternalJars {
 
 task startLdapServer() {
     doLast {
-        def stdOut = new ByteArrayOutputStream()
-        exec {
-            commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
-            standardOutput = stdOut
-        }
-        if (!stdOut.toString().contains("openldap-server")) {
-            println "Starting LDAP server."
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
             exec {
-                commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml up -d"
+                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
                 standardOutput = stdOut
             }
-            println stdOut.toString()
-            sleep(5 * 1000)
-        } else {
-            println "LDAP server is already running."
+            if (!stdOut.toString().contains("openldap-server")) {
+                println "Starting LDAP server."
+                exec {
+                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml up -d"
+                    standardOutput = stdOut
+                }
+                println stdOut.toString()
+                sleep(5 * 1000)
+            } else {
+                println "LDAP server is already running."
+            }
         }
     }
 }
 
 task stopLdapServer() {
     doLast {
-        def stdOut = new ByteArrayOutputStream()
-        exec {
-            commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
-            standardOutput = stdOut
-        }
-        if (stdOut.toString().contains("openldap-server")) {
-            println "Stopping LDAP server."
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
             exec {
-                commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml rm -svf"
+                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
                 standardOutput = stdOut
             }
-            println stdOut.toString()
-            sleep(5 * 1000)
-        } else {
-            println "LDAP server is not started."
+            if (stdOut.toString().contains("openldap-server")) {
+                println "Stopping LDAP server."
+                exec {
+                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml rm -svf"
+                    standardOutput = stdOut
+                }
+                println stdOut.toString()
+                sleep(5 * 1000)
+            } else {
+                println "LDAP server is not started."
+            }
         }
     }
 }
@@ -262,12 +266,13 @@ publishing {
     }
 }
 
-
 updateTomlFiles.dependsOn copyStdlibs
 
-if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-    test.dependsOn startLdapServer
-}
+test.finalizedBy stopLdapServer
+test.dependsOn startLdapServer
+
+build.finalizedBy stopLdapServer
+build.dependsOn startLdapServer
 
 build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-native:test"
@@ -277,10 +282,6 @@ test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-native:test"
 test.dependsOn ":${packageName}-test-utils:build"
 test.dependsOn ":${packageName}-compiler-plugin:build"
-
-if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-    build.finalizedBy stopLdapServer
-}
 
 publishToMavenLocal.dependsOn copyExternalJars
 publish.dependsOn copyExternalJars
