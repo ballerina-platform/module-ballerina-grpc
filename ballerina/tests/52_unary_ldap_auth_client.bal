@@ -17,7 +17,7 @@
 import ballerina/test;
 
 @test:Config {
-    enable: false,
+    enable: true,
     groups: ["ldap"]
 }
 isolated function testStringValueReturnWithLdapAuth() returns Error? {
@@ -50,7 +50,7 @@ isolated function testStringValueReturnWithLdapAuth() returns Error? {
 }
 
 @test:Config {
-    enable: false,
+    enable: true,
     groups: ["ldap"]
 }
 isolated function testStringValueReturnWithInvalidLdapAuth() returns Error? {
@@ -83,7 +83,7 @@ isolated function testStringValueReturnWithInvalidLdapAuth() returns Error? {
 }
 
 @test:Config {
-    enable: false,
+    enable: true,
     groups: ["ldap"]
 }
 isolated function testStringValueReturnWithEmptyLdapAuth() returns Error? {
@@ -105,7 +105,7 @@ isolated function testStringValueReturnWithEmptyLdapAuth() returns Error? {
 }
 
 @test:Config {
-    enable: false,
+    enable: true,
     groups: ["ldap"]
 }
 isolated function testStringValueReturnWithUnauthorizedLdapAuth() returns Error? {
