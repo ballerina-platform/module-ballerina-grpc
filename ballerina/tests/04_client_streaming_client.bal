@@ -26,7 +26,7 @@ isolated function testClientStreaming() returns Error? {
     LotsOfGreetingsStreamingClient ep;
     // Executing unary non-blocking call registering server message listener.
     var res = helloWorldEp->lotsOfGreetings();
-    if (res is Error) {
+    if res is Error {
         test:assertFail("Error from Connector: " + res.message());
         return;
     } else {
@@ -36,7 +36,7 @@ isolated function testClientStreaming() returns Error? {
 
     foreach var greet in requests {
         Error? err = ep->sendString(greet);
-        if (err is Error) {
+        if err is Error {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
@@ -44,4 +44,31 @@ isolated function testClientStreaming() returns Error? {
     io:println("completed successfully");
     anydata response = checkpanic ep->receiveString();
     test:assertEquals(<string> response, "Ack");
+}
+
+@test:Config {enable:true}
+isolated function testClientStreamingSendMessageAfterError() returns Error? {
+    HelloWorld7Client helloWorldEp = check new ("http://localhost:9094");
+    LotsOfGreetingsStreamingClient res = check helloWorldEp->lotsOfGreetings();
+
+    check res->sendError(error AbortedError("Aborted for testing"));
+    Error? err = res->sendString("Hey");
+    if err is Error {
+        test:assertEquals(err.message(), "Client call was already cancelled.");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testClientStreamingSendMessageAfterComplete() returns Error? {
+    ClientConfiguration config = {
+        compression: COMPRESSION_ALWAYS
+    };
+    HelloWorld7Client helloWorldEp = check new ("http://localhost:9094", config);
+    LotsOfGreetingsStreamingClient res = check helloWorldEp->lotsOfGreetings();
+    Error? err = res->sendString("Hey");
+    check res->complete();
+    err = res->sendString("Hey");
+    if err is Error {
+        test:assertEquals(err.message(), "Client call was already closed.");
+    }
 }

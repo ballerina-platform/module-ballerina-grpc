@@ -27,12 +27,12 @@ service "HelloWorld100" on ep7 {
         io:println("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
-        if (name == "invalid") {
+        if name == "invalid" {
             err = caller->sendError(error AbortedError("Operation aborted"));
         } else {
             err = caller->sendString(message);
         }
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         }
         checkpanic caller->complete();
@@ -42,7 +42,7 @@ service "HelloWorld100" on ep7 {
         io:println("age: " + age.toString());
         int displayAge = age - 2;
         Error? err = caller->sendInt(displayAge);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("display age : " + displayAge.toString());
@@ -54,7 +54,7 @@ service "HelloWorld100" on ep7 {
         io:println("gross salary: " + salary.toString());
         float netSalary = salary * 0.88;
         Error? err = caller->sendFloat(netSalary);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("net salary : " + netSalary.toString());
@@ -66,7 +66,7 @@ service "HelloWorld100" on ep7 {
         io:println("is available: " + available.toString());
         boolean aval = available || true;
         Error? err = caller->sendBoolean(aval);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("avaliability : " + aval.toString());
@@ -78,7 +78,7 @@ service "HelloWorld100" on ep7 {
         io:println(msg.name + " : " + msg.message);
         Response response = {resp:"Acknowledge " + msg.name};
         Error? err = caller->sendResponse(response);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("msg : " + response.resp);
@@ -89,7 +89,7 @@ service "HelloWorld100" on ep7 {
     isolated remote function testNoRequest(HelloWorld100StringCaller caller) {
         string resp = "service invoked with no request";
         Error? err = caller->sendString(resp);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("response : " + resp);
@@ -104,7 +104,7 @@ service "HelloWorld100" on ep7 {
     isolated remote function testResponseInsideMatch(HelloWorld100ResponseCaller caller, string msg) {
         io:println("Request: " + msg);
         Response? res = {resp:"Acknowledge " + msg};
-        if (res is Response) {
+        if res is Response {
             checkpanic caller->sendResponse(res);
         } else {
             checkpanic caller->sendError(error NotFoundError("No updates from that drone"));

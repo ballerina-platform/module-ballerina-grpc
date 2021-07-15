@@ -44,7 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Semaphore;
 
 import static io.ballerina.stdlib.grpc.GrpcUtil.getListenerConfig;
 import static io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils.externComplete;
@@ -200,7 +199,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
 
     public static Object closeStream(Environment env, BObject streamIterator) {
 
-        Semaphore listenerSemaphore = (Semaphore) streamIterator.getNativeData(GrpcConstants.MESSAGE_QUEUE);
+        BlockingQueue<?> messageQueue = (BlockingQueue<?>) streamIterator.getNativeData(GrpcConstants.MESSAGE_QUEUE);
         BObject clientEndpoint = (BObject) streamIterator.getNativeData(
                 GrpcConstants.CLIENT_ENDPOINT_RESPONSE_OBSERVER);
         Object errorVal = streamIterator.getNativeData(GrpcConstants.ERROR_MESSAGE);
@@ -208,12 +207,12 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
         if (errorVal instanceof BError) {
             returnError = (BError) errorVal;
         } else {
-            externComplete(env, clientEndpoint);
+            if (clientEndpoint != null) {
+                externComplete(env, clientEndpoint);
+            }
             returnError = null;
         }
-        while (listenerSemaphore.hasQueuedThreads()) {
-            listenerSemaphore.release();
-        }
+        messageQueue.clear();
         return returnError;
     }
 }

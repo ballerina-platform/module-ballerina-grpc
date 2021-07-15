@@ -32,7 +32,7 @@ service "helloWorldServerStreaming" on helloWorldStreamingep {
             string message = greet + " " + value.name;
             HelloResponse msg = {message: message};
             Error? err = caller->sendHelloResponse(msg);
-            if (err is Error) {
+            if err is Error {
                 log:printError("Error from Connector: " + err.message());
             } else {
                 log:printInfo("Send reply: " + msg.toString());
@@ -40,7 +40,7 @@ service "helloWorldServerStreaming" on helloWorldStreamingep {
         }
 
         Error? result = caller->complete();
-        if (result is Error) {
+        if result is Error {
             log:printError("Error in sending completed notification to caller",
                 'error = result);
         }

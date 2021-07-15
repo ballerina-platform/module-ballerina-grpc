@@ -22,7 +22,7 @@ isolated function testInvokeUnavailableService() returns Error? {
     HelloWorld16Client helloWorld16BlockingEp = check new ("http://localhost:9106");
     string name = "WSO2";
     string|Error unionResp16 = helloWorld16BlockingEp->hello(name);
-    if (unionResp16 is Error) {
+    if unionResp16 is Error {
         test:assertTrue(unionResp16.message().startsWith("Connection refused:"), msg = "Failed with error: " +
         unionResp16.message());
     } else {

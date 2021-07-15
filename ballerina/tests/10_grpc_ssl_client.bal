@@ -37,7 +37,7 @@ isolated function testUnarySecuredBlockingWithCerts() returns Error? {
         });
 
     string|Error unionResp = helloWorldBlockingEp->hello("WSO2");
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");

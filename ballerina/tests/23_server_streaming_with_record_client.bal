@@ -18,12 +18,12 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-public function testServerStreamingWithRecord() returns Error? {
+function testServerStreamingWithRecord() returns Error? {
     string name = "WSO2";
     helloWorldServerStreamingClient helloWorldEp = check new("http://localhost:9113");
     HelloRequest newreq = {name: name};
     var result = helloWorldEp->lotsOfReplies(newreq);
-    if (result is Error) {
+    if result is Error {
         test:assertFail("Error from Connector: " + result.message());
     } else {
         io:println("Connected successfully");

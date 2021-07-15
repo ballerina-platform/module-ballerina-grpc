@@ -24,7 +24,7 @@ isolated function testCallWithDeadlinePropergation() returns error? {
     time:Utc deadline = time:utcAddSeconds(current, 300);
     map<string|string[]> headers = setDeadline(deadline);
     var context = helloWorldClient->call1Context({content: "WSO2", headers: headers});
-    if (context is ContextString) {
+    if context is ContextString {
         test:assertEquals(context.content, "Ack");
     } else {
         test:assertFail(context.message());

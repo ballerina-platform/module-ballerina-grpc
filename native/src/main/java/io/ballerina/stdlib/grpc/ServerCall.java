@@ -142,19 +142,6 @@ public final class ServerCall {
         }
     }
 
-    public void setCompression(String compressorName) {
-        // Added here to give a better error message.
-        if (sendHeadersCalled) {
-            throw Status.Code.CANCELLED.toStatus().withDescription("Failed to set compression headers. Response " +
-                    "headers already sent.").asRuntimeException();
-        }
-        compressor = compressorRegistry.lookupCompressor(compressorName);
-        if (compressor == null) {
-            throw Status.Code.INVALID_ARGUMENT.toStatus().withDescription("Unable to find compressor by name "
-                    + compressorName).asRuntimeException();
-        }
-    }
-
     void setObserverContext(ObserverContext context) {
         this.context = context;
     }

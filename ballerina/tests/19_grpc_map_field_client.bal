@@ -30,7 +30,7 @@ function testMapFields() {
         }]
     };
     Error? publishMetrics = negotiatorEp->publishMetrics(request);
-    if (publishMetrics is Error) {
+    if publishMetrics is Error {
         test:assertFail(string `Metrics publish failed: ${publishMetrics.message()}`);
     }
 }
@@ -39,7 +39,7 @@ function testMapFields() {
 function testOptionalFields() {
     HandshakeRequest request = {};
     HandshakeResponse|Error result = negotiatorEp->handshake(request);
-    if (result is Error) {
+    if result is Error {
         test:assertFail(string `Handshake failed: ${result.message()}`);
     } else {
         test:assertEquals(result.id, "123456");

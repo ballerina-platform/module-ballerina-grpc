@@ -27,7 +27,7 @@ isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error?
 
     CallWithDeadlineStreamingClient streamingClient;
     var res = helloWorldCaller->callWithDeadline();
-    if (res is Error) {
+    if res is Error {
         test:assertFail("Error from Connector: " + res.message());
         return;
     } else {
@@ -42,7 +42,7 @@ isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error?
     ];
     foreach string s in requests {
         Error? err = streamingClient->sendContextString({content: s, headers: headers});
-        if (err is Error) {
+        if err is Error {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
@@ -51,7 +51,7 @@ isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error?
     var result = streamingClient->receiveString();
     int i = 0;
     while !(result is ()) {
-        if (result is string) {
+        if result is string {
             test:assertEquals(result, requests[i]);
         } else {
             test:assertFail("Unexpected output in the stream");

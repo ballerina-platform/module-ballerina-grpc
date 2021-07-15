@@ -43,20 +43,20 @@ service /HelloWorld29 on ep29 {
             },
             scopeKey: "scope"
         };
-        if (!request.headers.hasKey(AUTH_HEADER)) {
+        if !request.headers.hasKey(AUTH_HEADER) {
             Error? err = caller->sendError(error AbortedError("AUTH_HEADER header is missing"));
         } else {
             ListenerJwtAuthHandler handler = new(config);
             jwt:Payload|UnauthenticatedError authResult = handler.authenticate(request.headers);
-            if (authResult is UnauthenticatedError) {
+            if authResult is UnauthenticatedError {
                 Error? err = caller->sendError(authResult);
             } else {
                 PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
-                if (authrzResult is ()) {
+                if authrzResult is () {
                     responseHeaders["x-id"] = ["1234567890", "2233445677"];
                     ContextString responseMessage = {content: message, headers: responseHeaders};
                     Error? err = caller->sendContextString(responseMessage);
-                    if (err is Error) {
+                    if err is Error {
                         io:println("Error from Connector: " + err.message());
                     } else {
                         io:println("Server send response : " + message);
@@ -67,5 +67,40 @@ service /HelloWorld29 on ep29 {
             }
         }
         checkpanic caller->complete();
+    }
+
+    remote isolated function testStringValueReturnNegative(HelloWorld29StringCaller caller, ContextString request) {
+        string message = "Hello " + request.content;
+        map<string|string[]> responseHeaders = {};
+        JwtValidatorConfig config = {
+            issuer: "wso2",
+            audience: "ballerina",
+            signatureConfig: {
+                trustStoreConfig: {
+                    trustStore: {
+                        path: TRUSTSTORE_PATH,
+                        password: "ballerina"
+                    },
+                    certAlias: "ballerina"
+                }
+            },
+            scopeKey: "scope"
+        };
+        if !request.headers.hasKey(AUTH_HEADER) {
+            Error? err = caller->sendError(error AbortedError("AUTH_HEADER header is missing"));
+        } else {
+            ListenerJwtAuthHandler handler = new(config);
+            jwt:Payload|UnauthenticatedError authResult = handler.authenticate(request.headers);
+            if authResult is UnauthenticatedError {
+                Error? err = caller->sendError(authResult);
+            } else {
+                PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
+                if authrzResult is PermissionDeniedError {
+                    Error? err = caller->sendError(authrzResult);
+                } else {
+                    Error? err = caller->sendError(error AbortedError("Expected error was not found."));
+                }
+            }
+        }
     }
 }

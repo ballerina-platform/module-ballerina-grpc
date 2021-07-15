@@ -30,17 +30,17 @@ service "HelloWorld36S1" on ep36 {
     remote isolated function call1(ContextString request) returns ContextString|Error {
         log:printInfo("Invoked call1");
         var cancel = isCancelled(request.headers);
-        if (cancel is boolean) {
-            if (cancel) {
+        if cancel is boolean {
+            if cancel {
                 return error DeadlineExceededError("Exceeded the configured deadline");
             } else {
                 HelloWorld36S2Client helloWorldClient = checkpanic new ("http://localhost:9126");
                 var deadline = getDeadline(request.headers);
-                if (deadline is time:Utc) {
+                if deadline is time:Utc {
                     string deadlineStringValue = time:utcToString(deadline);
                     request.headers[TEST_DEADLINE_HEADER] = deadlineStringValue;
                     return helloWorldClient->call2Context({content: "WSO2", headers: request.headers});
-                } else if (deadline is time:Error) {
+                } else if deadline is time:Error {
                     return error CancelledError(deadline.message());
                 } else {
                     return error CancelledError("Deadline is not specified");
@@ -59,12 +59,12 @@ service "HelloWorld36S1" on ep36 {
 service "HelloWorld36S2" on ep36 {
     remote isolated function call2(ContextString request) returns ContextString|error {
         log:printInfo("Invoked call2");
-        if (request.headers[TEST_DEADLINE_HEADER] != ()) {
+        if request.headers[TEST_DEADLINE_HEADER] != () {
             string|string[]? deadlineStringValue = request.headers[TEST_DEADLINE_HEADER];
-            if (deadlineStringValue is string) {
+            if deadlineStringValue is string {
                 time:Utc currentTime = time:utcNow();
                 var deadline = time:utcFromString(deadlineStringValue);
-                if (deadline is time:Utc) {
+                if deadline is time:Utc {
                     [int, decimal] [deadlineSeconds, deadlineSecondFraction] = deadline;
                     [int, decimal] [currentSeconds, currentSecondFraction] = currentTime;
                     io:println(deadline);

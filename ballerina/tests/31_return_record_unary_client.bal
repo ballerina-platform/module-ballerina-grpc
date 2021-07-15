@@ -17,11 +17,11 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-public isolated function testUnaryRecordValueReturn() returns Error? {
+isolated function testUnaryRecordValueReturn() returns Error? {
     HelloWorld31Client ep = check new ("http://localhost:9121");
     SampleMsg31 reqMsg = {name: "WSO2", id: 8};
     var unionResp = ep->sayHello(reqMsg);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         SampleMsg31 resMsg = unionResp;
@@ -31,11 +31,11 @@ public isolated function testUnaryRecordValueReturn() returns Error? {
 }
 
 @test:Config {enable:true}
-public isolated function testUnaryErrorReturn() returns Error? {
+isolated function testUnaryErrorReturn() returns Error? {
     HelloWorld31Client ep = check new ("http://localhost:9121");
     SampleMsg31 reqMsg = {id: 8};
     var unionResp = ep->sayHello(reqMsg);
-    if (unionResp is InvalidArgumentError) {
+    if unionResp is InvalidArgumentError {
         test:assertEquals(unionResp.message(), "Name must not be empty.");
     } else {
         test:assertFail("RPC call should return an InvalidArgumentError");

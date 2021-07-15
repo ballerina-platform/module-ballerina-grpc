@@ -19,4 +19,5 @@ import "google/protobuf/wrappers.proto";
 
 service HelloWorld29 {
 	rpc testStringValueReturn(google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc testStringValueReturnNegative(google.protobuf.StringValue) returns (google.protobuf.StringValue);
 }

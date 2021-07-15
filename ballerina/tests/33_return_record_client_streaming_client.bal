@@ -22,7 +22,7 @@ isolated function testClientStreamingFromReturnRecord() returns Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClient streamingClient;
     var res = helloWorldEp->sayHello();
-    if (res is Error) {
+    if res is Error {
         test:assertFail("Error from Connector: " + res.message());
         return;
     } else {
@@ -37,7 +37,7 @@ isolated function testClientStreamingFromReturnRecord() returns Error? {
     ];
     foreach var r in requests {
         Error? err = streamingClient->sendSampleMsg33(r);
-        if (err is Error) {
+        if err is Error {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
@@ -54,7 +54,7 @@ isolated function testClientStreamingSendError() returns Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClient streamingClient;
     var res = helloWorldEp->sayHello();
-    if (res is Error) {
+    if res is Error {
         test:assertFail("Error from Connector: " + res.message());
         return;
     } else {

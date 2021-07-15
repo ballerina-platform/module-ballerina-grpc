@@ -27,7 +27,7 @@ isolated function testUnaryTimestampWithGreeting() returns error? {
 }
 
 @test:Config {enable: true}
-function testUnaryTimestampWithBidiGreeting() returns error? {
+isolated function testUnaryTimestampWithBidiGreeting() returns error? {
     UnaryTimestampServiceClient utsClient = check new ("http://localhost:9147");
     time:Utc customTime = [1228302930, 0.12];
     Greeting expectedGreeting = {"name": "Hello", "time": customTime};

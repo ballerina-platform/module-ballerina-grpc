@@ -16,7 +16,7 @@
 import ballerina/test;
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithBasicAuth() returns Error? {
+isolated function testStringValueReturnWithBasicAuth() returns Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {};
 
@@ -27,7 +27,7 @@ public isolated function testStringValueReturnWithBasicAuth() returns Error? {
 
     ClientBasicAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -38,7 +38,7 @@ public isolated function testStringValueReturnWithBasicAuth() returns Error? {
         headers: requestHeaders
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if (response is Error) {
+    if response is Error {
         test:assertFail(msg = response.message());
     } else {
         test:assertEquals(response, "Hello WSO2");
@@ -46,7 +46,7 @@ public isolated function testStringValueReturnWithBasicAuth() returns Error? {
 }
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithInvalidBasicAuth() returns Error? {
+isolated function testStringValueReturnWithInvalidBasicAuth() returns Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {};
 
@@ -57,7 +57,7 @@ public isolated function testStringValueReturnWithInvalidBasicAuth() returns Err
 
     ClientBasicAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertFail(msg = "Test Failed! " + result.message());
     } else {
         requestHeaders = result;
@@ -68,7 +68,7 @@ public isolated function testStringValueReturnWithInvalidBasicAuth() returns Err
         headers: requestHeaders
     };
     var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if (response is Error) {
+    if response is Error {
         test:assertEquals(response.message(), "Failed to authenticate username 'admin' from file user store.");
     } else {
         test:assertFail(msg = "Expected grpc:Error not found.");
@@ -76,7 +76,7 @@ public isolated function testStringValueReturnWithInvalidBasicAuth() returns Err
 }
 
 @test:Config {enable: true}
-public isolated function testStringValueReturnWithBasicAuthWithEmpty() returns Error? {
+isolated function testStringValueReturnWithBasicAuthWithEmpty() returns Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {};
 
@@ -87,9 +87,28 @@ public isolated function testStringValueReturnWithBasicAuthWithEmpty() returns E
 
     ClientBasicAuthHandler handler = new (config);
     map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if (result is ClientAuthError) {
+    if result is ClientAuthError {
         test:assertEquals(result.message(), "Failed to enrich request with Basic Auth token. Username or password cannot be empty.");
     } else {
         test:assertFail(msg = "Expected grpc:Error not found.");
+    }
+}
+
+@test:Config {enable: true}
+isolated function testStringValueReturnWithBasicAuthWithInvalidHeader() returns Error? {
+    HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
+    map<string|string[]> requestHeaders = {
+        "authorization": "Bearer "
+    };
+
+    ContextString requestMessage = {
+        content: "WSO2",
+        headers: requestHeaders
+    };
+    var response = helloWorldEp->testStringValueReturn(requestMessage);
+    if response is Error {
+        test:assertEquals(response.message(), "Empty authentication header.");
+    } else {
+        test:assertFail(msg = "Expected an error");
     }
 }

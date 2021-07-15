@@ -25,7 +25,7 @@ isolated function testByteArray() returns Error? {
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();
     var addResponse = blockingEp->checkBytes(bytes);
-    if (addResponse is Error) {
+    if addResponse is Error {
         test:assertFail(string `Error from Connector: ${addResponse.message()}`);
     } else {
         test:assertEquals(addResponse, bytes);
@@ -37,13 +37,13 @@ isolated function testLargeByteArray() returns Error? {
     string filePath = "tests/resources/sample_bytes.txt";
     byteServiceClient blockingEp  = check new ("http://localhost:9101");
     var rch = <@untainted> io:openReadableFile(filePath);
-    if (rch is error) {
+    if rch is error {
         test:assertFail("Error while reading the file.");
     } else {
         var resultBytes = rch.read(10000);
-        if (resultBytes is byte[]) {
+        if resultBytes is byte[] {
             var addResponse = blockingEp->checkBytes(resultBytes);
-            if (addResponse is Error) {
+            if addResponse is Error {
                 test:assertFail(string `Error from Connector: ${addResponse.message()}`);
             } else {
                 test:assertEquals(addResponse, resultBytes);

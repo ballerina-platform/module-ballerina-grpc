@@ -31,7 +31,7 @@ service "HelloWorld" on ep {
         string message = "Submitted name: " + req.name;
         io:println("Response message " + message);
         Error? err = caller->sendString(message);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         }
         checkpanic caller->complete();
@@ -42,7 +42,7 @@ service "HelloWorld" on ep {
         Person person = {name:"Sam", address:{postalCode:10300, state:"CA", country:"USA"}};
         io:println(person);
         Error? err = caller->sendPerson(person);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         }
         checkpanic caller->complete();
@@ -53,7 +53,7 @@ service "HelloWorld" on ep {
         StockQuote res = {symbol:"WSO2", name:"WSO2.com", last:149.52, low:150.70, high:149.18};
         io:println(res);
         Error? err = caller->sendStockQuote(res);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         }
         checkpanic caller->complete();
@@ -73,7 +73,7 @@ service "HelloWorld" on ep {
         StockQuotes quotes = {stock:[res, res1]};
 
         Error? err = caller->sendStockQuotes(quotes);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         }
         checkpanic caller->complete();
@@ -83,7 +83,7 @@ service "HelloWorld" on ep {
         string[] names = ["WSO2", "Google"];
         StockNames stockNames = {names:names};
         Error? err = caller->sendStockNames(stockNames);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         }
         checkpanic caller->complete();

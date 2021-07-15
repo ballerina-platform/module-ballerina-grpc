@@ -29,7 +29,7 @@ service "HelloWorld26" on ep26 {
         error? e = clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);
         });
-        if (e is ()) {
+        if e is () {
             return "Ack";
         }
         return "";

@@ -32,10 +32,10 @@ service "HelloWorld7" on ep4 {
         error? e = clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);
         });
-        if (e is ()) {
+        if e is () {
             log:printInfo("Server Response");
             Error? err = caller->sendString("Ack");
-            if (err is Error) {
+            if err is Error {
                 log:printError("Error from Connector: " + err.message());
             } else {
                 log:printInfo("Server send response : Ack");

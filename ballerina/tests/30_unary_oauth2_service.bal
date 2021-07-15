@@ -42,16 +42,77 @@ service /HelloWorld30 on ep30 {
                 }
             }
         };
-        if (!request.headers.hasKey(AUTH_HEADER)) {
+        if !request.headers.hasKey(AUTH_HEADER) {
             Error? err = caller->sendError(error AbortedError("AUTH_HEADER header is missing"));
         } else {
             ListenerOAuth2Handler handler = new(config);
             oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError authResult = handler->authorize(request.headers, "read");
-            if (authResult is oauth2:IntrospectionResponse) {
+            if authResult is oauth2:IntrospectionResponse {
                 responseHeaders["x-id"] = ["1234567890", "2233445677"];
                 ContextString responseMessage = {content: message, headers: responseHeaders};
                 Error? err = caller->sendContextString(responseMessage);
-                if (err is Error) {
+                if err is Error {
+                    io:println("Error from Connector: " + err.message());
+                } else {
+                    io:println("Server send response : " + message);
+                }
+            } else {
+                Error? err = caller->sendError(error AbortedError("Unauthorized"));
+            }
+        }
+        checkpanic caller->complete();
+    }
+
+    remote isolated function testStringValueNegative(HelloWorld30StringCaller caller, ContextString request) {
+        map<string|string[]> responseHeaders = {};
+        OAuth2IntrospectionConfig config = {
+            url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect",
+            tokenTypeHint: "access_token",
+            scopeKey: request.content,
+            clientConfig: {
+                secureSocket: {
+                   cert: {
+                       path: TRUSTSTORE_PATH,
+                       password: "ballerina"
+                   }
+                }
+            }
+        };
+        ListenerOAuth2Handler handler = new(config);
+        oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError authResult = handler->authorize(request.headers, "read");
+        if authResult is UnauthenticatedError|PermissionDeniedError {
+            Error? err = caller->sendError(authResult);
+        } else {
+            Error? err = caller->sendError(error AbortedError("Expected error was not found."));
+        }
+    }
+
+    remote isolated function testStringValueNoScope(HelloWorld30StringCaller caller, ContextString request) {
+        string message = "Hello " + request.content;
+        map<string|string[]> responseHeaders = {};
+        OAuth2IntrospectionConfig config = {
+            url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect",
+            tokenTypeHint: "access_token",
+            scopeKey: "scp",
+            clientConfig: {
+                secureSocket: {
+                   cert: {
+                       path: TRUSTSTORE_PATH,
+                       password: "ballerina"
+                   }
+                }
+            }
+        };
+        if !request.headers.hasKey(AUTH_HEADER) {
+            Error? err = caller->sendError(error AbortedError("AUTH_HEADER header is missing"));
+        } else {
+            ListenerOAuth2Handler handler = new(config);
+            oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError authResult = handler->authorize(request.headers, ());
+            if authResult is oauth2:IntrospectionResponse {
+                responseHeaders["x-id"] = ["1234567890", "2233445677"];
+                ContextString responseMessage = {content: message, headers: responseHeaders};
+                Error? err = caller->sendContextString(responseMessage);
+                if err is Error {
                     io:println("Error from Connector: " + err.message());
                 } else {
                     io:println("Server send response : " + message);

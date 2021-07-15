@@ -37,8 +37,8 @@ service "HelloWorld37" on ep37 {
             "Google"
         ];
         var cancel = isCancelled(clientStream.headers);
-        if (cancel is boolean) {
-            if (cancel) {
+        if cancel is boolean {
+            if cancel {
                 return error DeadlineExceededError("Exceeded the configured deadline");
             } else {
                 return {content: response.toStream(), headers: {}};

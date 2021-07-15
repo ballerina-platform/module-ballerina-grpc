@@ -20,26 +20,26 @@ import ballerina/log;
 
 // Server endpoint configuration
 listener Listener ep3 = new (9093, {
-      host: "localhost",
-      secureSocket: {
-          key: {
-              path: KEYSTORE_PATH,
-              password: "ballerina"
-          },
-          mutualSsl: {
-              verifyClient: REQUIRE,
-              cert: {
+    host: "localhost",
+    secureSocket: {
+        key: {
+            path: KEYSTORE_PATH,
+            password: "ballerina"
+        },
+        mutualSsl: {
+            verifyClient: REQUIRE,
+            cert: {
                 path: TRUSTSTORE_PATH,
                 password: "ballerina"
-              }
-          },
-          protocol: {
-              name: TLS,
-              versions: ["TLSv1.2","TLSv1.1"]
-          },
-          ciphers:["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
-      }
-  });
+            }
+        },
+        protocol: {
+            name: TLS,
+            versions: ["TLSv1.2","TLSv1.1"]
+        },
+        ciphers:["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+    }
+});
 
 @tainted map<ChatStringCaller> connectionsMap = {};
 boolean initialized = false;
@@ -65,7 +65,7 @@ service "Chat" on ep3 {
             while(!initialized) {
                 runtime:sleep(1);
                 log:printInfo("Waiting till connection initialize. status: " + initialized.toString());
-                if (waitCount > 10) {
+                if waitCount > 10 {
                     break;
                 }
                 waitCount += 1;
@@ -76,14 +76,14 @@ service "Chat" on ep3 {
             foreach var [callerId, connection] in connectionsMap.entries() {
                 conn = connection;
                 Error? err = conn->sendString(msg);
-                if (err is Error) {
+                if err is Error {
                     log:printError("Error from Connector: " + err.message());
                 } else {
                     log:printInfo("Server message to caller " + callerId + " sent successfully.");
                 }
             }
         });
-        if (e is ()) {
+        if e is () {
             string msg = string `${caller.getId()} left the chat`;
             log:printInfo(msg);
             var v = connectionsMap.remove(caller.getId().toString());
@@ -94,7 +94,7 @@ service "Chat" on ep3 {
                 ChatStringCaller conn;
                 conn = connection;
                 Error? err = conn->sendString(msg);
-                if (err is Error) {
+                if err is Error {
                     log:printError("Error from Connector: " + err.message());
                 } else {
                     log:printInfo("Server message to caller " + callerId + " sent successfully.");

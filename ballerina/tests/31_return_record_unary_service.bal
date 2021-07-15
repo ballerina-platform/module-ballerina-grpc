@@ -26,7 +26,7 @@ service "HelloWorld31" on ep31 {
     remote isolated function sayHello(SampleMsg31 reqMsg) returns ContextSampleMsg31|error {
         io:print("Received input for testRecordValueReturn: ");
         io:println(reqMsg);
-        if (reqMsg.name == "") {
+        if reqMsg.name == "" {
             return error InvalidArgumentError("Name must not be empty.");
         }
         SampleMsg31 respMsg = {

@@ -45,7 +45,7 @@ service "HelloWorld85" on ep9 {
         log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = caller->sendString(message);
-        if (err is Error) {
+        if err is Error {
             log:printError(err.message(), 'error = err);
         } else {
             log:printInfo("Server send response : " + message);

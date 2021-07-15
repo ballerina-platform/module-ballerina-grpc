@@ -21,7 +21,7 @@ import ballerina/test;
 Chat38Client chatEp = check new("http://localhost:9128");
 
 @test:Config {enable:true}
-public function testBidiStreamingServerResponseCount () returns error? {
+function testBidiStreamingServerResponseCount () returns error? {
     // Executes the RPC call and receives the customized streaming client.
     Chat38StreamingClient streamingClient = check chatEp->chat38();
 
@@ -45,7 +45,7 @@ public function testBidiStreamingServerResponseCount () returns error? {
         i += 1;
     }
     test:assertEquals(i, 3, "Server response message count is not equal to 3");
-    if (result is Error) {
+    if result is Error {
         test:assertEquals(result.message(), "Request Aborted.");
     } else {
         test:assertFail("Client should receive an error response");

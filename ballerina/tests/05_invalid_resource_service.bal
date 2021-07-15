@@ -26,12 +26,12 @@ service "HelloWorld98" on ep5 {
         log:printInfo("name: " + name);
         string message = "Hello " + name;
         Error? err = ();
-        if (name == "invalid") {
+        if name == "invalid" {
             err = caller->sendError(error AbortedError("Operation aborted"));
         } else {
             err = caller->sendString(message);
         }
-        if (err is Error) {
+        if err is Error {
             log:printError(err.message(), 'error = err);
         }
         checkpanic caller->complete();
@@ -40,13 +40,13 @@ service "HelloWorld98" on ep5 {
     isolated remote function testInt(HelloWorld98IntCaller caller, string age) {
         log:printInfo("age: " + age);
         int displayAge = 0;
-        if (age == "") {
+        if age == "" {
             displayAge = -1;
         } else {
             displayAge = 1;
         }
         Error? err = caller->sendInt(displayAge);
-        if (err is Error) {
+        if err is Error {
             log:printError(err.message(), 'error = err);
         } else {
             log:printInfo("display age : " + displayAge.toString());

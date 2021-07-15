@@ -24,7 +24,7 @@ isolated function testCallWithingDeadline() returns Error? {
     time:Utc deadline = time:utcAddSeconds(current, 300);
     map<string|string[]> headers = setDeadline(deadline);
     var context = helloWorldClient->callWithinDeadlineContext({content: "WSO2", headers: headers});
-    if (context is ContextString) {
+    if context is ContextString {
         test:assertEquals(context.content, "Ack");
     } else {
         test:assertFail(context.message());
@@ -38,7 +38,7 @@ isolated function testCallExceededDeadline() returns Error? {
     time:Utc deadline = time:utcAddSeconds(current, 5);
     map<string|string[]> headers = setDeadline(deadline);
     var context = helloWorldClient->callExceededDeadlineContext({content: "WSO2", headers: headers});
-    if (context is DeadlineExceededError) {
+    if context is DeadlineExceededError {
         test:assertEquals(context.message(), "Exceeded the configured deadline");
     } else {
         test:assertFail("Expected DeadlineExceededError not found");

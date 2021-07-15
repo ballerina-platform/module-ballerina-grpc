@@ -24,7 +24,7 @@ isolated function testBidiStreamingFromReturn() returns Error? {
     ChatFromReturnClient chatEp = check new ("http://localhost:9117");
     // Executing unary non-blocking call registering server message listener.
     var res = chatEp->chat27();
-    if (res is Error) {
+    if res is Error {
         io:println(string `Error from Connector: ${res.message()}`);
         return;
     } else {
@@ -46,7 +46,7 @@ isolated function testBidiStreamingFromReturn() returns Error? {
     var result = streamingClient->receiveString();
     while !(result is ()) {
         io:println(result);
-        if (result is Error) {
+        if result is Error {
             test:assertFail("Unexpected output in the stream");
         } else {
             test:assertEquals(result, expectedOutput[i]);

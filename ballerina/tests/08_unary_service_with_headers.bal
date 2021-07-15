@@ -32,7 +32,7 @@ service "HelloWorld101" on ep8 {
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
 
-        if (!request.headers.hasKey("x-id")) {
+        if !request.headers.hasKey("x-id") {
             Error? err = caller->sendError(error AbortedError("x-id header is missing"));
         } else {
             string headerValue = check getHeader(request.headers, "x-id");
@@ -43,7 +43,7 @@ service "HelloWorld101" on ep8 {
         }
         ContextString responseMessage = {content: message, headers: responseHeaders};
         Error? err = caller->sendContextString(responseMessage);
-        if (err is Error) {
+        if err is Error {
             io:println("Error from Connector: " + err.message());
         } else {
             io:println("Server send response : " + message);

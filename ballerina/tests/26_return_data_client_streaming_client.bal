@@ -24,7 +24,7 @@ isolated function testClientStreamingFromReturn() returns Error? {
 
     LotsOfGreetingsStreamingClient streamingClient;
     var res = helloWorldEp->lotsOfGreetings();
-    if (res is Error) {
+    if res is Error {
         test:assertFail("Error from Connector: " + res.message());
         return;
     } else {
@@ -34,7 +34,7 @@ isolated function testClientStreamingFromReturn() returns Error? {
 
     foreach var greet in requests {
         Error? err = streamingClient->sendString(greet);
-        if (err is Error) {
+        if err is Error {
             test:assertFail("Error from Connector: " + err.message());
         }
     }

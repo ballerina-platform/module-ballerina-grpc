@@ -28,14 +28,12 @@ type StockNamesTypedesc typedesc<StockNames>;
 @test:Config {enable:true}
 function testHttpsClientInitWithoutSecureSocketConfig() {
     HelloWorldClient|Error errorClient = new("https://localhost:9091");
-    if (errorClient is Error) {
+    if errorClient is Error {
         test:assertEquals(errorClient.message(), "To enable https you need to configure secureSocket record");
     } else {
         test:assertFail("Secure client initialization without secure socket should fail.");
     }
 }
-
-
 
 @test:Config {enable:true}
 function testSendNestedStruct() {
@@ -44,7 +42,7 @@ function testSendNestedStruct() {
     io:println(p);
     string|error unionResp = helloWorldClient->testInputNestedStruct(p);
     io:println(unionResp);
-    if (unionResp is error) {
+    if unionResp is error {
         test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp);
@@ -58,7 +56,7 @@ function testReceiveNestedStruct() {
     io:println("testOutputNestedStruct: input: " + name);
     Person|Error unionResp = helloWorldClient->testOutputNestedStruct(name);
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp.toString());
@@ -76,7 +74,7 @@ function testSendStructReceiveStruct() {
     io:println(request);
     StockQuote|Error unionResp = helloWorldClient->testInputStructOutputStruct(request);
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -93,7 +91,7 @@ function testSendNoReceiveStruct() {
     io:println("testNoInputOutputStruct: No input:");
     StockQuotes|Error unionResp = helloWorldClient->testNoInputOutputStruct();
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println(unionResp);
@@ -108,7 +106,7 @@ function testSendNoReceiveArray() {
     io:println("testNoInputOutputStruct: No input:");
     StockNames|Error unionResp = helloWorldClient->testNoInputOutputArray();
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
         io:println("Client Got Response : ");
@@ -126,7 +124,7 @@ function testSendStructNoReceive() {
     io:println(quote);
     Error? unionResp = helloWorldClient->testInputStructNoOutput(quote);
     io:println(unionResp);
-    if (unionResp is Error) {
+    if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     }
 }
