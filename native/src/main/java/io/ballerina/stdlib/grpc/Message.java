@@ -19,6 +19,7 @@ import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.WireFormat;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
@@ -206,7 +207,13 @@ public class Message {
         }
         boolean done = false;
         while (!done) {
-            int tag = input.readTag();
+            int tag;
+            try {
+                tag = input.readTag();
+            } catch (InvalidProtocolBufferException e) {
+                tag = input.getLastTag();
+            }
+
             if (tag == 0) {
                 done = true;
             } else if (fieldDescriptors.containsKey(tag)) {
