@@ -45,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CALLER;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 import static java.util.Map.entry;
 
@@ -141,9 +143,10 @@ public abstract class ServerCallHandler {
      * @param responseObserver client responder instance.
      * @return instance of endpoint type.
      */
-    BObject getConnectionParameter(ServiceResource resource, StreamObserver responseObserver) {
+    BObject getConnectionParameter(ServiceResource resource, StreamObserver responseObserver,
+                                   Map<String, Object> properties, boolean hasCaller) {
         // generate client responder struct on request message with response observer and response msg type.
-        BObject clientEndpoint = ValueCreator.createObjectValue(getModule(), GrpcConstants.CALLER);
+        BObject clientEndpoint = ValueCreator.createObjectValue(getModule(), CALLER);
         clientEndpoint.set(GrpcConstants.CALLER_ID, responseObserver.hashCode());
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_OBSERVER, responseObserver);
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_MESSAGE_DEFINITION, methodDescriptor.getOutputType());
@@ -151,8 +154,13 @@ public abstract class ServerCallHandler {
         Type returnType = resource.getRpcOutputType() instanceof ArrayType ?
                 ((ArrayType) resource.getRpcOutputType()).getElementType() : resource.getRpcOutputType();
         String outputType = returnType != PredefinedTypes.TYPE_NULL ? returnType.getName() : null;
-        return ValueCreator.createObjectValue(resource.getService().getType().getPackage(),
-                MessageUtils.getCallerTypeName(serviceName, outputType), clientEndpoint);
+        properties.put(CALLER, clientEndpoint);
+        if (hasCaller) {
+            return ValueCreator.createObjectValue(resource.getService().getType().getPackage(),
+                    MessageUtils.getCallerTypeName(serviceName, outputType), clientEndpoint);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -170,18 +178,19 @@ public abstract class ServerCallHandler {
                 this.methodDescriptor.getOutputType(), context);
         Object requestParam = request != null ? request.getbMessage() : null;
         HttpHeaders headers = request != null ? request.getHeaders() : null;
-        Object[] requestParams = computeResourceParams(resource, requestParam, headers, responseObserver);
         Map<String, Object> properties = new HashMap<>();
+        Object[] requestParams = computeResourceParams(resource, requestParam, headers, responseObserver, properties);
         if (ObserveUtils.isObservabilityEnabled()) {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
+        properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
                 GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
                 resource.getReturnType(), requestParams);
     }
 
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,
-                                   StreamObserver responseObserver) {
+                                   StreamObserver responseObserver, Map<String, Object> properties) {
         List<Type> signatureParams = resource.getParamTypes();
         int signatureParamSize = signatureParams.size();
         Object[] paramValues;
@@ -189,11 +198,12 @@ public abstract class ServerCallHandler {
         if ((signatureParamSize >= 1) && (signatureParams.get(0).getTag() == TypeTags.OBJECT_TYPE_TAG) &&
                 signatureParams.get(0).getName().contains(CALLER_TYPE)) {
             paramValues = new Object[signatureParams.size() * 2];
-            paramValues[i] = getConnectionParameter(resource, responseObserver);
+            paramValues[i] = getConnectionParameter(resource, responseObserver, properties, true);
             paramValues[i + 1] = true;
             i = i + 2;
         } else {
             paramValues = new Object[2];
+            getConnectionParameter(resource, responseObserver, properties, false);
         }
         if (resource.isHeaderRequired()) {
             BMap headerValues = MessageUtils.createHeaderMap(headers);
