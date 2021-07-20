@@ -52,52 +52,81 @@ public isolated function authenticateResource(Service serviceRef, string methodN
 }
 
 isolated function tryAuthenticate(ListenerAuthConfig[] authConfig, map<string|string[]> headers) returns UnauthenticatedError|PermissionDeniedError? {
+    PermissionDeniedError|boolean? result = ();
     foreach ListenerAuthConfig config in authConfig {
         if config is FileUserStoreConfigWithScopes {
-            ListenerFileUserStoreBasicAuthHandler handler = new(config.fileUserStoreConfig);
-            auth:UserDetails|UnauthenticatedError authn = handler.authenticate(headers);
-            string|string[]? scopes = config?.scopes;
-            if authn is auth:UserDetails {
-                if scopes is string|string[] {
-                    PermissionDeniedError? authz = handler.authorize(authn, scopes);
-                    return authz;
-                }
-                return;
-            }
+            result = authenticateWithFileUserStore(config, headers);
         } else if config is LdapUserStoreConfigWithScopes {
-            ListenerLdapUserStoreBasicAuthHandler handler = new(config.ldapUserStoreConfig);
-            auth:UserDetails|UnauthenticatedError authn = handler->authenticate(headers);
-            string|string[]? scopes = config?.scopes;
-            if authn is auth:UserDetails {
-                if scopes is string|string[] {
-                    PermissionDeniedError? authz = handler->authorize(authn, scopes);
-                    return authz;
-                }
-                return;
-            }
+            result = authenticateWithLdapUserStore(config, headers);
         } else if config is JwtValidatorConfigWithScopes {
-            ListenerJwtAuthHandler handler = new(config.jwtValidatorConfig);
-            jwt:Payload|UnauthenticatedError authn = handler.authenticate(headers);
-            string|string[]? scopes = config?.scopes;
-            if authn is jwt:Payload {
-                if scopes is string|string[] {
-                    PermissionDeniedError? authz = handler.authorize(authn, scopes);
-                    return authz;
-                }
-                return;
-            }
+            result = authenticateWithJwtValidator(config, headers);
         } else {
-            // Here, config is OAuth2IntrospectionConfigWithScopes
-            ListenerOAuth2Handler handler = new(config.oauth2IntrospectionConfig);
-            oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError auth = handler->authorize(headers, config?.scopes);
-            if auth is oauth2:IntrospectionResponse {
-                return;
-            } else if auth is PermissionDeniedError {
-                return auth;
-            }
+            result = authenticateWithOAuth2IntrospectionConfig(config, headers);
+        }
+        if result is PermissionDeniedError {
+            return result;
+        } else if result is boolean && result {
+            return;
         }
     }
     return error UnauthenticatedError("Failed to authenticate client");
+}
+
+isolated function authenticateWithFileUserStore(FileUserStoreConfigWithScopes config, map<string|string[]> headers)
+ returns PermissionDeniedError|boolean? {
+    ListenerFileUserStoreBasicAuthHandler handler = new(config.fileUserStoreConfig);
+    auth:UserDetails|UnauthenticatedError authn = handler.authenticate(headers);
+    string|string[]? scopes = config?.scopes;
+    if authn is auth:UserDetails {
+        if scopes is string|string[] {
+            PermissionDeniedError? authz = handler.authorize(authn, scopes);
+            return authz;
+        }
+        return;
+    }
+}
+
+isolated function authenticateWithLdapUserStore(LdapUserStoreConfigWithScopes config, map<string|string[]> headers)
+ returns PermissionDeniedError|boolean? {
+    ListenerLdapUserStoreBasicAuthHandler handler = new(config.ldapUserStoreConfig);
+    auth:UserDetails|UnauthenticatedError authn = handler->authenticate(headers);
+    string|string[]? scopes = config?.scopes;
+    if authn is auth:UserDetails {
+        if scopes is string|string[] {
+            PermissionDeniedError? authz = handler->authorize(authn, scopes);
+            return authz;
+        }
+        return;
+    }
+}
+
+isolated function authenticateWithJwtValidator(JwtValidatorConfigWithScopes config, map<string|string[]> headers)
+ returns PermissionDeniedError|boolean? {
+    ListenerJwtAuthHandler handler = new(config.jwtValidatorConfig);
+    jwt:Payload|UnauthenticatedError authn = handler.authenticate(headers);
+    string|string[]? scopes = config?.scopes;
+    if authn is jwt:Payload {
+        if scopes is string|string[] {
+            PermissionDeniedError? authz = handler.authorize(authn, scopes);
+            if authz is PermissionDeniedError {
+                return authz;
+            }
+            return true;
+        }
+        return true;
+    }
+}
+
+isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionConfigWithScopes config, map<string|string[]> headers)
+ returns PermissionDeniedError|boolean? {
+    // Here, config is OAuth2IntrospectionConfigWithScopes
+    ListenerOAuth2Handler handler = new(config.oauth2IntrospectionConfig);
+    oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError auth = handler->authorize(headers, config?.scopes);
+    if auth is oauth2:IntrospectionResponse {
+        return;
+    } else if auth is PermissionDeniedError {
+        return auth;
+    }
 }
 
 isolated function getListenerAuthConfig(Service serviceRef)
