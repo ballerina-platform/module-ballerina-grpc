@@ -40,7 +40,7 @@ service "helloWorld55" on ep55 {
 
     remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
      stream<string, Error?> clientStream) returns error? {
-        authenticateResource(self, "", []);
+        authenticateResource(self, "", []); // Currently the desugar function is called manually until the compiler supports it
         record {|string value;|}|Error? result = clientStream.next();
         result = clientStream.next();
         check caller->sendString("Hello from service");
@@ -49,18 +49,18 @@ service "helloWorld55" on ep55 {
 
     remote function hello55BiDiWithReturn(stream<string, Error?> clientStream) 
     returns stream<string, Error?>|error? {
-        authenticateResource(self, "", []);
+        authenticateResource(self, "", []); // Currently the desugar function is called manually until the compiler supports it
         return clientStream;
     }
 
     remote function hello55UnaryWithCaller(HelloWorld55StringCaller caller, string value) returns error? {
-        authenticateResource(self, "", []);
+        authenticateResource(self, "", []); // Currently the desugar function is called manually until the compiler supports it
         check caller->sendString(value);
         check caller->complete();
     }
 
     remote function hello55UnaryWithReturn(string value) returns string|error? {
-        authenticateResource(self, "", []);
+        authenticateResource(self, "", []); // Currently the desugar function is called manually until the compiler supports it
         return value;
     }
 }

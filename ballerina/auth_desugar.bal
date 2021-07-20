@@ -34,11 +34,11 @@ import ballerina/oauth2;
 # + resourcePath - The relative path
 public isolated function authenticateResource(Service serviceRef, string methodName, string[] resourcePath) {
     ListenerAuthConfig[]? authConfig = getListenerAuthConfig(serviceRef);
-    if (authConfig is ()) {
+    if authConfig is () {
         return;
     }
     string|Error authHeader = externGetAuthorizationHeader();
-    if (authHeader is string) {
+    if authHeader is string {
         map<string> headers = {
             "authorization": authHeader
         };
@@ -53,34 +53,34 @@ public isolated function authenticateResource(Service serviceRef, string methodN
 
 isolated function tryAuthenticate(ListenerAuthConfig[] authConfig, map<string|string[]> headers) returns UnauthenticatedError|PermissionDeniedError? {
     foreach ListenerAuthConfig config in authConfig {
-        if (config is FileUserStoreConfigWithScopes) {
+        if config is FileUserStoreConfigWithScopes {
             ListenerFileUserStoreBasicAuthHandler handler = new(config.fileUserStoreConfig);
             auth:UserDetails|UnauthenticatedError authn = handler.authenticate(headers);
             string|string[]? scopes = config?.scopes;
-            if (authn is auth:UserDetails) {
-                if (scopes is string|string[]) {
+            if authn is auth:UserDetails {
+                if scopes is string|string[] {
                     PermissionDeniedError? authz = handler.authorize(authn, scopes);
                     return authz;
                 }
                 return;
             }
-        } else if (config is LdapUserStoreConfigWithScopes) {
+        } else if config is LdapUserStoreConfigWithScopes {
             ListenerLdapUserStoreBasicAuthHandler handler = new(config.ldapUserStoreConfig);
             auth:UserDetails|UnauthenticatedError authn = handler->authenticate(headers);
             string|string[]? scopes = config?.scopes;
-            if (authn is auth:UserDetails) {
-                if (scopes is string|string[]) {
+            if authn is auth:UserDetails {
+                if scopes is string|string[] {
                     PermissionDeniedError? authz = handler->authorize(authn, scopes);
                     return authz;
                 }
                 return;
             }
-        } else if (config is JwtValidatorConfigWithScopes) {
+        } else if config is JwtValidatorConfigWithScopes {
             ListenerJwtAuthHandler handler = new(config.jwtValidatorConfig);
             jwt:Payload|UnauthenticatedError authn = handler.authenticate(headers);
             string|string[]? scopes = config?.scopes;
-            if (authn is jwt:Payload) {
-                if (scopes is string|string[]) {
+            if authn is jwt:Payload {
+                if scopes is string|string[] {
                     PermissionDeniedError? authz = handler.authorize(authn, scopes);
                     return authz;
                 }
@@ -90,9 +90,9 @@ isolated function tryAuthenticate(ListenerAuthConfig[] authConfig, map<string|st
             // Here, config is OAuth2IntrospectionConfigWithScopes
             ListenerOAuth2Handler handler = new(config.oauth2IntrospectionConfig);
             oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError auth = handler->authorize(headers, config?.scopes);
-            if (auth is oauth2:IntrospectionResponse) {
+            if auth is oauth2:IntrospectionResponse {
                 return;
-            } else if (auth is PermissionDeniedError) {
+            } else if auth is PermissionDeniedError {
                 return auth;
             }
         }
@@ -103,7 +103,7 @@ isolated function tryAuthenticate(ListenerAuthConfig[] authConfig, map<string|st
 isolated function getListenerAuthConfig(Service serviceRef)
                                         returns ListenerAuthConfig[]? {
     ListenerAuthConfig[]? serviceAuthConfig = getServiceAuthConfig(serviceRef);
-    if (serviceAuthConfig is ListenerAuthConfig[]) {
+    if serviceAuthConfig is ListenerAuthConfig[] {
         return serviceAuthConfig;
     }
 }
@@ -111,28 +111,17 @@ isolated function getListenerAuthConfig(Service serviceRef)
 isolated function getServiceAuthConfig(Service serviceRef) returns ListenerAuthConfig[]? {
     typedesc<any> serviceTypeDesc = typeof serviceRef;
     var serviceAnnotation = serviceTypeDesc.@ServiceConfig;
-    if (serviceAnnotation is ()) {
+    if serviceAnnotation is () {
         return;
     }
     GrpcServiceConfig serviceConfig = <GrpcServiceConfig>serviceAnnotation;
     return serviceConfig?.auth;
 }
 
-isolated function sendError(Error err) {
-    Caller? caller = externGetCaller();
-    if caller is () {
-        panic error InternalError("Caller not found");
-    } else {
-        checkpanic caller->sendError(err);
-        checkpanic caller->complete();
-    }
-    panic error("Already responded by auth desugar.");
+isolated function sendError(Error authError) {
+    panic authError;
 }
 
 isolated function externGetAuthorizationHeader() returns string|Error = @java:Method {
-    'class: "io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils"
-} external;
-
-isolated function externGetCaller() returns Caller? = @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils"
 } external;

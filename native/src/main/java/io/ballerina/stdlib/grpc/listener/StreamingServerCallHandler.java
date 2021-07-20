@@ -173,8 +173,8 @@ public class StreamingServerCallHandler extends ServerCallHandler {
     void onStreamInvoke(ServiceResource resource, BStream requestStream, HttpHeaders headers,
                         StreamObserver responseObserver, ObserverContext context) {
 
+        Object[] requestParams = computeResourceParams(resource, requestStream, headers, responseObserver);
         Map<String, Object> properties = new HashMap<>();
-        Object[] requestParams = computeResourceParams(resource, requestStream, headers, responseObserver, properties);
         if (ObserveUtils.isObservabilityEnabled()) {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
