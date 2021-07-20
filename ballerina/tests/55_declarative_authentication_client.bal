@@ -238,7 +238,7 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testHello55LdapAuth() returns error? {
     map<string|string[]> requestHeaders = {};
     CredentialsConfig config = {
@@ -368,7 +368,7 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testHello55LdapAuthWithEmptyScope() returns error? {
     map<string|string[]> requestHeaders = {};
     CredentialsConfig config = {
