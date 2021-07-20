@@ -118,6 +118,16 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
 
     @Override
     public void notifyFailure(io.ballerina.runtime.api.values.BError error) {
+        if (responseSender instanceof ServerCallHandler.ServerCallStreamObserver) {
+            ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
+                    .ServerCallStreamObserver) responseSender;
+            if (!serverCallStreamObserver.isReady()) {
+                return;
+            }
+            if (serverCallStreamObserver.isCancelled()) {
+                return;
+            }
+        }
         if (responseSender != null) {
             handleFailure(responseSender, error);
         }

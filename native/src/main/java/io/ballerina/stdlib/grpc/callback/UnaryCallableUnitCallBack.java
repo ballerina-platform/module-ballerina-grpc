@@ -131,6 +131,16 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
 
     @Override
     public void notifyFailure(BError error) {
+        if (requestSender instanceof ServerCallHandler.ServerCallStreamObserver) {
+            ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
+                    .ServerCallStreamObserver) requestSender;
+            if (!serverCallStreamObserver.isReady()) {
+                return;
+            }
+            if (serverCallStreamObserver.isCancelled()) {
+                return;
+            }
+        }
         handleFailure(requestSender, error);
         if (observerContext != null) {
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
