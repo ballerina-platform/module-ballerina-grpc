@@ -209,21 +209,23 @@ public abstract class ServerCallHandler {
                 );
             }
             BMap contentContext;
-            if (signatureParamSize >= 1 && (signatureParams.get(0).getTag() == TypeTags.RECORD_TYPE_TAG) &&
-                    signatureParams.get(signatureParamSize - 1).getName().contains("Stream")) {
-                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
-                        MessageUtils.getContextStreamTypeName(resource.getRpcInputType()), valueMap);
-            } else if (signatureParamSize > 1 && (signatureParams.get(1).getTag() == TypeTags.RECORD_TYPE_TAG) &&
-                    signatureParams.get(signatureParamSize - 1).getName().contains("Stream")) {
-                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
-                        MessageUtils.getContextStreamTypeName(resource.getRpcInputType()), valueMap);
-            } else {
-                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
-                        MessageUtils.getContextTypeName(resource.getRpcInputType()), valueMap);
+            if (signatureParamSize >= 1) {
+                Type inputParameter = signatureParams.get(signatureParamSize - 1);
+                if (signatureParamSize == 1 && (signatureParams.get(0).getTag() == TypeTags.RECORD_TYPE_TAG) &&
+                        inputParameter.getName().contains("Stream")) {
+                    contentContext = ValueCreator.createRecordValue(inputParameter.getPackage(),
+                            MessageUtils.getContextStreamTypeName(resource.getRpcInputType()), valueMap);
+                } else if (signatureParamSize > 1 && (signatureParams.get(1).getTag() == TypeTags.RECORD_TYPE_TAG) &&
+                        inputParameter.getName().contains("Stream")) {
+                    contentContext = ValueCreator.createRecordValue(inputParameter.getPackage(),
+                            MessageUtils.getContextStreamTypeName(resource.getRpcInputType()), valueMap);
+                } else {
+                    contentContext = ValueCreator.createRecordValue(inputParameter.getPackage(),
+                            MessageUtils.getContextTypeName(resource.getRpcInputType()), valueMap);
+                }
+                paramValues[i] = contentContext;
+                paramValues[i + 1] = true;
             }
-
-            paramValues[i] = contentContext;
-            paramValues[i + 1] = true;
         } else if (requestParam != null) {
             paramValues[i] = requestParam;
             paramValues[i + 1] = true;
