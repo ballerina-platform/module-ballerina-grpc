@@ -34,7 +34,54 @@ JwtValidatorConfigWithScopes jwtAuthConfig55 = {
     scopes: "write"
 };
 
-@AuthConfig {auth: [jwtAuthConfig55]}
+OAuth2IntrospectionConfigWithScopes oauth2Introspectionconfig55 = {
+    oauth2IntrospectionConfig: {
+        url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect",
+        tokenTypeHint: "access_token",
+        scopeKey: "scp",
+        clientConfig: {
+            secureSocket: {
+                cert: {
+                    path: TRUSTSTORE_PATH,
+                    password: "ballerina"
+                }
+            }
+        }
+    },
+    scopes: "write"
+};
+
+LdapUserStoreConfigWithScopes ldapUserStoreconfig55 = {
+    ldapUserStoreConfig: {
+        domainName: "avix.lk",
+        connectionUrl: "ldap://localhost:389",
+        connectionName: "cn=admin,dc=avix,dc=lk",
+        connectionPassword: "avix123",
+        userSearchBase: "ou=Users,dc=avix,dc=lk",
+        userEntryObjectClass: "inetOrgPerson",
+        userNameAttribute: "uid",
+        userNameSearchFilter: "(&(objectClass=inetOrgPerson)(uid=?))",
+        userNameListFilter: "(objectClass=inetOrgPerson)",
+        groupSearchBase: ["ou=Groups,dc=avix,dc=lk"],
+        groupEntryObjectClass: "groupOfNames",
+        groupNameAttribute: "cn",
+        groupNameSearchFilter: "(&(objectClass=groupOfNames)(cn=?))",
+        groupNameListFilter: "(objectClass=groupOfNames)",
+        membershipAttribute: "member",
+        userRolesCacheEnabled: true,
+        connectionPoolingEnabled: false,
+        connectionTimeout: 5,
+        readTimeout: 60
+    },
+    scopes: "write"
+};
+
+FileUserStoreConfigWithScopes fileUserStoreConfig55 = {
+    fileUserStoreConfig: {},
+    scopes: "write"
+};
+
+@AuthConfig {auth: [jwtAuthConfig55, oauth2Introspectionconfig55, ldapUserStoreconfig55, fileUserStoreConfig55]}
 @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()}
 service "helloWorld55" on ep55 {
 
