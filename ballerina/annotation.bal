@@ -28,8 +28,8 @@ public type ServiceDescriptorData record {|
 public annotation ServiceDescriptorData ServiceDescriptor on service;
 
 
-public type GrpcServiceConfig record {|
+public type AuthServiceConfig record {|
     ListenerAuthConfig[] auth?;
 |};
 
-public annotation GrpcServiceConfig ServiceConfig on service;
+public annotation AuthServiceConfig AuthConfig on service;

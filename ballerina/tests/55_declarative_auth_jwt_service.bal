@@ -34,7 +34,7 @@ JwtValidatorConfigWithScopes jwtAuthConfig55 = {
     scopes: "write"
 };
 
-@ServiceConfig {auth: [jwtAuthConfig55]}
+@AuthConfig {auth: [jwtAuthConfig55]}
 @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()}
 service "helloWorld55" on ep55 {
 

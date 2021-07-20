@@ -110,11 +110,11 @@ isolated function getListenerAuthConfig(Service serviceRef)
 
 isolated function getServiceAuthConfig(Service serviceRef) returns ListenerAuthConfig[]? {
     typedesc<any> serviceTypeDesc = typeof serviceRef;
-    var serviceAnnotation = serviceTypeDesc.@ServiceConfig;
+    var serviceAnnotation = serviceTypeDesc.@AuthConfig;
     if serviceAnnotation is () {
         return;
     }
-    GrpcServiceConfig serviceConfig = <GrpcServiceConfig>serviceAnnotation;
+    AuthServiceConfig serviceConfig = <AuthServiceConfig>serviceAnnotation;
     return serviceConfig?.auth;
 }
 
