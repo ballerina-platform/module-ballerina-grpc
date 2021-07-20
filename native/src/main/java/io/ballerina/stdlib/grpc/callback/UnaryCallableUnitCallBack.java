@@ -134,10 +134,7 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         if (requestSender instanceof ServerCallHandler.ServerCallStreamObserver) {
             ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
                     .ServerCallStreamObserver) requestSender;
-            if (!serverCallStreamObserver.isReady()) {
-                return;
-            }
-            if (serverCallStreamObserver.isCancelled()) {
+            if (!serverCallStreamObserver.isReady() || serverCallStreamObserver.isCancelled()) {
                 return;
             }
         }

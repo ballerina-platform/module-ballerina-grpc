@@ -121,10 +121,7 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
         if (responseSender instanceof ServerCallHandler.ServerCallStreamObserver) {
             ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
                     .ServerCallStreamObserver) responseSender;
-            if (!serverCallStreamObserver.isReady()) {
-                return;
-            }
-            if (serverCallStreamObserver.isCancelled()) {
+            if (!serverCallStreamObserver.isReady() || serverCallStreamObserver.isCancelled()) {
                 return;
             }
         }
