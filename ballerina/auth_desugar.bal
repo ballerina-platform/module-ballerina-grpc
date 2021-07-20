@@ -80,9 +80,12 @@ isolated function authenticateWithFileUserStore(FileUserStoreConfigWithScopes co
     if authn is auth:UserDetails {
         if scopes is string|string[] {
             PermissionDeniedError? authz = handler.authorize(authn, scopes);
-            return authz;
+            if authz is PermissionDeniedError {
+                return authz;
+            }
+            return true;
         }
-        return;
+        return true;
     }
 }
 
@@ -94,9 +97,12 @@ isolated function authenticateWithLdapUserStore(LdapUserStoreConfigWithScopes co
     if authn is auth:UserDetails {
         if scopes is string|string[] {
             PermissionDeniedError? authz = handler->authorize(authn, scopes);
-            return authz;
+            if authz is PermissionDeniedError {
+                return authz;
+            }
+            return true;
         }
-        return;
+        return true;
     }
 }
 
@@ -123,7 +129,7 @@ isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionC
     ListenerOAuth2Handler handler = new(config.oauth2IntrospectionConfig);
     oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError auth = handler->authorize(headers, config?.scopes);
     if auth is oauth2:IntrospectionResponse {
-        return;
+        return true;
     } else if auth is PermissionDeniedError {
         return auth;
     }

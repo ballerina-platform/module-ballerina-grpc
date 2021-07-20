@@ -23,3 +23,7 @@ service helloWorld55 {
   rpc hello55BiDiWithCaller (stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
   rpc hello55BiDiWithReturn (stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
 }
+
+service helloWorld55EmptyScope {
+  rpc hello55EmptyScope (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+}
