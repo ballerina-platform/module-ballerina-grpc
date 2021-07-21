@@ -32,7 +32,7 @@ import ballerina/oauth2;
 # + serviceRef - The service reference where the resource locates
 # + methodName - The name of the subjected resource
 # + resourcePath - The relative path
-public isolated function authenticateResource(Service serviceRef, string methodName, string[] resourcePath) {
+public isolated function authenticateResource(Service serviceRef) {
     ListenerAuthConfig[]? authConfig = getListenerAuthConfig(serviceRef);
     if authConfig is () {
         return;
