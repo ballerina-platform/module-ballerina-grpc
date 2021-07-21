@@ -108,7 +108,7 @@ FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope  = {
     auth: [
         jwtAuthConfig55WithScopes,
         oauth2config55WithScopes,
-        ldapUserStoreconfig55WithScopes,
+        // ldapUserStoreconfig55WithScopes,
         fileUserStoreConfig55WithScopes
     ]
 }
@@ -146,7 +146,7 @@ service "helloWorld55" on ep55WithScopes {
     auth: [
         jwtAuthConfig55EmptyScope,
         oauth2config55EmptyScope,
-        ldapUserStoreconfig55EmptyScope,
+        // ldapUserStoreconfig55EmptyScope,
         fileUserStoreConfig55EmptyScope
     ]
 }
@@ -158,5 +158,4 @@ service "helloWorld55EmptyScope" on ep55EmptyScope {
         check caller->sendString(value);
         check caller->complete();
     }
-
 }
