@@ -104,7 +104,7 @@ FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope  = {
     fileUserStoreConfig: {}
 };
 
-@AuthConfig {
+@ServiceConfig {
     auth: [
         jwtAuthConfig55WithScopes,
         oauth2config55WithScopes,
@@ -142,7 +142,7 @@ service "helloWorld55" on ep55WithScopes {
     }
 }
 
-@AuthConfig {
+@ServiceConfig {
     auth: [
         jwtAuthConfig55EmptyScope,
         oauth2config55EmptyScope,

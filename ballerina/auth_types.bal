@@ -136,4 +136,9 @@ public type OAuth2IntrospectionConfigWithScopes record {|
    string|string[] scopes?;
 |};
 
-public type ListenerAuthConfig FileUserStoreConfigWithScopes|LdapUserStoreConfigWithScopes|JwtValidatorConfigWithScopes|OAuth2IntrospectionConfigWithScopes;
+# Defines the authentication configurations for the gRPC listener.
+public type ListenerAuthConfig FileUserStoreConfigWithScopes|
+                               LdapUserStoreConfigWithScopes|
+                               JwtValidatorConfigWithScopes|
+                               OAuth2IntrospectionConfigWithScopes;
+

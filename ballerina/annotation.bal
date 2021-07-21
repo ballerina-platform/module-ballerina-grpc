@@ -27,9 +27,12 @@ public type ServiceDescriptorData record {|
 # Service descriptor annotation.
 public annotation ServiceDescriptorData ServiceDescriptor on service;
 
-
-public type AuthServiceConfig record {|
+# Contains the configurations for a gRPC service.
+#
+# + auth - Listener authenticaton configurations
+public type GrpcServiceConfig record {|
     ListenerAuthConfig[] auth?;
 |};
 
-public annotation AuthServiceConfig AuthConfig on service;
+# The annotation which is used to configure a gRPC service.
+public annotation GrpcServiceConfig ServiceConfig on service;

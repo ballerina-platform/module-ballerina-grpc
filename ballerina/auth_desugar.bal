@@ -30,10 +30,8 @@ import ballerina/oauth2;
 # by reading the auth annotations provided in service/resource and the `Authorization` header of request.
 # 
 # + serviceRef - The service reference where the resource locates
-# + methodName - The name of the subjected resource
-# + resourcePath - The relative path
 public isolated function authenticateResource(Service serviceRef) {
-    ListenerAuthConfig[]? authConfig = getListenerAuthConfig(serviceRef);
+    ListenerAuthConfig[]? authConfig = getServiceAuthConfig(serviceRef);
     if authConfig is () {
         return;
     }
@@ -135,21 +133,13 @@ isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionC
     }
 }
 
-isolated function getListenerAuthConfig(Service serviceRef)
-                                        returns ListenerAuthConfig[]? {
-    ListenerAuthConfig[]? serviceAuthConfig = getServiceAuthConfig(serviceRef);
-    if serviceAuthConfig is ListenerAuthConfig[] {
-        return serviceAuthConfig;
-    }
-}
-
 isolated function getServiceAuthConfig(Service serviceRef) returns ListenerAuthConfig[]? {
     typedesc<any> serviceTypeDesc = typeof serviceRef;
-    var serviceAnnotation = serviceTypeDesc.@AuthConfig;
+    var serviceAnnotation = serviceTypeDesc.@ServiceConfig;
     if serviceAnnotation is () {
         return;
     }
-    AuthServiceConfig serviceConfig = <AuthServiceConfig>serviceAnnotation;
+    GrpcServiceConfig serviceConfig = <GrpcServiceConfig>serviceAnnotation;
     return serviceConfig?.auth;
 }
 
