@@ -20,7 +20,7 @@ import integration_tests.api;
 listener grpc:Listener ep = new (9095);
 
 @grpc:ServiceDescriptor {descriptor: api:ROOT_DESCRIPTOR, descMap: api:getDescriptorMap()}
-service "SeperateModuleService" on ep {
+service "SeparateModuleService" on ep {
 
     remote function unary(api:ContextSMReq req) returns api:ContextSMRes|error {
         return {content: {name: "Anne", id: 12}, headers: req.headers};

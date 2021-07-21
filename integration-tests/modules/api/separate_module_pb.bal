@@ -16,7 +16,7 @@
 
 import ballerina/grpc;
 
-public isolated client class SeperateModuleServiceClient {
+public isolated client class SeparateModuleServiceClient {
     *grpc:AbstractClientEndpoint;
 
     private final grpc:Client grpcClient;
@@ -35,7 +35,7 @@ public isolated client class SeperateModuleServiceClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("SeperateModuleService/unary", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("SeparateModuleService/unary", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <SMRes>result;
     }
@@ -49,13 +49,13 @@ public isolated client class SeperateModuleServiceClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("SeperateModuleService/unary", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("SeparateModuleService/unary", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <SMRes>result, headers: respHeaders};
     }
 
     isolated remote function clientStreaming() returns (ClientStreamingStreamingClient|grpc:Error) {
-        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("SeperateModuleService/clientStreaming");
+        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("SeparateModuleService/clientStreaming");
         return new ClientStreamingStreamingClient(sClient);
     }
 
@@ -68,7 +68,7 @@ public isolated client class SeperateModuleServiceClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("SeperateModuleService/serverStreaming", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("SeparateModuleService/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         SMResStream outputStream = new SMResStream(result);
         return new stream<SMRes, grpc:Error?>(outputStream);
@@ -83,19 +83,19 @@ public isolated client class SeperateModuleServiceClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("SeperateModuleService/serverStreaming", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("SeparateModuleService/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         SMResStream outputStream = new SMResStream(result);
         return {content: new stream<SMRes, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
     isolated remote function bidirectional1() returns (Bidirectional1StreamingClient|grpc:Error) {
-        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("SeperateModuleService/bidirectional1");
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("SeparateModuleService/bidirectional1");
         return new Bidirectional1StreamingClient(sClient);
     }
 
     isolated remote function bidirectional2() returns (Bidirectional2StreamingClient|grpc:Error) {
-        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("SeperateModuleService/bidirectional2");
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("SeparateModuleService/bidirectional2");
         return new Bidirectional2StreamingClient(sClient);
     }
 }
@@ -256,7 +256,7 @@ public client class Bidirectional2StreamingClient {
     }
 }
 
-public client class SeperateModuleServiceSMResCaller {
+public client class SeparateModuleServiceSMResCaller {
     private grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
@@ -318,9 +318,9 @@ public type SMRes record {|
     int id = 0;
 |};
 
-public const string ROOT_DESCRIPTOR = "0A1573657065726174655F6D6F64756C652E70726F746F222B0A05534D52657112120A046E616D6518012001280952046E616D65120E0A02696418022001280552026964222B0A05534D52657312120A046E616D6518012001280952046E616D65120E0A0269641802200128055202696432C6010A1553657065726174654D6F64756C655365727669636512170A05756E61727912062E534D5265711A062E534D52657312230A0F73657276657253747265616D696E6712062E534D5265711A062E534D526573300112230A0F636C69656E7453747265616D696E6712062E534D5265711A062E534D526573280112240A0E6269646972656374696F6E616C3112062E534D5265711A062E534D5265732801300112240A0E6269646972656374696F6E616C3212062E534D5265711A062E534D52657328013001620670726F746F33";
+public const string ROOT_DESCRIPTOR = "0A1573657065726174655F6D6F64756C652E70726F746F222B0A05534D52657112120A046E616D6518012001280952046E616D65120E0A02696418022001280552026964222B0A05534D52657312120A046E616D6518012001280952046E616D65120E0A0269641802200128055202696432C6010A1553657061726174654D6F64756C655365727669636512170A05756E61727912062E534D5265711A062E534D52657312230A0F73657276657253747265616D696E6712062E534D5265711A062E534D526573300112230A0F636C69656E7453747265616D696E6712062E534D5265711A062E534D526573280112240A0E6269646972656374696F6E616C3112062E534D5265711A062E534D5265732801300112240A0E6269646972656374696F6E616C3212062E534D5265711A062E534D52657328013001620670726F746F33";
 
 public isolated function getDescriptorMap() returns map<string> {
-    return {"seperate_module.proto": "0A1573657065726174655F6D6F64756C652E70726F746F222B0A05534D52657112120A046E616D6518012001280952046E616D65120E0A02696418022001280552026964222B0A05534D52657312120A046E616D6518012001280952046E616D65120E0A0269641802200128055202696432C6010A1553657065726174654D6F64756C655365727669636512170A05756E61727912062E534D5265711A062E534D52657312230A0F73657276657253747265616D696E6712062E534D5265711A062E534D526573300112230A0F636C69656E7453747265616D696E6712062E534D5265711A062E534D526573280112240A0E6269646972656374696F6E616C3112062E534D5265711A062E534D5265732801300112240A0E6269646972656374696F6E616C3212062E534D5265711A062E534D52657328013001620670726F746F33"};
+    return {"seperate_module.proto": "0A1573657065726174655F6D6F64756C652E70726F746F222B0A05534D52657112120A046E616D6518012001280952046E616D65120E0A02696418022001280552026964222B0A05534D52657312120A046E616D6518012001280952046E616D65120E0A0269641802200128055202696432C6010A1553657061726174654D6F64756C655365727669636512170A05756E61727912062E534D5265711A062E534D52657312230A0F73657276657253747265616D696E6712062E534D5265711A062E534D526573300112230A0F636C69656E7453747265616D696E6712062E534D5265711A062E534D526573280112240A0E6269646972656374696F6E616C3112062E534D5265711A062E534D5265732801300112240A0E6269646972656374696F6E616C3212062E534D5265711A062E534D52657328013001620670726F746F33"};
 }
 
