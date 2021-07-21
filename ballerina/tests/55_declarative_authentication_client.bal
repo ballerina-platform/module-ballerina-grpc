@@ -465,3 +465,14 @@ function testHello55OAuth2AuthWithEmptyScope() returns error? {
         test:assertEquals(response, requestMessage.content);
     }
 }
+
+@test:Config {enable: true}
+function testHello55EmptyAuthHeader() returns error? {
+    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
+    string|Error response = hClient->hello55EmptyScope("WSO2");
+    if response is Error {
+        test:assertEquals(response.message(), "Authorization header does not exist");
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
