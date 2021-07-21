@@ -20,7 +20,7 @@ import integration_tests.api;
 @test:Config {}
 function testServiceInputParamFromAnotherModuleUnary() returns error? {
 
-    api:SeparateModuleServiceClient ep = check new ("http://localhost:9095");
+    api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
     api:ContextSMReq reqContext = {
         content: {name: "John", id: 11},
         headers: {h1: "H1"}
@@ -34,7 +34,7 @@ function testServiceInputParamFromAnotherModuleUnary() returns error? {
 @test:Config {}
 function testServiceInputParamFromAnotherModuleServerStreaming() returns error? {
 
-    api:SeparateModuleServiceClient ep = check new ("http://localhost:9095");
+    api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
     api:ContextSMReq reqContext = {
         content: {name: "John", id: 11},
         headers: {h1: "H1"}
@@ -58,7 +58,7 @@ function testServiceInputParamFromAnotherModuleServerStreaming() returns error? 
 @test:Config {}
 function testServiceInputParamFromAnotherModuleClientStreaming() returns error? {
 
-    api:SeparateModuleServiceClient ep = check new ("http://localhost:9095");
+    api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
     api:SMReq[] requests = [
         {name: "Anne", id: 12}, 
         {name: "Nick", id: 13}, 
@@ -86,7 +86,7 @@ function testServiceInputParamFromAnotherModuleClientStreaming() returns error? 
 @test:Config {}
 function testServiceInputParamFromAnotherModuleBidirectional1() returns error? {
 
-    api:SeparateModuleServiceClient ep = check new ("http://localhost:9095");
+    api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
     api:SMReq[] requests = [
         {name: "Anne", id: 12}, 
         {name: "Nick", id: 13}, 
@@ -121,7 +121,7 @@ function testServiceInputParamFromAnotherModuleBidirectional1() returns error? {
 @test:Config {}
 function testServiceInputParamFromAnotherModuleBidirectional2() returns error? {
 
-    api:SeparateModuleServiceClient ep = check new ("http://localhost:9095");
+    api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
     api:SMReq[] requests = [
         {name: "Anne", id: 12}, 
         {name: "Nick", id: 13}, 

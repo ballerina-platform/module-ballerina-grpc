@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import integration_tests.api;
 
-listener grpc:Listener ep = new (9095);
+listener grpc:Listener ep = new (9500);
 
 @grpc:ServiceDescriptor {descriptor: api:ROOT_DESCRIPTOR, descMap: api:getDescriptorMap()}
 service "SeparateModuleService" on ep {
