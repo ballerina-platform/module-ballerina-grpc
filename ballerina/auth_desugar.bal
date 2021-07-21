@@ -50,20 +50,18 @@ public isolated function authenticateResource(Service serviceRef) {
 }
 
 isolated function tryAuthenticate(ListenerAuthConfig[] authConfig, map<string|string[]> headers) returns UnauthenticatedError|PermissionDeniedError? {
-    PermissionDeniedError|boolean? result = ();
+    boolean authResult = false;
     foreach ListenerAuthConfig config in authConfig {
         if config is FileUserStoreConfigWithScopes {
-            result = authenticateWithFileUserStore(config, headers);
+            authResult = check authenticateWithFileUserStore(config, headers);
         } else if config is LdapUserStoreConfigWithScopes {
-            result = authenticateWithLdapUserStore(config, headers);
+            authResult = check authenticateWithLdapUserStore(config, headers);
         } else if config is JwtValidatorConfigWithScopes {
-            result = authenticateWithJwtValidator(config, headers);
+            authResult = check authenticateWithJwtValidator(config, headers);
         } else {
-            result = authenticateWithOAuth2IntrospectionConfig(config, headers);
+            authResult = check authenticateWithOAuth2IntrospectionConfig(config, headers);
         }
-        if result is PermissionDeniedError {
-            return result;
-        } else if result is boolean && result {
+        if authResult {
             return;
         }
     }
@@ -71,7 +69,7 @@ isolated function tryAuthenticate(ListenerAuthConfig[] authConfig, map<string|st
 }
 
 isolated function authenticateWithFileUserStore(FileUserStoreConfigWithScopes config, map<string|string[]> headers)
- returns PermissionDeniedError|boolean? {
+ returns PermissionDeniedError|boolean {
     ListenerFileUserStoreBasicAuthHandler handler = new(config.fileUserStoreConfig);
     auth:UserDetails|UnauthenticatedError authn = handler.authenticate(headers);
     string|string[]? scopes = config?.scopes;
@@ -81,14 +79,14 @@ isolated function authenticateWithFileUserStore(FileUserStoreConfigWithScopes co
             if authz is PermissionDeniedError {
                 return authz;
             }
-            return true;
         }
         return true;
     }
+    return false;
 }
 
 isolated function authenticateWithLdapUserStore(LdapUserStoreConfigWithScopes config, map<string|string[]> headers)
- returns PermissionDeniedError|boolean? {
+ returns PermissionDeniedError|boolean {
     ListenerLdapUserStoreBasicAuthHandler handler = new(config.ldapUserStoreConfig);
     auth:UserDetails|UnauthenticatedError authn = handler->authenticate(headers);
     string|string[]? scopes = config?.scopes;
@@ -98,14 +96,14 @@ isolated function authenticateWithLdapUserStore(LdapUserStoreConfigWithScopes co
             if authz is PermissionDeniedError {
                 return authz;
             }
-            return true;
         }
         return true;
     }
+    return false;
 }
 
 isolated function authenticateWithJwtValidator(JwtValidatorConfigWithScopes config, map<string|string[]> headers)
- returns PermissionDeniedError|boolean? {
+ returns PermissionDeniedError|boolean {
     ListenerJwtAuthHandler handler = new(config.jwtValidatorConfig);
     jwt:Payload|UnauthenticatedError authn = handler.authenticate(headers);
     string|string[]? scopes = config?.scopes;
@@ -115,14 +113,14 @@ isolated function authenticateWithJwtValidator(JwtValidatorConfigWithScopes conf
             if authz is PermissionDeniedError {
                 return authz;
             }
-            return true;
         }
         return true;
     }
+    return false;
 }
 
 isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionConfigWithScopes config, map<string|string[]> headers)
- returns PermissionDeniedError|boolean? {
+ returns PermissionDeniedError|boolean {
     // Here, config is OAuth2IntrospectionConfigWithScopes
     ListenerOAuth2Handler handler = new(config.oauth2IntrospectionConfig);
     oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError auth = handler->authorize(headers, config?.scopes);
@@ -131,6 +129,7 @@ isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionC
     } else if auth is PermissionDeniedError {
         return auth;
     }
+    return false;
 }
 
 isolated function getServiceAuthConfig(Service serviceRef) returns ListenerAuthConfig[]? {
