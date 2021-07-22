@@ -25,7 +25,6 @@ module io.ballerina.stdlib.grpc {
     requires proto.google.common.protos;
     requires io.ballerina.stdlib.http;
     requires io.ballerina.runtime;
-    requires io.ballerina.config;
     requires java.logging;
     requires io.ballerina.lang;
     requires io.ballerina.tools.api;
