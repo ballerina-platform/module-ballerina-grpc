@@ -119,7 +119,7 @@ service "helloWorld55" on ep55WithScopes {
      stream<string, Error?> clientStream) returns error? {
         record {|string value;|}|Error? result = clientStream.next();
         result = clientStream.next();
-        check caller->sendString("Hello from service");
+        check caller->sendString("Hello");
         check caller->complete();
     }
 

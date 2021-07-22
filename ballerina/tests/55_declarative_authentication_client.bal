@@ -1,20 +1,20 @@
- // Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- //
- // WSO2 Inc. licenses this file to you under the Apache License,
- // Version 2.0 (the "License"); you may not use this file except
- // in compliance with the License.
- // You may obtain a copy of the License at
- //
- // http://www.apache.org/licenses/LICENSE-2.0
- //
- // Unless required by applicable law or agreed to in writing,
- // software distributed under the License is distributed on an
- // "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- // KIND, either express or implied.  See the License for the
- // specific language governing permissions and limitations
- // under the License.
+// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+//
+// WSO2 Inc. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
 
- import ballerina/test;
+import ballerina/test;
 
 @test:Config {enable: true}
 function testHello55JWTAuthBiDiWithCaller() returns error? {
@@ -41,7 +41,7 @@ function testHello55JWTAuthBiDiWithCaller() returns error? {
     helloWorld55Client hClient = check new ("http://localhost:9155");
     Hello55BiDiWithCallerStreamingClient strClient = check hClient->hello55BiDiWithCaller();
     check strClient->sendContextString({
-        content: "Hello from client",
+        content: "Hello",
         headers: requestHeaders
     });
     check strClient->complete();
@@ -49,7 +49,7 @@ function testHello55JWTAuthBiDiWithCaller() returns error? {
     if s is () {
         test:assertFail("Expected a response");
     } else {
-        test:assertEquals(s, "Hello from service");
+        test:assertEquals(s, "Hello");
     }
 }
 
@@ -63,7 +63,7 @@ function testHello55JWTAuthBiDiWithCallerUnauthenticated() returns error? {
     helloWorld55Client hClient = check new ("http://localhost:9155");
     Hello55BiDiWithCallerStreamingClient strClient = check hClient->hello55BiDiWithCaller();
     check strClient->sendContextString({
-        content: "Hello from client",
+        content: "Hello",
         headers: requestHeaders
     });
     check strClient->complete();
@@ -100,7 +100,7 @@ function testHello55JWTAuthBiDiWithCallerInvalidPermission() returns error? {
     helloWorld55Client hClient = check new ("http://localhost:9155");
     Hello55BiDiWithCallerStreamingClient strClient = check hClient->hello55BiDiWithCaller();
     check strClient->sendContextString({
-        content: "Hello from client",
+        content: "Hello",
         headers: requestHeaders
     });
     check strClient->complete();
@@ -137,7 +137,7 @@ function testHello55JWTAuthBiDiWithReturn() returns error? {
     helloWorld55Client hClient = check new ("http://localhost:9155");
     Hello55BiDiWithReturnStreamingClient strClient = check hClient->hello55BiDiWithReturn();
     check strClient->sendContextString({
-        content: "Hello from client",
+        content: "Hello",
         headers: requestHeaders
     });
     check strClient->complete();
@@ -145,7 +145,7 @@ function testHello55JWTAuthBiDiWithReturn() returns error? {
     if s is () {
         test:assertFail("Expected a response");
     } else {
-        test:assertEquals(s, "Hello from client");
+        test:assertEquals(s, "Hello");
     }
 }
 
@@ -172,7 +172,7 @@ function testHello55JWTAuthUnary() returns error? {
     requestHeaders = check handler.enrich(requestHeaders);
     ContextString ctxString = {
         headers: requestHeaders,
-        content: "Hello from client"
+        content: "Hello"
     };
 
     helloWorld55Client hClient = check new ("http://localhost:9155");
@@ -191,7 +191,7 @@ function testHello55JWTAuthUnaryUnauthenticated() returns error? {
     };
     ContextString ctxString = {
         headers: requestHeaders,
-        content: "Hello from client"
+        content: "Hello"
     };
 
     helloWorld55Client hClient = check new ("http://localhost:9155");
@@ -226,7 +226,7 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
     requestHeaders = check handler.enrich(requestHeaders);
     ContextString ctxString = {
         headers: requestHeaders,
-        content: "Hello from client"
+        content: "Hello"
     };
 
     helloWorld55Client hClient = check new ("http://localhost:9155");
@@ -255,7 +255,7 @@ function testHello55LdapAuth() returns error? {
     }
 
     ContextString requestMessage = {
-        content: "WSO2",
+        content: "Hello",
         headers: requestHeaders
     };
 
@@ -286,7 +286,7 @@ function testHello55BasicAuth() returns error? {
     }
 
     ContextString requestMessage = {
-        content: "WSO2",
+        content: "Hello",
         headers: requestHeaders
     };
 
@@ -326,7 +326,9 @@ function testHello55OAuth2Auth() returns error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    ContextString requestMessage = {
+        content: "Hello", headers: requestHeaders
+    };
 
     helloWorld55Client hClient = check new ("http://localhost:9155");
     string|Error response = hClient->hello55UnaryWithReturn(requestMessage);
@@ -359,7 +361,9 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
     requestHeaders = check handler.enrich(requestHeaders);
 
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    ContextString requestMessage = {
+        content: "Hello", headers: requestHeaders
+    };
     string|Error? result = check hClient->hello55EmptyScope(requestMessage);
     if result is () {
         test:assertFail("Expected a response");
@@ -385,7 +389,7 @@ function testHello55LdapAuthWithEmptyScope() returns error? {
     }
 
     ContextString requestMessage = {
-        content: "WSO2",
+        content: "Hello",
         headers: requestHeaders
     };
 
@@ -416,7 +420,7 @@ function testHello55BasicAuthWithEmptyScope() returns error? {
     }
 
     ContextString requestMessage = {
-        content: "WSO2",
+        content: "Hello",
         headers: requestHeaders
     };
 
@@ -455,7 +459,9 @@ function testHello55OAuth2AuthWithEmptyScope() returns error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    ContextString requestMessage = {
+        content: "Hello", headers: requestHeaders
+    };
 
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
     string|Error response = hClient->hello55EmptyScope(requestMessage);
@@ -469,7 +475,7 @@ function testHello55OAuth2AuthWithEmptyScope() returns error? {
 @test:Config {enable: true}
 function testHello55EmptyAuthHeader() returns error? {
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
-    string|Error response = hClient->hello55EmptyScope("WSO2");
+    string|Error response = hClient->hello55EmptyScope("Hello");
     if response is Error {
         test:assertEquals(response.message(), "Authorization header does not exist");
     } else {
