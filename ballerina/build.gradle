@@ -274,6 +274,7 @@ test.dependsOn startLdapServer
 build.finalizedBy stopLdapServer
 build.dependsOn startLdapServer
 
+build.dependsOn "generatePomFileForMavenPublication"
 build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-native:test"
 build.dependsOn ":${packageName}-test-utils:build"
