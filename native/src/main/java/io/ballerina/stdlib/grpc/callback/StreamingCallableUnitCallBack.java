@@ -32,6 +32,8 @@ import io.ballerina.stdlib.grpc.StreamObserver;
 import io.ballerina.stdlib.grpc.listener.ServerCallHandler;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 
@@ -41,6 +43,8 @@ import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY
  * @since 0.995.0
  */
 public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StreamingCallableUnitCallBack.class);
 
     private Runtime runtime;
     private StreamObserver responseSender;
@@ -118,6 +122,14 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
 
     @Override
     public void notifyFailure(io.ballerina.runtime.api.values.BError error) {
+        if (responseSender instanceof ServerCallHandler.ServerCallStreamObserver) {
+            ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
+                    .ServerCallStreamObserver) responseSender;
+            if (!serverCallStreamObserver.isReady() || serverCallStreamObserver.isCancelled()) {
+                LOG.warn("Call already closed");
+                return;
+            }
+        }
         if (responseSender != null) {
             handleFailure(responseSender, error);
         }
