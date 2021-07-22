@@ -32,7 +32,6 @@ import io.ballerina.stdlib.http.transport.contract.config.SenderConfiguration;
 import io.ballerina.stdlib.http.transport.contract.config.SslConfiguration;
 import io.ballerina.stdlib.http.transport.contractimpl.sender.channel.pool.ConnectionManager;
 import io.ballerina.stdlib.http.transport.contractimpl.sender.channel.pool.PoolConfiguration;
-import org.ballerinalang.config.ConfigRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,8 +195,7 @@ public class GrpcUtil {
         ListenerConfiguration listenerConfiguration = new ListenerConfiguration();
 
         if (host == null || host.getValue().trim().isEmpty()) {
-            listenerConfiguration.setHost(ConfigRegistry.getInstance().getConfigOrDefault("b7a.http.host",
-                    HttpConstants.HTTP_DEFAULT_HOST));
+            listenerConfiguration.setHost(HttpConstants.HTTP_DEFAULT_HOST);
         } else {
             listenerConfiguration.setHost(host.getValue());
         }
