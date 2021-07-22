@@ -38,7 +38,7 @@ public isolated function authenticateResource(Service serviceRef) {
     string|Error authHeader = externGetAuthorizationHeader();
     if authHeader is string {
         map<string> headers = {
-            "authorization": authHeader
+            authorization: authHeader
         };
         UnauthenticatedError|PermissionDeniedError? result = tryAuthenticate(<ListenerAuthConfig[]>authConfig, headers);
         if result is UnauthenticatedError || result is PermissionDeniedError {
