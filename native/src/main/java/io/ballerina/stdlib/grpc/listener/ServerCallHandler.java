@@ -211,21 +211,25 @@ public abstract class ServerCallHandler {
                 );
             }
             BMap contentContext;
-            if (signatureParamSize >= 1 && (signatureParams.get(0).getTag() == TypeTags.RECORD_TYPE_TAG) &&
-                    signatureParams.get(signatureParamSize - 1).getName().contains("Stream")) {
-                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
-                        MessageUtils.getContextStreamTypeName(resource.getRpcInputType()), valueMap);
-            } else if (signatureParamSize > 1 && (signatureParams.get(1).getTag() == TypeTags.RECORD_TYPE_TAG) &&
-                    signatureParams.get(signatureParamSize - 1).getName().contains("Stream")) {
-                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
-                        MessageUtils.getContextStreamTypeName(resource.getRpcInputType()), valueMap);
-            } else {
-                contentContext = ValueCreator.createRecordValue(resource.getService().getType().getPackage(),
-                        MessageUtils.getContextTypeName(resource.getRpcInputType()), valueMap);
-            }
+            if (signatureParamSize >= 1) {
+                Type inputParameter = signatureParams.get(signatureParamSize - 1);
 
-            paramValues[i] = contentContext;
-            paramValues[i + 1] = true;
+                // Here the logic is:
+                // IF (inputParaName contains stream) AND ((firstParam is recordType) OR (secondParam is recordType))
+                // ELSE part execute for non-streaming cases with context param
+                if (inputParameter.getName().contains("Stream") &&
+                        ((signatureParamSize == 1 && (signatureParams.get(0).getTag() == TypeTags.RECORD_TYPE_TAG)) ||
+                                (signatureParamSize > 1 &&
+                                        (signatureParams.get(1).getTag() == TypeTags.RECORD_TYPE_TAG)))) {
+                    contentContext = ValueCreator.createRecordValue(inputParameter.getPackage(),
+                            MessageUtils.getContextStreamTypeName(resource.getRpcInputType()), valueMap);
+                } else {
+                    contentContext = ValueCreator.createRecordValue(inputParameter.getPackage(),
+                            MessageUtils.getContextTypeName(resource.getRpcInputType()), valueMap);
+                }
+                paramValues[i] = contentContext;
+                paramValues[i + 1] = true;
+            }
         } else if (requestParam != null) {
             paramValues[i] = requestParam;
             paramValues[i + 1] = true;
