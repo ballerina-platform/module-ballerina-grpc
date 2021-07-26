@@ -120,23 +120,27 @@ public class ServicesBuilderUtils {
             ServerCallHandler serverCallHandler;
             MethodDescriptor.Marshaller reqMarshaller = null;
             ServiceResource mappedResource = null;
+            Module inputParameterPackage = service.getType().getPackage();
 
             for (MethodType function : service.getType().getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
+                    Type inputParameterType = getRemoteInputParameterType(function);
                     mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
                             methodDescriptor);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
-                            getRemoteInputParameterType(function)));
+                            inputParameterType));
+                    inputParameterPackage = inputParameterType.getPackage();
+                    break;
                 }
             }
             if (methodDescriptor.toProto().getServerStreaming() && methodDescriptor.toProto().getClientStreaming()) {
                 methodType = MethodDescriptor.MethodType.BIDI_STREAMING;
                 serverCallHandler = new StreamingServerCallHandler(methodDescriptor, mappedResource,
-                        getBallerinaValueType(service.getType().getPackage(), requestDescriptor.getName()));
+                        getBallerinaValueType(inputParameterPackage, requestDescriptor.getName()));
             } else if (methodDescriptor.toProto().getClientStreaming()) {
                 methodType = MethodDescriptor.MethodType.CLIENT_STREAMING;
                 serverCallHandler = new StreamingServerCallHandler(methodDescriptor, mappedResource,
-                        getBallerinaValueType(service.getType().getPackage(), requestDescriptor.getName()));
+                        getBallerinaValueType(inputParameterPackage, requestDescriptor.getName()));
             } else if (methodDescriptor.toProto().getServerStreaming()) {
                 methodType = MethodDescriptor.MethodType.SERVER_STREAMING;
                 serverCallHandler = new UnaryServerCallHandler(methodDescriptor, mappedResource);
