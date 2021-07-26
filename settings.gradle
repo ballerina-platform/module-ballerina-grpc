@@ -19,6 +19,7 @@ include ':grpc-test-utils'
 include ':grpc-ballerina'
 include ':grpc-compiler-plugin'
 include ':grpc-compiler-plugin-tests'
+include ':grpc-integration-tests'
 include ':grpc-examples'
 
 project(':checkstyle').projectDir = file("build-config${File.separator}checkstyle")
@@ -27,6 +28,7 @@ project(':grpc-test-utils').projectDir = file('test-utils')
 project(':grpc-ballerina').projectDir = file('ballerina')
 project(':grpc-compiler-plugin').projectDir = file('compiler-plugin')
 project(':grpc-compiler-plugin-tests').projectDir = file('compiler-plugin-tests')
+project(':grpc-integration-tests').projectDir = file('integration-tests')
 project(':grpc-examples').projectDir = file('examples')
 
 gradleEnterprise {
