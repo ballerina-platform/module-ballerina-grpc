@@ -87,6 +87,10 @@ public class GrpcCmd implements BLauncherCmd {
     @CommandLine.Option(names = {"--protocVersion"}, hidden = true)
     private String protocVersion = "3.9.1";
 
+    @CommandLine.Option(names = {"--proto_path"}, description = "Path to a directory in which to look for .proto " +
+            "files when resolving import directives")
+    private String importPath = "";
+
     /**
      * Export a resource embedded into a Jar file to the local file path.
      *
@@ -217,8 +221,21 @@ public class GrpcCmd implements BLauncherCmd {
             // read root/dependent file descriptors.
             Path descFilePath = createServiceDescriptorFile();
             try {
-                root = DescriptorsGenerator.generateRootDescriptor(this.protocExePath,
-                        getAbsolutePath(protoPath), descFilePath.toAbsolutePath().toString());
+                if (importPath.equals("")) {
+                    root = DescriptorsGenerator.generateRootDescriptor(
+                            this.protocExePath,
+                            getAbsolutePath(protoPath),
+                            getAbsolutePath(BalFileGenerationUtils.resolveProtoFolderPath(protoPath)),
+                            descFilePath.toAbsolutePath().toString()
+                    );
+                } else {
+                    root = DescriptorsGenerator.generateRootDescriptor(
+                            this.protocExePath,
+                            getAbsolutePath(protoPath),
+                            getAbsolutePath(importPath),
+                            descFilePath.toAbsolutePath().toString()
+                    );
+                }
             } catch (CodeGeneratorException e) {
                 String errorMessage = "Error occurred when generating proto descriptor. " + e.getMessage();
                 LOG.error("Error occurred when generating proto descriptor.", e);
@@ -233,8 +250,19 @@ public class GrpcCmd implements BLauncherCmd {
             }
             LOG.debug("Successfully generated root descriptor.");
             try {
-                dependant = DescriptorsGenerator.generateDependentDescriptor(this.protocExePath,
-                        getAbsolutePath(protoPath), descFilePath.toAbsolutePath().toString());
+                if (importPath.equals("")) {
+                    dependant = DescriptorsGenerator.generateDependentDescriptor(
+                            this.protocExePath,
+                            getAbsolutePath(BalFileGenerationUtils.resolveProtoFolderPath(protoPath)),
+                            descFilePath.toAbsolutePath().toString()
+                    );
+                } else {
+                    dependant = DescriptorsGenerator.generateDependentDescriptor(
+                            this.protocExePath,
+                            getAbsolutePath(importPath),
+                            descFilePath.toAbsolutePath().toString()
+                    );
+                }
             } catch (CodeGeneratorException e) {
                 String errorMessage = "Error occurred when generating dependent proto descriptor. " + e.getMessage();
                 LOG.error(errorMessage, e);

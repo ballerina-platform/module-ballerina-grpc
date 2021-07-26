@@ -41,7 +41,7 @@ class DescriptorsGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(DescriptorsGenerator.class);
 
-    static Set<byte[]> generateDependentDescriptor(String exePath, String rootProtoPath, String
+    static Set<byte[]> generateDependentDescriptor(String exePath, String protoFolderPath, String
             rootDescriptorPath) throws CodeGeneratorException {
 
         Set<byte[]> dependentDescSet = new HashSet<>();
@@ -76,10 +76,8 @@ class DescriptorsGenerator {
                 }
                 //Derive proto file path of the dependent library.
                 String protoPath;
-                String protoFolderPath;
                 if (!dependentFilePath.contains(BalGenerationConstants.GOOGLE_STANDARD_LIB_PROTOBUF) &&
                         !dependentFilePath.contains(BalGenerationConstants.GOOGLE_STANDARD_LIB_API)) {
-                    protoFolderPath = BalFileGenerationUtils.resolveProtoFolderPath(rootProtoPath);
                     protoPath = new File(protoFolderPath, dependentFilePath).getAbsolutePath();
                 } else {
                     protoPath = new File(tempDir, dependentFilePath).getAbsolutePath();
@@ -95,8 +93,8 @@ class DescriptorsGenerator {
                     DescriptorProtos.FileDescriptorSet childDescSet = DescriptorProtos.FileDescriptorSet
                             .parseFrom(childStream);
                     if (childDescSet.getFile(0).getDependencyCount() != 0) {
-                        Set<byte[]> childList = generateDependentDescriptor(exePath, rootProtoPath, childFile
-                                .getAbsolutePath());
+                        Set<byte[]> childList = generateDependentDescriptor(exePath, protoFolderPath,
+                                childFile.getAbsolutePath());
                         dependentDescSet.addAll(childList);
                     }
                     byte[] dependentDesc = childDescSet.getFile(0).toByteArray();
@@ -120,15 +118,20 @@ class DescriptorsGenerator {
      *
      * @param exePath        protoc executor path
      * @param protoPath      .proto file path
+     * @param protoFolderPath      path to the import directives
      * @param descriptorPath file descriptor path.
      * @return byte array of generated proto file.
      */
-    static byte[] generateRootDescriptor(String exePath, String protoPath, String descriptorPath)
+    static byte[] generateRootDescriptor(String exePath, String protoPath, String protoFolderPath,
+                                         String descriptorPath)
             throws CodeGeneratorException {
 
-        String command = new ProtocCommandBuilder(exePath, BalFileGenerationUtils.escapeSpaces(protoPath),
-                BalFileGenerationUtils.escapeSpaces(BalFileGenerationUtils.resolveProtoFolderPath(protoPath)),
-                BalFileGenerationUtils.escapeSpaces(descriptorPath)).build();
+        String command = new ProtocCommandBuilder(
+                exePath,
+                BalFileGenerationUtils.escapeSpaces(protoPath),
+                BalFileGenerationUtils.escapeSpaces(protoFolderPath),
+                BalFileGenerationUtils.escapeSpaces(descriptorPath)
+        ).build();
         BalFileGenerationUtils.generateDescriptor(command);
         File initialFile = new File(descriptorPath);
         try (InputStream targetStream = new FileInputStream(initialFile)) {
