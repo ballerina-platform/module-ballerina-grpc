@@ -34,16 +34,10 @@ function testHello55JWTAuthBiDiWithCaller() returns error? {
             }
         }
     };
-    ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]> requestHeaders = {};
-    requestHeaders = check handler.enrich(requestHeaders);
 
-    helloWorld55Client hClient = check new ("http://localhost:9155");
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     Hello55BiDiWithCallerStreamingClient strClient = check hClient->hello55BiDiWithCaller();
-    check strClient->sendContextString({
-        content: "Hello",
-        headers: requestHeaders
-    });
+    check strClient->sendString("Hello");
     check strClient->complete();
     string? s = check strClient->receiveString();
     if s is () {
@@ -93,16 +87,10 @@ function testHello55JWTAuthBiDiWithCallerInvalidPermission() returns error? {
             }
         }
     };
-    ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]> requestHeaders = {};
-    requestHeaders = check handler.enrich(requestHeaders);
 
-    helloWorld55Client hClient = check new ("http://localhost:9155");
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     Hello55BiDiWithCallerStreamingClient strClient = check hClient->hello55BiDiWithCaller();
-    check strClient->sendContextString({
-        content: "Hello",
-        headers: requestHeaders
-    });
+    check strClient->sendString("Hello");
     check strClient->complete();
     string|Error? s = strClient->receiveString();
     if s is PermissionDeniedError {
@@ -134,12 +122,9 @@ function testHello55JWTAuthBiDiWithReturn() returns error? {
     map<string|string[]> requestHeaders = {};
     requestHeaders = check handler.enrich(requestHeaders);
 
-    helloWorld55Client hClient = check new ("http://localhost:9155");
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     Hello55BiDiWithReturnStreamingClient strClient = check hClient->hello55BiDiWithReturn();
-    check strClient->sendContextString({
-        content: "Hello",
-        headers: requestHeaders
-    });
+    check strClient->sendString("Hello");
     check strClient->complete();
     string? s = check strClient->receiveString();
     if s is () {
@@ -167,20 +152,13 @@ function testHello55JWTAuthUnary() returns error? {
             }
         }
     };
-    ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]> requestHeaders = {};
-    requestHeaders = check handler.enrich(requestHeaders);
-    ContextString ctxString = {
-        headers: requestHeaders,
-        content: "Hello"
-    };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155");
-    string|Error result = hClient->hello55UnaryWithCaller(ctxString);
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    string|Error result = hClient->hello55UnaryWithCaller("Hello");
     if result is Error {
         test:assertFail(result.message());
     } else {
-        test:assertEquals(result, ctxString.content);
+        test:assertEquals(result, "Hello");
     }
 }
 
@@ -221,16 +199,9 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
             }
         }
     };
-    ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]> requestHeaders = {};
-    requestHeaders = check handler.enrich(requestHeaders);
-    ContextString ctxString = {
-        headers: requestHeaders,
-        content: "Hello"
-    };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155");
-    string|Error result = hClient->hello55UnaryWithCaller(ctxString);
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    string|Error result = hClient->hello55UnaryWithCaller("Hello");
     if result is Error {
         test:assertEquals(result.message(), "Permission denied");
     } else {
@@ -246,25 +217,12 @@ function testHello55LdapAuth() returns error? {
         password: "alice@123"
     };
 
-    ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
-    ContextString requestMessage = {
-        content: "Hello",
-        headers: requestHeaders
-    };
-
-    helloWorld55Client hClient = check new ("http://localhost:9155");
-    string|Error response = hClient->hello55UnaryWithReturn(requestMessage);
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    string|Error response = hClient->hello55UnaryWithReturn("Hello");
     if response is Error {
         test:assertFail(response.message());
     } else {
-        test:assertEquals(response, requestMessage.content);
+        test:assertEquals(response, "Hello");
     }
 }
 
@@ -277,25 +235,12 @@ function testHello55BasicAuth() returns error? {
         password: "123"
     };
 
-    ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
-    ContextString requestMessage = {
-        content: "Hello",
-        headers: requestHeaders
-    };
-
-    helloWorld55Client hClient = check new ("http://localhost:9155");
-    string|Error response = hClient->hello55UnaryWithReturn(requestMessage);
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    string|Error response = hClient->hello55UnaryWithReturn("Hello");
     if response is Error {
         test:assertFail(response.message());
     } else {
-        test:assertEquals(response, requestMessage.content);
+        test:assertEquals(response, "Hello");
     }
 }
 
@@ -317,25 +262,13 @@ function testHello55OAuth2Auth() returns error? {
             }
         }
     };
-    ClientOAuth2Handler handler = new(config);
-    map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
 
-    requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {
-        content: "Hello", headers: requestHeaders
-    };
-
-    helloWorld55Client hClient = check new ("http://localhost:9155");
-    string|Error response = hClient->hello55UnaryWithReturn(requestMessage);
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    string|Error response = hClient->hello55UnaryWithReturn("Hello");
     if response is Error {
         test:assertFail(response.message());
     } else {
-        test:assertEquals(response, requestMessage.content);
+        test:assertEquals(response, "Hello");
     }
 }
 
@@ -356,19 +289,13 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
             }
         }
     };
-    ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]> requestHeaders = {};
-    requestHeaders = check handler.enrich(requestHeaders);
 
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
-    ContextString requestMessage = {
-        content: "Hello", headers: requestHeaders
-    };
-    string|Error? result = check hClient->hello55EmptyScope(requestMessage);
+    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
+    string|Error? result = check hClient->hello55EmptyScope("Hello");
     if result is () {
         test:assertFail("Expected a response");
     } else {
-        test:assertEquals(result, requestMessage.content);
+        test:assertEquals(result, "Hello");
     }
 }
 
@@ -380,25 +307,12 @@ function testHello55LdapAuthWithEmptyScope() returns error? {
         password: "alice@123"
     };
 
-    ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
-    ContextString requestMessage = {
-        content: "Hello",
-        headers: requestHeaders
-    };
-
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
-    string|Error response = hClient->hello55EmptyScope(requestMessage);
+    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
+    string|Error response = hClient->hello55EmptyScope("Hello");
     if response is Error {
         test:assertFail(response.message());
     } else {
-        test:assertEquals(response, requestMessage.content);
+        test:assertEquals(response, "Hello");
     }
 }
 
@@ -411,25 +325,17 @@ function testHello55BasicAuthWithEmptyScope() returns error? {
         password: "123"
     };
 
-    ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
     ContextString requestMessage = {
         content: "Hello",
         headers: requestHeaders
     };
 
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
-    string|Error response = hClient->hello55EmptyScope(requestMessage);
+    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
+    string|Error response = hClient->hello55EmptyScope("Hello");
     if response is Error {
         test:assertFail(response.message());
     } else {
-        test:assertEquals(response, requestMessage.content);
+        test:assertEquals(response, "Hello");
     }
 }
 
@@ -450,25 +356,13 @@ function testHello55OAuth2AuthWithEmptyScope() returns error? {
             }
         }
     };
-    ClientOAuth2Handler handler = new(config);
-    map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
 
-    requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {
-        content: "Hello", headers: requestHeaders
-    };
-
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
-    string|Error response = hClient->hello55EmptyScope(requestMessage);
+    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
+    string|Error response = hClient->hello55EmptyScope("Hello");
     if response is Error {
         test:assertFail(response.message());
     } else {
-        test:assertEquals(response, requestMessage.content);
+        test:assertEquals(response, "Hello");
     }
 }
 
