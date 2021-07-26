@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 import static java.util.Map.entry;
 
@@ -175,6 +176,7 @@ public abstract class ServerCallHandler {
         if (ObserveUtils.isObservabilityEnabled()) {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
+        properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
                 GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
                 resource.getReturnType(), requestParams);

@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STATUS_ERROR_MAP;
 import static io.ballerina.stdlib.grpc.GrpcConstants.getKeyByValue;
 import static io.ballerina.stdlib.grpc.MessageUtils.convertToHttpHeaders;
@@ -187,5 +188,16 @@ public class FunctionUtils {
             }
         }
         return null;
+    }
+
+    public static Object externGetAuthorizationHeader(Environment env) {
+        String headers = (String) env.getStrandLocal(AUTHORIZATION);
+        if (headers == null) {
+            return MessageUtils
+                    .getConnectorError(new StatusRuntimeException(Status
+                            .fromCode(Status.Code.INTERNAL.toStatus().getCode())
+                                    .withDescription("Authorization header does not exist")));
+        }
+        return StringUtils.fromString(headers);
     }
 }

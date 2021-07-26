@@ -35,7 +35,7 @@ service "RetryService" on retryListener {
             clientName = <@untainted>value;
         }
         requestCount += 1;
-        log:printInfo(clientName + ": Attetmpt No. " + requestCount.toString());
+        log:printInfo(clientName + ": Attempt No. " + requestCount.toString());
         if requestCount < 4 {
             match value {
                 "CancelledError" => {

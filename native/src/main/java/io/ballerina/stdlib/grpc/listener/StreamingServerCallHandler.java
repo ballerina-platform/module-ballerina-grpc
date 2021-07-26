@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
@@ -177,6 +178,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         if (ObserveUtils.isObservabilityEnabled()) {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
+        properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
         StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(resource.getRuntime(),
                 responseObserver, isEmptyResponse(), this.methodDescriptor.getOutputType(), context);
         resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
