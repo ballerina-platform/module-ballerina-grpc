@@ -211,7 +211,6 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
 
 @test:Config {enable: false}
 function testHello55LdapAuth() returns error? {
-    map<string|string[]> requestHeaders = {};
     CredentialsConfig config = {
         username: "alice",
         password: "alice@123"
@@ -228,8 +227,6 @@ function testHello55LdapAuth() returns error? {
 
 @test:Config {enable: true}
 function testHello55BasicAuth() returns error? {
-    map<string|string[]> requestHeaders = {};
-
     CredentialsConfig config = {
         username: "admin",
         password: "123"
@@ -246,8 +243,6 @@ function testHello55BasicAuth() returns error? {
 
 @test:Config {enable: true}
 function testHello55OAuth2Auth() returns error? {
-    map<string|string[]> requestHeaders = {};
-
     OAuth2ClientCredentialsGrantConfig config = {
         tokenUrl: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token",
         clientId: "3MVG9YDQS5WtC11paU2WcQjBB3L5w4gz52uriT8ksZ3nUVjKvrfQMrU4uvZohTftxStwNEW4cfStBEGRxRL68",
@@ -301,7 +296,6 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
 
 @test:Config {enable: false}
 function testHello55LdapAuthWithEmptyScope() returns error? {
-    map<string|string[]> requestHeaders = {};
     CredentialsConfig config = {
         username: "alice",
         password: "alice@123"
@@ -318,16 +312,9 @@ function testHello55LdapAuthWithEmptyScope() returns error? {
 
 @test:Config {enable: true}
 function testHello55BasicAuthWithEmptyScope() returns error? {
-    map<string|string[]> requestHeaders = {};
-
     CredentialsConfig config = {
         username: "admin",
         password: "123"
-    };
-
-    ContextString requestMessage = {
-        content: "Hello",
-        headers: requestHeaders
     };
 
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
@@ -341,8 +328,6 @@ function testHello55BasicAuthWithEmptyScope() returns error? {
 
 @test:Config {enable: true}
 function testHello55OAuth2AuthWithEmptyScope() returns error? {
-    map<string|string[]> requestHeaders = {};
-
     OAuth2ClientCredentialsGrantConfig config = {
         tokenUrl: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token",
         clientId: "3MVG9YDQS5WtC11paU2WcQjBB3L5w4gz52uriT8ksZ3nUVjKvrfQMrU4uvZohTftxStwNEW4cfStBEGRxRL68",
@@ -363,6 +348,72 @@ function testHello55OAuth2AuthWithEmptyScope() returns error? {
         test:assertFail(response.message());
     } else {
         test:assertEquals(response, "Hello");
+    }
+}
+
+@test:Config {enable: true}
+function testHello55ServerStreamingOAuth2Auth() returns error? {
+    OAuth2ClientCredentialsGrantConfig config = {
+        tokenUrl: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token",
+        clientId: "3MVG9YDQS5WtC11paU2WcQjBB3L5w4gz52uriT8ksZ3nUVjKvrfQMrU4uvZohTftxStwNEW4cfStBEGRxRL68",
+        clientSecret: "9205371918321623741",
+        clientConfig: {
+            secureSocket: {
+               cert: {
+                   path: TRUSTSTORE_PATH,
+                   password: "ballerina"
+               }
+            }
+        }
+    };
+
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    stream<string, Error?>|Error response = hClient->hello55ServerStreaming("Hello");
+    if response is Error {
+        test:assertFail(response.message());
+    } else {
+        var value1 = response.next();
+        var value2 = response.next();
+        if value1 is Error || value2 is Error {
+            test:assertFail("Error occured");
+        } else if value1 is () || value2 is () {
+            test:assertFail("Expected a non null response");
+        } else {
+            test:assertEquals(value1["value"], "Hello 1");
+            test:assertEquals(value2["value"], "Hello 2");
+        }
+    }
+}
+
+@test:Config {enable: true}
+function testHello55ClientStreamingOAuth2Auth() returns error? {
+    OAuth2ClientCredentialsGrantConfig config = {
+        tokenUrl: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token",
+        clientId: "3MVG9YDQS5WtC11paU2WcQjBB3L5w4gz52uriT8ksZ3nUVjKvrfQMrU4uvZohTftxStwNEW4cfStBEGRxRL68",
+        clientSecret: "9205371918321623741",
+        clientConfig: {
+            secureSocket: {
+               cert: {
+                   path: TRUSTSTORE_PATH,
+                   password: "ballerina"
+               }
+            }
+        }
+    };
+
+    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    Hello55ClientStreamingStreamingClient sClient = check hClient->hello55ClientStreaming();
+    check sClient->sendString("Hello");
+    check sClient->sendString("World");
+    check sClient->complete();
+
+    string|Error? response = sClient->receiveString();
+    if response is Error {
+        test:assertFail(response.message());
+    } else if response is () {
+        test:assertFail("Expected a response");
+    } else {
+        test:assertEquals(response, "Hello World");
     }
 }
 
