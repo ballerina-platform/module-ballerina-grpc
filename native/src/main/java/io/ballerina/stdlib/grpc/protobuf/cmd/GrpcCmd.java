@@ -436,4 +436,7 @@ public class GrpcCmd implements BLauncherCmd {
         this.mode = mode;
     }
 
+    public void setImportPath(String importPath) {
+        this.importPath = importPath;
+    }
 }

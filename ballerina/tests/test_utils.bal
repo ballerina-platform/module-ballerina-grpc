@@ -68,7 +68,7 @@ function assertGeneratedSourcesNegative(string input, string output, string outp
     test:assertFalse(check file:test(stubFilePath, file:EXISTS));
 }
 
-public function generateSourceCode(string protoFilePath, string outputDirPath, string? mode = ()) = @java:Method {
+public function generateSourceCode(string protoFilePath, string outputDirPath, string? mode = (), string? importDirPath = ()) = @java:Method {
     'class: "io.ballerina.stdlib.grpc.testutils.CodeGeneratorUtils",
     name: "generateSourceCode"
 } external;
