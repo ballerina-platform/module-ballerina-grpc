@@ -177,7 +177,7 @@ public class GrpcCmd implements BLauncherCmd {
             return;
         }
 
-        if (!importPath.equals("")) {
+        if (!importPath.isBlank()) {
             File importFilePath = new File(importPath);
             File protoFilePath = new File(protoPath);
             if (!isInSubDirectory(importFilePath, protoFilePath)) {
@@ -232,7 +232,7 @@ public class GrpcCmd implements BLauncherCmd {
             // read root/dependent file descriptors.
             Path descFilePath = createServiceDescriptorFile();
             try {
-                if (importPath.equals("")) {
+                if (importPath.isBlank()) {
                     root = DescriptorsGenerator.generateRootDescriptor(
                             this.protocExePath,
                             getAbsolutePath(protoPath),
@@ -261,7 +261,7 @@ public class GrpcCmd implements BLauncherCmd {
             }
             LOG.debug("Successfully generated root descriptor.");
             try {
-                if (importPath.equals("")) {
+                if (importPath.isBlank()) {
                     dependant = DescriptorsGenerator.generateDependentDescriptor(
                             this.protocExePath,
                             getAbsolutePath(BalFileGenerationUtils.resolveProtoFolderPath(protoPath)),

@@ -43,7 +43,7 @@ public class CodeGeneratorUtils {
             GrpcCmd grpcCmd = (GrpcCmd) grpcCmdClass.newInstance();
             Path protoFilePath = Paths.get(sProtoFilePath.getValue());
             grpcCmd.setProtoPath(protoFilePath.toAbsolutePath().toString());
-            if (!sOutputDirPath.getValue().equals("")) {
+            if (!sOutputDirPath.getValue().isBlank()) {
                 Path outputDirPath = Paths.get(sOutputDirPath.getValue());
                 grpcCmd.setBalOutPath(outputDirPath.toAbsolutePath().toString());
             }
