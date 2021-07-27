@@ -176,6 +176,17 @@ public class GrpcCmd implements BLauncherCmd {
             outStream.println(errorMessage);
             return;
         }
+
+        if (!importPath.equals("")) {
+            File importFilePath = new File(importPath);
+            File protoFilePath = new File(protoPath);
+            if (!isInSubDirectory(importFilePath, protoFilePath)) {
+                String errorMessage = "Input .proto file does not reside within the path specified using " +
+                        "--proto_path. You must specify a --proto_path which encompasses the .proto file.";
+                outStream.println(errorMessage);
+                return;
+            }
+        }
         // Temporary disabled due to new service changes.
         if (BalGenConstants.GRPC_PROXY.equals(mode)) {
             String errorMessage = "gRPC gateway proxy service generation is currently not supported.";
@@ -296,6 +307,16 @@ public class GrpcCmd implements BLauncherCmd {
         }
         msg.append("Successfully generated ballerina file.").append(BalGenerationConstants.NEW_LINE_CHARACTER);
         outStream.println(msg);
+    }
+
+    public static boolean isInSubDirectory(File dir, File file) {
+        if (file == null) {
+            return false;
+        }
+        if (file.equals(dir)) {
+            return true;
+        }
+        return isInSubDirectory(dir, file.getParentFile());
     }
 
     /**
