@@ -75,7 +75,7 @@ public isolated client class Client {
         if self.clientAuthHandler is ClientAuthHandler {
             enrichedHeaders = check enrichHeaders(<ClientAuthHandler>self.clientAuthHandler, headers);
         }
-        if (retryConfig is RetryConfiguration) {
+        if retryConfig is RetryConfiguration {
             return retryBlockingExecute(self, methodID, payload, enrichedHeaders, retryConfig);
         }
         return externExecuteSimpleRPC(self, methodID, payload, enrichedHeaders);
@@ -145,10 +145,10 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
 
     while (currentRetryCount <= retryCount) {
         var result = externExecuteSimpleRPC(grpcClient, methodID, payload, headers);
-        if (result is [anydata, map<string|string[]>]) {
+        if result is [anydata, map<string|string[]>] {
             return result;
         } else {
-            if (!(checkErrorForRetry(result, errorTypes))) {
+            if !(checkErrorForRetry(result, errorTypes)) {
                 return result;
             } else {
                 cause = result;
@@ -159,7 +159,7 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
         interval = (newInterval > maxInterval) ? maxInterval : newInterval;
         currentRetryCount += 1;
     }
-    if (cause is error) {
+    if cause is error {
         return error AllRetryAttemptsFailed("Maximum retry attempts completed without getting a result", cause);
     } else {
         return error AllRetryAttemptsFailed("Maximum retry attempts completed without getting a result");
@@ -168,7 +168,7 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
 
 isolated function generateMethodId(string? pkgName, string svcName, string rpcName) returns string {
     string methodID;
-    if (pkgName is ()) {
+    if pkgName is () {
        methodID = svcName + "/" + rpcName;
     } else {
         methodID = pkgName + "." + svcName + "/" + rpcName;
@@ -196,11 +196,11 @@ isolated function initClientAuthHandler(ClientAuthConfig authConfig) returns Cli
 
 // Enriches the request using the relevant client auth handler
 isolated function enrichHeaders(ClientAuthHandler clientAuthHandler, map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
-    if (clientAuthHandler is ClientBasicAuthHandler) {
+    if clientAuthHandler is ClientBasicAuthHandler {
         return clientAuthHandler.enrich(headers);
-    } else if (clientAuthHandler is ClientBearerTokenAuthHandler) {
+    } else if clientAuthHandler is ClientBearerTokenAuthHandler {
         return clientAuthHandler.enrich(headers);
-    } else if (clientAuthHandler is ClientSelfSignedJwtAuthHandler) {
+    } else if clientAuthHandler is ClientSelfSignedJwtAuthHandler {
         return clientAuthHandler.enrich(headers);
     } else {
         // Here, `clientAuthHandler` is `ClientOAuth2Handler`
