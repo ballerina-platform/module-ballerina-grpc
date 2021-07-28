@@ -23,6 +23,7 @@ public isolated client class Client {
 
     private final readonly & ClientConfiguration config;
     private string url;
+    private final ClientAuthHandler? clientAuthHandler;
 
     # Gets invoked to initialize the endpoint. During the initialization, the configurations provided through the `config`
     # record are used for the endpoint initialization.
@@ -36,6 +37,11 @@ public isolated client class Client {
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.config = config.cloneReadOnly();
         self.url = url;
+        if config.auth is ClientAuthConfig {
+            self.clientAuthHandler = initClientAuthHandler(<ClientAuthConfig>config.auth);
+        } else {
+            self.clientAuthHandler = ();
+        }
         return externInit(self, self.url, self.config, globalGrpcClientConnPool);
     }
 
@@ -65,10 +71,14 @@ public isolated client class Client {
     isolated remote function executeSimpleRPC(string methodID, anydata payload, map<string|string[]> headers = {})
                                    returns ([anydata, map<string|string[]>]|Error) {
         var retryConfig = self.config.retryConfiguration;
-        if (retryConfig is RetryConfiguration) {
-            return retryBlockingExecute(self, methodID, payload, headers, retryConfig);
+        map<string|string[]> enrichedHeaders = headers;
+        if self.clientAuthHandler is ClientAuthHandler {
+            enrichedHeaders = check enrichHeaders(<ClientAuthHandler>self.clientAuthHandler, headers);
         }
-        return externExecuteSimpleRPC(self, methodID, payload, headers);
+        if retryConfig is RetryConfiguration {
+            return retryBlockingExecute(self, methodID, payload, enrichedHeaders, retryConfig);
+        }
+        return externExecuteSimpleRPC(self, methodID, payload, enrichedHeaders);
     }
 
     # Calls when executing a server streaming call with a gRPC service.
@@ -82,7 +92,11 @@ public isolated client class Client {
     # + return - A `stream<anydata, grpc:Error?>` or a `grpc:Error` when an error occurs while sending the request
     isolated remote function executeServerStreaming(string methodID, anydata payload, map<string|string[]> headers = {})
                                     returns [stream<anydata, Error?>, map<string|string[]>]|Error {
-         return externExecuteServerStreaming(self, methodID, payload, headers);
+        map<string|string[]> enrichedHeaders = headers;
+        if self.clientAuthHandler is ClientAuthHandler {
+            enrichedHeaders = check enrichHeaders(<ClientAuthHandler>self.clientAuthHandler, headers);
+        }
+        return externExecuteServerStreaming(self, methodID, payload, enrichedHeaders);
     }
 
     # Calls when executing a client streaming call with a gRPC service.
@@ -94,7 +108,11 @@ public isolated client class Client {
     # + headers - Optional headers parameter. The header value are passed only if needed. The default value is `()`
     # + return - A `grpc:StreamingClient` object or a `grpc:Error` when an error occurs
     isolated remote function executeClientStreaming(string methodID, map<string|string[]> headers = {}) returns StreamingClient|Error {
-        return externExecuteClientStreaming(self, methodID, headers);
+        map<string|string[]> enrichedHeaders = headers;
+        if self.clientAuthHandler is ClientAuthHandler {
+            enrichedHeaders = check enrichHeaders(<ClientAuthHandler>self.clientAuthHandler, headers);
+        }
+        return externExecuteClientStreaming(self, methodID, enrichedHeaders);
     }
 
 
@@ -107,7 +125,11 @@ public isolated client class Client {
     # + headers - Optional headers parameter. The header value are passed only if needed. The default value is `()`
     # + return - A `grpc:StreamingClient` object or a `grpc:Error` when an error occurs
     isolated remote function executeBidirectionalStreaming(string methodID, map<string|string[]> headers = {}) returns StreamingClient|Error {
-        return externExecuteBidirectionalStreaming(self, methodID, headers);
+        map<string|string[]> enrichedHeaders = headers;
+        if self.clientAuthHandler is ClientAuthHandler {
+            enrichedHeaders = check enrichHeaders(<ClientAuthHandler>self.clientAuthHandler, headers);
+        }
+        return externExecuteBidirectionalStreaming(self, methodID, enrichedHeaders);
     }
 }
 
@@ -123,10 +145,10 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
 
     while (currentRetryCount <= retryCount) {
         var result = externExecuteSimpleRPC(grpcClient, methodID, payload, headers);
-        if (result is [anydata, map<string|string[]>]) {
+        if result is [anydata, map<string|string[]>] {
             return result;
         } else {
-            if (!(checkErrorForRetry(result, errorTypes))) {
+            if !(checkErrorForRetry(result, errorTypes)) {
                 return result;
             } else {
                 cause = result;
@@ -137,7 +159,7 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
         interval = (newInterval > maxInterval) ? maxInterval : newInterval;
         currentRetryCount += 1;
     }
-    if (cause is error) {
+    if cause is error {
         return error AllRetryAttemptsFailed("Maximum retry attempts completed without getting a result", cause);
     } else {
         return error AllRetryAttemptsFailed("Maximum retry attempts completed without getting a result");
@@ -146,12 +168,44 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
 
 isolated function generateMethodId(string? pkgName, string svcName, string rpcName) returns string {
     string methodID;
-    if (pkgName is ()) {
+    if pkgName is () {
        methodID = svcName + "/" + rpcName;
     } else {
         methodID = pkgName + "." + svcName + "/" + rpcName;
     }
     return methodID;
+}
+
+// Initialize the client auth handler based on the provided configurations
+isolated function initClientAuthHandler(ClientAuthConfig authConfig) returns ClientAuthHandler {
+    if authConfig is CredentialsConfig {
+        ClientBasicAuthHandler handler = new(authConfig);
+        return handler;
+    } else if authConfig is BearerTokenConfig {
+        ClientBearerTokenAuthHandler handler = new(authConfig);
+        return handler;
+    } else if authConfig is JwtIssuerConfig {
+        ClientSelfSignedJwtAuthHandler handler = new(authConfig);
+        return handler;
+    } else {
+        // Here, `authConfig` is `OAuth2GrantConfig`
+        ClientOAuth2Handler handler = new(authConfig);
+        return handler;
+    }
+}
+
+// Enriches the request using the relevant client auth handler
+isolated function enrichHeaders(ClientAuthHandler clientAuthHandler, map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
+    if clientAuthHandler is ClientBasicAuthHandler {
+        return clientAuthHandler.enrich(headers);
+    } else if clientAuthHandler is ClientBearerTokenAuthHandler {
+        return clientAuthHandler.enrich(headers);
+    } else if clientAuthHandler is ClientSelfSignedJwtAuthHandler {
+        return clientAuthHandler.enrich(headers);
+    } else {
+        // Here, `clientAuthHandler` is `ClientOAuth2Handler`
+        return clientAuthHandler->enrich(headers);
+    }
 }
 
 isolated function externInit(Client clientEndpoint, string url, ClientConfiguration config, PoolConfiguration
@@ -213,12 +267,14 @@ public type RetryConfiguration record {|
 # + secureSocket - SSL/TLS related options
 # + compression - Specifies the way of handling compression (`accept-encoding`) header
 # + retryConfiguration - Configures the retry functionality
+# + auth - Configurations related to client authentication
 public type ClientConfiguration record {|
     decimal timeout = 60;
     PoolConfiguration? poolConfig = ();
     ClientSecureSocket? secureSocket = ();
     Compression compression = COMPRESSION_AUTO;
     RetryConfiguration? retryConfiguration = ();
+    ClientAuthConfig? auth = ();
 |};
 
 # Configurations for facilitating secure communication with a remote gRPC endpoint.

@@ -135,6 +135,23 @@ service "helloWorld55" on ep55WithScopes {
     remote function hello55UnaryWithReturn(string value) returns string|error? {
         return value;
     }
+
+    remote function hello55ServerStreaming(HelloWorld55StringCaller caller, string value) returns error? {
+        check caller->sendString(value + " 1");
+        check caller->sendString(value + " 2");
+        check caller->complete();
+    }
+
+    remote function hello55ClientStreaming(HelloWorld55StringCaller caller, stream<string, error?> clientStream) returns error? {
+        var value1 = clientStream.next();
+        var value2 = clientStream.next();
+        if value1 is error || value1 is () || value2 is error || value2 is () {
+            check caller->sendError(error Error("Invalid request"));
+        } else {
+            check caller->sendString(value1["value"] + " " + value2["value"]);
+        }
+        check caller->complete();
+    }
 }
 
 @ServiceConfig {
