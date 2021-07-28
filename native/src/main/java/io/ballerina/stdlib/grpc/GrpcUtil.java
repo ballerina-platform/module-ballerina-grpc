@@ -145,13 +145,24 @@ public class GrpcUtil {
         boolean enable = secureSocket.getBooleanValue(SECURESOCKET_CONFIG_DISABLE_SSL);
         if (!enable) {
             senderConfiguration.disableSsl();
+            BMap<BString, Object> key = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_KEY);
+            if (key != null) {
+                evaluateKeyField(key, senderConfiguration);
+            }
             return;
         }
         Object cert = secureSocket.get(SECURESOCKET_CONFIG_CERT);
         if (cert == null) {
-            throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
-                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Need to configure " +
-                            "'crypto:TrustStore' or 'cert' with client SSL certificates file.")));
+            BMap<BString, Object> key = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_KEY);
+            if (key != null) {
+                senderConfiguration.useJavaDefaults();
+            } else {
+                throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
+                        .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Need to configure " +
+                                "'crypto:TrustStore' or 'cert' with client SSL certificates file.")));
+            }
+        } else {
+            evaluateCertField(cert, senderConfiguration);
         }
         evaluateCertField(cert, senderConfiguration);
         BMap<BString, Object> key = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_KEY);
