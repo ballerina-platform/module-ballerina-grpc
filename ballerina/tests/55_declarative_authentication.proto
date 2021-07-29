@@ -22,6 +22,8 @@ service helloWorld55 {
   rpc hello55UnaryWithReturn (google.protobuf.StringValue) returns (google.protobuf.StringValue);
   rpc hello55BiDiWithCaller (stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
   rpc hello55BiDiWithReturn (stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
+  rpc hello55ServerStreaming (google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
+  rpc hello55ClientStreaming (stream google.protobuf.StringValue) returns (google.protobuf.StringValue);
 }
 
 service helloWorld55EmptyScope {
