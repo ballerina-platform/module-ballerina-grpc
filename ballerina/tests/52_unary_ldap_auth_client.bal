@@ -14,125 +14,140 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/jballerina.java;
 import ballerina/test;
 
 @test:Config {
-    enable: false,
+    enable: true,
     groups: ["ldap"]
 }
 isolated function testStringValueReturnWithLdapAuth() returns Error? {
-    HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
-    map<string|string[]> requestHeaders = {};
+    if !isWindowsEnvironment() {
+        HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
+        map<string|string[]> requestHeaders = {};
 
-    CredentialsConfig config = {
-        username: "alice",
-        password: "alice@123"
-    };
+        CredentialsConfig config = {
+            username: "alice",
+            password: "alice@123"
+        };
 
-    ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
+        ClientBasicAuthHandler handler = new (config);
+        map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+        if result is ClientAuthError {
+            test:assertFail(msg = "Test Failed! " + result.message());
+        } else {
+            requestHeaders = result;
+        }
 
-    ContextString requestMessage = {
-        content: "WSO2",
-        headers: requestHeaders
-    };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is Error {
-        test:assertFail(msg = response.message());
-    } else {
-        test:assertEquals(response, "Hello WSO2");
+        ContextString requestMessage = {
+            content: "WSO2",
+            headers: requestHeaders
+        };
+        var response = helloWorldEp->testStringValueReturn(requestMessage);
+        if response is Error {
+            test:assertFail(msg = response.message());
+        } else {
+            test:assertEquals(response, "Hello WSO2");
+        }
     }
 }
 
 @test:Config {
-    enable: false,
+    enable: true,
     groups: ["ldap"]
 }
 isolated function testStringValueReturnWithInvalidLdapAuth() returns Error? {
-    HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
-    map<string|string[]> requestHeaders = {};
+    if !isWindowsEnvironment() {
+        HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
+        map<string|string[]> requestHeaders = {};
 
-    CredentialsConfig config = {
-        username: "admin",
-        password: "1234"
-    };
+        CredentialsConfig config = {
+            username: "admin",
+            password: "1234"
+        };
 
-    ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
+        ClientBasicAuthHandler handler = new (config);
+        map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+        if result is ClientAuthError {
+            test:assertFail(msg = "Test Failed! " + result.message());
+        } else {
+            requestHeaders = result;
+        }
 
-    ContextString requestMessage = {
-        content: "WSO2",
-        headers: requestHeaders
-    };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is Error {
-        test:assertEquals(response.message(), "Failed to authenticate username '" + config.username + "' with LDAP user store.");
-    } else {
-        test:assertFail(msg = "Expected grpc:Error not found.");
+        ContextString requestMessage = {
+            content: "WSO2",
+            headers: requestHeaders
+        };
+        var response = helloWorldEp->testStringValueReturn(requestMessage);
+        if response is Error {
+            test:assertEquals(response.message(), "Failed to authenticate username '" + config.username + "' with LDAP user store.");
+        } else {
+            test:assertFail(msg = "Expected grpc:Error not found.");
+        }
     }
 }
 
 @test:Config {
-    enable: false,
+    enable: true,
     groups: ["ldap"]
 }
 isolated function testStringValueReturnWithEmptyLdapAuth() returns Error? {
-    HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
-    map<string|string[]> requestHeaders = {
-        "authorization": "Bearer "
-    };
+    if !isWindowsEnvironment() {
+        HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
+        map<string|string[]> requestHeaders = {
+            "authorization": "Bearer "
+        };
 
-    ContextString requestMessage = {
-        content: "WSO2",
-        headers: requestHeaders
-    };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is Error {
-        test:assertEquals(response.message(), "Empty authentication header.");
-    } else {
-        test:assertFail(msg = "Expected grpc:Error not found.");
+        ContextString requestMessage = {
+            content: "WSO2",
+            headers: requestHeaders
+        };
+        var response = helloWorldEp->testStringValueReturn(requestMessage);
+        if response is Error {
+            test:assertEquals(response.message(), "Empty authentication header.");
+        } else {
+            test:assertFail(msg = "Expected grpc:Error not found.");
+        }
     }
 }
 
 @test:Config {
-    enable: false,
+    enable: true,
     groups: ["ldap"]
 }
 isolated function testStringValueReturnWithUnauthorizedLdapAuth() returns Error? {
-    HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
-    map<string|string[]> requestHeaders = {};
+    if !isWindowsEnvironment() {
+        HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
+        map<string|string[]> requestHeaders = {};
 
-    CredentialsConfig config = {
-        username: "bob",
-        password: "bobgreen@123"
-    };
+        CredentialsConfig config = {
+            username: "bob",
+            password: "bobgreen@123"
+        };
 
-    ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
-    if result is ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
+        ClientBasicAuthHandler handler = new (config);
+        map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+        if result is ClientAuthError {
+            test:assertFail(msg = "Test Failed! " + result.message());
+        } else {
+            requestHeaders = result;
+        }
 
-    ContextString requestMessage = {
-        content: "WSO2",
-        headers: requestHeaders
-    };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is Error {
-        test:assertEquals(response.message(), "Permission denied");
-    } else {
-        test:assertFail(msg = "Expected grpc:Error not found.");
+        ContextString requestMessage = {
+            content: "WSO2",
+            headers: requestHeaders
+        };
+        var response = helloWorldEp->testStringValueReturn(requestMessage);
+        if response is Error {
+            test:assertEquals(response.message(), "Permission denied");
+        } else {
+            test:assertFail(msg = "Expected grpc:Error not found.");
+        }
     }
 }
+
+isolated function isWindowsEnvironment() returns boolean = @java:Method {
+    name: "isWindowsEnvironment",
+    'class: "io.ballerina.stdlib.grpc.testutils.EnvironmentTestUtils"
+} external;
+
