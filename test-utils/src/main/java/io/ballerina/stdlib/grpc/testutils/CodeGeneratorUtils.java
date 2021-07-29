@@ -34,7 +34,8 @@ import java.nio.file.Paths;
  */
 public class CodeGeneratorUtils {
 
-    public static void generateSourceCode(BString sProtoFilePath, BString sOutputDirPath, Object mode) {
+    public static void generateSourceCode(BString sProtoFilePath, BString sOutputDirPath,
+                                          Object mode,  Object sImportDirPath) {
 
         Class<?> grpcCmdClass;
         try {
@@ -42,12 +43,16 @@ public class CodeGeneratorUtils {
             GrpcCmd grpcCmd = (GrpcCmd) grpcCmdClass.newInstance();
             Path protoFilePath = Paths.get(sProtoFilePath.getValue());
             grpcCmd.setProtoPath(protoFilePath.toAbsolutePath().toString());
-            if (!sOutputDirPath.getValue().equals("")) {
+            if (!sOutputDirPath.getValue().isBlank()) {
                 Path outputDirPath = Paths.get(sOutputDirPath.getValue());
                 grpcCmd.setBalOutPath(outputDirPath.toAbsolutePath().toString());
             }
             if (mode instanceof BString) {
                 grpcCmd.setMode(((BString)mode).getValue());
+            }
+            if (sImportDirPath instanceof BString) {
+                Path importPath = Paths.get(((BString)sImportDirPath).getValue());
+                grpcCmd.setImportPath(importPath.toAbsolutePath().toString());
             }
             grpcCmd.execute();
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {

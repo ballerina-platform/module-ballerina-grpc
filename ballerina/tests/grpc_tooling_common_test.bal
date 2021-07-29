@@ -196,6 +196,28 @@ function testProtoDirectory() returns error? {
     test:assertEquals(readContent(expectedStubFilePath5), readContent(actualStubFilePath5));
 }
 
+@test:Config {enable:true}
+function testExternalImportPaths() returns error? {
+    string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, "external-imports", "myproj", "foo", "bar", "child.proto");
+    string importDirPath = check file:joinPath(PROTO_FILE_DIRECTORY, "external-imports", "myproj");
+    string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, "tool_test_external_imports");
+
+    string actualRootStubFilePath = check file:joinPath(outputDirPath, "child_pb.bal");
+    string actualDependentStubFilePath = check file:joinPath(outputDirPath, "parent_pb.bal");
+    string expectedRootStubFilePath = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_external_imports", "child_pb.bal");
+    string expectedDependentStubFilePath = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_external_imports", "parent_pb.bal");
+
+    generateSourceCode(protoFilePath, outputDirPath, "stubs", importDirPath);
+
+    test:assertTrue(check file:test(actualRootStubFilePath, file:EXISTS));
+    test:assertFalse(hasDiagnostics(actualRootStubFilePath));
+    test:assertEquals(readContent(expectedRootStubFilePath), readContent(actualRootStubFilePath));
+
+    test:assertTrue(check file:test(actualDependentStubFilePath, file:EXISTS));
+    test:assertFalse(hasDiagnostics(actualDependentStubFilePath));
+    test:assertEquals(readContent(expectedDependentStubFilePath), readContent(actualDependentStubFilePath));
+}
+
 function assertGeneratedDataTypeSources(string subDir, string protoFile, string stubFile, string outputDir) returns error? {
     string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
     string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
