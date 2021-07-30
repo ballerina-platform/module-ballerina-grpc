@@ -343,7 +343,7 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
     }
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testHello55LdapAuthWithEmptyScope() returns error? {
     if !isWindowsEnvironment() {
         service object {} helloWorld55EmptyScope = @ServiceConfig {auth: [ldapUserStoreconfig55EmptyScope]} 
