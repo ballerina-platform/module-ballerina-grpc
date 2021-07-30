@@ -45,6 +45,7 @@ import java.io.IOException;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
+import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BOOL_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BYTES_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_DOUBLE_MESSAGE;
@@ -304,6 +305,8 @@ public class ServicesBuilderUtils {
             return TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE);
         } else if (protoType.equals(DURATION_MESSAGE)) {
             return PredefinedTypes.TYPE_DECIMAL;
+        } else if (protoType.equals(STRUCT_MESSAGE)) {
+            return PredefinedTypes.TYPE_MAP;
         } else {
             return TypeCreator.createRecordType(protoType, module, 0, true,
                     TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
