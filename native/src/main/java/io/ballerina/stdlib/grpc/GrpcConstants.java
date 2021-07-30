@@ -131,6 +131,7 @@ public class GrpcConstants {
     public static final String WRAPPER_STRING_MESSAGE = "StringValue";
     public static final String WRAPPER_BYTES_MESSAGE = "BytesValue";
     public static final String DURATION_MESSAGE = "Duration";
+    public static final String STRUCT_MESSAGE = "Struct";
     public static final String IS_BIDI_STREAMING = "isBidiStreaming";
 
     // Server Streaming method resources.
