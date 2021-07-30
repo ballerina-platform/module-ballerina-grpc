@@ -19,8 +19,15 @@ syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/struct.proto";
 
+package struct;
+option java_package="grpc.java.tutorial.struct";
+option java_multiple_files = true;
+
 service StructService {
   rpc getStruct(google.protobuf.StringValue) returns (google.protobuf.Struct) {};
   rpc sendStruct(google.protobuf.Struct) returns (google.protobuf.StringValue) {};
   rpc exchangeStruct(google.protobuf.Struct) returns (google.protobuf.Struct) {};
+  rpc serverStreamStruct(google.protobuf.Struct) returns (stream google.protobuf.Struct) {};
+  rpc clientStreamStruct(stream google.protobuf.Struct) returns (google.protobuf.Struct) {};
+  rpc bidirectionalStreamStruct(stream google.protobuf.Struct) returns (stream google.protobuf.Struct) {};
 }
