@@ -22,7 +22,7 @@ function testHello55JWTAuthBiDiWithCaller() returns error? {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "write" },
+        customClaims: {"scope": "write"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -75,7 +75,7 @@ function testHello55JWTAuthBiDiWithCallerInvalidPermission() returns error? {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "read" },
+        customClaims: {"scope": "read"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -106,7 +106,7 @@ function testHello55JWTAuthBiDiWithReturn() returns error? {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "write" },
+        customClaims: {"scope": "write"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -118,7 +118,7 @@ function testHello55JWTAuthBiDiWithReturn() returns error? {
             }
         }
     };
-    ClientSelfSignedJwtAuthHandler handler = new(config);
+    ClientSelfSignedJwtAuthHandler handler = new (config);
     map<string|string[]> requestHeaders = {};
     requestHeaders = check handler.enrich(requestHeaders);
 
@@ -140,7 +140,7 @@ function testHello55JWTAuthUnary() returns error? {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "write" },
+        customClaims: {"scope": "write"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -187,7 +187,7 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "read" },
+        customClaims: {"scope": "read"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -209,19 +209,68 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
     }
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testHello55LdapAuth() returns error? {
-    CredentialsConfig config = {
-        username: "alice",
-        password: "alice@123"
-    };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
-    string|Error response = hClient->hello55UnaryWithReturn("Hello");
-    if response is Error {
-        test:assertFail(response.message());
-    } else {
-        test:assertEquals(response, "Hello");
+    if !isWindowsEnvironment() {
+        service object {} helloWorld55 = @ServiceConfig {auth: [ldapUserStoreconfig55WithScopes]} 
+        @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()} 
+        service object {
+
+            remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller, 
+            stream<string, Error?> clientStream) returns error? {
+                record {|string value;|}|Error? result = clientStream.next();
+                result = clientStream.next();
+                check caller->sendString("Hello");
+                check caller->complete();
+            }
+
+            remote function hello55BiDiWithReturn(stream<string, Error?> clientStream) 
+            returns stream<string, Error?>|error? {
+                return clientStream;
+            }
+
+            remote function hello55UnaryWithCaller(HelloWorld55StringCaller caller, string value) returns error? {
+                check caller->sendString(value);
+                check caller->complete();
+            }
+
+            remote function hello55UnaryWithReturn(string value) returns string|error? {
+                return value;
+            }
+
+            remote function hello55ServerStreaming(HelloWorld55StringCaller caller, string value) returns error? {
+                check caller->sendString(value + " 1");
+                check caller->sendString(value + " 2");
+                check caller->complete();
+            }
+
+            remote function hello55ClientStreaming(HelloWorld55StringCaller caller, stream<string, error?> clientStream) returns error? {
+                var value1 = clientStream.next();
+                var value2 = clientStream.next();
+                if value1 is error || value1 is () || value2 is error || value2 is () {
+                    check caller->sendError(error Error("Invalid request"));
+                } else {
+                    check caller->sendString(value1["value"] + " " + value2["value"]);
+                }
+                check caller->complete();
+            }
+        };
+        check ep55WithLdapAndScopes.attach(helloWorld55, "helloWorld55");
+        check ep55WithLdapAndScopes.'start();
+        CredentialsConfig config = {
+            username: "alice",
+            password: "alice@123"
+        };
+
+        helloWorld55Client hClient = check new ("http://localhost:9256", {auth: config});
+        string|Error response = hClient->hello55UnaryWithReturn("Hello");
+        if response is Error {
+            test:assertFail(response.message());
+        } else {
+            test:assertEquals(response, "Hello");
+        }
+        check ep55WithLdapAndScopes.immediateStop();
     }
 }
 
@@ -250,10 +299,10 @@ function testHello55OAuth2Auth() returns error? {
         scopes: ["write"],
         clientConfig: {
             secureSocket: {
-               cert: {
-                   path: TRUSTSTORE_PATH,
-                   password: "ballerina"
-               }
+                cert: {
+                    path: TRUSTSTORE_PATH,
+                    password: "ballerina"
+                }
             }
         }
     };
@@ -294,19 +343,33 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
     }
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testHello55LdapAuthWithEmptyScope() returns error? {
-    CredentialsConfig config = {
-        username: "alice",
-        password: "alice@123"
-    };
+    if !isWindowsEnvironment() {
+        service object {} helloWorld55EmptyScope = @ServiceConfig {auth: [ldapUserStoreconfig55EmptyScope]} 
+        @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()} 
+        service object {
 
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
-    string|Error response = hClient->hello55EmptyScope("Hello");
-    if response is Error {
-        test:assertFail(response.message());
-    } else {
-        test:assertEquals(response, "Hello");
+            remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) returns error? {
+                check caller->sendString(value);
+                check caller->complete();
+            }
+        };
+        check ep55WithLdapAndEmptyScope.attach(helloWorld55EmptyScope, "helloWorld55EmptyScope");
+        check ep55WithLdapAndEmptyScope.'start();
+
+        CredentialsConfig config = {
+            username: "alice",
+            password: "alice@123"
+        };
+        helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9257", {auth: config});
+        string|Error response = hClient->hello55EmptyScope("Hello");
+        if response is Error {
+            test:assertFail(response.message());
+        } else {
+            test:assertEquals(response, "Hello");
+        }
+        check ep55WithLdapAndEmptyScope.immediateStop();
     }
 }
 
@@ -334,10 +397,10 @@ function testHello55OAuth2AuthWithEmptyScope() returns error? {
         clientSecret: "9205371918321623741",
         clientConfig: {
             secureSocket: {
-               cert: {
-                   path: TRUSTSTORE_PATH,
-                   password: "ballerina"
-               }
+                cert: {
+                    path: TRUSTSTORE_PATH,
+                    password: "ballerina"
+                }
             }
         }
     };
@@ -359,10 +422,10 @@ function testHello55ServerStreamingOAuth2Auth() returns error? {
         clientSecret: "9205371918321623741",
         clientConfig: {
             secureSocket: {
-               cert: {
-                   path: TRUSTSTORE_PATH,
-                   password: "ballerina"
-               }
+                cert: {
+                    path: TRUSTSTORE_PATH,
+                    password: "ballerina"
+                }
             }
         }
     };
@@ -393,10 +456,10 @@ function testHello55ClientStreamingOAuth2Auth() returns error? {
         clientSecret: "9205371918321623741",
         clientConfig: {
             secureSocket: {
-               cert: {
-                   path: TRUSTSTORE_PATH,
-                   password: "ballerina"
-               }
+                cert: {
+                    path: TRUSTSTORE_PATH,
+                    password: "ballerina"
+                }
             }
         }
     };

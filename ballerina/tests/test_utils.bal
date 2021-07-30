@@ -82,3 +82,8 @@ public function readContent(string filePath) returns string = @java:Method {
     'class: "io.ballerina.stdlib.grpc.testutils.CodeGeneratorUtils",
     name: "readContent"
 } external;
+
+isolated function isWindowsEnvironment() returns boolean = @java:Method {
+    name: "isWindowsEnvironment",
+    'class: "io.ballerina.stdlib.grpc.testutils.EnvironmentTestUtils"
+} external;
