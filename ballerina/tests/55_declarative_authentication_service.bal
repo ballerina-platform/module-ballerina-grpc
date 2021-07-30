@@ -16,6 +16,8 @@
 
 listener Listener ep55WithScopes = new (9155);
 listener Listener ep55EmptyScope = new (9255);
+listener Listener ep55WithLdapAndScopes = new (9256);
+listener Listener ep55WithLdapAndEmptyScope = new (9257);
 
 JwtValidatorConfig jwtAuthConfig55 = {
     issuer: "wso2",
@@ -100,22 +102,22 @@ FileUserStoreConfigWithScopes fileUserStoreConfig55WithScopes = {
     scopes: "write"
 };
 
-FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope  = {
+FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope = {
     fileUserStoreConfig: {}
 };
 
 @ServiceConfig {
     auth: [
-        jwtAuthConfig55WithScopes,
-        oauth2config55WithScopes,
+        jwtAuthConfig55WithScopes, 
+        oauth2config55WithScopes, 
         fileUserStoreConfig55WithScopes
     ]
 }
 @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()}
 service "helloWorld55" on ep55WithScopes {
 
-    remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
-     stream<string, Error?> clientStream) returns error? {
+    remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller, 
+    stream<string, Error?> clientStream) returns error? {
         record {|string value;|}|Error? result = clientStream.next();
         result = clientStream.next();
         check caller->sendString("Hello");
@@ -156,8 +158,8 @@ service "helloWorld55" on ep55WithScopes {
 
 @ServiceConfig {
     auth: [
-        jwtAuthConfig55EmptyScope,
-        oauth2config55EmptyScope,
+        jwtAuthConfig55EmptyScope, 
+        oauth2config55EmptyScope, 
         fileUserStoreConfig55EmptyScope
     ]
 }
