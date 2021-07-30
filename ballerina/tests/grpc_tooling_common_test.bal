@@ -191,9 +191,9 @@ function testProtoDirectory() returns error? {
     test:assertTrue(check file:test(actualStubFilePath4, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath4));
 
-    //test:assertTrue(check file:test(actualStubFilePath5, file:EXISTS));
-    //test:assertFalse(hasDiagnostics(actualStubFilePath5));
-    //test:assertEquals(readContent(expectedStubFilePath5), readContent(actualStubFilePath5));
+    test:assertTrue(check file:test(actualStubFilePath5, file:EXISTS));
+    test:assertFalse(hasDiagnostics(actualStubFilePath5));
+    test:assertEquals(readContent(expectedStubFilePath5), readContent(actualStubFilePath5));
 }
 
 @test:Config {enable:true}
