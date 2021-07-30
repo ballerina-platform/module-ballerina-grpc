@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/jballerina.java;
 import ballerina/test;
 
 @test:Config {
@@ -145,9 +144,4 @@ isolated function testStringValueReturnWithUnauthorizedLdapAuth() returns Error?
         }
     }
 }
-
-isolated function isWindowsEnvironment() returns boolean = @java:Method {
-    name: "isWindowsEnvironment",
-    'class: "io.ballerina.stdlib.grpc.testutils.EnvironmentTestUtils"
-} external;
 
