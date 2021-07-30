@@ -202,7 +202,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_13");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
     @Test
