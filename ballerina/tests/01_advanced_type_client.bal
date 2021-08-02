@@ -29,7 +29,7 @@ type StockNamesTypedesc typedesc<StockNames>;
 function testHttpsClientInitWithoutSecureSocketConfig() {
     HelloWorldClient|Error errorClient = new("https://localhost:9091");
     if errorClient is Error {
-        test:assertEquals(errorClient.message(), "To enable https you need to configure secureSocket record");
+        test:assertEquals(errorClient.message(), "The secureSocket configuration should be provided to establish an HTTPS connection");
     } else {
         test:assertFail("Secure client initialization without secure socket should fail.");
     }
