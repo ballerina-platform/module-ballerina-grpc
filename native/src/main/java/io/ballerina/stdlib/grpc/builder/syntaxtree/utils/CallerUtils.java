@@ -86,6 +86,8 @@ public class CallerUtils {
                 valueCap = "Timestamp";
             } else if (value.equals("time:Seconds")) {
                 valueCap = "Duration";
+            } else if (value.equals("map<anydata>")) {
+                valueCap = "Struct";
             } else {
                 valueCap = capitalize(value);
             }
