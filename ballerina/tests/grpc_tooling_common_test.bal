@@ -122,6 +122,22 @@ function testHelloWorldWithDurationType2() {
 }
 
 @test:Config {enable:true}
+function testHelloWorldWithStructType1() {
+    var result = assertGeneratedSources("data-types", "struct_type1.proto", "struct_type1_pb.bal", "StructHandler_sample_service.bal", "StructHandler_sample_client.bal", "tool_test_data_type_17");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
+}
+
+@test:Config {enable:true}
+function testHelloWorldWithStructType2() {
+    var result = assertGeneratedSources("data-types", "struct_type2.proto", "struct_type2_pb.bal", "StructHandler_sample_service.bal", "StructHandler_sample_client.bal", "tool_test_data_type_18");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
+}
+
+@test:Config {enable:true}
 function testHelloWorldChild() {
     var result1 = assertGeneratedDataTypeSources("data-types", "child.proto", "child_pb.bal", "tool_test_data_type_14");
     if result1 is error {
