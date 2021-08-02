@@ -21,65 +21,43 @@ listener Listener ep57 = new (9157);
 @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_57, descMap: getDescriptorMap57()}
 service "StructService" on ep57 {
 
-    remote function getStruct(string value) returns map<anydata>|error {
-        map<anydata> res = {
-            "r": -242.214,
-            "t": false,
-            "u": 123473623,
-            "v": true,
-            "w": 12.085,
-            "x": "Test String",
-            "y": 150,
-            "z": [10, "Test String 2", true, -102.354, [1, "Test String 3", ["Test String 4", false, -1249.124]]]
-        };
-        return res;
+    remote function getStructType1(string value) returns map<anydata>|error {
+        return sendingStruct;
     }
 
-    remote function sendStruct(map<anydata> value) returns string|error {
-        map<anydata> expected = {
-            "r": -242.214,
-            "t": false,
-            "u": 123473623.0,
-            "v": true,
-            "w": 12.085,
-            "x": "Test String",
-            "y": 150.0,
-            "z": [10.0, "Test String 2", true, -102.354, [1.0, "Test String 3", ["Test String 4", false, -1249.124]]]
-        };
-        if expected == value {
+    remote function getStructType2(string value) returns StructMsg|error {
+        return sendingStructMsg;
+    }
+
+    remote function sendStructType1(map<anydata> value) returns string|error {
+        if expectedStruct == value {
             return "OK";
         }
-        return value.toString();
+        return error Error("Type mismatch");
     }
 
-    remote function exchangeStruct(map<anydata> value) returns map<anydata>|error {
-        map<anydata> expected = {
-            "r": -242.214,
-            "t": false,
-            "u": 123473623.0,
-            "v": true,
-            "w": 12.085,
-            "x": "Test String",
-            "y": 150.0,
-            "z": [10.0, "Test String 2", true, -102.354, [1.0, "Test String 3", ["Test String 4", false, -1249.124]]]
-        };
-        if expected == value {
-            map<anydata> sending = {
-                "r": -242.214,
-                "t": false,
-                "u": 123473623,
-                "v": true,
-                "w": 12.085,
-                "x": "Test String",
-                "y": 150,
-                "z": [10, "Test String 2", true, -102.354, [1, "Test String 3", ["Test String 4", false, -1249.124]]]
-            };
-            return sending;
+    remote function sendStructType2(StructMsg value) returns string|error {
+        if expectedStructMsg == value {
+            return "OK";
         }
-        return value;
+        return error Error("Type mismatch");
     }
 
-    remote function serverStreamStruct(map<anydata> value) returns stream<map<anydata>, error?> {
+    remote function exchangeStructType1(map<anydata> value) returns map<anydata>|error {
+        if expectedStruct == value {
+            return sendingStruct;
+        }
+        return error Error("Type mismatch");
+    }
+
+    remote function exchangeStructType2(StructMsg value) returns StructMsg|error {
+        if expectedStructMsg == value {
+            return sendingStructMsg;
+        }
+        return error Error("Type mismatch");
+    }
+
+    remote function serverStreamStructType1(map<anydata> value) returns stream<map<anydata>, error?> {
         map<anydata>[] structArr = [
             {
                 "key1": "Hello",
@@ -92,12 +70,35 @@ service "StructService" on ep57 {
                 "key3": [1, "Hello"]
             },
             {},
-            value
+            value,
+            sendingStruct
         ];
         return structArr.toStream();
     }
 
-    remote function clientStreamStruct(stream<map<anydata>, error?> clientStream) returns map<anydata>|error {
+    remote function serverStreamStructType2(StructMsg value) returns stream<StructMsg, error?> {
+        StructMsg structmsg1 = {
+            name: "SM2",
+            struct: {
+                "key1": "WSO2",
+                "key2": -25,
+                "key3": [1, "Hello"]
+            }
+        };
+        StructMsg structmsg2 = {
+            name: "SM3",
+            struct: {}
+        };
+        StructMsg[] structArr = [
+            structmsg1,
+            structmsg2,
+            value,
+            sendingStructMsg
+        ];
+        return structArr.toStream();
+    }
+
+    remote function clientStreamStructType1(stream<map<anydata>, error?> clientStream) returns map<anydata>|error {
         int count = 0;
         map<anydata> response = {};
         error? e = clientStream.forEach(function(map<anydata> val) {
@@ -107,13 +108,39 @@ service "StructService" on ep57 {
         if e is error {
             return error Error("Incorrect request data");
         } else {
-            return <map<anydata>>response["0"];
+            return response;
         }
     }
 
-    remote function bidirectionalStreamStruct(stream<map<anydata>, error?> clientStream) returns stream<map<anydata>, error?> {
+    remote function clientStreamStructType2(stream<StructMsg, error?> clientStream) returns StructMsg|error {
+        int count = 0;
+        StructMsg response = {
+            name: "Response",
+            struct: {}
+        };
+        error? e = clientStream.forEach(function(map<anydata> val) {
+            response.struct[count.toString()] = val;
+            count += 1;
+        });
+        io:println(response);
+        if e is error {
+            return error Error("Incorrect request data");
+        } else {
+            return response;
+        }
+    }
+
+    remote function bidirectionalStreamStructType1(stream<map<anydata>, error?> clientStream) returns stream<map<anydata>, error?> {
         map<anydata>[] response = [];
         error? e = clientStream.forEach(function(map<anydata> val) {
+            response.push(val);
+        });
+        return response.toStream();
+    }
+
+    remote function bidirectionalStreamStructType2(stream<StructMsg, error?> clientStream) returns stream<StructMsg, error?> {
+        StructMsg[] response = [];
+        error? e = clientStream.forEach(function(StructMsg val) {
             response.push(val);
         });
         return response.toStream();

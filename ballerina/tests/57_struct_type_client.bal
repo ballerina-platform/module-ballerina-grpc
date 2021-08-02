@@ -15,70 +15,101 @@
 // under the License.
 
 import ballerina/test;
-import ballerina/io;
 
 StructServiceClient structClient = check new ("http://localhost:9157");
 
- @test:Config{}
- function testGetStruct() returns error? {
-     map<anydata> res = check structClient->getStruct("Hello");
-     map<anydata> expected = {
-         "r": -242.214,
-         "t": false,
-         "u": 123473623.0,
-         "v": true,
-         "w": 12.085,
-         "x": "Test String",
-         "y": 150.0,
-         "z": [10.0, "Test String 2", true, -102.354, [1.0, "Test String 3", ["Test String 4", false, -1249.124]]]
-     };
-     test:assertEquals(res, expected);
- }
+map<anydata> expectedStruct = {
+    "q": {
+        "a": 1250.0,
+        "b": "Hey",
+        "c": {
+            "p": "Hello",
+            "q": 1.245,
+            "r": false,
+            "s": -200.0,
+            "t": [125.0, "WSO2", true]
+        }
+    },
+    "r": -242.214,
+    "t": false,
+    "u": 123473.0,
+    "v": true,
+    "w": 12.085,
+    "x": "Test String",
+    "y": 150.0,
+    "z": [10.0, "Test String 2", {"a": 12.45, "b": "Hello"}, true, -102.354, [1.0, "Test String 3", ["Test String 4", false, -1249.124]]]
+};
 
- @test:Config{}
- function testSendStruct() returns error? {
-     map<anydata> sending = {
-         "r": -242.214,
-         "t": false,
-         "u": 123473623,
-         "v": true,
-         "w": 12.085,
-         "x": "Test String",
-         "y": 150,
-         "z": [10, "Test String 2", true, -102.354, [1, "Test String 3", ["Test String 4", false, -1249.124]]]
-     };
-     string res = check structClient->sendStruct(sending);
-     test:assertEquals(res, "OK");
- }
+map<anydata> sendingStruct = {
+    "q": {
+        "a": 1250,
+        "b": "Hey",
+        "c": {
+            "p": "Hello",
+            "q": 1.245,
+            "r": false,
+            "s": -200,
+            "t": [125, "WSO2", true]
+        }
+    },
+    "r": -242.214,
+    "t": false,
+    "u": 123473,
+    "v": true,
+    "w": 12.085,
+    "x": "Test String",
+    "y": 150,
+    "z": [10, "Test String 2", {"a": 12.45, "b": "Hello"}, true, -102.354, [1, "Test String 3", ["Test String 4", false, -1249.124]]]
+};
 
- @test:Config{}
- function testExchangeStruct() returns error? {
-     map<anydata> sending = {
-         "r": -242.214,
-         "t": false,
-         "u": 123473623,
-         "v": true,
-         "w": 12.085,
-         "x": "Test String",
-         "y": 150,
-         "z": [10, "Test String 2", true, -102.354, [1, "Test String 3", ["Test String 4", false, -1249.124]]]
-     };
-     map<anydata> expected = {
-         "r": -242.214,
-         "t": false,
-         "u": 123473623.0,
-         "v": true,
-         "w": 12.085,
-         "x": "Test String",
-         "y": 150.0,
-         "z": [10.0, "Test String 2", true, -102.354, [1.0, "Test String 3", ["Test String 4", false, -1249.124]]]
-     };
-     map<anydata> res = check structClient->exchangeStruct(sending);
-     test:assertEquals(res, expected);
- }
+StructMsg expectedStructMsg = {
+    name: "StructMsg",
+    struct: expectedStruct
+};
+
+StructMsg sendingStructMsg = {
+    name: "StructMsg",
+    struct: sendingStruct
+};
 
 @test:Config{}
-function testServerStreamStruct() returns error? {
+function testGetStructType1() returns error? {
+    map<anydata> res = check structClient->getStructType1("Hello");
+    test:assertEquals(res, expectedStruct);
+}
+
+@test:Config{}
+function testGetStructType2() returns error? {
+    StructMsg res = check structClient->getStructType2("Hello");
+    test:assertEquals(res, expectedStructMsg);
+}
+
+@test:Config{}
+function testSendStructType1() returns error? {
+    string res = check structClient->sendStructType1(sendingStruct);
+    test:assertEquals(res, "OK");
+}
+
+@test:Config{}
+function testSendStructType2() returns error? {
+    string res = check structClient->sendStructType2(sendingStructMsg);
+    test:assertEquals(res, "OK");
+}
+
+@test:Config{}
+function testExchangeStructType1() returns error? {
+    map<anydata> res = check structClient->exchangeStructType1(sendingStruct);
+    test:assertEquals(res, expectedStruct);
+}
+
+@test:Config{}
+function testExchangeStructType2() returns error? {
+    StructMsg res = check structClient->exchangeStructType2(sendingStructMsg);
+    test:assertEquals(res, expectedStructMsg);
+}
+
+@test:Config{}
+function testServerStreamStructType1() returns error? {
     map<anydata>[] expectedStructArr = [
         {
             "key1": "Hello",
@@ -93,10 +124,11 @@ function testServerStreamStruct() returns error? {
         {},
         {
             "key": [1.0, ["Hello"], false, ["WSO2"]]
-        }
+        },
+        expectedStruct
     ];
-    
-    var result = structClient->serverStreamStruct(expectedStructArr[3]);
+
+    var result = structClient->serverStreamStructType1(expectedStructArr[3]);
     if result is Error {
         test:assertFail(result.message());
     } else {
@@ -111,8 +143,145 @@ function testServerStreamStruct() returns error? {
 }
 
 @test:Config{}
-function testClientStreamStruct() returns error? {
-    ClientStreamStructStreamingClient streamClient = check structClient->clientStreamStruct();
+function testServerStreamStructType2() returns error? {
+    StructMsg exStructmsg1 = {
+        name: "SM1",
+        struct: {
+            "key1": "Hello",
+            "key2": 25.0,
+            "key3": false
+        }
+    };
+    StructMsg exStructmsg2 = {
+        name: "SM2",
+        struct: {
+            "key1": "WSO2",
+            "key2": -25.0,
+            "key3": [1.0, "Hello"]
+        }
+    };
+    StructMsg exStructmsg3 = {
+        name: "SM3",
+        struct: {}
+    };
+    StructMsg[] exStructArr = [
+        exStructmsg2,
+        exStructmsg3,
+        exStructmsg1,
+        expectedStructMsg
+    ];
+
+    var result = structClient->serverStreamStructType2(exStructmsg1);
+    if result is Error {
+        test:assertFail(result.message());
+    } else {
+        int count = 0;
+        StructMsg[] receivedData = [];
+        error? e = result.forEach(function(StructMsg value) {
+            receivedData[count] = <StructMsg>value;
+            count += 1;
+        });
+        test:assertEquals(receivedData, exStructArr);
+    }
+}
+
+@test:Config{}
+function testClientStreamStructType1() returns error? {
+    ClientStreamStructType1StreamingClient streamClient = check structClient->clientStreamStructType1();
+    map<anydata>[] requests = [
+        {
+            "key1": "Hello",
+            "key2": 25.0,
+            "key3": false
+        },
+        {
+            "key1": "WSO2",
+            "key2": -25.0,
+            "key3": [101.0, "Hello"]
+        },
+        {},
+        {
+            "key": [10.0, ["Hello"], false, ["WSO2"]]
+        },
+        sendingStruct
+    ];
+    map<anydata> expectedNestedStruct = {
+        "0": requests[0],
+        "1": requests[1],
+        "2": requests[2],
+        "3": requests[3],
+        "4": expectedStruct
+    };
+    foreach map<anydata> r in requests {
+        check streamClient->sendStruct(r);
+    }
+    check streamClient->complete();
+    var result = check streamClient->receiveStruct();
+    test:assertEquals(<map<anydata>>result, expectedNestedStruct);
+}
+
+@test:Config{}
+function testClientStreamStructType2() returns error? {
+    ClientStreamStructType2StreamingClient streamClient = check structClient->clientStreamStructType2();
+    StructMsg exStructmsg1 = {
+        name: "SM1",
+        struct: {
+            "key1": "Hello",
+            "key2": 25.0,
+            "key3": false
+        }
+    };
+    StructMsg exStructmsg2 = {
+        name: "SM2",
+        struct: {
+            "key1": "WSO2",
+            "key2": -25.0,
+            "key3": [1.0, "Hello"]
+        }
+    };
+    StructMsg exStructmsg3 = {
+        name: "SM3",
+        struct: {}
+    };
+    StructMsg[] requests = [
+        exStructmsg1,
+        exStructmsg2,
+        exStructmsg3,
+        sendingStructMsg
+    ];
+    StructMsg expectedNestedStruct = {
+        name: "Response",
+        struct: {
+            "0": exStructmsg1,
+            "1": exStructmsg2,
+            "2": exStructmsg3,
+            "3": expectedStructMsg
+        }
+    };
+    foreach map<anydata> r in requests {
+        check streamClient->sendStructMsg(r);
+    }
+    check streamClient->complete();
+    var result = check streamClient->receiveStructMsg();
+    test:assertEquals(<StructMsg>result, expectedNestedStruct);
+}
+
+@test:Config{}
+function testClientStreamStructType2() returns error? {
+    ClientStreamStructType2StreamingClient streamClient = check structClient->clientStreamStructType2();
+    StructMsg expectedNestedStruct = {
+        name: "Request",
+        struct: {}
+    };
+    check streamClient->sendString("Hey");
+    check streamClient->complete();
+    var result = check streamClient->receiveStructMsg();
+    test:assertEquals(<StructMsg>result, expectedNestedStruct);
+}
+
+@test:Config{}
+function testBidirectionalStreamStructType1() returns error? {
+    BidirectionalStreamStructType1StreamingClient streamClient = check structClient->bidirectionalStreamStructType1();
     map<anydata>[] requests = [
         {
             "key1": "Hello",
@@ -127,50 +296,72 @@ function testClientStreamStruct() returns error? {
         {},
         {
             "key": [1.0, ["Hello"], false, ["WSO2"]]
-        }
+        },
+        expectedStruct
     ];
     foreach map<anydata> r in requests {
         check streamClient->sendStruct(r);
     }
     check streamClient->complete();
-    var result = check streamClient->receiveStruct();
-    test:assertEquals(<map<anydata>>result, requests[0]);
+
+    int count = 0;
+    map<anydata>[] receivedData = [];
+    error? e = requests.forEach(function(map<anydata> value) {
+        map<anydata>|error? result = streamClient->receiveStruct();
+        if result is map<anydata> {
+            receivedData[count] = result;
+        } else {
+            test:assertFail("Error");
+        }
+        count += 1;
+    });
+    test:assertEquals(receivedData, requests);
 }
 
- @test:Config{}
- function testBidirectionalStreamStruct() returns error? {
-     BidirectionalStreamStructStreamingClient streamClient = check structClient->bidirectionalStreamStruct();
-     map<anydata>[] requests = [
-         {
-             "key1": "Hello",
-             "key2": 25.0,
-             "key3": false
-         },
-         {
-             "key1": "WSO2",
-             "key2": -25.0,
-             "key3": [1.0, "Hello"]
-         },
-         {},
-         {
-             "key": [1.0, ["Hello"], false, ["WSO2"]]
-         }
-     ];
-     foreach map<anydata> r in requests {
-         check streamClient->sendStruct(r);
-     }
-     check streamClient->complete();
+@test:Config{}
+function testBidirectionalStreamStructType2() returns error? {
+    BidirectionalStreamStructType2StreamingClient streamClient = check structClient->bidirectionalStreamStructType2();
+    StructMsg exStructmsg1 = {
+        name: "SM1",
+        struct: {
+            "key1": "Hello",
+            "key2": 25.0,
+            "key3": false
+        }
+    };
+    StructMsg exStructmsg2 = {
+        name: "SM2",
+        struct: {
+            "key1": "WSO2",
+            "key2": -25.0,
+            "key3": [1.0, "Hello"]
+        }
+    };
+    StructMsg exStructmsg3 = {
+        name: "SM3",
+        struct: {}
+    };
+    StructMsg[] requests = [
+        exStructmsg1,
+        exStructmsg2,
+        exStructmsg3,
+        expectedStructMsg
+    ];
+    foreach map<anydata> r in requests {
+        check streamClient->sendStructMsg(r);
+    }
+    check streamClient->complete();
 
-     int count = 0;
-     map<anydata>[] receivedData = [];
-     error? e = requests.forEach(function(map<anydata> value) {
-         map<anydata>|error? result = streamClient->receiveStruct();
-         if result is map<anydata> {
-             receivedData[count] = result;
-         } else {
-             test:assertFail("Error");
-         }
-         count += 1;
-     });
-     test:assertEquals(receivedData, requests);
- }
+    int count = 0;
+    StructMsg[] receivedData = [];
+    error? e = requests.forEach(function(StructMsg value) {
+        StructMsg|error? result = streamClient->receiveStructMsg();
+        if result is StructMsg {
+            receivedData[count] = result;
+        } else {
+            test:assertFail("Error");
+        }
+        count += 1;
+    });
+    test:assertEquals(receivedData, requests);
+}
