@@ -59,13 +59,22 @@ public function main() returns error? {
         {location: {latitude: 411733222, longitude: -744228360}, message: "m5"}
     ];
     RouteChatStreamingClient routeClient = check ep->RouteChat();
+
+    future<error?> f1 = start readResponse(routeClient);
+
     foreach RouteNote n in routeNotes {
         check routeClient->sendRouteNote(n);
     }
     check routeClient->complete();
-    RouteNote? receiveRouteNote = check routeClient->receiveRouteNote();
-    while receiveRouteNote != () {
-        io:println(`Got message '${receiveRouteNote.message}' at lat=${receiveRouteNote.location.latitude}, lon=${receiveRouteNote.location.longitude}`);
-        receiveRouteNote = check routeClient->receiveRouteNote();
-    }
+
+    check wait f1;
+}
+
+function readResponse(RouteChatStreamingClient routeClient) returns error? {
+     RouteNote? receiveRouteNote = check routeClient->receiveRouteNote();
+     while receiveRouteNote != () {
+         io:println(`Got message '${receiveRouteNote.message}' at lat=${receiveRouteNote.location.latitude},
+                lon=${receiveRouteNote.location.longitude}`);
+         receiveRouteNote = check routeClient->receiveRouteNote();
+     }
 }
