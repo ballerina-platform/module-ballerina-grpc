@@ -528,6 +528,10 @@ public class Message {
                                 Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
                                 Object bValue = readMessage(fieldDescriptor, fieldType, input).bMessage;
                                 updateBBMap(bBMap, fieldDescriptor, bValue);
+                            } else if (fieldDescriptor.getMessageType().getFullName().equals("google.protobuf.Struct")
+                                    && recordType instanceof RecordType) {
+                                Type fieldType = TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA);
+                                bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             } else {
                                 Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
