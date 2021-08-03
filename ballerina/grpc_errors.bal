@@ -20,7 +20,7 @@ public type Error distinct error;
 # Represents the operation canceled(typically by the caller) error.
 public type CancelledError distinct Error;
 
-# Represents unknown error.(e.g. Status value received is unknown)
+# Represents unknown error(e.g., Status value received is unknown).
 public type UnKnownError distinct Error;
 
 # Represents client specified an invalid argument error.

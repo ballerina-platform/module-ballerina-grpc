@@ -120,8 +120,8 @@ public class GrpcUtil {
             populateSSLConfiguration(senderConfiguration, secureSocket);
         } else if (scheme.equals(PROTOCOL_HTTPS)) {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
-                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("To enable https you need to" +
-                            " configure secureSocket record")));
+                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("The secureSocket " +
+                            "configuration should be provided to establish an HTTPS connection")));
         }
         double timeoutSeconds = ((BDecimal) clientEndpointConfig.get(fromString("timeout"))).floatValue();
         if (timeoutSeconds < 0) {
