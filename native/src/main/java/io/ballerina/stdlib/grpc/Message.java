@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Generic Proto3 Message.
@@ -63,7 +62,15 @@ public class Message {
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_NANOS = "google.protobuf.Timestamp.nanos";
     private static final String GOOGLE_PROTOBUF_DURATION_SECONDS = "google.protobuf.Duration.seconds";
     private static final String GOOGLE_PROTOBUF_DURATION_NANOS = "google.protobuf.Duration.nanos";
-    public static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
+    private static final String GOOGLE_PROTOBUF_STRUCT = "google.protobuf.Struct";
+    private static final String GOOGLE_PROTOBUF_STRUCT_FIELDS = "google.protobuf.Struct.fields";
+    private static final String GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_KEY = "google.protobuf.Struct.FieldsEntry.key";
+    private static final String GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_VALUE = "google.protobuf.Struct.FieldsEntry.value";
+    private static final String GOOGLE_PROTOBUF_VALUE_LIST_VALUE = "google.protobuf.Value.list_value";
+    private static final String GOOGLE_PROTOBUF_VALUE_STRUCT_VALUE = "google.protobuf.Value.struct_value";
+    private static final String GOOGLE_PROTOBUF_LISTVALUE_VALUES = "google.protobuf.ListValue.values";
+    private static final String GOOGLE_PROTOBUF_STRUCTVALUE_VALUES = "google.protobuf.StructValue.values";
+    private static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
 
     private String messageName;
     private int memoizedSize = -1;
@@ -130,7 +137,7 @@ public class Message {
             throws IOException {
         this(messageName);
 
-        if (type instanceof UnionType && type.isNilable() && !messageName.equals("Value")) {
+        if (type instanceof UnionType && !(type instanceof AnydataType) && type.isNilable()) {
             List<Type> memberTypes = ((UnionType) type).getMemberTypes();
             if (memberTypes.size() != 2) {
                 throw Status.Code.INTERNAL.toStatus().withDescription("Error while decoding request " +
@@ -433,9 +440,9 @@ public class Message {
                                 bBMap.put(bFieldName, StringUtils.fromString(
                                                 input.readStringRequireUtf8()));
                             }
-                        } else if (bMessage instanceof BArray &&
-                                fieldDescriptor.getFullName().equals("google.protobuf.Struct.FieldsEntry.key")) {
-                            ((BArray) bMessage).add(0, StringUtils.fromString(input.readStringRequireUtf8()));
+                        } else if (bArray != null &&
+                                fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_KEY)) {
+                            bArray.add(0, StringUtils.fromString(input.readStringRequireUtf8()));
                         } else if (!fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_ANY_TYPE_URL)) {
                             bMessage = StringUtils.fromString(
                                     input.readStringRequireUtf8());
@@ -485,29 +492,19 @@ public class Message {
                     }
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE_VALUE: {
                         RecordType recordType;
-                        TupleType tupleType;
-                        AnydataType anydataType;
-                        Type anydataArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA);
                         if (type instanceof RecordType) {
                             recordType = (RecordType) type;
-                            tupleType = null;
-                        } else if (type instanceof MapType) {
+                        } else if (type instanceof MapType || type instanceof TupleType ||
+                                type instanceof AnydataType || type.toString().equals("anydata[]")) {
                             recordType = null;
-                            tupleType = null;
-                        } else if (type instanceof TupleType) {
-                            tupleType = (TupleType) type;
-                            recordType = null;
-                        } else if (type instanceof AnydataType || type.toString().equals("anydata[]")) {
-                            recordType = null;
-                            tupleType = null;
                         } else {
                             throw Status.Code.INTERNAL.toStatus().withDescription("Error while decoding request " +
                                     "message. record type is not supported : " +
                                     fieldDescriptor.getType()).asRuntimeException();
                         }
                         if (bBMap != null) {
-                            if (fieldDescriptor.getFullName().equals("google.protobuf.Struct.fields") ||
-                                    fieldDescriptor.getFullName().equals("google.protobuf.StructValue.values")) {
+                            if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDS) ||
+                                    fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCTVALUE_VALUES)) {
                                 List<Type> typeList = new ArrayList<>();
                                 typeList.add(PredefinedTypes.TYPE_STRING);
                                 typeList.add(PredefinedTypes.TYPE_ANYDATA);
@@ -528,24 +525,23 @@ public class Message {
                                 Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
                                 Object bValue = readMessage(fieldDescriptor, fieldType, input).bMessage;
                                 updateBBMap(bBMap, fieldDescriptor, bValue);
-                            } else if (fieldDescriptor.getMessageType().getFullName().equals("google.protobuf.Struct")
-                                    && recordType instanceof RecordType) {
+                            } else if (fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_STRUCT) &&
+                                    recordType instanceof RecordType) {
                                 Type fieldType = TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA);
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             } else {
                                 Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             }
-                        } else if (tupleType != null) {
-                            ((BArray) bMessage).add(1, readMessage(fieldDescriptor,
-                                    PredefinedTypes.TYPE_ANYDATA, input).bMessage);
-                        } else if (fieldDescriptor.getFullName().equals("google.protobuf.Value.list_value")) {
+                        } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_VALUE)) {
+                            bArray.add(1, readMessage(fieldDescriptor, PredefinedTypes.TYPE_ANYDATA, input).bMessage);
+                        } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_VALUE_LIST_VALUE)) {
                             bMessage = readMessage(fieldDescriptor,
                                     TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA), input).bMessage;
-                        } else if (fieldDescriptor.getFullName().equals("google.protobuf.ListValue.values")) {
+                        } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_LISTVALUE_VALUES)) {
                             bArray.add(bArray.size(), readMessage(fieldDescriptor,
                                     PredefinedTypes.TYPE_ANYDATA, input).bMessage);
-                        } else if (fieldDescriptor.getFullName().equals("google.protobuf.Value.struct_value")) {
+                        } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_VALUE_STRUCT_VALUE)) {
                             bMessage = readMessage(fieldDescriptor,
                                     TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA), input).bMessage;
                         } else {
@@ -762,10 +758,9 @@ public class Message {
                         } else {
                             output.writeString(fieldDescriptor.getNumber(), ((BString) bValue).getValue());
                         }
-                    } else if (bMessage instanceof BArray
-                            && fieldDescriptor.getFullName().equals("google.protobuf.Struct.FieldsEntry.key")) {
-                        output.writeString(fieldDescriptor.getNumber(), ((BString) ((BArray) bMessage)
-                                .get(0)).getValue());
+                    } else if (bArray != null &&
+                            fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_KEY)) {
+                        output.writeString(fieldDescriptor.getNumber(), ((BString) bArray.get(0)).getValue());
                     } else if (bMessage instanceof BString
                             && !fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_ANY_TYPE_URL)) {
                         output.writeString(fieldDescriptor.getNumber(), ((BString) bMessage).getValue());
@@ -798,46 +793,38 @@ public class Message {
                             output.writeUInt32NoTag(message.getSerializedSize());
                             message.writeTo(output);
                         }
-                    } else if (bBMap != null && bFieldName.getValue().equals("fields")) {
-                        Set set = bBMap.entrySet();
-                        Object[] arr = set.toArray();
-                        for (int i = 0; i < arr.length; i++) {
-                            Map.Entry entry = (Map.Entry) arr[i];
+                    } else if (bBMap != null && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDS)) {
+                        for (Map.Entry<BString, Object> entry : bBMap.entrySet()) {
                             BArray valueArray = ValueCreator.createArrayValue(TypeCreator
                                     .createArrayType(PredefinedTypes.TYPE_ANY), 2);
-                            valueArray.add(0, entry.getKey());
+                            valueArray.add(0, (Object) entry.getKey());
                             valueArray.add(1, entry.getValue());
                             Message message = new Message(fieldDescriptor.getMessageType(), valueArray);
                             output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                             output.writeUInt32NoTag(message.getSerializedSize());
                             message.writeTo(output);
                         }
-                    } else if (fieldDescriptor.getFullName()
-                            .equals("google.protobuf.Struct.FieldsEntry.value")) {
-                        BArray bArray1 = (BArray) bMessage;
-                        Message message = new Message(fieldDescriptor.getMessageType(), bArray1.get(1));
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_VALUE) &&
+                            bArray != null) {
+                        Message message = new Message(fieldDescriptor.getMessageType(), bArray.get(1));
                         output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                         output.writeUInt32NoTag(message.getSerializedSize());
                         message.writeTo(output);
-                    } else if (fieldDescriptor.getFullName()
-                            .equals("google.protobuf.Value.list_value") && bArray != null) {
-                            Message message = new Message(fieldDescriptor.getMessageType(),
-                                    bArray);
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_VALUE_LIST_VALUE) &&
+                            bArray != null) {
+                            Message message = new Message(fieldDescriptor.getMessageType(), bArray);
                             output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                             output.writeUInt32NoTag(message.getSerializedSize());
                             message.writeTo(output);
-                    } else if (fieldDescriptor.getFullName().equals("google.protobuf.Value.struct_value") &&
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_VALUE_STRUCT_VALUE) &&
                             bBMap != null) {
-                        Message message = new Message(fieldDescriptor.getMessageType(),
-                                bBMap);
+                        Message message = new Message(fieldDescriptor.getMessageType(), bBMap);
                         output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                         output.writeUInt32NoTag(message.getSerializedSize());
                         message.writeTo(output);
-                    } else if (fieldDescriptor.getFullName().equals("google.protobuf.ListValue.values")) {
-                        BArray bArray1 = (BArray) bMessage;
-                        for (int i = 0; i < bArray1.size(); i++) {
-                            Message message = new Message(fieldDescriptor.getMessageType(),
-                                    bArray1.get(i));
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_LISTVALUE_VALUES)) {
+                        for (int i = 0; i < bArray.size(); i++) {
+                            Message message = new Message(fieldDescriptor.getMessageType(), bArray.get(i));
                             output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                             output.writeUInt32NoTag(message.getSerializedSize());
                             message.writeTo(output);
@@ -1096,7 +1083,7 @@ public class Message {
                                     ((BString) bValue).getValue());
                         }
                     } else if (bMessage instanceof BArray
-                            && fieldDescriptor.getFullName().equals("google.protobuf.Struct.FieldsEntry.key")) {
+                            && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_KEY)) {
                         size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(),
                                 ((BArray) bMessage).getBString(0).getValue());
                     } else if (bMessage instanceof BString) {
@@ -1125,39 +1112,32 @@ public class Message {
                             Message message = new Message(fieldDescriptor.getMessageType(), bValue);
                             size += computeMessageSize(fieldDescriptor, message);
                         }
-                    } else if (bBMap != null && bFieldName.getValue().equals("fields")) {
-                        Set set = bBMap.entrySet();
-                        Object[] arr = set.toArray();
-                        for (int i = 0; i < arr.length; i++) {
-                            Map.Entry entry = (Map.Entry) arr[i];
+//                    } else if (bBMap != null && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDS)) {
+                    } else if (bBMap != null && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDS)) {
+                        for (Map.Entry<BString, Object> entry : bBMap.entrySet()) {
                             BArray valueArray = ValueCreator.createArrayValue(TypeCreator
                                     .createArrayType(PredefinedTypes.TYPE_ANY), 2);
-                            valueArray.add(0, entry.getKey());
+                            valueArray.add(0, (Object) entry.getKey());
                             valueArray.add(1, entry.getValue());
                             Message message = new Message(fieldDescriptor.getMessageType(), valueArray);
                             size += computeMessageSize(fieldDescriptor, message);
                         }
-                    } else if (fieldDescriptor.getFullName()
-                            .equals("google.protobuf.Struct.FieldsEntry.value")) {
-                        BArray bArray1 = (BArray) bMessage;
-                        Message message = new Message(fieldDescriptor.getMessageType(), bArray1.get(1));
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_VALUE)) {
+                        Message message = new Message(fieldDescriptor.getMessageType(), ((BArray) bMessage).get(1));
                         size += computeMessageSize(fieldDescriptor, message);
-                    } else if (fieldDescriptor.getFullName()
-                            .equals("google.protobuf.Value.list_value") && bMessage instanceof BArray) {
-                        BArray bArray1 = (BArray) bMessage;
-                        Message message = new Message(fieldDescriptor.getMessageType(),
-                                bArray1);
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_VALUE_LIST_VALUE) &&
+                            bMessage instanceof BArray) {
+                        Message message = new Message(fieldDescriptor.getMessageType(), bMessage);
                         size += computeMessageSize(fieldDescriptor, message);
-                    } else if (fieldDescriptor.getFullName().equals("google.protobuf.Value.struct_value") &&
-                    bMessage instanceof BMap) {
-                        Message message = new Message(fieldDescriptor.getMessageType(),
-                                bBMap);
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_VALUE_STRUCT_VALUE) &&
+                            bMessage instanceof BMap) {
+                        Message message = new Message(fieldDescriptor.getMessageType(), bBMap);
                         size += computeMessageSize(fieldDescriptor, message);
-                    } else if (fieldDescriptor.getFullName().equals("google.protobuf.ListValue.values")) {
-                        BArray bArray1 = (BArray) bMessage;
-                        for (int i = 0; i < bArray1.size(); i++) {
-                            Message message = new Message(fieldDescriptor.getMessageType(),
-                                bArray1.get(i));
+                    } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_LISTVALUE_VALUES) &&
+                            bMessage instanceof BArray) {
+                        BArray bArray = (BArray) bMessage;
+                        for (int i = 0; i < bArray.size(); i++) {
+                            Message message = new Message(fieldDescriptor.getMessageType(), bArray.get(i));
                             size += computeMessageSize(fieldDescriptor, message);
                         }
                     }
