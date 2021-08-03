@@ -14,8 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
-
 listener Listener ep57 = new (9157);
 
 @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_57, descMap: getDescriptorMap57()}
@@ -122,7 +120,6 @@ service "StructService" on ep57 {
             response.struct[count.toString()] = val;
             count += 1;
         });
-        io:println(response);
         if e is error {
             return error Error("Incorrect request data");
         } else {

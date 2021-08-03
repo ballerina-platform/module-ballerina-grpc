@@ -267,19 +267,6 @@ function testClientStreamStructType2() returns error? {
 }
 
 @test:Config{}
-function testClientStreamStructType2() returns error? {
-    ClientStreamStructType2StreamingClient streamClient = check structClient->clientStreamStructType2();
-    StructMsg expectedNestedStruct = {
-        name: "Request",
-        struct: {}
-    };
-    check streamClient->sendString("Hey");
-    check streamClient->complete();
-    var result = check streamClient->receiveStructMsg();
-    test:assertEquals(<StructMsg>result, expectedNestedStruct);
-}
-
-@test:Config{}
 function testBidirectionalStreamStructType1() returns error? {
     BidirectionalStreamStructType1StreamingClient streamClient = check structClient->bidirectionalStreamStructType1();
     map<anydata>[] requests = [
