@@ -495,7 +495,8 @@ public class Message {
                         if (type instanceof RecordType) {
                             recordType = (RecordType) type;
                         } else if (type instanceof MapType || type instanceof TupleType ||
-                                type instanceof AnydataType || type.toString().equals("anydata[]")) {
+                                type instanceof AnydataType ||
+                                type.getTag() == TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA).getTag()) {
                             recordType = null;
                         } else {
                             throw Status.Code.INTERNAL.toStatus().withDescription("Error while decoding request " +
@@ -1082,8 +1083,8 @@ public class Message {
                             size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(),
                                     ((BString) bValue).getValue());
                         }
-                    } else if (bMessage instanceof BArray
-                            && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_KEY)) {
+                    } else if (bMessage instanceof BArray &&
+                            fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_KEY)) {
                         size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(),
                                 ((BArray) bMessage).getBString(0).getValue());
                     } else if (bMessage instanceof BString) {
@@ -1112,7 +1113,6 @@ public class Message {
                             Message message = new Message(fieldDescriptor.getMessageType(), bValue);
                             size += computeMessageSize(fieldDescriptor, message);
                         }
-//                    } else if (bBMap != null && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDS)) {
                     } else if (bBMap != null && fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDS)) {
                         for (Map.Entry<BString, Object> entry : bBMap.entrySet()) {
                             BArray valueArray = ValueCreator.createArrayValue(TypeCreator
