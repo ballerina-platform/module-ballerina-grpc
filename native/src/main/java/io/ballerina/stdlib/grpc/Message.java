@@ -42,7 +42,6 @@ import io.netty.handler.codec.http.HttpHeaders;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -157,22 +156,22 @@ public class Message {
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG) {
             bBMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
             bMessage = bBMap;
-        } else if (type.getTag() == TypeTags.INTERSECTION_TAG) {
+        } else if (type.getTag() == TypeTags.INTERSECTION_TAG) { // for Timestamp type
             TupleType tupleType = TypeCreator.createTupleType(
                     Arrays.asList(PredefinedTypes.TYPE_INT, PredefinedTypes.TYPE_DECIMAL));
             bArray = ValueCreator.createTupleValue(tupleType);
             bMessage = bArray;
-        } else if (type.getTag() == TypeTags.DECIMAL_TAG) {
+        } else if (type.getTag() == TypeTags.DECIMAL_TAG) { // for Duration type
             bMessage = ValueCreator.createDecimalValue(new BigDecimal(0));
-        } else if (type.getTag() == TypeTags.MAP_TAG) {
+        } else if (type.getTag() == TypeTags.MAP_TAG) { // for Struct type
             bBMap = ValueCreator.createMapValue(TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA));
             bMessage = bBMap;
-        } else if (type.getTag() == TypeTags.TUPLE_TAG) {
+        } else if (type.getTag() == TypeTags.TUPLE_TAG) { // for each field in Struct type
             TupleType tupleType = TypeCreator.createTupleType(
                     Arrays.asList(PredefinedTypes.TYPE_STRING, PredefinedTypes.TYPE_ANYDATA));
             bArray = ValueCreator.createTupleValue(tupleType);
             bMessage = bArray;
-        } else if (type.getTag() == TypeTags.ARRAY_TAG) {
+        } else if (type.getTag() == TypeTags.ARRAY_TAG) { // for array values inside structs
             bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA));
             bMessage = bArray;
         }
@@ -506,11 +505,9 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDS) ||
                                     fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCTVALUE_VALUES)) {
-                                List<Type> typeList = new ArrayList<>();
-                                typeList.add(PredefinedTypes.TYPE_STRING);
-                                typeList.add(PredefinedTypes.TYPE_ANYDATA);
                                 BArray tupleval = (BArray) readMessage(fieldDescriptor,
-                                        TypeCreator.createTupleType(typeList), input).bMessage;
+                                        TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_STRING,
+                                                PredefinedTypes.TYPE_ANYDATA)), input).bMessage;
                                 bBMap.put(tupleval.getBString(0), tupleval.get(1));
                             } else if (fieldDescriptor.isRepeated()) {
                                 BArray structArray = bBMap.get(bFieldName) != null ?
