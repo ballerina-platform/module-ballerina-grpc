@@ -147,6 +147,19 @@ public class Record {
         );
     }
 
+    public void addOptionalMapField(TypeDescriptorNode descriptorNode, String fieldName) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldNode(
+                        null,
+                        null,
+                        getMapTypeDescriptorNode(descriptorNode),
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_QUESTION_MARK,
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                )
+        );
+    }
+
     public void addOptionalCustomField(String fieldType, String fieldName) {
         fields = fields.add(
                 NodeFactory.createRecordFieldNode(
@@ -211,6 +224,20 @@ public class Record {
                         AbstractNodeFactory.createIdentifierToken(fieldName),
                         SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
                         getListConstructorExpressionNode(null),
+                        SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+                )
+        );
+    }
+
+    public void addMapFieldWithDefaultValue(TypeDescriptorNode descriptorNode, String fieldName) {
+        fields = fields.add(
+                NodeFactory.createRecordFieldWithDefaultValueNode(
+                        null,
+                        null,
+                        getMapTypeDescriptorNode(descriptorNode),
+                        AbstractNodeFactory.createIdentifierToken(fieldName),
+                        SyntaxTreeConstants.SYNTAX_TREE_EQUAL,
+                        new Map().getMappingConstructorExpressionNode(),
                         SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
                 )
         );
