@@ -65,7 +65,7 @@ service "TimestampService" on ep47 {
     remote function clientStreamTime(TimestampServiceTimestampCaller caller, stream<time:Utc, Error?> clientStream) returns error? {
         time:Utc[] timearr = [];
         error? e = clientStream.forEach(function(time:Utc value) {
-            timearr.push(value);
+            timearr.push(value.cloneReadOnly());
         });
         check caller->sendContextTimestamp({
             headers: {},
