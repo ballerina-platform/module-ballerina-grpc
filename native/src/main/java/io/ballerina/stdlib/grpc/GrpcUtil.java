@@ -18,6 +18,8 @@
 
 package io.ballerina.stdlib.grpc;
 
+import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
@@ -447,5 +449,16 @@ public class GrpcUtil {
                     "value is set to {}", Integer.MAX_VALUE);
             return Integer.MAX_VALUE;
         }
+    }
+
+    public static String getTypeName(Type type) {
+        if (type.getTag() == TypeTags.TUPLE_TAG) {
+            return "Timestamp";
+        } else if (type.getTag() == TypeTags.DECIMAL_TAG) {
+            return "Duration";
+        } else if (type.getTag() == TypeTags.MAP_TAG) {
+            return "Struct";
+        }
+        return type.getName();
     }
 }

@@ -52,6 +52,7 @@ import java.util.Locale;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.runtime.api.utils.StringUtils.fromStringArray;
+import static io.ballerina.stdlib.grpc.GrpcUtil.getTypeName;
 import static io.ballerina.stdlib.grpc.Status.Code.UNKNOWN;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -452,7 +453,7 @@ public class MessageUtils {
     public static String getContextTypeName(Type inputType) {
         inputType = inputType instanceof ArrayType ?
                 ((ArrayType) inputType).getElementType() : inputType;
-        String sInputType = inputType != PredefinedTypes.TYPE_NULL ? inputType.getName() : null;
+        String sInputType = inputType != PredefinedTypes.TYPE_NULL ? getTypeName(inputType) : null;
         if (sInputType != null) {
             sInputType = sInputType.replaceAll("[^a-zA-Z0-9]", "");
             return "Context" + sInputType.substring(0, 1).toUpperCase() + sInputType.substring(1);
@@ -464,7 +465,7 @@ public class MessageUtils {
     public static String getContextStreamTypeName(Type inputType) {
         inputType = inputType instanceof ArrayType ?
                 ((ArrayType) inputType).getElementType() : inputType;
-        String sInputType = inputType != PredefinedTypes.TYPE_NULL ? inputType.getName() : null;
+        String sInputType = inputType != PredefinedTypes.TYPE_NULL ? getTypeName(inputType) : null;
         if (sInputType != null) {
             sInputType = sInputType.replaceAll("[^a-zA-Z0-9]", "");
             return "Context" + sInputType.substring(0, 1).toUpperCase() + sInputType.substring(1) + "Stream";

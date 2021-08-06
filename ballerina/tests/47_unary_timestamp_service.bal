@@ -18,10 +18,10 @@ import ballerina/time;
 
 listener Listener ep47 = new (9147);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_47, descMap: getDescriptorMap_47()}
-service "UnaryTimestampService" on ep47 {
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_47, descMap: getDescriptorMap47()}
+service "TimestampService" on ep47 {
 
-    remote function getGreeting(UnaryTimestampServiceGreetingCaller caller, string value) returns error? {
+    remote function getGreeting(TimestampServiceGreetingCaller caller, string value) returns error? {
         Greeting greeting = {
             name: value,
             time: check time:utcFromString("2007-12-03T10:15:30.120Z")
@@ -30,7 +30,7 @@ service "UnaryTimestampService" on ep47 {
         check caller->complete();
     }
 
-    remote function getBiGreeting(UnaryTimestampServiceGreetingCaller caller, Greeting value) returns error? {
+    remote function exchangeGreeting(TimestampServiceGreetingCaller caller, Greeting value) returns error? {
         Greeting greeting = {
             name: value.name,
             time: check time:utcFromString("2008-12-03T11:15:30.120Z")
@@ -38,8 +38,8 @@ service "UnaryTimestampService" on ep47 {
         check caller->sendGreeting(greeting);
         check caller->complete();
     }
-    
-    remote function getBiTime(UnaryTimestampServiceTimestampCaller caller, time:Utc value) returns time:Utc|error? {
+
+    remote function exchangeTime(TimestampServiceTimestampCaller caller, time:Utc value) returns time:Utc|error? {
         time:Utc expectedTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
         if expectedTime == value {
             time:Utc sendingTime = check time:utcFromString("2012-12-03T11:13:30.472Z");
@@ -49,5 +49,27 @@ service "UnaryTimestampService" on ep47 {
             check caller->sendError(error Error("Timestamp does not match"));
             check caller->complete();
         }
+    }
+
+    remote function serverStreamTime(TimestampServiceTimestampCaller caller, time:Utc value) returns error? {
+        time:Utc responseTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
+        time:Utc[] timearr = [responseTime, responseTime, responseTime, responseTime];
+        error? e = timearr.forEach(function(time:Utc val) {
+            checkpanic caller->sendContextTimestamp({
+                headers: {},
+                content: val
+            });
+        });
+    }
+
+    remote function clientStreamTime(TimestampServiceTimestampCaller caller, stream<time:Utc, Error?> clientStream) returns error? {
+        time:Utc[] timearr = [];
+        error? e = clientStream.forEach(function(time:Utc value) {
+            timearr.push(value.cloneReadOnly());
+        });
+        check caller->sendContextTimestamp({
+            headers: {},
+            content: timearr[0]
+        });
     }
 }
