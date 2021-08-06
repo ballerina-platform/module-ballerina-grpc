@@ -23,8 +23,10 @@ message Greeting {
 	google.protobuf.Timestamp time = 2;
 }
 
-service UnaryTimestampService {
+service TimestampService {
 	rpc getGreeting(google.protobuf.StringValue) returns (Greeting) {}
-	rpc getBiGreeting(Greeting) returns (Greeting) {}
-	rpc getBiTime(google.protobuf.Timestamp) returns (google.protobuf.Timestamp) {}
+	rpc exchangeGreeting(Greeting) returns (Greeting) {}
+	rpc exchangeTime(google.protobuf.Timestamp) returns (google.protobuf.Timestamp) {}
+	rpc serverStreamTime(google.protobuf.Timestamp) returns (stream google.protobuf.Timestamp) {};
+	rpc clientStreamTime(stream google.protobuf.Timestamp) returns (google.protobuf.Timestamp) {};
 }
