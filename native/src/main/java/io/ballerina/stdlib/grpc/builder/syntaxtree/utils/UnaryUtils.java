@@ -66,6 +66,8 @@ public class UnaryUtils {
                 inputCap = "Timestamp";
             } else if (method.getInputType().equals("time:Seconds")) {
                 inputCap = "Duration";
+            } else if (method.getInputType().equals("map<anydata>")) {
+                inputCap = "Struct";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
@@ -133,6 +135,8 @@ public class UnaryUtils {
                 inputCap = "Timestamp";
             } else if (method.getInputType().equals("time:Seconds")) {
                 inputCap = "Duration";
+            } else if (method.getInputType().equals("map<anydata>")) {
+                inputCap = "Struct";
             } else {
                 inputCap = capitalize(method.getInputType());
             }
@@ -151,6 +155,8 @@ public class UnaryUtils {
                 outCap = "Timestamp";
             } else if (method.getOutputType().equals("time:Seconds")) {
                 outCap = "Duration";
+            } else if (method.getOutputType().equals("map<anydata>")) {
+                outCap = "Struct";
             } else {
                 outCap = capitalize(method.getOutputType());
             }

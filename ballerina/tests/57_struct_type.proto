@@ -1,0 +1,40 @@
+// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+//
+// WSO2 Inc. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
+
+message StructMsg {
+  string name = 1;
+  google.protobuf.Struct struct = 2;
+}
+
+service StructService {
+  rpc getStructType1(google.protobuf.StringValue) returns (google.protobuf.Struct) {};
+  rpc getStructType2(google.protobuf.StringValue) returns (StructMsg) {};
+  rpc sendStructType1(google.protobuf.Struct) returns (google.protobuf.StringValue) {};
+  rpc sendStructType2(StructMsg) returns (google.protobuf.StringValue) {};
+  rpc exchangeStructType1(google.protobuf.Struct) returns (google.protobuf.Struct) {};
+  rpc exchangeStructType2(StructMsg) returns (StructMsg) {};
+  rpc serverStreamStructType1(google.protobuf.Struct) returns (stream google.protobuf.Struct) {};
+  rpc serverStreamStructType2(StructMsg) returns (stream StructMsg) {};
+  rpc clientStreamStructType1(stream google.protobuf.Struct) returns (google.protobuf.Struct) {};
+  rpc clientStreamStructType2(stream StructMsg) returns (StructMsg) {};
+  rpc bidirectionalStreamStructType1(stream google.protobuf.Struct) returns (stream google.protobuf.Struct) {};
+  rpc bidirectionalStreamStructType2(stream StructMsg) returns (stream StructMsg) {};
+}

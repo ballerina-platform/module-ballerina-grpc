@@ -124,6 +124,10 @@ public class MessageUtils {
                 case "Duration":
                     messageRecord.addCustomFieldWithDefaultValue("time:Seconds", field.getFieldName(), "0.0d");
                     break;
+                case "Struct":
+                    messageRecord.addMapFieldWithDefaultValue(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
+                            field.getFieldName());
+                    break;
                 default:
                     if (field.getFieldLabel() == null) {
                         messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
@@ -155,6 +159,10 @@ public class MessageUtils {
                             break;
                         case "Duration":
                             messageRecord.addOptionalCustomField("time:Seconds", field.getFieldName());
+                            break;
+                        case "Struct":
+                            messageRecord.addOptionalMapField(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
+                                    field.getFieldName());
                             break;
                         default:
                             if (field.getFieldLabel() == null) {
