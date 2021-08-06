@@ -41,11 +41,13 @@ import io.ballerina.stdlib.grpc.listener.StreamingServerCallHandler;
 import io.ballerina.stdlib.grpc.listener.UnaryServerCallHandler;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_MESSAGE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BOOL_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BYTES_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_DOUBLE_MESSAGE;
@@ -303,6 +305,10 @@ public class ServicesBuilderUtils {
             return PredefinedTypes.TYPE_NULL;
         } else if (protoType.equalsIgnoreCase(WRAPPER_BYTES_MESSAGE)) {
             return TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE);
+        } else if (protoType.equals(TIMESTAMP_MESSAGE)) {
+            Type tupleType = TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_INT,
+                    PredefinedTypes.TYPE_DECIMAL));
+            return tupleType;
         } else if (protoType.equals(DURATION_MESSAGE)) {
             return PredefinedTypes.TYPE_DECIMAL;
         } else if (protoType.equals(STRUCT_MESSAGE)) {

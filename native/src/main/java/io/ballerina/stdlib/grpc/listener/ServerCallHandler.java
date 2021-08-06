@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
+import static io.ballerina.stdlib.grpc.GrpcUtil.getTypeName;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 import static java.util.Map.entry;
 
@@ -151,7 +152,7 @@ public abstract class ServerCallHandler {
         String serviceName = resource.getServiceName();
         Type returnType = resource.getRpcOutputType() instanceof ArrayType ?
                 ((ArrayType) resource.getRpcOutputType()).getElementType() : resource.getRpcOutputType();
-        String outputType = returnType != PredefinedTypes.TYPE_NULL ? returnType.getName() : null;
+        String outputType = returnType != PredefinedTypes.TYPE_NULL ? getTypeName(returnType) : null;
         return ValueCreator.createObjectValue(resource.getService().getType().getPackage(),
                 MessageUtils.getCallerTypeName(serviceName, outputType), clientEndpoint);
     }

@@ -46,6 +46,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_MESSAGE;
+
 /**
  * Generic Proto3 Message.
  *
@@ -156,7 +158,8 @@ public class Message {
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG) {
             bBMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
             bMessage = bBMap;
-        } else if (type.getTag() == TypeTags.INTERSECTION_TAG) { // for Timestamp type
+        } else if (type.getTag() == TypeTags.INTERSECTION_TAG ||
+                (type.getTag() == TypeTags.TUPLE_TAG && messageName.equals(TIMESTAMP_MESSAGE))) { // for Timestamp type
             TupleType tupleType = TypeCreator.createTupleType(
                     Arrays.asList(PredefinedTypes.TYPE_INT, PredefinedTypes.TYPE_DECIMAL));
             bArray = ValueCreator.createTupleValue(tupleType);
