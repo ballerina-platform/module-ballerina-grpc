@@ -52,7 +52,7 @@ service "TimestampService" on ep47 {
     }
 
     remote function serverStreamTime(TimestampServiceTimestampCaller caller, time:Utc value) returns error? {
-        time:Utc responseTime = checkpanic time:utcFromString("2008-12-03T11:15:30.120Z");
+        time:Utc responseTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
         time:Utc[] timearr = [responseTime, responseTime, responseTime, responseTime];
         error? e = timearr.forEach(function(time:Utc val) {
             checkpanic caller->sendContextTimestamp({
@@ -65,7 +65,7 @@ service "TimestampService" on ep47 {
     remote function clientStreamTime(TimestampServiceTimestampCaller caller, stream<time:Utc, Error?> clientStream) returns error? {
         time:Utc[] timearr = [];
         error? e = clientStream.forEach(function(time:Utc value) {
-            timearr.push(checkpanic time:utcFromString("2008-12-03T11:15:30.120Z"));
+            timearr.push(value);
         });
         check caller->sendContextTimestamp({
             headers: {},

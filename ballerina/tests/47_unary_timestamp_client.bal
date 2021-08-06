@@ -65,7 +65,7 @@ function testTimestampServerStream() returns error? {
     int count = 0;
     time:Utc[] receivedData = [];
     error? e = result.forEach(function(time:Utc value) {
-        receivedData[count] = <time:Utc>value;
+        receivedData[count] = value;
         count += 1;
     });
     test:assertEquals(receivedData, [sendingTime, sendingTime, sendingTime, sendingTime]);
@@ -83,7 +83,7 @@ function testTimestampContextServerStream() returns error? {
     int count = 0;
     time:Utc[] receivedData = [];
     error? e = result.content.forEach(function(time:Utc value) {
-        receivedData[count] = <time:Utc>value;
+        receivedData[count] = value;
         count += 1;
     });
     test:assertEquals(receivedData, [sendingTime, sendingTime, sendingTime, sendingTime]);
