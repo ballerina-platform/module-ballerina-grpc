@@ -53,3 +53,23 @@ enum priority {
     medium = 1;
     low = 2;
 }
+
+message FileInfo {
+    enum Type {
+        UNKNOWN = 0;
+        FILE = 1;
+        DIRECTORY = 2;
+
+    }
+    Type type = 1;
+}
+
+message Log {
+    enum Type {
+        UNKNOWN = 0;
+        STDOUT = 1;
+        STDERR = 2;
+
+    }
+    Type type = 1;
+}
