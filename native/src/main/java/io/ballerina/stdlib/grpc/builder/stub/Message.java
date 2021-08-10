@@ -149,7 +149,7 @@ public class Message {
             Map<String, List<Field>> oneofFieldMap = new HashMap<>();
             for (DescriptorProtos.FieldDescriptorProto fieldDescriptorProto : messageDescriptor.getFieldList()) {
                 Field field;
-                if (isProtoType((fieldDescriptorProto.getTypeName()))) {
+                if (isWellKnownProtoType((fieldDescriptorProto.getTypeName()))) {
                     field = Field.newBuilder(fieldDescriptorProto).build();
                 } else {
                     field = Field.newBuilder(
@@ -206,7 +206,7 @@ public class Message {
         return fieldType.toString();
     }
 
-    private static boolean isProtoType(String type) {
+    private static boolean isWellKnownProtoType(String type) {
         switch (type) {
             case ".google.protobuf.DoubleValue":
             case ".google.protobuf.FloatValue":
