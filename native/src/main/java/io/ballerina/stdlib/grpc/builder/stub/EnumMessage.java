@@ -39,7 +39,12 @@ public class EnumMessage {
     }
 
     public static EnumMessage.Builder newBuilder(DescriptorProtos.EnumDescriptorProto enumDescriptor) {
-        return new EnumMessage.Builder(enumDescriptor);
+        return new EnumMessage.Builder(enumDescriptor, enumDescriptor.getName());
+    }
+
+    public static EnumMessage.Builder newBuilder(DescriptorProtos.EnumDescriptorProto enumDescriptor,
+                                                 String messageName) {
+        return new EnumMessage.Builder(enumDescriptor, messageName);
     }
 
     public List<EnumField> getFieldList() {
@@ -55,6 +60,7 @@ public class EnumMessage {
      */
     public static class Builder {
         private final DescriptorProtos.EnumDescriptorProto enumDescriptor;
+        private final String messageName;
     
         public EnumMessage build() {
             int index = 0;
@@ -63,15 +69,16 @@ public class EnumMessage {
                 EnumField field = EnumField.newBuilder(fieldDescriptor).build();
                 fieldList.add(field);
                 if (index == 0) {
-                    enumDefaultValueMap.put(enumDescriptor.getName(), field.getName());
+                    enumDefaultValueMap.put(messageName, field.getName());
                 }
                 index++;
             }
-            return new EnumMessage(enumDescriptor.getName(), fieldList);
+            return new EnumMessage(messageName, fieldList);
         }
 
-        private Builder(DescriptorProtos.EnumDescriptorProto enumDescriptor) {
+        private Builder(DescriptorProtos.EnumDescriptorProto enumDescriptor, String messageName) {
             this.enumDescriptor = enumDescriptor;
+            this.messageName = messageName;
         }
     }
 }
