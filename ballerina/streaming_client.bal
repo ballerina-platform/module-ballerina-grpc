@@ -125,7 +125,7 @@ isolated function streamSendError(StreamingClient streamConnection, Error err) r
     'class: "io.ballerina.stdlib.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
 
-isolated function externReceive(StreamingClient streamConnection) returns anydata|stream<anydata, Error>|Error =
+isolated function externReceive(StreamingClient streamConnection) returns anydata|stream<anydata, Error?>|Error =
 @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.streamingclient.FunctionUtils"
 } external;
