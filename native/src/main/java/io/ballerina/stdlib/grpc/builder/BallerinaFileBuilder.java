@@ -141,7 +141,7 @@ public class BallerinaFileBuilder {
 
             // read message types.
             for (DescriptorProtos.DescriptorProto descriptorProto : messageTypeList) {
-                Message message = Message.newBuilder(descriptorProto).build();
+                Message message = Message.newBuilder(descriptorProto, filePackage).build();
                 messageList.add(message);
             }
 
@@ -179,9 +179,11 @@ public class BallerinaFileBuilder {
                     if (method.containsEmptyType() && !(stubFileObject.isMessageExists(BalGenConstants.EMPTY_DATA_TYPE))
                             && !hasEmptyMessage) {
                         Message message =
-                                Message.newBuilder(StandardDescriptorBuilder.getFileDescriptor(
-                                        StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY).getMessageTypes()
-                                        .get(0).toProto()).build();
+                                Message.newBuilder(
+                                        StandardDescriptorBuilder.getFileDescriptor(
+                                                StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY).getMessageTypes()
+                                                .get(0).toProto(),
+                                        filePackage).build();
                         messageList.add(message);
                         stubFileObject.addMessage(message);
                         hasEmptyMessage = true;

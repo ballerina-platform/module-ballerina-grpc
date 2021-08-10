@@ -168,15 +168,15 @@ public type ByeRequest record {|
 
 public type HelloResponse record {|
     string message = "";
-    Bar[] bars = [];
+    HelloResponse_Bar[] bars = [];
 |};
 
-public type Bar record {|
+public type HelloResponse_Bar record {|
     int i = 0;
-    Foo[] foo = [];
+    HelloResponse_Bar_Foo[] foo = [];
 |};
 
-public type Foo record {|
+public type HelloResponse_Bar_Foo record {|
     int i = 0;
 |};
 

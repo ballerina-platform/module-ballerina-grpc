@@ -67,8 +67,13 @@ public class Message {
         return mapList;
     }
 
-    public static Message.Builder newBuilder(DescriptorProtos.DescriptorProto messageDescriptor) {
-        return new Message.Builder(messageDescriptor);
+    public static Message.Builder newBuilder(DescriptorProtos.DescriptorProto messageDescriptor, String packageName) {
+        return new Message.Builder(messageDescriptor, messageDescriptor.getName(), packageName);
+    }
+
+    public static Message.Builder newBuilder(DescriptorProtos.DescriptorProto messageDescriptor, String messageName,
+                                             String packageName) {
+        return new Message.Builder(messageDescriptor, messageName, packageName);
     }
 
     public List<Message> getNestedMessageList() {
@@ -96,15 +101,26 @@ public class Message {
      */
     public static class Builder {
         private final DescriptorProtos.DescriptorProto messageDescriptor;
+        private final String messageName;
+        private final String packageName;
 
         public Message build() {
             List<Message> nestedMessageList = new ArrayList<>();
             List<Message> mapList = new ArrayList<>();
             List<String> mapNames = new ArrayList<>();
             for (DescriptorProtos.DescriptorProto nestedDescriptorProto : messageDescriptor.getNestedTypeList()) {
-                Message nestedMessage = Message.newBuilder(nestedDescriptorProto).build();
+                Message nestedMessage;
+                if (nestedDescriptorProto.getOptions().hasMapEntry()) {
+                    nestedMessage = Message.newBuilder(nestedDescriptorProto, packageName).build();
+                } else {
+                    nestedMessage = Message.newBuilder(
+                            nestedDescriptorProto,
+                            messageName + "_" + nestedDescriptorProto.getName(),
+                            packageName
+                    ).build();
+                }
                 if (nestedDescriptorProto.hasOptions() && nestedDescriptorProto.getOptions().hasMapEntry()) {
-                    mapNames.add(nestedMessage.getMessageName());
+                    mapNames.add(messageName + "_" + nestedDescriptorProto.getName());
 
                     // remove unnecessary "Entry" part appends to the message name by the proto library
                     if (nestedMessage.getMessageName().length() > 5) {
@@ -122,14 +138,25 @@ public class Message {
 
             List<EnumMessage> enumList = new ArrayList<>();
             for (DescriptorProtos.EnumDescriptorProto enumDescriptorProto : messageDescriptor.getEnumTypeList()) {
-                EnumMessage enumMessage = EnumMessage.newBuilder(enumDescriptorProto).build();
+                EnumMessage enumMessage = EnumMessage.newBuilder(
+                        enumDescriptorProto,
+                        messageName + "_" + enumDescriptorProto.getName()
+                ).build();
                 enumList.add(enumMessage);
             }
 
             List<Field> fieldList = new ArrayList<>();
             Map<String, List<Field>> oneofFieldMap = new HashMap<>();
             for (DescriptorProtos.FieldDescriptorProto fieldDescriptorProto : messageDescriptor.getFieldList()) {
-                Field field = Field.newBuilder(fieldDescriptorProto).build();
+                Field field;
+                if (isProtoType((fieldDescriptorProto.getTypeName()))) {
+                    field = Field.newBuilder(fieldDescriptorProto).build();
+                } else {
+                    field = Field.newBuilder(
+                            fieldDescriptorProto,
+                            getFieldType(fieldDescriptorProto.getTypeName(), packageName)
+                    ).build();
+                }
                 if (fieldDescriptorProto.hasOneofIndex()) {
                     String oneofField = messageDescriptor.getOneofDecl(fieldDescriptorProto.getOneofIndex()).getName();
                     List<Field> oneofMessageList = oneofFieldMap.computeIfAbsent(oneofField, k -> new ArrayList<>());
@@ -139,7 +166,7 @@ public class Message {
                 }
             }
 
-            Message message = new Message(messageDescriptor.getName(), fieldList);
+            Message message = new Message(messageName, fieldList);
 
             if (!oneofFieldMap.isEmpty()) {
                 message.setOneofFieldMap(oneofFieldMap);
@@ -156,8 +183,49 @@ public class Message {
             return message;
         }
 
-        private Builder(DescriptorProtos.DescriptorProto messageDescriptor) {
+        private Builder(DescriptorProtos.DescriptorProto messageDescriptor, String messageName, String packageName) {
             this.messageDescriptor = messageDescriptor;
+            this.messageName = messageName;
+            this.packageName = packageName;
+        }
+    }
+
+    private static String getFieldType(String typeName, String packageName) {
+        StringBuilder fieldType = new StringBuilder();
+        String[] types =  typeName.split("\\.");
+        for (int i = 1; i < types.length; i++) {
+            if (i == 1 && types[i].equals(packageName)) {
+                continue;
+            }
+            if (fieldType.toString().isBlank()) {
+                fieldType.append(types[i]);
+            } else {
+                fieldType.append("_").append(types[i]);
+            }
+        }
+        return fieldType.toString();
+    }
+
+    private static boolean isProtoType(String type) {
+        switch (type) {
+            case ".google.protobuf.DoubleValue":
+            case ".google.protobuf.FloatValue":
+            case ".google.protobuf.Int32Value":
+            case ".google.protobuf.Int64Value":
+            case ".google.protobuf.UInt64Value":
+            case ".google.protobuf.UInt32Value":
+            case ".google.protobuf.BoolValue":
+            case ".google.protobuf.BytesValue":
+            case ".google.protobuf.Any":
+            case ".google.protobuf.Empty":
+            case ".google.protobuf.Timestamp":
+            case ".google.protobuf.Duration":
+            case ".google.protobuf.Struct":
+            case ".google.protobuf.StringValue":
+            case "":
+                return true;
+            default:
+                return false;
         }
     }
 }

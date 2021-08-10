@@ -305,10 +305,10 @@ public type ByeRequest record {|
 
 public type HelloResponse record {|
     string message = "";
-    sentiment mode = happy;
+    HelloResponse_sentiment mode = happy;
 |};
 
-public enum sentiment {
+public enum HelloResponse_sentiment {
     happy,
     sad,
     neutral

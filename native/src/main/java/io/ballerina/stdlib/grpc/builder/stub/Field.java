@@ -46,7 +46,11 @@ public class Field {
     }
 
     public static Field.Builder newBuilder(DescriptorProtos.FieldDescriptorProto fieldDescriptor) {
-        return new Field.Builder(fieldDescriptor);
+        return new Field.Builder(fieldDescriptor, fieldDescriptor.getTypeName());
+    }
+
+    public static Field.Builder newBuilder(DescriptorProtos.FieldDescriptorProto fieldDescriptor, String fieldType) {
+        return new Field.Builder(fieldDescriptor, fieldType);
     }
 
     public String getFieldType() {
@@ -70,9 +74,10 @@ public class Field {
      */
     public static class Builder {
         private final DescriptorProtos.FieldDescriptorProto fieldDescriptor;
+        private final String type;
 
         public Field build() {
-            String fieldType = fieldDescriptor.getTypeName();
+            String fieldType = type;
             String fieldDefaultValue = null;
             if (CUSTOM_FIELD_TYPE_MAP.get(fieldDescriptor.getTypeName()) != null) {
                 fieldType = CUSTOM_FIELD_TYPE_MAP.get(fieldDescriptor.getTypeName());
@@ -102,8 +107,9 @@ public class Field {
             return new Field(fieldName, fieldType, fieldLabel, fieldDefaultValue);
         }
 
-        private Builder(DescriptorProtos.FieldDescriptorProto fieldDescriptor) {
+        private Builder(DescriptorProtos.FieldDescriptorProto fieldDescriptor, String fieldType) {
             this.fieldDescriptor = fieldDescriptor;
+            this.type = fieldType;
         }
     }
 
