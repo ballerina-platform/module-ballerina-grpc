@@ -36,7 +36,7 @@ public class EnumUtils {
     public static Enum getEnum(EnumMessage enumMessage) {
         Enum enumMsg = new Enum(enumMessage.getMessageName());
         for (EnumField field : enumMessage.getFieldList()) {
-            enumMsg.addMember(Enum.getEnumMemberNode(enumMessage.getMessageName() + "_" + field.getName()));
+            enumMsg.addMember(Enum.getEnumMemberNode(field.getName()));
         }
         return enumMsg;
     }

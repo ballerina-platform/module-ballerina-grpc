@@ -69,7 +69,7 @@ public class EnumMessage {
                 EnumField field = EnumField.newBuilder(fieldDescriptor).build();
                 fieldList.add(field);
                 if (index == 0) {
-                    enumDefaultValueMap.put(messageName, messageName + "_" + field.getName());
+                    enumDefaultValueMap.put(messageName, field.getName());
                 }
                 index++;
             }
