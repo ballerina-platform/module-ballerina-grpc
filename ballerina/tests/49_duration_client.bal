@@ -62,7 +62,7 @@ function testDurationClientStreaming() returns Error? {
 
 }
 
-@test:Config {}
+@test:Config {enable: false}
 function testDurationBidirectionalStreaming() returns Error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
     DurationMsg[] durationMessages = [

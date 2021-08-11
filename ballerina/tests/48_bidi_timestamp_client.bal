@@ -17,7 +17,7 @@
 import ballerina/test;
 import ballerina/time;
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 isolated function testBidiTimestampWithGreeting() returns error? {
     BidiStreamingTimestampServiceClient btsClient = check new ("http://localhost:9148");
     BidiStreamingGreetServerStreamingClient streamingClient = check btsClient->bidiStreamingGreetServer();
