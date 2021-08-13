@@ -45,7 +45,6 @@ def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
 def targetNativeJar = file("$project.rootDir/native/build/libs/${packageName}-native-${project.version}.jar")
 def originalBallerinaToml = ballerinaTomlFile.text
-def originalDependenciesToml = dependenciesTomlFile.text
 def originalCompilerPluginToml = compilerPluginTomlFile.text
 
 def stripBallerinaExtensionVersion(String extVersion) {
@@ -183,7 +182,6 @@ task updateTomlFiles {
 task revertTomlFiles {
     doLast {
         ballerinaTomlFile.text = originalBallerinaToml
-        dependenciesTomlFile.text = originalDependenciesToml
         compilerPluginTomlFile.text = originalCompilerPluginToml
     }
 }
