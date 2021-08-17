@@ -150,6 +150,18 @@ function testHelloWorldChild() {
 }
 
 @test:Config {enable:true}
+function testTimeWithDependency() {
+    var result1 = assertGeneratedDataTypeSources("data-types", "time_root.proto", "time_root_pb.bal", "tool_test_data_type_19");
+    if result1 is error {
+        test:assertFail("Failed to assert generated time_root_pb.bal");
+    }
+    var result2 = assertGeneratedDataTypeSources("data-types", "time_root.proto", "time_dependent_pb.bal", "tool_test_data_type_19");
+    if result2 is error {
+        test:assertFail("Failed to assert generated time_dependent_pb.bal");
+    }
+}
+
+@test:Config {enable:true}
 function testWithoutOutputDir() {
     var result = assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal", "");
     if (result is error) {
