@@ -231,7 +231,7 @@ public class SyntaxTreeGenerator {
                 descriptorMap.addStringField(descriptor.getKey(), descriptor.getValue());
             }
             getDescriptorMap.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
-            getDescriptorMap.addQualifiers(new String[]{"isolated"});
+            getDescriptorMap.addQualifiers(new String[]{"public", "isolated"});
             moduleMembers = moduleMembers.add(getDescriptorMap.getFunctionDefinitionNode());
         }
 
