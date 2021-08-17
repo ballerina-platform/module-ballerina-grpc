@@ -139,7 +139,7 @@ function testHelloWorldWithStructType2() {
 
 @test:Config {enable:true}
 function testHelloWorldChild() {
-    var result1 = assertGeneratedDataTypeSources("data-types", "child.proto", "child_pb.bal", "tool_test_data_type_14");
+    var result1 = assertGeneratedDataTypeSources("data-types", "child.proto", "parent_pb.bal", "tool_test_data_type_14");
     if result1 is error {
         test:assertFail("Failed to assert generated child_pb.bal");
     }

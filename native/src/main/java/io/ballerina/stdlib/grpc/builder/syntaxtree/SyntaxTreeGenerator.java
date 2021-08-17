@@ -121,11 +121,14 @@ public class SyntaxTreeGenerator {
             if (checkForImportsInServices(methodList, "time:Utc")
                     || checkForImportsInServices(methodList, "time:Seconds")) {
                 importTime = true;
+                break;
             }
         }
-        if (checkForImportsInMessageMap(stubFile, "Timestamp") ||
-                checkForImportsInMessageMap(stubFile, "Duration")) {
-            importTime = true;
+        if (!importTime) {
+            if (checkForImportsInMessageMap(stubFile, "Timestamp") ||
+                    checkForImportsInMessageMap(stubFile, "Duration")) {
+                importTime = true;
+            }
         }
         if (importTime) {
             ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
