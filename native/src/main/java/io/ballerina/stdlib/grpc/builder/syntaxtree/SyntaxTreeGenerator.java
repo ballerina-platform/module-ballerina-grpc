@@ -120,9 +120,6 @@ public class SyntaxTreeGenerator {
 
             if (checkForImportsInServices(methodList, "time:Utc")
                     || checkForImportsInServices(methodList, "time:Seconds")) {
-                ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
-                        "ballerina", "time"
-                );
                 importTime = true;
             }
         }
