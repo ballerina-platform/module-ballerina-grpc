@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -18,16 +18,10 @@
 
 syntax = "proto3";
 
+import "time_dependent.proto";
+
 import "google/protobuf/timestamp.proto";
 
-message ByeRequest {
-    string greet = 1;
-}
-message ByeResponse {
-    string say = 1;
-}
-
-message User {
-    google.protobuf.Timestamp created_at = 1;
-    google.protobuf.Timestamp expired_at = 2;
+service helloWorld {
+	rpc sendTime(stream google.protobuf.Timestamp) returns (stream Greeting);
 }

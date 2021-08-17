@@ -18,6 +18,8 @@
 
 syntax = "proto3";
 
+package myproj.apis;
+
 service helloWorldWithNestedMessage {
     rpc hello(HelloRequest) returns (HelloResponse);
     rpc bye(ByeRequest) returns (ByeResponse);
