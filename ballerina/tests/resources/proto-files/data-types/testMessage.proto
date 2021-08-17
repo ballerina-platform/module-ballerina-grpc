@@ -18,6 +18,8 @@
 
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 message Test1 {
     string name = 1;
 }
@@ -44,4 +46,8 @@ message Test3 {
     repeated uint64 g = 7;
     repeated fixed32 h = 8;
     repeated fixed64 i = 9;
+}
+
+message Test4 {
+    google.protobuf.Timestamp created_at = 1;
 }

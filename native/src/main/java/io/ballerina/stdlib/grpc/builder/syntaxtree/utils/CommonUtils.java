@@ -19,7 +19,8 @@
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
-import io.ballerina.stdlib.grpc.builder.stub.Descriptor;
+import io.ballerina.stdlib.grpc.builder.stub.Field;
+import io.ballerina.stdlib.grpc.builder.stub.Message;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
 import io.ballerina.stdlib.grpc.builder.stub.StubFile;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
@@ -169,19 +170,21 @@ public class CommonUtils {
         function.addVariableStatement(payload.getVariableDeclarationNode());
     }
 
-    public static boolean checkForImportsInStub(StubFile stubFile, String type) {
-        for (Object desc : stubFile.getDescriptors().toArray()) {
-            if (((Descriptor) desc).getKey().equals(type)) {
+    public static boolean checkForImportsInServices(List<Method> methodList, String type) {
+        for (Method method : methodList) {
+            if (isType(method.getInputType(), type) || isType(method.getOutputType(), type)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean checkForImportsInServices(List<Method> methodList, String type) {
-        for (Method method : methodList) {
-            if (isType(method.getInputType(), type) || isType(method.getOutputType(), type)) {
-                return true;
+    public static boolean checkForImportsInMessageMap(StubFile stubFile, String type) {
+        for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
+            for (Field field: message.getValue().getFieldList()) {
+                if (field.getFieldType().equals(type)) {
+                    return true;
+                }
             }
         }
         return false;

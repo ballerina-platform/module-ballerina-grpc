@@ -79,10 +79,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.GOOGLE_PROTOBUF_DURATION_PROTO;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.GOOGLE_PROTOBUF_TIMESTAMP_PROTO;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInMessageMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInStub;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
@@ -111,13 +109,32 @@ public class SyntaxTreeGenerator {
                     "ballerina", "grpc"
             );
             imports = imports.add(importForGrpc);
-            if (checkForImportsInStub(stubFile, GOOGLE_PROTOBUF_TIMESTAMP_PROTO)
-                    || checkForImportsInStub(stubFile, GOOGLE_PROTOBUF_DURATION_PROTO)) {
+        }
+        boolean importTime = false;
+        for (ServiceStub serviceStub : stubFile.getStubList()) {
+            List<Method> methodList = new ArrayList<>();
+            methodList.addAll(serviceStub.getUnaryFunctions());
+            methodList.addAll(serviceStub.getClientStreamingFunctions());
+            methodList.addAll(serviceStub.getServerStreamingFunctions());
+            methodList.addAll(serviceStub.getBidiStreamingFunctions());
+
+            if (checkForImportsInServices(methodList, "time:Utc")
+                    || checkForImportsInServices(methodList, "time:Seconds")) {
                 ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
                         "ballerina", "time"
                 );
-                imports = imports.add(importForTime);
+                importTime = true;
             }
+        }
+        if (checkForImportsInMessageMap(stubFile, "Timestamp") ||
+                checkForImportsInMessageMap(stubFile, "Duration")) {
+            importTime = true;
+        }
+        if (importTime) {
+            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
+                    "ballerina", "time"
+            );
+            imports = imports.add(importForTime);
         }
 
         java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();

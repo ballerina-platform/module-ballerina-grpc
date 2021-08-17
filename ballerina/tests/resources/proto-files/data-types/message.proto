@@ -18,9 +18,16 @@
 
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 message ByeRequest {
     string greet = 1;
 }
 message ByeResponse {
     string say = 1;
+}
+
+message User {
+    google.protobuf.Timestamp created_at = 1;
+    google.protobuf.Timestamp expired_at = 2;
 }
