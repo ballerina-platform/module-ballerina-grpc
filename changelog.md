@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Add gRPC Duration support](https://github.com/ballerina-platform/ballerina-standard-library/issues/1610)
 - [Support a directory with protos as input in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/1626)
 - [Support external import paths in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/1612)
+- [Add OAuth2 JWT bearer grant type support](https://github.com/ballerina-platform/ballerina-standard-library/issues/1788)
 
 ### Changed
 - [Change the group ID and rename the sub modules](https://github.com/ballerina-platform/ballerina-standard-library/issues/1623)

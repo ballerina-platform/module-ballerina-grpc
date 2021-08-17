@@ -162,6 +162,44 @@ isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig() retur
 }
 
 @test:Config {enable:true}
+isolated function testStringValueReturnWithOAuth2JwtBearerGrantConfig() returns Error? {
+    HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
+    map<string|string[]> requestHeaders = {};
+
+    OAuth2JwtBearerGrantConfig config = {
+        tokenUrl: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token",
+        assertion: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+        clientId: "3MVG9YDQS5WtC11paU2WcQjBB3L5w4gz52uriT8ksZ3nUVjKvrfQMrU4uvZohTftxStwNEW4cfStBEGRxRL68",
+        clientSecret: "9205371918321623741",
+        scopes: ["token-scope1", "token-scope2"],
+        clientConfig: {
+            secureSocket: {
+               cert: {
+                   path: TRUSTSTORE_PATH,
+                   password: "ballerina"
+               }
+            }
+        }
+    };
+    ClientOAuth2Handler handler = new(config);
+    map<string|string[]>|ClientAuthError result = handler->enrich(requestHeaders);
+    if result is ClientAuthError {
+        test:assertFail(msg = "Test Failed! " + result.message());
+    } else {
+        requestHeaders = result;
+    }
+
+    requestHeaders["x-id"] = ["0987654321"];
+    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
+    if unionResp is Error {
+        test:assertFail(msg = unionResp.message());
+    } else {
+        test:assertEquals(unionResp, "Hello WSO2");
+    }
+}
+
+@test:Config {enable:true}
 isolated function testStringValueReturnWithOAuth2NoScope() returns Error? {
     HelloWorld30Client helloWorldEp = check new ("http://localhost:9120");
     map<string|string[]> requestHeaders = {};

@@ -192,11 +192,11 @@ public class Message {
 
     private static String getFieldType(String typeName, String packageName) {
         StringBuilder fieldType = new StringBuilder();
+        if (!packageName.isBlank()) {
+            typeName = typeName.replaceFirst("^\\." + packageName, "");
+        }
         String[] types =  typeName.split("\\.");
         for (int i = 1; i < types.length; i++) {
-            if (i == 1 && types[i].equals(packageName)) {
-                continue;
-            }
             if (fieldType.toString().isBlank()) {
                 fieldType.append(types[i]);
             } else {
