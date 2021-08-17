@@ -93,16 +93,20 @@ public class ClientConnectorListener implements HttpClientConnectorListener {
                                     .isFailure()) {
                                 transportError = Status.Code.ABORTED.toStatus().withDescription(lastHttpContent
                                         .decoderResult().cause().getMessage());
-                            } else if (httpCarbonMessage.getTrailerHeaders().isEmpty()) {
+                            } else if (!httpCarbonMessage.getTrailerHeaders().isEmpty()) {
+                                // Read Trailer header to get gRPC response status.
+                                transportTrailersReceived(httpCarbonMessage.getTrailerHeaders());
+                            } else if (containsTrailers(inboundMessage.getHeaders())) {
+                                // When there is no http content, sometimes trailing headers are coming along with
+                                // leading headers.
+                                transportTrailersReceived(inboundMessage.getHeaders());
+                            } else {
                                 // This is a protocol violation as we expect to receive trailer headers with Last Http
                                 // content.
                                 transportError = Status.Code.INTERNAL.toStatus().withDescription("Received unexpected" +
                                         " end-of-stream on DATA frame from server.");
                                 transportErrorMetadata = new DefaultHttpHeaders();
                                 stateListener.transportReportStatus(transportError, false, transportErrorMetadata);
-                            } else {
-                                // Read Trailer header to get gRPC response status.
-                                transportTrailersReceived(httpCarbonMessage.getTrailerHeaders());
                             }
                             break;
                         }
@@ -209,6 +213,10 @@ public class ClientConnectorListener implements HttpClientConnectorListener {
         } else {
             return Status.Code.UNKNOWN.toStatus().withDescription("missing GRPC status in response");
         }
+    }
+
+    private boolean containsTrailers(HttpHeaders headers) {
+        return headers.get(GRPC_STATUS_KEY) != null;
     }
 
     private static class ClientInboundStateListener extends InboundMessage.InboundStateListener {
