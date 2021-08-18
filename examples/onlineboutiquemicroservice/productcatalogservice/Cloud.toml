@@ -1,0 +1,13 @@
+[container.image]
+repository="wso2inc"
+name="productcatalogservice"
+
+[[container.copy.files]]
+sourceFile="resources/products.json"
+target="/home/ballerina/resources/products.json"
+
+[cloud.deployment]
+internal_domain_name="productcatalogservice"
+
+# [container.image.user]
+# run_as="productcatalogservice"

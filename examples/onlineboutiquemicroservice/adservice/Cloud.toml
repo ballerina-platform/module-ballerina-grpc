@@ -1,0 +1,10 @@
+[container.image]
+repository="wso2inc"
+name="adservice"
+tag="v0.1.0"
+
+[cloud.deployment]
+internal_domain_name="adservice"
+
+# [container.image.user]
+# run_as="adservice"
