@@ -19,20 +19,22 @@
 
 import ballerina/test;
 
-@test:Config{}
+@test:Config {enable: true}
 public function testServerErrorWithGoService() returns error? {
-    ProductInfoClient productClient = check new ("http://localhost:50051");
+    if !isWindowsEnvironment() {
+        ProductInfoClient productClient = check new ("http://localhost:50051");
 
-    map<string|string[]> headers = {"userId": "app:system"};
+        map<string|string[]> headers = {"userId": "app:system"};
 
-    ProductDetail product1 = {name: "Samsung S10",
-                          description: "Samsung Galaxy S10 is the latest smart phone, launched in February 2019",
-                          price: 700.0f};
+        ProductDetail product1 = {name: "Samsung S10",
+                              description: "Samsung Galaxy S10 is the latest smart phone, launched in February 2019",
+                              price: 700.0f};
 
-    ProductID|error productId = productClient->addProduct({content: product1, headers: headers});
-    if (productId is InternalError) {
-        test:assertEquals(productId.message(), "product Id is empty");
-    } else {
-        test:assertFail(msg = "Expected an internal error");
+        ProductID|error productId = productClient->addProduct({content: product1, headers: headers});
+        if (productId is InternalError) {
+            test:assertEquals(productId.message(), "product Id is empty");
+        } else {
+            test:assertFail(msg = "Expected an internal error");
+        }
     }
 }
