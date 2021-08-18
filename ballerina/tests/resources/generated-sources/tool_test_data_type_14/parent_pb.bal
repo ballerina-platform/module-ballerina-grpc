@@ -7,7 +7,7 @@ public isolated client class ParentTestClient {
 
     public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_PARENT, getDescriptorMapParent());
     }
 
     isolated remote function callParent1(ParentMessage|ContextParentMessage req) returns (ParentMessage|grpc:Error) {
@@ -236,3 +236,4 @@ public type ContextParentMessage record {|
 public type ParentMessage record {|
     string msg = "";
 |};
+

@@ -208,8 +208,15 @@ public class BallerinaFileBuilder {
                 if (BalGenConstants.GRPC_SERVICE.equals(mode)) {
                     String serviceFilePath = generateOutputFile(this.balOutPath, serviceStub.getServiceName() +
                             BalGenConstants.SAMPLE_SERVICE_FILE_PREFIX);
-                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTreeForServiceSample(serviceStub,
-                            serviceIndex == 0), serviceFilePath);
+                    writeOutputFile(
+                            SyntaxTreeGenerator.generateSyntaxTreeForServiceSample(
+                                    serviceStub,
+                                    serviceIndex == 0,
+                                    stubFileObject.getFileName()
+                            ),
+                            serviceFilePath
+                    )
+                    ;
                 } else if (BalGenConstants.GRPC_CLIENT.equals(mode)) {
                     String clientFilePath = generateOutputFile(this.balOutPath,
                             serviceStub.getServiceName() + BalGenConstants.SAMPLE_FILE_PREFIX

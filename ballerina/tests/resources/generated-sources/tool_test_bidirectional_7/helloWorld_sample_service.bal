@@ -3,7 +3,7 @@ import ballerina/time;
 
 listener grpc:Listener ep = new (9090);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR, descMap: getDescriptorMap()}
+@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_HELLOWORLDTIMESTAMP, descMap: getDescriptorMapHelloWorldTimestamp()}
 service "helloWorld" on ep {
 
     remote function getTime(stream<string, grpc:Error?> clientStream) returns stream<time:Utc, error?>|error {
@@ -19,3 +19,4 @@ service "helloWorld" on ep {
     remote function exchangeGreeting(stream<Greeting, grpc:Error?> clientStream) returns stream<Greeting, error?>|error {
     }
 }
+

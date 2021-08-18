@@ -76,11 +76,14 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.GET_DESCRIPTOR_MAP;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.ROOT_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInMessageMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.toPascalCase;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
@@ -152,7 +155,7 @@ public class SyntaxTreeGenerator {
                     getQualifiedNameReferenceNode("grpc", "AbstractClientEndpoint")));
             client.addMember(getObjectFieldNode("private", new String[]{"final"},
                     getQualifiedNameReferenceNode("grpc", "Client"), "grpcClient"));
-            client.addMember(getInitFunction().getFunctionDefinitionNode());
+            client.addMember(getInitFunction(stubFile.getFileName()).getFunctionDefinitionNode());
 
             for (Method method : service.getUnaryFunctions()) {
                 client.addMember(UnaryUtils.getUnaryFunction(method).getFunctionDefinitionNode());
@@ -216,13 +219,17 @@ public class SyntaxTreeGenerator {
 
         // ROOT_DESCRIPTOR
         if (stubFile.getRootDescriptor() != null) {
-            Constant rootDescriptor = new Constant("string", "ROOT_DESCRIPTOR", stubFile.getRootDescriptor());
+            Constant rootDescriptor = new Constant(
+                    "string",
+                    ROOT_DESCRIPTOR + stubFile.getFileName().toUpperCase(),
+                    stubFile.getRootDescriptor()
+            );
             moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
         }
 
         // getDescriptorMap function
         if (stubFile.getDescriptors().size() > 0) {
-            Function getDescriptorMap = new Function("getDescriptorMap");
+            Function getDescriptorMap = new Function(GET_DESCRIPTOR_MAP + toPascalCase(stubFile.getFileName()));
             getDescriptorMap.addReturns(
                     getMapTypeDescriptorNode(SYNTAX_TREE_VAR_STRING)
             );
@@ -231,7 +238,7 @@ public class SyntaxTreeGenerator {
                 descriptorMap.addStringField(descriptor.getKey(), descriptor.getValue());
             }
             getDescriptorMap.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
-            getDescriptorMap.addQualifiers(new String[]{"isolated"});
+            getDescriptorMap.addQualifiers(new String[]{"public", "isolated"});
             moduleMembers = moduleMembers.add(getDescriptorMap.getFunctionDefinitionNode());
         }
 
@@ -242,7 +249,8 @@ public class SyntaxTreeGenerator {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
-    public static SyntaxTree generateSyntaxTreeForServiceSample(ServiceStub serviceStub, boolean addListener) {
+    public static SyntaxTree generateSyntaxTreeForServiceSample(ServiceStub serviceStub, boolean addListener,
+                                                                String fileName) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
         ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode("ballerina", "grpc");
@@ -277,10 +285,13 @@ public class SyntaxTreeGenerator {
                 new String[]{"ep"}
         );
         Annotation grpcServiceDescriptor = new Annotation("grpc", "ServiceDescriptor");
-        grpcServiceDescriptor.addField("descriptor", "ROOT_DESCRIPTOR");
+        grpcServiceDescriptor.addField(
+                "descriptor",
+                ROOT_DESCRIPTOR + fileName.toUpperCase()
+        );
         grpcServiceDescriptor.addField(
                 "descMap",
-                getFunctionCallExpressionNode("getDescriptorMap", new String[]{})
+                getFunctionCallExpressionNode(GET_DESCRIPTOR_MAP + toPascalCase(fileName), new String[]{})
         );
         service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
 
@@ -365,7 +376,7 @@ public class SyntaxTreeGenerator {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
-    public static Function getInitFunction() {
+    public static Function getInitFunction(String fileName) {
         Function function = new Function("init");
         function.addRequiredParameter(SYNTAX_TREE_VAR_STRING, "url");
         function.addIncludedRecordParameter(
@@ -385,7 +396,10 @@ public class SyntaxTreeGenerator {
                                 getMethodCallExpressionNode(
                                         getFieldAccessExpressionNode("self", "grpcClient"),
                                         "initStub",
-                                        new String[]{"self", "ROOT_DESCRIPTOR", "getDescriptorMap()"}
+                                        new String[]{
+                                                "self",
+                                                ROOT_DESCRIPTOR + fileName.toUpperCase(),
+                                                GET_DESCRIPTOR_MAP + toPascalCase(fileName) + "()"}
                                 )
                         )
                 )

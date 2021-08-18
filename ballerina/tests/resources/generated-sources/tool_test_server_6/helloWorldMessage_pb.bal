@@ -7,7 +7,7 @@ public isolated client class helloWorldClient {
 
     public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDMESSAGE, getDescriptorMapHelloWorldMessage());
     }
 
     isolated remote function hello(HelloRequest|ContextHelloRequest req) returns stream<HelloResponse, grpc:Error?>|grpc:Error {
@@ -37,10 +37,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         HelloResponseStream outputStream = new HelloResponseStream(result);
-        return {
-            content: new stream<HelloResponse, grpc:Error?>(outputStream),
-            headers: respHeaders
-        };
+        return {content: new stream<HelloResponse, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
     isolated remote function bye(ByeRequest|ContextByeRequest req) returns stream<ByeResponse, grpc:Error?>|grpc:Error {
@@ -70,10 +67,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/bye", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         ByeResponseStream outputStream = new ByeResponseStream(result);
-        return {
-            content: new stream<ByeResponse, grpc:Error?>(outputStream),
-            headers: respHeaders
-        };
+        return {content: new stream<ByeResponse, grpc:Error?>(outputStream), headers: respHeaders};
     }
 }
 
@@ -84,18 +78,14 @@ public class HelloResponseStream {
         self.anydataStream = anydataStream;
     }
 
-    public isolated function next() returns record {|
-                                                HelloResponse value;
-                                            |}|grpc:Error? {
+    public isolated function next() returns record {|HelloResponse value;|}|grpc:Error? {
         var streamValue = self.anydataStream.next();
         if (streamValue is ()) {
             return streamValue;
         } else if (streamValue is grpc:Error) {
             return streamValue;
         } else {
-            record {|
-                HelloResponse value;
-            |} nextRecord = {value: <HelloResponse>streamValue.value};
+            record {|HelloResponse value;|} nextRecord = {value: <HelloResponse>streamValue.value};
             return nextRecord;
         }
     }
@@ -112,18 +102,14 @@ public class ByeResponseStream {
         self.anydataStream = anydataStream;
     }
 
-    public isolated function next() returns record {|
-                                                ByeResponse value;
-                                            |}|grpc:Error? {
+    public isolated function next() returns record {|ByeResponse value;|}|grpc:Error? {
         var streamValue = self.anydataStream.next();
         if (streamValue is ()) {
             return streamValue;
         } else if (streamValue is grpc:Error) {
             return streamValue;
         } else {
-            record {|
-                ByeResponse value;
-            |} nextRecord = {value: <ByeResponse>streamValue.value};
+            record {|ByeResponse value;|} nextRecord = {value: <ByeResponse>streamValue.value};
             return nextRecord;
         }
     }
@@ -243,9 +229,9 @@ public type HelloRequest record {|
     string name = "";
 |};
 
-const string ROOT_DESCRIPTOR = "0A1768656C6C6F576F726C644D6573736167652E70726F746F22220A0C48656C6C6F5265717565737412120A046E616D6518012001280952046E616D6522290A0D48656C6C6F526573706F6E736512180A076D65737361676518012001280952076D65737361676522220A0A4279655265717565737412140A05677265657418012001280952056772656574221F0A0B427965526573706F6E736512100A037361791801200128095203736179325A0A0A68656C6C6F576F726C6412280A0568656C6C6F120D2E48656C6C6F526571756573741A0E2E48656C6C6F526573706F6E7365300112220A03627965120B2E427965526571756573741A0C2E427965526573706F6E73653001620670726F746F33";
+const string ROOT_DESCRIPTOR_HELLOWORLDMESSAGE = "0A1768656C6C6F576F726C644D6573736167652E70726F746F22220A0C48656C6C6F5265717565737412120A046E616D6518012001280952046E616D6522290A0D48656C6C6F526573706F6E736512180A076D65737361676518012001280952076D65737361676522220A0A4279655265717565737412140A05677265657418012001280952056772656574221F0A0B427965526573706F6E736512100A037361791801200128095203736179325A0A0A68656C6C6F576F726C6412280A0568656C6C6F120D2E48656C6C6F526571756573741A0E2E48656C6C6F526573706F6E7365300112220A03627965120B2E427965526571756573741A0C2E427965526573706F6E73653001620670726F746F33";
 
-isolated function getDescriptorMap() returns map<string> {
+public isolated function getDescriptorMapHelloWorldMessage() returns map<string> {
     return {"helloWorldMessage.proto": "0A1768656C6C6F576F726C644D6573736167652E70726F746F22220A0C48656C6C6F5265717565737412120A046E616D6518012001280952046E616D6522290A0D48656C6C6F526573706F6E736512180A076D65737361676518012001280952076D65737361676522220A0A4279655265717565737412140A05677265657418012001280952056772656574221F0A0B427965526573706F6E736512100A037361791801200128095203736179325A0A0A68656C6C6F576F726C6412280A0568656C6C6F120D2E48656C6C6F526571756573741A0E2E48656C6C6F526573706F6E7365300112220A03627965120B2E427965526571756573741A0C2E427965526573706F6E73653001620670726F746F33"};
 }
 

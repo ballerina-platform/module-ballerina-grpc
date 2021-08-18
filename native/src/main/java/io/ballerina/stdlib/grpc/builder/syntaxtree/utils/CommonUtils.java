@@ -53,9 +53,6 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
  */
 public class CommonUtils {
 
-    public static final String GOOGLE_PROTOBUF_TIMESTAMP_PROTO = "google/protobuf/timestamp.proto";
-    public static final String GOOGLE_PROTOBUF_DURATION_PROTO = "google/protobuf/duration.proto";
-
     private CommonUtils() {
 
     }
