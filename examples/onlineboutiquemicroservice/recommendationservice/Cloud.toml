@@ -1,9 +1,7 @@
 [container.image]
 repository="wso2inc"
 name="recommendationservice"
-
-# [container.image.user]
-# run_as="recommendationservice"
+tag="v0.1.0"
 
 [cloud.deployment]
 internal_domain_name="recommendationservice"

@@ -17,7 +17,7 @@ PRGDIR=`dirname "$PRG"`
 # Only set DEMO_HOME if not already set
 [ -z "$DEMO_HOME" ] && DEMO_HOME=`cd "$PRGDIR/.." ; pwd`
 
-for service in productcatalogservice adservice recommendationservice; do
+for service in recommendationservice productcatalogservice adservice; do
   (cd $DEMO_HOME/$service
   bal build)
 done
