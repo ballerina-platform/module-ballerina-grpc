@@ -38,14 +38,12 @@ def packageName = "grpc"
 def packageOrg = "ballerina"
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
-def dependenciesTomlFile = new File("$project.projectDir/Dependencies.toml")
 def compilerPluginTomlFile = new File("$project.projectDir/CompilerPlugin.toml")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 // external jar file which need to pack to distribution
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
 def targetNativeJar = file("$project.rootDir/native/build/libs/${packageName}-native-${project.version}.jar")
 def originalBallerinaToml = ballerinaTomlFile.text
-def originalDependenciesToml = dependenciesTomlFile.text
 def originalCompilerPluginToml = compilerPluginTomlFile.text
 
 def stripBallerinaExtensionVersion(String extVersion) {
@@ -143,15 +141,6 @@ dependencies {
 
 task updateTomlFiles {
     doLast {
-        def stdlibDependentCryptoVersion = stripBallerinaExtensionVersion(project.stdlibCryptoVersion)
-        def stdlibDependentHttpVersion = stripBallerinaExtensionVersion(project.stdlibHttpVersion)
-        def stdlibDependentAuthVersion = stripBallerinaExtensionVersion(project.stdlibOAuth2Version)
-        def stdlibDependentJwtVersion = stripBallerinaExtensionVersion(project.stdlibJwtVersion)
-        def stdlibDependentOAuth2Version = stripBallerinaExtensionVersion(project.stdlibOAuth2Version)
-        def stdlibDependentRegexVersion = stripBallerinaExtensionVersion(project.stdlibRegexVersion)
-        def stdlibDependentTimeVersion = stripBallerinaExtensionVersion(project.stdlibTimeVersion)
-        def stdlibDependentOsVersion = stripBallerinaExtensionVersion(project.stdlibOsVersion)
-
         def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
@@ -165,16 +154,6 @@ task updateTomlFiles {
         newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
         ballerinaTomlFile.text = newBallerinaToml
 
-        def newDependencyConfig = dependenciesTomlFile.text.replace("@stdlib.crypto.version@", stdlibDependentCryptoVersion)
-        newDependencyConfig = newDependencyConfig.replace("@stdlib.http.version@", stdlibDependentHttpVersion)
-        newDependencyConfig = newDependencyConfig.replace("@stdlib.auth.version@", stdlibDependentAuthVersion)
-        newDependencyConfig = newDependencyConfig.replace("@stdlib.jwt.version@", stdlibDependentJwtVersion)
-        newDependencyConfig = newDependencyConfig.replace("@stdlib.oauth2.version@", stdlibDependentOAuth2Version)
-        newDependencyConfig = newDependencyConfig.replace("@stdlib.regex.version@", stdlibDependentRegexVersion)
-        newDependencyConfig = newDependencyConfig.replace("@stdlib.time.version@", stdlibDependentTimeVersion)
-        newDependencyConfig = newDependencyConfig.replace("@stdlib.os.version@", stdlibDependentOsVersion)
-        dependenciesTomlFile.text = newDependencyConfig
-
         def newCompilerPluginToml = compilerPluginTomlFile.text.replace("@project.version@", project.version)
         compilerPluginTomlFile.text = newCompilerPluginToml
     }
@@ -183,7 +162,6 @@ task updateTomlFiles {
 task revertTomlFiles {
     doLast {
         ballerinaTomlFile.text = originalBallerinaToml
-        dependenciesTomlFile.text = originalDependenciesToml
         compilerPluginTomlFile.text = originalCompilerPluginToml
     }
 }
@@ -247,6 +225,79 @@ task stopLdapServer() {
     }
 }
 
+def testContainerName = "go_grpc_simple_server"
+
+def checkGoServerStatus(containerName) {
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+        def stdOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'sh', '-c', "docker inspect ${containerName} | grep \"Running\""
+            standardOutput = stdOut
+        }
+        if (stdOut.toString().contains("true")) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+}
+
+task startGoServer() {
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+        def stdOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
+            standardOutput = stdOut
+        }
+        if (!stdOut.toString().contains(testContainerName)) {
+            println "Starting Golang gRPC server."
+            def standardOutput = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d daneshk/go_grpc_simple_server:latest"
+            }
+            def healthCheck = 1;
+            def counter = 0;
+            doLast {
+                while (healthCheck != 0 && counter < 12) {
+                    sleep(1000)
+                    healthCheck = checkGoServerStatus(testContainerName)
+                    counter = counter + 1;
+                }
+                if (healthCheck != 0) {
+                    throw new GradleException("Docker container ${testContainerName} health test exceeded timeout!")
+                }
+            }
+        } else {
+            println "Golang gRPC server is already running."
+        }
+    }
+}
+
+task stopGoServer() {
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
+                standardOutput = stdOut
+            }
+            if (stdOut.toString().contains(testContainerName)) {
+                println "Stopping Golang gRPC server."
+                try {
+                    exec {
+                        commandLine 'sh', '-c', "docker stop ${testContainerName}"
+                        standardOutput = stdOut
+                    }
+                } catch (all) {
+                    println("Gradle process can safely ignore stopGoServerDockerContainer task")
+                }
+            } else {
+                println "Golang gRPC server is not started."
+            }
+        }
+    }
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
@@ -270,9 +321,13 @@ updateTomlFiles.dependsOn copyStdlibs
 
 test.finalizedBy stopLdapServer
 test.dependsOn startLdapServer
+test.finalizedBy stopGoServer
+test.dependsOn startGoServer
 
 build.finalizedBy stopLdapServer
 build.dependsOn startLdapServer
+build.finalizedBy stopGoServer
+build.dependsOn startGoServer
 
 build.dependsOn "generatePomFileForMavenPublication"
 build.dependsOn ":${packageName}-native:build"
