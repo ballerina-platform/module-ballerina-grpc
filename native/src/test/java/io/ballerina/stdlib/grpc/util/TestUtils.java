@@ -30,6 +30,7 @@ import io.ballerina.runtime.api.values.BLink;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.runtime.internal.scheduling.Scheduler;
 import io.ballerina.runtime.internal.scheduling.Strand;
 import io.ballerina.runtime.internal.values.MapValue;
@@ -170,6 +171,11 @@ public class TestUtils {
             @Override
             public Object frozenCopy(Map<Object, Object> map) {
 
+                return null;
+            }
+
+            @Override
+            public BTypedesc getTypedesc() {
                 return null;
             }
 
