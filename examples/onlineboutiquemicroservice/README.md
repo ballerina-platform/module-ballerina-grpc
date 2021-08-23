@@ -4,7 +4,7 @@
 
 Online Boutique Microservices example is based on the [cloud-native microservices demo application](https://github.com/GoogleCloudPlatform/microservices-demo) of [Google Cloud Platform](https://github.com/GoogleCloudPlatform). 
 The original example consists of 10 microservices implemented in various languages and 3 of those microservices are implemented in Ballerina here.
-This example shows how ballerina gRPC module can work effectively with microservices implemented in other languages.
+This example shows how Ballerina gRPC module can work effectively with microservices implemented in other languages.
 
 Following shows an overview of the microservices.
 
@@ -50,7 +50,7 @@ For this example to work, all the 10 microservices must be running. Therefore, y
     Note: You can run `kubectl delete -f ./release/kubernetes-manifests.yaml` to stop the 7 services when in need.
 4. Now clone this repository and run `sh examples/onlineboutiquemicroservice/scripts/start.sh`(This will build the 3 services and deploy in kubernetes).
 5. Run `kubectl get pods` to see whether pods are in a Ready state.
-6. If all the pods are running, run `kubectl get service/frontend-external`to get the frontend-external ip.
+6. If all the pods are running, run `kubectl get service/frontend-external` to get the frontend-external ip.
 7. Visit the application on your browser to confirm installation.
    
    Note: If you are on Minikube, get the hostname by executing `minikube ip`. e.g., <MINIKUBE_IP>:<FRONTEND_EXTERNAL_PORT>
