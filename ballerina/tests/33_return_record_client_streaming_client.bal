@@ -71,3 +71,18 @@ isolated function testClientStreamingSendError() returns Error? {
         test:assertFail("Expected grpc:Error not found");
     }
 }
+
+@test:Config {enable:true}
+isolated function testClientStreamingReceiveAfterSendError() returns Error? {
+    HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
+    SayHelloStreamingClient streamingClient = check helloWorldEp->sayHello();
+
+    check streamingClient->sendSampleMsg33({name: "WSO2", id: 0});
+    check streamingClient->sendError(error UnKnownError("Unknown gRPC error occured."));
+    string|Error? response = streamingClient->complete();
+    if response is Error {
+        test:assertEquals(response.message(), "Client call was cancelled.");
+    } else {
+        test:assertFail("Expected grpc:Error not found");
+    }
+}
