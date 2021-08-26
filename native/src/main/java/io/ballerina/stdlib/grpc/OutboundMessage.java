@@ -17,8 +17,12 @@
  */
 package io.ballerina.stdlib.grpc;
 
+import io.ballerina.stdlib.http.transport.contractimpl.sender.http2.Http2ResetContent;
 import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.EmptyByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -206,6 +210,21 @@ public class OutboundMessage {
         LastHttpContent lastHttpContent = new DefaultLastHttpContent();
         lastHttpContent.trailingHeaders().set(trailers);
         responseMessage.addHttpContent(lastHttpContent);
+    }
+
+    /**
+     * Close the stream by sending a Http2ResetContent with the gRPC status code.
+     *
+     * @param status gRPC status
+     */
+    public void sendError(Status status) {
+        framer().flush();
+        framer().dispose();
+        HttpHeaders errorHeaders = new DefaultHttpHeaders();
+        addStatusToTrailers(status, errorHeaders);
+        Http2ResetContent resetContent = new Http2ResetContent(
+                new EmptyByteBuf(ByteBufAllocator.DEFAULT), errorHeaders);
+        responseMessage.addHttpContent(resetContent);
     }
 
     private void addStatusToTrailers(Status status, HttpHeaders trailers) {
