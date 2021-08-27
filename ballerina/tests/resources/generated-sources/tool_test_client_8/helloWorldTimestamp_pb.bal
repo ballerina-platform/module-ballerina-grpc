@@ -1,5 +1,7 @@
 import ballerina/grpc;
 import ballerina/time;
+import ballerina/protobuf.types.wrappers;
+import ballerina/protobuf.types.timestamp;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -53,7 +55,7 @@ public client class GetTimeStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextString(ContextString message) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -67,7 +69,7 @@ public client class GetTimeStreamingClient {
         }
     }
 
-    isolated remote function receiveContextTimestamp() returns ContextTimestamp|grpc:Error? {
+    isolated remote function receiveContextTimestamp() returns timestamp:ContextTimestamp|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -97,7 +99,7 @@ public client class SendTimeStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextTimestamp(ContextTimestamp message) returns grpc:Error? {
+    isolated remote function sendContextTimestamp(timestamp:ContextTimestamp message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -111,7 +113,7 @@ public client class SendTimeStreamingClient {
         }
     }
 
-    isolated remote function receiveContextString() returns ContextString|grpc:Error? {
+    isolated remote function receiveContextString() returns wrappers:ContextString|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -141,7 +143,7 @@ public client class ExchangeTimeStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextTimestamp(ContextTimestamp message) returns grpc:Error? {
+    isolated remote function sendContextTimestamp(timestamp:ContextTimestamp message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -155,7 +157,7 @@ public client class ExchangeTimeStreamingClient {
         }
     }
 
-    isolated remote function receiveContextTimestamp() returns ContextTimestamp|grpc:Error? {
+    isolated remote function receiveContextTimestamp() returns timestamp:ContextTimestamp|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -185,7 +187,7 @@ public client class GetGreetingStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextString(ContextString message) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -243,7 +245,7 @@ public client class SendGreetingStreamingClient {
         }
     }
 
-    isolated remote function receiveContextString() returns ContextString|grpc:Error? {
+    isolated remote function receiveContextString() returns wrappers:ContextString|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -321,7 +323,7 @@ public client class HelloWorldStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -385,7 +387,7 @@ public client class HelloWorldTimestampCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextTimestamp(ContextTimestamp response) returns grpc:Error? {
+    isolated remote function sendContextTimestamp(timestamp:ContextTimestamp response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -407,23 +409,8 @@ public type ContextGreetingStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextTimestampStream record {|
-    stream<time:Utc, error?> content;
-    map<string|string[]> headers;
-|};
-
 public type ContextGreeting record {|
     Greeting content;
-    map<string|string[]> headers;
-|};
-
-public type ContextString record {|
-    string content;
-    map<string|string[]> headers;
-|};
-
-public type ContextTimestamp record {|
-    time:Utc content;
     map<string|string[]> headers;
 |};
 

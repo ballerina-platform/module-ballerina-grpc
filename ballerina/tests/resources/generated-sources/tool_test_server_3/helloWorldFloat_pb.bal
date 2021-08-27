@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -10,10 +11,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDFLOAT, getDescriptorMapHelloWorldFloat());
     }
 
-    isolated remote function hello(float|ContextFloat req) returns stream<float, grpc:Error?>|grpc:Error {
+    isolated remote function hello(float|wrappers:ContextFloat req) returns stream<float, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         float message;
-        if (req is ContextFloat) {
+        if (req is wrappers:ContextFloat) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -21,14 +22,14 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        FloatStream outputStream = new FloatStream(result);
+        wrappers:FloatStream outputStream = new wrappers:FloatStream(result);
         return new stream<float, grpc:Error?>(outputStream);
     }
 
-    isolated remote function helloContext(float|ContextFloat req) returns ContextFloatStream|grpc:Error {
+    isolated remote function helloContext(float|wrappers:ContextFloat req) returns wrappers:ContextFloatStream|grpc:Error {
         map<string|string[]> headers = {};
         float message;
-        if (req is ContextFloat) {
+        if (req is wrappers:ContextFloat) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -36,32 +37,8 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        FloatStream outputStream = new FloatStream(result);
+        wrappers:FloatStream outputStream = new wrappers:FloatStream(result);
         return {content: new stream<float, grpc:Error?>(outputStream), headers: respHeaders};
-    }
-}
-
-public class FloatStream {
-    private stream<anydata, grpc:Error?> anydataStream;
-
-    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
-        self.anydataStream = anydataStream;
-    }
-
-    public isolated function next() returns record {|float value;|}|grpc:Error? {
-        var streamValue = self.anydataStream.next();
-        if (streamValue is ()) {
-            return streamValue;
-        } else if (streamValue is grpc:Error) {
-            return streamValue;
-        } else {
-            record {|float value;|} nextRecord = {value: <float>streamValue.value};
-            return nextRecord;
-        }
-    }
-
-    public isolated function close() returns grpc:Error? {
-        return self.anydataStream.close();
     }
 }
 
@@ -80,7 +57,7 @@ public client class HelloWorldFloatCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextFloat(ContextFloat response) returns grpc:Error? {
+    isolated remote function sendContextFloat(wrappers:ContextFloat response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -96,16 +73,6 @@ public client class HelloWorldFloatCaller {
         return self.caller.isCancelled();
     }
 }
-
-public type ContextFloatStream record {|
-    stream<float, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextFloat record {|
-    float content;
-    map<string|string[]> headers;
-|};
 
 const string ROOT_DESCRIPTOR_HELLOWORLDFLOAT = "0A1568656C6C6F576F726C64466C6F61742E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32510A0A68656C6C6F576F726C6412430A0568656C6C6F121B2E676F6F676C652E70726F746F6275662E466C6F617456616C75651A1B2E676F6F676C652E70726F746F6275662E466C6F617456616C75653001620670726F746F33";
 

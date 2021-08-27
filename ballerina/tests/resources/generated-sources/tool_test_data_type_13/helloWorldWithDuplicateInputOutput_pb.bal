@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class ChatClient {
     *grpc:AbstractClientEndpoint;
@@ -24,7 +25,7 @@ public isolated client class ChatClient {
         return result.toString();
     }
 
-    isolated remote function call1Context(Msg|ContextMsg req) returns (ContextString|grpc:Error) {
+    isolated remote function call1Context(Msg|ContextMsg req) returns (wrappers:ContextString|grpc:Error) {
         map<string|string[]> headers = {};
         Msg message;
         if (req is ContextMsg) {
@@ -52,7 +53,7 @@ public isolated client class ChatClient {
         return result.toString();
     }
 
-    isolated remote function call2Context(Msg|ContextMsg req) returns (ContextString|grpc:Error) {
+    isolated remote function call2Context(Msg|ContextMsg req) returns (wrappers:ContextString|grpc:Error) {
         map<string|string[]> headers = {};
         Msg message;
         if (req is ContextMsg) {
@@ -87,11 +88,11 @@ public isolated client class ChatClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call3Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
+    isolated remote function call3Context(Msg|ContextMsg req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
         if (req is ContextMsg) {
@@ -102,7 +103,7 @@ public isolated client class ChatClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -117,11 +118,11 @@ public isolated client class ChatClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call4Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
+    isolated remote function call4Context(Msg|ContextMsg req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
         if (req is ContextMsg) {
@@ -132,7 +133,7 @@ public isolated client class ChatClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -171,7 +172,7 @@ public isolated client class Chat2Client {
         return result.toString();
     }
 
-    isolated remote function call1Context(Msg|ContextMsg req) returns (ContextString|grpc:Error) {
+    isolated remote function call1Context(Msg|ContextMsg req) returns (wrappers:ContextString|grpc:Error) {
         map<string|string[]> headers = {};
         Msg message;
         if (req is ContextMsg) {
@@ -199,7 +200,7 @@ public isolated client class Chat2Client {
         return result.toString();
     }
 
-    isolated remote function call2Context(Msg|ContextMsg req) returns (ContextString|grpc:Error) {
+    isolated remote function call2Context(Msg|ContextMsg req) returns (wrappers:ContextString|grpc:Error) {
         map<string|string[]> headers = {};
         Msg message;
         if (req is ContextMsg) {
@@ -234,11 +235,11 @@ public isolated client class Chat2Client {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call3Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
+    isolated remote function call3Context(Msg|ContextMsg req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
         if (req is ContextMsg) {
@@ -249,7 +250,7 @@ public isolated client class Chat2Client {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -264,11 +265,11 @@ public isolated client class Chat2Client {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function call4Context(Msg|ContextMsg req) returns ContextStringStream|grpc:Error {
+    isolated remote function call4Context(Msg|ContextMsg req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
         if (req is ContextMsg) {
@@ -279,7 +280,7 @@ public isolated client class Chat2Client {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -305,7 +306,7 @@ public client class Call5StreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextString(ContextString message) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -349,7 +350,7 @@ public client class Call6StreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextString(ContextString message) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -382,30 +383,6 @@ public client class Call6StreamingClient {
     }
 }
 
-public class StringStream {
-    private stream<anydata, grpc:Error?> anydataStream;
-
-    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
-        self.anydataStream = anydataStream;
-    }
-
-    public isolated function next() returns record {|string value;|}|grpc:Error? {
-        var streamValue = self.anydataStream.next();
-        if (streamValue is ()) {
-            return streamValue;
-        } else if (streamValue is grpc:Error) {
-            return streamValue;
-        } else {
-            record {|string value;|} nextRecord = {value: <string>streamValue.value};
-            return nextRecord;
-        }
-    }
-
-    public isolated function close() returns grpc:Error? {
-        return self.anydataStream.close();
-    }
-}
-
 public client class Call7StreamingClient {
     private grpc:StreamingClient sClient;
 
@@ -417,7 +394,7 @@ public client class Call7StreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextString(ContextString message) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -461,7 +438,7 @@ public client class Call8StreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextString(ContextString message) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -541,7 +518,7 @@ public client class ChatStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -573,7 +550,7 @@ public client class Chat2StringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -627,18 +604,8 @@ public type ContextMsgStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextStringStream record {|
-    stream<string, error?> content;
-    map<string|string[]> headers;
-|};
-
 public type ContextMsg record {|
     Msg content;
-    map<string|string[]> headers;
-|};
-
-public type ContextString record {|
-    string content;
     map<string|string[]> headers;
 |};
 

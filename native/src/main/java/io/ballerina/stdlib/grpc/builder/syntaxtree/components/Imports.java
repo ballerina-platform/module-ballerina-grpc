@@ -22,10 +22,14 @@ import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.IdentifierToken;
 import io.ballerina.compiler.syntax.tree.ImportDeclarationNode;
 import io.ballerina.compiler.syntax.tree.ImportOrgNameNode;
+import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class representing ImportDeclarationNode.
@@ -52,6 +56,30 @@ public class Imports {
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_IMPORT,
                 importOrgNameNode,
                 moduleNodeList,
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        );
+    }
+
+    public static ImportDeclarationNode getImportDeclarationNode(String orgName, String moduleName,
+                                                                 String[] submodules) {
+        Token orgNameToken = AbstractNodeFactory.createIdentifierToken(orgName);
+        ImportOrgNameNode importOrgNameNode = NodeFactory.createImportOrgNameNode(
+                orgNameToken,
+                SyntaxTreeConstants.SYNTAX_TREE_SLASH
+        );
+        List<Node> moduleNodeList = new ArrayList<>();
+        moduleNodeList.add(AbstractNodeFactory.createIdentifierToken(moduleName));
+
+        for (String submodule : submodules) {
+            moduleNodeList.add(SyntaxTreeConstants.SYNTAX_TREE_DOT);
+            moduleNodeList.add(AbstractNodeFactory.createIdentifierToken(submodule));
+        }
+
+        return NodeFactory.createImportDeclarationNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_IMPORT,
+                importOrgNameNode,
+                AbstractNodeFactory.createSeparatedNodeList(moduleNodeList),
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         );

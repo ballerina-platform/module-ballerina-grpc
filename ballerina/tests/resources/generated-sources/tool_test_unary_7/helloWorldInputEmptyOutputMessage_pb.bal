@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.empty;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -11,7 +12,7 @@ public isolated client class helloWorldClient {
     }
 
     isolated remote function testNoInputOutputStruct() returns (HelloResponse|grpc:Error) {
-        Empty message = {};
+        empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
@@ -19,7 +20,7 @@ public isolated client class helloWorldClient {
     }
 
     isolated remote function testNoInputOutputStructContext() returns (ContextHelloResponse|grpc:Error) {
-        Empty message = {};
+        empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
@@ -59,16 +60,9 @@ public client class HelloWorldHelloResponseCaller {
     }
 }
 
-public type ContextNil record {|
-    map<string|string[]> headers;
-|};
-
 public type ContextHelloResponse record {|
     HelloResponse content;
     map<string|string[]> headers;
-|};
-
-public type Empty record {|
 |};
 
 public type HelloResponse record {|

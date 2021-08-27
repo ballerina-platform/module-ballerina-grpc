@@ -49,6 +49,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
 /**
  * Utility functions related to Server.
@@ -76,10 +78,14 @@ public class ServerUtils {
             } else {
                 inputCap = capitalize(method.getInputType());
             }
+            String contextParam = "Context" + inputCap;
+            if (isBallerinaProtobufType(method.getInputType())) {
+                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
-                            getSimpleNameReferenceNode("Context" + inputCap)
+                            getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
             );
@@ -134,10 +140,14 @@ public class ServerUtils {
             } else {
                 inputCap = capitalize(method.getInputType());
             }
+            String contextParam = "Context" + inputCap;
+            if (isBallerinaProtobufType(method.getInputType())) {
+                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
-                            getSimpleNameReferenceNode("Context" + inputCap)
+                            getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
             );
@@ -154,9 +164,13 @@ public class ServerUtils {
         } else {
             outputCap = capitalize(method.getOutputType());
         }
+        String contextStreamParam = "Context" + outputCap + "Stream";
+        if (isBallerinaProtobufType(method.getOutputType())) {
+            contextStreamParam = getProtobufType(method.getOutputType()) + ":" + contextStreamParam;
+        }
         function.addReturns(
                 getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode("Context" + outputCap + "Stream"),
+                        getSimpleNameReferenceNode(contextStreamParam),
                         SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
                 )
         );
@@ -350,12 +364,16 @@ public class ServerUtils {
         );
         function.addVariableStatement(payloadTuple.getVariableDeclarationNode());
 
+        String streamParam = outCap + "Stream";
+        if (isBallerinaProtobufType(method.getOutputType())) {
+            streamParam = getProtobufType(method.getOutputType()) + ":" + streamParam;
+        }
         VariableDeclaration stream = new VariableDeclaration(
                 getTypedBindingPatternNode(
-                        getSimpleNameReferenceNode(outCap + "Stream"),
+                        getSimpleNameReferenceNode(streamParam),
                         getCaptureBindingPatternNode("outputStream")
                 ),
-                getExplicitNewExpressionNode(outCap + "Stream", new String[]{"result"})
+                getExplicitNewExpressionNode(streamParam, new String[]{"result"})
         );
         function.addVariableStatement(stream.getVariableDeclarationNode());
     }

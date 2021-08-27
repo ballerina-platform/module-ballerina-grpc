@@ -30,6 +30,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
 /**
  * Utility functions related to Caller.
@@ -107,9 +109,13 @@ public class CallerUtils {
             send.addQualifiers(new String[]{"isolated", "remote"});
             caller.addMember(send.getFunctionDefinitionNode());
 
+            String contextParam = "Context" + valueCap;
+            if (isBallerinaProtobufType(value)) {
+                contextParam = getProtobufType(value) + ":" + contextParam;
+            }
             Function sendContext = new Function("sendContext" + valueCap);
             sendContext.addRequiredParameter(
-                    getSimpleNameReferenceNode("Context" + valueCap),
+                    getSimpleNameReferenceNode(contextParam),
                     "response"
             );
             sendContext.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
