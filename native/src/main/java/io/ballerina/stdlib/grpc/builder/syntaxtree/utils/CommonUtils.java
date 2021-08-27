@@ -31,7 +31,6 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaratio
 import java.util.List;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.UNARY;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
@@ -172,11 +171,10 @@ public class CommonUtils {
                 contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
             }
             IfElse reqIsContext = new IfElse(
-                    getBracedExpressionNode(
-                            getTypeTestExpressionNode(
-                                    getSimpleNameReferenceNode("req"),
-                                    getSimpleNameReferenceNode(contextParam)
-                            )));
+                    getTypeTestExpressionNode(
+                            getSimpleNameReferenceNode("req"),
+                            getSimpleNameReferenceNode(contextParam)
+                    ));
             reqIsContext.addIfStatement(
                     getAssignmentStatementNode(
                             "message",
@@ -233,9 +231,6 @@ public class CommonUtils {
     }
 
     public static boolean isType(String methodType, String type) {
-        if (methodType != null && methodType.equals(type)) {
-            return true;
-        }
-        return false;
+        return methodType != null && methodType.equals(type);
     }
 }

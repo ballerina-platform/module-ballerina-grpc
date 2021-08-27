@@ -14,7 +14,7 @@ public isolated client class helloWorldClient {
     isolated remote function hello(boolean|wrappers:ContextBoolean req) returns stream<boolean, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         boolean message;
-        if (req is wrappers:ContextBoolean) {
+        if req is wrappers:ContextBoolean {
             message = req.content;
             headers = req.headers;
         } else {
@@ -29,7 +29,7 @@ public isolated client class helloWorldClient {
     isolated remote function helloContext(boolean|wrappers:ContextBoolean req) returns wrappers:ContextBooleanStream|grpc:Error {
         map<string|string[]> headers = {};
         boolean message;
-        if (req is wrappers:ContextBoolean) {
+        if req is wrappers:ContextBoolean {
             message = req.content;
             headers = req.headers;
         } else {

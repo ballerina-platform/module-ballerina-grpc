@@ -11,10 +11,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDINT, getDescriptorMapHelloWorldInt());
     }
 
-    isolated remote function hello(int|wrappers:ContextInt req) returns (int|grpc:Error) {
+    isolated remote function hello(int|wrappers:ContextInt req) returns int|grpc:Error {
         map<string|string[]> headers = {};
         int message;
-        if (req is wrappers:ContextInt) {
+        if req is wrappers:ContextInt {
             message = req.content;
             headers = req.headers;
         } else {
@@ -25,10 +25,10 @@ public isolated client class helloWorldClient {
         return <int>result;
     }
 
-    isolated remote function helloContext(int|wrappers:ContextInt req) returns (wrappers:ContextInt|grpc:Error) {
+    isolated remote function helloContext(int|wrappers:ContextInt req) returns wrappers:ContextInt|grpc:Error {
         map<string|string[]> headers = {};
         int message;
-        if (req is wrappers:ContextInt) {
+        if req is wrappers:ContextInt {
             message = req.content;
             headers = req.headers;
         } else {

@@ -14,7 +14,7 @@ public isolated client class helloWorldClient {
     isolated remote function hello(byte[]|wrappers:ContextBytes req) returns stream<byte[], grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is wrappers:ContextBytes) {
+        if req is wrappers:ContextBytes {
             message = req.content;
             headers = req.headers;
         } else {
@@ -29,7 +29,7 @@ public isolated client class helloWorldClient {
     isolated remote function helloContext(byte[]|wrappers:ContextBytes req) returns wrappers:ContextBytesStream|grpc:Error {
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is wrappers:ContextBytes) {
+        if req is wrappers:ContextBytes {
             message = req.content;
             headers = req.headers;
         } else {

@@ -14,7 +14,7 @@ public isolated client class helloWorldClient {
     isolated remote function hello(float|wrappers:ContextFloat req) returns stream<float, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         float message;
-        if (req is wrappers:ContextFloat) {
+        if req is wrappers:ContextFloat {
             message = req.content;
             headers = req.headers;
         } else {
@@ -29,7 +29,7 @@ public isolated client class helloWorldClient {
     isolated remote function helloContext(float|wrappers:ContextFloat req) returns wrappers:ContextFloatStream|grpc:Error {
         map<string|string[]> headers = {};
         float message;
-        if (req is wrappers:ContextFloat) {
+        if req is wrappers:ContextFloat {
             message = req.content;
             headers = req.headers;
         } else {

@@ -11,7 +11,7 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDINPUTEMPTYOUTPUTMESSAGE, getDescriptorMapHelloWorldInputEmptyOutputMessage());
     }
 
-    isolated remote function testNoInputOutputStruct() returns (HelloResponse|grpc:Error) {
+    isolated remote function testNoInputOutputStruct() returns HelloResponse|grpc:Error {
         empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
@@ -19,7 +19,7 @@ public isolated client class helloWorldClient {
         return <HelloResponse>result;
     }
 
-    isolated remote function testNoInputOutputStructContext() returns (ContextHelloResponse|grpc:Error) {
+    isolated remote function testNoInputOutputStructContext() returns ContextHelloResponse|grpc:Error {
         empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);

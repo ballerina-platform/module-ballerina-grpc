@@ -12,7 +12,7 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_TIME_ROOT, getDescriptorMapTimeRoot());
     }
 
-    isolated remote function sendTime() returns (SendTimeStreamingClient|grpc:Error) {
+    isolated remote function sendTime() returns SendTimeStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/sendTime");
         return new SendTimeStreamingClient(sClient);
     }

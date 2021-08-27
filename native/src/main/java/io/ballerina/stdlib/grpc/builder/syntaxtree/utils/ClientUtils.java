@@ -45,7 +45,6 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getMapTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getNilTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
@@ -76,11 +75,9 @@ public class ClientUtils {
         String clientName = capitalize(method.getMethodName()) + "StreamingClient";
         Function function = new Function(method.getMethodName());
         function.addReturns(
-                getParenthesisedTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(clientName),
-                                SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
-                        )
+                getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(clientName),
+                        SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
                 )
         );
         VariableDeclaration sClient = new VariableDeclaration(
@@ -148,16 +145,22 @@ public class ClientUtils {
 
     private static Function getSendFunction(Method method) {
         String inputCap;
-        if (method.getInputType().equals("byte[]")) {
-            inputCap = "Bytes";
-        } else if (method.getInputType().equals("time:Utc")) {
-            inputCap = "Timestamp";
-        } else if (method.getInputType().equals("time:Seconds")) {
-            inputCap = "Duration";
-        } else if (method.getInputType().equals("map<anydata>")) {
-            inputCap = "Struct";
-        } else {
-            inputCap = capitalize(method.getInputType());
+        switch (method.getInputType()) {
+            case "byte[]":
+                inputCap = "Bytes";
+                break;
+            case "time:Utc":
+                inputCap = "Timestamp";
+                break;
+            case "time:Seconds":
+                inputCap = "Duration";
+                break;
+            case "map<anydata>":
+                inputCap = "Struct";
+                break;
+            default:
+                inputCap = capitalize(method.getInputType());
+                break;
         }
         Function function = new Function("send" + inputCap);
         function.addRequiredParameter(
@@ -178,16 +181,22 @@ public class ClientUtils {
 
     private static Function getSendContextFunction(Method method) {
         String inputCap;
-        if (method.getInputType().equals("byte[]")) {
-            inputCap = "Bytes";
-        } else if (method.getInputType().equals("time:Utc")) {
-            inputCap = "Timestamp";
-        } else if (method.getInputType().equals("time:Seconds")) {
-            inputCap = "Duration";
-        } else if (method.getInputType().equals("map<anydata>")) {
-            inputCap = "Struct";
-        } else {
-            inputCap = capitalize(method.getInputType());
+        switch (method.getInputType()) {
+            case "byte[]":
+                inputCap = "Bytes";
+                break;
+            case "time:Utc":
+                inputCap = "Timestamp";
+                break;
+            case "time:Seconds":
+                inputCap = "Duration";
+                break;
+            case "map<anydata>":
+                inputCap = "Struct";
+                break;
+            default:
+                inputCap = capitalize(method.getInputType());
+                break;
         }
         Function function = new Function("sendContext" + inputCap);
         String contextParam = "Context" + inputCap;
@@ -214,16 +223,22 @@ public class ClientUtils {
         String functionName = "receive";
         if (method.getOutputType() != null) {
             String outCap;
-            if (method.getOutputType().equals("byte[]")) {
-                outCap = "Bytes";
-            } else if (method.getOutputType().equals("time:Utc")) {
-                outCap = "Timestamp";
-            } else if (method.getOutputType().equals("time:Seconds")) {
-                outCap = "Duration";
-            } else if (method.getOutputType().equals("map<anydata>")) {
-                outCap = "Struct";
-            } else {
-                outCap = capitalize(method.getOutputType());
+            switch (method.getOutputType()) {
+                case "byte[]":
+                    outCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    outCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    outCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    outCap = "Struct";
+                    break;
+                default:
+                    outCap = capitalize(method.getOutputType());
+                    break;
             }
             functionName = "receive" + outCap;
         }
@@ -325,16 +340,22 @@ public class ClientUtils {
     private static Function getReceiveContextFunction(Method method) {
         String outCap = "Nil";
         if (method.getOutputType() != null) {
-            if (method.getOutputType().equals("byte[]")) {
-                outCap = "Bytes";
-            } else if (method.getOutputType().equals("time:Utc")) {
-                outCap = "Timestamp";
-            } else if (method.getOutputType().equals("time:Seconds")) {
-                outCap = "Duration";
-            } else if (method.getOutputType().equals("map<anydata>")) {
-                outCap = "Struct";
-            } else {
-                outCap = capitalize(method.getOutputType());
+            switch (method.getOutputType()) {
+                case "byte[]":
+                    outCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    outCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    outCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    outCap = "Struct";
+                    break;
+                default:
+                    outCap = capitalize(method.getOutputType());
+                    break;
             }
         }
         Function function = new Function("receiveContext" + outCap);

@@ -13,32 +13,32 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDTIMESTAMP, getDescriptorMapHelloWorldTimestamp());
     }
 
-    isolated remote function getTime() returns (GetTimeStreamingClient|grpc:Error) {
+    isolated remote function getTime() returns GetTimeStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/getTime");
         return new GetTimeStreamingClient(sClient);
     }
 
-    isolated remote function sendTime() returns (SendTimeStreamingClient|grpc:Error) {
+    isolated remote function sendTime() returns SendTimeStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/sendTime");
         return new SendTimeStreamingClient(sClient);
     }
 
-    isolated remote function exchangeTime() returns (ExchangeTimeStreamingClient|grpc:Error) {
+    isolated remote function exchangeTime() returns ExchangeTimeStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/exchangeTime");
         return new ExchangeTimeStreamingClient(sClient);
     }
 
-    isolated remote function getGreeting() returns (GetGreetingStreamingClient|grpc:Error) {
+    isolated remote function getGreeting() returns GetGreetingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/getGreeting");
         return new GetGreetingStreamingClient(sClient);
     }
 
-    isolated remote function sendGreeting() returns (SendGreetingStreamingClient|grpc:Error) {
+    isolated remote function sendGreeting() returns SendGreetingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/sendGreeting");
         return new SendGreetingStreamingClient(sClient);
     }
 
-    isolated remote function exchangeGreeting() returns (ExchangeGreetingStreamingClient|grpc:Error) {
+    isolated remote function exchangeGreeting() returns ExchangeGreetingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/exchangeGreeting");
         return new ExchangeGreetingStreamingClient(sClient);
     }
