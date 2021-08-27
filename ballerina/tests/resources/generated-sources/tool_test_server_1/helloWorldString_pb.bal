@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -10,10 +11,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDSTRING, getDescriptorMapHelloWorldString());
     }
 
-    isolated remote function hello(string|ContextString req) returns stream<string, grpc:Error?>|grpc:Error {
+    isolated remote function hello(string|wrappers:ContextString req) returns stream<string, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -21,14 +22,14 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
-    isolated remote function helloContext(string|ContextString req) returns ContextStringStream|grpc:Error {
+    isolated remote function helloContext(string|wrappers:ContextString req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -36,32 +37,8 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        StringStream outputStream = new StringStream(result);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
-    }
-}
-
-public class StringStream {
-    private stream<anydata, grpc:Error?> anydataStream;
-
-    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
-        self.anydataStream = anydataStream;
-    }
-
-    public isolated function next() returns record {|string value;|}|grpc:Error? {
-        var streamValue = self.anydataStream.next();
-        if (streamValue is ()) {
-            return streamValue;
-        } else if (streamValue is grpc:Error) {
-            return streamValue;
-        } else {
-            record {|string value;|} nextRecord = {value: <string>streamValue.value};
-            return nextRecord;
-        }
-    }
-
-    public isolated function close() returns grpc:Error? {
-        return self.anydataStream.close();
     }
 }
 
@@ -80,7 +57,7 @@ public client class HelloWorldStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -96,16 +73,6 @@ public client class HelloWorldStringCaller {
         return self.caller.isCancelled();
     }
 }
-
-public type ContextStringStream record {|
-    stream<string, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextString record {|
-    string content;
-    map<string|string[]> headers;
-|};
 
 const string ROOT_DESCRIPTOR_HELLOWORLDSTRING = "0A1668656C6C6F576F726C64537472696E672E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32530A0A68656C6C6F576F726C6412450A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75653001620670726F746F33";
 

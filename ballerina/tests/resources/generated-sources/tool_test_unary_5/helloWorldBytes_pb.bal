@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -10,10 +11,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDBYTES, getDescriptorMapHelloWorldBytes());
     }
 
-    isolated remote function hello(byte[]|ContextBytes req) returns (byte[]|grpc:Error) {
+    isolated remote function hello(byte[]|wrappers:ContextBytes req) returns (byte[]|grpc:Error) {
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is ContextBytes) {
+        if (req is wrappers:ContextBytes) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -24,10 +25,10 @@ public isolated client class helloWorldClient {
         return <byte[]>result;
     }
 
-    isolated remote function helloContext(byte[]|ContextBytes req) returns (ContextBytes|grpc:Error) {
+    isolated remote function helloContext(byte[]|wrappers:ContextBytes req) returns (wrappers:ContextBytes|grpc:Error) {
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is ContextBytes) {
+        if (req is wrappers:ContextBytes) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -54,7 +55,7 @@ public client class HelloWorldByteCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextBytes(ContextBytes response) returns grpc:Error? {
+    isolated remote function sendContextBytes(wrappers:ContextBytes response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -70,11 +71,6 @@ public client class HelloWorldByteCaller {
         return self.caller.isCancelled();
     }
 }
-
-public type ContextBytes record {|
-    byte[] content;
-    map<string|string[]> headers;
-|};
 
 const string ROOT_DESCRIPTOR_HELLOWORLDBYTES = "0A1568656C6C6F576F726C6442797465732E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F324F0A0A68656C6C6F576F726C6412410A0568656C6C6F121B2E676F6F676C652E70726F746F6275662E427974657356616C75651A1B2E676F6F676C652E70726F746F6275662E427974657356616C7565620670726F746F33";
 
