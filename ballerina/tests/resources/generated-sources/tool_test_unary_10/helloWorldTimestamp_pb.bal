@@ -13,10 +13,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDTIMESTAMP, getDescriptorMapHelloWorldTimestamp());
     }
 
-    isolated remote function getTime(string|wrappers:ContextString req) returns (time:Utc|grpc:Error) {
+    isolated remote function getTime(string|wrappers:ContextString req) returns time:Utc|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is wrappers:ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -27,10 +27,10 @@ public isolated client class helloWorldClient {
         return <time:Utc>result.cloneReadOnly();
     }
 
-    isolated remote function getTimeContext(string|wrappers:ContextString req) returns (timestamp:ContextTimestamp|grpc:Error) {
+    isolated remote function getTimeContext(string|wrappers:ContextString req) returns timestamp:ContextTimestamp|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is wrappers:ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -41,10 +41,10 @@ public isolated client class helloWorldClient {
         return {content: <time:Utc>result.cloneReadOnly(), headers: respHeaders};
     }
 
-    isolated remote function sendTime(time:Utc|timestamp:ContextTimestamp req) returns (string|grpc:Error) {
+    isolated remote function sendTime(time:Utc|timestamp:ContextTimestamp req) returns string|grpc:Error {
         map<string|string[]> headers = {};
         time:Utc message;
-        if (req is timestamp:ContextTimestamp) {
+        if req is timestamp:ContextTimestamp {
             message = req.content;
             headers = req.headers;
         } else {
@@ -55,10 +55,10 @@ public isolated client class helloWorldClient {
         return result.toString();
     }
 
-    isolated remote function sendTimeContext(time:Utc|timestamp:ContextTimestamp req) returns (wrappers:ContextString|grpc:Error) {
+    isolated remote function sendTimeContext(time:Utc|timestamp:ContextTimestamp req) returns wrappers:ContextString|grpc:Error {
         map<string|string[]> headers = {};
         time:Utc message;
-        if (req is timestamp:ContextTimestamp) {
+        if req is timestamp:ContextTimestamp {
             message = req.content;
             headers = req.headers;
         } else {
@@ -69,10 +69,10 @@ public isolated client class helloWorldClient {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function exchangeTime(time:Utc|timestamp:ContextTimestamp req) returns (time:Utc|grpc:Error) {
+    isolated remote function exchangeTime(time:Utc|timestamp:ContextTimestamp req) returns time:Utc|grpc:Error {
         map<string|string[]> headers = {};
         time:Utc message;
-        if (req is timestamp:ContextTimestamp) {
+        if req is timestamp:ContextTimestamp {
             message = req.content;
             headers = req.headers;
         } else {
@@ -83,10 +83,10 @@ public isolated client class helloWorldClient {
         return <time:Utc>result.cloneReadOnly();
     }
 
-    isolated remote function exchangeTimeContext(time:Utc|timestamp:ContextTimestamp req) returns (timestamp:ContextTimestamp|grpc:Error) {
+    isolated remote function exchangeTimeContext(time:Utc|timestamp:ContextTimestamp req) returns timestamp:ContextTimestamp|grpc:Error {
         map<string|string[]> headers = {};
         time:Utc message;
-        if (req is timestamp:ContextTimestamp) {
+        if req is timestamp:ContextTimestamp {
             message = req.content;
             headers = req.headers;
         } else {
@@ -97,10 +97,10 @@ public isolated client class helloWorldClient {
         return {content: <time:Utc>result.cloneReadOnly(), headers: respHeaders};
     }
 
-    isolated remote function getGreeting(string|wrappers:ContextString req) returns (Greeting|grpc:Error) {
+    isolated remote function getGreeting(string|wrappers:ContextString req) returns Greeting|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is wrappers:ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -111,10 +111,10 @@ public isolated client class helloWorldClient {
         return <Greeting>result;
     }
 
-    isolated remote function getGreetingContext(string|wrappers:ContextString req) returns (ContextGreeting|grpc:Error) {
+    isolated remote function getGreetingContext(string|wrappers:ContextString req) returns ContextGreeting|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is wrappers:ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -125,10 +125,10 @@ public isolated client class helloWorldClient {
         return {content: <Greeting>result, headers: respHeaders};
     }
 
-    isolated remote function sendGreeting(Greeting|ContextGreeting req) returns (string|grpc:Error) {
+    isolated remote function sendGreeting(Greeting|ContextGreeting req) returns string|grpc:Error {
         map<string|string[]> headers = {};
         Greeting message;
-        if (req is ContextGreeting) {
+        if req is ContextGreeting {
             message = req.content;
             headers = req.headers;
         } else {
@@ -139,10 +139,10 @@ public isolated client class helloWorldClient {
         return result.toString();
     }
 
-    isolated remote function sendGreetingContext(Greeting|ContextGreeting req) returns (wrappers:ContextString|grpc:Error) {
+    isolated remote function sendGreetingContext(Greeting|ContextGreeting req) returns wrappers:ContextString|grpc:Error {
         map<string|string[]> headers = {};
         Greeting message;
-        if (req is ContextGreeting) {
+        if req is ContextGreeting {
             message = req.content;
             headers = req.headers;
         } else {
@@ -153,10 +153,10 @@ public isolated client class helloWorldClient {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function exchangeGreeting(Greeting|ContextGreeting req) returns (Greeting|grpc:Error) {
+    isolated remote function exchangeGreeting(Greeting|ContextGreeting req) returns Greeting|grpc:Error {
         map<string|string[]> headers = {};
         Greeting message;
-        if (req is ContextGreeting) {
+        if req is ContextGreeting {
             message = req.content;
             headers = req.headers;
         } else {
@@ -167,10 +167,10 @@ public isolated client class helloWorldClient {
         return <Greeting>result;
     }
 
-    isolated remote function exchangeGreetingContext(Greeting|ContextGreeting req) returns (ContextGreeting|grpc:Error) {
+    isolated remote function exchangeGreetingContext(Greeting|ContextGreeting req) returns ContextGreeting|grpc:Error {
         map<string|string[]> headers = {};
         Greeting message;
-        if (req is ContextGreeting) {
+        if req is ContextGreeting {
             message = req.content;
             headers = req.headers;
         } else {

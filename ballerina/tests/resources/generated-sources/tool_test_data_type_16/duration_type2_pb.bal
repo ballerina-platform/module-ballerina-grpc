@@ -12,10 +12,10 @@ public isolated client class DurationHandlerClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_DURATION_TYPE2, getDescriptorMapDurationType2());
     }
 
-    isolated remote function unaryCall(time:Seconds|duration:ContextDuration req) returns (time:Seconds|grpc:Error) {
+    isolated remote function unaryCall(time:Seconds|duration:ContextDuration req) returns time:Seconds|grpc:Error {
         map<string|string[]> headers = {};
         time:Seconds message;
-        if (req is duration:ContextDuration) {
+        if req is duration:ContextDuration {
             message = req.content;
             headers = req.headers;
         } else {
@@ -26,10 +26,10 @@ public isolated client class DurationHandlerClient {
         return <time:Seconds>result;
     }
 
-    isolated remote function unaryCallContext(time:Seconds|duration:ContextDuration req) returns (duration:ContextDuration|grpc:Error) {
+    isolated remote function unaryCallContext(time:Seconds|duration:ContextDuration req) returns duration:ContextDuration|grpc:Error {
         map<string|string[]> headers = {};
         time:Seconds message;
-        if (req is duration:ContextDuration) {
+        if req is duration:ContextDuration {
             message = req.content;
             headers = req.headers;
         } else {
@@ -40,7 +40,7 @@ public isolated client class DurationHandlerClient {
         return {content: <time:Seconds>result, headers: respHeaders};
     }
 
-    isolated remote function clientStreaming() returns (ClientStreamingStreamingClient|grpc:Error) {
+    isolated remote function clientStreaming() returns ClientStreamingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("DurationHandler/clientStreaming");
         return new ClientStreamingStreamingClient(sClient);
     }
@@ -48,7 +48,7 @@ public isolated client class DurationHandlerClient {
     isolated remote function serverStreaming(time:Seconds|duration:ContextDuration req) returns stream<time:Seconds, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         time:Seconds message;
-        if (req is duration:ContextDuration) {
+        if req is duration:ContextDuration {
             message = req.content;
             headers = req.headers;
         } else {
@@ -63,7 +63,7 @@ public isolated client class DurationHandlerClient {
     isolated remote function serverStreamingContext(time:Seconds|duration:ContextDuration req) returns duration:ContextDurationStream|grpc:Error {
         map<string|string[]> headers = {};
         time:Seconds message;
-        if (req is duration:ContextDuration) {
+        if req is duration:ContextDuration {
             message = req.content;
             headers = req.headers;
         } else {
@@ -75,7 +75,7 @@ public isolated client class DurationHandlerClient {
         return {content: new stream<time:Seconds, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function bidirectionalStreaming() returns (BidirectionalStreamingStreamingClient|grpc:Error) {
+    isolated remote function bidirectionalStreaming() returns BidirectionalStreamingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("DurationHandler/bidirectionalStreaming");
         return new BidirectionalStreamingStreamingClient(sClient);
     }

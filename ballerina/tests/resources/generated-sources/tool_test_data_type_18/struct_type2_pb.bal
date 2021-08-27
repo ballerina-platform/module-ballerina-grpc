@@ -11,10 +11,10 @@ public isolated client class StructHandlerClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_STRUCT_TYPE2, getDescriptorMapStructType2());
     }
 
-    isolated remote function unaryCall(map<anydata>|struct:ContextStruct req) returns (map<anydata>|grpc:Error) {
+    isolated remote function unaryCall(map<anydata>|struct:ContextStruct req) returns map<anydata>|grpc:Error {
         map<string|string[]> headers = {};
         map<anydata> message;
-        if (req is struct:ContextStruct) {
+        if req is struct:ContextStruct {
             message = req.content;
             headers = req.headers;
         } else {
@@ -25,10 +25,10 @@ public isolated client class StructHandlerClient {
         return <map<anydata>>result;
     }
 
-    isolated remote function unaryCallContext(map<anydata>|struct:ContextStruct req) returns (struct:ContextStruct|grpc:Error) {
+    isolated remote function unaryCallContext(map<anydata>|struct:ContextStruct req) returns struct:ContextStruct|grpc:Error {
         map<string|string[]> headers = {};
         map<anydata> message;
-        if (req is struct:ContextStruct) {
+        if req is struct:ContextStruct {
             message = req.content;
             headers = req.headers;
         } else {
@@ -39,7 +39,7 @@ public isolated client class StructHandlerClient {
         return {content: <map<anydata>>result, headers: respHeaders};
     }
 
-    isolated remote function clientStreaming() returns (ClientStreamingStreamingClient|grpc:Error) {
+    isolated remote function clientStreaming() returns ClientStreamingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("StructHandler/clientStreaming");
         return new ClientStreamingStreamingClient(sClient);
     }
@@ -47,7 +47,7 @@ public isolated client class StructHandlerClient {
     isolated remote function serverStreaming(map<anydata>|struct:ContextStruct req) returns stream<map<anydata>, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         map<anydata> message;
-        if (req is struct:ContextStruct) {
+        if req is struct:ContextStruct {
             message = req.content;
             headers = req.headers;
         } else {
@@ -62,7 +62,7 @@ public isolated client class StructHandlerClient {
     isolated remote function serverStreamingContext(map<anydata>|struct:ContextStruct req) returns struct:ContextStructStream|grpc:Error {
         map<string|string[]> headers = {};
         map<anydata> message;
-        if (req is struct:ContextStruct) {
+        if req is struct:ContextStruct {
             message = req.content;
             headers = req.headers;
         } else {
@@ -74,7 +74,7 @@ public isolated client class StructHandlerClient {
         return {content: new stream<map<anydata>, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function bidirectionalStreaming() returns (BidirectionalStreamingStreamingClient|grpc:Error) {
+    isolated remote function bidirectionalStreaming() returns BidirectionalStreamingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("StructHandler/bidirectionalStreaming");
         return new BidirectionalStreamingStreamingClient(sClient);
     }

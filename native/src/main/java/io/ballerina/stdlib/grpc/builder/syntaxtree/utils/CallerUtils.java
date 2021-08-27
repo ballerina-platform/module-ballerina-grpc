@@ -82,16 +82,22 @@ public class CallerUtils {
 
         if (value != null) {
             String valueCap;
-            if (value.equals("byte[]")) {
-                valueCap = "Bytes";
-            } else if (value.equals("time:Utc")) {
-                valueCap = "Timestamp";
-            } else if (value.equals("time:Seconds")) {
-                valueCap = "Duration";
-            } else if (value.equals("map<anydata>")) {
-                valueCap = "Struct";
-            } else {
-                valueCap = capitalize(value);
+            switch (value) {
+                case "byte[]":
+                    valueCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    valueCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    valueCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    valueCap = "Struct";
+                    break;
+                default:
+                    valueCap = capitalize(value);
+                    break;
             }
             Function send = new Function("send" + valueCap);
             send.addRequiredParameter(

@@ -11,7 +11,7 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDBYTES, getDescriptorMapHelloWorldBytes());
     }
 
-    isolated remote function hello() returns (HelloStreamingClient|grpc:Error) {
+    isolated remote function hello() returns HelloStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("helloWorld/hello");
         return new HelloStreamingClient(sClient);
     }

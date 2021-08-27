@@ -10,12 +10,12 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDMESSAGE, getDescriptorMapHelloWorldMessage());
     }
 
-    isolated remote function hello() returns (HelloStreamingClient|grpc:Error) {
+    isolated remote function hello() returns HelloStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/hello");
         return new HelloStreamingClient(sClient);
     }
 
-    isolated remote function bye() returns (ByeStreamingClient|grpc:Error) {
+    isolated remote function bye() returns ByeStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("helloWorld/bye");
         return new ByeStreamingClient(sClient);
     }

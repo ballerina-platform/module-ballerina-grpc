@@ -11,10 +11,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDBOOLEAN, getDescriptorMapHelloWorldBoolean());
     }
 
-    isolated remote function hello(boolean|wrappers:ContextBoolean req) returns (boolean|grpc:Error) {
+    isolated remote function hello(boolean|wrappers:ContextBoolean req) returns boolean|grpc:Error {
         map<string|string[]> headers = {};
         boolean message;
-        if (req is wrappers:ContextBoolean) {
+        if req is wrappers:ContextBoolean {
             message = req.content;
             headers = req.headers;
         } else {
@@ -25,10 +25,10 @@ public isolated client class helloWorldClient {
         return <boolean>result;
     }
 
-    isolated remote function helloContext(boolean|wrappers:ContextBoolean req) returns (wrappers:ContextBoolean|grpc:Error) {
+    isolated remote function helloContext(boolean|wrappers:ContextBoolean req) returns wrappers:ContextBoolean|grpc:Error {
         map<string|string[]> headers = {};
         boolean message;
-        if (req is wrappers:ContextBoolean) {
+        if req is wrappers:ContextBoolean {
             message = req.content;
             headers = req.headers;
         } else {

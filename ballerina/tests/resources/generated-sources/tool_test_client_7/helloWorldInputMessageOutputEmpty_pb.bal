@@ -11,7 +11,7 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDINPUTMESSAGEOUTPUTEMPTY, getDescriptorMapHelloWorldInputMessageOutputEmpty());
     }
 
-    isolated remote function testInputStructNoOutput() returns (TestInputStructNoOutputStreamingClient|grpc:Error) {
+    isolated remote function testInputStructNoOutput() returns TestInputStructNoOutputStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("grpcservices.helloWorld/testInputStructNoOutput");
         return new TestInputStructNoOutputStreamingClient(sClient);
     }
