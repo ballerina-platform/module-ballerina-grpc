@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -10,10 +11,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDINT, getDescriptorMapHelloWorldInt());
     }
 
-    isolated remote function hello(int|ContextInt req) returns stream<int, grpc:Error?>|grpc:Error {
+    isolated remote function hello(int|wrappers:ContextInt req) returns stream<int, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         int message;
-        if (req is ContextInt) {
+        if (req is wrappers:ContextInt) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -21,14 +22,14 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        IntStream outputStream = new IntStream(result);
+        wrappers:IntStream outputStream = new wrappers:IntStream(result);
         return new stream<int, grpc:Error?>(outputStream);
     }
 
-    isolated remote function helloContext(int|ContextInt req) returns ContextIntStream|grpc:Error {
+    isolated remote function helloContext(int|wrappers:ContextInt req) returns wrappers:ContextIntStream|grpc:Error {
         map<string|string[]> headers = {};
         int message;
-        if (req is ContextInt) {
+        if (req is wrappers:ContextInt) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -36,32 +37,8 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        IntStream outputStream = new IntStream(result);
+        wrappers:IntStream outputStream = new wrappers:IntStream(result);
         return {content: new stream<int, grpc:Error?>(outputStream), headers: respHeaders};
-    }
-}
-
-public class IntStream {
-    private stream<anydata, grpc:Error?> anydataStream;
-
-    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
-        self.anydataStream = anydataStream;
-    }
-
-    public isolated function next() returns record {|int value;|}|grpc:Error? {
-        var streamValue = self.anydataStream.next();
-        if (streamValue is ()) {
-            return streamValue;
-        } else if (streamValue is grpc:Error) {
-            return streamValue;
-        } else {
-            record {|int value;|} nextRecord = {value: <int>streamValue.value};
-            return nextRecord;
-        }
-    }
-
-    public isolated function close() returns grpc:Error? {
-        return self.anydataStream.close();
     }
 }
 
@@ -80,7 +57,7 @@ public client class HelloWorldIntCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextInt(ContextInt response) returns grpc:Error? {
+    isolated remote function sendContextInt(wrappers:ContextInt response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -96,16 +73,6 @@ public client class HelloWorldIntCaller {
         return self.caller.isCancelled();
     }
 }
-
-public type ContextIntStream record {|
-    stream<int, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextInt record {|
-    int content;
-    map<string|string[]> headers;
-|};
 
 const string ROOT_DESCRIPTOR_HELLOWORLDINT = "0A1368656C6C6F576F726C64496E742E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32510A0A68656C6C6F576F726C6412430A0568656C6C6F121B2E676F6F676C652E70726F746F6275662E496E74333256616C75651A1B2E676F6F676C652E70726F746F6275662E496E74333256616C75653001620670726F746F33";
 

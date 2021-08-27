@@ -43,6 +43,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
 /**
  * Utility functions related to Unary.
@@ -71,12 +73,16 @@ public class UnaryUtils {
             } else {
                 inputCap = capitalize(method.getInputType());
             }
+            String contextParam = "Context" + inputCap;
+            if (isBallerinaProtobufType(method.getInputType())) {
+                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(
                                     method.getInputType()
                             ),
-                            getSimpleNameReferenceNode("Context" + inputCap)
+                            getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
             );
@@ -127,7 +133,7 @@ public class UnaryUtils {
         Function function = new Function(method.getMethodName() + "Context");
         function.addQualifiers(new String[]{"isolated", "remote"});
         String inputCap = "Nil";
-        String outCap = "Nil";
+        String outCap;
         if (method.getInputType() != null) {
             if (method.getInputType().equals("byte[]")) {
                 inputCap = "Bytes";
@@ -140,14 +146,19 @@ public class UnaryUtils {
             } else {
                 inputCap = capitalize(method.getInputType());
             }
+            String contextParam = "Context" + inputCap;
+            if (isBallerinaProtobufType(method.getInputType())) {
+                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
-                            getSimpleNameReferenceNode("Context" + inputCap)
+                            getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
             );
         }
+        String contextParam = "";
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("byte[]")) {
                 outCap = "Bytes";
@@ -160,11 +171,17 @@ public class UnaryUtils {
             } else {
                 outCap = capitalize(method.getOutputType());
             }
+            contextParam = "Context" + outCap;
+            if (isBallerinaProtobufType(method.getOutputType())) {
+                contextParam = getProtobufType(method.getOutputType()) + ":" + contextParam;
+            }
+        } else {
+            contextParam = "empty:ContextNil";
         }
         function.addReturns(
                 getParenthesisedTypeDescriptorNode(
                         getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode("Context" + outCap),
+                                getSimpleNameReferenceNode(contextParam),
                                 SYNTAX_TREE_GRPC_ERROR
                         )
                 )

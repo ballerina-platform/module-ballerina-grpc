@@ -1,4 +1,6 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.struct;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class StructHandlerClient {
     *grpc:AbstractClientEndpoint;
@@ -10,10 +12,10 @@ public isolated client class StructHandlerClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_STRUCT_TYPE1, getDescriptorMapStructType1());
     }
 
-    isolated remote function unaryCall1(string|ContextString req) returns (map<anydata>|grpc:Error) {
+    isolated remote function unaryCall1(string|wrappers:ContextString req) returns (map<anydata>|grpc:Error) {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -24,10 +26,10 @@ public isolated client class StructHandlerClient {
         return <map<anydata>>result;
     }
 
-    isolated remote function unaryCall1Context(string|ContextString req) returns (ContextStruct|grpc:Error) {
+    isolated remote function unaryCall1Context(string|wrappers:ContextString req) returns (struct:ContextStruct|grpc:Error) {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -71,10 +73,10 @@ public isolated client class StructHandlerClient {
         return new ClientStreamingStreamingClient(sClient);
     }
 
-    isolated remote function serverStreaming(string|ContextString req) returns stream<map<anydata>, grpc:Error?>|grpc:Error {
+    isolated remote function serverStreaming(string|wrappers:ContextString req) returns stream<map<anydata>, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -82,14 +84,14 @@ public isolated client class StructHandlerClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("StructHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        StructStream outputStream = new StructStream(result);
+        struct:StructStream outputStream = new struct:StructStream(result);
         return new stream<map<anydata>, grpc:Error?>(outputStream);
     }
 
-    isolated remote function serverStreamingContext(string|ContextString req) returns ContextStructStream|grpc:Error {
+    isolated remote function serverStreamingContext(string|wrappers:ContextString req) returns struct:ContextStructStream|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -97,7 +99,7 @@ public isolated client class StructHandlerClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("StructHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        StructStream outputStream = new StructStream(result);
+        struct:StructStream outputStream = new struct:StructStream(result);
         return {content: new stream<map<anydata>, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -118,7 +120,7 @@ public client class ClientStreamingStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextStruct(ContextStruct message) returns grpc:Error? {
+    isolated remote function sendContextStruct(struct:ContextStruct message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -132,7 +134,7 @@ public client class ClientStreamingStreamingClient {
         }
     }
 
-    isolated remote function receiveContextString() returns ContextString|grpc:Error? {
+    isolated remote function receiveContextString() returns wrappers:ContextString|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -148,30 +150,6 @@ public client class ClientStreamingStreamingClient {
 
     isolated remote function complete() returns grpc:Error? {
         return self.sClient->complete();
-    }
-}
-
-public class StructStream {
-    private stream<anydata, grpc:Error?> anydataStream;
-
-    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
-        self.anydataStream = anydataStream;
-    }
-
-    public isolated function next() returns record {|map<anydata> value;|}|grpc:Error? {
-        var streamValue = self.anydataStream.next();
-        if (streamValue is ()) {
-            return streamValue;
-        } else if (streamValue is grpc:Error) {
-            return streamValue;
-        } else {
-            record {|map<anydata> value;|} nextRecord = {value: <map<anydata>>streamValue.value};
-            return nextRecord;
-        }
-    }
-
-    public isolated function close() returns grpc:Error? {
-        return self.anydataStream.close();
     }
 }
 
@@ -234,7 +212,7 @@ public client class StructHandlerStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -266,7 +244,7 @@ public client class StructHandlerStructCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextStruct(ContextStruct response) returns grpc:Error? {
+    isolated remote function sendContextStruct(struct:ContextStruct response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -320,23 +298,8 @@ public type ContextStructMsgStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextStructStream record {|
-    stream<map<anydata>, error?> content;
-    map<string|string[]> headers;
-|};
-
 public type ContextStructMsg record {|
     StructMsg content;
-    map<string|string[]> headers;
-|};
-
-public type ContextString record {|
-    string content;
-    map<string|string[]> headers;
-|};
-
-public type ContextStruct record {|
-    map<anydata> content;
     map<string|string[]> headers;
 |};
 
