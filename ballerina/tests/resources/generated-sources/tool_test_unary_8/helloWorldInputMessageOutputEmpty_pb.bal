@@ -11,10 +11,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDINPUTMESSAGEOUTPUTEMPTY, getDescriptorMapHelloWorldInputMessageOutputEmpty());
     }
 
-    isolated remote function testInputStructNoOutput(HelloRequest|ContextHelloRequest req) returns (grpc:Error?) {
+    isolated remote function testInputStructNoOutput(HelloRequest|ContextHelloRequest req) returns grpc:Error? {
         map<string|string[]> headers = {};
         HelloRequest message;
-        if (req is ContextHelloRequest) {
+        if req is ContextHelloRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -23,10 +23,10 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testInputStructNoOutput", message, headers);
     }
 
-    isolated remote function testInputStructNoOutputContext(HelloRequest|ContextHelloRequest req) returns (empty:ContextNil|grpc:Error) {
+    isolated remote function testInputStructNoOutputContext(HelloRequest|ContextHelloRequest req) returns empty:ContextNil|grpc:Error {
         map<string|string[]> headers = {};
         HelloRequest message;
-        if (req is ContextHelloRequest) {
+        if req is ContextHelloRequest {
             message = req.content;
             headers = req.headers;
         } else {

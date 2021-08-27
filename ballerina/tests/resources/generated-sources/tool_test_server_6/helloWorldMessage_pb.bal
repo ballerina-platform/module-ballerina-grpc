@@ -13,7 +13,7 @@ public isolated client class helloWorldClient {
     isolated remote function hello(HelloRequest|ContextHelloRequest req) returns stream<HelloResponse, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         HelloRequest message;
-        if (req is ContextHelloRequest) {
+        if req is ContextHelloRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -28,7 +28,7 @@ public isolated client class helloWorldClient {
     isolated remote function helloContext(HelloRequest|ContextHelloRequest req) returns ContextHelloResponseStream|grpc:Error {
         map<string|string[]> headers = {};
         HelloRequest message;
-        if (req is ContextHelloRequest) {
+        if req is ContextHelloRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -43,7 +43,7 @@ public isolated client class helloWorldClient {
     isolated remote function bye(ByeRequest|ContextByeRequest req) returns stream<ByeResponse, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         ByeRequest message;
-        if (req is ContextByeRequest) {
+        if req is ContextByeRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -58,7 +58,7 @@ public isolated client class helloWorldClient {
     isolated remote function byeContext(ByeRequest|ContextByeRequest req) returns ContextByeResponseStream|grpc:Error {
         map<string|string[]> headers = {};
         ByeRequest message;
-        if (req is ContextByeRequest) {
+        if req is ContextByeRequest {
             message = req.content;
             headers = req.headers;
         } else {

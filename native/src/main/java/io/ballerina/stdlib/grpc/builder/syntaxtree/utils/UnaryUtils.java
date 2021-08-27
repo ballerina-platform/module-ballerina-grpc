@@ -31,7 +31,6 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getMapTypeDescriptorNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getParenthesisedTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
@@ -62,16 +61,22 @@ public class UnaryUtils {
         function.addQualifiers(new String[]{"isolated", "remote"});
         String inputCap = "Nil";
         if (method.getInputType() != null) {
-            if (method.getInputType().equals("byte[]")) {
-                inputCap = "Bytes";
-            } else if (method.getInputType().equals("time:Utc")) {
-                inputCap = "Timestamp";
-            } else if (method.getInputType().equals("time:Seconds")) {
-                inputCap = "Duration";
-            } else if (method.getInputType().equals("map<anydata>")) {
-                inputCap = "Struct";
-            } else {
-                inputCap = capitalize(method.getInputType());
+            switch (method.getInputType()) {
+                case "byte[]":
+                    inputCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    inputCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    inputCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    inputCap = "Struct";
+                    break;
+                default:
+                    inputCap = capitalize(method.getInputType());
+                    break;
             }
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
@@ -89,20 +94,16 @@ public class UnaryUtils {
         }
         if (method.getOutputType() != null) {
             function.addReturns(
-                    getParenthesisedTypeDescriptorNode(
-                            getUnionTypeDescriptorNode(
-                                    getSimpleNameReferenceNode(
-                                            method.getOutputType()
-                                    ),
-                                    SYNTAX_TREE_GRPC_ERROR
-                            )
+                    getUnionTypeDescriptorNode(
+                            getSimpleNameReferenceNode(
+                                    method.getOutputType()
+                            ),
+                            SYNTAX_TREE_GRPC_ERROR
                     )
             );
         } else {
             function.addReturns(
-                    getParenthesisedTypeDescriptorNode(
-                            SYNTAX_TREE_GRPC_ERROR_OPTIONAL
-                    )
+                    SYNTAX_TREE_GRPC_ERROR_OPTIONAL
             );
         }
         addClientCallBody(function, inputCap, method);
@@ -135,16 +136,22 @@ public class UnaryUtils {
         String inputCap = "Nil";
         String outCap;
         if (method.getInputType() != null) {
-            if (method.getInputType().equals("byte[]")) {
-                inputCap = "Bytes";
-            } else if (method.getInputType().equals("time:Utc")) {
-                inputCap = "Timestamp";
-            } else if (method.getInputType().equals("time:Seconds")) {
-                inputCap = "Duration";
-            } else if (method.getInputType().equals("map<anydata>")) {
-                inputCap = "Struct";
-            } else {
-                inputCap = capitalize(method.getInputType());
+            switch (method.getInputType()) {
+                case "byte[]":
+                    inputCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    inputCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    inputCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    inputCap = "Struct";
+                    break;
+                default:
+                    inputCap = capitalize(method.getInputType());
+                    break;
             }
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
@@ -158,18 +165,24 @@ public class UnaryUtils {
                     "req"
             );
         }
-        String contextParam = "";
+        String contextParam;
         if (method.getOutputType() != null) {
-            if (method.getOutputType().equals("byte[]")) {
-                outCap = "Bytes";
-            } else if (method.getOutputType().equals("time:Utc")) {
-                outCap = "Timestamp";
-            } else if (method.getOutputType().equals("time:Seconds")) {
-                outCap = "Duration";
-            } else if (method.getOutputType().equals("map<anydata>")) {
-                outCap = "Struct";
-            } else {
-                outCap = capitalize(method.getOutputType());
+            switch (method.getOutputType()) {
+                case "byte[]":
+                    outCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    outCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    outCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    outCap = "Struct";
+                    break;
+                default:
+                    outCap = capitalize(method.getOutputType());
+                    break;
             }
             contextParam = "Context" + outCap;
             if (isBallerinaProtobufType(method.getOutputType())) {
@@ -179,11 +192,9 @@ public class UnaryUtils {
             contextParam = "empty:ContextNil";
         }
         function.addReturns(
-                getParenthesisedTypeDescriptorNode(
-                        getUnionTypeDescriptorNode(
-                                getSimpleNameReferenceNode(contextParam),
-                                SYNTAX_TREE_GRPC_ERROR
-                        )
+                getUnionTypeDescriptorNode(
+                        getSimpleNameReferenceNode(contextParam),
+                        SYNTAX_TREE_GRPC_ERROR
                 )
         );
         addClientCallBody(function, inputCap, method);
