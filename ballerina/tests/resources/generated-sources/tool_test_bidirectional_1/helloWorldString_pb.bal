@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -27,7 +28,7 @@ public client class HelloStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextString(ContextString message) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -41,7 +42,7 @@ public client class HelloStreamingClient {
         }
     }
 
-    isolated remote function receiveContextString() returns ContextString|grpc:Error? {
+    isolated remote function receiveContextString() returns wrappers:ContextString|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -75,7 +76,7 @@ public client class HelloWorldStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -91,16 +92,6 @@ public client class HelloWorldStringCaller {
         return self.caller.isCancelled();
     }
 }
-
-public type ContextStringStream record {|
-    stream<string, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextString record {|
-    string content;
-    map<string|string[]> headers;
-|};
 
 const string ROOT_DESCRIPTOR_HELLOWORLDSTRING = "0A1668656C6C6F576F726C64537472696E672E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32550A0A68656C6C6F576F726C6412470A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756528013001620670726F746F33";
 

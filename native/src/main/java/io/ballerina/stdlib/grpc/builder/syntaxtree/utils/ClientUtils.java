@@ -56,6 +56,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
 /**
  * Utility functions related to Client.
@@ -188,8 +190,12 @@ public class ClientUtils {
             inputCap = capitalize(method.getInputType());
         }
         Function function = new Function("sendContext" + inputCap);
+        String contextParam = "Context" + inputCap;
+        if (isBallerinaProtobufType(method.getInputType())) {
+            contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+        }
         function.addRequiredParameter(
-                getSimpleNameReferenceNode("Context" + inputCap),
+                getSimpleNameReferenceNode(contextParam),
                 "message"
         );
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
@@ -346,9 +352,13 @@ public class ClientUtils {
                 getTupleTypeDescriptorNode(receiveArgs),
                 getListBindingPatternNode(new String[]{"payload", "headers"})
         );
+        String contextParam = "Context" + outCap;
+        if (isBallerinaProtobufType(method.getOutputType())) {
+            contextParam = getProtobufType(method.getOutputType()) + ":" + contextParam;
+        }
         function.addReturns(
                 TypeDescriptor.getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode("Context" + outCap),
+                        getSimpleNameReferenceNode(contextParam),
                         SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                 )
         );

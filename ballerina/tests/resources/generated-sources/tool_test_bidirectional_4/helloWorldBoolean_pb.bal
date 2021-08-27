@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -27,7 +28,7 @@ public client class HelloStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextBoolean(ContextBoolean message) returns grpc:Error? {
+    isolated remote function sendContextBoolean(wrappers:ContextBoolean message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -41,7 +42,7 @@ public client class HelloStreamingClient {
         }
     }
 
-    isolated remote function receiveContextBoolean() returns ContextBoolean|grpc:Error? {
+    isolated remote function receiveContextBoolean() returns wrappers:ContextBoolean|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -75,7 +76,7 @@ public client class HelloWorldBooleanCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextBoolean(ContextBoolean response) returns grpc:Error? {
+    isolated remote function sendContextBoolean(wrappers:ContextBoolean response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -91,16 +92,6 @@ public client class HelloWorldBooleanCaller {
         return self.caller.isCancelled();
     }
 }
-
-public type ContextBooleanStream record {|
-    stream<boolean, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextBoolean record {|
-    boolean content;
-    map<string|string[]> headers;
-|};
 
 const string ROOT_DESCRIPTOR_HELLOWORLDBOOLEAN = "0A1768656C6C6F576F726C64426F6F6C65616E2E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32510A0A68656C6C6F576F726C6412430A0568656C6C6F121A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75651A1A2E676F6F676C652E70726F746F6275662E426F6F6C56616C756528013001620670726F746F33";
 

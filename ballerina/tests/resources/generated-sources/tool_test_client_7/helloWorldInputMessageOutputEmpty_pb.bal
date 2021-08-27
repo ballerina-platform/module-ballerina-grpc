@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/protobuf.types.empty;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -40,7 +41,7 @@ public client class TestInputStructNoOutputStreamingClient {
         }
     }
 
-    isolated remote function receiveContextNil() returns ContextNil|grpc:Error? {
+    isolated remote function receiveContextNil() returns empty:ContextNil|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -88,16 +89,9 @@ public type ContextHelloRequestStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextNil record {|
-    map<string|string[]> headers;
-|};
-
 public type ContextHelloRequest record {|
     HelloRequest content;
     map<string|string[]> headers;
-|};
-
-public type Empty record {|
 |};
 
 public type HelloRequest record {|

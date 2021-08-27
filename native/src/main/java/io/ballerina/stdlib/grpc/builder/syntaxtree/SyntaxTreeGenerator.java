@@ -83,6 +83,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInMessageMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.toPascalCase;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
@@ -104,6 +106,7 @@ public class SyntaxTreeGenerator {
     }
 
     public static SyntaxTree generateSyntaxTree(StubFile stubFile, boolean isRoot) {
+        java.util.Map<String, String> protobufImports = new LinkedHashMap<>();
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
@@ -168,7 +171,11 @@ public class SyntaxTreeGenerator {
             for (Method method : service.getServerStreamingFunctions()) {
                 client.addMember(getServerStreamingFunction(method).getFunctionDefinitionNode());
                 client.addMember(getServerStreamingContextFunction(method).getFunctionDefinitionNode());
-                serverStreamingClasses.put(method.getOutputType(), getServerStreamClass(method));
+                if (!isBallerinaProtobufType(method.getOutputType())) {
+                    serverStreamingClasses.put(method.getOutputType(), getServerStreamClass(method));
+                } else {
+                    protobufImports.put(method.getOutputType(), getProtobufType(method.getOutputType()));
+                }
             }
             for (Method method : service.getBidiStreamingFunctions()) {
                 client.addMember(ClientUtils.getStreamingClientFunction(method).getFunctionDefinitionNode());
@@ -181,12 +188,27 @@ public class SyntaxTreeGenerator {
             }
             for (java.util.Map.Entry<String, Boolean> valueType : service.getValueTypeMap().entrySet()) {
                 if (!(isRoot && dependentValueTypeMap.containsKey(valueType.getKey()))) {
-                    if (valueType.getValue()) {
-                        valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey()));
+                    if (!isBallerinaProtobufType(valueType.getKey())) {
+                        if (valueType.getValue()) {
+                            valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey()));
+                        }
+                        valueTypes.put(valueType.getKey(), getValueType(valueType.getKey()));
+                    } else {
+                        protobufImports.put(valueType.getKey(), getProtobufType(valueType.getKey()));
                     }
-                    valueTypes.put(valueType.getKey(), getValueType(valueType.getKey()));
                 }
             }
+        }
+
+        // Add protobuf imports
+        for (java.util.Map.Entry<String, String> protobufImport : protobufImports.entrySet()) {
+            imports = imports.add(
+                    Imports.getImportDeclarationNode(
+                            "ballerina",
+                            "protobuf",
+                            new String[]{"types", protobufImport.getValue()}
+                    )
+            );
         }
 
         for (java.util.Map.Entry<String, Class> streamingClient : clientStreamingClasses.entrySet()) {
@@ -208,8 +230,10 @@ public class SyntaxTreeGenerator {
             moduleMembers = moduleMembers.add(valueType.getValue().getTypeDefinitionNode());
         }
         for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
-            for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
-                moduleMembers = moduleMembers.add(messageNode);
+            if (!message.getValue().getMessageName().equals("Empty")) {
+                for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
+                    moduleMembers = moduleMembers.add(messageNode);
+                }
             }
         }
 

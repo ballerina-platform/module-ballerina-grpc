@@ -1,5 +1,7 @@
 import ballerina/grpc;
 import ballerina/time;
+import ballerina/protobuf.types.duration;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class DurationHandlerClient {
     *grpc:AbstractClientEndpoint;
@@ -11,10 +13,10 @@ public isolated client class DurationHandlerClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_DURATION_TYPE1, getDescriptorMapDurationType1());
     }
 
-    isolated remote function unaryCall1(string|ContextString req) returns (time:Seconds|grpc:Error) {
+    isolated remote function unaryCall1(string|wrappers:ContextString req) returns (time:Seconds|grpc:Error) {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -25,10 +27,10 @@ public isolated client class DurationHandlerClient {
         return <time:Seconds>result;
     }
 
-    isolated remote function unaryCall1Context(string|ContextString req) returns (ContextDuration|grpc:Error) {
+    isolated remote function unaryCall1Context(string|wrappers:ContextString req) returns (duration:ContextDuration|grpc:Error) {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -72,10 +74,10 @@ public isolated client class DurationHandlerClient {
         return new ClientStreamingStreamingClient(sClient);
     }
 
-    isolated remote function serverStreaming(string|ContextString req) returns stream<time:Seconds, grpc:Error?>|grpc:Error {
+    isolated remote function serverStreaming(string|wrappers:ContextString req) returns stream<time:Seconds, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -83,14 +85,14 @@ public isolated client class DurationHandlerClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        DurationStream outputStream = new DurationStream(result);
+        duration:DurationStream outputStream = new duration:DurationStream(result);
         return new stream<time:Seconds, grpc:Error?>(outputStream);
     }
 
-    isolated remote function serverStreamingContext(string|ContextString req) returns ContextDurationStream|grpc:Error {
+    isolated remote function serverStreamingContext(string|wrappers:ContextString req) returns duration:ContextDurationStream|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if (req is wrappers:ContextString) {
             message = req.content;
             headers = req.headers;
         } else {
@@ -98,7 +100,7 @@ public isolated client class DurationHandlerClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        DurationStream outputStream = new DurationStream(result);
+        duration:DurationStream outputStream = new duration:DurationStream(result);
         return {content: new stream<time:Seconds, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -119,7 +121,7 @@ public client class ClientStreamingStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextDuration(ContextDuration message) returns grpc:Error? {
+    isolated remote function sendContextDuration(duration:ContextDuration message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -133,7 +135,7 @@ public client class ClientStreamingStreamingClient {
         }
     }
 
-    isolated remote function receiveContextString() returns ContextString|grpc:Error? {
+    isolated remote function receiveContextString() returns wrappers:ContextString|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -149,30 +151,6 @@ public client class ClientStreamingStreamingClient {
 
     isolated remote function complete() returns grpc:Error? {
         return self.sClient->complete();
-    }
-}
-
-public class DurationStream {
-    private stream<anydata, grpc:Error?> anydataStream;
-
-    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
-        self.anydataStream = anydataStream;
-    }
-
-    public isolated function next() returns record {|time:Seconds value;|}|grpc:Error? {
-        var streamValue = self.anydataStream.next();
-        if (streamValue is ()) {
-            return streamValue;
-        } else if (streamValue is grpc:Error) {
-            return streamValue;
-        } else {
-            record {|time:Seconds value;|} nextRecord = {value: <time:Seconds>streamValue.value};
-            return nextRecord;
-        }
-    }
-
-    public isolated function close() returns grpc:Error? {
-        return self.anydataStream.close();
     }
 }
 
@@ -267,7 +245,7 @@ public client class DurationHandlerDurationCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextDuration(ContextDuration response) returns grpc:Error? {
+    isolated remote function sendContextDuration(duration:ContextDuration response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -299,7 +277,7 @@ public client class DurationHandlerStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -321,23 +299,8 @@ public type ContextDurationMsgStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextDurationStream record {|
-    stream<time:Seconds, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextString record {|
-    string content;
-    map<string|string[]> headers;
-|};
-
 public type ContextDurationMsg record {|
     DurationMsg content;
-    map<string|string[]> headers;
-|};
-
-public type ContextDuration record {|
-    time:Seconds content;
     map<string|string[]> headers;
 |};
 

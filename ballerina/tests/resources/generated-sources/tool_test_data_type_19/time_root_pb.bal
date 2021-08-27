@@ -1,5 +1,6 @@
 import ballerina/grpc;
 import ballerina/time;
+import ballerina/protobuf.types.timestamp;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -28,7 +29,7 @@ public client class SendTimeStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextTimestamp(ContextTimestamp message) returns grpc:Error? {
+    isolated remote function sendContextTimestamp(timestamp:ContextTimestamp message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -98,18 +99,8 @@ public type ContextGreetingStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextTimestampStream record {|
-    stream<time:Utc, error?> content;
-    map<string|string[]> headers;
-|};
-
 public type ContextGreeting record {|
     Greeting content;
-    map<string|string[]> headers;
-|};
-
-public type ContextTimestamp record {|
-    time:Utc content;
     map<string|string[]> headers;
 |};
 
