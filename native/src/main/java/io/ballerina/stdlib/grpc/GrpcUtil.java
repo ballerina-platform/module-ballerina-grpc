@@ -118,12 +118,14 @@ public class GrpcUtil {
         BMap<BString, Object> secureSocket = (BMap<BString, Object>) clientEndpointConfig
                 .getMapValue(ENDPOINT_CONFIG_SECURESOCKET);
 
-        if (secureSocket != null) {
-            populateSSLConfiguration(senderConfiguration, secureSocket);
-        } else if (scheme.equals(PROTOCOL_HTTPS)) {
-            throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
-                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("The secureSocket " +
-                            "configuration should be provided to establish an HTTPS connection")));
+        if (scheme.equals(HttpConstants.PROTOCOL_HTTPS)) {
+            if (secureSocket == null) {
+                throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
+                        .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("The secureSocket " +
+                                "configuration should be provided to establish an HTTPS connection")));
+            } else {
+                populateSSLConfiguration(senderConfiguration, secureSocket);
+            }
         }
         double timeoutSeconds = ((BDecimal) clientEndpointConfig.get(fromString("timeout"))).floatValue();
         if (timeoutSeconds < 0) {
@@ -153,7 +155,7 @@ public class GrpcUtil {
         if (cert == null) {
             throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Need to configure " +
-                            "'crypto:TrustStore' or 'cert' with client SSL certificates file.")));
+                            "cert with client SSL certificates file")));
         }
         evaluateCertField(cert, senderConfiguration);
         BMap<BString, Object> key = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_KEY);

@@ -191,7 +191,7 @@ isolated function testBidiStreamingNullCertField() returns Error? {
         }
     });
     if result is Error {
-        string expectedError = "Need to configure 'crypto:TrustStore' or 'cert' with client SSL certificates file.";
+        string expectedError = "Need to configure cert with client SSL certificates file";
         test:assertEquals(result.message(), expectedError);
     } else {
         test:assertFail("Expected an error");

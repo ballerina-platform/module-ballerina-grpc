@@ -17,7 +17,7 @@
 import ballerina/test;
 
 @test:Config {enable:true}
-isolated function testStringValueReturnWithJwt() returns Error? {
+isolated function testStringValueReturnWithJwt1() returns Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {};
 
@@ -56,7 +56,85 @@ isolated function testStringValueReturnWithJwt() returns Error? {
 }
 
 @test:Config {enable:true}
-isolated function testStringValueReturnWithUnauthorizedJwt() returns Error? {
+isolated function testStringValueReturnWithJwt2() returns Error? {
+    HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
+    map<string|string[]> requestHeaders = {};
+
+    JwtIssuerConfig config = {
+        username: "admin",
+        issuer: "wso2",
+        audience: ["ballerina"],
+        customClaims: { "scope": "write update" },
+        signatureConfig: {
+            config: {
+                keyStore: {
+                    path: KEYSTORE_PATH,
+                    password: "ballerina"
+                },
+                keyAlias: "ballerina",
+                keyPassword: "ballerina"
+            }
+        }
+    };
+    ClientSelfSignedJwtAuthHandler handler = new(config);
+    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+    if result is ClientAuthError {
+        test:assertFail(msg = "Test Failed! " + result.message());
+    } else {
+        requestHeaders = result;
+    }
+
+    requestHeaders["x-id"] = ["0987654321"];
+    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
+    if unionResp is Error {
+        test:assertFail(msg = unionResp.message());
+    } else {
+        test:assertEquals(unionResp, "Hello WSO2");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testStringValueReturnWithJwt3() returns Error? {
+    HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
+    map<string|string[]> requestHeaders = {};
+
+    JwtIssuerConfig config = {
+        username: "admin",
+        issuer: "wso2",
+        audience: ["ballerina"],
+        customClaims: { "scope": ["write", "update"] },
+        signatureConfig: {
+            config: {
+                keyStore: {
+                    path: KEYSTORE_PATH,
+                    password: "ballerina"
+                },
+                keyAlias: "ballerina",
+                keyPassword: "ballerina"
+            }
+        }
+    };
+    ClientSelfSignedJwtAuthHandler handler = new(config);
+    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+    if result is ClientAuthError {
+        test:assertFail(msg = "Test Failed! " + result.message());
+    } else {
+        requestHeaders = result;
+    }
+
+    requestHeaders["x-id"] = ["0987654321"];
+    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
+    if unionResp is Error {
+        test:assertFail(msg = unionResp.message());
+    } else {
+        test:assertEquals(unionResp, "Hello WSO2");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testStringValueReturnWithUnauthorizedJwt1() returns Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {};
 
@@ -65,6 +143,84 @@ isolated function testStringValueReturnWithUnauthorizedJwt() returns Error? {
         issuer: "wso2",
         audience: ["ballerina"],
         customClaims: { "scope": "delete" },
+        signatureConfig: {
+            config: {
+                keyStore: {
+                    path: KEYSTORE_PATH,
+                    password: "ballerina"
+                },
+                keyAlias: "ballerina",
+                keyPassword: "ballerina"
+            }
+        }
+    };
+    ClientSelfSignedJwtAuthHandler handler = new(config);
+    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+    if result is ClientAuthError {
+        test:assertFail(msg = "Test Failed! " + result.message());
+    } else {
+        requestHeaders = result;
+    }
+
+    requestHeaders["x-id"] = ["0987654321"];
+    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    if unionResp is Error {
+        test:assertEquals(unionResp.message(), "Permission denied");
+    } else {
+        test:assertFail(msg = "Expected an error.");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testStringValueReturnWithUnauthorizedJwt2() returns Error? {
+    HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
+    map<string|string[]> requestHeaders = {};
+
+    JwtIssuerConfig config = {
+        username: "admin",
+        issuer: "wso2",
+        audience: ["ballerina"],
+        customClaims: { "scope": "read delete" },
+        signatureConfig: {
+            config: {
+                keyStore: {
+                    path: KEYSTORE_PATH,
+                    password: "ballerina"
+                },
+                keyAlias: "ballerina",
+                keyPassword: "ballerina"
+            }
+        }
+    };
+    ClientSelfSignedJwtAuthHandler handler = new(config);
+    map<string|string[]>|ClientAuthError result = handler.enrich(requestHeaders);
+    if result is ClientAuthError {
+        test:assertFail(msg = "Test Failed! " + result.message());
+    } else {
+        requestHeaders = result;
+    }
+
+    requestHeaders["x-id"] = ["0987654321"];
+    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    if unionResp is Error {
+        test:assertEquals(unionResp.message(), "Permission denied");
+    } else {
+        test:assertFail(msg = "Expected an error.");
+    }
+}
+
+@test:Config {enable:true}
+isolated function testStringValueReturnWithUnauthorizedJwt3() returns Error? {
+    HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
+    map<string|string[]> requestHeaders = {};
+
+    JwtIssuerConfig config = {
+        username: "admin",
+        issuer: "wso2",
+        audience: ["ballerina"],
+        customClaims: { "scope": ["read", "delete"] },
         signatureConfig: {
             config: {
                 keyStore: {
