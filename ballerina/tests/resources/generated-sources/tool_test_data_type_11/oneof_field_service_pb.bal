@@ -10,10 +10,10 @@ public isolated client class OneofFieldServiceClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_ONEOF_FIELD_SERVICE, getDescriptorMapOneofFieldService());
     }
 
-    isolated remote function hello(Request1|ContextRequest1 req) returns (Response1|grpc:Error) {
+    isolated remote function hello(Request1|ContextRequest1 req) returns Response1|grpc:Error {
         map<string|string[]> headers = {};
         Request1 message;
-        if (req is ContextRequest1) {
+        if req is ContextRequest1 {
             message = req.content;
             headers = req.headers;
         } else {
@@ -24,10 +24,10 @@ public isolated client class OneofFieldServiceClient {
         return <Response1>result;
     }
 
-    isolated remote function helloContext(Request1|ContextRequest1 req) returns (ContextResponse1|grpc:Error) {
+    isolated remote function helloContext(Request1|ContextRequest1 req) returns ContextResponse1|grpc:Error {
         map<string|string[]> headers = {};
         Request1 message;
-        if (req is ContextRequest1) {
+        if req is ContextRequest1 {
             message = req.content;
             headers = req.headers;
         } else {
@@ -38,10 +38,10 @@ public isolated client class OneofFieldServiceClient {
         return {content: <Response1>result, headers: respHeaders};
     }
 
-    isolated remote function testOneofField(ZZZ|ContextZZZ req) returns (ZZZ|grpc:Error) {
+    isolated remote function testOneofField(ZZZ|ContextZZZ req) returns ZZZ|grpc:Error {
         map<string|string[]> headers = {};
         ZZZ message;
-        if (req is ContextZZZ) {
+        if req is ContextZZZ {
             message = req.content;
             headers = req.headers;
         } else {
@@ -52,10 +52,10 @@ public isolated client class OneofFieldServiceClient {
         return <ZZZ>result;
     }
 
-    isolated remote function testOneofFieldContext(ZZZ|ContextZZZ req) returns (ContextZZZ|grpc:Error) {
+    isolated remote function testOneofFieldContext(ZZZ|ContextZZZ req) returns ContextZZZ|grpc:Error {
         map<string|string[]> headers = {};
         ZZZ message;
-        if (req is ContextZZZ) {
+        if req is ContextZZZ {
             message = req.content;
             headers = req.headers;
         } else {

@@ -10,10 +10,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDMESSAGE, getDescriptorMapHelloWorldMessage());
     }
 
-    isolated remote function hello(HelloRequest|ContextHelloRequest req) returns (HelloResponse|grpc:Error) {
+    isolated remote function hello(HelloRequest|ContextHelloRequest req) returns HelloResponse|grpc:Error {
         map<string|string[]> headers = {};
         HelloRequest message;
-        if (req is ContextHelloRequest) {
+        if req is ContextHelloRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -24,10 +24,10 @@ public isolated client class helloWorldClient {
         return <HelloResponse>result;
     }
 
-    isolated remote function helloContext(HelloRequest|ContextHelloRequest req) returns (ContextHelloResponse|grpc:Error) {
+    isolated remote function helloContext(HelloRequest|ContextHelloRequest req) returns ContextHelloResponse|grpc:Error {
         map<string|string[]> headers = {};
         HelloRequest message;
-        if (req is ContextHelloRequest) {
+        if req is ContextHelloRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -38,10 +38,10 @@ public isolated client class helloWorldClient {
         return {content: <HelloResponse>result, headers: respHeaders};
     }
 
-    isolated remote function bye(ByeRequest|ContextByeRequest req) returns (ByeResponse|grpc:Error) {
+    isolated remote function bye(ByeRequest|ContextByeRequest req) returns ByeResponse|grpc:Error {
         map<string|string[]> headers = {};
         ByeRequest message;
-        if (req is ContextByeRequest) {
+        if req is ContextByeRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -52,10 +52,10 @@ public isolated client class helloWorldClient {
         return <ByeResponse>result;
     }
 
-    isolated remote function byeContext(ByeRequest|ContextByeRequest req) returns (ContextByeResponse|grpc:Error) {
+    isolated remote function byeContext(ByeRequest|ContextByeRequest req) returns ContextByeResponse|grpc:Error {
         map<string|string[]> headers = {};
         ByeRequest message;
-        if (req is ContextByeRequest) {
+        if req is ContextByeRequest {
             message = req.content;
             headers = req.headers;
         } else {

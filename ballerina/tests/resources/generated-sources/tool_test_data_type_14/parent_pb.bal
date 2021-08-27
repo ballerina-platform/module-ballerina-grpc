@@ -10,10 +10,10 @@ public isolated client class ParentTestClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_PARENT, getDescriptorMapParent());
     }
 
-    isolated remote function callParent1(ParentMessage|ContextParentMessage req) returns (ParentMessage|grpc:Error) {
+    isolated remote function callParent1(ParentMessage|ContextParentMessage req) returns ParentMessage|grpc:Error {
         map<string|string[]> headers = {};
         ParentMessage message;
-        if (req is ContextParentMessage) {
+        if req is ContextParentMessage {
             message = req.content;
             headers = req.headers;
         } else {
@@ -24,10 +24,10 @@ public isolated client class ParentTestClient {
         return <ParentMessage>result;
     }
 
-    isolated remote function callParent1Context(ParentMessage|ContextParentMessage req) returns (ContextParentMessage|grpc:Error) {
+    isolated remote function callParent1Context(ParentMessage|ContextParentMessage req) returns ContextParentMessage|grpc:Error {
         map<string|string[]> headers = {};
         ParentMessage message;
-        if (req is ContextParentMessage) {
+        if req is ContextParentMessage {
             message = req.content;
             headers = req.headers;
         } else {
@@ -38,7 +38,7 @@ public isolated client class ParentTestClient {
         return {content: <ParentMessage>result, headers: respHeaders};
     }
 
-    isolated remote function callParent2() returns (CallParent2StreamingClient|grpc:Error) {
+    isolated remote function callParent2() returns CallParent2StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("ParentTest/callParent2");
         return new CallParent2StreamingClient(sClient);
     }
@@ -46,7 +46,7 @@ public isolated client class ParentTestClient {
     isolated remote function callParent3(ParentMessage|ContextParentMessage req) returns stream<ParentMessage, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         ParentMessage message;
-        if (req is ContextParentMessage) {
+        if req is ContextParentMessage {
             message = req.content;
             headers = req.headers;
         } else {
@@ -61,7 +61,7 @@ public isolated client class ParentTestClient {
     isolated remote function callParent3Context(ParentMessage|ContextParentMessage req) returns ContextParentMessageStream|grpc:Error {
         map<string|string[]> headers = {};
         ParentMessage message;
-        if (req is ContextParentMessage) {
+        if req is ContextParentMessage {
             message = req.content;
             headers = req.headers;
         } else {
@@ -73,7 +73,7 @@ public isolated client class ParentTestClient {
         return {content: new stream<ParentMessage, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function callParent4() returns (CallParent4StreamingClient|grpc:Error) {
+    isolated remote function callParent4() returns CallParent4StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("ParentTest/callParent4");
         return new CallParent4StreamingClient(sClient);
     }

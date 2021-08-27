@@ -11,10 +11,10 @@ public isolated client class ChatClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDWITHDUPLICATEINPUTOUTPUT, getDescriptorMapHelloWorldWithDuplicateInputOutput());
     }
 
-    isolated remote function call1(Msg|ContextMsg req) returns (string|grpc:Error) {
+    isolated remote function call1(Msg|ContextMsg req) returns string|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -25,10 +25,10 @@ public isolated client class ChatClient {
         return result.toString();
     }
 
-    isolated remote function call1Context(Msg|ContextMsg req) returns (wrappers:ContextString|grpc:Error) {
+    isolated remote function call1Context(Msg|ContextMsg req) returns wrappers:ContextString|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -39,10 +39,10 @@ public isolated client class ChatClient {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function call2(Msg|ContextMsg req) returns (string|grpc:Error) {
+    isolated remote function call2(Msg|ContextMsg req) returns string|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -53,10 +53,10 @@ public isolated client class ChatClient {
         return result.toString();
     }
 
-    isolated remote function call2Context(Msg|ContextMsg req) returns (wrappers:ContextString|grpc:Error) {
+    isolated remote function call2Context(Msg|ContextMsg req) returns wrappers:ContextString|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -67,12 +67,12 @@ public isolated client class ChatClient {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function call5() returns (Call5StreamingClient|grpc:Error) {
+    isolated remote function call5() returns Call5StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("Chat/call5");
         return new Call5StreamingClient(sClient);
     }
 
-    isolated remote function call6() returns (Call6StreamingClient|grpc:Error) {
+    isolated remote function call6() returns Call6StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("Chat/call6");
         return new Call6StreamingClient(sClient);
     }
@@ -80,7 +80,7 @@ public isolated client class ChatClient {
     isolated remote function call3(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -95,7 +95,7 @@ public isolated client class ChatClient {
     isolated remote function call3Context(Msg|ContextMsg req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -110,7 +110,7 @@ public isolated client class ChatClient {
     isolated remote function call4(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -125,7 +125,7 @@ public isolated client class ChatClient {
     isolated remote function call4Context(Msg|ContextMsg req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -137,12 +137,12 @@ public isolated client class ChatClient {
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function call7() returns (Call7StreamingClient|grpc:Error) {
+    isolated remote function call7() returns Call7StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("Chat/call7");
         return new Call7StreamingClient(sClient);
     }
 
-    isolated remote function call8() returns (Call8StreamingClient|grpc:Error) {
+    isolated remote function call8() returns Call8StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("Chat/call8");
         return new Call8StreamingClient(sClient);
     }
@@ -158,10 +158,10 @@ public isolated client class Chat2Client {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDWITHDUPLICATEINPUTOUTPUT, getDescriptorMapHelloWorldWithDuplicateInputOutput());
     }
 
-    isolated remote function call1(Msg|ContextMsg req) returns (string|grpc:Error) {
+    isolated remote function call1(Msg|ContextMsg req) returns string|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -172,10 +172,10 @@ public isolated client class Chat2Client {
         return result.toString();
     }
 
-    isolated remote function call1Context(Msg|ContextMsg req) returns (wrappers:ContextString|grpc:Error) {
+    isolated remote function call1Context(Msg|ContextMsg req) returns wrappers:ContextString|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -186,10 +186,10 @@ public isolated client class Chat2Client {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function call2(Msg|ContextMsg req) returns (string|grpc:Error) {
+    isolated remote function call2(Msg|ContextMsg req) returns string|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -200,10 +200,10 @@ public isolated client class Chat2Client {
         return result.toString();
     }
 
-    isolated remote function call2Context(Msg|ContextMsg req) returns (wrappers:ContextString|grpc:Error) {
+    isolated remote function call2Context(Msg|ContextMsg req) returns wrappers:ContextString|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -214,12 +214,12 @@ public isolated client class Chat2Client {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function call5() returns (Call5StreamingClient|grpc:Error) {
+    isolated remote function call5() returns Call5StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("Chat2/call5");
         return new Call5StreamingClient(sClient);
     }
 
-    isolated remote function call6() returns (Call6StreamingClient|grpc:Error) {
+    isolated remote function call6() returns Call6StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("Chat2/call6");
         return new Call6StreamingClient(sClient);
     }
@@ -227,7 +227,7 @@ public isolated client class Chat2Client {
     isolated remote function call3(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -242,7 +242,7 @@ public isolated client class Chat2Client {
     isolated remote function call3Context(Msg|ContextMsg req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -257,7 +257,7 @@ public isolated client class Chat2Client {
     isolated remote function call4(Msg|ContextMsg req) returns stream<string, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -272,7 +272,7 @@ public isolated client class Chat2Client {
     isolated remote function call4Context(Msg|ContextMsg req) returns wrappers:ContextStringStream|grpc:Error {
         map<string|string[]> headers = {};
         Msg message;
-        if (req is ContextMsg) {
+        if req is ContextMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -284,12 +284,12 @@ public isolated client class Chat2Client {
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function call7() returns (Call7StreamingClient|grpc:Error) {
+    isolated remote function call7() returns Call7StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("Chat2/call7");
         return new Call7StreamingClient(sClient);
     }
 
-    isolated remote function call8() returns (Call8StreamingClient|grpc:Error) {
+    isolated remote function call8() returns Call8StreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("Chat2/call8");
         return new Call8StreamingClient(sClient);
     }

@@ -13,10 +13,10 @@ public isolated client class DurationHandlerClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_DURATION_TYPE1, getDescriptorMapDurationType1());
     }
 
-    isolated remote function unaryCall1(string|wrappers:ContextString req) returns (time:Seconds|grpc:Error) {
+    isolated remote function unaryCall1(string|wrappers:ContextString req) returns time:Seconds|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is wrappers:ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -27,10 +27,10 @@ public isolated client class DurationHandlerClient {
         return <time:Seconds>result;
     }
 
-    isolated remote function unaryCall1Context(string|wrappers:ContextString req) returns (duration:ContextDuration|grpc:Error) {
+    isolated remote function unaryCall1Context(string|wrappers:ContextString req) returns duration:ContextDuration|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is wrappers:ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -41,10 +41,10 @@ public isolated client class DurationHandlerClient {
         return {content: <time:Seconds>result, headers: respHeaders};
     }
 
-    isolated remote function unaryCall2(DurationMsg|ContextDurationMsg req) returns (DurationMsg|grpc:Error) {
+    isolated remote function unaryCall2(DurationMsg|ContextDurationMsg req) returns DurationMsg|grpc:Error {
         map<string|string[]> headers = {};
         DurationMsg message;
-        if (req is ContextDurationMsg) {
+        if req is ContextDurationMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -55,10 +55,10 @@ public isolated client class DurationHandlerClient {
         return <DurationMsg>result;
     }
 
-    isolated remote function unaryCall2Context(DurationMsg|ContextDurationMsg req) returns (ContextDurationMsg|grpc:Error) {
+    isolated remote function unaryCall2Context(DurationMsg|ContextDurationMsg req) returns ContextDurationMsg|grpc:Error {
         map<string|string[]> headers = {};
         DurationMsg message;
-        if (req is ContextDurationMsg) {
+        if req is ContextDurationMsg {
             message = req.content;
             headers = req.headers;
         } else {
@@ -69,7 +69,7 @@ public isolated client class DurationHandlerClient {
         return {content: <DurationMsg>result, headers: respHeaders};
     }
 
-    isolated remote function clientStreaming() returns (ClientStreamingStreamingClient|grpc:Error) {
+    isolated remote function clientStreaming() returns ClientStreamingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("DurationHandler/clientStreaming");
         return new ClientStreamingStreamingClient(sClient);
     }
@@ -77,7 +77,7 @@ public isolated client class DurationHandlerClient {
     isolated remote function serverStreaming(string|wrappers:ContextString req) returns stream<time:Seconds, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is wrappers:ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -92,7 +92,7 @@ public isolated client class DurationHandlerClient {
     isolated remote function serverStreamingContext(string|wrappers:ContextString req) returns duration:ContextDurationStream|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is wrappers:ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -104,7 +104,7 @@ public isolated client class DurationHandlerClient {
         return {content: new stream<time:Seconds, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function bidirectionalStreaming() returns (BidirectionalStreamingStreamingClient|grpc:Error) {
+    isolated remote function bidirectionalStreaming() returns BidirectionalStreamingStreamingClient|grpc:Error {
         grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("DurationHandler/bidirectionalStreaming");
         return new BidirectionalStreamingStreamingClient(sClient);
     }

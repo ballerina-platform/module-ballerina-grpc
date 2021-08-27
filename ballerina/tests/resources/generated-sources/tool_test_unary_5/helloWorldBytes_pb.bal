@@ -11,10 +11,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDBYTES, getDescriptorMapHelloWorldBytes());
     }
 
-    isolated remote function hello(byte[]|wrappers:ContextBytes req) returns (byte[]|grpc:Error) {
+    isolated remote function hello(byte[]|wrappers:ContextBytes req) returns byte[]|grpc:Error {
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is wrappers:ContextBytes) {
+        if req is wrappers:ContextBytes {
             message = req.content;
             headers = req.headers;
         } else {
@@ -25,10 +25,10 @@ public isolated client class helloWorldClient {
         return <byte[]>result;
     }
 
-    isolated remote function helloContext(byte[]|wrappers:ContextBytes req) returns (wrappers:ContextBytes|grpc:Error) {
+    isolated remote function helloContext(byte[]|wrappers:ContextBytes req) returns wrappers:ContextBytes|grpc:Error {
         map<string|string[]> headers = {};
         byte[] message;
-        if (req is wrappers:ContextBytes) {
+        if req is wrappers:ContextBytes {
             message = req.content;
             headers = req.headers;
         } else {

@@ -39,16 +39,22 @@ public class ValueTypeUtils {
 
     public static Type getValueTypeStream(String key) {
         String typeName;
-        if (key.equals("byte[]")) {
-            typeName = "ContextBytesStream";
-        } else if (key.equals("time:Utc")) {
-            typeName = "ContextTimestampStream";
-        } else if (key.equals("time:Seconds")) {
-            typeName = "ContextDurationStream";
-        } else if (key.equals("map<anydata>")) {
-            typeName = "ContextStructStream";
-        } else {
-            typeName = "Context" + capitalize(key) + "Stream";
+        switch (key) {
+            case "byte[]":
+                typeName = "ContextBytesStream";
+                break;
+            case "time:Utc":
+                typeName = "ContextTimestampStream";
+                break;
+            case "time:Seconds":
+                typeName = "ContextDurationStream";
+                break;
+            case "map<anydata>":
+                typeName = "ContextStructStream";
+                break;
+            default:
+                typeName = "Context" + capitalize(key) + "Stream";
+                break;
         }
         Record contextStream = new Record();
         contextStream.addStreamField(key, "content");
@@ -72,16 +78,22 @@ public class ValueTypeUtils {
         if (key == null) {
             typeName = "ContextNil";
         } else {
-            if (key.equals("byte[]")) {
-                typeName = "ContextBytes";
-            } else if (key.equals("time:Utc")) {
-                typeName = "ContextTimestamp";
-            } else if (key.equals("time:Seconds")) {
-                typeName = "ContextDuration";
-            } else if (key.equals("map<anydata>")) {
-                typeName = "ContextStruct";
-            } else {
-                typeName = "Context" + capitalize(key);
+            switch (key) {
+                case "byte[]":
+                    typeName = "ContextBytes";
+                    break;
+                case "time:Utc":
+                    typeName = "ContextTimestamp";
+                    break;
+                case "time:Seconds":
+                    typeName = "ContextDuration";
+                    break;
+                case "map<anydata>":
+                    typeName = "ContextStruct";
+                    break;
+                default:
+                    typeName = "Context" + capitalize(key);
+                    break;
             }
             if (isBallerinaBasicType(key)) {
                 contextString.addBasicField(key, "content");
