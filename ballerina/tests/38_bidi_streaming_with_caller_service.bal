@@ -17,8 +17,8 @@
 import ballerina/log;
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_38,
-    descMap: getDescriptorMap38()
+    descriptor: ROOT_DESCRIPTOR_38_BIDI_STREAMING_WITH_CALLER,
+    descMap: getDescriptorMap38BidiStreamingWithCaller()
 }
 service "Chat38" on new Listener(9128) {
     remote function chat38(Chat38StringCaller caller, stream<ChatMessage38, Error> clientStream)

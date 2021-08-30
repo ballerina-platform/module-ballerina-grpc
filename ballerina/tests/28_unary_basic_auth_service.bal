@@ -18,8 +18,8 @@ import ballerina/auth;
 listener Listener ep28 = new (9118);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_28,
-    descMap: getDescriptorMap28()
+    descriptor: ROOT_DESCRIPTOR_28_UNARY_BASIC_AUTH,
+    descMap: getDescriptorMap28UnaryBasicAuth()
 }
 service "HelloWorld28" on ep28 {
 

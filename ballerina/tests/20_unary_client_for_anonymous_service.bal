@@ -16,7 +16,7 @@
 
 listener Listener ep20 = new (9110);
 
-service object {} AnonService1 = @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20, descMap: getDescriptorMap20()} 
+service object {} AnonService1 = @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20_UNARY_CLIENT_FOR_ANONYMOUS_SERVICE, descMap: getDescriptorMap20UnaryClientForAnonymousService()} 
 service object {
     remote isolated function hello1(string value) returns string|error {
         return "Hello Ballerina";
@@ -26,14 +26,14 @@ service object {
     }
 };
 
-service object {} IncompleteService = @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20, descMap: getDescriptorMap20()} 
+service object {} IncompleteService = @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20_UNARY_CLIENT_FOR_ANONYMOUS_SERVICE, descMap: getDescriptorMap20UnaryClientForAnonymousService()} 
 service object {
     remote isolated function hello1(string value) returns string|error {
         return "Hello Ballerina";
     }
 };
 
-service object {} unregisteredService = @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20, descMap: getDescriptorMap20()} 
+service object {} unregisteredService = @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20_UNARY_CLIENT_FOR_ANONYMOUS_SERVICE, descMap: getDescriptorMap20UnaryClientForAnonymousService()} 
 service object {
     remote isolated function hello1(string value) returns string|error {
         return "Hello Ballerina";

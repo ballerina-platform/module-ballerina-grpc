@@ -16,11 +16,11 @@
 
 listener Listener ep56 = new (9156);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_56, descMap: getDescriptorMap56()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_56_SERVICE_PANIC_AFTER_SEND_ERROR, descMap: getDescriptorMap56ServicePanicAfterSendError()}
 service "HelloWorld56" on ep56 {
 
     remote function hello56BiDi(HelloWorld56StringCaller caller,
-     stream<string, Error?> clientStream) returns error? {
+     stream<string, error?> clientStream) returns error? {
         check caller->sendError(error Error("Test error from service"));
         panic error Error("Panic in service");
     }

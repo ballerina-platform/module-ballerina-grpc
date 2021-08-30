@@ -45,8 +45,8 @@ listener Listener ep3 = new (9093, {
 boolean initialized = false;
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_3,
-    descMap: getDescriptorMap3()
+    descriptor: ROOT_DESCRIPTOR_03_BIDIRECTIONAL_STREAMING_SERVICE,
+    descMap: getDescriptorMap03BidirectionalStreamingService()
 }
 service "Chat" on ep3 {
 

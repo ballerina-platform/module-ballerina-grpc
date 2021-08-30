@@ -14,6 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/protobuf.types.wrappers;
+
 public isolated client class HelloWorld52Client {
     *AbstractClientEndpoint;
 
@@ -21,13 +23,13 @@ public isolated client class HelloWorld52Client {
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_52, getDescriptorMap52());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_52_UNARY_LDAP_AUTH, getDescriptorMap52UnaryLdapAuth());
     }
 
-    isolated remote function testStringValueReturn(string|ContextString req) returns (string|Error) {
+    isolated remote function testStringValueReturn(string|wrappers:ContextString req) returns string|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -38,10 +40,10 @@ public isolated client class HelloWorld52Client {
         return result.toString();
     }
 
-    isolated remote function testStringValueReturnContext(string|ContextString req) returns (ContextString|Error) {
+    isolated remote function testStringValueReturnContext(string|wrappers:ContextString req) returns wrappers:ContextString|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -68,7 +70,7 @@ public client class HelloWorld52StringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns Error? {
         return self.caller->send(response);
     }
 
@@ -85,14 +87,9 @@ public client class HelloWorld52StringCaller {
     }
 }
 
-//public type ContextString record {|
-//    string content;
-//    map<string|string[]> headers;
-//|};
+const string ROOT_DESCRIPTOR_52_UNARY_LDAP_AUTH = "0A1835325F756E6172795F6C6461705F617574682E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32630A0C48656C6C6F576F726C64353212530A1574657374537472696E6756616C756552657475726E121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";
 
-const string ROOT_DESCRIPTOR_52 = "0A1835325F756E6172795F6C6461705F617574682E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32630A0C48656C6C6F576F726C64353212530A1574657374537472696E6756616C756552657475726E121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";
-
-isolated function getDescriptorMap52() returns map<string> {
+public isolated function getDescriptorMap52UnaryLdapAuth() returns map<string> {
     return {"52_unary_ldap_auth.proto": "0A1835325F756E6172795F6C6461705F617574682E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32630A0C48656C6C6F576F726C64353212530A1574657374537472696E6756616C756552657475726E121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33", "google/protobuf/wrappers.proto": "0A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F120F676F6F676C652E70726F746F62756622230A0B446F75626C6556616C756512140A0576616C7565180120012801520576616C756522220A0A466C6F617456616C756512140A0576616C7565180120012802520576616C756522220A0A496E74363456616C756512140A0576616C7565180120012803520576616C756522230A0B55496E74363456616C756512140A0576616C7565180120012804520576616C756522220A0A496E74333256616C756512140A0576616C7565180120012805520576616C756522230A0B55496E74333256616C756512140A0576616C756518012001280D520576616C756522210A09426F6F6C56616C756512140A0576616C7565180120012808520576616C756522230A0B537472696E6756616C756512140A0576616C7565180120012809520576616C756522220A0A427974657356616C756512140A0576616C756518012001280C520576616C756542570A13636F6D2E676F6F676C652E70726F746F627566420D577261707065727350726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33"};
 }
 

@@ -20,8 +20,8 @@ import ballerina/jwt;
 listener Listener ep29 = new (9119);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_29,
-    descMap: getDescriptorMap29()
+    descriptor: ROOT_DESCRIPTOR_29_UNARY_JWT,
+    descMap: getDescriptorMap29UnaryJwt()
 }
 service /HelloWorld29 on ep29 {
 

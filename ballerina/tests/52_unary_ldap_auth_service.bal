@@ -19,8 +19,8 @@ import ballerina/auth;
 listener Listener ep52 = new (9152);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_52,
-    descMap: getDescriptorMap52()
+    descriptor: ROOT_DESCRIPTOR_52_UNARY_LDAP_AUTH,
+    descMap: getDescriptorMap52UnaryLdapAuth()
 }
 service "HelloWorld52" on ep52 {
 

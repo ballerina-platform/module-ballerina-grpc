@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-// This is server implementation for bidirectional streaming scenario
 
 public isolated client class HelloWorld33Client {
     *AbstractClientEndpoint;
@@ -22,10 +21,10 @@ public isolated client class HelloWorld33Client {
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_33, getDescriptorMap33());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_33_RETURN_RECORD_CLIENT_STREAMING, getDescriptorMap33ReturnRecordClientStreaming());
     }
 
-    isolated remote function sayHello() returns (SayHelloStreamingClient|Error) {
+    isolated remote function sayHello() returns SayHelloStreamingClient|Error {
         StreamingClient sClient = check self.grpcClient->executeClientStreaming("HelloWorld33/sayHello");
         return new SayHelloStreamingClient(sClient);
     }
@@ -101,7 +100,16 @@ public client class HelloWorld33SampleMsg33Caller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
+
+public type ContextSampleMsg33Stream record {|
+    stream<SampleMsg33, error?> content;
+    map<string|string[]> headers;
+|};
 
 public type ContextSampleMsg33 record {|
     SampleMsg33 content;
@@ -113,9 +121,9 @@ public type SampleMsg33 record {|
     int id = 0;
 |};
 
-const string ROOT_DESCRIPTOR_33 = "0A2733335F72657475726E5F7265636F72645F636C69656E745F73747265616D696E672E70726F746F22310A0B53616D706C654D7367333312120A046E616D6518012001280952046E616D65120E0A0269641802200128055202696432380A0C48656C6C6F576F726C64333312280A0873617948656C6C6F120C2E53616D706C654D736733331A0C2E53616D706C654D736733332801620670726F746F33";
+const string ROOT_DESCRIPTOR_33_RETURN_RECORD_CLIENT_STREAMING = "0A2733335F72657475726E5F7265636F72645F636C69656E745F73747265616D696E672E70726F746F22310A0B53616D706C654D7367333312120A046E616D6518012001280952046E616D65120E0A0269641802200128055202696432380A0C48656C6C6F576F726C64333312280A0873617948656C6C6F120C2E53616D706C654D736733331A0C2E53616D706C654D736733332801620670726F746F33";
 
-isolated function getDescriptorMap33() returns map<string> {
+public isolated function getDescriptorMap33ReturnRecordClientStreaming() returns map<string> {
     return {"33_return_record_client_streaming.proto": "0A2733335F72657475726E5F7265636F72645F636C69656E745F73747265616D696E672E70726F746F22310A0B53616D706C654D7367333312120A046E616D6518012001280952046E616D65120E0A0269641802200128055202696432380A0C48656C6C6F576F726C64333312280A0873617948656C6C6F120C2E53616D706C654D736733331A0C2E53616D706C654D736733332801620670726F746F33"};
 }
 

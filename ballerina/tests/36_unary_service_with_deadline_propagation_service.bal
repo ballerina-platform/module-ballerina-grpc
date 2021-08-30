@@ -17,17 +17,18 @@
 import ballerina/time;
 import ballerina/log;
 import ballerina/io;
+import ballerina/protobuf.types.wrappers;
 
 listener Listener ep36 = new (9126);
 const string TEST_DEADLINE_HEADER = "testdeadline";
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_36,
-    descMap: getDescriptorMap36()
+    descriptor: ROOT_DESCRIPTOR_36_UNARY_SERVICE_WITH_DEADLINE_PROPAGATION,
+    descMap: getDescriptorMap36UnaryServiceWithDeadlinePropagation()
 }
 service "HelloWorld36S1" on ep36 {
     
-    remote isolated function call1(ContextString request) returns ContextString|Error {
+    remote isolated function call1(ContextString request) returns wrappers:ContextString|Error {
         log:printInfo("Invoked call1");
         var cancel = isCancelled(request.headers);
         if cancel is boolean {
@@ -53,11 +54,11 @@ service "HelloWorld36S1" on ep36 {
 }
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_36,
-    descMap: getDescriptorMap36()
+    descriptor: ROOT_DESCRIPTOR_36_UNARY_SERVICE_WITH_DEADLINE_PROPAGATION,
+    descMap: getDescriptorMap36UnaryServiceWithDeadlinePropagation()
 }
 service "HelloWorld36S2" on ep36 {
-    remote isolated function call2(ContextString request) returns ContextString|error {
+    remote isolated function call2(ContextString request) returns wrappers:ContextString|error {
         log:printInfo("Invoked call2");
         if request.headers[TEST_DEADLINE_HEADER] != () {
             string|string[]? deadlineStringValue = request.headers[TEST_DEADLINE_HEADER];

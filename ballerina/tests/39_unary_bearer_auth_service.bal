@@ -17,8 +17,8 @@
 listener Listener ep39 = new (9129);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_39,
-    descMap: getDescriptorMap39()
+    descriptor: ROOT_DESCRIPTOR_39_UNARY_BEARER_AUTH,
+    descMap: getDescriptorMap39UnaryBearerAuth()
 }
 service "HelloWorld39" on ep39 {
 

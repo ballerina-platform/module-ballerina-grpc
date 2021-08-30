@@ -14,6 +14,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/protobuf.types.wrappers;
+import ballerina/protobuf.types.empty;
+
 public isolated client class EmptyHandlerClient {
     *AbstractClientEndpoint;
 
@@ -21,42 +24,44 @@ public isolated client class EmptyHandlerClient {
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_46, getDescriptorMap46());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_46_EMPTY_VALUES, getDescriptorMap46EmptyValues());
     }
 
-    isolated remote function unaryWithEmpty() returns (Error?) {
-        Empty message = {};
+    isolated remote function unaryWithEmpty() returns Error? {
+        empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("EmptyHandler/unaryWithEmpty", message, headers);
     }
 
-    isolated remote function unaryWithEmptyContext() returns (ContextNil|Error) {
-        Empty message = {};
+    isolated remote function unaryWithEmptyContext() returns empty:ContextNil|Error {
+        empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("EmptyHandler/unaryWithEmpty", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {headers: respHeaders};
     }
 
-    isolated remote function clientStrWithEmpty() returns (ClientStrWithEmptyStreamingClient|Error) {
+    isolated remote function clientStrWithEmpty() returns ClientStrWithEmptyStreamingClient|Error {
         StreamingClient sClient = check self.grpcClient->executeClientStreaming("EmptyHandler/clientStrWithEmpty");
         return new ClientStrWithEmptyStreamingClient(sClient);
     }
 
-    isolated remote function serverStrWithEmpty() returns stream<string, Error?>|Error {
-        Empty req = {};
-        var payload = check self.grpcClient->executeServerStreaming("EmptyHandler/serverStrWithEmpty", req);
+    isolated remote function serverStrWithEmpty() returns stream<string, error?>|Error {
+        empty:Empty message = {};
+        map<string|string[]> headers = {};
+        var payload = check self.grpcClient->executeServerStreaming("EmptyHandler/serverStrWithEmpty", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
-        StringStream outputStream = new StringStream(result);
-        return new stream<string, Error?>(outputStream);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        return new stream<string, error?>(outputStream);
     }
 
-    isolated remote function serverStrWithEmptyContext() returns ContextStringStream|Error {
-        Empty req = {};
-        var payload = check self.grpcClient->executeServerStreaming("EmptyHandler/serverStrWithEmpty", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
-        StringStream outputStream = new StringStream(result);
-        return {content: new stream<string, Error?>(outputStream), headers: headers};
+    isolated remote function serverStrWithEmptyContext() returns wrappers:ContextStringStream|Error {
+        empty:Empty message = {};
+        map<string|string[]> headers = {};
+        var payload = check self.grpcClient->executeServerStreaming("EmptyHandler/serverStrWithEmpty", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        return {content: new stream<string, error?>(outputStream), headers: respHeaders};
     }
 }
 
@@ -71,7 +76,7 @@ public client class ClientStrWithEmptyStreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextString(ContextString message) returns Error? {
+    isolated remote function sendContextString(wrappers:ContextString message) returns Error? {
         return self.sClient->send(message);
     }
 
@@ -84,7 +89,7 @@ public client class ClientStrWithEmptyStreamingClient {
         }
     }
 
-    isolated remote function receiveContextNil() returns ContextNil|Error? {
+    isolated remote function receiveContextNil() returns empty:ContextNil|Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
@@ -102,30 +107,6 @@ public client class ClientStrWithEmptyStreamingClient {
         return self.sClient->complete();
     }
 }
-
-//public class StringStream {
-//    private stream<anydata, Error?> anydataStream;
-//
-//    public isolated function init(stream<anydata, Error?> anydataStream) {
-//        self.anydataStream = anydataStream;
-//    }
-//
-//    public isolated function next() returns record {|string value;|}|Error? {
-//        var streamValue = self.anydataStream.next();
-//        if (streamValue is ()) {
-//            return streamValue;
-//        } else if (streamValue is Error) {
-//            return streamValue;
-//        } else {
-//            record {|string value;|} nextRecord = {value: <string>streamValue.value};
-//            return nextRecord;
-//        }
-//    }
-//
-//    public isolated function close() returns Error? {
-//        return self.anydataStream.close();
-//    }
-//}
 
 public client class EmptyHandlerNilCaller {
     private Caller caller;
@@ -166,7 +147,7 @@ public client class EmptyHandlerStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns Error? {
         return self.caller->send(response);
     }
 
@@ -183,26 +164,9 @@ public client class EmptyHandlerStringCaller {
     }
 }
 
-//public type ContextStringStream record {|
-//    stream<string, error?> content;
-//    map<string|string[]> headers;
-//|};
-//
-//public type ContextNil record {|
-//    map<string|string[]> headers;
-//|};
-//
-//public type ContextString record {|
-//    string content;
-//    map<string|string[]> headers;
-//|};
-//
-//public type Empty record {|
-//|};
+const string ROOT_DESCRIPTOR_46_EMPTY_VALUES = "0A1534365F656D7074795F76616C7565732E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F32EC010A0C456D70747948616E646C657212400A0E756E61727957697468456D70747912162E676F6F676C652E70726F746F6275662E456D7074791A162E676F6F676C652E70726F746F6275662E456D707479124C0A1273657276657253747257697468456D70747912162E676F6F676C652E70726F746F6275662E456D7074791A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75653001124C0A12636C69656E7453747257697468456D707479121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E676F6F676C652E70726F746F6275662E456D7074792801620670726F746F33";
 
-const string ROOT_DESCRIPTOR_46 = "0A1534365F656D7074795F76616C7565732E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F32EC010A0C456D70747948616E646C657212400A0E756E61727957697468456D70747912162E676F6F676C652E70726F746F6275662E456D7074791A162E676F6F676C652E70726F746F6275662E456D707479124C0A1273657276657253747257697468456D70747912162E676F6F676C652E70726F746F6275662E456D7074791A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75653001124C0A12636C69656E7453747257697468456D707479121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E676F6F676C652E70726F746F6275662E456D7074792801620670726F746F33";
-
-isolated function getDescriptorMap46() returns map<string> {
+public isolated function getDescriptorMap46EmptyValues() returns map<string> {
     return {"46_empty_values.proto": "0A1534365F656D7074795F76616C7565732E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F32EC010A0C456D70747948616E646C657212400A0E756E61727957697468456D70747912162E676F6F676C652E70726F746F6275662E456D7074791A162E676F6F676C652E70726F746F6275662E456D707479124C0A1273657276657253747257697468456D70747912162E676F6F676C652E70726F746F6275662E456D7074791A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75653001124C0A12636C69656E7453747257697468456D707479121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E676F6F676C652E70726F746F6275662E456D7074792801620670726F746F33", "google/protobuf/empty.proto": "0A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F120F676F6F676C652E70726F746F62756622070A05456D70747942540A13636F6D2E676F6F676C652E70726F746F627566420A456D70747950726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33", "google/protobuf/wrappers.proto": "0A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F120F676F6F676C652E70726F746F62756622230A0B446F75626C6556616C756512140A0576616C7565180120012801520576616C756522220A0A466C6F617456616C756512140A0576616C7565180120012802520576616C756522220A0A496E74363456616C756512140A0576616C7565180120012803520576616C756522230A0B55496E74363456616C756512140A0576616C7565180120012804520576616C756522220A0A496E74333256616C756512140A0576616C7565180120012805520576616C756522230A0B55496E74333256616C756512140A0576616C756518012001280D520576616C756522210A09426F6F6C56616C756512140A0576616C7565180120012808520576616C756522230A0B537472696E6756616C756512140A0576616C7565180120012809520576616C756522220A0A427974657356616C756512140A0576616C756518012001280C520576616C756542570A13636F6D2E676F6F676C652E70726F746F627566420D577261707065727350726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33"};
 }
 

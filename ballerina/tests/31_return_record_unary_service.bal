@@ -19,8 +19,8 @@ import ballerina/io;
 listener Listener ep31 = new (9121);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_31,
-    descMap: getDescriptorMap31()
+    descriptor: ROOT_DESCRIPTOR_31_RETURN_UNARY,
+    descMap: getDescriptorMap31ReturnUnary()
 }
 service "HelloWorld31" on ep31 {
     remote isolated function sayHello(SampleMsg31 reqMsg) returns ContextSampleMsg31|error {

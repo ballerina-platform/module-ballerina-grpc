@@ -13,11 +13,12 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/log;
 
 listener Listener ep41 = new (9141);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_41, descMap: getDescriptorMap41()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_41_SERVER_STREAMING_HEADERS_AND_NEGATIVE_TEST, descMap: getDescriptorMap41ServerStreamingHeadersAndNegativeTest()}
 service "Chat41" on ep41 {
 
     remote function call1(ChatMessage41 value) returns ContextStringStream|error {

@@ -19,8 +19,8 @@ listener Listener ep12 = new (9102, {
 });
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_12,
-    descMap: getDescriptorMap12()
+    descriptor: ROOT_DESCRIPTOR_12_GRPC_ENUM_TEST_SERVICE,
+    descMap: getDescriptorMap12GrpcEnumTestService()
 }
 service "testEnumService" on ep12 {
     isolated remote function testEnum(TestEnumServiceStringCaller caller, OrderInfo orderReq) {

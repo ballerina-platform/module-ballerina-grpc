@@ -17,7 +17,7 @@ import ballerina/log;
 
 listener Listener ep45 = new (9145);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_45, descMap: getDescriptorMap45()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_45_SERVICES_WITH_HEADERS, descMap: getDescriptorMap45ServicesWithHeaders()}
 service "HeadersService" on ep45 {
 
     remote function unary(HeadersServiceHSResCaller caller, ContextHSReq req) returns error? {

@@ -21,13 +21,13 @@ public isolated client class HeadersServiceClient {
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_45, getDescriptorMap45());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_45_SERVICES_WITH_HEADERS, getDescriptorMap45ServicesWithHeaders());
     }
 
-    isolated remote function unary(HSReq|ContextHSReq req) returns (HSRes|Error) {
+    isolated remote function unary(HSReq|ContextHSReq req) returns HSRes|Error {
         map<string|string[]> headers = {};
         HSReq message;
-        if (req is ContextHSReq) {
+        if req is ContextHSReq {
             message = req.content;
             headers = req.headers;
         } else {
@@ -38,10 +38,10 @@ public isolated client class HeadersServiceClient {
         return <HSRes>result;
     }
 
-    isolated remote function unaryContext(HSReq|ContextHSReq req) returns (ContextHSRes|Error) {
+    isolated remote function unaryContext(HSReq|ContextHSReq req) returns ContextHSRes|Error {
         map<string|string[]> headers = {};
         HSReq message;
-        if (req is ContextHSReq) {
+        if req is ContextHSReq {
             message = req.content;
             headers = req.headers;
         } else {
@@ -52,13 +52,21 @@ public isolated client class HeadersServiceClient {
         return {content: <HSRes>result, headers: respHeaders};
     }
 
-    isolated remote function clientStr() returns (ClientStrStreamingClient|Error) {
+    isolated remote function clientStr() returns ClientStrStreamingClient|Error {
         StreamingClient sClient = check self.grpcClient->executeClientStreaming("HeadersService/clientStr");
         return new ClientStrStreamingClient(sClient);
     }
 
-    isolated remote function serverStr(HSReq req) returns stream<HSRes, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("HeadersService/serverStr", req);
+    isolated remote function serverStr(HSReq|ContextHSReq req) returns stream<HSRes, Error?>|Error {
+        map<string|string[]> headers = {};
+        HSReq message;
+        if req is ContextHSReq {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("HeadersService/serverStr", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         HSResStream outputStream = new HSResStream(result);
         return new stream<HSRes, Error?>(outputStream);
@@ -67,7 +75,7 @@ public isolated client class HeadersServiceClient {
     isolated remote function serverStrContext(HSReq|ContextHSReq req) returns ContextHSResStream|Error {
         map<string|string[]> headers = {};
         HSReq message;
-        if (req is ContextHSReq) {
+        if req is ContextHSReq {
             message = req.content;
             headers = req.headers;
         } else {
@@ -79,7 +87,7 @@ public isolated client class HeadersServiceClient {
         return {content: new stream<HSRes, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function bidirectionalStr() returns (BidirectionalStrStreamingClient|Error) {
+    isolated remote function bidirectionalStr() returns BidirectionalStrStreamingClient|Error {
         StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("HeadersService/bidirectionalStr");
         return new BidirectionalStrStreamingClient(sClient);
     }
@@ -223,6 +231,10 @@ public client class HeadersServiceHSResCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public type ContextHSResStream record {|
@@ -230,13 +242,13 @@ public type ContextHSResStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextHSRes record {|
-    HSRes content;
+public type ContextHSReqStream record {|
+    stream<HSReq, error?> content;
     map<string|string[]> headers;
 |};
 
-public type ContextHSReqStream record {|
-    stream<HSReq, error?> content;
+public type ContextHSRes record {|
+    HSRes content;
     map<string|string[]> headers;
 |};
 
@@ -255,8 +267,9 @@ public type HSReq record {|
     string message = "";
 |};
 
-const string ROOT_DESCRIPTOR_45 = "0A1E34355F73657276696365735F776974685F686561646572732E70726F746F22350A05485352657112120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D65737361676522350A05485352657312120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765328F010A0E486561646572735365727669636512170A05756E61727912062E48535265711A062E4853526573121D0A0973657276657253747212062E48535265711A062E48535265733001121D0A09636C69656E7453747212062E48535265711A062E4853526573280112260A106269646972656374696F6E616C53747212062E48535265711A062E485352657328013001620670726F746F33";
+const string ROOT_DESCRIPTOR_45_SERVICES_WITH_HEADERS = "0A1E34355F73657276696365735F776974685F686561646572732E70726F746F22350A05485352657112120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D65737361676522350A05485352657312120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765328F010A0E486561646572735365727669636512170A05756E61727912062E48535265711A062E4853526573121D0A0973657276657253747212062E48535265711A062E48535265733001121D0A09636C69656E7453747212062E48535265711A062E4853526573280112260A106269646972656374696F6E616C53747212062E48535265711A062E485352657328013001620670726F746F33";
 
-isolated function getDescriptorMap45() returns map<string> {
+public isolated function getDescriptorMap45ServicesWithHeaders() returns map<string> {
     return {"45_services_with_headers.proto": "0A1E34355F73657276696365735F776974685F686561646572732E70726F746F22350A05485352657112120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D65737361676522350A05485352657312120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765328F010A0E486561646572735365727669636512170A05756E61727912062E48535265711A062E4853526573121D0A0973657276657253747212062E48535265711A062E48535265733001121D0A09636C69656E7453747212062E48535265711A062E4853526573280112260A106269646972656374696F6E616C53747212062E48535265711A062E485352657328013001620670726F746F33"};
 }
+

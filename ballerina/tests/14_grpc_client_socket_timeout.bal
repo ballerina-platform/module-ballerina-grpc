@@ -18,8 +18,8 @@ import ballerina/io;
 import ballerina/lang.runtime as runtime;
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_14,
-    descMap: getDescriptorMap14()
+    descriptor: ROOT_DESCRIPTOR_14_GRPC_CLIENT_SOCKET_TIMEOUT,
+    descMap: getDescriptorMap14GrpcClientSocketTimeout()
 }
 service "HelloWorld14" on new Listener(9104) {
 

@@ -17,12 +17,12 @@
 listener Listener ep50 = new (9150);
 boolean cancelled = false;
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_50, descMap: getDescriptorMap50()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_50_BIDI_CALLER_CANCEL_STATUS, descMap: getDescriptorMap50BidiCallerCancelStatus()}
 service "HelloWorld50" on ep50 {
 
     remote function sendString(HelloWorld50StringCaller caller,
-     stream<string, Error?> clientStream) returns error? {
-        record {|string value;|}|Error? result = clientStream.next();
+     stream<string, error?> clientStream) returns error? {
+        record {|string value;|}|error? result = clientStream.next();
         result = clientStream.next();
         if caller.isCancelled() {
             cancelled = true;

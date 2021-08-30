@@ -17,7 +17,7 @@ import ballerina/log;
 
 listener Listener ep42 = new (9142);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_42, descMap: getDescriptorMap42()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_42_REPEATED_DATA_TYPES_TEST, descMap: getDescriptorMap42RepeatedDataTypesTest()}
 service "DataTypesService" on ep42 {
 
     remote function helloWithInt32Array(string value) returns stream<Int32ArrMsg, error?>|error {

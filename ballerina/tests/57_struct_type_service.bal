@@ -16,7 +16,7 @@
 
 listener Listener ep57 = new (9157);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_57, descMap: getDescriptorMap57()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_57_STRUCT_TYPE, descMap: getDescriptorMap57StructType()}
 service "StructService" on ep57 {
 
     remote function getStructType1(string value) returns map<anydata>|error {

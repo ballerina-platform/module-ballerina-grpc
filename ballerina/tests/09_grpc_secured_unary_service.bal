@@ -37,8 +37,8 @@ listener Listener ep9 = new (9099, {
 });
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_9,
-    descMap: getDescriptorMap9()
+    descriptor: ROOT_DESCRIPTOR_09_GRPC_SECURED_UNARY_SERVICE,
+    descMap: getDescriptorMap09GrpcSecuredUnaryService()
 }
 service "HelloWorld85" on ep9 {
     isolated remote function hello(HelloWorld85StringCaller caller, string name) {

@@ -19,8 +19,8 @@ import ballerina/log;
 listener Listener checkoutep = new (9108);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_18,
-    descMap: getDescriptorMap18()
+    descriptor: ROOT_DESCRIPTOR_18_GRPC_OPTIONAL_FIELD_SERVICE,
+    descMap: getDescriptorMap18GrpcOptionalFieldService()
 }
 service "CheckoutService" on checkoutep {
 

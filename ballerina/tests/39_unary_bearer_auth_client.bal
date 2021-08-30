@@ -13,7 +13,9 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/test;
+import ballerina/protobuf.types.wrappers;
 
 @test:Config {enable: true}
 isolated function testStringValueReturnWithBearerTokenAuth() returns Error? {
@@ -30,7 +32,7 @@ isolated function testStringValueReturnWithBearerTokenAuth() returns Error? {
         requestHeaders = result;
     }
 
-    ContextString requestMessage = {
+    wrappers:ContextString requestMessage = {
         content: "WSO2",
         headers: requestHeaders
     };
@@ -57,7 +59,7 @@ isolated function testStringValueReturnWithInvalidBearerTokenAuth() returns Erro
         requestHeaders = result;
     }
 
-    ContextString requestMessage = {
+    wrappers:ContextString requestMessage = {
         content: "WSO2",
         headers: requestHeaders
     };

@@ -19,8 +19,8 @@ import ballerina/io;
 listener Listener ep27 = new (9117);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_27,
-    descMap: getDescriptorMap27()
+    descriptor: ROOT_DESCRIPTOR_27_BIDIRECTIONAL_STREAMING_SERVICE,
+    descMap: getDescriptorMap27BidirectionalStreamingService()
 }
 service "ChatFromReturn" on ep27 {
 

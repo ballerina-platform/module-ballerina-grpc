@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/test;
+import ballerina/protobuf.types.wrappers;
 
 @test:Config {enable: true}
 function testHello55JWTAuthBiDiWithCaller() returns error? {
@@ -167,7 +168,7 @@ function testHello55JWTAuthUnaryUnauthenticated() returns error? {
     map<string|string[]> requestHeaders = {
         "authorization": "bearer "
     };
-    ContextString ctxString = {
+    wrappers:ContextString ctxString = {
         headers: requestHeaders,
         content: "Hello"
     };
@@ -214,19 +215,19 @@ function testHello55LdapAuth() returns error? {
 
     if !isWindowsEnvironment() {
         service object {} helloWorld55 = @ServiceConfig {auth: [ldapUserStoreconfig55WithScopes]} 
-        @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()} 
+        @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()} 
         service object {
 
             remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller, 
-            stream<string, Error?> clientStream) returns error? {
-                record {|string value;|}|Error? result = clientStream.next();
+            stream<string, error?> clientStream) returns error? {
+                record {|string value;|}|error? result = clientStream.next();
                 result = clientStream.next();
                 check caller->sendString("Hello");
                 check caller->complete();
             }
 
-            remote function hello55BiDiWithReturn(stream<string, Error?> clientStream) 
-            returns stream<string, Error?>|error? {
+            remote function hello55BiDiWithReturn(stream<string, error?> clientStream) 
+            returns stream<string, error?>|error? {
                 return clientStream;
             }
 
@@ -347,7 +348,7 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
 function testHello55LdapAuthWithEmptyScope() returns error? {
     if !isWindowsEnvironment() {
         service object {} helloWorld55EmptyScope = @ServiceConfig {auth: [ldapUserStoreconfig55EmptyScope]} 
-        @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()} 
+        @ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()} 
         service object {
 
             remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) returns error? {
@@ -431,13 +432,13 @@ function testHello55ServerStreamingOAuth2Auth() returns error? {
     };
 
     helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
-    stream<string, Error?>|Error response = hClient->hello55ServerStreaming("Hello");
+    stream<string, error?>|Error response = hClient->hello55ServerStreaming("Hello");
     if response is Error {
         test:assertFail(response.message());
     } else {
         var value1 = response.next();
         var value2 = response.next();
-        if value1 is Error || value2 is Error {
+        if value1 is error || value2 is error {
             test:assertFail("Error occured");
         } else if value1 is () || value2 is () {
             test:assertFail("Expected a non null response");

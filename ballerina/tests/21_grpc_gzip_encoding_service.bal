@@ -19,8 +19,8 @@ import ballerina/io;
 listener Listener ordermgtep = new (9111);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_21,
-    descMap: getDescriptorMap21()
+    descriptor: ROOT_DESCRIPTOR_21_GRPC_GZIP_ENCODING_SERVICE,
+    descMap: getDescriptorMap21GrpcGzipEncodingService()
 }
 service "OrderManagement" on ordermgtep {
 

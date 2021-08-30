@@ -19,8 +19,8 @@ import ballerina/log;
 listener Listener helloWorldStreamingep = new (9113);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_23,
-    descMap: getDescriptorMap23()
+    descriptor: ROOT_DESCRIPTOR_23_SERVER_STREAMING_WITH_RECORD_SERVICE,
+    descMap: getDescriptorMap23ServerStreamingWithRecordService()
 }
 service "helloWorldServerStreaming" on helloWorldStreamingep {
 

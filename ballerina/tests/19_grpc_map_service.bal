@@ -20,8 +20,8 @@ import ballerina/log;
 listener Listener negotiatorep = new (9109);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_19,
-    descMap: getDescriptorMap19()
+    descriptor: ROOT_DESCRIPTOR_19_GRPC_MAP_SERVICE,
+    descMap: getDescriptorMap19GrpcMapService()
 }
 service "Negotiator" on negotiatorep {
 

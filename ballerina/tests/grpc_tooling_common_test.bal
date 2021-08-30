@@ -310,6 +310,7 @@ function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile,
 //    generateSourceCode(outputDirPath + "25_return_data_streaming.proto", outputDirPath);
 //    generateSourceCode(outputDirPath + "26_return_data_client_streaming.proto", outputDirPath);
 //    generateSourceCode(outputDirPath + "27_bidirectional_streaming_service.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "28_unary_basic_auth.proto", outputDirPath);
 //    generateSourceCode(outputDirPath + "29_unary_jwt.proto", outputDirPath);
 //    generateSourceCode(outputDirPath + "30_unary_oauth2.proto", outputDirPath);
 //    generateSourceCode(outputDirPath + "31_return_unary.proto", outputDirPath);
@@ -320,4 +321,25 @@ function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile,
 //    generateSourceCode(outputDirPath + "36_unary_service_with_deadline_propagation.proto", outputDirPath);
 //    generateSourceCode(outputDirPath + "37_streaming_with_deadline.proto", outputDirPath);
 //    generateSourceCode(outputDirPath + "38_bidi_streaming_with_caller.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "39_unary_bearer_auth.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "40_bidirectional_streaming_negative_test.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "41_server_streaming_headers_and_negative_test.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "42_repeated_data_types_test.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "43_nested_record_with_streams.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "44_route_guide.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "45_services_with_headers.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "46_empty_values.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "47_unary_timestamp.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "48_bidi_timestamp.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "49_duration.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "50_bidi_caller_cancel_status.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "51_client_function_utils_negative_cases.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "52_unary_ldap_auth.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "53_server_streaming_negative.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "54_backward_compatible_client_proto.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "55_declarative_authentication.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "56_service_panic_after_send_error.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "57_struct_type.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "58_nested_message_nested_enum.proto", outputDirPath);
+//    generateSourceCode(outputDirPath + "59_simple_rpc_with_go_service.proto", outputDirPath);
 //}

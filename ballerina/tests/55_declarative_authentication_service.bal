@@ -113,19 +113,19 @@ FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope = {
         fileUserStoreConfig55WithScopes
     ]
 }
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
 service "helloWorld55" on ep55WithScopes {
 
     remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller, 
-    stream<string, Error?> clientStream) returns error? {
-        record {|string value;|}|Error? result = clientStream.next();
+    stream<string, error?> clientStream) returns error? {
+        record {|string value;|}|error? result = clientStream.next();
         result = clientStream.next();
         check caller->sendString("Hello");
         check caller->complete();
     }
 
-    remote function hello55BiDiWithReturn(stream<string, Error?> clientStream) 
-    returns stream<string, Error?>|error? {
+    remote function hello55BiDiWithReturn(stream<string, error?> clientStream) 
+    returns stream<string, error?>|error? {
         return clientStream;
     }
 
@@ -163,7 +163,7 @@ service "helloWorld55" on ep55WithScopes {
         fileUserStoreConfig55EmptyScope
     ]
 }
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55, descMap: getDescriptorMap55()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
 service "helloWorld55EmptyScope" on ep55EmptyScope {
 
     remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) returns error? {

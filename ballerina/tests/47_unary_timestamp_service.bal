@@ -18,7 +18,7 @@ import ballerina/time;
 
 listener Listener ep47 = new (9147);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_47, descMap: getDescriptorMap47()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_47_UNARY_TIMESTAMP, descMap: getDescriptorMap47UnaryTimestamp()}
 service "TimestampService" on ep47 {
 
     remote function getGreeting(TimestampServiceGreetingCaller caller, string value) returns error? {
