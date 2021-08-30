@@ -135,7 +135,7 @@ public isolated client class HelloWorldClient {
         return {headers: respHeaders};
     }
 
-    isolated remote function testNoInputOutputStruct() returns StockQuotes|Error) {
+    isolated remote function testNoInputOutputStruct() returns StockQuotes|Error {
         Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputStruct", message, headers);
