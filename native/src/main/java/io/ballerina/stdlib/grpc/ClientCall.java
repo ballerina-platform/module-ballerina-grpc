@@ -202,8 +202,7 @@ public final class ClientCall {
                     status = status.withCause(cause);
                 }
             }
-            outboundMessage.complete(status, new DefaultHttpHeaders());
-//            outboundMessage.sendError(status);
+            outboundMessage.sendError(status);
         }
     }
 
