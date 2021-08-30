@@ -21,8 +21,8 @@ listener Listener ep = new (9091, {
 });
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_01_ADVANCED_TYPE_SERVICE,
-    descMap: getDescriptorMap01AdvancedTypeService()
+    descriptor: ROOT_DESCRIPTOR_1,
+    descMap: getDescriptorMap1()
 }
 service "HelloWorld" on ep {
 
