@@ -25,7 +25,7 @@ description = 'Ballerina - gRPC Examples'
 def ballerinaModulePath = "${project.rootDir}/ballerina/"
 def ballerinaDistPath = "${ballerinaModulePath}/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
 def ballerinaDist = "${buildDir}/target/ballerina-distribution"
-def examples = ["routeguide/server", "routeguide/client"]
+def examples = ["routeguide/server", "routeguide/client", "onlineboutiquemicroservice/productcatalogservice", "onlineboutiquemicroservice/adservice", "onlineboutiquemicroservice/recommendationservice"]
 
 dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
