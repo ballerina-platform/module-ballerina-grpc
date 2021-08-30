@@ -18,11 +18,11 @@ import ballerina/time;
 
 listener Listener ep48 = new (9148);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_48, descMap: getDescriptorMap_48()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_48_BIDI_TIMESTAMP, descMap: getDescriptorMap48BidiTimestamp()}
 service "BidiStreamingTimestampService" on ep48 {
 
     remote function bidiStreamingGreetServer(BidiStreamingTimestampServiceBiDiGreetingCaller caller,
-     stream<string, Error?> clientStream) returns error? {
+     stream<string, error?> clientStream) returns error? {
         error? e = clientStream.forEach(function(string value) {
             BiDiGreeting greeting = {
                 name: value,

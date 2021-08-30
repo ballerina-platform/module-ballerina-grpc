@@ -16,6 +16,7 @@
 
 import ballerina/test;
 import ballerina/time;
+import ballerina/protobuf.types.wrappers;
 
 @test:Config {enable:true}
 isolated function testCallWithingDeadline() returns Error? {
@@ -24,7 +25,7 @@ isolated function testCallWithingDeadline() returns Error? {
     time:Utc deadline = time:utcAddSeconds(current, 300);
     map<string|string[]> headers = setDeadline(deadline);
     var context = helloWorldClient->callWithinDeadlineContext({content: "WSO2", headers: headers});
-    if context is ContextString {
+    if context is wrappers:ContextString {
         test:assertEquals(context.content, "Ack");
     } else {
         test:assertFail(context.message());

@@ -16,7 +16,7 @@
 
 listener Listener ep58 = new (9158);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_58, descMap: getDescriptorMap58()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_58_NESTED_MESSAGE_NESTED_ENUM, descMap: getDescriptorMap58NestedMessageNestedEnum()}
 service "helloWorldWithNestedMessageNestedEnum" on ep58 {
 
     remote function hello(HelloRequest58 request) returns HelloResponse58|error {

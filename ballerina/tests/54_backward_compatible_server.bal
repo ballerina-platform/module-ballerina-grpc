@@ -16,7 +16,7 @@
 
 listener Listener ep54 = new (9154);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_54_SERVER, descMap: getDescriptorMap54Server()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_54_BACKWARD_COMPATIBLE_CLIENT_PROTO, descMap: getDescriptorMap54BackwardCompatibleClientProto()}
 service "ProductCatalog" on ep54 {
 
     isolated remote function getProduct(string value) returns ChangedProduct|error {

@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/test;
+import ballerina/protobuf.types.wrappers;
 
 @test:Config {enable:true}
 isolated function testStringValueReturnWithJwt1() returns Error? {
@@ -46,7 +47,7 @@ isolated function testStringValueReturnWithJwt1() returns Error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
     if unionResp is Error {
         test:assertFail(msg = unionResp.message());
@@ -85,7 +86,7 @@ isolated function testStringValueReturnWithJwt2() returns Error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
     if unionResp is Error {
         test:assertFail(msg = unionResp.message());
@@ -124,7 +125,7 @@ isolated function testStringValueReturnWithJwt3() returns Error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
     if unionResp is Error {
         test:assertFail(msg = unionResp.message());
@@ -163,7 +164,7 @@ isolated function testStringValueReturnWithUnauthorizedJwt1() returns Error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Permission denied");
@@ -202,7 +203,7 @@ isolated function testStringValueReturnWithUnauthorizedJwt2() returns Error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Permission denied");
@@ -241,7 +242,7 @@ isolated function testStringValueReturnWithUnauthorizedJwt3() returns Error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Permission denied");
@@ -258,7 +259,7 @@ isolated function testStringValueReturnWithInvalidHeaderJwt() returns Error? {
         "authorization": "bearer invalid"
     };
 
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Credential format does not match to JWT format.");
@@ -275,7 +276,7 @@ isolated function testStringValueReturnWithEmptyHeaderJwt() returns Error? {
         "authorization": "bearer "
     };
 
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Empty authentication header.");

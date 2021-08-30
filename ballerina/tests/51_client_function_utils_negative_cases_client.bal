@@ -41,7 +41,7 @@ function testClientFunctionUtilsInvalidRPCCall() returns error? {
     } else {
         test:assertFail(msg = "Expected an error");
     }
-    stream<string, Error?>|Error serverResult = hClient->stringServerStreaming("Hey");
+    stream<string, error?>|Error serverResult = hClient->stringServerStreaming("Hey");
     if serverResult is Error {
         test:assertEquals(serverResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
     } else {

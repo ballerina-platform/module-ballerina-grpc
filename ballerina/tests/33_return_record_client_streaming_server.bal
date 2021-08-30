@@ -19,8 +19,8 @@ import ballerina/io;
 listener Listener ep33 = new (9123);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_33,
-    descMap: getDescriptorMap33()
+    descriptor: ROOT_DESCRIPTOR_33_RETURN_RECORD_CLIENT_STREAMING,
+    descMap: getDescriptorMap33ReturnRecordClientStreaming()
 }
 service "HelloWorld33" on ep33 {
     remote isolated function sayHello(stream<SampleMsg33, error?> clientStream) returns ContextSampleMsg33 {

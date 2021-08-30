@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/test;
+import ballerina/protobuf.types.wrappers;
 
 @test:Config {enable:true}
 isolated function testStringValueReturnWithOAuth2() returns Error? {
@@ -44,7 +45,7 @@ isolated function testStringValueReturnWithOAuth2() returns Error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
     if unionResp is Error {
         test:assertFail(msg = unionResp.message());
@@ -83,7 +84,7 @@ isolated function testStringValueReturnWithOAuth2PasswordGrantConfig() returns E
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
     if unionResp is Error {
         test:assertFail(msg = unionResp.message());
@@ -152,7 +153,7 @@ isolated function testStringValueReturnWithOAuth2RefreshTokenGrantConfig() retur
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
     if unionResp is Error {
         test:assertFail(msg = unionResp.message());
@@ -190,7 +191,7 @@ isolated function testStringValueReturnWithOAuth2JwtBearerGrantConfig() returns 
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
     if unionResp is Error {
         test:assertFail(msg = unionResp.message());
@@ -227,7 +228,7 @@ isolated function testStringValueReturnWithOAuth2NoScope() returns Error? {
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNoScope(requestMessage);
     if unionResp is Error {
         test:assertFail(msg = unionResp.message());
@@ -264,7 +265,7 @@ isolated function testStringValueReturnWithOAuth2WithInvalidScopeKey() returns E
     }
 
     requestHeaders["x-id"] = ["0987654321"];
-    ContextString requestMessage = {content: "Invalid", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "Invalid", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Permission denied");
@@ -280,7 +281,7 @@ isolated function testStringValueReturnWithOAuth2EmptyAuthHeader() returns Error
         "x-id": "0987654321",
         "authorization": ""
     };
-    ContextString requestMessage = {content: "scp", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "scp", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Empty authentication header.");
@@ -296,7 +297,7 @@ isolated function testStringValueReturnWithOAuth2InvalidAuthHeader() returns Err
         "x-id": "0987654321",
         "authorization": "Bearer invalid"
     };
-    ContextString requestMessage = {content: "scp", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "scp", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Unauthenticated");
@@ -312,7 +313,7 @@ isolated function testStringValueReturnWithOAuth2InvalidAuthHeaderFormat() retur
         "x-id": "0987654321",
         "authorization": "Bearer  invalid"
     };
-    ContextString requestMessage = {content: "scp", headers: requestHeaders};
+    wrappers:ContextString requestMessage = {content: "scp", headers: requestHeaders};
     var unionResp = helloWorldEp->testStringValueNegative(requestMessage);
     if unionResp is Error {
         test:assertEquals(unionResp.message(), "Unauthenticated");

@@ -19,8 +19,8 @@ import ballerina/io;
 listener Listener ep34 = new (9124);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_34,
-    descMap: getDescriptorMap34()
+    descriptor: ROOT_DESCRIPTOR_34_RETURN_RECORD_BIDI_STREAMING,
+    descMap: getDescriptorMap34ReturnRecordBidiStreaming()
 }
 service "HelloWorld34" on ep34 {
 

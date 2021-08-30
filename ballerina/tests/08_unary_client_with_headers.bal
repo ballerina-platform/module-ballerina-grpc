@@ -16,6 +16,7 @@
 
 import ballerina/io;
 import ballerina/test;
+import ballerina/protobuf.types.wrappers;
 
 // Client endpoint configuration
 final HelloWorld101Client helloWorld8BlockingEp = check new ("http://localhost:9098");
@@ -24,9 +25,9 @@ final HelloWorld101Client helloWorld8BlockingEp = check new ("http://localhost:9
 function testHeadersInUnaryClient() {
 
     //Working with custom headers
-    ContextString requestMessage = {content: "WSO2", headers:  {"x-id": "0987654321"}};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers:  {"x-id": "0987654321"}};
     // Executing unary blocking call
-    ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
+    wrappers:ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
     if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {
@@ -43,9 +44,9 @@ function testHeadersInUnaryClient() {
 
 @test:Config {enable:true}
 function testHeadersInBlockingClient() returns Error? {
-    ContextString requestMessage = {content: "WSO2", headers: {"x-id": "0987654321"}};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: {"x-id": "0987654321"}};
     // Executing unary blocking call
-    ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
+    wrappers:ContextString|Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
     if unionResp is Error {
         test:assertFail(string `Error from Connector: ${unionResp.message()}`);
     } else {

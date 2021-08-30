@@ -24,8 +24,8 @@ string clientName = "";
 listener Listener retryListener = new (9112);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_22,
-    descMap: getDescriptorMap22()
+    descriptor: ROOT_DESCRIPTOR_22_RETRY_SERVICE,
+    descMap: getDescriptorMap22RetryService()
 }
 service "RetryService" on retryListener {
     remote function getResult(string value) returns string|error {

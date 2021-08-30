@@ -16,6 +16,7 @@
 
 import ballerina/test;
 import ballerina/time;
+import ballerina/protobuf.types.timestamp;
 
 @test:Config {enable: false}
 isolated function testBidiTimestampWithGreeting() returns error? {
@@ -92,7 +93,7 @@ isolated function testBiDiTimestampWithBidiTimeContext() returns error? {
     BidiStreamingExchangeTimeStreamingClient streamingClient = check utsClient->bidiStreamingExchangeTime();
     
     time:Utc testTime = check time:utcFromString("2012-12-03T11:13:30.472Z");
-    ContextTimestamp ctxtTimestamp = {
+    timestamp:ContextTimestamp ctxtTimestamp = {
         content: testTime,
         headers: {
             "test": "test"
@@ -105,8 +106,8 @@ isolated function testBiDiTimestampWithBidiTimeContext() returns error? {
     check streamingClient->complete();
 
     time:Utc expectedTime = check time:utcFromString("2021-12-03T11:13:30.472Z");
-    ContextTimestamp? result = check streamingClient->receiveContextTimestamp();
-    if result is ContextTimestamp {
+    timestamp:ContextTimestamp? result = check streamingClient->receiveContextTimestamp();
+    if result is timestamp:ContextTimestamp {
         test:assertEquals(result.content, expectedTime);
     } else {
         test:assertFail("Invalid time received");

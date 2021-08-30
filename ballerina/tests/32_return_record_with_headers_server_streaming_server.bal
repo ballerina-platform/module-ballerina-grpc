@@ -19,8 +19,8 @@ import ballerina/io;
 listener Listener ep32_2 = new (9222);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_32,
-    descMap: getDescriptorMap32()
+    descriptor: ROOT_DESCRIPTOR_32_RETURN_RECORD_SERVER_STREAMING,
+    descMap: getDescriptorMap32ReturnRecordServerStreaming()
 }
 service "HelloWorld32" on ep32_2 {
 

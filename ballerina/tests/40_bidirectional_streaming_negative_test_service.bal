@@ -18,8 +18,8 @@ import ballerina/log;
 listener Listener ep40 = new (9140);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_40,
-    descMap: getDescriptorMap40()
+    descriptor: ROOT_DESCRIPTOR_40_BIDIRECTIONAL_STREAMING_NEGATIVE_TEST,
+    descMap: getDescriptorMap40BidirectionalStreamingNegativeTest()
 }
 service "ChatWithCaller" on ep40 {
 

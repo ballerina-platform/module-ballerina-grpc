@@ -21,8 +21,8 @@ import ballerina/io;
 listener Listener ep35 = new (9125);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_35,
-    descMap: getDescriptorMap35()
+    descriptor: ROOT_DESCRIPTOR_35_UNARY_SERVICE_WITH_DEADLINE,
+    descMap: getDescriptorMap35UnaryServiceWithDeadline()
 }
 service "HelloWorld35" on ep35 {
     

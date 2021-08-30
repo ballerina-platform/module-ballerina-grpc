@@ -19,8 +19,8 @@ import ballerina/io;
 listener Listener ep24 = new (9114);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_24,
-    descMap: getDescriptorMap24()
+    descriptor: ROOT_DESCRIPTOR_24_RETURN_DATA_UNARY,
+    descMap: getDescriptorMap24ReturnDataUnary()
 }
 service /HelloWorld24 on ep24 {
 

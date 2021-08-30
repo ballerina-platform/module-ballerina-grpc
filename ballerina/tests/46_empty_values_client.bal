@@ -26,7 +26,7 @@ isolated function testUnaryWithEmptyValues() returns error? {
 @test:Config {enable: true}
 function testServerStreamingWithEmptyValues() returns error? {
     EmptyHandlerClient ep = check new ("http://localhost:9146");
-    stream<string, Error?> strm = check ep->serverStrWithEmpty();
+    stream<string, error?> strm = check ep->serverStrWithEmpty();
     int i = 0;
     string[] arr = ["WSO2", "Ballerina", "Microsoft", "Azure"];
     error? e = strm.forEach(function(string s) {
