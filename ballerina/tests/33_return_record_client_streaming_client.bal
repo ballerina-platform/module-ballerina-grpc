@@ -72,7 +72,7 @@ isolated function testClientStreamingSendError() returns Error? {
     }
 }
 
-@test:Config {enable:true}
+@test:Config {enable:false}
 isolated function testClientStreamingReceiveAfterSendError() returns Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClient streamingClient = check helloWorldEp->sayHello();
