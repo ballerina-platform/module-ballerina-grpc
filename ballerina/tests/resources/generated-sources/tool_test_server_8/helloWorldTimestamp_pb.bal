@@ -1,7 +1,7 @@
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/protobuf.types.timestamp;
 import ballerina/protobuf.types.wrappers;
+import ballerina/protobuf.types.timestamp;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
