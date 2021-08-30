@@ -13,7 +13,7 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDTIMESTAMP, getDescriptorMapHelloWorldTimestamp());
     }
 
-    isolated remote function getTime(string|wrappers:ContextString req) returns stream<time:Utc, grpc:Error?>|grpc:Error {
+    isolated remote function getTime(string|wrappers:ContextString req) returns stream<time:Utc, error?>|grpc:Error {
         map<string|string[]> headers = {};
         string message;
         if req is wrappers:ContextString {
@@ -25,7 +25,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/getTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         timestamp:TimestampStream outputStream = new timestamp:TimestampStream(result);
-        return new stream<time:Utc, grpc:Error?>(outputStream);
+        return new stream<time:Utc, error?>(outputStream);
     }
 
     isolated remote function getTimeContext(string|wrappers:ContextString req) returns timestamp:ContextTimestampStream|grpc:Error {
@@ -40,10 +40,10 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/getTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         timestamp:TimestampStream outputStream = new timestamp:TimestampStream(result);
-        return {content: new stream<time:Utc, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<time:Utc, error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function sendTime(time:Utc|timestamp:ContextTimestamp req) returns stream<string, grpc:Error?>|grpc:Error {
+    isolated remote function sendTime(time:Utc|timestamp:ContextTimestamp req) returns stream<string, error?>|grpc:Error {
         map<string|string[]> headers = {};
         time:Utc message;
         if req is timestamp:ContextTimestamp {
@@ -55,7 +55,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/sendTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         wrappers:StringStream outputStream = new wrappers:StringStream(result);
-        return new stream<string, grpc:Error?>(outputStream);
+        return new stream<string, error?>(outputStream);
     }
 
     isolated remote function sendTimeContext(time:Utc|timestamp:ContextTimestamp req) returns wrappers:ContextStringStream|grpc:Error {
@@ -70,10 +70,10 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/sendTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         wrappers:StringStream outputStream = new wrappers:StringStream(result);
-        return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<string, error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function exchangeTime(time:Utc|timestamp:ContextTimestamp req) returns stream<time:Utc, grpc:Error?>|grpc:Error {
+    isolated remote function exchangeTime(time:Utc|timestamp:ContextTimestamp req) returns stream<time:Utc, error?>|grpc:Error {
         map<string|string[]> headers = {};
         time:Utc message;
         if req is timestamp:ContextTimestamp {
@@ -85,7 +85,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/exchangeTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         timestamp:TimestampStream outputStream = new timestamp:TimestampStream(result);
-        return new stream<time:Utc, grpc:Error?>(outputStream);
+        return new stream<time:Utc, error?>(outputStream);
     }
 
     isolated remote function exchangeTimeContext(time:Utc|timestamp:ContextTimestamp req) returns timestamp:ContextTimestampStream|grpc:Error {
@@ -100,10 +100,10 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/exchangeTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         timestamp:TimestampStream outputStream = new timestamp:TimestampStream(result);
-        return {content: new stream<time:Utc, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<time:Utc, error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function getGreeting(string|wrappers:ContextString req) returns stream<Greeting, grpc:Error?>|grpc:Error {
+    isolated remote function getGreeting(string|wrappers:ContextString req) returns stream<Greeting, error?>|grpc:Error {
         map<string|string[]> headers = {};
         string message;
         if req is wrappers:ContextString {
@@ -115,7 +115,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/getGreeting", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         GreetingStream outputStream = new GreetingStream(result);
-        return new stream<Greeting, grpc:Error?>(outputStream);
+        return new stream<Greeting, error?>(outputStream);
     }
 
     isolated remote function getGreetingContext(string|wrappers:ContextString req) returns ContextGreetingStream|grpc:Error {
@@ -130,10 +130,10 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/getGreeting", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         GreetingStream outputStream = new GreetingStream(result);
-        return {content: new stream<Greeting, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<Greeting, error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function sendGreeting(Greeting|ContextGreeting req) returns stream<string, grpc:Error?>|grpc:Error {
+    isolated remote function sendGreeting(Greeting|ContextGreeting req) returns stream<string, error?>|grpc:Error {
         map<string|string[]> headers = {};
         Greeting message;
         if req is ContextGreeting {
@@ -145,7 +145,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/sendGreeting", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         wrappers:StringStream outputStream = new wrappers:StringStream(result);
-        return new stream<string, grpc:Error?>(outputStream);
+        return new stream<string, error?>(outputStream);
     }
 
     isolated remote function sendGreetingContext(Greeting|ContextGreeting req) returns wrappers:ContextStringStream|grpc:Error {
@@ -160,10 +160,10 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/sendGreeting", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         wrappers:StringStream outputStream = new wrappers:StringStream(result);
-        return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<string, error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function exchangeGreeting(Greeting|ContextGreeting req) returns stream<Greeting, grpc:Error?>|grpc:Error {
+    isolated remote function exchangeGreeting(Greeting|ContextGreeting req) returns stream<Greeting, error?>|grpc:Error {
         map<string|string[]> headers = {};
         Greeting message;
         if req is ContextGreeting {
@@ -175,7 +175,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/exchangeGreeting", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         GreetingStream outputStream = new GreetingStream(result);
-        return new stream<Greeting, grpc:Error?>(outputStream);
+        return new stream<Greeting, error?>(outputStream);
     }
 
     isolated remote function exchangeGreetingContext(Greeting|ContextGreeting req) returns ContextGreetingStream|grpc:Error {
@@ -190,7 +190,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/exchangeGreeting", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         GreetingStream outputStream = new GreetingStream(result);
-        return {content: new stream<Greeting, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<Greeting, error?>(outputStream), headers: respHeaders};
     }
 }
 

@@ -11,7 +11,7 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDBOOLEAN, getDescriptorMapHelloWorldBoolean());
     }
 
-    isolated remote function hello(boolean|wrappers:ContextBoolean req) returns stream<boolean, grpc:Error?>|grpc:Error {
+    isolated remote function hello(boolean|wrappers:ContextBoolean req) returns stream<boolean, error?>|grpc:Error {
         map<string|string[]> headers = {};
         boolean message;
         if req is wrappers:ContextBoolean {
@@ -23,7 +23,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         wrappers:BooleanStream outputStream = new wrappers:BooleanStream(result);
-        return new stream<boolean, grpc:Error?>(outputStream);
+        return new stream<boolean, error?>(outputStream);
     }
 
     isolated remote function helloContext(boolean|wrappers:ContextBoolean req) returns wrappers:ContextBooleanStream|grpc:Error {
@@ -38,7 +38,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         wrappers:BooleanStream outputStream = new wrappers:BooleanStream(result);
-        return {content: new stream<boolean, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<boolean, error?>(outputStream), headers: respHeaders};
     }
 }
 

@@ -74,7 +74,7 @@ public isolated client class DurationHandlerClient {
         return new ClientStreamingStreamingClient(sClient);
     }
 
-    isolated remote function serverStreaming(string|wrappers:ContextString req) returns stream<time:Seconds, grpc:Error?>|grpc:Error {
+    isolated remote function serverStreaming(string|wrappers:ContextString req) returns stream<time:Seconds, error?>|grpc:Error {
         map<string|string[]> headers = {};
         string message;
         if req is wrappers:ContextString {
@@ -86,7 +86,7 @@ public isolated client class DurationHandlerClient {
         var payload = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         duration:DurationStream outputStream = new duration:DurationStream(result);
-        return new stream<time:Seconds, grpc:Error?>(outputStream);
+        return new stream<time:Seconds, error?>(outputStream);
     }
 
     isolated remote function serverStreamingContext(string|wrappers:ContextString req) returns duration:ContextDurationStream|grpc:Error {
@@ -101,7 +101,7 @@ public isolated client class DurationHandlerClient {
         var payload = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         duration:DurationStream outputStream = new duration:DurationStream(result);
-        return {content: new stream<time:Seconds, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<time:Seconds, error?>(outputStream), headers: respHeaders};
     }
 
     isolated remote function bidirectionalStreaming() returns BidirectionalStreamingStreamingClient|grpc:Error {

@@ -11,7 +11,7 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_HELLOWORLDSTRING, getDescriptorMapHelloWorldString());
     }
 
-    isolated remote function hello(string|wrappers:ContextString req) returns stream<string, grpc:Error?>|grpc:Error {
+    isolated remote function hello(string|wrappers:ContextString req) returns stream<string, error?>|grpc:Error {
         map<string|string[]> headers = {};
         string message;
         if req is wrappers:ContextString {
@@ -23,7 +23,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         wrappers:StringStream outputStream = new wrappers:StringStream(result);
-        return new stream<string, grpc:Error?>(outputStream);
+        return new stream<string, error?>(outputStream);
     }
 
     isolated remote function helloContext(string|wrappers:ContextString req) returns wrappers:ContextStringStream|grpc:Error {
@@ -38,7 +38,7 @@ public isolated client class helloWorldClient {
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         wrappers:StringStream outputStream = new wrappers:StringStream(result);
-        return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
+        return {content: new stream<string, error?>(outputStream), headers: respHeaders};
     }
 }
 

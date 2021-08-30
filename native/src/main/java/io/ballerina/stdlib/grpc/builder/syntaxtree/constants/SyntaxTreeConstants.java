@@ -99,6 +99,8 @@ public class SyntaxTreeConstants {
             TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Error");
     public static final OptionalTypeDescriptorNode SYNTAX_TREE_GRPC_ERROR_OPTIONAL =
             TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error");
+    public static final OptionalTypeDescriptorNode SYNTAX_TREE_ERROR_OPTIONAL =
+            TypeDescriptor.getOptionalTypeDescriptorNode("", "error");
 
     public static final String GET_DESCRIPTOR_MAP = "getDescriptorMap";
     public static final String ROOT_DESCRIPTOR = "ROOT_DESCRIPTOR_";

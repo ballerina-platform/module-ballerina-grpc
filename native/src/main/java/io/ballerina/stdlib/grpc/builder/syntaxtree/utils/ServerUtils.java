@@ -118,7 +118,7 @@ public class ServerUtils {
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
                                 getSimpleNameReferenceNode(method.getOutputType()),
-                                SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                                SyntaxTreeConstants.SYNTAX_TREE_ERROR_OPTIONAL
                         ),
                         SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
                 )
@@ -128,7 +128,7 @@ public class ServerUtils {
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
                                 getSimpleNameReferenceNode(method.getOutputType()),
-                                SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                                SyntaxTreeConstants.SYNTAX_TREE_ERROR_OPTIONAL
                         ),
                         new String[]{"outputStream"}
                 )
@@ -205,7 +205,7 @@ public class ServerUtils {
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
                                 getSimpleNameReferenceNode(method.getOutputType()),
-                                SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
+                                SyntaxTreeConstants.SYNTAX_TREE_ERROR_OPTIONAL
                         ),
                         new String[]{"outputStream"}
                 )
