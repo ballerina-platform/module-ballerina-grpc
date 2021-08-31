@@ -21,8 +21,8 @@ import ballerina/io;
 listener Listener ep6 = new (9096);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_6,
-    descMap: getDescriptorMap6()
+    descriptor: ROOT_DESCRIPTOR_06_SERVER_STREAMING_SERVICE,
+    descMap: getDescriptorMap06ServerStreamingService()
 }
 service "HelloWorld45" on ep6 {
 

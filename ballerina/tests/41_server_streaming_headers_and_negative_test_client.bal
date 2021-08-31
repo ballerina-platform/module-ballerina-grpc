@@ -13,19 +13,21 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/test;
+import ballerina/protobuf.types.wrappers;
 
 @test:Config {enable: true}
 isolated function testServerStreamingWithCustomHeaders() returns Error? {
     Chat41Client ep = check new ("http://localhost:9141");
-    ContextStringStream call1 = check ep->call1Context({name: "John", message: "Hi Bella"});
+    wrappers:ContextStringStream call1 = check ep->call1Context({name: "John", message: "Hi Bella"});
     test:assertEquals(call1.headers["h1"], "v1");
 }
 
 @test:Config {enable: true}
 isolated function testServerStreamingWithCustomError() returns error? {
     Chat41Client ep = check new ("http://localhost:9141");
-    stream<string, Error?> strm = check ep->call2({name: "John", message: "Hi Bella"});
+    stream<string, error?> strm = check ep->call2({name: "John", message: "Hi Bella"});
     var content = strm.next();
     if content is record {| string value; |} || content is () {
         test:assertFail(msg = "Expected grpc:Error not found.");

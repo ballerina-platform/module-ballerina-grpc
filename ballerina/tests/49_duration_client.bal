@@ -13,6 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/test;
 import ballerina/time;
 
@@ -32,9 +33,9 @@ function testDurationUnaryCall2() returns Error? {
 }
 
 @test:Config {}
-function testDurationServerStreaming() returns Error? {
+function testDurationServerStreaming() returns error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
-    stream<time:Seconds, Error?> durationStream = check ep->serverStreaming("server streaming with duration");
+    stream<time:Seconds, error?> durationStream = check ep->serverStreaming("server streaming with duration");
     time:Seconds[] expectedDurations = [1.11d, 2.22d, 3.33d, 4.44d];
     int i = 0;
     check durationStream.forEach(function(time:Seconds d) {

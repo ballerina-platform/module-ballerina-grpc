@@ -15,8 +15,8 @@
 // under the License.
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_13,
-    descMap: getDescriptorMap13()
+    descriptor: ROOT_DESCRIPTOR_13_GRPC_SERVICE_WITH_ERROR_RETURN,
+    descMap: getDescriptorMap13GrpcServiceWithErrorReturn()
 }
 service "HelloWorld13" on new Listener(9103) {
 

@@ -18,8 +18,8 @@ import ballerina/log;
 
 listener Listener ep5 = new (9095);
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_5,
-    descMap: getDescriptorMap5()
+    descriptor: ROOT_DESCRIPTOR_05_INVALID_RESOURCE_SERVICE,
+    descMap: getDescriptorMap05InvalidResourceService()
 }
 service "HelloWorld98" on ep5 {
     isolated remote function hello(HelloWorld98StringCaller caller, string name) {

@@ -38,8 +38,8 @@ listener Listener ep10 = new (9100,
     });
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_10,
-    descMap: getDescriptorMap10()
+    descriptor: ROOT_DESCRIPTOR_10_GRPC_SSL_SERVER,
+    descMap: getDescriptorMap10GrpcSslServer()
 }
 service "grpcMutualSslService" on ep10 {
     isolated remote function hello(GrpcMutualSslServiceStringCaller caller, string name) {

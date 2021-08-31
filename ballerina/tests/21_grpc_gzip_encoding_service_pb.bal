@@ -13,7 +13,8 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-// This is server implementation for bidirectional streaming scenario
+
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class OrderManagementClient {
     *AbstractClientEndpoint;
@@ -22,13 +23,13 @@ public isolated client class OrderManagementClient {
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_21, getDescriptorMap21());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_21_GRPC_GZIP_ENCODING_SERVICE, getDescriptorMap21GrpcGzipEncodingService());
     }
 
-    isolated remote function addOrder(Order|ContextOrder req) returns (string|Error) {
+    isolated remote function addOrder(Order|ContextOrder req) returns string|Error {
         map<string|string[]> headers = {};
         Order message;
-        if (req is ContextOrder) {
+        if req is ContextOrder {
             message = req.content;
             headers = req.headers;
         } else {
@@ -39,10 +40,10 @@ public isolated client class OrderManagementClient {
         return result.toString();
     }
 
-    isolated remote function addOrderContext(Order|ContextOrder req) returns (ContextString|Error) {
+    isolated remote function addOrderContext(Order|ContextOrder req) returns wrappers:ContextString|Error {
         map<string|string[]> headers = {};
         Order message;
-        if (req is ContextOrder) {
+        if req is ContextOrder {
             message = req.content;
             headers = req.headers;
         } else {
@@ -53,10 +54,10 @@ public isolated client class OrderManagementClient {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function getOrder(string|ContextString req) returns (Order|Error) {
+    isolated remote function getOrder(string|wrappers:ContextString req) returns Order|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -67,10 +68,10 @@ public isolated client class OrderManagementClient {
         return <Order>result;
     }
 
-    isolated remote function getOrderContext(string|ContextString req) returns (ContextOrder|Error) {
+    isolated remote function getOrderContext(string|wrappers:ContextString req) returns ContextOrder|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -108,6 +109,10 @@ public client class OrderManagementOrderCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class OrderManagementStringCaller {
@@ -125,7 +130,7 @@ public client class OrderManagementStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns Error? {
         return self.caller->send(response);
     }
 
@@ -136,17 +141,16 @@ public client class OrderManagementStringCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public type ContextOrder record {|
     Order content;
     map<string|string[]> headers;
 |};
-
-//public type ContextString record {|
-//    string content;
-//    map<string|string[]> headers;
-//|};
 
 public type Order record {|
     string id = "";
@@ -162,9 +166,9 @@ public type CombinedShipment record {|
     Order[] ordersList = [];
 |};
 
-const string ROOT_DESCRIPTOR_21 = "0A2332315F677270635F677A69705F656E636F64696E675F736572766963652E70726F746F120965636F6D6D657263651A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F2287010A054F72646572120E0A0269641801200128095202696412140A056974656D7318022003280952056974656D7312200A0B6465736372697074696F6E180320012809520B6465736372697074696F6E12140A0570726963651804200128025205707269636512200A0B64657374696E6174696F6E180520012809520B64657374696E6174696F6E226C0A10436F6D62696E6564536869706D656E74120E0A0269641801200128095202696412160A06737461747573180220012809520673746174757312300A0A6F72646572734C69737418032003280B32102E65636F6D6D657263652E4F72646572520A6F72646572734C6973743289010A0F4F726465724D616E6167656D656E74123A0A086164644F7264657212102E65636F6D6D657263652E4F726465721A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565123A0A086765744F72646572121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A102E65636F6D6D657263652E4F72646572620670726F746F33";
+const string ROOT_DESCRIPTOR_21_GRPC_GZIP_ENCODING_SERVICE = "0A2332315F677270635F677A69705F656E636F64696E675F736572766963652E70726F746F120965636F6D6D657263651A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F2287010A054F72646572120E0A0269641801200128095202696412140A056974656D7318022003280952056974656D7312200A0B6465736372697074696F6E180320012809520B6465736372697074696F6E12140A0570726963651804200128025205707269636512200A0B64657374696E6174696F6E180520012809520B64657374696E6174696F6E226C0A10436F6D62696E6564536869706D656E74120E0A0269641801200128095202696412160A06737461747573180220012809520673746174757312300A0A6F72646572734C69737418032003280B32102E65636F6D6D657263652E4F72646572520A6F72646572734C6973743289010A0F4F726465724D616E6167656D656E74123A0A086164644F7264657212102E65636F6D6D657263652E4F726465721A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565123A0A086765744F72646572121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A102E65636F6D6D657263652E4F72646572620670726F746F33";
 
-isolated function getDescriptorMap21() returns map<string> {
+public isolated function getDescriptorMap21GrpcGzipEncodingService() returns map<string> {
     return {"21_grpc_gzip_encoding_service.proto": "0A2332315F677270635F677A69705F656E636F64696E675F736572766963652E70726F746F120965636F6D6D657263651A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F2287010A054F72646572120E0A0269641801200128095202696412140A056974656D7318022003280952056974656D7312200A0B6465736372697074696F6E180320012809520B6465736372697074696F6E12140A0570726963651804200128025205707269636512200A0B64657374696E6174696F6E180520012809520B64657374696E6174696F6E226C0A10436F6D62696E6564536869706D656E74120E0A0269641801200128095202696412160A06737461747573180220012809520673746174757312300A0A6F72646572734C69737418032003280B32102E65636F6D6D657263652E4F72646572520A6F72646572734C6973743289010A0F4F726465724D616E6167656D656E74123A0A086164644F7264657212102E65636F6D6D657263652E4F726465721A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565123A0A086765744F72646572121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A102E65636F6D6D657263652E4F72646572620670726F746F33", "google/protobuf/wrappers.proto": "0A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F120F676F6F676C652E70726F746F62756622230A0B446F75626C6556616C756512140A0576616C7565180120012801520576616C756522220A0A466C6F617456616C756512140A0576616C7565180120012802520576616C756522220A0A496E74363456616C756512140A0576616C7565180120012803520576616C756522230A0B55496E74363456616C756512140A0576616C7565180120012804520576616C756522220A0A496E74333256616C756512140A0576616C7565180120012805520576616C756522230A0B55496E74333256616C756512140A0576616C756518012001280D520576616C756522210A09426F6F6C56616C756512140A0576616C7565180120012808520576616C756522230A0B537472696E6756616C756512140A0576616C7565180120012809520576616C756522220A0A427974657356616C756512140A0576616C756518012001280C520576616C756542570A13636F6D2E676F6F676C652E70726F746F627566420D577261707065727350726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33"};
 }
 

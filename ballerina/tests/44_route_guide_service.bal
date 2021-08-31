@@ -16,7 +16,7 @@
 
 listener Listener ep44 = new (9144);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_44, descMap: getDescriptorMap44()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_44_ROUTE_GUIDE, descMap: getDescriptorMap44RouteGuide()}
 service "RouteGuide" on ep44 {
 
     isolated remote function GetFeature(Point point) returns Feature|error {

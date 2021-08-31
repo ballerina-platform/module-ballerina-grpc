@@ -13,7 +13,9 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-// This is server implementation for bidirectional streaming scenario
+
+import ballerina/protobuf.types.empty;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class HelloWorld100Client {
     *AbstractClientEndpoint;
@@ -22,13 +24,13 @@ public isolated client class HelloWorld100Client {
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_7, getDescriptorMap7());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_07_UNARY_SERVER, getDescriptorMap07UnaryServer());
     }
 
-    isolated remote function hello(string|ContextString req) returns (string|Error) {
+    isolated remote function hello(string|wrappers:ContextString req) returns string|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -39,10 +41,10 @@ public isolated client class HelloWorld100Client {
         return result.toString();
     }
 
-    isolated remote function helloContext(string|ContextString req) returns (ContextString|Error) {
+    isolated remote function helloContext(string|wrappers:ContextString req) returns wrappers:ContextString|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -53,10 +55,10 @@ public isolated client class HelloWorld100Client {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function testInt(int|ContextInt req) returns (int|Error) {
+    isolated remote function testInt(int|wrappers:ContextInt req) returns int|Error {
         map<string|string[]> headers = {};
         int message;
-        if (req is ContextInt) {
+        if req is wrappers:ContextInt {
             message = req.content;
             headers = req.headers;
         } else {
@@ -67,10 +69,10 @@ public isolated client class HelloWorld100Client {
         return <int>result;
     }
 
-    isolated remote function testIntContext(int|ContextInt req) returns (ContextInt|Error) {
+    isolated remote function testIntContext(int|wrappers:ContextInt req) returns wrappers:ContextInt|Error {
         map<string|string[]> headers = {};
         int message;
-        if (req is ContextInt) {
+        if req is wrappers:ContextInt {
             message = req.content;
             headers = req.headers;
         } else {
@@ -81,10 +83,10 @@ public isolated client class HelloWorld100Client {
         return {content: <int>result, headers: respHeaders};
     }
 
-    isolated remote function testFloat(float|ContextFloat req) returns (float|Error) {
+    isolated remote function testFloat(float|wrappers:ContextFloat req) returns float|Error {
         map<string|string[]> headers = {};
         float message;
-        if (req is ContextFloat) {
+        if req is wrappers:ContextFloat {
             message = req.content;
             headers = req.headers;
         } else {
@@ -95,10 +97,10 @@ public isolated client class HelloWorld100Client {
         return <float>result;
     }
 
-    isolated remote function testFloatContext(float|ContextFloat req) returns (ContextFloat|Error) {
+    isolated remote function testFloatContext(float|wrappers:ContextFloat req) returns wrappers:ContextFloat|Error {
         map<string|string[]> headers = {};
         float message;
-        if (req is ContextFloat) {
+        if req is wrappers:ContextFloat {
             message = req.content;
             headers = req.headers;
         } else {
@@ -109,10 +111,10 @@ public isolated client class HelloWorld100Client {
         return {content: <float>result, headers: respHeaders};
     }
 
-    isolated remote function testBoolean(boolean|ContextBoolean req) returns (boolean|Error) {
+    isolated remote function testBoolean(boolean|wrappers:ContextBoolean req) returns boolean|Error {
         map<string|string[]> headers = {};
         boolean message;
-        if (req is ContextBoolean) {
+        if req is wrappers:ContextBoolean {
             message = req.content;
             headers = req.headers;
         } else {
@@ -123,10 +125,10 @@ public isolated client class HelloWorld100Client {
         return <boolean>result;
     }
 
-    isolated remote function testBooleanContext(boolean|ContextBoolean req) returns (ContextBoolean|Error) {
+    isolated remote function testBooleanContext(boolean|wrappers:ContextBoolean req) returns wrappers:ContextBoolean|Error {
         map<string|string[]> headers = {};
         boolean message;
-        if (req is ContextBoolean) {
+        if req is wrappers:ContextBoolean {
             message = req.content;
             headers = req.headers;
         } else {
@@ -137,10 +139,10 @@ public isolated client class HelloWorld100Client {
         return {content: <boolean>result, headers: respHeaders};
     }
 
-    isolated remote function testStruct(Request|ContextRequest req) returns (Response|Error) {
+    isolated remote function testStruct(Request|ContextRequest req) returns Response|Error {
         map<string|string[]> headers = {};
         Request message;
-        if (req is ContextRequest) {
+        if req is ContextRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -151,10 +153,10 @@ public isolated client class HelloWorld100Client {
         return <Response>result;
     }
 
-    isolated remote function testStructContext(Request|ContextRequest req) returns (ContextResponse|Error) {
+    isolated remote function testStructContext(Request|ContextRequest req) returns ContextResponse|Error {
         map<string|string[]> headers = {};
         Request message;
-        if (req is ContextRequest) {
+        if req is ContextRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -165,26 +167,26 @@ public isolated client class HelloWorld100Client {
         return {content: <Response>result, headers: respHeaders};
     }
 
-    isolated remote function testNoRequest() returns (string|Error) {
-        Empty message = {};
+    isolated remote function testNoRequest() returns string|Error {
+        empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoRequest", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
 
-    isolated remote function testNoRequestContext() returns (ContextString|Error) {
-        Empty message = {};
+    isolated remote function testNoRequestContext() returns wrappers:ContextString|Error {
+        empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoRequest", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function testNoResponse(string|ContextString req) returns (Error?) {
+    isolated remote function testNoResponse(string|wrappers:ContextString req) returns Error? {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -193,10 +195,10 @@ public isolated client class HelloWorld100Client {
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoResponse", message, headers);
     }
 
-    isolated remote function testNoResponseContext(string|ContextString req) returns (ContextNil|Error) {
+    isolated remote function testNoResponseContext(string|wrappers:ContextString req) returns empty:ContextNil|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -207,10 +209,10 @@ public isolated client class HelloWorld100Client {
         return {headers: respHeaders};
     }
 
-    isolated remote function testResponseInsideMatch(string|ContextString req) returns (Response|Error) {
+    isolated remote function testResponseInsideMatch(string|wrappers:ContextString req) returns Response|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -221,10 +223,10 @@ public isolated client class HelloWorld100Client {
         return <Response>result;
     }
 
-    isolated remote function testResponseInsideMatchContext(string|ContextString req) returns (ContextResponse|Error) {
+    isolated remote function testResponseInsideMatchContext(string|wrappers:ContextString req) returns ContextResponse|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -251,7 +253,7 @@ public client class HelloWorld100BooleanCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextBoolean(ContextBoolean response) returns Error? {
+    isolated remote function sendContextBoolean(wrappers:ContextBoolean response) returns Error? {
         return self.caller->send(response);
     }
 
@@ -261,6 +263,10 @@ public client class HelloWorld100BooleanCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -279,7 +285,7 @@ public client class HelloWorld100StringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns Error? {
         return self.caller->send(response);
     }
 
@@ -289,6 +295,10 @@ public client class HelloWorld100StringCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -307,7 +317,7 @@ public client class HelloWorld100IntCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextInt(ContextInt response) returns Error? {
+    isolated remote function sendContextInt(wrappers:ContextInt response) returns Error? {
         return self.caller->send(response);
     }
 
@@ -317,6 +327,10 @@ public client class HelloWorld100IntCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -338,6 +352,10 @@ public client class HelloWorld100NilCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class HelloWorld100FloatCaller {
@@ -355,7 +373,7 @@ public client class HelloWorld100FloatCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextFloat(ContextFloat response) returns Error? {
+    isolated remote function sendContextFloat(wrappers:ContextFloat response) returns Error? {
         return self.caller->send(response);
     }
 
@@ -365,6 +383,10 @@ public client class HelloWorld100FloatCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -394,6 +416,10 @@ public client class HelloWorld100ResponseCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public type ContextResponse record {|
@@ -401,50 +427,23 @@ public type ContextResponse record {|
     map<string|string[]> headers;
 |};
 
-//public type ContextNil record {|
-//    map<string|string[]> headers;
-//|};
-
-//public type ContextBoolean record {|
-//    boolean content;
-//    map<string|string[]> headers;
-//|};
-
-//public type ContextString record {|
-//    string content;
-//    map<string|string[]> headers;
-//|};
-
 public type ContextRequest record {|
     Request content;
     map<string|string[]> headers;
 |};
 
-//public type ContextFloat record {|
-//    float content;
-//    map<string|string[]> headers;
-//|};
-
-//public type ContextInt record {|
-//    int content;
-//    map<string|string[]> headers;
-//|};
-
 public type Response record {|
     string resp = "";
 |};
-
-//public type Empty record {|
-//|};
 
 public type Request record {|
     string name = "";
     string message = "";
 |};
 
-const string ROOT_DESCRIPTOR_7 = "0A1530375F756E6172795F7365727665722E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F22370A075265717565737412120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765221E0A08526573706F6E736512120A047265737018012001280952047265737032C4040A0D48656C6C6F576F726C6431303012430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512430A0774657374496E74121B2E676F6F676C652E70726F746F6275662E496E74333256616C75651A1B2E676F6F676C652E70726F746F6275662E496E74333256616C756512450A0974657374466C6F6174121B2E676F6F676C652E70726F746F6275662E466C6F617456616C75651A1B2E676F6F676C652E70726F746F6275662E466C6F617456616C756512450A0B74657374426F6F6C65616E121A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75651A1A2E676F6F676C652E70726F746F6275662E426F6F6C56616C7565123B0A0A7465737453747275637412152E6772706373657276696365732E526571756573741A162E6772706373657276696365732E526573706F6E736512450A0D746573744E6F5265717565737412162E676F6F676C652E70726F746F6275662E456D7074791A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512460A0E746573744E6F526573706F6E7365121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E676F6F676C652E70726F746F6275662E456D707479124F0A1774657374526573706F6E7365496E736964654D61746368121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E6772706373657276696365732E526573706F6E7365620670726F746F33";
+const string ROOT_DESCRIPTOR_07_UNARY_SERVER = "0A1530375F756E6172795F7365727665722E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F22370A075265717565737412120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765221E0A08526573706F6E736512120A047265737018012001280952047265737032C4040A0D48656C6C6F576F726C6431303012430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512430A0774657374496E74121B2E676F6F676C652E70726F746F6275662E496E74333256616C75651A1B2E676F6F676C652E70726F746F6275662E496E74333256616C756512450A0974657374466C6F6174121B2E676F6F676C652E70726F746F6275662E466C6F617456616C75651A1B2E676F6F676C652E70726F746F6275662E466C6F617456616C756512450A0B74657374426F6F6C65616E121A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75651A1A2E676F6F676C652E70726F746F6275662E426F6F6C56616C7565123B0A0A7465737453747275637412152E6772706373657276696365732E526571756573741A162E6772706373657276696365732E526573706F6E736512450A0D746573744E6F5265717565737412162E676F6F676C652E70726F746F6275662E456D7074791A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512460A0E746573744E6F526573706F6E7365121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E676F6F676C652E70726F746F6275662E456D707479124F0A1774657374526573706F6E7365496E736964654D61746368121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E6772706373657276696365732E526573706F6E7365620670726F746F33";
 
-isolated function getDescriptorMap7() returns map<string> {
+public isolated function getDescriptorMap07UnaryServer() returns map<string> {
     return {"07_unary_server.proto": "0A1530375F756E6172795F7365727665722E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F22370A075265717565737412120A046E616D6518012001280952046E616D6512180A076D65737361676518022001280952076D657373616765221E0A08526573706F6E736512120A047265737018012001280952047265737032C4040A0D48656C6C6F576F726C6431303012430A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512430A0774657374496E74121B2E676F6F676C652E70726F746F6275662E496E74333256616C75651A1B2E676F6F676C652E70726F746F6275662E496E74333256616C756512450A0974657374466C6F6174121B2E676F6F676C652E70726F746F6275662E466C6F617456616C75651A1B2E676F6F676C652E70726F746F6275662E466C6F617456616C756512450A0B74657374426F6F6C65616E121A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75651A1A2E676F6F676C652E70726F746F6275662E426F6F6C56616C7565123B0A0A7465737453747275637412152E6772706373657276696365732E526571756573741A162E6772706373657276696365732E526573706F6E736512450A0D746573744E6F5265717565737412162E676F6F676C652E70726F746F6275662E456D7074791A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C756512460A0E746573744E6F526573706F6E7365121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E676F6F676C652E70726F746F6275662E456D707479124F0A1774657374526573706F6E7365496E736964654D61746368121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A162E6772706373657276696365732E526573706F6E7365620670726F746F33", "google/protobuf/empty.proto": "0A1B676F6F676C652F70726F746F6275662F656D7074792E70726F746F120F676F6F676C652E70726F746F62756622070A05456D70747942540A13636F6D2E676F6F676C652E70726F746F627566420A456D70747950726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33", "google/protobuf/wrappers.proto": "0A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F120F676F6F676C652E70726F746F62756622230A0B446F75626C6556616C756512140A0576616C7565180120012801520576616C756522220A0A466C6F617456616C756512140A0576616C7565180120012802520576616C756522220A0A496E74363456616C756512140A0576616C7565180120012803520576616C756522230A0B55496E74363456616C756512140A0576616C7565180120012804520576616C756522220A0A496E74333256616C756512140A0576616C7565180120012805520576616C756522230A0B55496E74333256616C756512140A0576616C756518012001280D520576616C756522210A09426F6F6C56616C756512140A0576616C7565180120012808520576616C756522230A0B537472696E6756616C756512140A0576616C7565180120012809520576616C756522220A0A427974657356616C756512140A0576616C756518012001280C520576616C756542570A13636F6D2E676F6F676C652E70726F746F627566420D577261707065727350726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33"};
 }
 

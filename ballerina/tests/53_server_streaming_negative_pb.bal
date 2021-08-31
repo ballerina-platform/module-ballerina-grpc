@@ -14,6 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/protobuf.types.wrappers;
+
 public isolated client class helloWorld53Client {
     *AbstractClientEndpoint;
 
@@ -21,47 +23,39 @@ public isolated client class helloWorld53Client {
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_53, getDescriptorMap53());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_53_SERVER_STREAMING_NEGATIVE, getDescriptorMap53ServerStreamingNegative());
     }
 
-    isolated remote function hello53(string req) returns stream<string, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld53/hello53", req);
+    isolated remote function hello53(string|wrappers:ContextString req) returns stream<string, error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld53/hello53", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
-        StringStream outputStream = new StringStream(result);
-        return new stream<string, Error?>(outputStream);
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        return new stream<string, error?>(outputStream);
     }
 
-    isolated remote function hello53Context(string req) returns ContextStringStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld53/hello53", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
-        StringStream outputStream = new StringStream(result);
-        return {content: new stream<string, Error?>(outputStream), headers: headers};
+    isolated remote function hello53Context(string|wrappers:ContextString req) returns wrappers:ContextStringStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("helloWorld53/hello53", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
+        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        return {content: new stream<string, error?>(outputStream), headers: respHeaders};
     }
 }
-
-// public class StringStream {
-//     private stream<anydata, Error?> anydataStream;
-
-//     public isolated function init(stream<anydata, Error?> anydataStream) {
-//         self.anydataStream = anydataStream;
-//     }
-
-//     public isolated function next() returns record {|string value;|}|Error? {
-//         var streamValue = self.anydataStream.next();
-//         if (streamValue is ()) {
-//             return streamValue;
-//         } else if (streamValue is Error) {
-//             return streamValue;
-//         } else {
-//             record {|string value;|} nextRecord = {value: <string>streamValue.value};
-//             return nextRecord;
-//         }
-//     }
-
-//     public isolated function close() returns Error? {
-//         return self.anydataStream.close();
-//     }
-// }
 
 public client class HelloWorld53StringCaller {
     private Caller caller;
@@ -78,7 +72,7 @@ public client class HelloWorld53StringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns Error? {
         return self.caller->send(response);
     }
 
@@ -95,19 +89,9 @@ public client class HelloWorld53StringCaller {
     }
 }
 
-// public type ContextStringStream record {|
-//     stream<string, error?> content;
-//     map<string|string[]> headers;
-// |};
+const string ROOT_DESCRIPTOR_53_SERVER_STREAMING_NEGATIVE = "0A2235335F7365727665725F73747265616D696E675F6E656761746976652E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32570A0C68656C6C6F576F726C64353312470A0768656C6C6F3533121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75653001620670726F746F33";
 
-// public type ContextString record {|
-//     string content;
-//     map<string|string[]> headers;
-// |};
-
-const string ROOT_DESCRIPTOR_53 = "0A2235335F7365727665725F73747265616D696E675F6E656761746976652E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32570A0C68656C6C6F576F726C64353312470A0768656C6C6F3533121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75653001620670726F746F33";
-
-isolated function getDescriptorMap53() returns map<string> {
+public isolated function getDescriptorMap53ServerStreamingNegative() returns map<string> {
     return {"53_server_streaming_negative.proto": "0A2235335F7365727665725F73747265616D696E675F6E656761746976652E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32570A0C68656C6C6F576F726C64353312470A0768656C6C6F3533121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75653001620670726F746F33", "google/protobuf/wrappers.proto": "0A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F120F676F6F676C652E70726F746F62756622230A0B446F75626C6556616C756512140A0576616C7565180120012801520576616C756522220A0A466C6F617456616C756512140A0576616C7565180120012802520576616C756522220A0A496E74363456616C756512140A0576616C7565180120012803520576616C756522230A0B55496E74363456616C756512140A0576616C7565180120012804520576616C756522220A0A496E74333256616C756512140A0576616C7565180120012805520576616C756522230A0B55496E74333256616C756512140A0576616C756518012001280D520576616C756522210A09426F6F6C56616C756512140A0576616C7565180120012808520576616C756522230A0B537472696E6756616C756512140A0576616C7565180120012809520576616C756522220A0A427974657356616C756512140A0576616C756518012001280C520576616C756542570A13636F6D2E676F6F676C652E70726F746F627566420D577261707065727350726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33"};
 }
 

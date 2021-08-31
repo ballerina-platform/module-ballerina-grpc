@@ -16,6 +16,7 @@
 
 import ballerina/test;
 import ballerina/time;
+import ballerina/protobuf.types.timestamp;
 
 @test:Config {enable: true}
 isolated function testGetGreeting() returns error? {
@@ -48,7 +49,7 @@ isolated function testExchangeTime() returns error? {
 isolated function testExchangeTimeContext() returns error? {
     TimestampServiceClient utsClient = check new ("http://localhost:9147");
     time:Utc sendingTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
-    ContextTimestamp result = check utsClient->exchangeTimeContext({
+    timestamp:ContextTimestamp result = check utsClient->exchangeTimeContext({
         headers: {},
         content: sendingTime
     });
@@ -76,7 +77,7 @@ function testTimestampContextServerStream() returns error? {
     TimestampServiceClient utsClient = check new ("http://localhost:9147");
     time:Utc sendingTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
 
-    ContextTimestampStream result = check utsClient->serverStreamTimeContext({
+    timestamp:ContextTimestampStream result = check utsClient->serverStreamTimeContext({
         headers: {"req-header": ["1234567890", "2233445677"]},
         content: sendingTime
     });
@@ -110,8 +111,8 @@ isolated function testTimestampContextClientStream() returns error? {
         content: sendingTime
     });
     check result->complete();
-    ContextTimestamp? res = check result->receiveContextTimestamp();
-    if res is ContextTimestamp {
+    timestamp:ContextTimestamp? res = check result->receiveContextTimestamp();
+    if res is timestamp:ContextTimestamp {
         test:assertEquals(res.content, sendingTime);
     } else {
         test:assertFail(msg = "Expected a context timestamp");

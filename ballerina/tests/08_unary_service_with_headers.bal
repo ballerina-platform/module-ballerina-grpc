@@ -23,8 +23,8 @@ listener Listener ep8 = new (9098, {
 });
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_8,
-    descMap: getDescriptorMap8()
+    descriptor: ROOT_DESCRIPTOR_08_UNARY_SERVICE_WITH_HEADERS,
+    descMap: getDescriptorMap08UnaryServiceWithHeaders()
 }
 service "HelloWorld101" on ep8 {
     isolated remote function hello(HelloWorld101StringCaller caller, ContextString request) returns error? {

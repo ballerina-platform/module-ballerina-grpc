@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/test;
+import ballerina/protobuf.types.wrappers;
 
 @test:Config {
     enable: true,
@@ -38,7 +39,7 @@ isolated function testStringValueReturnWithLdapAuth() returns Error? {
             requestHeaders = result;
         }
 
-        ContextString requestMessage = {
+        wrappers:ContextString requestMessage = {
             content: "WSO2",
             headers: requestHeaders
         };

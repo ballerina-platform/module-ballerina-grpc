@@ -20,8 +20,8 @@ import ballerina/oauth2;
 listener Listener ep30 = new (9120);
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_30,
-    descMap: getDescriptorMap30()
+    descriptor: ROOT_DESCRIPTOR_30_UNARY_OAUTH2,
+    descMap: getDescriptorMap30UnaryOauth2()
 }
 service /HelloWorld30 on ep30 {
 

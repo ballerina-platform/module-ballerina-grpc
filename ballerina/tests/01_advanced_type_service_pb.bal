@@ -13,7 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-// This is server implementation for bidirectional streaming scenario
+
 
 public isolated client class HelloWorldClient {
     *AbstractClientEndpoint;
@@ -25,10 +25,10 @@ public isolated client class HelloWorldClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_1, getDescriptorMap1());
     }
 
-    isolated remote function testInputNestedStruct(Person|ContextPerson req) returns (string|Error) {
+    isolated remote function testInputNestedStruct(Person|ContextPerson req) returns string|Error {
         map<string|string[]> headers = {};
         Person message;
-        if (req is ContextPerson) {
+        if req is ContextPerson {
             message = req.content;
             headers = req.headers;
         } else {
@@ -39,10 +39,10 @@ public isolated client class HelloWorldClient {
         return result.toString();
     }
 
-    isolated remote function testInputNestedStructContext(Person|ContextPerson req) returns (ContextString|Error) {
+    isolated remote function testInputNestedStructContext(Person|ContextPerson req) returns ContextString|Error {
         map<string|string[]> headers = {};
         Person message;
-        if (req is ContextPerson) {
+        if req is ContextPerson {
             message = req.content;
             headers = req.headers;
         } else {
@@ -53,10 +53,10 @@ public isolated client class HelloWorldClient {
         return {content: result.toString(), headers: respHeaders};
     }
 
-    isolated remote function testOutputNestedStruct(string|ContextString req) returns (Person|Error) {
+    isolated remote function testOutputNestedStruct(string|ContextString req) returns Person|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -67,10 +67,10 @@ public isolated client class HelloWorldClient {
         return <Person>result;
     }
 
-    isolated remote function testOutputNestedStructContext(string|ContextString req) returns (ContextPerson|Error) {
+    isolated remote function testOutputNestedStructContext(string|ContextString req) returns ContextPerson|Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -81,10 +81,10 @@ public isolated client class HelloWorldClient {
         return {content: <Person>result, headers: respHeaders};
     }
 
-    isolated remote function testInputStructOutputStruct(StockRequest|ContextStockRequest req) returns (StockQuote|Error) {
+    isolated remote function testInputStructOutputStruct(StockRequest|ContextStockRequest req) returns StockQuote|Error {
         map<string|string[]> headers = {};
         StockRequest message;
-        if (req is ContextStockRequest) {
+        if req is ContextStockRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -95,10 +95,10 @@ public isolated client class HelloWorldClient {
         return <StockQuote>result;
     }
 
-    isolated remote function testInputStructOutputStructContext(StockRequest|ContextStockRequest req) returns (ContextStockQuote|Error) {
+    isolated remote function testInputStructOutputStructContext(StockRequest|ContextStockRequest req) returns ContextStockQuote|Error {
         map<string|string[]> headers = {};
         StockRequest message;
-        if (req is ContextStockRequest) {
+        if req is ContextStockRequest {
             message = req.content;
             headers = req.headers;
         } else {
@@ -109,10 +109,10 @@ public isolated client class HelloWorldClient {
         return {content: <StockQuote>result, headers: respHeaders};
     }
 
-    isolated remote function testInputStructNoOutput(StockQuote|ContextStockQuote req) returns (Error?) {
+    isolated remote function testInputStructNoOutput(StockQuote|ContextStockQuote req) returns Error? {
         map<string|string[]> headers = {};
         StockQuote message;
-        if (req is ContextStockQuote) {
+        if req is ContextStockQuote {
             message = req.content;
             headers = req.headers;
         } else {
@@ -121,10 +121,10 @@ public isolated client class HelloWorldClient {
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testInputStructNoOutput", message, headers);
     }
 
-    isolated remote function testInputStructNoOutputContext(StockQuote|ContextStockQuote req) returns (ContextNil|Error) {
+    isolated remote function testInputStructNoOutputContext(StockQuote|ContextStockQuote req) returns ContextNil|Error {
         map<string|string[]> headers = {};
         StockQuote message;
-        if (req is ContextStockQuote) {
+        if req is ContextStockQuote {
             message = req.content;
             headers = req.headers;
         } else {
@@ -135,7 +135,7 @@ public isolated client class HelloWorldClient {
         return {headers: respHeaders};
     }
 
-    isolated remote function testNoInputOutputStruct() returns (StockQuotes|Error) {
+    isolated remote function testNoInputOutputStruct() returns StockQuotes|Error {
         Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputStruct", message, headers);
@@ -143,7 +143,7 @@ public isolated client class HelloWorldClient {
         return <StockQuotes>result;
     }
 
-    isolated remote function testNoInputOutputStructContext() returns (ContextStockQuotes|Error) {
+    isolated remote function testNoInputOutputStructContext() returns ContextStockQuotes|Error {
         Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputStruct", message, headers);
@@ -151,7 +151,7 @@ public isolated client class HelloWorldClient {
         return {content: <StockQuotes>result, headers: respHeaders};
     }
 
-    isolated remote function testNoInputOutputArray() returns (StockNames|Error) {
+    isolated remote function testNoInputOutputArray() returns StockNames|Error {
         Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputArray", message, headers);
@@ -159,7 +159,7 @@ public isolated client class HelloWorldClient {
         return <StockNames>result;
     }
 
-    isolated remote function testNoInputOutputArrayContext() returns (ContextStockNames|Error) {
+    isolated remote function testNoInputOutputArrayContext() returns ContextStockNames|Error {
         Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld/testNoInputOutputArray", message, headers);
@@ -194,6 +194,10 @@ public client class HelloWorldStringCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class HelloWorldNilCaller {
@@ -213,6 +217,10 @@ public client class HelloWorldNilCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -242,6 +250,10 @@ public client class HelloWorldPersonCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class HelloWorldStockNamesCaller {
@@ -269,6 +281,10 @@ public client class HelloWorldStockNamesCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -298,6 +314,10 @@ public client class HelloWorldStockQuotesCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class HelloWorldStockQuoteCaller {
@@ -325,6 +345,10 @@ public client class HelloWorldStockQuoteCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 

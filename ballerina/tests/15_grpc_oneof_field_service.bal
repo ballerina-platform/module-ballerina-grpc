@@ -17,8 +17,8 @@
 import ballerina/io;
 
 @ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_15,
-    descMap: getDescriptorMap15()
+    descriptor: ROOT_DESCRIPTOR_15_GRPC_ONEOF_FIELD_SERVICE,
+    descMap: getDescriptorMap15GrpcOneofFieldService()
 }
 service "OneofFieldService" on new Listener(9105) {
 

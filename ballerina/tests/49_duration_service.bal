@@ -13,12 +13,13 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/log;
 import ballerina/time;
 
 listener Listener ep49 = new (9149);
 
-@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_49, descMap: getDescriptorMap49()}
+@ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_49_DURATION, descMap: getDescriptorMap49Duration()}
 service "DurationHandler" on ep49 {
 
     remote function unaryCall1(string value) returns time:Seconds|error {

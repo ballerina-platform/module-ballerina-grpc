@@ -14,6 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/protobuf.types.wrappers;
+
 public isolated client class DataTypesServiceClient {
     *AbstractClientEndpoint;
 
@@ -21,147 +23,307 @@ public isolated client class DataTypesServiceClient {
 
     public isolated function init(string url, *ClientConfiguration config) returns Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_42, getDescriptorMap42());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_42_REPEATED_DATA_TYPES_TEST, getDescriptorMap42RepeatedDataTypesTest());
     }
 
-    isolated remote function helloWithInt32Array(string req) returns stream<Int32ArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithInt32Array", req);
+    isolated remote function helloWithInt32Array(string|wrappers:ContextString req) returns stream<Int32ArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithInt32Array", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         Int32ArrMsgStream outputStream = new Int32ArrMsgStream(result);
         return new stream<Int32ArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithInt32ArrayContext(string req) returns ContextInt32ArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithInt32Array", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithInt32ArrayContext(string|wrappers:ContextString req) returns ContextInt32ArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithInt32Array", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         Int32ArrMsgStream outputStream = new Int32ArrMsgStream(result);
-        return {content: new stream<Int32ArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<Int32ArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithInt64Array(string req) returns stream<Int64ArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithInt64Array", req);
+    isolated remote function helloWithInt64Array(string|wrappers:ContextString req) returns stream<Int64ArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithInt64Array", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         Int64ArrMsgStream outputStream = new Int64ArrMsgStream(result);
         return new stream<Int64ArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithInt64ArrayContext(string req) returns ContextInt64ArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithInt64Array", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithInt64ArrayContext(string|wrappers:ContextString req) returns ContextInt64ArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithInt64Array", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         Int64ArrMsgStream outputStream = new Int64ArrMsgStream(result);
-        return {content: new stream<Int64ArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<Int64ArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithUnsignedInt64Array(string req) returns stream<UnsignedInt64ArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithUnsignedInt64Array", req);
+    isolated remote function helloWithUnsignedInt64Array(string|wrappers:ContextString req) returns stream<UnsignedInt64ArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithUnsignedInt64Array", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         UnsignedInt64ArrMsgStream outputStream = new UnsignedInt64ArrMsgStream(result);
         return new stream<UnsignedInt64ArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithUnsignedInt64ArrayContext(string req) returns ContextUnsignedInt64ArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithUnsignedInt64Array", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithUnsignedInt64ArrayContext(string|wrappers:ContextString req) returns ContextUnsignedInt64ArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithUnsignedInt64Array", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         UnsignedInt64ArrMsgStream outputStream = new UnsignedInt64ArrMsgStream(result);
-        return {content: new stream<UnsignedInt64ArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<UnsignedInt64ArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithFixed32Array(string req) returns stream<Fixed32ArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFixed32Array", req);
+    isolated remote function helloWithFixed32Array(string|wrappers:ContextString req) returns stream<Fixed32ArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFixed32Array", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         Fixed32ArrMsgStream outputStream = new Fixed32ArrMsgStream(result);
         return new stream<Fixed32ArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithFixed32ArrayContext(string req) returns ContextFixed32ArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFixed32Array", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithFixed32ArrayContext(string|wrappers:ContextString req) returns ContextFixed32ArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFixed32Array", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         Fixed32ArrMsgStream outputStream = new Fixed32ArrMsgStream(result);
-        return {content: new stream<Fixed32ArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<Fixed32ArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithFixed64Array(string req) returns stream<Fixed64ArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFixed64Array", req);
+    isolated remote function helloWithFixed64Array(string|wrappers:ContextString req) returns stream<Fixed64ArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFixed64Array", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         Fixed64ArrMsgStream outputStream = new Fixed64ArrMsgStream(result);
         return new stream<Fixed64ArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithFixed64ArrayContext(string req) returns ContextFixed64ArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFixed64Array", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithFixed64ArrayContext(string|wrappers:ContextString req) returns ContextFixed64ArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFixed64Array", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         Fixed64ArrMsgStream outputStream = new Fixed64ArrMsgStream(result);
-        return {content: new stream<Fixed64ArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<Fixed64ArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithFloatArray(string req) returns stream<FloatArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFloatArray", req);
+    isolated remote function helloWithFloatArray(string|wrappers:ContextString req) returns stream<FloatArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFloatArray", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         FloatArrMsgStream outputStream = new FloatArrMsgStream(result);
         return new stream<FloatArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithFloatArrayContext(string req) returns ContextFloatArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFloatArray", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithFloatArrayContext(string|wrappers:ContextString req) returns ContextFloatArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithFloatArray", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         FloatArrMsgStream outputStream = new FloatArrMsgStream(result);
-        return {content: new stream<FloatArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<FloatArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithDoubleArray(string req) returns stream<DoubleArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithDoubleArray", req);
+    isolated remote function helloWithDoubleArray(string|wrappers:ContextString req) returns stream<DoubleArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithDoubleArray", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         DoubleArrMsgStream outputStream = new DoubleArrMsgStream(result);
         return new stream<DoubleArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithDoubleArrayContext(string req) returns ContextDoubleArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithDoubleArray", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithDoubleArrayContext(string|wrappers:ContextString req) returns ContextDoubleArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithDoubleArray", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         DoubleArrMsgStream outputStream = new DoubleArrMsgStream(result);
-        return {content: new stream<DoubleArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<DoubleArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithStringArray(string req) returns stream<StringArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithStringArray", req);
+    isolated remote function helloWithStringArray(string|wrappers:ContextString req) returns stream<StringArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithStringArray", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         StringArrMsgStream outputStream = new StringArrMsgStream(result);
         return new stream<StringArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithStringArrayContext(string req) returns ContextStringArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithStringArray", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithStringArrayContext(string|wrappers:ContextString req) returns ContextStringArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithStringArray", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         StringArrMsgStream outputStream = new StringArrMsgStream(result);
-        return {content: new stream<StringArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<StringArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithBooleanArray(string req) returns stream<BooleanArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithBooleanArray", req);
+    isolated remote function helloWithBooleanArray(string|wrappers:ContextString req) returns stream<BooleanArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithBooleanArray", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         BooleanArrMsgStream outputStream = new BooleanArrMsgStream(result);
         return new stream<BooleanArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithBooleanArrayContext(string req) returns ContextBooleanArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithBooleanArray", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithBooleanArrayContext(string|wrappers:ContextString req) returns ContextBooleanArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithBooleanArray", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         BooleanArrMsgStream outputStream = new BooleanArrMsgStream(result);
-        return {content: new stream<BooleanArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<BooleanArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function helloWithBytesArray(string req) returns stream<BytesArrMsg, Error?>|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithBytesArray", req);
+    isolated remote function helloWithBytesArray(string|wrappers:ContextString req) returns stream<BytesArrMsg, Error?>|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithBytesArray", message, headers);
         [stream<anydata, Error?>, map<string|string[]>] [result, _] = payload;
         BytesArrMsgStream outputStream = new BytesArrMsgStream(result);
         return new stream<BytesArrMsg, Error?>(outputStream);
     }
 
-    isolated remote function helloWithBytesArrayContext(string req) returns ContextBytesArrMsgStream|Error {
-        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithBytesArray", req);
-        [stream<anydata, Error?>, map<string|string[]>] [result, headers] = payload;
+    isolated remote function helloWithBytesArrayContext(string|wrappers:ContextString req) returns ContextBytesArrMsgStream|Error {
+        map<string|string[]> headers = {};
+        string message;
+        if req is wrappers:ContextString {
+            message = req.content;
+            headers = req.headers;
+        } else {
+            message = req;
+        }
+        var payload = check self.grpcClient->executeServerStreaming("DataTypesService/helloWithBytesArray", message, headers);
+        [stream<anydata, Error?>, map<string|string[]>] [result, respHeaders] = payload;
         BytesArrMsgStream outputStream = new BytesArrMsgStream(result);
-        return {content: new stream<BytesArrMsg, Error?>(outputStream), headers: headers};
+        return {content: new stream<BytesArrMsg, Error?>(outputStream), headers: respHeaders};
     }
 }
 
@@ -431,6 +593,10 @@ public client class DataTypesServiceInt64ArrMsgCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class DataTypesServiceInt32ArrMsgCaller {
@@ -458,6 +624,10 @@ public client class DataTypesServiceInt32ArrMsgCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -487,6 +657,10 @@ public client class DataTypesServiceBytesArrMsgCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class DataTypesServiceStringArrMsgCaller {
@@ -514,6 +688,10 @@ public client class DataTypesServiceStringArrMsgCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -543,6 +721,10 @@ public client class DataTypesServiceFixed32ArrMsgCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class DataTypesServiceFixed64ArrMsgCaller {
@@ -570,6 +752,10 @@ public client class DataTypesServiceFixed64ArrMsgCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -599,6 +785,10 @@ public client class DataTypesServiceUnsignedInt64ArrMsgCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class DataTypesServiceFloatArrMsgCaller {
@@ -626,6 +816,10 @@ public client class DataTypesServiceFloatArrMsgCaller {
 
     isolated remote function complete() returns Error? {
         return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
     }
 }
 
@@ -655,6 +849,10 @@ public client class DataTypesServiceBooleanArrMsgCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public client class DataTypesServiceDoubleArrMsgCaller {
@@ -683,15 +881,14 @@ public client class DataTypesServiceDoubleArrMsgCaller {
     isolated remote function complete() returns Error? {
         return self.caller->complete();
     }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
 }
 
 public type ContextFixed32ArrMsgStream record {|
     stream<Fixed32ArrMsg, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextFixed32ArrMsg record {|
-    Fixed32ArrMsg content;
     map<string|string[]> headers;
 |};
 
@@ -700,18 +897,8 @@ public type ContextFloatArrMsgStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextFloatArrMsg record {|
-    FloatArrMsg content;
-    map<string|string[]> headers;
-|};
-
 public type ContextFixed64ArrMsgStream record {|
     stream<Fixed64ArrMsg, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextFixed64ArrMsg record {|
-    Fixed64ArrMsg content;
     map<string|string[]> headers;
 |};
 
@@ -720,33 +907,13 @@ public type ContextBooleanArrMsgStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextBooleanArrMsg record {|
-    BooleanArrMsg content;
-    map<string|string[]> headers;
-|};
-
 public type ContextBytesArrMsgStream record {|
     stream<BytesArrMsg, error?> content;
     map<string|string[]> headers;
 |};
 
-public type ContextBytesArrMsg record {|
-    BytesArrMsg content;
-    map<string|string[]> headers;
-|};
-
-//public type ContextString record {|
-//    string content;
-//    map<string|string[]> headers;
-//|};
-
 public type ContextDoubleArrMsgStream record {|
     stream<DoubleArrMsg, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextDoubleArrMsg record {|
-    DoubleArrMsg content;
     map<string|string[]> headers;
 |};
 
@@ -755,18 +922,8 @@ public type ContextUnsignedInt64ArrMsgStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextUnsignedInt64ArrMsg record {|
-    UnsignedInt64ArrMsg content;
-    map<string|string[]> headers;
-|};
-
 public type ContextStringArrMsgStream record {|
     stream<StringArrMsg, error?> content;
-    map<string|string[]> headers;
-|};
-
-public type ContextStringArrMsg record {|
-    StringArrMsg content;
     map<string|string[]> headers;
 |};
 
@@ -775,13 +932,53 @@ public type ContextInt64ArrMsgStream record {|
     map<string|string[]> headers;
 |};
 
-public type ContextInt64ArrMsg record {|
-    Int64ArrMsg content;
+public type ContextInt32ArrMsgStream record {|
+    stream<Int32ArrMsg, error?> content;
     map<string|string[]> headers;
 |};
 
-public type ContextInt32ArrMsgStream record {|
-    stream<Int32ArrMsg, error?> content;
+public type ContextFixed32ArrMsg record {|
+    Fixed32ArrMsg content;
+    map<string|string[]> headers;
+|};
+
+public type ContextFloatArrMsg record {|
+    FloatArrMsg content;
+    map<string|string[]> headers;
+|};
+
+public type ContextFixed64ArrMsg record {|
+    Fixed64ArrMsg content;
+    map<string|string[]> headers;
+|};
+
+public type ContextBooleanArrMsg record {|
+    BooleanArrMsg content;
+    map<string|string[]> headers;
+|};
+
+public type ContextBytesArrMsg record {|
+    BytesArrMsg content;
+    map<string|string[]> headers;
+|};
+
+public type ContextDoubleArrMsg record {|
+    DoubleArrMsg content;
+    map<string|string[]> headers;
+|};
+
+public type ContextUnsignedInt64ArrMsg record {|
+    UnsignedInt64ArrMsg content;
+    map<string|string[]> headers;
+|};
+
+public type ContextStringArrMsg record {|
+    StringArrMsg content;
+    map<string|string[]> headers;
+|};
+
+public type ContextInt64ArrMsg record {|
+    Int64ArrMsg content;
     map<string|string[]> headers;
 |};
 
@@ -840,9 +1037,9 @@ public type Int32ArrMsg record {|
     int[] arr = [];
 |};
 
-const string ROOT_DESCRIPTOR_42 = "0A2134325F72657065617465645F646174615F74797065735F746573742E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F22330A0B496E7433324172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032805520361727222330A0B496E7436344172724D736712120A046E6F746518012001280952046E6F746512100A036172721802200328035203617272223B0A13556E7369676E6564496E7436344172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032804520361727222350A0D466978656433324172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032807520361727222350A0D466978656436344172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032806520361727222330A0B466C6F61744172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032802520361727222340A0C446F75626C654172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032801520361727222340A0C537472696E674172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032809520361727222350A0D426F6F6C65616E4172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032808520361727222330A0B42797465734172724D736712120A046E6F746518012001280952046E6F746512100A0361727218022003280C520361727232E4050A104461746154797065735365727669636512430A1368656C6C6F57697468496E7433324172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E496E7433324172724D7367300112430A1368656C6C6F57697468496E7436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E496E7436344172724D7367300112530A1B68656C6C6F57697468556E7369676E6564496E7436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A142E556E7369676E6564496E7436344172724D7367300112470A1568656C6C6F57697468466978656433324172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E466978656433324172724D7367300112470A1568656C6C6F57697468466978656436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E466978656436344172724D7367300112430A1368656C6C6F57697468466C6F61744172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E466C6F61744172724D7367300112450A1468656C6C6F57697468446F75626C654172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0D2E446F75626C654172724D7367300112450A1468656C6C6F57697468537472696E674172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0D2E537472696E674172724D7367300112470A1568656C6C6F57697468426F6F6C65616E4172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E426F6F6C65616E4172724D7367300112430A1368656C6C6F5769746842797465734172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E42797465734172724D73673001620670726F746F33";
+const string ROOT_DESCRIPTOR_42_REPEATED_DATA_TYPES_TEST = "0A2134325F72657065617465645F646174615F74797065735F746573742E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F22330A0B496E7433324172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032805520361727222330A0B496E7436344172724D736712120A046E6F746518012001280952046E6F746512100A036172721802200328035203617272223B0A13556E7369676E6564496E7436344172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032804520361727222350A0D466978656433324172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032807520361727222350A0D466978656436344172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032806520361727222330A0B466C6F61744172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032802520361727222340A0C446F75626C654172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032801520361727222340A0C537472696E674172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032809520361727222350A0D426F6F6C65616E4172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032808520361727222330A0B42797465734172724D736712120A046E6F746518012001280952046E6F746512100A0361727218022003280C520361727232E4050A104461746154797065735365727669636512430A1368656C6C6F57697468496E7433324172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E496E7433324172724D7367300112430A1368656C6C6F57697468496E7436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E496E7436344172724D7367300112530A1B68656C6C6F57697468556E7369676E6564496E7436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A142E556E7369676E6564496E7436344172724D7367300112470A1568656C6C6F57697468466978656433324172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E466978656433324172724D7367300112470A1568656C6C6F57697468466978656436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E466978656436344172724D7367300112430A1368656C6C6F57697468466C6F61744172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E466C6F61744172724D7367300112450A1468656C6C6F57697468446F75626C654172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0D2E446F75626C654172724D7367300112450A1468656C6C6F57697468537472696E674172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0D2E537472696E674172724D7367300112470A1568656C6C6F57697468426F6F6C65616E4172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E426F6F6C65616E4172724D7367300112430A1368656C6C6F5769746842797465734172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E42797465734172724D73673001620670726F746F33";
 
-isolated function getDescriptorMap42() returns map<string> {
+public isolated function getDescriptorMap42RepeatedDataTypesTest() returns map<string> {
     return {"42_repeated_data_types_test.proto": "0A2134325F72657065617465645F646174615F74797065735F746573742E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F22330A0B496E7433324172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032805520361727222330A0B496E7436344172724D736712120A046E6F746518012001280952046E6F746512100A036172721802200328035203617272223B0A13556E7369676E6564496E7436344172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032804520361727222350A0D466978656433324172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032807520361727222350A0D466978656436344172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032806520361727222330A0B466C6F61744172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032802520361727222340A0C446F75626C654172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032801520361727222340A0C537472696E674172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032809520361727222350A0D426F6F6C65616E4172724D736712120A046E6F746518012001280952046E6F746512100A03617272180220032808520361727222330A0B42797465734172724D736712120A046E6F746518012001280952046E6F746512100A0361727218022003280C520361727232E4050A104461746154797065735365727669636512430A1368656C6C6F57697468496E7433324172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E496E7433324172724D7367300112430A1368656C6C6F57697468496E7436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E496E7436344172724D7367300112530A1B68656C6C6F57697468556E7369676E6564496E7436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A142E556E7369676E6564496E7436344172724D7367300112470A1568656C6C6F57697468466978656433324172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E466978656433324172724D7367300112470A1568656C6C6F57697468466978656436344172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E466978656436344172724D7367300112430A1368656C6C6F57697468466C6F61744172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E466C6F61744172724D7367300112450A1468656C6C6F57697468446F75626C654172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0D2E446F75626C654172724D7367300112450A1468656C6C6F57697468537472696E674172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0D2E537472696E674172724D7367300112470A1568656C6C6F57697468426F6F6C65616E4172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0E2E426F6F6C65616E4172724D7367300112430A1368656C6C6F5769746842797465734172726179121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A0C2E42797465734172724D73673001620670726F746F33", "google/protobuf/wrappers.proto": "0A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F120F676F6F676C652E70726F746F62756622230A0B446F75626C6556616C756512140A0576616C7565180120012801520576616C756522220A0A466C6F617456616C756512140A0576616C7565180120012802520576616C756522220A0A496E74363456616C756512140A0576616C7565180120012803520576616C756522230A0B55496E74363456616C756512140A0576616C7565180120012804520576616C756522220A0A496E74333256616C756512140A0576616C7565180120012805520576616C756522230A0B55496E74333256616C756512140A0576616C756518012001280D520576616C756522210A09426F6F6C56616C756512140A0576616C7565180120012808520576616C756522230A0B537472696E6756616C756512140A0576616C7565180120012809520576616C756522220A0A427974657356616C756512140A0576616C756518012001280C520576616C756542570A13636F6D2E676F6F676C652E70726F746F627566420D577261707065727350726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33"};
 }
 
