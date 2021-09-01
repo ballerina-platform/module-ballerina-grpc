@@ -1,5 +1,6 @@
 import ballerina/grpc;
 import ballerina/protobuf.types.struct;
+import ballerina/grpc.types.struct as sstruct;
 
 public isolated client class StructHandlerClient {
     *grpc:AbstractClientEndpoint;
@@ -55,7 +56,7 @@ public isolated client class StructHandlerClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("StructHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        struct:StructStream outputStream = new struct:StructStream(result);
+        sstruct:StructStream outputStream = new sstruct:StructStream(result);
         return new stream<map<anydata>, grpc:Error?>(outputStream);
     }
 
@@ -70,7 +71,7 @@ public isolated client class StructHandlerClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("StructHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        struct:StructStream outputStream = new struct:StructStream(result);
+        sstruct:StructStream outputStream = new sstruct:StructStream(result);
         return {content: new stream<map<anydata>, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
