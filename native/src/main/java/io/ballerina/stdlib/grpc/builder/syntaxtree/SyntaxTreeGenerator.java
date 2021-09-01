@@ -52,7 +52,9 @@ import io.ballerina.tools.text.TextDocuments;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
@@ -106,7 +108,8 @@ public class SyntaxTreeGenerator {
     }
 
     public static SyntaxTree generateSyntaxTree(StubFile stubFile, boolean isRoot) {
-        java.util.Map<String, String> protobufImports = new LinkedHashMap<>();
+        Set<String> protobufImports = new LinkedHashSet<>();
+        Set<String> grpcStreamImports = new LinkedHashSet<>();
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
@@ -174,7 +177,7 @@ public class SyntaxTreeGenerator {
                 if (!isBallerinaProtobufType(method.getOutputType())) {
                     serverStreamingClasses.put(method.getOutputType(), getServerStreamClass(method));
                 } else {
-                    protobufImports.put(method.getOutputType(), getProtobufType(method.getOutputType()));
+                    grpcStreamImports.add(getProtobufType(method.getOutputType()));
                 }
             }
             for (Method method : service.getBidiStreamingFunctions()) {
@@ -194,19 +197,31 @@ public class SyntaxTreeGenerator {
                         }
                         valueTypes.put(valueType.getKey(), getValueType(valueType.getKey()));
                     } else {
-                        protobufImports.put(valueType.getKey(), getProtobufType(valueType.getKey()));
+                        protobufImports.add(getProtobufType(valueType.getKey()));
                     }
                 }
             }
         }
 
         // Add protobuf imports
-        for (java.util.Map.Entry<String, String> protobufImport : protobufImports.entrySet()) {
+        for (String protobufImport : protobufImports) {
             imports = imports.add(
                     Imports.getImportDeclarationNode(
                             "ballerina",
                             "protobuf",
-                            new String[]{"types", protobufImport.getValue()}
+                            new String[]{"types", protobufImport},
+                            ""
+                    )
+            );
+        }
+        // Add grpc server streaming imports
+        for (String sImport : grpcStreamImports) {
+            imports = imports.add(
+                    Imports.getImportDeclarationNode(
+                            "ballerina",
+                            "grpc",
+                            new String[]{"types", sImport},
+                            "s" + sImport
                     )
             );
         }

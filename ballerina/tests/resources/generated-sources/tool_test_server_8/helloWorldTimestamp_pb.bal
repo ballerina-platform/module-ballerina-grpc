@@ -1,7 +1,9 @@
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/protobuf.types.timestamp;
 import ballerina/protobuf.types.wrappers;
+import ballerina/protobuf.types.timestamp;
+import ballerina/grpc.types.timestamp as stimestamp;
+import ballerina/grpc.types.wrappers as swrappers;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -24,7 +26,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/getTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        timestamp:TimestampStream outputStream = new timestamp:TimestampStream(result);
+        stimestamp:TimestampStream outputStream = new stimestamp:TimestampStream(result);
         return new stream<time:Utc, grpc:Error?>(outputStream);
     }
 
@@ -39,7 +41,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/getTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        timestamp:TimestampStream outputStream = new timestamp:TimestampStream(result);
+        stimestamp:TimestampStream outputStream = new stimestamp:TimestampStream(result);
         return {content: new stream<time:Utc, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -54,7 +56,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/sendTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
@@ -69,7 +71,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/sendTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -84,7 +86,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/exchangeTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        timestamp:TimestampStream outputStream = new timestamp:TimestampStream(result);
+        stimestamp:TimestampStream outputStream = new stimestamp:TimestampStream(result);
         return new stream<time:Utc, grpc:Error?>(outputStream);
     }
 
@@ -99,7 +101,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/exchangeTime", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        timestamp:TimestampStream outputStream = new timestamp:TimestampStream(result);
+        stimestamp:TimestampStream outputStream = new stimestamp:TimestampStream(result);
         return {content: new stream<time:Utc, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -144,7 +146,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/sendGreeting", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
@@ -159,7 +161,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/sendGreeting", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 

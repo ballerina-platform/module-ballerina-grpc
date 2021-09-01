@@ -396,7 +396,7 @@ public class ServerUtils {
 
         String streamParam = outCap + "Stream";
         if (isBallerinaProtobufType(method.getOutputType())) {
-            streamParam = getProtobufType(method.getOutputType()) + ":" + streamParam;
+            streamParam = "s" + getProtobufType(method.getOutputType()) + ":" + streamParam;
         }
         VariableDeclaration stream = new VariableDeclaration(
                 getTypedBindingPatternNode(

@@ -1,7 +1,8 @@
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/protobuf.types.duration;
 import ballerina/protobuf.types.wrappers;
+import ballerina/protobuf.types.duration;
+import ballerina/grpc.types.duration as sduration;
 
 public isolated client class DurationHandlerClient {
     *grpc:AbstractClientEndpoint;
@@ -85,7 +86,7 @@ public isolated client class DurationHandlerClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        duration:DurationStream outputStream = new duration:DurationStream(result);
+        sduration:DurationStream outputStream = new sduration:DurationStream(result);
         return new stream<time:Seconds, grpc:Error?>(outputStream);
     }
 
@@ -100,7 +101,7 @@ public isolated client class DurationHandlerClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        duration:DurationStream outputStream = new duration:DurationStream(result);
+        sduration:DurationStream outputStream = new sduration:DurationStream(result);
         return {content: new stream<time:Seconds, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
