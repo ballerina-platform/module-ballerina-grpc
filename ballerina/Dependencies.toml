@@ -226,6 +226,24 @@ dependencies = [
 
 [[package]]
 org = "ballerina"
+name = "protobuf"
+version = "1.0.0"
+scope = "testOnly"
+transitive = false
+dependencies = [
+	{org = "ballerina", name = "time"}
+]
+modules = [
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.duration"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.empty"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.struct"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.timestamp"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.wrappers"}
+]
+
+[[package]]
+org = "ballerina"
 name = "regex"
 version = "1.0.0"
 transitive = false
