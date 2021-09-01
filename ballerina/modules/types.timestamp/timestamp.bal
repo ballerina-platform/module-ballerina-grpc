@@ -36,7 +36,7 @@ public class TimestampStream {
         if streamValue is grpc:Error? {
             return streamValue;
         } else {
-            return {value: <time:Utc>streamValue.value.cloneReadOnly()};
+            return {value: <time:Utc> streamValue.value.cloneReadOnly()};
         }
     }
 

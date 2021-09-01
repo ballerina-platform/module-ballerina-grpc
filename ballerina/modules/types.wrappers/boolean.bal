@@ -35,7 +35,7 @@ public class BooleanStream {
         if streamValue is grpc:Error? {
             return streamValue;
         } else {
-            return {value: <boolean>streamValue.value};
+            return {value: <boolean> streamValue.value};
         }
     }
 

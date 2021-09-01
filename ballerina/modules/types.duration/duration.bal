@@ -36,7 +36,7 @@ public class DurationStream {
         if streamValue is grpc:Error? {
             return streamValue;
         } else {
-            return {value: <time:Seconds>streamValue.value};
+            return {value: <time:Seconds> streamValue.value};
         }
     }
 
