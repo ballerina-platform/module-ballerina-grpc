@@ -17,37 +17,37 @@
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {enable:true}
-isolated function testClientStreamingFromReturnRecord() returns Error? {
-    HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
-    SayHelloStreamingClient streamingClient;
-    var res = helloWorldEp->sayHello();
-    if res is Error {
-        test:assertFail("Error from Connector: " + res.message());
-        return;
-    } else {
-        streamingClient = res;
-    }
-    io:println("Initialized connection sucessfully.");
-    SampleMsg33[] requests = [
-        {name: "WSO2", id: 0},
-        {name: "Microsoft", id: 1},
-        {name: "Facebook", id: 2},
-        {name: "Google", id: 3}
-    ];
-    foreach var r in requests {
-        Error? err = streamingClient->sendSampleMsg33(r);
-        if err is Error {
-            test:assertFail("Error from Connector: " + err.message());
-        }
-    }
-    check streamingClient->complete();
-    io:println("Completed successfully");
-    var response = check streamingClient->receiveContextSampleMsg33();
-    if response is ContextSampleMsg33 {
-        test:assertEquals(<SampleMsg33>response.content, {name: "WSO2", id: 1});
-    }
-}
+//@test:Config {enable:true}
+//isolated function testClientStreamingFromReturnRecord() returns Error? {
+//    HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
+//    SayHelloStreamingClient streamingClient;
+//    var res = helloWorldEp->sayHello();
+//    if res is Error {
+//        test:assertFail("Error from Connector: " + res.message());
+//        return;
+//    } else {
+//        streamingClient = res;
+//    }
+//    io:println("Initialized connection sucessfully.");
+//    SampleMsg33[] requests = [
+//        {name: "WSO2", id: 0},
+//        {name: "Microsoft", id: 1},
+//        {name: "Facebook", id: 2},
+//        {name: "Google", id: 3}
+//    ];
+//    foreach var r in requests {
+//        Error? err = streamingClient->sendSampleMsg33(r);
+//        if err is Error {
+//            test:assertFail("Error from Connector: " + err.message());
+//        }
+//    }
+//    check streamingClient->complete();
+//    io:println("Completed successfully");
+//    var response = check streamingClient->receiveContextSampleMsg33();
+//    if response is ContextSampleMsg33 {
+//        test:assertEquals(<SampleMsg33>response.content, {name: "WSO2", id: 1});
+//    }
+//}
 
 @test:Config {enable:true}
 isolated function testClientStreamingSendError() returns Error? {

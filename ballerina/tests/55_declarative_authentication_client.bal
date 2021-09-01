@@ -273,7 +273,7 @@ import ballerina/test;
 //        check ep55WithLdapAndScopes.immediateStop();
 //    }
 //}
-//
+
 @test:Config {enable: true}
 function testHello55BasicAuth() returns error? {
     CredentialsConfig config = {
@@ -289,7 +289,7 @@ function testHello55BasicAuth() returns error? {
         test:assertEquals(response, "Hello");
     }
 }
-//
+
 //@test:Config {enable: true}
 //function testHello55OAuth2Auth() returns error? {
 //    OAuth2ClientCredentialsGrantConfig config = {
