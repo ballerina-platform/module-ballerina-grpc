@@ -1,5 +1,6 @@
 import ballerina/grpc;
 import ballerina/protobuf.types.wrappers;
+import ballerina/grpc.types.wrappers as swrappers;
 
 public isolated client class ChatClient {
     *grpc:AbstractClientEndpoint;
@@ -88,7 +89,7 @@ public isolated client class ChatClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
@@ -103,7 +104,7 @@ public isolated client class ChatClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -118,7 +119,7 @@ public isolated client class ChatClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
@@ -133,7 +134,7 @@ public isolated client class ChatClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -235,7 +236,7 @@ public isolated client class Chat2Client {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
@@ -250,7 +251,7 @@ public isolated client class Chat2Client {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
@@ -265,7 +266,7 @@ public isolated client class Chat2Client {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
     }
 
@@ -280,7 +281,7 @@ public isolated client class Chat2Client {
         }
         var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        wrappers:StringStream outputStream = new wrappers:StringStream(result);
+        swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
     }
 

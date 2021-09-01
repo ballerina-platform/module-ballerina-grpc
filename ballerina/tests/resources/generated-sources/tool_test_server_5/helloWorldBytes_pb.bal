@@ -1,5 +1,6 @@
 import ballerina/grpc;
 import ballerina/protobuf.types.wrappers;
+import ballerina/grpc.types.wrappers as swrappers;
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -22,7 +23,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        wrappers:BytesStream outputStream = new wrappers:BytesStream(result);
+        swrappers:BytesStream outputStream = new swrappers:BytesStream(result);
         return new stream<byte[], grpc:Error?>(outputStream);
     }
 
@@ -37,7 +38,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        wrappers:BytesStream outputStream = new wrappers:BytesStream(result);
+        swrappers:BytesStream outputStream = new swrappers:BytesStream(result);
         return {content: new stream<byte[], grpc:Error?>(outputStream), headers: respHeaders};
     }
 }
