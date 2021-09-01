@@ -186,11 +186,8 @@ function testHelloWorldWithInvalidDependency() {
 }
 
 @test:Config {enable:true}
-function testMultipleWrapperTypes() {
-    var result = assertGeneratedDataTypeSources("data-types", "multiple_wrapper_types.proto", "multiple_wrapper_types_pb.bal", "tool_test_data_type_20");
-    if (result is error) {
-        test:assertFail("Failed to assert generated sources");
-    }
+function testMultipleWrapperTypes() returns error? {
+    var result =  check assertGeneratedDataTypeSources("data-types", "multiple_wrapper_types.proto", "multiple_wrapper_types_pb.bal", "tool_test_data_type_20");
 }
 
 @test:Config {enable:true}
