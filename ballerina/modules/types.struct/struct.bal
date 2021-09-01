@@ -35,7 +35,7 @@ public class StructStream {
         if streamValue is grpc:Error? {
             return streamValue;
         } else {
-            return {value: <map<anydata>>streamValue.value};
+            return {value: <map<anydata>> streamValue.value};
         }
     }
 

@@ -35,7 +35,7 @@ public class IntStream {
         if streamValue is grpc:Error? {
             return streamValue;
         } else {
-            return {value: <int>streamValue.value};
+            return {value: <int> streamValue.value};
         }
     }
 

@@ -35,7 +35,7 @@ public class BytesStream {
         if streamValue is grpc:Error? {
             return streamValue;
         } else {
-            return {value: <byte[]>streamValue.value};
+            return {value: <byte[]> streamValue.value};
         }
     }
 

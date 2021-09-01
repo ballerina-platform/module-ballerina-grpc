@@ -35,7 +35,7 @@ public class FloatStream {
         if streamValue is grpc:Error? {
             return streamValue;
         } else {
-            return {value: <float>streamValue.value};
+            return {value: <float> streamValue.value};
         }
     }
 
