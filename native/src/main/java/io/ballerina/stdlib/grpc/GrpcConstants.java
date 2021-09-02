@@ -206,6 +206,18 @@ public class GrpcConstants {
     public static final String DATA_LOSS_ERROR = "DataLossError";
     public static final String UNAUTHENTICATED_ERROR = "UnauthenticatedError";
 
+    // Logging related runtime parameter names
+    public static final String HTTP_TRACE_LOG = "http.tracelog";
+    public static final String HTTP_TRACE_LOG_ENABLED = "http.tracelog.enabled";
+    public static final String HTTP_ACCESS_LOG = "http.accesslog";
+    public static final String HTTP_ACCESS_LOG_ENABLED = "http.accesslog.enabled";
+
+    // TraceLog and AccessLog configs
+    public static final BString GRPC_LOG_CONSOLE = StringUtils.fromString("console");
+    public static final BString GRPC_LOG_FILE_PATH = StringUtils.fromString("path");
+    public static final BString GRPC_TRACE_LOG_HOST = StringUtils.fromString("host");
+    public static final BString GRPC_TRACE_LOG_PORT = StringUtils.fromString("port");
+
     public static final Map<Integer, String> STATUS_ERROR_MAP;
 
     static {
