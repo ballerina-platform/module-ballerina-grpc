@@ -18,8 +18,8 @@
 
 package io.ballerina.stdlib.grpc.logging;
 
-import io.ballerina.stdlib.http.api.logging.util.LogLevel;
-import io.ballerina.stdlib.http.api.logging.util.LogLevelMapper;
+import io.ballerina.stdlib.grpc.logging.util.LogLevel;
+import io.ballerina.stdlib.grpc.logging.util.LogLevelMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * A unit test class for Http module LogLevelMapper class functions.
+ * A unit test class for gRPC module LogLevelMapper class functions.
  */
 public class LogUtilTest {
 
