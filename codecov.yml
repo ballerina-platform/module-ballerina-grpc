@@ -1,3 +1,6 @@
+fixes:
+  - "ballerina/grpc/*/::../ballerina/"
+
 ignore:
   - "grpc-test-utils"
   - "ballerina-tests"
