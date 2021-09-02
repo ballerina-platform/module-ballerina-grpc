@@ -18,6 +18,7 @@ import ballerina/jballerina.java;
 
 function init() {
     setModule();
+    _ = initializeGrpcLogs(traceLogConsole, traceLogAdvancedConfig, accessLogConfig);
 }
 
 function setModule() = @java:Method {
