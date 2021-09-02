@@ -37,7 +37,7 @@ public enum LogLevel {
         return levelValue;
     }
 
-    public static io.ballerina.stdlib.grpc.logging.util.LogLevel toLogLevel(String logLevel) {
+    public static LogLevel toLogLevel(String logLevel) {
 
         io.ballerina.stdlib.grpc.logging.util.LogLevel level;
         try {
