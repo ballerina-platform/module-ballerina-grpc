@@ -55,7 +55,7 @@ public class GrpcLogManager extends LogManager {
                 getResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(is);
         } catch (IOException e) {
-            throw new RuntimeException("failed to read logging.properties file from the classpath", e);
+            throw new RuntimeException("Failed to read logging.properties file from the classpath", e);
         }
     }
 
@@ -98,7 +98,7 @@ public class GrpcLogManager extends LogManager {
                 grpcTraceLogger.addHandler(fileHandler);
                 traceLogsEnabled = true;
             } catch (IOException e) {
-                throw new RuntimeException("failed to setup GRPC trace log file: " + logFilePath.getValue(), e);
+                throw new RuntimeException("Failed to setup gRPC trace log file: " + logFilePath.getValue(), e);
             }
         }
 
@@ -112,14 +112,14 @@ public class GrpcLogManager extends LogManager {
                 grpcTraceLogger.addHandler(socketHandler);
                 traceLogsEnabled = true;
             } catch (IOException e) {
-                throw new RuntimeException("failed to connect to " + host.getValue() + ":" + port.intValue(), e);
+                throw new RuntimeException("Failed to connect to " + host.getValue() + ":" + port.intValue(), e);
             }
         }
 
         if (traceLogsEnabled) {
             grpcTraceLogger.setLevel(Level.FINEST);
             System.setProperty(HTTP_TRACE_LOG_ENABLED, "true");
-            stdErr.println("ballerina: GRPC trace log enabled");
+            stdErr.println("ballerina: gRPC trace log enabled");
         }
     }
 
@@ -155,13 +155,13 @@ public class GrpcLogManager extends LogManager {
                 grpcAccessLogger.setLevel(Level.INFO);
                 accessLogsEnabled = true;
             } catch (IOException e) {
-                throw new RuntimeException("failed to setup GRPC access log file: " + filePath.getValue(), e);
+                throw new RuntimeException("Failed to setup gRPC access log file: " + filePath.getValue(), e);
             }
         }
 
         if (accessLogsEnabled) {
             System.setProperty(HTTP_ACCESS_LOG_ENABLED, "true");
-            stdErr.println("ballerina: GRPC access log enabled");
+            stdErr.println("ballerina: gRPC access log enabled");
         }
     }
 

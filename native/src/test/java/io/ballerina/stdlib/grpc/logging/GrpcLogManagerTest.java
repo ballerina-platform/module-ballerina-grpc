@@ -46,7 +46,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
- * A unit test class for Grpc module GrpcLogManager class functions.
+ * A unit test class for gRPC module GrpcLogManager class functions.
  */
 public class GrpcLogManagerTest {
 
@@ -269,7 +269,7 @@ public class GrpcLogManagerTest {
     }
 
     @Test(expectedExceptions = RuntimeException.class,
-            expectedExceptionsMessageRegExp = "failed to setup GRPC trace log file: /test/logTestFile.txt")
+            expectedExceptionsMessageRegExp = "Failed to setup gRPC trace log file: /test/logTestFile.txt")
     public void testGrpcLogManagerWithInvalidTraceLogFilePath() {
 
         BMap traceLogAdvancedConfig = mock(BMap.class);
@@ -294,7 +294,7 @@ public class GrpcLogManagerTest {
     }
 
     @Test(expectedExceptions = RuntimeException.class,
-            expectedExceptionsMessageRegExp = "failed to connect to testHost:8080")
+            expectedExceptionsMessageRegExp = "Failed to connect to testHost:8080")
     public void testGrpcLogManagerWithNonExistingSocket() {
 
         BMap traceLogAdvancedConfig = mock(BMap.class);
@@ -318,7 +318,7 @@ public class GrpcLogManagerTest {
     }
 
     @Test(expectedExceptions = RuntimeException.class,
-            expectedExceptionsMessageRegExp = "failed to setup GRPC access log file: /test/logTestFile.txt")
+            expectedExceptionsMessageRegExp = "Failed to setup gRPC access log file: /test/logTestFile.txt")
     public void testGrpcLogManagerWithInvalidAccessLogPath() {
 
         BMap traceLogAdvancedConfig = mock(BMap.class);
