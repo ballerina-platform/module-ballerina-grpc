@@ -44,5 +44,5 @@ configurable AccessLogConfiguration accessLogConfig = {};
 
 isolated function initializeGrpcLogs(boolean traceLogConsole, TraceLogAdvancedConfiguration traceLogAdvancedConfig,
 AccessLogConfiguration accessLogConfig) returns handle = @java:Constructor {
-    'class: "io.ballerina.stdlib.grpc.logging.GrpcLogManager"
+    'class: "io.ballerina.stdlib.http.api.logging.HttpLogManager"
 } external;
