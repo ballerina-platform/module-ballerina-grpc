@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package io.ballerina.stdlib.grpc.logging;
+package io.ballerina.stdlib.grpc;
 
 import io.ballerina.stdlib.http.api.logging.util.LogLevel;
 import io.ballerina.stdlib.http.api.logging.util.LogLevelMapper;
