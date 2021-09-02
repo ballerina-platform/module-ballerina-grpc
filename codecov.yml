@@ -1,5 +1,9 @@
 fixes:
-  - "ballerina/grpc/*::../ballerina/"
+  - "ballerina/grpc/*/::../ballerina/"
+  - "ballerina/modules/types.duration/*::../ballerina/"
+  - "ballerina/modules/types.struct/*::../ballerina/"
+  - "ballerina/modules/types.timestamp/*::../ballerina/"
+  - "ballerina/modules/types.wrappers/*::../ballerina/"
 
 ignore:
   - "grpc-test-utils"
