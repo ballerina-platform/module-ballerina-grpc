@@ -63,61 +63,16 @@ dependencies {
     jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
     }
-    externalJars(group: 'io.ballerina.stdlib', name: 'http-native', version: "${stdlibHttpVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-common', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-buffer', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-transport', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-resolver', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-handler', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-codec', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-handler-proxy', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-codec-http2', version: "${nettyVersion}") {
-        transitive = false
-    }
     externalJars(group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
         transitive = false
     }
-    externalJars(group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: "${bouncycastleVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: "${bouncycastleVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: "${nettyTcnativeVersion}") {
-        transitive = false
-    }
     externalJars(group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'info.picocli', name: 'picocli', version: "${picocliVersion}") {
         transitive = false
     }
     externalJars(group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}") {
         transitive = false
     }
     externalJars(group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'org.wso2.orbit.org.antlr', name: 'antlr4-runtime', version: "${wso2OrbitAntlrVersion}") {
         transitive = false
     }
     externalJars(group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}") {
@@ -131,13 +86,6 @@ dependencies {
 
 clean {
     delete "$project.projectDir/target"
-}
-
-jar {
-    manifest {
-        attributes('Implementation-Title': project.name,
-                'Implementation-Version': project.version)
-    }
 }
 
 task unpackJballerinaTools(type: Copy) {
@@ -192,12 +140,6 @@ task updateTomlFiles {
     doLast {
         def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
-        newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
-        newBallerinaToml = newBallerinaToml.replace("@netty.version@", project.nettyVersion)
-        newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", project.nettyTcnativeVersion)
-        newBallerinaToml = newBallerinaToml.replace("@antlr.version@", project.wso2OrbitAntlrVersion)
-        newBallerinaToml = newBallerinaToml.replace("@commons.pool.version@", project.wso2CommonsPoolVersion)
-        newBallerinaToml = newBallerinaToml.replace("@bouncy.castle.version@", project.bouncycastleVersion)
         newBallerinaToml = newBallerinaToml.replace("@protobuf.java.version@", project.protobufJavaVersion)
         newBallerinaToml = newBallerinaToml.replace("@proto.google.commons.version@", project.protoGoogleCommonsVersion)
         newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)

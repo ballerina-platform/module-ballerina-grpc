@@ -1,5 +1,6 @@
 ignore:
   - "grpc-test-utils"
+  - "ballerina-tests"
 
 coverage:
   precision: 2
