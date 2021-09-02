@@ -31,8 +31,6 @@ def moduleName = "tests"
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
-// external jar file which need to pack to distribution
-def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
 def targetNativeJar = file("$project.rootDir/native/build/libs/${packageName}-native-${project.version}.jar")
 def originalBallerinaToml = ballerinaTomlFile.text
 def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
@@ -157,10 +155,6 @@ task copyExternalJars {
     doLast {
         copy {
             from targetNativeJar
-            into file("$artifactLibParent/libs")
-        }
-        copy {
-            from externalGoogleProtosCommonJar
             into file("$artifactLibParent/libs")
         }
         copy {
