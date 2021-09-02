@@ -41,8 +41,11 @@ dependencies {
     implementation group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}"
     implementation group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}"
     implementation group: 'info.picocli', name: 'picocli', version: "${picocliVersion}"
+    implementation group: 'com.google.code.gson', name: 'gson', version: "${gsonVersion}"
 
     testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+    testImplementation group: 'org.mockito', name:'mockito-inline', version: "${mockitoVersion}"
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: "${mockitoVersion}"
 }
 
 test {
