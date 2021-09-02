@@ -14,10 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/grpc;// This is server implementation for client streaming scenario
-
+import ballerina/grpc;
 import ballerina/log;
-
 
 // Server endpoint configuration
 listener grpc:Listener  ep4 = new (9094);
