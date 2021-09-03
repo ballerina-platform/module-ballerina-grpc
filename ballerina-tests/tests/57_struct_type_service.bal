@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+
 listener grpc:Listener ep57 = new (9157);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_57_STRUCT_TYPE, descMap: getDescriptorMap57StructType()}
