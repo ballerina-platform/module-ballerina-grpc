@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+
 listener grpc:Listener ep44 = new (9144);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_44_ROUTE_GUIDE, descMap: getDescriptorMap44RouteGuide()}

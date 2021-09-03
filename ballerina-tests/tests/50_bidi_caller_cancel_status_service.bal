@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+
 listener grpc:Listener ep50 = new (9150);
 boolean cancelled = false;
 

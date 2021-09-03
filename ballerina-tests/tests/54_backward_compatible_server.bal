@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+
 listener grpc:Listener ep54 = new (9154);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_54_BACKWARD_COMPATIBLE_CLIENT_PROTO, descMap: getDescriptorMap54BackwardCompatibleClientProto()}
