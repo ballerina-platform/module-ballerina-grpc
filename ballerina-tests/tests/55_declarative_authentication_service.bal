@@ -16,10 +16,10 @@
 
 import ballerina/grpc;
 
-listener grpc:Listener  ep55WithScopes = new (9155);
-listener grpc:Listener  ep55EmptyScope = new (9255);
-listener grpc:Listener  ep55WithLdapAndScopes = new (9256);
-listener grpc:Listener  ep55WithLdapAndEmptyScope = new (9257);
+listener grpc:Listener ep55WithScopes = new (9155);
+listener grpc:Listener ep55EmptyScope = new (9255);
+listener grpc:Listener ep55WithLdapAndScopes = new (9256);
+listener grpc:Listener ep55WithLdapAndEmptyScope = new (9257);
 
 grpc:JwtValidatorConfig jwtAuthConfig55 = {
     issuer: "wso2",

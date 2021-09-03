@@ -19,7 +19,7 @@ import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 import ballerina/oauth2;
 
-listener grpc:Listener  ep30 = new (9120);
+listener grpc:Listener ep30 = new (9120);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_30_UNARY_OAUTH2,

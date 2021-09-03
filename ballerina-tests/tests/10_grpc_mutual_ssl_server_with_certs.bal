@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/log;
 
-listener grpc:Listener  ep10 = new (9100,
+listener grpc:Listener ep10 = new (9100,
     host = "localhost",
     secureSocket = {
         key: {

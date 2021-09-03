@@ -18,7 +18,7 @@ import ballerina/grpc;
 import ballerina/log;
 
 // Server endpoint configuration
-listener grpc:Listener  ep4 = new (9094);
+listener grpc:Listener ep4 = new (9094);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_04_CLIENT_STREAMING_SERVICE,

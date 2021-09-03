@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-listener grpc:Listener  ep56 = new (9156);
+listener grpc:Listener ep56 = new (9156);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_56_SERVICE_PANIC_AFTER_SEND_ERROR, descMap: getDescriptorMap56ServicePanicAfterSendError()}
 service "HelloWorld56" on ep56 {

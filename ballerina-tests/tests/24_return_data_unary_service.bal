@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/io;
 
-listener grpc:Listener  ep24 = new (9114);
+listener grpc:Listener ep24 = new (9114);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_24_RETURN_DATA_UNARY,

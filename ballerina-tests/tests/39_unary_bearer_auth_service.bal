@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-listener grpc:Listener  ep39 = new (9129);
+listener grpc:Listener ep39 = new (9129);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_39_UNARY_BEARER_AUTH,

@@ -16,7 +16,7 @@
 
 import ballerina/grpc;import ballerina/log;
 
-listener grpc:Listener  ep45 = new (9145);
+listener grpc:Listener ep45 = new (9145);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_45_SERVICES_WITH_HEADERS, descMap: getDescriptorMap45ServicesWithHeaders()}
 service "HeadersService" on ep45 {

@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/log;
 
-listener grpc:Listener  ep53 = new (9153);
+listener grpc:Listener ep53 = new (9153);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_53_SERVER_STREAMING_NEGATIVE, descMap: getDescriptorMap53ServerStreamingNegative()}
 service "helloWorld53" on ep53 {

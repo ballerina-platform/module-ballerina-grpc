@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/time;
 
-listener grpc:Listener  ep47 = new (9147);
+listener grpc:Listener ep47 = new (9147);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_47_UNARY_TIMESTAMP, descMap: getDescriptorMap47UnaryTimestamp()}
 service "TimestampService" on ep47 {

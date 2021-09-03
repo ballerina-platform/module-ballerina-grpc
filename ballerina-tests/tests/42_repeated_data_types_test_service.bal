@@ -16,7 +16,7 @@
 
 import ballerina/grpc;import ballerina/log;
 
-listener grpc:Listener  ep42 = new (9142);
+listener grpc:Listener ep42 = new (9142);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_42_REPEATED_DATA_TYPES_TEST, descMap: getDescriptorMap42RepeatedDataTypesTest()}
 service "DataTypesService" on ep42 {

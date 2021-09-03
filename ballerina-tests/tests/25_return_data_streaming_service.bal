@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/io;
 
-listener grpc:Listener  ep25 = new (9115);
+listener grpc:Listener ep25 = new (9115);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_25_RETURN_DATA_STREAMING,

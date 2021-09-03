@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-listener grpc:Listener  ep58 = new (9158);
+listener grpc:Listener ep58 = new (9158);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_58_NESTED_MESSAGE_NESTED_ENUM, descMap: getDescriptorMap58NestedMessageNestedEnum()}
 service "helloWorldWithNestedMessageNestedEnum" on ep58 {

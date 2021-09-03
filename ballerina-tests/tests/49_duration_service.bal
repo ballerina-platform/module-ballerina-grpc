@@ -18,7 +18,7 @@ import ballerina/grpc;
 import ballerina/log;
 import ballerina/time;
 
-listener grpc:Listener  ep49 = new (9149);
+listener grpc:Listener ep49 = new (9149);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_49_DURATION, descMap: getDescriptorMap49Duration()}
 service "DurationHandler" on ep49 {

@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-listener grpc:Listener  ep20 = new (9110);
+listener grpc:Listener ep20 = new (9110);
 
 service object {} AnonService1 = @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20_UNARY_CLIENT_FOR_ANONYMOUS_SERVICE, descMap: getDescriptorMap20UnaryClientForAnonymousService()} 
 service object {

@@ -20,7 +20,7 @@ import ballerina/log;
 import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 
-listener grpc:Listener  ep36 = new (9126);
+listener grpc:Listener ep36 = new (9126);
 const string TEST_DEADLINE_HEADER = "testdeadline";
 
 @grpc:ServiceDescriptor {
