@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_13_GRPC_SERVICE_WITH_ERROR_RETURN,
     descMap: getDescriptorMap13GrpcServiceWithErrorReturn()
