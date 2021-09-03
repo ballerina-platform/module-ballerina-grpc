@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-// This is client implementation for server streaming scenario
 import ballerina/io;
 import ballerina/test;
 
