@@ -19,7 +19,7 @@ import ballerina/log;
 import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 
-listener grpc:Listener  ep37 = new (9127);
+listener grpc:Listener ep37 = new (9127);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_37_STREAMING_WITH_DEADLINE,

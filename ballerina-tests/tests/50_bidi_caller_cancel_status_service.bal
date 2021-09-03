@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-listener grpc:Listener  ep50 = new (9150);
+listener grpc:Listener ep50 = new (9150);
 boolean cancelled = false;
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_50_BIDI_CALLER_CANCEL_STATUS, descMap: getDescriptorMap50BidiCallerCancelStatus()}

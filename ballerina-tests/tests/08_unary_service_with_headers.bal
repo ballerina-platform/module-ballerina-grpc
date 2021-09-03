@@ -19,7 +19,7 @@ import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 
 // Server endpoint configuration
-listener grpc:Listener  ep8 = new (9098, {
+listener grpc:Listener ep8 = new (9098, {
     host:"localhost"
 });
 

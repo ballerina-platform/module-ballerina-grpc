@@ -19,7 +19,7 @@ import ballerina/log;
 import ballerina/lang.runtime;
 import ballerina/io;
 
-listener grpc:Listener  ep35 = new (9125);
+listener grpc:Listener ep35 = new (9125);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_35_UNARY_SERVICE_WITH_DEADLINE,

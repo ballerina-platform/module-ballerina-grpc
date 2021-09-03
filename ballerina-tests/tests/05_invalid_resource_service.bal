@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/log;
 
-listener grpc:Listener  ep5 = new (9095);
+listener grpc:Listener ep5 = new (9095);
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_05_INVALID_RESOURCE_SERVICE,
     descMap: getDescriptorMap05InvalidResourceService()

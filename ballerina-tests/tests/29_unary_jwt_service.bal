@@ -19,7 +19,7 @@ import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 import ballerina/jwt;
 
-listener grpc:Listener  ep29 = new (9119);
+listener grpc:Listener ep29 = new (9119);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_29_UNARY_JWT,

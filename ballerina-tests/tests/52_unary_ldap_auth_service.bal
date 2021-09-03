@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/auth;
 
-listener grpc:Listener  ep52 = new (9152);
+listener grpc:Listener ep52 = new (9152);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_52_UNARY_LDAP_AUTH,

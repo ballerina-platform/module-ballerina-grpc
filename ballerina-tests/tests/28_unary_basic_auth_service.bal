@@ -16,7 +16,7 @@
 
 import ballerina/grpc;import ballerina/auth;
 
-listener grpc:Listener  ep28 = new (9118);
+listener grpc:Listener ep28 = new (9118);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_28_UNARY_BASIC_AUTH,

@@ -19,7 +19,7 @@ import ballerina/lang.runtime as runtime;
 import ballerina/log;
 
 // Server endpoint configuration
-listener grpc:Listener  ep3 = new (9093, {
+listener grpc:Listener ep3 = new (9093, {
     host: "localhost",
     secureSocket: {
         key: {

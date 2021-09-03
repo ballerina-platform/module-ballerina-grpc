@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/log;
 
-listener grpc:Listener  ep46 = new (9146);
+listener grpc:Listener ep46 = new (9146);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_46_EMPTY_VALUES, descMap: getDescriptorMap46EmptyValues()}
 service "EmptyHandler" on ep46 {

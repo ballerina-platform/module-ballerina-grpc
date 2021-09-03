@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/io;
 
-listener grpc:Listener  ep27 = new (9117);
+listener grpc:Listener ep27 = new (9117);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_27_BIDIRECTIONAL_STREAMING_SERVICE,

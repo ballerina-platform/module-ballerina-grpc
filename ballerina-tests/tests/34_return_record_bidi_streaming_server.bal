@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/io;
 
-listener grpc:Listener  ep34 = new (9124);
+listener grpc:Listener ep34 = new (9124);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_34_RETURN_RECORD_BIDI_STREAMING,
