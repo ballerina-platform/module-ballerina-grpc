@@ -49,6 +49,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
 /**
  * Utility functions related to Server.
@@ -65,36 +67,52 @@ public class ServerUtils {
         Function function = new Function(method.getMethodName());
         String inputCap = "Nil";
         if (method.getInputType() != null) {
-            if (method.getInputType().equals("byte[]")) {
-                inputCap = "Bytes";
-            } else if (method.getInputType().equals("time:Utc")) {
-                inputCap = "Timestamp";
-            } else if (method.getInputType().equals("time:Seconds")) {
-                inputCap = "Duration";
-            } else if (method.getInputType().equals("map<anydata>")) {
-                inputCap = "Struct";
-            } else {
-                inputCap = capitalize(method.getInputType());
+            switch (method.getInputType()) {
+                case "byte[]":
+                    inputCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    inputCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    inputCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    inputCap = "Struct";
+                    break;
+                default:
+                    inputCap = capitalize(method.getInputType());
+                    break;
+            }
+            String contextParam = "Context" + inputCap;
+            if (isBallerinaProtobufType(method.getInputType())) {
+                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
-                            getSimpleNameReferenceNode("Context" + inputCap)
+                            getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
             );
         }
         String outCap;
-        if (method.getOutputType().equals("byte[]")) {
-            outCap = "Bytes";
-        } else if (method.getOutputType().equals("time:Utc")) {
-            outCap = "Timestamp";
-        } else if (method.getOutputType().equals("time:Seconds")) {
-            outCap = "Duration";
-        } else if (method.getOutputType().equals("map<anydata>")) {
-            outCap = "Struct";
-        } else {
-            outCap = capitalize(method.getOutputType());
+        switch (method.getOutputType()) {
+            case "byte[]":
+                outCap = "Bytes";
+                break;
+            case "time:Utc":
+                outCap = "Timestamp";
+                break;
+            case "time:Seconds":
+                outCap = "Duration";
+                break;
+            case "map<anydata>":
+                outCap = "Struct";
+                break;
+            default:
+                outCap = capitalize(method.getOutputType());
+                break;
         }
         function.addReturns(
                 getUnionTypeDescriptorNode(
@@ -123,40 +141,60 @@ public class ServerUtils {
         Function function = new Function(method.getMethodName() + "Context");
         String inputCap = "Nil";
         if (method.getInputType() != null) {
-            if (method.getInputType().equals("byte[]")) {
-                inputCap = "Bytes";
-            } else if (method.getInputType().equals("time:Utc")) {
-                inputCap = "Timestamp";
-            } else if (method.getInputType().equals("time:Seconds")) {
-                inputCap = "Duration";
-            } else if (method.getInputType().equals("map<anydata>")) {
-                inputCap = "Struct";
-            } else {
-                inputCap = capitalize(method.getInputType());
+            switch (method.getInputType()) {
+                case "byte[]":
+                    inputCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    inputCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    inputCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    inputCap = "Struct";
+                    break;
+                default:
+                    inputCap = capitalize(method.getInputType());
+                    break;
+            }
+            String contextParam = "Context" + inputCap;
+            if (isBallerinaProtobufType(method.getInputType())) {
+                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
-                            getSimpleNameReferenceNode("Context" + inputCap)
+                            getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
             );
         }
         String outputCap;
-        if (method.getOutputType().equals("byte[]")) {
-            outputCap = "Bytes";
-        } else if (method.getOutputType().equals("time:Utc")) {
-            outputCap = "Timestamp";
-        } else if (method.getOutputType().equals("time:Seconds")) {
-            outputCap = "Duration";
-        } else if (method.getOutputType().equals("map<anydata>")) {
-            outputCap = "Struct";
-        } else {
-            outputCap = capitalize(method.getOutputType());
+        switch (method.getOutputType()) {
+            case "byte[]":
+                outputCap = "Bytes";
+                break;
+            case "time:Utc":
+                outputCap = "Timestamp";
+                break;
+            case "time:Seconds":
+                outputCap = "Duration";
+                break;
+            case "map<anydata>":
+                outputCap = "Struct";
+                break;
+            default:
+                outputCap = capitalize(method.getOutputType());
+                break;
+        }
+        String contextStreamParam = "Context" + outputCap + "Stream";
+        if (isBallerinaProtobufType(method.getOutputType())) {
+            contextStreamParam = getProtobufType(method.getOutputType()) + ":" + contextStreamParam;
         }
         function.addReturns(
                 getUnionTypeDescriptorNode(
-                        getSimpleNameReferenceNode("Context" + outputCap + "Stream"),
+                        getSimpleNameReferenceNode(contextStreamParam),
                         SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
                 )
         );
@@ -180,16 +218,22 @@ public class ServerUtils {
 
     public static Class getServerStreamClass(Method method) {
         String outputCap;
-        if (method.getOutputType().equals("byte[]")) {
-            outputCap = "Bytes";
-        } else if (method.getOutputType().equals("time:Utc")) {
-            outputCap = "Timestamp";
-        } else if (method.getOutputType().equals("time:Seconds")) {
-            outputCap = "Duration";
-        } else if (method.getOutputType().equals("map<anydata>")) {
-            outputCap = "Struct";
-        } else {
-            outputCap = capitalize(method.getOutputType());
+        switch (method.getOutputType()) {
+            case "byte[]":
+                outputCap = "Bytes";
+                break;
+            case "time:Utc":
+                outputCap = "Timestamp";
+                break;
+            case "time:Seconds":
+                outputCap = "Duration";
+                break;
+            case "map<anydata>":
+                outputCap = "Struct";
+                break;
+            default:
+                outputCap = capitalize(method.getOutputType());
+                break;
         }
         Class serverStream = new Class(outputCap + "Stream", true);
 
@@ -350,12 +394,16 @@ public class ServerUtils {
         );
         function.addVariableStatement(payloadTuple.getVariableDeclarationNode());
 
+        String streamParam = outCap + "Stream";
+        if (isBallerinaProtobufType(method.getOutputType())) {
+            streamParam = "s" + getProtobufType(method.getOutputType()) + ":" + streamParam;
+        }
         VariableDeclaration stream = new VariableDeclaration(
                 getTypedBindingPatternNode(
-                        getSimpleNameReferenceNode(outCap + "Stream"),
+                        getSimpleNameReferenceNode(streamParam),
                         getCaptureBindingPatternNode("outputStream")
                 ),
-                getExplicitNewExpressionNode(outCap + "Stream", new String[]{"result"})
+                getExplicitNewExpressionNode(streamParam, new String[]{"result"})
         );
         function.addVariableStatement(stream.getVariableDeclarationNode());
     }

@@ -31,7 +31,6 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaratio
 import java.util.List;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.UNARY;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
@@ -87,13 +86,54 @@ public class CommonUtils {
         }
     }
 
+    public static boolean isBallerinaProtobufType(String type) {
+        if (type == null) {
+            return true;
+        }
+        switch (type) {
+            case "string" :
+            case "int" :
+            case "float" :
+            case "boolean" :
+            case "byte[]" :
+            case "time:Utc" :
+            case "time:Seconds" :
+            case "map<anydata>" :
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static String getProtobufType(String type) {
+        if (type == null) {
+            return "empty";
+        }
+        switch (type) {
+            case "string" :
+            case "int" :
+            case "float" :
+            case "boolean" :
+            case "byte[]" :
+                return "wrappers";
+            case "time:Utc" :
+                return "timestamp";
+            case "time:Seconds" :
+                return "duration";
+            case "map<anydata>" :
+                return "struct";
+            default:
+                return "";
+        }
+    }
+
     public static void addClientCallBody(Function function, String inputCap, Method method) {
         String methodName = method.getMethodType().equals(UNARY) ? "executeSimpleRPC" : "executeServerStreaming";
         if (method.getInputType() == null) {
             Map empty = new Map();
             VariableDeclaration message = new VariableDeclaration(
                     getTypedBindingPatternNode(
-                            getSimpleNameReferenceNode("Empty"),
+                            getSimpleNameReferenceNode("empty:Empty"),
                             getCaptureBindingPatternNode("message")
                     ),
                     empty.getMappingConstructorExpressionNode()
@@ -126,12 +166,15 @@ public class CommonUtils {
                     null
             );
             function.addVariableStatement(message.getVariableDeclarationNode());
+            String contextParam = "Context" + inputCap;
+            if (isBallerinaProtobufType(method.getInputType())) {
+                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+            }
             IfElse reqIsContext = new IfElse(
-                    getBracedExpressionNode(
-                            getTypeTestExpressionNode(
-                                    getSimpleNameReferenceNode("req"),
-                                    getSimpleNameReferenceNode("Context" + inputCap)
-                            )));
+                    getTypeTestExpressionNode(
+                            getSimpleNameReferenceNode("req"),
+                            getSimpleNameReferenceNode(contextParam)
+                    ));
             reqIsContext.addIfStatement(
                     getAssignmentStatementNode(
                             "message",
@@ -188,9 +231,6 @@ public class CommonUtils {
     }
 
     public static boolean isType(String methodType, String type) {
-        if (methodType != null && methodType.equals(type)) {
-            return true;
-        }
-        return false;
+        return methodType != null && methodType.equals(type);
     }
 }

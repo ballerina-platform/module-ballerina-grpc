@@ -1,0 +1,24 @@
+[package]
+org = "ballerina"
+name = "grpc_tests"
+version = "@toml.version@"
+
+[[platform.java11.dependency]]
+path = "../native/build/libs/grpc-native-@project.version@.jar"
+
+[[platform.java11.dependency]]
+path = "../test-utils/build/libs/grpc-test-utils-@project.version@.jar"
+scope = "testOnly"
+
+[[platform.java11.dependency]]
+path = "./lib/ballerina-cli-@ballerinalang.version@.jar"
+scope = "testOnly"
+
+[[platform.java11.dependency]]
+path = "./lib/protobuf-java-@protobuf.java.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/proto-google-common-protos-@proto.google.commons.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/formatter-core-@ballerinalang.version@.jar"
