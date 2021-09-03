@@ -15,7 +15,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/grpc;import ballerina/test;
+import ballerina/grpc;
+import ballerina/test;
 
 @test:Config {enable: true}
 isolated function testNestedMessagesWithUnary() returns error? {

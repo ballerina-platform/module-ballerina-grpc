@@ -14,7 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/grpc;import ballerina/auth;
+import ballerina/auth;
+import ballerina/grpc;
 
 listener grpc:Listener ep28 = new (9118);
 
