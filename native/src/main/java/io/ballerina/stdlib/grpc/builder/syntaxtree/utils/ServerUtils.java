@@ -88,10 +88,6 @@ public class ServerUtils {
             if (isBallerinaProtobufType(method.getInputType())) {
                 contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
             }
-            String contextParam = "Context" + inputCap;
-            if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
-            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
@@ -166,10 +162,6 @@ public class ServerUtils {
             if (isBallerinaProtobufType(method.getInputType())) {
                 contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
             }
-            String contextParam = "Context" + inputCap;
-            if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
-            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputType()),
@@ -195,10 +187,6 @@ public class ServerUtils {
             default:
                 outputCap = capitalize(method.getOutputType());
                 break;
-        }
-        String contextStreamParam = "Context" + outputCap + "Stream";
-        if (isBallerinaProtobufType(method.getOutputType())) {
-            contextStreamParam = getProtobufType(method.getOutputType()) + ":" + contextStreamParam;
         }
         String contextStreamParam = "Context" + outputCap + "Stream";
         if (isBallerinaProtobufType(method.getOutputType())) {

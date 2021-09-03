@@ -82,10 +82,6 @@ public class UnaryUtils {
             if (isBallerinaProtobufType(method.getInputType())) {
                 contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
             }
-            String contextParam = "Context" + inputCap;
-            if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
-            }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(
@@ -156,10 +152,6 @@ public class UnaryUtils {
                 default:
                     inputCap = capitalize(method.getInputType());
                     break;
-            }
-            String contextParam = "Context" + inputCap;
-            if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
             }
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
