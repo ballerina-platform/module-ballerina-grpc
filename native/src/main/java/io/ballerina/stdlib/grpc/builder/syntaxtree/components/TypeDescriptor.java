@@ -34,7 +34,6 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.ObjectFieldNode;
 import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
-import io.ballerina.compiler.syntax.tree.ParenthesisedTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.ReturnTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
@@ -257,14 +256,6 @@ public class TypeDescriptor {
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_RETURNS,
                 annotations,
                 type
-        );
-    }
-
-    public static ParenthesisedTypeDescriptorNode getParenthesisedTypeDescriptorNode(TypeDescriptorNode typeDesc) {
-        return NodeFactory.createParenthesisedTypeDescriptorNode(
-                SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
-                typeDesc,
-                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN
         );
     }
 

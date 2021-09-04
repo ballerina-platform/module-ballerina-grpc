@@ -17,6 +17,7 @@ include ':checkstyle'
 include ':grpc-native'
 include ':grpc-test-utils'
 include ':grpc-ballerina'
+include ':grpc-ballerina-tests'
 include ':grpc-compiler-plugin'
 include ':grpc-compiler-plugin-tests'
 include ':grpc-integration-tests'
@@ -26,6 +27,7 @@ project(':checkstyle').projectDir = file("build-config${File.separator}checkstyl
 project(':grpc-native').projectDir = file('native')
 project(':grpc-test-utils').projectDir = file('test-utils')
 project(':grpc-ballerina').projectDir = file('ballerina')
+project(':grpc-ballerina-tests').projectDir = file('ballerina-tests')
 project(':grpc-compiler-plugin').projectDir = file('compiler-plugin')
 project(':grpc-compiler-plugin-tests').projectDir = file('compiler-plugin-tests')
 project(':grpc-integration-tests').projectDir = file('integration-tests')

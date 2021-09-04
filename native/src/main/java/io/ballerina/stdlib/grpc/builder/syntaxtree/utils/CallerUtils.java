@@ -30,6 +30,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
 /**
  * Utility functions related to Caller.
@@ -80,16 +82,22 @@ public class CallerUtils {
 
         if (value != null) {
             String valueCap;
-            if (value.equals("byte[]")) {
-                valueCap = "Bytes";
-            } else if (value.equals("time:Utc")) {
-                valueCap = "Timestamp";
-            } else if (value.equals("time:Seconds")) {
-                valueCap = "Duration";
-            } else if (value.equals("map<anydata>")) {
-                valueCap = "Struct";
-            } else {
-                valueCap = capitalize(value);
+            switch (value) {
+                case "byte[]":
+                    valueCap = "Bytes";
+                    break;
+                case "time:Utc":
+                    valueCap = "Timestamp";
+                    break;
+                case "time:Seconds":
+                    valueCap = "Duration";
+                    break;
+                case "map<anydata>":
+                    valueCap = "Struct";
+                    break;
+                default:
+                    valueCap = capitalize(value);
+                    break;
             }
             Function send = new Function("send" + valueCap);
             send.addRequiredParameter(
@@ -107,9 +115,13 @@ public class CallerUtils {
             send.addQualifiers(new String[]{"isolated", "remote"});
             caller.addMember(send.getFunctionDefinitionNode());
 
+            String contextParam = "Context" + valueCap;
+            if (isBallerinaProtobufType(value)) {
+                contextParam = getProtobufType(value) + ":" + contextParam;
+            }
             Function sendContext = new Function("sendContext" + valueCap);
             sendContext.addRequiredParameter(
-                    getSimpleNameReferenceNode("Context" + valueCap),
+                    getSimpleNameReferenceNode(contextParam),
                     "response"
             );
             sendContext.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);

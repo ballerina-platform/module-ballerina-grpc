@@ -15,8 +15,6 @@
  *
  */
 
-import org.apache.tools.ant.taskdefs.condition.Os
-
 buildscript {
     repositories {
         maven {
@@ -179,125 +177,6 @@ task copyExternalJars {
     }
 }
 
-task startLdapServer() {
-    doLast {
-        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-            def stdOut = new ByteArrayOutputStream()
-            exec {
-                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
-                standardOutput = stdOut
-            }
-            if (!stdOut.toString().contains("openldap-server")) {
-                println "Starting LDAP server."
-                exec {
-                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml up -d"
-                    standardOutput = stdOut
-                }
-                println stdOut.toString()
-                sleep(5 * 1000)
-            } else {
-                println "LDAP server is already running."
-            }
-        }
-    }
-}
-
-task stopLdapServer() {
-    doLast {
-        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-            def stdOut = new ByteArrayOutputStream()
-            exec {
-                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
-                standardOutput = stdOut
-            }
-            if (stdOut.toString().contains("openldap-server")) {
-                println "Stopping LDAP server."
-                exec {
-                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml rm -svf"
-                    standardOutput = stdOut
-                }
-                println stdOut.toString()
-                sleep(5 * 1000)
-            } else {
-                println "LDAP server is not started."
-            }
-        }
-    }
-}
-
-def testContainerName = "go_grpc_simple_server"
-
-def checkGoServerStatus(containerName) {
-    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-        def stdOut = new ByteArrayOutputStream()
-        exec {
-            commandLine 'sh', '-c', "docker inspect ${containerName} | grep \"Running\""
-            standardOutput = stdOut
-        }
-        if (stdOut.toString().contains("true")) {
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-}
-
-task startGoServer() {
-    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-        def stdOut = new ByteArrayOutputStream()
-        exec {
-            commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
-            standardOutput = stdOut
-        }
-        if (!stdOut.toString().contains(testContainerName)) {
-            println "Starting Golang gRPC server."
-            def standardOutput = new ByteArrayOutputStream()
-            exec {
-                commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d daneshk/go_grpc_simple_server:latest"
-            }
-            def healthCheck = 1;
-            def counter = 0;
-            doLast {
-                while (healthCheck != 0 && counter < 12) {
-                    sleep(1000)
-                    healthCheck = checkGoServerStatus(testContainerName)
-                    counter = counter + 1;
-                }
-                if (healthCheck != 0) {
-                    throw new GradleException("Docker container ${testContainerName} health test exceeded timeout!")
-                }
-            }
-        } else {
-            println "Golang gRPC server is already running."
-        }
-    }
-}
-
-task stopGoServer() {
-    doLast {
-        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-            def stdOut = new ByteArrayOutputStream()
-            exec {
-                commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
-                standardOutput = stdOut
-            }
-            if (stdOut.toString().contains(testContainerName)) {
-                println "Stopping Golang gRPC server."
-                try {
-                    exec {
-                        commandLine 'sh', '-c', "docker stop ${testContainerName}"
-                        standardOutput = stdOut
-                    }
-                } catch (all) {
-                    println("Gradle process can safely ignore stopGoServerDockerContainer task")
-                }
-            } else {
-                println "Golang gRPC server is not started."
-            }
-        }
-    }
-}
-
 publishing {
     publications {
         maven(MavenPublication) {
@@ -318,16 +197,6 @@ publishing {
 }
 
 updateTomlFiles.dependsOn copyStdlibs
-
-test.finalizedBy stopLdapServer
-test.dependsOn startLdapServer
-test.finalizedBy stopGoServer
-test.dependsOn startGoServer
-
-build.finalizedBy stopLdapServer
-build.dependsOn startLdapServer
-build.finalizedBy stopGoServer
-build.dependsOn startGoServer
 
 build.dependsOn "generatePomFileForMavenPublication"
 build.dependsOn ":${packageName}-native:build"

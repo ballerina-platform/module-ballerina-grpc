@@ -1,0 +1,350 @@
+/*
+ * Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+plugins {
+    id 'jacoco'
+}
+
+apply plugin: 'java'
+
+description = 'Ballerina - gRPC Ballerina Tests'
+
+def packageName = "grpc"
+def packageOrg = "ballerina"
+def moduleName = "tests"
+def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
+def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
+def artifactLibParent = file("$project.projectDir/build/lib_parent/")
+def targetNativeJar = file("$project.rootDir/native/build/libs/${packageName}-native-${project.version}.jar")
+def originalBallerinaToml = ballerinaTomlFile.text
+def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
+def testCoverageParam = "--code-coverage --coverage-format=xml --includes=io.ballerina.stdlib.grpc.*:ballerina.grpc*"
+
+def stripBallerinaExtensionVersion(String extVersion) {
+    if (extVersion.matches(project.ext.timestampedVersionRegex)) {
+        def splitVersion = extVersion.split('-')
+        if (splitVersion.length > 3) {
+            def strippedValues = splitVersion[0..-4]
+            return strippedValues.join('-')
+        } else {
+            return extVersion
+        }
+    } else {
+        return extVersion.replace("${project.ext.snapshotVersion}", "")
+    }
+}
+
+configurations {
+    jbalTools
+    externalJars
+}
+
+dependencies {
+
+    jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'com.google.api.grpc', name: 'proto-google-common-protos', version: "${protoGoogleCommonsVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}") {
+        transitive = false
+    }
+    implementation group: 'org.ballerinalang', name: 'toml-parser', version: "${ballerinaTomlParserVersion}"
+}
+
+clean {
+    delete "$project.projectDir/target"
+}
+
+task unpackJballerinaTools(type: Copy) {
+    configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        from zipTree(artifact.getFile())
+        into new File("${buildDir}/target/extracted-distributions", "jballerina-tools-zip")
+    }
+}
+
+task unpackStdLibs() {
+    doLast {
+        configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            copy {
+                from project.zipTree(artifact.getFile())
+                into new File("${buildDir}/target/extracted-distributions", artifact.name + "-zip")
+            }
+        }
+    }
+}
+
+task copyStdlibsForTest(type: Copy) {
+    dependsOn(unpackJballerinaTools)
+    dependsOn(unpackStdLibs)
+
+    into ballerinaDist
+
+    /* Standard Libraries */
+    configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        def artifactExtractedPath = "${buildDir}/target/extracted-distributions/" + artifact.name + "-zip"
+        into("repo/bala") {
+            from "${artifactExtractedPath}/bala/"
+        }
+        into("repo/cache") {
+            from "${artifactExtractedPath}/cache"
+        }
+    }
+}
+
+task copyGrpcStdlib {
+    dependsOn(":grpc-ballerina:build")
+    dependsOn(copyStdlibsForTest)
+    doLast {
+        /* Copy gRPC module */
+        copy {
+            from "$project.rootDir/ballerina/build/cache_parent/bala"
+            into "${ballerinaDist}/repo/bala"
+        }
+    }
+}
+
+task updateTomlFiles {
+    doLast {
+        def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
+        newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
+        newBallerinaToml = newBallerinaToml.replace("@protobuf.java.version@", project.protobufJavaVersion)
+        newBallerinaToml = newBallerinaToml.replace("@proto.google.commons.version@", project.protoGoogleCommonsVersion)
+        newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
+        ballerinaTomlFile.text = newBallerinaToml
+    }
+}
+
+task revertTomlFiles {
+    doLast {
+        ballerinaTomlFile.text = originalBallerinaToml
+    }
+}
+
+task copyExternalJars {
+    doLast {
+        copy {
+            from targetNativeJar
+            into file("$artifactLibParent/libs")
+        }
+        copy {
+            into "$project.projectDir/lib"
+            from project.configurations.externalJars
+        }
+    }
+}
+
+def groupParams = ""
+def disableGroups = ""
+def debugParams = ""
+def balJavaDebugParam = ""
+def testParams = ""
+
+task initializeVariables {
+    if (project.hasProperty("groups")) {
+        groupParams = "--groups ${project.findProperty("groups")}"
+    }
+    if (project.hasProperty("disable")) {
+        disableGroups = "--disable-groups ${project.findProperty("disable")}"
+    }
+    if (project.hasProperty("debug")) {
+        debugParams = "--debug ${project.findProperty("debug")}"
+    }
+    if (project.hasProperty("balJavaDebug")) {
+        balJavaDebugParam = "BAL_JAVA_DEBUG=${project.findProperty("balJavaDebug")}"
+    }
+
+    gradle.taskGraph.whenReady { graph ->
+        if (graph.hasTask(":${packageName}-ballerina:test")) {
+            testParams = "${testCoverageParam}"
+        } else {
+            testParams = "--skip-tests"
+        }
+    }
+}
+
+task ballerinaTest {
+    inputs.dir file(project.projectDir)
+    dependsOn(":${packageName}-${packageOrg}:build")
+    dependsOn(updateTomlFiles)
+    dependsOn(copyGrpcStdlib)
+    dependsOn(initializeVariables)
+    dependsOn(":${packageName}-${packageOrg}-${moduleName}:compileJava")
+    dependsOn(":${packageName}-${packageOrg}-${moduleName}:jar")
+    dependsOn(":${packageName}-${packageOrg}-${moduleName}:processResources")
+    finalizedBy(revertTomlFiles)
+
+    doLast {
+        exec {
+            workingDir project.projectDir
+            environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                commandLine 'cmd', '/c', "${balJavaDebugParam} ${distributionBinPath}/bal.bat test " +
+                        "${testParams} ${groupParams} ${disableGroups} ${debugParams} && " +
+                        "exit %%ERRORLEVEL%%"
+            } else {
+                commandLine 'sh', '-c', "${balJavaDebugParam} ${distributionBinPath}/bal test " +
+                        "${testParams} ${groupParams} ${disableGroups} ${debugParams}"
+            }
+        }
+    }
+}
+
+task startLdapServer() {
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
+                standardOutput = stdOut
+            }
+            if (!stdOut.toString().contains("openldap-server")) {
+                println "Starting LDAP server."
+                exec {
+                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml up -d"
+                    standardOutput = stdOut
+                }
+                println stdOut.toString()
+                sleep(5 * 1000)
+            } else {
+                println "LDAP server is already running."
+            }
+        }
+    }
+}
+
+task stopLdapServer() {
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
+                standardOutput = stdOut
+            }
+            if (stdOut.toString().contains("openldap-server")) {
+                println "Stopping LDAP server."
+                exec {
+                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml rm -svf"
+                    standardOutput = stdOut
+                }
+                println stdOut.toString()
+                sleep(5 * 1000)
+            } else {
+                println "LDAP server is not started."
+            }
+        }
+    }
+}
+
+def testContainerName = "go_grpc_simple_server"
+
+def checkGoServerStatus(containerName) {
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+        def stdOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'sh', '-c', "docker inspect ${containerName} | grep \"Running\""
+            standardOutput = stdOut
+        }
+        if (stdOut.toString().contains("true")) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+}
+
+task startGoServer() {
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+        def stdOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
+            standardOutput = stdOut
+        }
+        if (!stdOut.toString().contains(testContainerName)) {
+            println "Starting Golang gRPC server."
+            def standardOutput = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d daneshk/go_grpc_simple_server:latest"
+            }
+            def healthCheck = 1;
+            def counter = 0;
+            doLast {
+                while (healthCheck != 0 && counter < 12) {
+                    sleep(1000)
+                    healthCheck = checkGoServerStatus(testContainerName)
+                    counter = counter + 1;
+                }
+                if (healthCheck != 0) {
+                    throw new GradleException("Docker container ${testContainerName} health test exceeded timeout!")
+                }
+            }
+        } else {
+            println "Golang gRPC server is already running."
+        }
+    }
+}
+
+task stopGoServer() {
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
+                standardOutput = stdOut
+            }
+            if (stdOut.toString().contains(testContainerName)) {
+                println "Stopping Golang gRPC server."
+                try {
+                    exec {
+                        commandLine 'sh', '-c', "docker stop ${testContainerName}"
+                        standardOutput = stdOut
+                    }
+                } catch (all) {
+                    println("Gradle process can safely ignore stopGoServerDockerContainer task")
+                }
+            } else {
+                println "Golang gRPC server is not started."
+            }
+        }
+    }
+}
+
+build.dependsOn ":${packageName}-test-utils:build"
+ballerinaTest.finalizedBy stopLdapServer
+ballerinaTest.dependsOn startLdapServer
+ballerinaTest.finalizedBy stopGoServer
+ballerinaTest.dependsOn startGoServer
+ballerinaTest.dependsOn ":${packageName}-test-utils:build"
+ballerinaTest.dependsOn copyExternalJars
+test.dependsOn ballerinaTest
+build.dependsOn test
