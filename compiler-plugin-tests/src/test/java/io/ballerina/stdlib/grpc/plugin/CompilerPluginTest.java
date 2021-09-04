@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 /**
  * gRPC Compiler plugin tests.
@@ -107,12 +108,10 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(29:0,42:1)] undefined annotation: " +
                 "grpc:ServiceDescriptor";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
-        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode());
-        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
-                d -> errMsg.equals(d.toString())));
+        Stream<Diagnostic> grpcErrorDiagnostic = diagnosticResult.diagnostics().stream().filter(
+                diagnostic -> diagnostic.diagnosticInfo().code().equals(
+                        GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode()));
+        Assert.assertTrue(grpcErrorDiagnostic.anyMatch(d -> errMsg.equals(d.toString())));
     }
 
     @Test
