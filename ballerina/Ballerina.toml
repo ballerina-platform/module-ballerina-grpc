@@ -3,6 +3,7 @@ org = "ballerina"
 name = "grpc"
 version = "@toml.version@"
 distribution = "slbeta3"
+export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers"]
 
 [[platform.java11.dependency]]
 path = "../native/build/libs/grpc-native-@project.version@.jar"
