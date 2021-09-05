@@ -8,6 +8,10 @@ fixes:
 ignore:
   - "grpc-test-utils"
   - "ballerina-tests"
+  - "compiler-plugin-tests"
+  - "test-utils"
+  - "examples"
+  - "integration-tests"
 
 coverage:
   precision: 2
