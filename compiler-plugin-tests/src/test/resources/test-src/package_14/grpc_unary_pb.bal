@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+import ballerina/protobuf.types.wrappers;
 
 public isolated client class HelloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -23,13 +24,13 @@ public isolated client class HelloWorldClient {
 
     public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_GRPC_UNARY, getDescriptorMapGrpcUnary());
     }
 
-    isolated remote function helloWorld(string|ContextString req) returns (string|grpc:Error) {
+    isolated remote function helloWorld(string|wrappers:ContextString req) returns string|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -40,10 +41,10 @@ public isolated client class HelloWorldClient {
         return result.toString();
     }
 
-    isolated remote function helloWorldContext(string|ContextString req) returns (ContextString|grpc:Error) {
+    isolated remote function helloWorldContext(string|wrappers:ContextString req) returns wrappers:ContextString|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -62,13 +63,13 @@ public isolated client class HelloBallerinaClient {
 
     public isolated function init(string url, *grpc:ClientConfiguration config) returns grpc:Error? {
         self.grpcClient = check new (url, config);
-        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
+        check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_GRPC_UNARY, getDescriptorMapGrpcUnary());
     }
 
-    isolated remote function helloBallerina(string|ContextString req) returns (string|grpc:Error) {
+    isolated remote function helloBallerina(string|wrappers:ContextString req) returns string|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -79,10 +80,10 @@ public isolated client class HelloBallerinaClient {
         return result.toString();
     }
 
-    isolated remote function helloBallerinaContext(string|ContextString req) returns (ContextString|grpc:Error) {
+    isolated remote function helloBallerinaContext(string|wrappers:ContextString req) returns wrappers:ContextString|grpc:Error {
         map<string|string[]> headers = {};
         string message;
-        if (req is ContextString) {
+        if req is wrappers:ContextString {
             message = req.content;
             headers = req.headers;
         } else {
@@ -109,7 +110,7 @@ public client class HelloWorldStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -141,7 +142,7 @@ public client class HelloBallerinaStringCaller {
         return self.caller->send(response);
     }
 
-    isolated remote function sendContextString(ContextString response) returns grpc:Error? {
+    isolated remote function sendContextString(wrappers:ContextString response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -158,13 +159,9 @@ public client class HelloBallerinaStringCaller {
     }
 }
 
-public type ContextString record {|
-    string content;
-    map<string|string[]> headers;
-|};
+const string ROOT_DESCRIPTOR_GRPC_UNARY = "0A10677270635F756E6172792E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32560A0A48656C6C6F576F726C6412480A0A68656C6C6F576F726C64121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565325E0A0E48656C6C6F42616C6C6572696E61124C0A0E68656C6C6F42616C6C6572696E61121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";
 
-const string ROOT_DESCRIPTOR = "0A10677270635F756E6172792E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32560A0A48656C6C6F576F726C6412480A0A68656C6C6F576F726C64121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565325E0A0E48656C6C6F42616C6C6572696E61124C0A0E68656C6C6F42616C6C6572696E61121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33";
-
-isolated function getDescriptorMap() returns map<string> {
+public isolated function getDescriptorMapGrpcUnary() returns map<string> {
     return {"google/protobuf/wrappers.proto": "0A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F120F676F6F676C652E70726F746F62756622230A0B446F75626C6556616C756512140A0576616C7565180120012801520576616C756522220A0A466C6F617456616C756512140A0576616C7565180120012802520576616C756522220A0A496E74363456616C756512140A0576616C7565180120012803520576616C756522230A0B55496E74363456616C756512140A0576616C7565180120012804520576616C756522220A0A496E74333256616C756512140A0576616C7565180120012805520576616C756522230A0B55496E74333256616C756512140A0576616C756518012001280D520576616C756522210A09426F6F6C56616C756512140A0576616C7565180120012808520576616C756522230A0B537472696E6756616C756512140A0576616C7565180120012809520576616C756522220A0A427974657356616C756512140A0576616C756518012001280C520576616C756542570A13636F6D2E676F6F676C652E70726F746F627566420D577261707065727350726F746F50015A057479706573F80101A20203475042AA021E476F6F676C652E50726F746F6275662E57656C6C4B6E6F776E5479706573620670726F746F33", "grpc_unary.proto": "0A10677270635F756E6172792E70726F746F120C6772706373657276696365731A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32560A0A48656C6C6F576F726C6412480A0A68656C6C6F576F726C64121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565325E0A0E48656C6C6F42616C6C6572696E61124C0A0E68656C6C6F42616C6C6572696E61121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C7565620670726F746F33"};
 }
+

@@ -14,12 +14,15 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/grpc;
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_GRPC_UNARY, descMap: getDescriptorMapGrpcUnary()}
-service "/HelloBallerina" on ep {
+package grpcservices;
 
-    remote function helloBallerina(string value) returns string|error {
-        return "Hello Client";
-    }
+service HelloWorld {
+  rpc helloWorld (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+}
+
+service HelloBallerina {
+  rpc helloBallerina (google.protobuf.StringValue) returns (google.protobuf.StringValue);
 }

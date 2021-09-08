@@ -19,8 +19,8 @@ import ballerina/grpc;
 listener grpc:Listener ep = new (9090);
 
 @grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR,
-    descMap: getDescriptorMap()
+    descriptor: ROOT_DESCRIPTOR_GRPC_UNARY,
+    descMap: getDescriptorMapGrpcUnary()
 }
 service "" on ep {
 
