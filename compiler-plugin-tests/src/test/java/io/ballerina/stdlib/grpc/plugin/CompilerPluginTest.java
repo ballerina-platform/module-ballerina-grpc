@@ -213,6 +213,52 @@ public class CompilerPluginTest {
         Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
     }
 
+    @Test
+    public void testCompilerPluginUnaryWithEmptyServiceName() {
+
+        Package currentPackage = loadPackage("package_14");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 2);
+
+        String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(18:0,27:1)] invalid service name. " +
+                "Service name cannot be nil";
+        Diagnostic diagnostic1 = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
+        Assert.assertEquals(diagnostic1.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getErrorCode());
+        Assert.assertEquals(diagnostic1.toString(), errMsg1);
+
+        String errMsg2 = "ERROR [HelloWorld_sample_service.bal:(24:8,24:10)] invalid service name. " +
+                "Service name cannot be nil";
+        Diagnostic diagnostic2 = (Diagnostic) diagnosticResult.diagnostics().toArray()[1];
+        Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getErrorCode());
+        Assert.assertEquals(diagnostic2.toString(), errMsg2);
+    }
+
+    @Test
+    public void testCompilerPluginUnaryWithHierarchicalServiceName() {
+
+        Package currentPackage = loadPackage("package_15");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.diagnostics().size(), 2);
+
+        String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(19:8,19:25)] invalid service name. " +
+                "Service name should not be a hierarchical name";
+        Diagnostic diagnostic1 = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
+        Assert.assertEquals(diagnostic1.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.HIERARCHICAL_SERVICE_NAME.getErrorCode());
+        Assert.assertEquals(diagnostic1.toString(), errMsg1);
+
+        String errMsg2 = "ERROR [HelloWorld_sample_service.bal:(21:8,21:9)] invalid service name. " +
+                "Service name should not be a hierarchical name";
+        Diagnostic diagnostic2 = (Diagnostic) diagnosticResult.diagnostics().toArray()[1];
+        Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.HIERARCHICAL_SERVICE_NAME.getErrorCode());
+        Assert.assertEquals(diagnostic2.toString(), errMsg2);
+    }
+
     private Package loadPackage(String path) {
 
         Path projectDirPath = RESOURCE_DIRECTORY.resolve(path);

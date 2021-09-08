@@ -74,6 +74,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
             if (isBallerinaGrpcService(serviceDeclarationSymbol)) {
                 String serviceName = serviceNameFromServiceDeclarationNode(serviceDeclarationNode);
                 validateServiceAnnotation(serviceDeclarationNode, syntaxNodeAnalysisContext, serviceDeclarationSymbol);
+                validateServiceName(serviceDeclarationNode, syntaxNodeAnalysisContext, serviceName);
                 serviceDeclarationNode.members().stream().filter(child ->
                         child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
                                 || child.kind() == SyntaxKind.RESOURCE_ACCESSOR_DEFINITION).forEach(node -> {
@@ -117,6 +118,23 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
             }
         }
         return false;
+    }
+
+    private void validateServiceName(ServiceDeclarationNode serviceDeclarationNode,
+                                     SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String serviceName) {
+        if (serviceDeclarationNode.absoluteResourcePath().isEmpty()) {
+            reportErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
+                    (GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getError()),
+                    GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getErrorCode());
+        } else if (serviceName.equals("")) {
+            reportErrorDiagnostic(serviceDeclarationNode.absoluteResourcePath().get(0), syntaxNodeAnalysisContext,
+                    (GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getError()),
+                    GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getErrorCode());
+        } else if (serviceName.contains("/")) {
+            reportErrorDiagnostic(serviceDeclarationNode.absoluteResourcePath().get(0), syntaxNodeAnalysisContext,
+                    (GrpcCompilerPluginConstants.CompilationErrors.HIERARCHICAL_SERVICE_NAME.getError()),
+                    GrpcCompilerPluginConstants.CompilationErrors.HIERARCHICAL_SERVICE_NAME.getErrorCode());
+        }
     }
 
     private void validateServiceAnnotation(ServiceDeclarationNode serviceDeclarationNode,
