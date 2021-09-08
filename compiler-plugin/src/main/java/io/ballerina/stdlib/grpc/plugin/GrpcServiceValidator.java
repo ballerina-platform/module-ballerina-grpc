@@ -74,7 +74,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
             if (isBallerinaGrpcService(serviceDeclarationSymbol)) {
                 String serviceName = serviceNameFromServiceDeclarationNode(serviceDeclarationNode);
                 validateServiceAnnotation(serviceDeclarationNode, syntaxNodeAnalysisContext, serviceDeclarationSymbol);
-                validateServiceName(serviceDeclarationNode, syntaxNodeAnalysisContext, serviceName);
+                validateServiceName(serviceDeclarationNode, syntaxNodeAnalysisContext,
+                        getFullServiceNameFromServiceDeclarationNode(serviceDeclarationNode));
                 serviceDeclarationNode.members().stream().filter(child ->
                         child.kind() == SyntaxKind.OBJECT_METHOD_DEFINITION
                                 || child.kind() == SyntaxKind.RESOURCE_ACCESSOR_DEFINITION).forEach(node -> {
@@ -124,16 +125,19 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                                      SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String serviceName) {
         if (serviceDeclarationNode.absoluteResourcePath().isEmpty()) {
             reportErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
-                    (GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getError()),
-                    GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getErrorCode());
+                    (GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getError() +
+                            ". Service name cannot be nil"),
+                    GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
         } else if (serviceName.equals("")) {
             reportErrorDiagnostic(serviceDeclarationNode.absoluteResourcePath().get(0), syntaxNodeAnalysisContext,
-                    (GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getError()),
-                    GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getErrorCode());
+                    (GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getError() +
+                            ". Service name cannot be nil"),
+                    GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
         } else if (serviceName.contains("/")) {
             reportErrorDiagnostic(serviceDeclarationNode.absoluteResourcePath().get(0), syntaxNodeAnalysisContext,
-                    (GrpcCompilerPluginConstants.CompilationErrors.HIERARCHICAL_SERVICE_NAME.getError()),
-                    GrpcCompilerPluginConstants.CompilationErrors.HIERARCHICAL_SERVICE_NAME.getErrorCode());
+                    (GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getError() +
+                            " " + serviceName + ". Service name should not be a hierarchical name"),
+                    GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
         }
     }
 
@@ -255,6 +259,16 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
             return serviceName.replaceAll("\"", "").strip();
         }
         return "";
+    }
+
+    private String getFullServiceNameFromServiceDeclarationNode(ServiceDeclarationNode serviceDeclarationNode) {
+
+        NodeList<Node> nodeList = serviceDeclarationNode.absoluteResourcePath();
+        StringBuilder serviceNameBuilder = new StringBuilder();
+        for (Node node: nodeList) {
+            serviceNameBuilder.append(node.toString());
+        }
+        return serviceNameBuilder.toString().replaceAll("\"", "").strip();
     }
 
     private String typeNameFromParameterNode(ParameterNode parameterNode) {

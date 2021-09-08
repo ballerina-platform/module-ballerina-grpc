@@ -223,10 +223,10 @@ public class CompilerPluginTest {
 
         Diagnostic diagnostic1 = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnostic1.diagnosticInfo().code(),
-                GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
         Diagnostic diagnostic2 = (Diagnostic) diagnosticResult.diagnostics().toArray()[1];
         Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
-                GrpcCompilerPluginConstants.CompilationErrors.EMPTY_SERVICE_NAME.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
 
         String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(18:0,27:1)] invalid service name. " +
                 "Service name cannot be nil";
@@ -248,15 +248,15 @@ public class CompilerPluginTest {
 
         Diagnostic diagnostic1 = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
         Assert.assertEquals(diagnostic1.diagnosticInfo().code(),
-                GrpcCompilerPluginConstants.CompilationErrors.HIERARCHICAL_SERVICE_NAME.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
         Diagnostic diagnostic2 = (Diagnostic) diagnosticResult.diagnostics().toArray()[1];
         Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
-                GrpcCompilerPluginConstants.CompilationErrors.HIERARCHICAL_SERVICE_NAME.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
 
-        String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(19:8,19:25)] invalid service name. " +
+        String errMsg1 = "ERROR [HelloWorld_sample_service.bal:(21:8,21:9)] invalid service name /HelloWorld. " +
                 "Service name should not be a hierarchical name";
-        String errMsg2 = "ERROR [HelloWorld_sample_service.bal:(21:8,21:9)] invalid service name. " +
-                "Service name should not be a hierarchical name";
+        String errMsg2 = "ERROR [HelloBallerina_sample_service.bal:(19:8,19:25)] invalid service name " +
+                "/HelloBallerina. Service name should not be a hierarchical name";
         String[] actualErrors  = {diagnostic1.toString(), diagnostic2.toString()};
         String[] expectedErrors  = {errMsg1, errMsg2};
         Assert.assertEqualsNoOrder(actualErrors, expectedErrors);
