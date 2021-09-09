@@ -15,6 +15,8 @@
  *
  */
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         maven {
@@ -35,14 +37,14 @@ description = 'Ballerina - gRPC Ballerina Generator'
 def packageName = "grpc"
 def packageOrg = "ballerina"
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
+def ballerinaTomlFilePlaceHolder = new File("${project.rootDir}/build-config/resources/Ballerina.toml")
+def compilerPluginTomlFilePlaceHolder = new File("${project.rootDir}/build-config/resources/CompilerPlugin.toml")
 def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
 def compilerPluginTomlFile = new File("$project.projectDir/CompilerPlugin.toml")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 // external jar file which need to pack to distribution
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
 def targetNativeJar = file("$project.rootDir/native/build/libs/${packageName}-native-${project.version}.jar")
-def originalBallerinaToml = ballerinaTomlFile.text
-def originalCompilerPluginToml = compilerPluginTomlFile.text
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
@@ -139,7 +141,7 @@ dependencies {
 
 task updateTomlFiles {
     doLast {
-        def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
+        def newBallerinaToml = ballerinaTomlFilePlaceHolder.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
         newBallerinaToml = newBallerinaToml.replace("@netty.version@", project.nettyVersion)
@@ -152,15 +154,21 @@ task updateTomlFiles {
         newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
         ballerinaTomlFile.text = newBallerinaToml
 
-        def newCompilerPluginToml = compilerPluginTomlFile.text.replace("@project.version@", project.version)
+        def newCompilerPluginToml = compilerPluginTomlFilePlaceHolder.text.replace("@project.version@", project.version)
         compilerPluginTomlFile.text = newCompilerPluginToml
     }
 }
 
-task revertTomlFiles {
+task commitTomlFiles {
     doLast {
-        ballerinaTomlFile.text = originalBallerinaToml
-        compilerPluginTomlFile.text = originalCompilerPluginToml
+        project.exec {
+            ignoreExitValue true
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                commandLine 'cmd', '/c', "git commit Ballerina.toml CompilerPlugin.toml -m '[Automated] Update the native jar versions'"
+            } else {
+                commandLine 'sh', '-c', "git commit Ballerina.toml CompilerPlugin.toml -m '[Automated] Update the native jar versions'"
+            }
+        }
     }
 }
 
