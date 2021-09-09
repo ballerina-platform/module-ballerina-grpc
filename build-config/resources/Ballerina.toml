@@ -1,0 +1,75 @@
+[package]
+org = "ballerina"
+name = "grpc"
+version = "@toml.version@"
+distribution = "slbeta3"
+export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers"]
+
+[[platform.java11.dependency]]
+path = "../native/build/libs/grpc-native-@project.version@.jar"
+
+[[platform.java11.dependency]]
+path = "../test-utils/build/libs/grpc-test-utils-@project.version@.jar"
+scope = "testOnly"
+
+[[platform.java11.dependency]]
+path = "./lib/ballerina-cli-@ballerinalang.version@.jar"
+scope = "testOnly"
+
+[[platform.java11.dependency]]
+path = "./lib/antlr4-runtime-@antlr.version@.jar"
+scope = "testOnly"
+
+[[platform.java11.dependency]]
+path = "./lib/http-native-@http.native.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-common-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-buffer-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-transport-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-resolver-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-handler-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-codec-http-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-codec-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-handler-proxy-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-codec-http2-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/commons-pool-@commons.pool.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/bcprov-jdk15on-@bouncy.castle.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/bcpkix-jdk15on-@bouncy.castle.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/protobuf-java-@protobuf.java.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/proto-google-common-protos-@proto.google.commons.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/formatter-core-@ballerinalang.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/ballerina-parser-@ballerinalang.version@.jar"
