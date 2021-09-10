@@ -43,7 +43,9 @@ public class GrpcCompilerPluginConstants {
                 "GRPC_104", DiagnosticSeverity.ERROR),
         TWO_PARAMS_WITHOUT_CALLER("when there are two parameters to a remote function, the first one " +
                 "must be a caller type", "GRPC_105", DiagnosticSeverity.ERROR),
-        INVALID_CALLER_TYPE("expected caller type \"", "GRPC_106", DiagnosticSeverity.ERROR);
+        INVALID_CALLER_TYPE("expected caller type \"", "GRPC_106", DiagnosticSeverity.ERROR),
+        INVALID_SERVICE_NAME("invalid service name", "GRPC_107",
+                DiagnosticSeverity.ERROR);
 
         private final String error;
         private final String errorCode;
