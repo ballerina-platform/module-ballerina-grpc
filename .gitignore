@@ -37,4 +37,3 @@ target
 # Ballerina
 velocity.log*
 *Ballerina.lock
-ballerina/Dependencies.toml
