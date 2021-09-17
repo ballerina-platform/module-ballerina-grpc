@@ -56,11 +56,6 @@ clean {
 
 task runIntegrationTests {
     doLast {
-        def moduleVersion = "${project.version}".replace("-SNAPSHOT", "")
-        def dependenciesTomlFile = new File("${project.projectDir}/Dependencies.toml")
-        def dependenciesTomlFileOriginalText = dependenciesTomlFile.text
-        def newDependenciesTomlText = dependenciesTomlFile.text.replace("@project.version@", moduleVersion)
-        dependenciesTomlFile.text = newDependenciesTomlText
         try {
             exec {
                 workingDir project.projectDir
@@ -82,4 +77,3 @@ copyDistribution.dependsOn ":grpc-ballerina:build"
 copyPackageBala.dependsOn copyDistribution
 runIntegrationTests.dependsOn copyPackageBala
 test.dependsOn runIntegrationTests
-build.dependsOn runIntegrationTests
