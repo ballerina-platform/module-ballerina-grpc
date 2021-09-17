@@ -50,7 +50,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "jballerina.java"
-version = "0.9.0"
+version = "0.0.0"
 transitive = false
 modules = [
 	{org = "ballerina", packageName = "jballerina.java", moduleName = "jballerina.java"}
@@ -78,7 +78,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "lang.__internal"
-version = "0.1.0"
+version = "0.0.0"
 transitive = true
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
@@ -88,7 +88,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "lang.array"
-version = "1.1.0"
+version = "0.0.0"
 transitive = true
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
@@ -98,7 +98,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "lang.int"
-version = "1.1.0"
+version = "0.0.0"
 transitive = true
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
@@ -107,13 +107,13 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "lang.object"
-version = "1.0.0"
+version = "0.0.0"
 transitive = true
 
 [[package]]
 org = "ballerina"
 name = "lang.runtime"
-version = "0.0.1"
+version = "0.0.0"
 transitive = false
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
@@ -127,7 +127,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "lang.string"
-version = "1.1.0"
+version = "0.0.0"
 transitive = true
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
@@ -136,7 +136,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "lang.value"
-version = "1.0.0"
+version = "0.0.0"
 transitive = true
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
@@ -205,7 +205,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "test"
-version = "0.8.0"
+version = "0.0.0"
 scope = "testOnly"
 transitive = false
 dependencies = [
