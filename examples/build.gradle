@@ -68,11 +68,7 @@ task testExamples {
     doLast {
         def moduleVersion = "${project.version}".replace("-SNAPSHOT", "")
         examples.each { example ->
-            def dependenciesTomlFile = new File("${project.projectDir}/resources/Dependencies.toml")
-            def dependenciesTomlFileInExample = new File("${project.projectDir}/${example}/Dependencies.toml")
-            def newDependenciesTomlText = dependenciesTomlFile.text.replace("@project.version@", moduleVersion)
             def exampleDirectory = "${project.projectDir}/${example}"
-            dependenciesTomlFileInExample.text = newDependenciesTomlText
             try {
                 exec {
                     workingDir exampleDirectory
@@ -85,8 +81,6 @@ task testExamples {
             } catch (Exception e) {
                 println("Example '${example}' Build failed: " + e.message)
                 throw e
-            } finally {
-                dependenciesTomlFileInExample.text = ""
             }
         }
     }
@@ -103,10 +97,6 @@ task buildExamples {
     doLast {
         def moduleVersion = "${project.version}".replace("-SNAPSHOT", "")
         examples.each { example ->
-            def dependenciesTomlFile = new File("${project.projectDir}/resources/Dependencies.toml")
-            def dependenciesTomlFileInExample = new File("${project.projectDir}/${example}/Dependencies.toml")
-            def newDependenciesTomlText = dependenciesTomlFile.text.replace("@project.version@", moduleVersion)
-            dependenciesTomlFileInExample.text = newDependenciesTomlText
             try {
                 exec {
                     workingDir project.projectDir
@@ -119,8 +109,6 @@ task buildExamples {
             } catch (Exception e) {
                 println("Example '${example}' Build failed: " + e.message)
                 throw e
-            } finally {
-                dependenciesTomlFileInExample.text = ""
             }
         }
     }
