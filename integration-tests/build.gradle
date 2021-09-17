@@ -67,8 +67,6 @@ task runIntegrationTests {
             }
         } catch (Exception e) {
             throw e
-        } finally {
-            dependenciesTomlFile.text = dependenciesTomlFileOriginalText
         }
     }
 }
