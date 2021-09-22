@@ -22,7 +22,7 @@ public enum CompressionType {
 
 # Enables the compression support by adding the `grpc-encoding` header to the given headers.
 # ```ballerina
-# map<string|string[]> headers = grpc:setCompression(GZIP);
+# map<string|string[]> headers = grpc:setCompression(grpc:GZIP);
 # ```
 #
 # + compressionType - The compression type.
