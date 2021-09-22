@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Support external import paths in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/1612)
 - [Add OAuth2 JWT bearer grant type support](https://github.com/ballerina-platform/ballerina-standard-library/issues/1788)
 - [Add authorization with JWTs with multiple scopes](https://github.com/ballerina-platform/ballerina-standard-library/issues/1801)
+- [Enable gRPC trace and access logs for debugging](https://github.com/ballerina-platform/ballerina-standard-library/issues/1826)
 
 ### Changed
 - [Change the group ID and rename the sub modules](https://github.com/ballerina-platform/ballerina-standard-library/issues/1623)
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Fix invalid string value for cert validation type in GrpcConstants.java](https://github.com/ballerina-platform/ballerina-standard-library/issues/1631)
 - [Fix invalid int value conversion in GrpcUtil.java for cert validation](https://github.com/ballerina-platform/ballerina-standard-library/issues/1632)
 - [Fix the gRPC backward incompatibility issue when adding a new field](https://github.com/ballerina-platform/ballerina-standard-library/issues/1572)
+- [Fix Gzip compression at the server-side](https://github.com/ballerina-platform/ballerina-standard-library/issues/1899)
 
 ## [0.8.0-beta.2] - 2021-07-06
 ### Changed
