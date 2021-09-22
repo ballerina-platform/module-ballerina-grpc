@@ -22,7 +22,7 @@ isolated function testGzipEncoding() returns grpc:Error? {
     OrderManagementClient OrderMgtBlockingEp = check new("http://localhost:9111");
 
     Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
-    map<string|string[]> headers = grpc:setCompression(GZIP);
+    map<string|string[]> headers = grpc:setCompression(grpc:GZIP);
     ContextOrder reqOrder = {content: 'order, headers: headers};
     string|error result = OrderMgtBlockingEp->addOrder(reqOrder);
     if result is error {
