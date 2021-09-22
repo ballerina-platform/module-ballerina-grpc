@@ -17,7 +17,7 @@
 # Compression types that are supported.
 # GZIP - Gzip compression
 public enum CompressionType {
-   GZIP
+   GZIP = "gzip"
 }
 
 # Enables the compression support by adding the `grpc-encoding` header to the given headers.
