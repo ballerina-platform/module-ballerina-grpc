@@ -129,12 +129,9 @@ public class MessageFramer {
 
     private int writeCompressed(InputStream message) throws IOException {
         BufferChainOutputStream bufferChain = new BufferChainOutputStream();
-        OutputStream compressingStream = compressor.compress(bufferChain);
         int written;
-        try {
+        try (OutputStream compressingStream = compressor.compress(bufferChain)) {
             written = writeToOutputStream(message, compressingStream);
-        } finally {
-            compressingStream.close();
         }
         if (maxOutboundMessageSize >= 0 && written > maxOutboundMessageSize) {
             throw Status.Code.RESOURCE_EXHAUSTED.toStatus()
