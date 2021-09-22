@@ -81,10 +81,8 @@ public final class ServerCall {
         outboundMessage.removeHeader(GrpcConstants.MESSAGE_ENCODING);
 
         if (headers != null && headers.contains(GrpcConstants.MESSAGE_ENCODING)) {
-            String messageEncodingType = headers.get(GrpcConstants.MESSAGE_ENCODING);
-            if (compressorRegistry.lookupCompressor(messageEncodingType) != null) {
-                compressor = compressorRegistry.lookupCompressor(messageEncodingType);
-            } else {
+            compressor = compressorRegistry.lookupCompressor(headers.get(GrpcConstants.MESSAGE_ENCODING));
+            if (compressor == null) {
                 compressor = Codec.Identity.NONE;
             }
         } else {
