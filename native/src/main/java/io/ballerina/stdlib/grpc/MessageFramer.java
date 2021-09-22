@@ -88,8 +88,8 @@ public class MessageFramer {
     public void writePayload(InputStream message) {
         verifyNotClosed();
         boolean compressed = messageCompression && compressor != Codec.Identity.NONE;
-        int written;
-        int messageLength;
+        int written = -1;
+        int messageLength = -2;
         try {
             messageLength = getKnownLength(message);
             if (messageLength != 0 && compressed) {
@@ -179,21 +179,25 @@ public class MessageFramer {
         header.put(compressed ? COMPRESSED : UNCOMPRESSED);
         int messageLength = bufferChain.readableBytes();
         header.putInt(messageLength);
-
+        int capacityHint = Math.min(MAX_BUFFER, Math.max(MIN_BUFFER, HEADER_LENGTH));
+        ByteBuffer writeableHeader = ByteBuffer.allocate(capacityHint);
+        writeableHeader.put(headerScratch, 0, header.position());
         // Allocate the initial buffer chunk based on frame header + payload length.
-        if (buffer == null) {
-            buffer = ByteBuffer.allocate(header.position() + messageLength);
-        }
-        writeRaw(headerScratch, 0, header.position());
+
         if (messageLength == 0) {
+            buffer = writeableHeader;
             return;
         }
 
+        if (buffer == null) {
+            buffer = ByteBuffer.allocate(HEADER_LENGTH + messageLength);
+        }
         List<ByteBuffer> bufferList = bufferChain.bufferList;
         // Assign the current buffer to the last in the chain so it can be used
         // for future writes or written with end-of-stream=true on close.
+        buffer.put(headerScratch, 0, header.position());
         for (ByteBuffer byteBuffer : bufferList) {
-            buffer.put(byteBuffer.array(), 0, byteBuffer.limit() - 1);
+            buffer.put(byteBuffer.array(), 0, byteBuffer.position());
         }
     }
 
@@ -208,14 +212,15 @@ public class MessageFramer {
 
     private void writeRaw(byte[] b, int off, int len) {
         while (len > 0) {
-            if (buffer != null && buffer.limit() == 0) {
+            int writableBytes = buffer.limit() - buffer.position();
+            if (buffer != null && writableBytes == 0) {
                 commitToSink(false);
             }
             if (buffer == null) {
                 // InboundMessage a buffer allocation using the message length as a hint.
                 buffer = ByteBuffer.allocate(len);
             }
-            int toWrite = min(len, buffer.limit());
+            int toWrite = min(len, writableBytes);
             buffer.put(b, off, toWrite);
             off += toWrite;
             len -= toWrite;
@@ -334,7 +339,8 @@ public class MessageFramer {
          */
         @Override
         public void write(int b) {
-            if (current != null && current.limit() > 0) {
+            int writableBytes = current.limit() - current.position();
+            if (writableBytes > 0) {
                 current.put((byte) b);
                 return;
             }
@@ -351,7 +357,7 @@ public class MessageFramer {
                 bufferList.add(current);
             }
             while (len > 0) {
-                int canWrite = Math.min(len, current.limit());
+                int canWrite = Math.min(len, (current.limit() - current.position()));
                 if (canWrite == 0) {
                     // Assume message is twice as large as previous assumption if were still not done,
                     // the allocator may allocate more or less than this amount.
@@ -369,7 +375,7 @@ public class MessageFramer {
         private int readableBytes() {
             int readable = 0;
             for (ByteBuffer writableBuffer : bufferList) {
-                readable += writableBuffer.limit();
+                readable += writableBuffer.position();
             }
             return readable;
         }

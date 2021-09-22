@@ -25,9 +25,6 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Encapsulates a single call received from a remote client.
@@ -82,20 +79,14 @@ public final class ServerCall {
             throw new IllegalStateException("call is closed");
         }
         outboundMessage.removeHeader(GrpcConstants.MESSAGE_ENCODING);
-        if (compressor == null) {
-            compressor = Codec.Identity.NONE;
-        } else {
-            if (messageAcceptEncoding != null) {
-                List<String> acceptEncodings = Arrays.stream(messageAcceptEncoding.split("\\s*,\\s*"))
-                        .map(mediaType -> mediaType.split("\\s*;\\s*")[0])
-                        .collect(Collectors.toList());
-                if (!acceptEncodings.contains(compressor.getMessageEncoding())) {
-                    // resort to using no compression.
-                    compressor = Codec.Identity.NONE;
-                }
-            } else {
+
+        if (headers != null && headers.contains(GrpcConstants.MESSAGE_ENCODING)) {
+            compressor = compressorRegistry.lookupCompressor(headers.get(GrpcConstants.MESSAGE_ENCODING));
+            if (compressor == null) {
                 compressor = Codec.Identity.NONE;
             }
+        } else {
+            compressor = Codec.Identity.NONE;
         }
         // Always put compressor, even if it's identity.
         outboundMessage.setHeader(GrpcConstants.MESSAGE_ENCODING, compressor.getMessageEncoding());

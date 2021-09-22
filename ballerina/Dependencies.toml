@@ -49,6 +49,41 @@ modules = [
 
 [[package]]
 org = "ballerina"
+name = "grpc"
+version = "1.0.0"
+transitive = false
+dependencies = [
+	{org = "ballerina", name = "auth"},
+	{org = "ballerina", name = "crypto"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "jwt"},
+	{org = "ballerina", name = "lang.runtime"},
+	{org = "ballerina", name = "log"},
+	{org = "ballerina", name = "oauth2"},
+	{org = "ballerina", name = "regex"},
+	{org = "ballerina", name = "test"},
+	{org = "ballerina", name = "time"}
+]
+modules = [
+	{org = "ballerina", packageName = "grpc", moduleName = "grpc"},
+	{org = "ballerina", packageName = "grpc", moduleName = "grpc.types.duration"},
+	{org = "ballerina", packageName = "grpc", moduleName = "grpc.types.struct"},
+	{org = "ballerina", packageName = "grpc", moduleName = "grpc.types.timestamp"},
+	{org = "ballerina", packageName = "grpc", moduleName = "grpc.types.wrappers"}
+]
+
+[[package]]
+org = "ballerina"
+name = "io"
+version = "1.0.0"
+transitive = true
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.value"}
+]
+
+[[package]]
+org = "ballerina"
 name = "jballerina.java"
 version = "0.0.0"
 transitive = false
@@ -148,6 +183,7 @@ name = "log"
 version = "2.0.0"
 transitive = false
 dependencies = [
+	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "observe"}
 ]
