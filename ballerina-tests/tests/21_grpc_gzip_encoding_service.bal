@@ -33,7 +33,9 @@ service "OrderManagement" on ordermgtep {
 
     isolated remote function getOrder(OrderManagementOrderCaller caller, string value) {
         Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
-        error? send = caller->sendOrder('order);
+        map<string|string[]> headers = {};
+        headers = grpc:setCompression(GZIP);
+        error? send = caller->sendContextOrder({content: 'order, headers: headers});
         error? complete = caller->complete();
     }
 }
