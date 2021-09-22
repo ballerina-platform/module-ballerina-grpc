@@ -1,4 +1,0 @@
-[[dependency]]
-org = "ballerina"
-name = "grpc"
-version = "@project.version@"
