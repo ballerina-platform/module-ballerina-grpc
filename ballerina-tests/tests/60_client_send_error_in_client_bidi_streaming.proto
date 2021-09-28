@@ -20,5 +20,5 @@ import "google/protobuf/wrappers.proto";
 
 service SendError {
 	rpc sendErrorClientStreaming(stream google.protobuf.StringValue) returns (google.protobuf.BoolValue);
-    rpc sendErrorBidiStreaming(stream google.protobuf.StringValue) returns (stream google.protobuf.BoolValue);
+  rpc sendErrorBidiStreaming(stream google.protobuf.StringValue) returns (stream google.protobuf.BoolValue);
 }
