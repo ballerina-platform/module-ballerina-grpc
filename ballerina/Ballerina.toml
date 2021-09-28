@@ -21,7 +21,7 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-3.0.3-SNAPSHOT.jar"
+path = "./lib/http-native-5.9.2-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.65.Final.jar"
