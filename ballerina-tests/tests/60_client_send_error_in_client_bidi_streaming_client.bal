@@ -40,6 +40,26 @@ isolated function testClientStreamingSendErrorToService() returns grpc:Error? {
 }
 
 @test:Config {enable:true}
+isolated function testClientStreamingSendErrorAsFirstMessageToService() returns grpc:Error? {
+    SendErrorClient errorClient = check new ("http://localhost:9160");
+    SendErrorClientStreamingStreamingClient streamingClient = check errorClient->sendErrorClientStreaming();
+
+    check streamingClient->sendError(error grpc:UnKnownError("Unknown gRPC error occured."));
+    runtime:sleep(3);
+
+    streamingClient = check errorClient->sendErrorClientStreaming();
+    check streamingClient->sendString("Hello");
+    check streamingClient->complete();
+    boolean? errorStatus = check streamingClient->receiveBoolean();
+
+    if errorStatus != () {
+        test:assertTrue(errorStatus);
+    } else {
+        test:assertFail("Server has not received the error sent by the client");
+    }
+}
+
+@test:Config {enable:true}
 isolated function testBidiStreamingSendErrorToService() returns grpc:Error? {
     SendErrorClient errorClient = check new ("http://localhost:9160");
     SendErrorBidiStreamingStreamingClient streamingClient = check errorClient->sendErrorBidiStreaming();
