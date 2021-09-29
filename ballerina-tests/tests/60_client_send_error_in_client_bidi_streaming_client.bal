@@ -20,7 +20,7 @@ import ballerina/lang.runtime;
 
 @test:Config {enable:true}
 isolated function testClientStreamingSendErrorToService() returns grpc:Error? {
-    SendErrorClient errorClient = check new ("http://localhost:9160");
+    ErrorSendServiceClient errorClient = check new ("http://localhost:9160");
     SendErrorClientStreamingStreamingClient streamingClient = check errorClient->sendErrorClientStreaming();
 
     check streamingClient->sendString("Hey");
@@ -30,18 +30,21 @@ isolated function testClientStreamingSendErrorToService() returns grpc:Error? {
     streamingClient = check errorClient->sendErrorClientStreaming();
     check streamingClient->sendString("Hello");
     check streamingClient->complete();
-    boolean? errorStatus = check streamingClient->receiveBoolean();
+    int? errorCount = check streamingClient->receiveInt();
 
-    if errorStatus != () {
-        test:assertTrue(errorStatus);
+    if errorCount != () {
+        test:assertEquals(errorCount, 1);
     } else {
         test:assertFail("Server has not received the error sent by the client");
     }
 }
 
-@test:Config {enable:true}
+@test:Config {
+    enable:true,
+    dependsOn: [testClientStreamingSendErrorToService]
+}
 isolated function testClientStreamingSendErrorAsFirstMessageToService() returns grpc:Error? {
-    SendErrorClient errorClient = check new ("http://localhost:9160");
+    ErrorSendServiceClient errorClient = check new ("http://localhost:9160");
     SendErrorClientStreamingStreamingClient streamingClient = check errorClient->sendErrorClientStreaming();
 
     check streamingClient->sendError(error grpc:UnKnownError("Unknown gRPC error occured."));
@@ -50,10 +53,10 @@ isolated function testClientStreamingSendErrorAsFirstMessageToService() returns 
     streamingClient = check errorClient->sendErrorClientStreaming();
     check streamingClient->sendString("Hello");
     check streamingClient->complete();
-    boolean? errorStatus = check streamingClient->receiveBoolean();
+    int? errorCount = check streamingClient->receiveInt();
 
-    if errorStatus != () {
-        test:assertTrue(errorStatus);
+    if errorCount != () {
+        test:assertEquals(errorCount, 2);
     } else {
         test:assertFail("Server has not received the error sent by the client");
     }
@@ -61,7 +64,7 @@ isolated function testClientStreamingSendErrorAsFirstMessageToService() returns 
 
 @test:Config {enable:true}
 isolated function testBidiStreamingSendErrorToService() returns grpc:Error? {
-    SendErrorClient errorClient = check new ("http://localhost:9160");
+    ErrorSendServiceClient errorClient = check new ("http://localhost:9160");
     SendErrorBidiStreamingStreamingClient streamingClient = check errorClient->sendErrorBidiStreaming();
 
     check streamingClient->sendString("Hey");
@@ -71,10 +74,34 @@ isolated function testBidiStreamingSendErrorToService() returns grpc:Error? {
     streamingClient = check errorClient->sendErrorBidiStreaming();
     check streamingClient->sendString("Hello");
     check streamingClient->complete();
-    boolean? errorStatus = check streamingClient->receiveBoolean();
+    int? errorCount = check streamingClient->receiveInt();
 
-    if errorStatus != () {
-        test:assertTrue(errorStatus);
+    if errorCount != () {
+        test:assertEquals(errorCount, 1);
+    } else {
+        test:assertFail("Server has not received the error sent by the client");
+    }
+}
+
+@test:Config {
+    enable:true,
+    dependsOn: [testBidiStreamingSendErrorToService]
+}
+isolated function testBidiStreamingSendErrorAsFirstMessageToService() returns grpc:Error? {
+    ErrorSendServiceClient errorClient = check new ("http://localhost:9160");
+    SendErrorBidiStreamingStreamingClient streamingClient = check errorClient->sendErrorBidiStreaming();
+
+    check streamingClient->sendString("Hey");
+    check streamingClient->sendError(error grpc:AbortedError("Operation is aborted."));
+    runtime:sleep(3);
+
+    streamingClient = check errorClient->sendErrorBidiStreaming();
+    check streamingClient->sendString("Hello");
+    check streamingClient->complete();
+    int? errorCount = check streamingClient->receiveInt();
+
+    if errorCount != () {
+        test:assertEquals(errorCount, 2);
     } else {
         test:assertFail("Server has not received the error sent by the client");
     }

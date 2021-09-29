@@ -18,7 +18,7 @@ syntax = "proto3";
 
 import "google/protobuf/wrappers.proto";
 
-service SendError {
-	rpc sendErrorClientStreaming(stream google.protobuf.StringValue) returns (google.protobuf.BoolValue);
-  rpc sendErrorBidiStreaming(stream google.protobuf.StringValue) returns (stream google.protobuf.BoolValue);
+service ErrorSendService {
+	rpc sendErrorClientStreaming(stream google.protobuf.StringValue) returns (google.protobuf.Int32Value);
+  rpc sendErrorBidiStreaming(stream google.protobuf.StringValue) returns (stream google.protobuf.Int32Value);
 }

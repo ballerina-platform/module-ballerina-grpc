@@ -19,38 +19,38 @@ import ballerina/io;
 
 listener grpc:Listener ep60 = new (9160);
 
-boolean receivedClientStreamingError = false;
-boolean receivedBidiStreamingError = false;
+int clientStreamingErrorCount = 0;
+int bidiStreamingErrorCount = 0;
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_60_CLIENT_SEND_ERROR_IN_CLIENT_BIDI_STREAMING,
     descMap: getDescriptorMap60ClientSendErrorInClientBidiStreaming()
 }
-service "SendError" on ep60 {
-    remote function sendErrorClientStreaming(stream<string, error?> clientStream) returns boolean {
+service "ErrorSendService" on ep60 {
+    remote function sendErrorClientStreaming(stream<string, error?> clientStream) returns int {
         error? e = clientStream.forEach(isolated function(string val) {
             io:println(val);
         });
         if e is () {
-            return receivedClientStreamingError;
+            return clientStreamingErrorCount;
         } else {
             io:println("Received a client error : " + e.message());
-            receivedClientStreamingError = true;
-            return receivedClientStreamingError;
+            clientStreamingErrorCount += 1;
+            return clientStreamingErrorCount;
         }
     }
 
-    remote function sendErrorBidiStreaming(stream<string, error?> clientStream) returns stream<boolean, error?> {
+    remote function sendErrorBidiStreaming(stream<string, error?> clientStream) returns stream<int, error?> {
         error? e = clientStream.forEach(isolated function(string val) {
             io:println(val);
         });
         if e is () {
-            boolean[] errorResult = [receivedBidiStreamingError];
+            int[] errorResult = [bidiStreamingErrorCount];
             return errorResult.toStream();
         } else {
             io:println("Received a client error : " + e.message());
-            receivedBidiStreamingError = true;
-            boolean[] errorResult = [receivedBidiStreamingError];
+            bidiStreamingErrorCount += 1;
+            int[] errorResult = [bidiStreamingErrorCount];
             return errorResult.toStream();
         }
     }
