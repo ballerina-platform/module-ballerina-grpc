@@ -117,6 +117,7 @@ public class FunctionUtils {
                 }
                 requestSender.onError(new Message(new StatusRuntimeException(Status.fromCodeValue(statusCode)
                         .withDescription(errorValue.getErrorMessage().getValue()))));
+                streamingConnection.addNativeData(GrpcConstants.IS_STREAM_CANCELLED, true);
                 // Add message content to observer context.
                 ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
                 observerContext.addTag(GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE,
@@ -174,6 +175,12 @@ public class FunctionUtils {
      */
     public static Object externReceive(BObject streamingConnection) {
 
+        Boolean isStreamCancelled = (Boolean) streamingConnection.getNativeData(GrpcConstants.IS_STREAM_CANCELLED);
+        if (isStreamCancelled != null && isStreamCancelled) {
+            return MessageUtils.getConnectorError(new StatusRuntimeException(Status
+                    .fromCode(Status.Code.INTERNAL.toStatus().getCode())
+                    .withDescription("Client call was already cancelled.")));
+        }
         BlockingQueue<?> messageQueue = (BlockingQueue<?>) streamingConnection.getNativeData(
                 GrpcConstants.MESSAGE_QUEUE);
         boolean isBidiStream = (boolean) streamingConnection.getNativeData(GrpcConstants.IS_BIDI_STREAMING);
@@ -208,7 +215,7 @@ public class FunctionUtils {
     }
 
     /**
-     * Extern function to get response header values of streaming clientg.
+     * Extern function to get response header values of streaming client.
      *
      * @param streamingConnection streaming connection instance.
      * @param isBidirectional     indicate the RPC call is bidirectional or not.

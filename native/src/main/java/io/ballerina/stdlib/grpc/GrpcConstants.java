@@ -134,6 +134,7 @@ public class GrpcConstants {
     public static final String DURATION_MESSAGE = "Duration";
     public static final String STRUCT_MESSAGE = "Struct";
     public static final String IS_BIDI_STREAMING = "isBidiStreaming";
+    public static final String IS_STREAM_CANCELLED = "isStreamCancelled";
 
     // Server Streaming method resources.
     public static final String ON_COMPLETE_RESOURCE = "onComplete";

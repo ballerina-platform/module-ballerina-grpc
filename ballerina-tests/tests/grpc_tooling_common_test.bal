@@ -347,4 +347,5 @@ function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile,
 //     generateSourceCode(outputDirPath + "57_struct_type.proto", outputDirPath);
 //     generateSourceCode(outputDirPath + "58_nested_message_nested_enum.proto", outputDirPath);
 //     generateSourceCode(outputDirPath + "59_simple_rpc_with_go_service.proto", outputDirPath);
+//     generateSourceCode(outputDirPath + "60_client_send_error_in_client_bidi_streaming.proto", outputDirPath);
 // }
