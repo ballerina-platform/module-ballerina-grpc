@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
+import ballerina/log;
 
 listener grpc:Listener ep60 = new (9160);
 
@@ -29,12 +29,12 @@ int bidiStreamingErrorCount = 0;
 service "ErrorSendService" on ep60 {
     remote function sendErrorClientStreaming(stream<string, error?> clientStream) returns int {
         error? e = clientStream.forEach(isolated function(string val) {
-            io:println(val);
+            log:printInfo(val);
         });
         if e is () {
             return clientStreamingErrorCount;
         } else {
-            io:println("Received a client error : " + e.message());
+            log:printError("Received a client error", e);
             clientStreamingErrorCount += 1;
             return clientStreamingErrorCount;
         }
@@ -42,13 +42,13 @@ service "ErrorSendService" on ep60 {
 
     remote function sendErrorBidiStreaming(stream<string, error?> clientStream) returns stream<int, error?> {
         error? e = clientStream.forEach(isolated function(string val) {
-            io:println(val);
+            log:printInfo(val);
         });
         if e is () {
             int[] errorResult = [bidiStreamingErrorCount];
             return errorResult.toStream();
         } else {
-            io:println("Received a client error : " + e.message());
+            log:printError("Received a client error", e);
             bidiStreamingErrorCount += 1;
             int[] errorResult = [bidiStreamingErrorCount];
             return errorResult.toStream();
