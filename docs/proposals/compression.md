@@ -10,10 +10,10 @@ _Issues_: [#1899](https://github.com/ballerina-platform/ballerina-standard-libra
 Add gRPC compression support for Ballerina gRPC client and server. Currently, Ballerina client to server compression works without an issue. Here, we are going to improve the server-side support for gRPC compression by implementing the compression mechanism and improving the compressor selection logic.
 
 ## Goals
-To support message compression between gRPC client and server communication.
+To support message-level compression between gRPC client and server communication.
 
 ## Non-Goals
-Support message compression for each gRPC channel.
+Support gRPC channel-level compression.
 
 ## Motivation
 - To reduce the bandwidth consumed by the communication between gRPC server and client using message compressing.
