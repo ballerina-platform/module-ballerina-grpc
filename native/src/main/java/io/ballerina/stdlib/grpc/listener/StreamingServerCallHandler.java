@@ -37,6 +37,7 @@ import io.ballerina.stdlib.grpc.callback.StreamingCallableUnitCallBack;
 import io.ballerina.stdlib.grpc.exception.GrpcServerException;
 import io.netty.handler.codec.http.HttpHeaders;
 
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -95,12 +96,16 @@ public class StreamingServerCallHandler extends ServerCallHandler {
     private static final class StreamingServerRequestObserver implements StreamObserver {
         private final BlockingQueue<Message> messageQueue;
 
+        private final PrintStream console = System.out;
+
         StreamingServerRequestObserver(BObject streamIterator, BlockingQueue<Message> messageQueue) {
             this.messageQueue = messageQueue;
         }
 
         @Override
         public void onNext(Message value) {
+            console.println("Received a message in StreamingServerRequestObserver on next ------------------" +
+                    "-----------" + value.getSerializedSize());
             messageQueue.add(value);
         }
 
@@ -121,6 +126,8 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         private final ServerCallStreamObserver responseObserver;
         private boolean halfClosed = false;
 
+        private final PrintStream console = System.out;
+
         // Non private to avoid synthetic class
         StreamingServerCallListener(
                 StreamObserver requestObserver,
@@ -131,6 +138,8 @@ public class StreamingServerCallHandler extends ServerCallHandler {
 
         @Override
         public void onMessage(Message request) {
+            console.println("Received a message in StreamingServerCallListener onMessage ------------------" +
+                    "-----------" + request.getSerializedSize());
             requestObserver.onNext(request);
         }
 
