@@ -45,14 +45,14 @@ function testNestedMessagesWithServerStreaming() returns error? {
     test:assertEquals(i, 5);
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testNestedMessagesWithClientStreaming() returns error? {
     NestedMsgServiceClient ep = check new ("http://localhost:9143");
     NestedMsg[] messages = [
-        {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}}, 
-        {name: "Name 02", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 2}}}}, 
-        {name: "Name 03", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 3}}}}, 
-        {name: "Name 04", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 4}}}}, 
+        {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}},
+        {name: "Name 02", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 2}}}},
+        {name: "Name 03", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 3}}}},
+        {name: "Name 04", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 4}}}},
         {name: "Name 05", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 5}}}}
     ];
     NestedMsgClientStreamingStreamingClient sc = check ep->nestedMsgClientStreaming();
@@ -68,7 +68,7 @@ function testNestedMessagesWithClientStreaming() returns error? {
     }
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testNestedMessagesWithBidirectionalStreaming() returns error? {
     NestedMsgServiceClient ep = check new ("http://localhost:9143");
     NestedMsg[] sendingMessages = [
