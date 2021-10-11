@@ -84,7 +84,7 @@ function testDurationBidirectionalStreaming() returns grpc:Error? {
         test:assertEquals(response, durationMessages[i]);
         i += 1;
     } else {
-        test:assertFail(msg = "Invalid type found");
+        test:assertFail(msg = "Invalid type found 1");
     }
     while !(response is ()) {
         response = check sc->receiveDurationMsg();
@@ -92,7 +92,7 @@ function testDurationBidirectionalStreaming() returns grpc:Error? {
             test:assertEquals(response, durationMessages[i]);
             i += 1;
         } else {
-            test:assertFail(msg = "Invalid type found");
+            test:assertFail(msg = "Invalid type found 2");
         }
     }
     test:assertEquals(i, 4);
