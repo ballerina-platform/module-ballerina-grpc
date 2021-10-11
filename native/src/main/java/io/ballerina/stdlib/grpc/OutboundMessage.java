@@ -28,6 +28,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.LastHttpContent;
 
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -47,6 +48,8 @@ public class OutboundMessage {
     private int statusCode = NULL_STATUS_CODE;
     private boolean outboundClosed;
     private final ThreadLocal<MessageFramer> framer;
+
+    private final PrintStream console = System.out;
 
     public OutboundMessage(HttpCarbonMessage responseMessage) {
         this.responseMessage = responseMessage;
@@ -192,6 +195,7 @@ public class OutboundMessage {
             framer().writePayload(entity);
             framer().flush();
         } else {
+            console.println("Found null entity -----------> sending empty DefaultLastHttpContent ");
             ByteBuffer byteBuffer = ByteBuffer.allocate(0);
             responseMessage.addHttpContent(new DefaultLastHttpContent(Unpooled.wrappedBuffer(byteBuffer)));
         }
