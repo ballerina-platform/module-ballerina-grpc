@@ -24,8 +24,10 @@ description = 'Ballerina - gRPC Examples'
 
 def ballerinaModulePath = "${project.rootDir}/ballerina/"
 def ballerinaDistPath = "${ballerinaModulePath}/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
-def ballerinaDist = "${buildDir}/target/ballerina-distribution"
+//def ballerinaDist = "${project.rootDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
 def examples = ["routeguide/server", "routeguide/client", "onlineboutiquemicroservice/productcatalogservice", "onlineboutiquemicroservice/adservice", "onlineboutiquemicroservice/recommendationservice"]
+
+def ballerinaDist = "${project.rootDir}/target/ballerina-distribution"
 
 dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
@@ -34,29 +36,29 @@ dependencies {
     implementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
 }
 
-task copyDistribution(type: Copy) {
-    from ballerinaDistPath
-    into ballerinaDist
-}
-
-task copyPackageBala {
-    doLast {
-        copy {
-            from "${ballerinaModulePath}/build/cache_parent"
-            into "${ballerinaDist}/repo"
-            copy {
-                into("bala/ballerina") {
-                    from "bala/ballerina"
-                }
-            }
-            copy {
-                into("cache/ballerina/") {
-                    from "cache/ballerina"
-                }
-            }
-        }
-    }
-}
+//task copyDistribution(type: Copy) {
+//    from ballerinaDistPath
+//    into ballerinaDist
+//}
+//
+//task copyPackageBala {
+//    doLast {
+//        copy {
+//            from "${ballerinaModulePath}/build/cache_parent"
+//            into "${ballerinaDist}/repo"
+//            copy {
+//                into("bala/ballerina") {
+//                    from "bala/ballerina"
+//                }
+//            }
+//            copy {
+//                into("cache/ballerina/") {
+//                    from "cache/ballerina"
+//                }
+//            }
+//        }
+//    }
+//}
 
 clean {
     examples.forEach { example ->
@@ -114,9 +116,10 @@ task buildExamples {
     }
 }
 
-copyDistribution.dependsOn ":grpc-ballerina:build"
-copyPackageBala.dependsOn copyDistribution
-buildExamples.dependsOn copyPackageBala
-testExamples.dependsOn copyPackageBala
+buildExamples.dependsOn ":grpc-ballerina:build"
+testExamples.dependsOn ":grpc-ballerina:build"
+//copyPackageBala.dependsOn copyDistribution
+//buildExamples.dependsOn copyPackageBala
+//testExamples.dependsOn copyPackageBala
 test.dependsOn testExamples
 build.dependsOn buildExamples

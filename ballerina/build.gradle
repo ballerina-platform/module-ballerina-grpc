@@ -19,13 +19,14 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
     repositories {
-        maven {
-            url = 'https://maven.pkg.github.com/ballerina-platform/plugin-gradle'
-            credentials {
-                username System.getenv("packageUser")
-                password System.getenv("packagePAT")
-            }
-        }
+//        maven {
+//            url = 'https://maven.pkg.github.com/dilansachi/plugin-gradle'
+//            credentials {
+//                username System.getenv("packageUser")
+//                password System.getenv("packagePAT")
+//            }
+//        }
+        mavenLocal()
     }
     dependencies {
         classpath "io.ballerina:plugin-gradle:${project.ballerinaGradlePluginVersion}"
@@ -159,6 +160,38 @@ task updateTomlFiles {
     }
 }
 
+def ballerinaModulePath = "${project.rootDir}/ballerina/"
+def ballerinaDistPath = "${ballerinaModulePath}/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+def ballerinaDist = "${project.rootDir}/target/ballerina-distribution"
+
+//def ballerinaDist = "${project.rootDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+
+//task copyDistribution(type: Copy) {
+//    dependsOn(copyStdlibs)
+//    from ballerinaDistPath
+//    into ballerinaDist
+//}
+//
+task copyPackageBala {
+//    dependsOn(copyDistribution)
+    doLast {
+        copy {
+            from "${ballerinaModulePath}/build/cache_parent"
+            into "${ballerinaDist}/repo"
+            copy {
+                into("bala/ballerina") {
+                    from "bala/ballerina"
+                }
+            }
+            copy {
+                into("cache/ballerina") {
+                    from "cache/ballerina"
+                }
+            }
+        }
+    }
+}
+
 task commitTomlFiles {
     doLast {
         project.exec {
@@ -211,12 +244,15 @@ build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-native:test"
 build.dependsOn ":${packageName}-test-utils:build"
 build.dependsOn ":${packageName}-compiler-plugin:build"
-build.finalizedBy ":${packageName}-ballerina-tests:build"
+copyPackageBala.dependsOn copyDistribution
+build.finalizedBy copyPackageBala
+test.finalizedBy copyPackageBala
+//copyPackageBala.finalizedBy ":${packageName}-ballerina-tests:build"
+//build.finalizedBy ":${packageName}-ballerina-tests:build"
 test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-native:test"
 test.dependsOn ":${packageName}-test-utils:build"
 test.dependsOn ":${packageName}-compiler-plugin:build"
-build.finalizedBy ":${packageName}-ballerina-tests:build"
 
 publishToMavenLocal.dependsOn copyExternalJars
 publish.dependsOn copyExternalJars

@@ -33,9 +33,15 @@ def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 def targetNativeJar = file("$project.rootDir/native/build/libs/${packageName}-native-${project.version}.jar")
 def originalBallerinaToml = ballerinaTomlFile.text
-def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+//def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
 def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 def testCoverageParam = "--code-coverage --coverage-format=xml --includes=io.ballerina.stdlib.grpc.*:ballerina.grpc*"
+
+//def ballerinaModulePath = "${project.rootDir}/ballerina/"
+//def ballerinaDistPath = "${ballerinaModulePath}/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+def ballerinaDist = "${project.rootDir}/target/ballerina-distribution"
+
+//def ballerinaDist = "${project.rootDir}/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
@@ -83,56 +89,59 @@ dependencies {
 }
 
 clean {
+    delete "$project.rootDir/target"
     delete "$project.projectDir/target"
 }
 
-task unpackJballerinaTools(type: Copy) {
-    configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-        from zipTree(artifact.getFile())
-        into new File("${buildDir}/target/extracted-distributions", "jballerina-tools-zip")
-    }
-}
 
-task unpackStdLibs() {
-    doLast {
-        configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-            copy {
-                from project.zipTree(artifact.getFile())
-                into new File("${buildDir}/target/extracted-distributions", artifact.name + "-zip")
-            }
-        }
-    }
-}
 
-task copyStdlibsForTest(type: Copy) {
-    dependsOn(unpackJballerinaTools)
-    dependsOn(unpackStdLibs)
-
-    into ballerinaDist
-
-    /* Standard Libraries */
-    configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-        def artifactExtractedPath = "${buildDir}/target/extracted-distributions/" + artifact.name + "-zip"
-        into("repo/bala") {
-            from "${artifactExtractedPath}/bala/"
-        }
-        into("repo/cache") {
-            from "${artifactExtractedPath}/cache"
-        }
-    }
-}
-
-task copyGrpcStdlib {
-    dependsOn(":grpc-ballerina:build")
-    dependsOn(copyStdlibsForTest)
-    doLast {
-        /* Copy gRPC module */
-        copy {
-            from "$project.rootDir/ballerina/build/cache_parent/bala"
-            into "${ballerinaDist}/repo/bala"
-        }
-    }
-}
+//task unpackJballerinaTools(type: Copy) {
+//    configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+//        from zipTree(artifact.getFile())
+//        into new File("${buildDir}/target/extracted-distributions", "jballerina-tools-zip")
+//    }
+//}
+//
+//task unpackStdLibs() {
+//    doLast {
+//        configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+//            copy {
+//                from project.zipTree(artifact.getFile())
+//                into new File("${buildDir}/target/extracted-distributions", artifact.name + "-zip")
+//            }
+//        }
+//    }
+//}
+//
+//task copyStdlibsForTest(type: Copy) {
+//    dependsOn(unpackJballerinaTools)
+//    dependsOn(unpackStdLibs)
+//
+//    into ballerinaDist
+//
+//    /* Standard Libraries */
+//    configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+//        def artifactExtractedPath = "${buildDir}/target/extracted-distributions/" + artifact.name + "-zip"
+//        into("repo/bala") {
+//            from "${artifactExtractedPath}/bala/"
+//        }
+//        into("repo/cache") {
+//            from "${artifactExtractedPath}/cache"
+//        }
+//    }
+//}
+//
+//task copyGrpcStdlib {
+//    dependsOn(":grpc-ballerina:build")
+//    dependsOn(copyStdlibsForTest)
+//    doLast {
+//        /* Copy gRPC module */
+//        copy {
+//            from "$project.rootDir/ballerina/build/cache_parent/bala"
+//            into "${ballerinaDist}/repo/bala"
+//        }
+//    }
+//}
 
 task updateTomlFiles {
     doLast {
@@ -197,7 +206,7 @@ task ballerinaTest {
     inputs.dir file(project.projectDir)
     dependsOn(":${packageName}-${packageOrg}:build")
     dependsOn(updateTomlFiles)
-    dependsOn(copyGrpcStdlib)
+//    dependsOn(copyPackageBala)
     dependsOn(initializeVariables)
     dependsOn(":${packageName}-${packageOrg}-${moduleName}:compileJava")
     dependsOn(":${packageName}-${packageOrg}-${moduleName}:jar")
@@ -209,11 +218,11 @@ task ballerinaTest {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "${balJavaDebugParam} ${distributionBinPath}/bal.bat test " +
+                commandLine 'cmd', '/c', "${balJavaDebugParam} ${ballerinaDist}/bin/bal.bat test " +
                         "${testParams} ${groupParams} ${disableGroups} ${debugParams} && " +
                         "exit %%ERRORLEVEL%%"
             } else {
-                commandLine 'sh', '-c', "${balJavaDebugParam} ${distributionBinPath}/bal test " +
+                commandLine 'sh', '-c', "${balJavaDebugParam} ${ballerinaDist}/bin/bal test " +
                         "${testParams} ${groupParams} ${disableGroups} ${debugParams}"
             }
         }
@@ -340,6 +349,7 @@ task stopGoServer() {
 }
 
 build.dependsOn ":${packageName}-test-utils:build"
+build.dependsOn ":${packageName}-ballerina:build"
 ballerinaTest.finalizedBy stopLdapServer
 ballerinaTest.dependsOn startLdapServer
 ballerinaTest.finalizedBy stopGoServer
