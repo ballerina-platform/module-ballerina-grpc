@@ -1,15 +1,15 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.0.0"
+version = "1.0.1"
 distribution = "slbeta3"
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers"]
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/grpc-native-1.0.0.jar"
+path = "../native/build/libs/grpc-native-1.0.1-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.0.0.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.0.1-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
