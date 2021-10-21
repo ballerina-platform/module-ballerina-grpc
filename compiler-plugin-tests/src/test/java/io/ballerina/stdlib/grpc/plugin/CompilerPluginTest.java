@@ -40,7 +40,7 @@ public class CompilerPluginTest {
 
     private static final Path RESOURCE_DIRECTORY = Paths.get("src", "test", "resources", "test-src")
             .toAbsolutePath();
-    private static final Path DISTRIBUTION_PATH = Paths.get("../", "target", "ballerina-distribution")
+    private static final Path DISTRIBUTION_PATH = Paths.get("../", "target", "ballerina-runtime")
             .toAbsolutePath();
 
     private static ProjectEnvironmentBuilder getEnvironmentBuilder() {

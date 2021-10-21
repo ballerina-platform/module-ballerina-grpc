@@ -22,7 +22,7 @@ apply plugin: 'java'
 
 description = 'Ballerina - gRPC Examples'
 
-def ballerinaDist = "${project.rootDir}/target/ballerina-distribution"
+def ballerinaDist = "${project.rootDir}/target/ballerina-runtime"
 def examples = ["routeguide/server", "routeguide/client", "onlineboutiquemicroservice/productcatalogservice", "onlineboutiquemicroservice/adservice", "onlineboutiquemicroservice/recommendationservice"]
 
 dependencies {
