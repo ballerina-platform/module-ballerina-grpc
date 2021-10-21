@@ -40,5 +40,6 @@ velocity.log*
 
 # Auto generated Dependencies.toml files
 examples/**/Dependencies.toml
+load-tests/**/Dependencies.toml
 integration-tests/Dependencies.toml
 ballerina-tests/Dependencies.toml
