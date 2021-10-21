@@ -13,7 +13,7 @@ path = "../test-utils/build/libs/grpc-test-utils-1.0.1-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2.0.0-beta.3.jar"
+path = "./lib/ballerina-cli-2.0.0-beta.4-20211018-175700-7b56bdee.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -21,7 +21,7 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.0.0.jar"
+path = "./lib/http-native-2.0.1-20211018-220500-cebfdce.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.68.Final.jar"
@@ -69,7 +69,7 @@ path = "./lib/protobuf-java-3.9.1.jar"
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/formatter-core-2.0.0-beta.3.jar"
+path = "./lib/formatter-core-2.0.0-beta.4-20211018-175700-7b56bdee.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-parser-2.0.0-beta.3.jar"
+path = "./lib/ballerina-parser-2.0.0-beta.4-20211018-175700-7b56bdee.jar"
