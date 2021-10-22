@@ -86,17 +86,6 @@ clean {
     delete "$project.projectDir/target"
 }
 
-task copyGrpcStdlib {
-    dependsOn(":grpc-ballerina:build")
-    doLast {
-        /* Copy gRPC module */
-        copy {
-            from "$project.rootDir/ballerina/build/cache_parent/bala"
-            into "${ballerinaDist}/repo/bala"
-        }
-    }
-}
-
 task updateTomlFiles {
     doLast {
         def newBallerinaToml = ballerinaTomlFile.text.replace("@project.version@", project.version)
@@ -160,7 +149,6 @@ task ballerinaTest {
     inputs.dir file(project.projectDir)
     dependsOn(":${packageName}-${packageOrg}:build")
     dependsOn(updateTomlFiles)
-    dependsOn(copyGrpcStdlib)
     dependsOn(initializeVariables)
     dependsOn(":${packageName}-${packageOrg}-${moduleName}:compileJava")
     dependsOn(":${packageName}-${packageOrg}-${moduleName}:compileTestJava")
