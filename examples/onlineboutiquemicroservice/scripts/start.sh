@@ -19,7 +19,7 @@ PRGDIR=`dirname "$PRG"`
 
 for service in recommendationservice productcatalogservice adservice; do
   (cd $DEMO_HOME/$service
-  bal build)
+  test --offline)
 done
 
 kubectl apply -f  $DEMO_HOME/productcatalogservice/target/kubernetes/productcatalogservice/productcatalogservice.yaml
