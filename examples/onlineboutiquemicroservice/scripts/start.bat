@@ -6,7 +6,7 @@ if "%DEMO_HOME%"=="" set DEMO_HOME=%~sdp0..
 
 FOR %%service IN (productcatalogservice adservice recommendationservice) DO (
     cd %DEMO_HOME%/%%service
-    bal build
+    test --offline
     cd %DEMO_HOME%
 )
 
