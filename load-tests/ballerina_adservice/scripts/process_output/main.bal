@@ -8,7 +8,7 @@ string[] output_headers = ["Label", "# Samples", "Average", "Median", "90% Line"
                                 "99% Line", "Min", "Max", "Error %", "Throughput", "Received KB/sec", 
                                 "Std. Dev.", "Date", "Payload", "Users"];
 
-public function main(int users, string csv_path) returns error? {
+public function main(string label, int users, string csv_path) returns error? {
     json json_data = check io:fileReadJson(ghz_output_path);
     int num_samples = check json_data.options.total;
     int average = check json_data.average;
@@ -40,7 +40,7 @@ public function main(int users, string csv_path) returns error? {
     float std_deviation = check getStdDeviation(check json_data.details, <float>average);
     int date = time:utcNow()[0];
 
-    var results = [num_samples, average, median, ninety_line, ninety_five_line, ninety_nine_line, 
+    var results = [label, num_samples, average, median, ninety_line, ninety_five_line, ninety_nine_line,
                         error_percent, throughput, 0, std_deviation, date, 50, 200];
 
     io:println(results);
