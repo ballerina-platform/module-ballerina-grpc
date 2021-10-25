@@ -21,5 +21,5 @@
 
 #wget https://github.com/bojand/ghz/releases/download/v0.105.0/ghz-linux-x86_64.tar.gz
 #tar -xf ghz-linux-x86_64.tar.gz
-./ghz --insecure --proto ./demo.proto --rps 200 --call hipstershop.AdService.GetAds -d '{"context_keys":["photography", "gardening"]}' 0.0.0.0:9090 -O pretty > ghz_output.json
-$baldev run ./process_output/ -- "gRPC Unary" 50 "../results/summary.csv"
+./ghz --insecure --proto ./demo.proto --concurrency $concurrent_users --call hipstershop.AdService.GetAds -d '{"context_keys":["photography", "gardening"]}' 0.0.0.0:9090 -O pretty > ghz_output.json
+$baldev run ./process_output/ -- "gRPC Unary" $concurrent_users "../results/summary.csv"
