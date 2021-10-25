@@ -30,9 +30,9 @@ task runIntegrationTests {
             exec {
                 workingDir project.projectDir
                 if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    commandLine 'cmd', '/c', "${ballerinaDist}/bin/bal.bat build && exit %%ERRORLEVEL%%"
+                    commandLine 'cmd', '/c', "${ballerinaDist}/bin/bal.bat test --offline && exit %%ERRORLEVEL%%"
                 } else {
-                    commandLine 'sh', '-c', "${ballerinaDist}/bin/bal build"
+                    commandLine 'sh', '-c', "${ballerinaDist}/bin/bal test --offline"
                 }
             }
         } catch (Exception e) {

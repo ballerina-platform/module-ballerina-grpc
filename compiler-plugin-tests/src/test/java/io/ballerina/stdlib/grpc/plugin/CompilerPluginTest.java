@@ -56,7 +56,7 @@ public class CompilerPluginTest {
         PackageCompilation compilation = currentPackage.getCompilation();
 
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_02");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
     @Test
@@ -76,11 +76,11 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] only `error?` return type is allowed " +
                 "with the caller";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
-        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
 
@@ -92,11 +92,11 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] when there are two parameters to " +
                 "a remote function, the first one must be a caller type";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
-        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
 
@@ -108,7 +108,7 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(29:0,42:1)] undefined annotation: " +
                 "grpc:ServiceDescriptor";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Stream<Diagnostic> grpcErrorDiagnostic = diagnosticResult.diagnostics().stream().filter(
+        Stream<Diagnostic> grpcErrorDiagnostic = diagnosticResult.errors().stream().filter(
                 diagnostic -> diagnostic.diagnosticInfo().code().equals(
                         GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode()));
         Assert.assertTrue(grpcErrorDiagnostic.anyMatch(d -> errMsg.equals(d.toString())));
@@ -122,11 +122,11 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(40:4,42:5)] only remote functions are " +
                 "allowed inside gRPC services";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
-        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
 
@@ -138,11 +138,11 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,39:5)] expected caller type " +
                 "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"CustomCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
-        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
 
@@ -152,7 +152,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_08");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
     @Test
@@ -163,11 +163,11 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_service.bal:(25:4,37:5)] expected caller type " +
          "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloWStringCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
-        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
 
@@ -177,7 +177,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_10");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
     @Test
@@ -188,11 +188,11 @@ public class CompilerPluginTest {
         String errMsg = "ERROR [grpc_service.bal:(25:4,37:5)] expected caller type " +
          "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloStringCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Diagnostic diagnostic = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 1);
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
-        Assert.assertTrue(diagnosticResult.diagnostics().stream().anyMatch(
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
 
@@ -210,7 +210,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_12");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 0);
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
     @Test
@@ -219,12 +219,12 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_14");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 2);
+        Assert.assertEquals(diagnosticResult.errors().size(), 2);
 
-        Diagnostic diagnostic1 = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
+        Diagnostic diagnostic1 = (Diagnostic) diagnosticResult.errors().toArray()[0];
         Assert.assertEquals(diagnostic1.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
-        Diagnostic diagnostic2 = (Diagnostic) diagnosticResult.diagnostics().toArray()[1];
+        Diagnostic diagnostic2 = (Diagnostic) diagnosticResult.errors().toArray()[1];
         Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
 
@@ -243,13 +243,13 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_15");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.diagnostics().size(), 2);
+        Assert.assertEquals(diagnosticResult.errors().size(), 2);
 
 
-        Diagnostic diagnostic1 = (Diagnostic) diagnosticResult.diagnostics().toArray()[0];
+        Diagnostic diagnostic1 = (Diagnostic) diagnosticResult.errors().toArray()[0];
         Assert.assertEquals(diagnostic1.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
-        Diagnostic diagnostic2 = (Diagnostic) diagnosticResult.diagnostics().toArray()[1];
+        Diagnostic diagnostic2 = (Diagnostic) diagnosticResult.errors().toArray()[1];
         Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
 
