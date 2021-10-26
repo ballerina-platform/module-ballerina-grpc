@@ -83,5 +83,6 @@ task buildExamples {
 }
 
 testExamples.dependsOn ":grpc-ballerina:build"
+buildExamples.dependsOn ":grpc-ballerina:build"
 test.dependsOn testExamples
 build.dependsOn buildExamples
