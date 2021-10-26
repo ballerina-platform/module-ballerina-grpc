@@ -22,37 +22,7 @@ apply plugin: 'java'
 
 description = 'Ballerina - gRPC Examples'
 
-def ballerinaModulePath = "${project.rootDir}/ballerina/"
-def ballerinaDistPath = "${ballerinaModulePath}/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
-def ballerinaDist = "${buildDir}/target/ballerina-distribution"
-
-task copyDistribution(type: Copy) {
-    from ballerinaDistPath
-    into ballerinaDist
-}
-
-task copyPackageBala {
-    doLast {
-        copy {
-            from "${ballerinaModulePath}/build/cache_parent"
-            into "${ballerinaDist}/repo"
-            copy {
-                into("bala/ballerina") {
-                    from "bala/ballerina"
-                }
-            }
-            copy {
-                into("cache/ballerina/") {
-                    from "cache/ballerina"
-                }
-            }
-        }
-    }
-}
-
-clean {
-   delete "${projectDir}/target"
-}
+def ballerinaDist = "${project.rootDir}/target/ballerina-runtime"
 
 task runIntegrationTests {
     doLast {
@@ -71,7 +41,5 @@ task runIntegrationTests {
     }
 }
 
-copyDistribution.dependsOn ":grpc-ballerina:build"
-copyPackageBala.dependsOn copyDistribution
-runIntegrationTests.dependsOn copyPackageBala
+runIntegrationTests.dependsOn ":grpc-ballerina:build"
 test.dependsOn runIntegrationTests
