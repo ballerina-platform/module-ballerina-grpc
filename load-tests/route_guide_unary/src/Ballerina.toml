@@ -1,6 +1,6 @@
 [package]
 org = "wso2"
-name = "route_guide_test"
+name = "route_guide_unary"
 version = "0.0.1"
 
 [build-options]
