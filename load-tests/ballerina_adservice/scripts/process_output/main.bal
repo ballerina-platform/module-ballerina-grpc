@@ -10,38 +10,38 @@ string[] output_headers = ["Label", "# Samples", "Average", "Median", "90% Line"
 
 public function main(string label, int users, string csv_path) returns error? {
     json json_data = check io:fileReadJson(ghz_output_path);
-    int num_samples = check json_data.options.total;
-    int average = check json_data.average;
+    int num_samples = check json_data.count;
+    float average = (<float> check json_data.average)/1000000.0;
 
     json json_distribution = check json_data.latencyDistribution;
-    int median = 0;
-    int ninety_line = 0;
-    int ninety_five_line = 0;
-    int ninety_nine_line = 0;
+    float median = 0;
+    float ninety_line = 0;
+    float ninety_five_line = 0;
+    float ninety_nine_line = 0;
 
     if json_distribution != () {
         LatencyDistribution[] latency_distributions = check json_distribution.cloneWithType();
-        median = latency_distributions[2].latency;
-        ninety_line = latency_distributions[4].latency;
-        ninety_five_line = latency_distributions[5].latency;
-        ninety_nine_line = latency_distributions[6].latency;
+        median = <float> latency_distributions[2].latency/1000000.0;
+        ninety_line = <float> latency_distributions[4].latency/1000000.0;
+        ninety_five_line = <float> latency_distributions[5].latency/1000000.0;
+        ninety_nine_line = <float> latency_distributions[6].latency/1000000.0;
     }
 
     float error_percent = check getErrorPercentage(check json_data.details);
 
-    int minimum = check json_data.fastest;
-    int maximum = check json_data.slowest;
+    float minimum = (<float> check json_data.fastest)/1000000.0;
+    float maximum = (<float> check json_data.slowest)/1000000.0;
 
-    int total_time = check json_data.total;
+    float total_time = (<float> check json_data.total)/1000000.0;
     io:println(total_time);
     io:println(num_samples);
-    float throughput = (<float>num_samples * 1000000.0/<float>total_time);
+    float throughput = (<float>num_samples/<float>total_time);
 
     float std_deviation = check getStdDeviation(check json_data.details, <float>average);
     int date = time:utcNow()[0];
 
-    var results = [label, num_samples, average, median, ninety_line, ninety_five_line, ninety_nine_line,
-                        error_percent, throughput, 0, std_deviation, date, 50, 200];
+    var results = [label, num_samples, average, median, ninety_line, ninety_five_line, ninety_nine_line, minimum,
+                        maximum, error_percent, throughput, 0, std_deviation, date, 0, users];
 
     io:println(results);
 
@@ -56,7 +56,7 @@ function getErrorPercentage(json details) returns float|error {
             error_count += 1;
         }
     }
-    return <float>(error_count * 100/latency_details.length());
+    return (<float>error_count * 100.0/<float>latency_details.length());
 }
 
 function getStdDeviation(json details, float average) returns float|error {
