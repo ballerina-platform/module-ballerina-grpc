@@ -34,7 +34,7 @@ def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 def targetNativeJar = file("$project.rootDir/native/build/libs/${packageName}-native-${project.version}.jar")
 def originalBallerinaToml = ballerinaTomlFile.text
 def ballerinaDist = "${project.rootDir}/target/ballerina-runtime"
-def distributionBinPath =  project.rootDir.absolutePath + "/target/ballerina-runtime/bin"
+def distributionBinPath = project.rootDir.absolutePath + "/target/ballerina-runtime/bin"
 def testCoverageParam = "--code-coverage --coverage-format=xml --includes=io.ballerina.stdlib.grpc.*:ballerina.grpc*"
 
 def stripBallerinaExtensionVersion(String extVersion) {
