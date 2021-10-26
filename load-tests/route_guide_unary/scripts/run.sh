@@ -17,9 +17,9 @@
 # Execution script for ballerina performance tests
 # ----------------------------------------------------------------------------
 set -e
-# source base-scenario.sh
+source base-scenario.sh
 
-# wget https://github.com/bojand/ghz/releases/download/v0.105.0/ghz-linux-x86_64.tar.gz
-# tar -xf ghz-linux-x86_64.tar.gz
+wget https://github.com/bojand/ghz/releases/download/v0.105.0/ghz-linux-x86_64.tar.gz
+tar -xf ghz-linux-x86_64.tar.gz
 ./ghz --insecure --proto $scriptsDir/route_guide.proto --duration 6s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": 406109563, "longitude": -742186778}' 0.0.0.0:9090 -O csv > $scriptsDir/ghz_output.csv
 $BAL_PATH/bin/bal run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Unary" $concurrent_users "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "6"
