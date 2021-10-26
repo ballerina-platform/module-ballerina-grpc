@@ -9,13 +9,17 @@ string[] output_headers = ["Label", "# Samples", "Average", "Median", "90% Line"
                                 "99% Line", "Min", "Max", "Error %", "Throughput", "Received KB/sec", 
                                 "Std. Dev.", "Date", "Payload", "Users"];
 
-public function main(string label, int users, string csv_path) returns error? {
-    string[][] csv_data = check io:fileReadCsv(ghz_output_path);
+public function main(string label, int users, string ghz_csv_path, string output_csv_path) returns error? {
+    string[][] csv_data = check io:fileReadCsv(ghz_csv_path);
     _ = array:remove(csv_data, 0);
     _ = array:remove(csv_data, 0);
     int num_samples = csv_data.length();
-    io:println(num_samples);
-    io:println(calc_stat_values(csv_data));
+    var stat_results = check calc_stat_values(csv_data);
+
+    var results = [label, num_samples, stat_results[0], stat_results[1], stat_results[2], stat_results[3], stat_results[4], stat_results[5],
+                        stat_results[6], error_percent, throughput, 0, stat_results[7], date, 0, users];
+
+    check writeResultsToCsv(results, output_csv_path);
 }
 
 function calc_stat_values(string[][] request_data) returns float[]|error {
@@ -33,7 +37,7 @@ function calc_stat_values(string[][] request_data) returns float[]|error {
     float max_duration = sorted_durations[sorted_durations.length() - 1];
     float min_duration = sorted_durations[0];
     float std_deviation = calc_std_deviation(sorted_durations, average);
-    return [average, median, ninety_line, ninety_five_line, ninety_nine_line, max_duration, min_duration, std_deviation];
+    return [average, median, ninety_line, ninety_five_line, ninety_nine_line, min_duration, max_duration, std_deviation];
 }
 
 function calc_average(float[] durations) returns float {
@@ -56,12 +60,12 @@ function calc_std_deviation(float[] durations, float average) returns float {
     return floats:sqrt(sum_deviation/<float> durations.length());
 }
 
-function writeResultsToCsv(any[] results, string summary_path) returns error? {
-    string[][] summary_data = check io:fileReadCsv(summary_path);
+function writeResultsToCsv(any[] results, string output_path) returns error? {
+    string[][] summary_data = check io:fileReadCsv(output_path);
     string[] final_results = [];
     foreach var result in results {
         final_results.push(result.toString());
     }
     summary_data.push(final_results);
-    check io:fileWriteCsv(csv_path, readCsv);
+    check io:fileWriteCsv(output_path, summary_data);
 }
