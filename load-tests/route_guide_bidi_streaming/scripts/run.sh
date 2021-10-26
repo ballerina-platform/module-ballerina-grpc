@@ -21,5 +21,7 @@
 
 #wget https://github.com/bojand/ghz/releases/download/v0.105.0/ghz-linux-x86_64.tar.gz
 #tar -xf ghz-linux-x86_64.tar.gz
-#./ghz --insecure --proto ./demo.proto --duration 60s --concurrency $concurrent_users --duration-stop wait --call hipstershop.AdService.GetAds -d '{"context_keys":["photography", "gardening"]}' 0.0.0.0:9090 -O csv > ghz_output.csv
-$baldev run ./process_csv_output/ -- "gRPC Unary" $concurrent_users "ghz_output.csv" "../results/summary.csv" "60"
+./ghz --insecure --proto ./route_guide.proto --duration 60s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": 406109563, "longitude": -742186778}' 0.0.0.0:8980 -O csv > ghz_output.csv
+$baldev run ./process_csv_output/ -- "gRPC Route Guide Unary" $concurrent_users "ghz_output.csv" "../results/summary.csv" "60"
+./ghz --insecure --proto ./route_guide.proto --duration 60s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": 406109563, "longitude": -742186778}' 0.0.0.0:8980 -O csv > ghz_output.csv
+$baldev run ./process_csv_output/ -- "gRPC Route Guide CStreaming" $concurrent_users "ghz_output.csv" "../results/summary.csv" "60"
