@@ -20,6 +20,6 @@
 #source base-scenario.sh
 
 #wget https://github.com/bojand/ghz/releases/download/v0.105.0/ghz-linux-x86_64.tar.gz
-#tar -xf ghz-linux-x86_64.tar.gz
-./ghz --insecure --proto ./demo.proto --concurrency $concurrent_users --call hipstershop.AdService.GetAds -d '{"context_keys":["photography", "gardening"]}' 0.0.0.0:9090 -O pretty > ghz_output.json
+tar -xf ghz-linux-x86_64.tar.gz
+./ghz --insecure --proto ./demo.proto --duration 20m --concurrency $concurrent_users --duration-stop wait --call hipstershop.AdService.GetAds -d '{"context_keys":["photography", "gardening"]}' 0.0.0.0:9090 -O csv > ghz_output.csv
 $baldev run ./process_output/ -- "gRPC Unary" $concurrent_users "../results/summary.csv"
