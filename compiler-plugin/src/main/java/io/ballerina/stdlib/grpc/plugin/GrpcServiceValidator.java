@@ -62,6 +62,12 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
     @Override
     public void perform(SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
 
+        List<Diagnostic> diagnostics = syntaxNodeAnalysisContext.semanticModel().diagnostics();
+        for (Diagnostic diagnostic : diagnostics) {
+            if (diagnostic.diagnosticInfo().severity() == DiagnosticSeverity.ERROR) {
+                return;
+            }
+        }
         ServiceDeclarationNode serviceDeclarationNode = (ServiceDeclarationNode) syntaxNodeAnalysisContext.node();
         Optional<Symbol> optionalServiceDeclarationSymbol = syntaxNodeAnalysisContext.semanticModel()
                 .symbol(serviceDeclarationNode);
@@ -123,6 +129,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
     private void validateServiceName(ServiceDeclarationNode serviceDeclarationNode,
                                      SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String serviceName) {
+
         if (serviceDeclarationNode.absoluteResourcePath().isEmpty()) {
             reportErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
                     (GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getError() +
@@ -265,7 +272,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
         NodeList<Node> nodeList = serviceDeclarationNode.absoluteResourcePath();
         StringBuilder serviceNameBuilder = new StringBuilder();
-        for (Node node: nodeList) {
+        for (Node node : nodeList) {
             serviceNameBuilder.append(node.toString());
         }
         return serviceNameBuilder.toString().replaceAll("\"", "").strip();
