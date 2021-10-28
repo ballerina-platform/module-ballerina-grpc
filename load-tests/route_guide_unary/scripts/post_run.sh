@@ -14,10 +14,19 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Execution script for ballerina performance tests
+# Post run script for ballerina performance tests
 # ----------------------------------------------------------------------------
 set -e
-source base-scenario.sh
 
-echo "----------Running load tests----------"
-./ghz --insecure --proto $scriptsDir/route_guide.proto --duration 6s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": 406109563, "longitude": -742186778}' 0.0.0.0:9090 -O csv > $scriptsDir/ghz_output.csv
+export scriptsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_unary/scripts"
+export resultsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_unary/results"
+
+echo "----------Downloading Ballerina----------"
+wget https://dist.ballerina.io/downloads/swan-lake-beta3/ballerina-swan-lake-beta3.zip
+
+echo "----------Setting Up Ballerina----------"
+unzip ballerina-swan-lake-beta3.zip
+export BAL_PATH=`pwd`/ballerina-swan-lake-beta3/bin/bal
+
+echo "----------Finalizing results----------"
+$BAL_PATH run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Unary" 50 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "6"
