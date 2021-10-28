@@ -23,11 +23,10 @@ export resultsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_
 
 # Using the ballerina zip version for testing. Once finalized, can use a docker image with process_csv_output util
 echo "----------Downloading Ballerina----------"
-wget https://dist.ballerina.io/downloads/swan-lake-beta3/ballerina-swan-lake-beta3.zip
+wget https://dist.ballerina.io/downloads/swan-lake-beta3/ballerina-linux-installer-x64-swan-lake-beta3.deb
 
 echo "----------Setting Up Ballerina----------"
-unzip ballerina-swan-lake-beta3.zip
-export BAL_PATH=`pwd`/ballerina-swan-lake-beta3/bin/bal
+sudo dpkg -i ballerina-linux-installer-x64-swan-lake-beta3.deb
 
 echo "----------Finalizing results----------"
-$BAL_PATH run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Unary" 50 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "6"
+bal run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Unary" 50 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "6"
