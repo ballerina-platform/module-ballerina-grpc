@@ -21,6 +21,7 @@ set -e
 export scriptsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_unary/scripts"
 export resultsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_unary/results"
 
+# Using the ballerina zip version for testing. Once finalized, can use a docker image with process_csv_output util
 echo "----------Downloading Ballerina----------"
 wget https://dist.ballerina.io/downloads/swan-lake-beta3/ballerina-swan-lake-beta3.zip
 
