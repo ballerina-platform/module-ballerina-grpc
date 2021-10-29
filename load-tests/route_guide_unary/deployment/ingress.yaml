@@ -15,6 +15,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: route-guide-unary
+            name: route-guide-una
             port:
               number: 9090
