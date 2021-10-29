@@ -6,6 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   rules:
   - host: bal.perf.test
@@ -18,3 +19,6 @@ spec:
             name: route-guide-una
             port:
               number: 9090
+  tls:
+  - hosts:
+    - "bal.perf.test"
