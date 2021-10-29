@@ -20,5 +20,5 @@ set -e
 source base-scenario.sh
 
 echo "----------Running load tests----------"
-./ghz --insecure --proto $scriptsDir/route_guide.proto --duration 6s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": 406109563, "longitude": -742186778}' bal.perf.test:80 -O csv > $scriptsDir/ghz_output.csv
+./ghz --insecure --proto $scriptsDir/route_guide.proto --duration 6s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": 406109563, "longitude": -742186778}' bal.perf.test:443 -O csv > $scriptsDir/ghz_output.csv
 tail -50f $scriptsDir/ghz_output.csv
