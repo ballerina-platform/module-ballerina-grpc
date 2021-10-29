@@ -20,5 +20,6 @@ spec:
             port:
               number: 9090
   tls:
-  - hosts:
+  - secretName: secret.bal.perf.test
+    hosts:
     - "bal.perf.test"
