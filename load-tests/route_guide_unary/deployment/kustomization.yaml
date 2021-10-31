@@ -8,7 +8,3 @@ patches:
     version: v1
     kind: Deployment
     name: route-guide-unary-deployment
-- path: secret-patch.yaml
-  target:
-    version: v1
-    kind: Secret
