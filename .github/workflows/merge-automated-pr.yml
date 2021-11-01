@@ -1,0 +1,20 @@
+name: Merge ballerina bot pull requests
+
+on:
+  workflow_run:
+    types:
+      - completed
+    workflows:
+      - 'Create Automated Summary PR'
+
+jobs:
+  merge-automated-pr:
+    name: Merge Automated PRs
+    runs-on: ubuntu-latest
+    steps:
+      - if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        name: Merge Automated PRs
+        uses: ridedott/merge-me-action@v2.8.35
+        with:
+          GITHUB_LOGIN: ballerina-bot
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
