@@ -8,8 +8,9 @@ jobs:
   invokeLoadTests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        name: Get latest ballerina runtime artifact
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get latest ballerina runtime artifact
         id: setRuntimeUrl
         shell: bash
         run: |
