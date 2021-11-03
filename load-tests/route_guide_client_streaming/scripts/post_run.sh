@@ -18,8 +18,8 @@
 # ----------------------------------------------------------------------------
 set -e
 
-export scriptsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_unary/scripts"
-export resultsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_unary/results"
+export scriptsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_client_streaming/scripts"
+export resultsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_client_streaming/results"
 
 # Using the ballerina zip version for testing. Once finalized, can use a docker image with process_csv_output util
 echo "----------Downloading Ballerina----------"
@@ -29,4 +29,4 @@ echo "----------Setting Up Ballerina----------"
 sudo dpkg -i ballerina-linux-installer-x64-swan-lake-beta3.deb
 
 echo "----------Finalizing results----------"
-bal run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Unary" 50 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "300"
+bal run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Client Streaming" 50 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "300"

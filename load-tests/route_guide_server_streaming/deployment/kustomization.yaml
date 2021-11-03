@@ -1,0 +1,10 @@
+resources:
+  - route_guide_server_streaming.yaml
+  - ingress.yaml
+patches:
+- path: deployment-patch.yaml
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: route-guide-server-streaming-deployment

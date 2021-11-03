@@ -20,5 +20,5 @@ set -e
 source base-scenario.sh
 
 echo "----------Running load tests----------"
-./ghz --skipTLS --proto $scriptsDir/route_guide.proto --duration 300s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": "{{randomInt -999999999 999999999}}", "longitude": "{{randomInt -999999999 999999999}}"}' bal.perf.test:443 -O csv > $scriptsDir/ghz_output.csv
+./ghz --skipTLS --proto $scriptsDir/route_guide.proto --duration 300s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.RouteChat --stream-dynamic-messages --stream-call-count=5 -d '[{"location": {"latitude": 406109563, "longitude": -742186778}, "message": "m1"},{"location": {"latitude": 411733222, "longitude": -744228360}, "message": "m2"}, {"location": {"latitude": 411733222, "longitude": -744228360}, "message": "m2"}, {"location": {"latitude": "{{randomInt -999999999 999999999}}", "longitude": "{{randomInt -999999999 999999999}}"}, "message": "m2"}, {"location": {"latitude": "{{randomInt -999999999 999999999}}", "longitude": "{{randomInt -999999999 999999999}}"}, "message": "m2"}, {"location": {"latitude": "{{randomInt -999999999 999999999}}", "longitude": "{{randomInt -999999999 999999999}}"}, "message": "m2"}]' bal.perf.test:443 -O csv > $scriptsDir/ghz_output.csv
 head $scriptsDir/ghz_output.csv

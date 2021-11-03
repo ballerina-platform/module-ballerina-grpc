@@ -14,11 +14,10 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Execution script for ballerina performance tests
+# Pre run script for ballerina performance tests
 # ----------------------------------------------------------------------------
 set -e
-source base-scenario.sh
 
-echo "----------Running load tests----------"
-./ghz --skipTLS --proto $scriptsDir/route_guide.proto --duration 300s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": "{{randomInt -999999999 999999999}}", "longitude": "{{randomInt -999999999 999999999}}"}' bal.perf.test:443 -O csv > $scriptsDir/ghz_output.csv
-head $scriptsDir/ghz_output.csv
+echo "----------Downloading ghz tool----------"
+wget https://github.com/bojand/ghz/releases/download/v0.105.0/ghz-linux-x86_64.tar.gz
+tar -xf ghz-linux-x86_64.tar.gz
