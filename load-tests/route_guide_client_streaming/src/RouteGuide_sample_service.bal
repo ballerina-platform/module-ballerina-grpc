@@ -16,7 +16,6 @@
 
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/io;
 
 listener grpc:Listener ep = new (9090);
 
@@ -58,7 +57,6 @@ service "RouteGuide" on ep {
 
         decimal startTime = time:monotonicNow();
         error? e = clientStream.forEach(function(Point p) {
-            io:println(p);
             pointCount += 1;
             if pointExistsInFeatures(FEATURES, p) {
                 featureCount += 1;
@@ -71,7 +69,6 @@ service "RouteGuide" on ep {
         });
         decimal endTime = time:monotonicNow();
         int elapsedTime = <int>(endTime - startTime);
-        io:println({point_count: pointCount, feature_count: featureCount, distance: distance, elapsed_time: elapsedTime});
         return {point_count: pointCount, feature_count: featureCount, distance: distance, elapsed_time: elapsedTime};
     }
 

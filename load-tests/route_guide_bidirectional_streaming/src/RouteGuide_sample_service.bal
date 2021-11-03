@@ -16,7 +16,6 @@
 
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/io;
 
 listener grpc:Listener ep = new (9090);
 
@@ -74,7 +73,6 @@ service "RouteGuide" on ep {
 
     remote function RouteChat(RouteGuideRouteNoteCaller caller, stream<RouteNote, grpc:Error?> clientNotesStream) returns error? {
         check clientNotesStream.forEach(function(RouteNote receivedNote) {
-            io:println(receivedNote);
             string pointKey = keyFromPoint(receivedNote.location);
             lock {
                 RouteNote[]? routeNotes = ROUTE_NOTES_MAP[pointKey];

@@ -16,7 +16,6 @@
 
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/io;
 
 listener grpc:Listener ep = new (9090);
 
@@ -37,8 +36,6 @@ service "RouteGuide" on ep {
         int right = int:max(rectangle.lo.longitude, rectangle.hi.longitude);
         int top = int:max(rectangle.lo.latitude, rectangle.hi.latitude);
         int bottom = int:min(rectangle.lo.latitude, rectangle.hi.latitude);
-
-        io:println(rectangle);
 
         Feature[] selectedFeatures = from var feature in FEATURES
             where feature.name != ""
