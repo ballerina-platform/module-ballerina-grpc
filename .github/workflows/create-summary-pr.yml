@@ -4,7 +4,7 @@ on:
     branches:
       - 'nightly-**'
     paths:
-      - 'load-tests/**'
+      - 'load-tests/**/results/summary.csv'
 jobs:
   createPullRequest:
     runs-on: ubuntu-latest
@@ -14,6 +14,6 @@ jobs:
         shell: bash
         run: |
           curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
-          bin/hub pull-request -m '[Automated] Update summary csv files' -b ballerina-platform:master
+          bin/hub pull-request -m '[Automated] Update summary csv files' -b ballerina-platform:main
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
