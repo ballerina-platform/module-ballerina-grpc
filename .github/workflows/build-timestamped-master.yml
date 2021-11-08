@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths-ignore:
-      - 'load-tests/**/results/'
+      - 'load-tests/'
   workflow_dispatch:
 
 jobs:
