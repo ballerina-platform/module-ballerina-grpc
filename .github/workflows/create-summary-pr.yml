@@ -11,9 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Create pull request for new summary
-        shell: bash
-        run: |
-          curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
-          bin/hub pull-request -m '[Automated] Update summary csv files' -b ballerina-platform:main
+        run: gh pr create --title "[Automated] Update summary csv files" --body "Update summary csv files"
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
