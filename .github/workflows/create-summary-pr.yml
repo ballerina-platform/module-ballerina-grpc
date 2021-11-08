@@ -1,4 +1,4 @@
-name: Create Automated Summary PR
+name: Create Automated Summary PR for Load Tests
 on:
   push:
     branches:
