@@ -1,1 +1,2 @@
 Label,# Samples,Average,Median,90% Line,95% Line,99% Line,Min,Max,Error %,Throughput,Received KB/sec,Std. Dev.,Date,Payload,Users
+gRPC Route Guide Bidirectional Streaming,2712,6968.94214233039,5156.12,19183.41,19999.73,20000.41,20.11,20007.66,9.550147492625369,9.04,0,5918.58669348074,1636434562,0,50
