@@ -32,4 +32,4 @@ jobs:
           workflow: Stdlib Workflow
           repo: ballerina-platform/ballerina-performance-cloud
           token: ${{ secrets.BALLERINA_BOT_TOKEN }}
-          inputs: '{ "repo-name": "module-ballerina-grpc", "tests": ${{ github.event.inputs.tests }}, "zipURL": ${{ steps.setRuntimeUrl.outputs.runtimeUrl}}, "clusterName": ${{ github.event.inputs.clusterName }} }'
+          inputs: '{ "repo-name": "module-ballerina-grpc", "tests": "${{ github.event.inputs.tests }}", "zipURL": ${{ steps.setRuntimeUrl.outputs.runtimeUrl}}, "clusterName": "${{ github.event.inputs.clusterName }}" }'
