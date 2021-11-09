@@ -1,1 +1,2 @@
 Label,# Samples,Average,Median,90% Line,95% Line,99% Line,Min,Max,Error %,Throughput,Received KB/sec,Std. Dev.,Date,Payload,Users
+gRPC Route Guide Server Streaming,137223,125.84339163259885,108.8,195.98,207.38,325.06,0.02,3085.69,3.4287255051995653,457.41,0,89.90590949093061,1636436262,0,50
