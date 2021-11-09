@@ -1,4 +1,5 @@
 name: Invoke Load Tests
+
 on:
   workflow_dispatch:
     inputs:
@@ -11,6 +12,7 @@ on:
         description: 'Cluster name'
         default: 'bal-perf-cluster-test'
         required: false
+
 jobs:
   invokeLoadTests:
     runs-on: ubuntu-latest
