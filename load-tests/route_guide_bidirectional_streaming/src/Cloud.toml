@@ -1,0 +1,17 @@
+[container.image]
+repository= "ballerina"
+name="route_guide_bidirectional_streaming"
+
+[cloud.deployment]
+min_memory="256Mi"
+max_memory="512Mi"
+min_cpu="200m"
+max_cpu="1000m"
+
+[cloud.deployment.autoscaling]
+min_replicas=1
+max_replicas=1
+
+[[cloud.config.maps]]
+file="./resources/route_guide_db.json"
+mount_path="/home/ballerina/resources/route_guide_db.json"
