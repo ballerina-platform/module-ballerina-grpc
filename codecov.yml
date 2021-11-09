@@ -12,6 +12,7 @@ ignore:
   - "test-utils"
   - "examples"
   - "integration-tests"
+  - "load-tests"
 
 coverage:
   precision: 2
