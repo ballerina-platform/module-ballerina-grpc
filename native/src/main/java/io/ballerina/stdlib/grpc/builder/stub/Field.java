@@ -138,7 +138,7 @@ public class Field {
         FIELD_TYPE_MAP.put(DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES, "byte[]");
 
         CUSTOM_FIELD_TYPE_MAP = new HashMap<>();
-        CUSTOM_FIELD_TYPE_MAP.put(".google.protobuf.Any", "anydata");
+        CUSTOM_FIELD_TYPE_MAP.put(".google.protobuf.Any", "'any:Any");
 
         FIELD_DEFAULT_VALUE_MAP = new HashMap<>();
         FIELD_DEFAULT_VALUE_MAP.put(DescriptorProtos.FieldDescriptorProto.Type.TYPE_DOUBLE, "0.0");
