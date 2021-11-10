@@ -1,12 +1,11 @@
-name: Invoke Load Tests
+name: Trigger Load Tests
 
 on:
   workflow_dispatch:
     inputs:
       tests:
         description: >
-          Array of test names
-          Example-["route_guide_unary","route_guide_client_streaming"]
+          List of test names. This needs to be filled only if you want to run a specific set of tests. Example: [“foo”, “bar”]
         required: false
       clusterName:
         description: 'Cluster name'
