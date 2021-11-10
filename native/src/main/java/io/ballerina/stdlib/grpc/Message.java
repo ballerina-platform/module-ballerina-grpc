@@ -205,7 +205,7 @@ public class Message {
         } else if (type.getTag() == TypeTags.ARRAY_TAG) { // for array values inside structs
             bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA));
             bMessage = bArray;
-        } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(messageName)) {
+        } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(messageName) && input != null) {
             int typeUrlTag = input.readTag();
 
             if (typeUrlTag == 10) {
@@ -230,8 +230,10 @@ public class Message {
                         break;
                     }
                     case WRAPPER_BYTES_TYPE_NAME: {
-                        bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA));
+                        bArray = ValueCreator.createArrayValue(
+                                TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA));
                         bMessage = bArray;
+                        break;
                     }
                     case WRAPPER_BOOL_TYPE_NAME: {
                         bMessage = Boolean.FALSE;
@@ -851,8 +853,9 @@ public class Message {
                     } else if (bMessage instanceof BString
                             && !fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_ANY_TYPE_URL)) {
                         output.writeString(fieldDescriptor.getNumber(), ((BString) bMessage).getValue());
-                    }  else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
-                        output.writeString(fieldDescriptor.getNumber(), ((BMap) bMessage).getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue());
+                    } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
+                        output.writeString(fieldDescriptor.getNumber(), ((BMap) bMessage)
+                                .getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue());
                     }
                     break;
                 }
@@ -935,11 +938,13 @@ public class Message {
                         if (bValue instanceof BArray && !GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
                             BArray valueArray = (BArray) bValue;
                             output.writeByteArray(fieldDescriptor.getNumber(), valueArray.getBytes());
-                        } else if (!GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
-                            String typeUrl = ((BMap<BString, Object>) this.bMessage).getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue();
+                        } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
+                            String typeUrl = ((BMap<BString, Object>) this.bMessage).getStringValue(
+                                    StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue();
                             String typeName = anyMessageTypeNameFromTypeUrl(typeUrl);
                             Descriptors.Descriptor descriptor = findFieldDescriptorFromTypeUrl(typeName);
-                            Object value = ((BMap<BString, Object>) this.bMessage).get(StringUtils.fromString(BALLERINA_ANY_VALUE_ENTRY));
+                            Object value = ((BMap<BString, Object>) this.bMessage).get(
+                                    StringUtils.fromString(BALLERINA_ANY_VALUE_ENTRY));
                             Message message = new Message(descriptor, value);
                             output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                             output.writeUInt32NoTag(message.getSerializedSize());
@@ -1187,9 +1192,9 @@ public class Message {
                     } else if (bMessage instanceof BString) {
                         size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(),
                                 ((BString) bMessage).getValue());
-                    } else if (!GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
-                        size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(),
-                                ((BMap) bMessage).getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue());
+                    } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
+                        size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(), ((BMap) bMessage)
+                                .getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue());
                     }
                     break;
                 }
@@ -1261,11 +1266,13 @@ public class Message {
                             BArray valueArray = (BArray) bValue;
                             size += com.google.protobuf.CodedOutputStream
                                     .computeByteArraySize(fieldDescriptor.getNumber(), valueArray.getBytes());
-                        } else if (!GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
-                            String typeUrl = ((BMap<BString, Object>) this.bMessage).getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue();
+                        } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
+                            String typeUrl = ((BMap<BString, Object>) this.bMessage)
+                                    .getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue();
                             String typeName = anyMessageTypeNameFromTypeUrl(typeUrl);
                             Descriptors.Descriptor descriptor = findFieldDescriptorFromTypeUrl(typeName);
-                            Object value = ((BMap<BString, Object>) this.bMessage).get(StringUtils.fromString(BALLERINA_ANY_VALUE_ENTRY));
+                            Object value = ((BMap<BString, Object>) this.bMessage)
+                                    .get(StringUtils.fromString(BALLERINA_ANY_VALUE_ENTRY));
                             Message message = new Message(descriptor, value);
                             size += computeMessageSize(fieldDescriptor, message);
                         }
