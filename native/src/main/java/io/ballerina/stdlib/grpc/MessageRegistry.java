@@ -30,6 +30,7 @@ import java.util.Map;
 public class MessageRegistry {
 
     private Map<String, Descriptors.Descriptor> messageDescriptors = new HashMap<>();
+    private Descriptors.FileDescriptor fileDescriptor;
 
     private static volatile MessageRegistry messageRegistry = new MessageRegistry();
 
@@ -45,6 +46,16 @@ public class MessageRegistry {
 
     public Descriptors.Descriptor getMessageDescriptor(String messageName) {
         return messageDescriptors.get(messageName);
+    }
+
+    public void setFileDescriptor(Descriptors.FileDescriptor fileDescriptor) {
+
+        this.fileDescriptor = fileDescriptor;
+    }
+
+    public Descriptors.FileDescriptor getFileDescriptor() {
+
+        return fileDescriptor;
     }
 
     public Map<String, Descriptors.Descriptor> getMessageDescriptorMap() {
