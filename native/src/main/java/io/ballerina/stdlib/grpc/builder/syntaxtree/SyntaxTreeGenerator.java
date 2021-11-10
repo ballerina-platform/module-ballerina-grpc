@@ -216,12 +216,16 @@ public class SyntaxTreeGenerator {
         }
         // Add grpc server streaming imports
         for (String sImport : grpcStreamImports) {
+            String prefix = sImport;
+            if (sImport.equals("'any")) {
+                prefix = "any";
+            }
             imports = imports.add(
                     Imports.getImportDeclarationNode(
                             "ballerina",
                             "grpc",
                             new String[]{"types", sImport},
-                            "s" + sImport
+                            "s" + prefix
                     )
             );
         }
@@ -305,6 +309,13 @@ public class SyntaxTreeGenerator {
                 || checkForImportsInServices(methodList, "time:Seconds")) {
             ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
                     "ballerina", "time"
+            );
+            imports = imports.add(importForTime);
+        }
+
+        if (checkForImportsInServices(methodList, "'any:Any")) {
+            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
+                    "ballerina", "protobuf.types.'any"
             );
             imports = imports.add(importForTime);
         }

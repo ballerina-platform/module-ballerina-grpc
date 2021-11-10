@@ -95,6 +95,9 @@ public class CallerUtils {
                 case "map<anydata>":
                     valueCap = "Struct";
                     break;
+                case "'any:Any":
+                    valueCap = "Any";
+                    break;
                 default:
                     valueCap = capitalize(value);
                     break;

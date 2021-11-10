@@ -52,6 +52,9 @@ public class ValueTypeUtils {
             case "map<anydata>":
                 typeName = "ContextStructStream";
                 break;
+            case "'any:Any":
+                typeName = "ContextAnyStream";
+                break;
             default:
                 typeName = "Context" + capitalize(key) + "Stream";
                 break;
@@ -90,6 +93,9 @@ public class ValueTypeUtils {
                     break;
                 case "map<anydata>":
                     typeName = "ContextStruct";
+                    break;
+                case "'any:Any":
+                    typeName = "ContextAny";
                     break;
                 default:
                     typeName = "Context" + capitalize(key);
