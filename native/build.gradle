@@ -41,6 +41,7 @@ dependencies {
     implementation group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}"
     implementation group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}"
     implementation group: 'info.picocli', name: 'picocli', version: "${picocliVersion}"
+    implementation group: 'io.ballerina.stdlib', name: 'protobuf-native', version: "${stdlibProtobufVersion}"
 
     testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
 }
