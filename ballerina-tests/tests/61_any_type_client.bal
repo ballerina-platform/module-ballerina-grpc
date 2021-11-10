@@ -14,9 +14,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
-import ballerina/protobuf.types.'any;
 import ballerina/grpc;
+import ballerina/protobuf.types.'any;
+import ballerina/lang.'string;
 import ballerina/test;
 import ballerina/time;
 
@@ -30,16 +30,19 @@ public function testProtbufAnyType() returns error? {
     'any:Any uc1Value2 = check ep->unaryCall1('any:pack("timestamp"));
     'any:Any uc1Value3 = check ep->unaryCall1('any:pack("duration"));
     'any:Any uc1Value4 = check ep->unaryCall1('any:pack("empty"));
+    'any:Any uc1Value5 = check ep->unaryCall1('any:pack("bytes"));
 
     string unpackedUc1Value1 = check 'any:unpack(uc1Value1, string);
     time:Utc unpackedUc1Value2 = check 'any:unpack(uc1Value2, time:Utc);
     time:Seconds unpackedUc1Value3 = check 'any:unpack(uc1Value3, time:Seconds);
     NilType unpackedNil = check 'any:unpack(uc1Value4, NilType);
+    string unpackedStringUc1Value5 = check 'string:fromBytes(check 'any:unpack(uc1Value5));
 
     test:assertEquals(unpackedUc1Value1, "Hello Ballerina");
     test:assertEquals(unpackedUc1Value2, check time:utcFromString("2007-12-03T10:15:30.120Z"));
     test:assertEquals(unpackedUc1Value3, 234d);
     test:assertEquals(unpackedNil, ());
+    test:assertEquals(unpackedStringUc1Value5, "string value");
 
     'any:Any uc2Value = check ep->unaryCall2('any:pack(true));
     int unpackedUc2Value = check 'any:unpack(uc2Value, int);

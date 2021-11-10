@@ -16,7 +16,6 @@
 
 import ballerina/time;
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/protobuf.types.'any;
 
 listener grpc:Listener ep61 = new (9161);
@@ -27,7 +26,6 @@ type Teacher Person1|Person2;
 service "AnyTypeServer" on ep61 {
 
     remote function unaryCall1('any:Any value) returns 'any:Any|error {
-        io:println(value);
         string stringValue = "";
         stringValue = check 'any:unpack(value);
         if stringValue == "string" {
@@ -39,6 +37,10 @@ service "AnyTypeServer" on ep61 {
             return 'any:pack(d);
         } else if stringValue == "empty" {
             return 'any:pack(());
+        } else if stringValue == "bytes" {
+            string stringValueForReturn = "string value";
+            byte[] bytes = stringValueForReturn.toBytes();
+            return 'any:pack(bytes);
         }
         return value;
 
