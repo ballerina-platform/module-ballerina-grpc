@@ -20,5 +20,5 @@ set -e
 source base-scenario.sh
 
 echo "----------Running load tests----------"
-./ghz --skipTLS --proto $scriptsDir/route_guide.proto --duration 1800s --concurrency 10 --duration-stop wait --call routeguide.RouteGuide.GetFeature -d '{"latitude": "{{randomInt -999999999 999999999}}", "longitude": "{{randomInt -999999999 999999999}}"}' bal.perf.test:443 --format csv --output $scriptsDir/ghz_output.csv
+./ghz --skipTLS --proto $scriptsDir/route_guide.proto --duration 300s --concurrency $concurrent_users --duration-stop wait --call routeguide.RouteGuide.ListFeatures -d '[{"lo": {"latitude": "{{randomInt -999999999 999999999}}", "longitude": "{{randomInt -999999999 999999999}}"}, "hi": {"latitude": "{{randomInt -999999999 999999999}}", "longitude": "{{randomInt -999999999 999999999}}"}},{"lo": {"latitude": 400000000, "longitude": -750000000},"hi": {"latitude": 420000000, "longitude": -730000000}}]' bal.perf.test:443 --format csv --output $scriptsDir/ghz_output.csv
 head $scriptsDir/ghz_output.csv

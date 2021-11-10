@@ -1,0 +1,3 @@
+resources:
+  - route_guide_bidirectional_streaming.yaml
+  - ingress.yaml

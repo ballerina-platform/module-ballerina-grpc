@@ -1,0 +1,36 @@
+name: Trigger Load Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      tests:
+        description: >
+          List of test names
+          This needs to be filled only if you want to run a specific set of tests. Example: [“foo”, “bar”]
+        required: false
+      clusterName:
+        description: 'Cluster name'
+        default: 'bal-perf-cluster-test'
+        required: false
+
+jobs:
+  invokeLoadTests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get latest ballerina runtime artifact
+        id: setRuntimeUrl
+        shell: bash
+        run: |
+          printf "::set-output name=runtimeUrl::%s" $(curl -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/ballerina-platform/module-ballerina-grpc/actions/artifacts | \
+            jq '[.artifacts[] | select(.name=="ballerina-runtime" and .expired==false)]|max|.archive_download_url')
+      - name: Invoke standard library load test workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Stdlib Workflow
+          repo: ballerina-platform/ballerina-performance-cloud
+          ref: refs/heads/main
+          token: ${{ secrets.BALLERINA_BOT_TOKEN }}
+          inputs: '{ "repo-name": "module-ballerina-grpc", "tests": "${{ github.event.inputs.tests }}", "zipURL": ${{ steps.setRuntimeUrl.outputs.runtimeUrl}}, "clusterName": "${{ github.event.inputs.clusterName }}" }'
