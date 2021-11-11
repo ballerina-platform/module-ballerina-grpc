@@ -302,4 +302,6 @@ public class GrpcConstants {
     //context message field name constants
     public static final String CONTENT_FIELD = "content";
     public static final String HEADER_FIELD = "headers";
+
+    public static final String STREAMING_NEXT_FUNCTION = "next";
 }
