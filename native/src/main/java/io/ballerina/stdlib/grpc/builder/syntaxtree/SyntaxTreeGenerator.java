@@ -314,10 +314,10 @@ public class SyntaxTreeGenerator {
         }
 
         if (checkForImportsInServices(methodList, "'any:Any")) {
-            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
+            ImportDeclarationNode importForAny = Imports.getImportDeclarationNode(
                     "ballerina", "protobuf.types.'any"
             );
-            imports = imports.add(importForTime);
+            imports = imports.add(importForAny);
         }
 
         if (addListener) {
