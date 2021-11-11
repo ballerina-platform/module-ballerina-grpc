@@ -18,6 +18,7 @@
 package io.ballerina.stdlib.grpc.callback;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
@@ -100,7 +101,13 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             BObject bObject = ((BStream) content).getIteratorObj();
             ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                     runtime, responseSender, outputType, bObject, headers);
-            runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
+            if (bObject.getType().isIsolated("next")) {
+                runtime.invokeMethodAsyncConcurrently(bObject, "next", null, null,
+                        returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
+            } else {
+                runtime.invokeMethodAsyncSequentially(bObject, "next", null, null,
+                        returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
+            }
         } else {
             // If content is null and remote function doesn't return empty response means. response is already sent
             // to client via caller object, but connection is not closed already by calling complete function.
@@ -174,7 +181,13 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
                     headers = null;
                 }
                 requestSender.onNext(msg);
-                runtime.invokeMethodAsync(bObject, "next", null, null, this);
+                if (bObject.getType().isIsolated("next")) {
+                    runtime.invokeMethodAsyncConcurrently(bObject, "next", null,
+                            null, this, null, PredefinedTypes.TYPE_NULL);
+                } else {
+                    runtime.invokeMethodAsyncSequentially(bObject, "next", null,
+                            null, this, null, PredefinedTypes.TYPE_NULL);
+                }
             } else {
                 requestSender.onCompleted();
             }
