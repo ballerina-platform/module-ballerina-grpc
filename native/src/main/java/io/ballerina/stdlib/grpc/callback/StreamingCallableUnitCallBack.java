@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.STREAMING_NEXT_FUNCTION;
 
 /**
  * Call back class registered for streaming gRPC service in B7a executor.
@@ -101,11 +102,11 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             BObject bObject = ((BStream) content).getIteratorObj();
             ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                     runtime, responseSender, outputType, bObject, headers);
-            if (bObject.getType().isIsolated("next")) {
-                runtime.invokeMethodAsyncConcurrently(bObject, "next", null, null,
+            if (bObject.getType().isIsolated(STREAMING_NEXT_FUNCTION)) {
+                runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null, null,
                         returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
             } else {
-                runtime.invokeMethodAsyncSequentially(bObject, "next", null, null,
+                runtime.invokeMethodAsyncSequentially(bObject, STREAMING_NEXT_FUNCTION, null, null,
                         returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
             }
         } else {
@@ -181,11 +182,11 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
                     headers = null;
                 }
                 requestSender.onNext(msg);
-                if (bObject.getType().isIsolated("next")) {
-                    runtime.invokeMethodAsyncConcurrently(bObject, "next", null,
+                if (bObject.getType().isIsolated(STREAMING_NEXT_FUNCTION)) {
+                    runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null,
                             null, this, null, PredefinedTypes.TYPE_NULL);
                 } else {
-                    runtime.invokeMethodAsyncSequentially(bObject, "next", null,
+                    runtime.invokeMethodAsyncSequentially(bObject, STREAMING_NEXT_FUNCTION, null,
                             null, this, null, PredefinedTypes.TYPE_NULL);
                 }
             } else {
