@@ -206,7 +206,7 @@ public class Message {
         } else if (isAnyTypedMessage && input != null) {
             int typeUrlTag = input.readTag();
 
-            if (typeUrlTag == 10) {
+            if (typeUrlTag == DescriptorProtos.FieldDescriptorProto.Type.TYPE_GROUP_VALUE) {
                 typeUrl = input.readStringRequireUtf8();
                 String typeName = anyMessageTypeNameFromTypeUrl(typeUrl);
                 fieldDescriptors = findFieldDescriptorsMapFromTypeUrl(typeName, type);
