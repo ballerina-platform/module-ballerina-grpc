@@ -18,6 +18,7 @@
 package io.ballerina.stdlib.grpc.callback;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.STREAMING_NEXT_FUNCTION;
 
 /**
  * Call back class registered for streaming gRPC service in B7a executor.
@@ -108,7 +110,13 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                 BObject bObject = ((BStream) content).getIteratorObj();
                 ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                         runtime, requestSender, outputType, bObject, headers);
-                runtime.invokeMethodAsync(bObject, "next", null, null, returnStreamUnitCallBack);
+                if (bObject.getType().isIsolated(STREAMING_NEXT_FUNCTION)) {
+                    runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null, null,
+                            returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
+                } else {
+                    runtime.invokeMethodAsyncSequentially(bObject, STREAMING_NEXT_FUNCTION, null, null,
+                            returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
+                }
             } else {
                 // If content is null and remote function doesn't return empty response means. response is already sent
                 // to client via caller object, but connection is not closed already by calling complete function.
@@ -185,7 +193,13 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                     headers = null;
                 }
                 requestSender.onNext(msg);
-                runtime.invokeMethodAsync(bObject, "next", null, null, this);
+                if (bObject.getType().isIsolated(STREAMING_NEXT_FUNCTION)) {
+                    runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null, null,
+                            this, null, PredefinedTypes.TYPE_NULL);
+                } else {
+                    runtime.invokeMethodAsyncSequentially(bObject, STREAMING_NEXT_FUNCTION, null, null,
+                            this, null, PredefinedTypes.TYPE_NULL);
+                }
             } else {
                 requestSender.onCompleted();
             }
