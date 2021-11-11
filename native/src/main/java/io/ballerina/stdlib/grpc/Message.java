@@ -205,7 +205,7 @@ public class Message {
         } else if (type.getTag() == TypeTags.ARRAY_TAG) { // for array values inside structs
             bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA));
             bMessage = bArray;
-        } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(messageName) && input != null) {
+        } else if (isAnyTypedMessage && input != null) {
             int typeUrlTag = input.readTag();
 
             if (typeUrlTag == 10) {
