@@ -74,6 +74,9 @@ public class UnaryUtils {
                 case "map<anydata>":
                     inputCap = "Struct";
                     break;
+                case "'any:Any":
+                    inputCap = "Any";
+                    break;
                 default:
                     inputCap = capitalize(method.getInputType());
                     break;
@@ -149,6 +152,9 @@ public class UnaryUtils {
                 case "map<anydata>":
                     inputCap = "Struct";
                     break;
+                case "'any:Any":
+                    inputCap = "Any";
+                    break;
                 default:
                     inputCap = capitalize(method.getInputType());
                     break;
@@ -179,6 +185,9 @@ public class UnaryUtils {
                     break;
                 case "map<anydata>":
                     outCap = "Struct";
+                    break;
+                case "'any:Any":
+                    outCap = "Any";
                     break;
                 default:
                     outCap = capitalize(method.getOutputType());

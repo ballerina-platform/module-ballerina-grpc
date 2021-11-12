@@ -39,10 +39,12 @@ import io.ballerina.stdlib.grpc.exception.GrpcServerException;
 import io.ballerina.stdlib.grpc.listener.ServerCallHandler;
 import io.ballerina.stdlib.grpc.listener.StreamingServerCallHandler;
 import io.ballerina.stdlib.grpc.listener.UnaryServerCallHandler;
+import io.ballerina.stdlib.protobuf.nativeimpl.ProtoTypesUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
@@ -64,6 +66,7 @@ public class ServicesBuilderUtils {
                                                                Object annotationData) throws GrpcServerException {
 
         Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
+        MessageRegistry.getInstance().setFileDescriptor(fileDescriptor);
         if (fileDescriptor == null) {
             fileDescriptor = getDescriptorFromService(service);
         }
@@ -313,6 +316,9 @@ public class ServicesBuilderUtils {
             return PredefinedTypes.TYPE_DECIMAL;
         } else if (protoType.equals(STRUCT_MESSAGE)) {
             return PredefinedTypes.TYPE_MAP;
+        } else if (protoType.equals(ANY_MESSAGE)) {
+            return TypeCreator.createRecordType("Any", ProtoTypesUtils.getProtoTypesAnyModule(), 0, true,
+                    TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
         } else {
             return TypeCreator.createRecordType(protoType, module, 0, true,
                     TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));

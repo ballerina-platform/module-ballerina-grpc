@@ -158,6 +158,9 @@ public class ClientUtils {
             case "map<anydata>":
                 inputCap = "Struct";
                 break;
+            case "'any:Any":
+                inputCap = "Any";
+                break;
             default:
                 inputCap = capitalize(method.getInputType());
                 break;
@@ -193,6 +196,9 @@ public class ClientUtils {
                 break;
             case "map<anydata>":
                 inputCap = "Struct";
+                break;
+            case "'any:Any":
+                inputCap = "Any";
                 break;
             default:
                 inputCap = capitalize(method.getInputType());
@@ -235,6 +241,9 @@ public class ClientUtils {
                     break;
                 case "map<anydata>":
                     outCap = "Struct";
+                    break;
+                case "'any:Any":
+                    outCap = "Any";
                     break;
                 default:
                     outCap = capitalize(method.getOutputType());
@@ -352,6 +361,9 @@ public class ClientUtils {
                     break;
                 case "map<anydata>":
                     outCap = "Struct";
+                    break;
+                case "'any:Any":
+                    outCap = "Any";
                     break;
                 default:
                     outCap = capitalize(method.getOutputType());
