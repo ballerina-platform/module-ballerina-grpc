@@ -5,7 +5,7 @@ on:
     inputs:
       tests:
         description: >
-          List of test names. This needs to be filled only if you want to run a specific set of tests. Example: ["foo", "bar"]
+          List of test names. This needs to be filled only if you want to run a specific set of tests. Example: [\"foo\", \"bar\"]
         required: false
       clusterName:
         description: 'Cluster name'
