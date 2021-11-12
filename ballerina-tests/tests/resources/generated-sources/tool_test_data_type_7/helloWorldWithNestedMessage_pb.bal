@@ -19,7 +19,7 @@ public isolated client class helloWorldWithNestedMessageClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("myproj.apis.helloWorldWithNestedMessage/hello", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("myproj.apis.helloWorldWithNestedMessage/hello", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <HelloResponse>result;
     }
@@ -33,8 +33,8 @@ public isolated client class helloWorldWithNestedMessageClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("myproj.apis.helloWorldWithNestedMessage/hello", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("myproj.apis.helloWorldWithNestedMessage/hello", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <HelloResponse>result, headers: respHeaders};
     }
 
@@ -47,7 +47,7 @@ public isolated client class helloWorldWithNestedMessageClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("myproj.apis.helloWorldWithNestedMessage/bye", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("myproj.apis.helloWorldWithNestedMessage/bye", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <ByeResponse>result;
     }
@@ -61,8 +61,8 @@ public isolated client class helloWorldWithNestedMessageClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("myproj.apis.helloWorldWithNestedMessage/bye", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("myproj.apis.helloWorldWithNestedMessage/bye", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <ByeResponse>result, headers: respHeaders};
     }
 }

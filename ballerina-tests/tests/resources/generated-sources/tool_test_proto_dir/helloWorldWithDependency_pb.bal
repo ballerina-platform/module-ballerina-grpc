@@ -19,7 +19,7 @@ public isolated client class helloWorldWithDependencyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorldWithDependency/hello", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorldWithDependency/hello", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <HelloResponse>result;
     }
@@ -33,8 +33,8 @@ public isolated client class helloWorldWithDependencyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorldWithDependency/hello", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorldWithDependency/hello", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <HelloResponse>result, headers: respHeaders};
     }
 }

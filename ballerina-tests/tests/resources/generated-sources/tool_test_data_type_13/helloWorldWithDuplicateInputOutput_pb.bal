@@ -21,7 +21,7 @@ public isolated client class ChatClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Chat/call1", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("Chat/call1", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
@@ -35,8 +35,8 @@ public isolated client class ChatClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Chat/call1", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("Chat/call1", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
@@ -49,7 +49,7 @@ public isolated client class ChatClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Chat/call2", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("Chat/call2", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
@@ -63,8 +63,8 @@ public isolated client class ChatClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Chat/call2", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("Chat/call2", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
@@ -87,7 +87,7 @@ public isolated client class ChatClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
@@ -102,7 +102,7 @@ public isolated client class ChatClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("Chat/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
@@ -117,7 +117,7 @@ public isolated client class ChatClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
@@ -132,7 +132,7 @@ public isolated client class ChatClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("Chat/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
@@ -168,7 +168,7 @@ public isolated client class Chat2Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Chat2/call1", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("Chat2/call1", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
@@ -182,8 +182,8 @@ public isolated client class Chat2Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Chat2/call1", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("Chat2/call1", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
@@ -196,7 +196,7 @@ public isolated client class Chat2Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Chat2/call2", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("Chat2/call2", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
@@ -210,8 +210,8 @@ public isolated client class Chat2Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Chat2/call2", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("Chat2/call2", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
@@ -234,7 +234,7 @@ public isolated client class Chat2Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
@@ -249,7 +249,7 @@ public isolated client class Chat2Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("Chat2/call3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
@@ -264,7 +264,7 @@ public isolated client class Chat2Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
@@ -279,7 +279,7 @@ public isolated client class Chat2Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("Chat2/call4", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
@@ -316,7 +316,7 @@ public client class Call5StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <Msg>payload;
         }
     }
@@ -360,7 +360,7 @@ public client class Call6StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <Msg>payload;
         }
     }
@@ -404,7 +404,7 @@ public client class Call7StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <Msg>payload;
         }
     }
@@ -448,7 +448,7 @@ public client class Call8StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <Msg>payload;
         }
     }

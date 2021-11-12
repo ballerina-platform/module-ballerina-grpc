@@ -23,7 +23,7 @@ public isolated client class DurationHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("DurationHandler/unaryCall1", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("DurationHandler/unaryCall1", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <time:Seconds>result;
     }
@@ -37,8 +37,8 @@ public isolated client class DurationHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("DurationHandler/unaryCall1", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("DurationHandler/unaryCall1", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <time:Seconds>result, headers: respHeaders};
     }
 
@@ -51,7 +51,7 @@ public isolated client class DurationHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("DurationHandler/unaryCall2", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("DurationHandler/unaryCall2", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <DurationMsg>result;
     }
@@ -65,8 +65,8 @@ public isolated client class DurationHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("DurationHandler/unaryCall2", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("DurationHandler/unaryCall2", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <DurationMsg>result, headers: respHeaders};
     }
 
@@ -84,7 +84,7 @@ public isolated client class DurationHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         sduration:DurationStream outputStream = new sduration:DurationStream(result);
         return new stream<time:Seconds, grpc:Error?>(outputStream);
@@ -99,7 +99,7 @@ public isolated client class DurationHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("DurationHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         sduration:DurationStream outputStream = new sduration:DurationStream(result);
         return {content: new stream<time:Seconds, grpc:Error?>(outputStream), headers: respHeaders};
@@ -131,7 +131,7 @@ public client class ClientStreamingStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return payload.toString();
         }
     }
@@ -175,7 +175,7 @@ public client class BidirectionalStreamingStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <DurationMsg>payload;
         }
     }

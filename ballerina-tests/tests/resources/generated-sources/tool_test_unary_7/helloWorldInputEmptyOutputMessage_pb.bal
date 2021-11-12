@@ -14,7 +14,7 @@ public isolated client class helloWorldClient {
     isolated remote function testNoInputOutputStruct() returns HelloResponse|grpc:Error {
         empty:Empty message = {};
         map<string|string[]> headers = {};
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <HelloResponse>result;
     }
@@ -22,8 +22,8 @@ public isolated client class helloWorldClient {
     isolated remote function testNoInputOutputStructContext() returns ContextHelloResponse|grpc:Error {
         empty:Empty message = {};
         map<string|string[]> headers = {};
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testNoInputOutputStruct", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <HelloResponse>result, headers: respHeaders};
     }
 }

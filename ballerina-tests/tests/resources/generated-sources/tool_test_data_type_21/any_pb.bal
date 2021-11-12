@@ -21,7 +21,7 @@ public isolated client class AnyTypeServerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall1", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall1", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <'any:Any>result;
     }
@@ -35,8 +35,8 @@ public isolated client class AnyTypeServerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall1", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall1", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <'any:Any>result, headers: respHeaders};
     }
 
@@ -49,7 +49,7 @@ public isolated client class AnyTypeServerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall2", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall2", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <'any:Any>result;
     }
@@ -63,8 +63,8 @@ public isolated client class AnyTypeServerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall2", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall2", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <'any:Any>result, headers: respHeaders};
     }
 
@@ -77,7 +77,7 @@ public isolated client class AnyTypeServerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall3", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall3", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <'any:Any>result;
     }
@@ -91,8 +91,8 @@ public isolated client class AnyTypeServerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall3", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("AnyTypeServer/unaryCall3", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <'any:Any>result, headers: respHeaders};
     }
 
@@ -110,7 +110,7 @@ public isolated client class AnyTypeServerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("AnyTypeServer/serverStreamingCall", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("AnyTypeServer/serverStreamingCall", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         sany:AnyStream outputStream = new sany:AnyStream(result);
         return new stream<'any:Any, grpc:Error?>(outputStream);
@@ -125,7 +125,7 @@ public isolated client class AnyTypeServerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("AnyTypeServer/serverStreamingCall", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("AnyTypeServer/serverStreamingCall", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         sany:AnyStream outputStream = new sany:AnyStream(result);
         return {content: new stream<'any:Any, grpc:Error?>(outputStream), headers: respHeaders};
@@ -157,7 +157,7 @@ public client class ClientStreamingCallStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <'any:Any>payload;
         }
     }
@@ -201,7 +201,7 @@ public client class BidirectionalStreamingCallStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <'any:Any>payload;
         }
     }

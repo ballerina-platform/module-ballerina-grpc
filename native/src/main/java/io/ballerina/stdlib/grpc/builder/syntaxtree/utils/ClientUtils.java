@@ -264,7 +264,7 @@ public class ClientUtils {
         );
         TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
                 getTupleTypeDescriptorNode(receiveArgs),
-                getListBindingPatternNode(new String[]{"payload", "headers"}));
+                getListBindingPatternNode(new String[]{"payload", "_"}));
         if (method.getOutputType() != null) {
             function.addReturns(
                     TypeDescriptor.getUnionTypeDescriptorNode(

@@ -22,7 +22,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/getTime", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/getTime", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <time:Utc>result.cloneReadOnly();
     }
@@ -36,8 +36,8 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/getTime", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/getTime", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <time:Utc>result.cloneReadOnly(), headers: respHeaders};
     }
 
@@ -50,7 +50,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/sendTime", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/sendTime", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
@@ -64,8 +64,8 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/sendTime", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/sendTime", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
@@ -78,7 +78,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/exchangeTime", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/exchangeTime", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <time:Utc>result.cloneReadOnly();
     }
@@ -92,8 +92,8 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/exchangeTime", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/exchangeTime", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <time:Utc>result.cloneReadOnly(), headers: respHeaders};
     }
 
@@ -106,7 +106,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/getGreeting", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/getGreeting", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <Greeting>result;
     }
@@ -120,8 +120,8 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/getGreeting", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/getGreeting", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <Greeting>result, headers: respHeaders};
     }
 
@@ -134,7 +134,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/sendGreeting", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/sendGreeting", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
@@ -148,8 +148,8 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/sendGreeting", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/sendGreeting", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
@@ -162,7 +162,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/exchangeGreeting", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/exchangeGreeting", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <Greeting>result;
     }
@@ -176,8 +176,8 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorld/exchangeGreeting", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorld/exchangeGreeting", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <Greeting>result, headers: respHeaders};
     }
 }

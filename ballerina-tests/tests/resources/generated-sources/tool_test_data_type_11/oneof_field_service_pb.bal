@@ -19,7 +19,7 @@ public isolated client class OneofFieldServiceClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <Response1>result;
     }
@@ -33,8 +33,8 @@ public isolated client class OneofFieldServiceClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/hello", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <Response1>result, headers: respHeaders};
     }
 
@@ -47,7 +47,7 @@ public isolated client class OneofFieldServiceClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <ZZZ>result;
     }
@@ -61,8 +61,8 @@ public isolated client class OneofFieldServiceClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.OneofFieldService/testOneofField", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <ZZZ>result, headers: respHeaders};
     }
 }

@@ -19,7 +19,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         HelloResponseStream outputStream = new HelloResponseStream(result);
         return new stream<HelloResponse, grpc:Error?>(outputStream);
@@ -34,7 +34,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         HelloResponseStream outputStream = new HelloResponseStream(result);
         return {content: new stream<HelloResponse, grpc:Error?>(outputStream), headers: respHeaders};
@@ -49,7 +49,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/bye", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("helloWorld/bye", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         ByeResponseStream outputStream = new ByeResponseStream(result);
         return new stream<ByeResponse, grpc:Error?>(outputStream);
@@ -64,7 +64,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/bye", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("helloWorld/bye", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         ByeResponseStream outputStream = new ByeResponseStream(result);
         return {content: new stream<ByeResponse, grpc:Error?>(outputStream), headers: respHeaders};

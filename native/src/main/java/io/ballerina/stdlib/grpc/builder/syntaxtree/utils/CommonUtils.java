@@ -201,7 +201,7 @@ public class CommonUtils {
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getBuiltinSimpleNameReferenceNode("var"),
-                        getCaptureBindingPatternNode("payload")),
+                        getCaptureBindingPatternNode("_")),
                 getCheckExpressionNode(
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "grpcClient"),

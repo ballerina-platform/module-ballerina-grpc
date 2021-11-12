@@ -19,7 +19,7 @@ public isolated client class helloWorldWithNestedEnumClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorldWithNestedEnum/hello", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorldWithNestedEnum/hello", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <HelloResponse>result;
     }
@@ -33,8 +33,8 @@ public isolated client class helloWorldWithNestedEnumClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorldWithNestedEnum/hello", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorldWithNestedEnum/hello", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <HelloResponse>result, headers: respHeaders};
     }
 
@@ -47,7 +47,7 @@ public isolated client class helloWorldWithNestedEnumClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorldWithNestedEnum/bye", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorldWithNestedEnum/bye", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <ByeResponse>result;
     }
@@ -61,8 +61,8 @@ public isolated client class helloWorldWithNestedEnumClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloWorldWithNestedEnum/bye", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloWorldWithNestedEnum/bye", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <ByeResponse>result, headers: respHeaders};
     }
 }
@@ -86,7 +86,7 @@ public isolated client class helloFooWithNestedEnumClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloFooWithNestedEnum/foo", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloFooWithNestedEnum/foo", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <HelloResponse>result;
     }
@@ -100,8 +100,8 @@ public isolated client class helloFooWithNestedEnumClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloFooWithNestedEnum/foo", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloFooWithNestedEnum/foo", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <HelloResponse>result, headers: respHeaders};
     }
 
@@ -114,7 +114,7 @@ public isolated client class helloFooWithNestedEnumClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloFooWithNestedEnum/bar", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("helloFooWithNestedEnum/bar", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <ByeResponse>result;
     }
@@ -128,8 +128,8 @@ public isolated client class helloFooWithNestedEnumClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("helloFooWithNestedEnum/bar", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("helloFooWithNestedEnum/bar", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <ByeResponse>result, headers: respHeaders};
     }
 }

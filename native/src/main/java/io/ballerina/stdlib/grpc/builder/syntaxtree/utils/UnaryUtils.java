@@ -219,7 +219,7 @@ public class UnaryUtils {
         VariableDeclaration payload = new VariableDeclaration(
                 getTypedBindingPatternNode(
                         getTupleTypeDescriptorNode(payloadArgs),
-                        getListBindingPatternNode(new String[]{"result", "respHeaders"})),
+                        getListBindingPatternNode(new String[]{"_", "respHeaders"})),
                 getSimpleNameReferenceNode("payload")
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());

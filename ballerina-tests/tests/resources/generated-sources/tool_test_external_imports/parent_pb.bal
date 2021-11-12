@@ -19,7 +19,7 @@ public isolated client class ParentTestClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ParentTest/callParent1", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("ParentTest/callParent1", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <ParentMessage>result;
     }
@@ -33,8 +33,8 @@ public isolated client class ParentTestClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ParentTest/callParent1", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("ParentTest/callParent1", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <ParentMessage>result, headers: respHeaders};
     }
 
@@ -52,7 +52,7 @@ public isolated client class ParentTestClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("ParentTest/callParent3", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("ParentTest/callParent3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         ParentMessageStream outputStream = new ParentMessageStream(result);
         return new stream<ParentMessage, grpc:Error?>(outputStream);
@@ -67,7 +67,7 @@ public isolated client class ParentTestClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("ParentTest/callParent3", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("ParentTest/callParent3", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         ParentMessageStream outputStream = new ParentMessageStream(result);
         return {content: new stream<ParentMessage, grpc:Error?>(outputStream), headers: respHeaders};
@@ -99,7 +99,7 @@ public client class CallParent2StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <ParentMessage>payload;
         }
     }
@@ -167,7 +167,7 @@ public client class CallParent4StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <ParentMessage>payload;
         }
     }

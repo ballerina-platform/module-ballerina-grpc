@@ -21,7 +21,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         swrappers:BytesStream outputStream = new swrappers:BytesStream(result);
         return new stream<byte[], grpc:Error?>(outputStream);
@@ -36,7 +36,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("helloWorld/hello", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         swrappers:BytesStream outputStream = new swrappers:BytesStream(result);
         return {content: new stream<byte[], grpc:Error?>(outputStream), headers: respHeaders};

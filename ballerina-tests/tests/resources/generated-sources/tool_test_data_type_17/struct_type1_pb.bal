@@ -22,7 +22,7 @@ public isolated client class StructHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("StructHandler/unaryCall1", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("StructHandler/unaryCall1", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <map<anydata>>result;
     }
@@ -36,8 +36,8 @@ public isolated client class StructHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("StructHandler/unaryCall1", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("StructHandler/unaryCall1", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <map<anydata>>result, headers: respHeaders};
     }
 
@@ -50,7 +50,7 @@ public isolated client class StructHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("StructHandler/unaryCall2", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("StructHandler/unaryCall2", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <StructMsg>result;
     }
@@ -64,8 +64,8 @@ public isolated client class StructHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("StructHandler/unaryCall2", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        var _ = check self.grpcClient->executeSimpleRPC("StructHandler/unaryCall2", message, headers);
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {content: <StructMsg>result, headers: respHeaders};
     }
 
@@ -83,7 +83,7 @@ public isolated client class StructHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("StructHandler/serverStreaming", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("StructHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         sstruct:StructStream outputStream = new sstruct:StructStream(result);
         return new stream<map<anydata>, grpc:Error?>(outputStream);
@@ -98,7 +98,7 @@ public isolated client class StructHandlerClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("StructHandler/serverStreaming", message, headers);
+        var _ = check self.grpcClient->executeServerStreaming("StructHandler/serverStreaming", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         sstruct:StructStream outputStream = new sstruct:StructStream(result);
         return {content: new stream<map<anydata>, grpc:Error?>(outputStream), headers: respHeaders};
@@ -130,7 +130,7 @@ public client class ClientStreamingStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return payload.toString();
         }
     }
@@ -174,7 +174,7 @@ public client class BidirectionalStreamingStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <StructMsg>payload;
         }
     }
