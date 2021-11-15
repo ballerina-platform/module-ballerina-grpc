@@ -441,6 +441,9 @@ public class MessageUtils {
             if (returnType.equals("map<anydata>")) {
                 returnType = "Struct";
             }
+            if (returnType.equals("'any:Any")) {
+                returnType = "Any";
+            }
             returnType = returnType.replaceAll("[^a-zA-Z0-9]", "");
             return serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1) +
                     returnType.substring(0, 1).toUpperCase() + returnType.substring(1) +

@@ -15,12 +15,18 @@
  */
 package io.ballerina.stdlib.grpc;
 
+import com.google.protobuf.AnyProto;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.DurationProto;
+import com.google.protobuf.EmptyProto;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.StructProto;
+import com.google.protobuf.TimestampProto;
 import com.google.protobuf.WireFormat;
+import com.google.protobuf.WrappersProto;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.creators.TypeCreator;
@@ -46,7 +52,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_MESSAGE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BOOL_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BYTES_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_DOUBLE_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_FLOAT_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_INT32_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_INT64_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_STRING_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_UINT32_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_UINT64_TYPE_NAME;
 
 /**
  * Generic Proto3 Message.
@@ -58,6 +78,7 @@ public class Message {
     private static final String GOOGLE_PROTOBUF_ANY = "google.protobuf.Any";
     private static final String GOOGLE_PROTOBUF_ANY_VALUE = "google.protobuf.Any.value";
     private static final String GOOGLE_PROTOBUF_ANY_TYPE_URL = "google.protobuf.Any.type_url";
+    private static final String GOOGLE_PROTOBUF_ANY_MESSAGE_NAME = "Any";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP = "google.protobuf.Timestamp";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_SECONDS = "google.protobuf.Timestamp.seconds";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_NANOS = "google.protobuf.Timestamp.nanos";
@@ -71,6 +92,8 @@ public class Message {
     private static final String GOOGLE_PROTOBUF_VALUE_STRUCT_VALUE = "google.protobuf.Value.struct_value";
     private static final String GOOGLE_PROTOBUF_LISTVALUE_VALUES = "google.protobuf.ListValue.values";
     private static final String GOOGLE_PROTOBUF_STRUCTVALUE_VALUES = "google.protobuf.StructValue.values";
+    private static final String BALLERINA_ANY_VALUE_ENTRY = "value";
+    private static final String BALLERINA_TYPE_URL_ENTRY = "typeUrl";
     private static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
 
     private String messageName;
@@ -137,6 +160,8 @@ public class Message {
             Map<Integer, Descriptors.FieldDescriptor> fieldDescriptors)
             throws IOException {
         this(messageName);
+        boolean isAnyTypedMessage = false;
+        String typeUrl = "";
 
         if (type instanceof UnionType && !(type instanceof AnydataType) && type.isNilable()) {
             List<Type> memberTypes = ((UnionType) type).getMemberTypes();
@@ -155,7 +180,8 @@ public class Message {
 
         BMap<BString, Object> bBMap = null;
         BArray bArray = null;
-        if (type.getTag() == TypeTags.RECORD_TYPE_TAG) {
+        isAnyTypedMessage = GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(messageName);
+        if (type.getTag() == TypeTags.RECORD_TYPE_TAG && !isAnyTypedMessage) {
             bBMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
             bMessage = bBMap;
         } else if (type.getTag() == TypeTags.INTERSECTION_TAG ||
@@ -166,7 +192,7 @@ public class Message {
             bMessage = bArray;
         } else if (type.getTag() == TypeTags.DECIMAL_TAG) { // for Duration type
             bMessage = ValueCreator.createDecimalValue(new BigDecimal(0));
-        } else if (type.getTag() == TypeTags.MAP_TAG) { // for Struct type
+        } else if (type.getTag() == TypeTags.MAP_TAG && !isAnyTypedMessage) { // for Struct type
             bBMap = ValueCreator.createMapValue(TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA));
             bMessage = bBMap;
         } else if (type.getTag() == TypeTags.TUPLE_TAG) { // for each field in Struct type
@@ -177,6 +203,59 @@ public class Message {
         } else if (type.getTag() == TypeTags.ARRAY_TAG) { // for array values inside structs
             bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA));
             bMessage = bArray;
+        } else if (isAnyTypedMessage && input != null) {
+            int typeUrlTag = input.readTag();
+
+            if (typeUrlTag == DescriptorProtos.FieldDescriptorProto.Type.TYPE_GROUP_VALUE) {
+                typeUrl = input.readStringRequireUtf8();
+                String typeName = anyMessageTypeNameFromTypeUrl(typeUrl);
+                fieldDescriptors = findFieldDescriptorsMapFromTypeUrl(typeName, type);
+                switch (typeName) {
+                    case WRAPPER_DOUBLE_TYPE_NAME:
+                    case WRAPPER_FLOAT_TYPE_NAME: {
+                        bMessage = (double) 0;
+                        break;
+                    }
+                    case WRAPPER_INT64_TYPE_NAME:
+                    case WRAPPER_UINT64_TYPE_NAME:
+                    case WRAPPER_INT32_TYPE_NAME:
+                    case WRAPPER_UINT32_TYPE_NAME: {
+                        bMessage = (long) 0;
+                        break;
+                    }
+                    case WRAPPER_STRING_TYPE_NAME: {
+                        bMessage = StringUtils.fromString("");
+                        break;
+                    }
+                    case WRAPPER_BYTES_TYPE_NAME: {
+                        bArray = ValueCreator.createArrayValue(
+                                TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA));
+                        bMessage = bArray;
+                        break;
+                    }
+                    case WRAPPER_BOOL_TYPE_NAME: {
+                        bMessage = Boolean.FALSE;
+                        break;
+                    }
+                    case TIMESTAMP_TYPE_NAME: {
+                        TupleType tupleType = TypeCreator.createTupleType(
+                                Arrays.asList(PredefinedTypes.TYPE_INT, PredefinedTypes.TYPE_DECIMAL));
+                        bArray = ValueCreator.createTupleValue(tupleType);
+                        bMessage = bArray;
+                        break;
+                    }
+                    case DURATION_TYPE_NAME: {
+                        bMessage = ValueCreator.createDecimalValue(new BigDecimal(0));
+                        break;
+                    }
+                    default: {
+                        bBMap = ValueCreator.createMapValue(TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA));
+                        bMessage = bBMap;
+                    }
+                }
+                // Unwanted tag readings for Any type
+                skipUnnecessaryAnyTypeTags(input);
+            }
         }
 
         if (input == null) {
@@ -558,6 +637,13 @@ public class Message {
                 }
             }
         }
+
+        if (isAnyTypedMessage) {
+            BMap<BString, Object> anyMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
+            anyMap.put(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY), StringUtils.fromString(typeUrl));
+            anyMap.put(StringUtils.fromString(BALLERINA_ANY_VALUE_ENTRY), bMessage);
+            bMessage = anyMap;
+        }
     }
 
     private void updateBBMap(BMap<BString, Object> bBMap,
@@ -765,6 +851,9 @@ public class Message {
                     } else if (bMessage instanceof BString
                             && !fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_ANY_TYPE_URL)) {
                         output.writeString(fieldDescriptor.getNumber(), ((BString) bMessage).getValue());
+                    } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
+                        output.writeString(fieldDescriptor.getNumber(), ((BMap) bMessage)
+                                .getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue());
                     }
                     break;
                 }
@@ -844,9 +933,20 @@ public class Message {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES_VALUE: {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
                         Object bValue = bBMap.get(bFieldName);
-                        if (bValue instanceof BArray) {
+                        if (bValue instanceof BArray && !GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
                             BArray valueArray = (BArray) bValue;
                             output.writeByteArray(fieldDescriptor.getNumber(), valueArray.getBytes());
+                        } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
+                            String typeUrl = ((BMap<BString, Object>) this.bMessage).getStringValue(
+                                    StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue();
+                            String typeName = anyMessageTypeNameFromTypeUrl(typeUrl);
+                            Descriptors.Descriptor descriptor = findFieldDescriptorFromTypeUrl(typeName);
+                            Object value = ((BMap<BString, Object>) this.bMessage).get(
+                                    StringUtils.fromString(BALLERINA_ANY_VALUE_ENTRY));
+                            Message message = new Message(descriptor, value);
+                            output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
+                            output.writeUInt32NoTag(message.getSerializedSize());
+                            message.writeTo(output);
                         }
                     } else if (bMessage instanceof BArray) {
                         BArray valueArray = (BArray) bMessage;
@@ -1090,6 +1190,9 @@ public class Message {
                     } else if (bMessage instanceof BString) {
                         size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(),
                                 ((BString) bMessage).getValue());
+                    } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
+                        size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(), ((BMap) bMessage)
+                                .getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue());
                     }
                     break;
                 }
@@ -1157,10 +1260,19 @@ public class Message {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES_VALUE: {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
                         Object bValue = bBMap.get(bFieldName);
-                        if (bValue instanceof BArray) {
+                        if (bValue instanceof BArray && !GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
                             BArray valueArray = (BArray) bValue;
                             size += com.google.protobuf.CodedOutputStream
                                     .computeByteArraySize(fieldDescriptor.getNumber(), valueArray.getBytes());
+                        } else if (GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
+                            String typeUrl = ((BMap<BString, Object>) this.bMessage)
+                                    .getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue();
+                            String typeName = anyMessageTypeNameFromTypeUrl(typeUrl);
+                            Descriptors.Descriptor descriptor = findFieldDescriptorFromTypeUrl(typeName);
+                            Object value = ((BMap<BString, Object>) this.bMessage)
+                                    .get(StringUtils.fromString(BALLERINA_ANY_VALUE_ENTRY));
+                            Message message = new Message(descriptor, value);
+                            size += computeMessageSize(fieldDescriptor, message);
                         }
                     } else if (bMessage instanceof BArray) {
                         BArray valueArray = (BArray) bMessage;
@@ -1184,6 +1296,74 @@ public class Message {
         return CodedOutputStream.computeTagSize(fieldDescriptor
                 .getNumber()) + CodedOutputStream.computeUInt32SizeNoTag
                 (message.getSerializedSize()) + message.getSerializedSize();
+    }
+
+    private String anyMessageTypeNameFromTypeUrl(String typeUrl) {
+
+        String[] types = typeUrl.split("/");
+        return types[types.length - 1].trim();
+    }
+
+    private Map<Integer, Descriptors.FieldDescriptor> findFieldDescriptorsMapFromTypeUrl(String typeName, Type type) {
+
+        Descriptors.Descriptor descriptor = findFieldDescriptorFromTypeUrl(typeName);
+        MessageParser messageParser = new MessageParser(typeName, type, descriptor);
+        return messageParser.getFieldDescriptors();
+    }
+
+    private Descriptors.Descriptor findFieldDescriptorFromTypeUrl(String typeName) {
+
+        if (typeName.startsWith("google.protobuf")) {
+            return findGoogleDescriptorFromName(typeName);
+        } else {
+            return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(typeName);
+        }
+    }
+
+    private Descriptors.Descriptor findGoogleDescriptorFromName(String typeName) {
+
+        String messageName = typeName.replace("google.protobuf.", "");
+        switch (typeName) {
+            case WRAPPER_DOUBLE_TYPE_NAME:
+            case WRAPPER_FLOAT_TYPE_NAME:
+            case WRAPPER_INT64_TYPE_NAME:
+            case WRAPPER_UINT64_TYPE_NAME:
+            case WRAPPER_INT32_TYPE_NAME:
+            case WRAPPER_UINT32_TYPE_NAME:
+            case WRAPPER_BOOL_TYPE_NAME:
+            case WRAPPER_STRING_TYPE_NAME:
+            case WRAPPER_BYTES_TYPE_NAME: {
+                return WrappersProto.getDescriptor().findMessageTypeByName(messageName);
+            }
+            case ANY_TYPE_NAME: {
+                return AnyProto.getDescriptor().findMessageTypeByName(messageName);
+            }
+            case EMPTY_TYPE_NAME: {
+                return EmptyProto.getDescriptor().findMessageTypeByName(messageName);
+            }
+            case TIMESTAMP_TYPE_NAME: {
+                return TimestampProto.getDescriptor().findMessageTypeByName(messageName);
+            }
+            case DURATION_TYPE_NAME: {
+                return DurationProto.getDescriptor().findMessageTypeByName(messageName);
+            }
+            case STRUCT_TYPE_NAME: {
+                return StructProto.getDescriptor().findMessageTypeByName(messageName);
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+
+    public void skipUnnecessaryAnyTypeTags(com.google.protobuf.CodedInputStream input) throws IOException {
+
+        try {
+            input.readTag();
+            input.readTag();
+        } catch (InvalidProtocolBufferException e) {
+            input.getLastTag();
+        }
     }
 
     public byte[] toByteArray() {

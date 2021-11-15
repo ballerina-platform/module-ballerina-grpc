@@ -56,12 +56,14 @@ dependencies = [
 	{org = "ballerina", name = "lang.runtime"},
 	{org = "ballerina", name = "log"},
 	{org = "ballerina", name = "oauth2"},
+	{org = "ballerina", name = "protobuf"},
 	{org = "ballerina", name = "regex"},
 	{org = "ballerina", name = "test"},
 	{org = "ballerina", name = "time"}
 ]
 modules = [
 	{org = "ballerina", packageName = "grpc", moduleName = "grpc"},
+	{org = "ballerina", packageName = "grpc", moduleName = "grpc.types.any"},
 	{org = "ballerina", packageName = "grpc", moduleName = "grpc.types.duration"},
 	{org = "ballerina", packageName = "grpc", moduleName = "grpc.types.struct"},
 	{org = "ballerina", packageName = "grpc", moduleName = "grpc.types.timestamp"},
@@ -139,9 +141,7 @@ org = "ballerina"
 name = "lang.runtime"
 version = "0.0.0"
 dependencies = [
-	{org = "ballerina", name = "jballerina.java"},
-	{org = "ballerina", name = "lang.array"},
-	{org = "ballerina", name = "lang.value"}
+	{org = "ballerina", name = "jballerina.java"}
 ]
 modules = [
 	{org = "ballerina", packageName = "lang.runtime", moduleName = "lang.runtime"}
@@ -198,6 +198,24 @@ name = "observe"
 version = "1.0.0"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
+]
+
+[[package]]
+org = "ballerina"
+name = "protobuf"
+version = "1.0.1"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "time"}
+]
+modules = [
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.any"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.duration"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.empty"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.struct"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.timestamp"},
+	{org = "ballerina", packageName = "protobuf", moduleName = "protobuf.types.wrappers"}
 ]
 
 [[package]]

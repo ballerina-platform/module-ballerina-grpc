@@ -71,7 +71,8 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
      */
     public static Object externInitEndpoint(BObject listenerObject) {
 
-        BMap serviceEndpointConfig = listenerObject.getMapValue(HttpConstants.SERVICE_ENDPOINT_CONFIG);
+        BMap serviceEndpointConfig = listenerObject.getMapValue(StringUtils.fromString(
+                HttpConstants.SERVICE_ENDPOINT_CONFIG));
         long port = listenerObject.getIntValue(ENDPOINT_CONFIG_PORT);
         try {
             ListenerConfiguration configuration = getListenerConfig(port, serviceEndpointConfig);

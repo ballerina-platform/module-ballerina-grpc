@@ -138,6 +138,14 @@ function testHelloWorldWithStructType2() {
 }
 
 @test:Config {enable:true}
+function testHelloWorldWithAnyType() {
+    var result = assertGeneratedSources("data-types", "any.proto", "any_pb.bal", "AnyTypeServer_sample_service.bal", "AnyTypeServer_sample_client.bal", "tool_test_data_type_21");
+    if (result is error) {
+        test:assertFail("Failed to assert generated sources");
+    }
+}
+
+@test:Config {enable:true}
 function testHelloWorldChild() {
     var result1 = assertGeneratedDataTypeSources("data-types", "child.proto", "parent_pb.bal", "tool_test_data_type_14");
     if result1 is error {
