@@ -99,6 +99,7 @@ public class CommonUtils {
             case "time:Utc" :
             case "time:Seconds" :
             case "map<anydata>" :
+            case "'any:Any" :
                 return true;
             default:
                 return false;
@@ -122,6 +123,8 @@ public class CommonUtils {
                 return "duration";
             case "map<anydata>" :
                 return "struct";
+            case "'any:Any" :
+                return "'any";
             default:
                 return "";
         }

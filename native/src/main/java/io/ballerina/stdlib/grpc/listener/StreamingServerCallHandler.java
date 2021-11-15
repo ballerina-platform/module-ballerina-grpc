@@ -190,8 +190,16 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
         StreamingCallableUnitCallBack callback = new StreamingCallableUnitCallBack(resource.getRuntime(),
                 responseObserver, isEmptyResponse(), this.methodDescriptor.getOutputType(), context);
-        resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
-                GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                resource.getReturnType(), requestParams);
+
+        String functionName = resource.getFunctionName();
+        if (resource.getService().getType().isIsolated(functionName)) {
+            resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), resource.getFunctionName(), null,
+                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                    resource.getReturnType(), requestParams);
+        } else {
+            resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), resource.getFunctionName(), null,
+                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                    resource.getReturnType(), requestParams);
+        }
     }
 }

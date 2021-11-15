@@ -1,0 +1,17 @@
+name: Create Automated Summary PR for Load Tests
+on:
+  push:
+    branches:
+      - 'nightly-**'
+    paths:
+      - 'load-tests/**/results/summary.csv'
+jobs:
+  createPullRequest:
+    name: Create Summary Update PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create pull request for new summary
+        run: gh pr create --title "[Automated] Update summary csv files" --body "Update summary csv files"
+        env:
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}

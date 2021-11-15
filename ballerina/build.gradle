@@ -164,9 +164,9 @@ task commitTomlFiles {
         project.exec {
             ignoreExitValue true
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "git commit Ballerina.toml Dependencies.toml CompilerPlugin.toml -m \"[Automated] Update the native jar versions\""
+                commandLine 'cmd', '/c', "git commit -m \"[Automated] Update the native jar versions\" Ballerina.toml Dependencies.toml CompilerPlugin.toml"
             } else {
-                commandLine 'sh', '-c', "git commit Ballerina.toml Dependencies.toml CompilerPlugin.toml -m '[Automated] Update the native jar versions'"
+                commandLine 'sh', '-c', "git commit -m '[Automated] Update the native jar versions' Ballerina.toml Dependencies.toml CompilerPlugin.toml"
             }
         }
     }
@@ -211,7 +211,6 @@ build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-native:test"
 build.dependsOn ":${packageName}-test-utils:build"
 build.dependsOn ":${packageName}-compiler-plugin:build"
-build.finalizedBy ":${packageName}-ballerina-tests:build"
 test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-native:test"
 test.dependsOn ":${packageName}-test-utils:build"

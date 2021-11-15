@@ -26,6 +26,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.grpc.DataContext;
 import io.ballerina.stdlib.grpc.Message;
+import io.ballerina.stdlib.grpc.MessageRegistry;
 import io.ballerina.stdlib.grpc.MessageUtils;
 import io.ballerina.stdlib.grpc.MethodDescriptor;
 import io.ballerina.stdlib.grpc.ServiceDefinition;
@@ -162,6 +163,7 @@ public class FunctionUtils extends AbstractExecute {
 
         try {
             ServiceDefinition serviceDefinition = new ServiceDefinition(rootDescriptor.getValue(), descriptorMap);
+            MessageRegistry.getInstance().setFileDescriptor(serviceDefinition.getDescriptor());
             Map<String, MethodDescriptor> methodDescriptorMap =
                     serviceDefinition.getMethodDescriptors(clientEndpoint.getType());
 
