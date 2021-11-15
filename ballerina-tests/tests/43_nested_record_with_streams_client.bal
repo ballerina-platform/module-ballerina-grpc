@@ -18,7 +18,7 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 isolated function testNestedMessagesWithUnary() returns error? {
     NestedMsgServiceClient ep = check new ("http://localhost:9143");
     NestedMsg expectedMessage = {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}};
