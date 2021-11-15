@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: route-guide-unary
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  namespace: default
+spec:
+  rules:
+  - host: bal.perf.test
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: route-guide-una
+            port:
+              number: 9090
+  tls:
+  - hosts:
+    - "bal.perf.test"

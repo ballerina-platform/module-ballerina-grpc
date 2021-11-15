@@ -3,7 +3,11 @@ org = "ballerina"
 name = "grpc"
 version = "@toml.version@"
 distribution = "slbeta3"
-export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers"]
+authors = ["Ballerina"]
+keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
+repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
+license = ["Apache-2.0"]
+export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 
 [[platform.java11.dependency]]
 path = "../native/build/libs/grpc-native-@project.version@.jar"

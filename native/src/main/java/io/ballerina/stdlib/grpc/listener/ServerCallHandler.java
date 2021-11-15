@@ -178,9 +178,17 @@ public abstract class ServerCallHandler {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, context);
         }
         properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
-        resource.getRuntime().invokeMethodAsync(resource.getService(), resource.getFunctionName(), null,
-                GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                resource.getReturnType(), requestParams);
+
+        String functionName = resource.getFunctionName();
+        if (resource.getService().getType().isIsolated(functionName)) {
+            resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
+                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                    resource.getReturnType(), requestParams);
+        } else {
+            resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
+                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                    resource.getReturnType(), requestParams);
+        }
     }
 
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,

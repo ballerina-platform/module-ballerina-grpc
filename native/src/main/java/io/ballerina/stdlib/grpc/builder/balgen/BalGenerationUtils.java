@@ -74,7 +74,7 @@ public class BalGenerationUtils {
                 return "byte[]";
             }
             case ".google.protobuf.Any": {
-                return "anydata";
+                return "'any:Any";
             }
             case ".google.protobuf.Empty": {
                 return null;

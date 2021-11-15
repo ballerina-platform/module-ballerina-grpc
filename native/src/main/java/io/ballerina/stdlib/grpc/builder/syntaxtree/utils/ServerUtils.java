@@ -80,6 +80,9 @@ public class ServerUtils {
                 case "map<anydata>":
                     inputCap = "Struct";
                     break;
+                case "'any:Any":
+                    inputCap = "Any";
+                    break;
                 default:
                     inputCap = capitalize(method.getInputType());
                     break;
@@ -109,6 +112,9 @@ public class ServerUtils {
                 break;
             case "map<anydata>":
                 outCap = "Struct";
+                break;
+            case "'any:Any":
+                outCap = "Any";
                 break;
             default:
                 outCap = capitalize(method.getOutputType());
@@ -154,6 +160,9 @@ public class ServerUtils {
                 case "map<anydata>":
                     inputCap = "Struct";
                     break;
+                case "'any:Any":
+                    inputCap = "Any";
+                    break;
                 default:
                     inputCap = capitalize(method.getInputType());
                     break;
@@ -183,6 +192,9 @@ public class ServerUtils {
                 break;
             case "map<anydata>":
                 outputCap = "Struct";
+                break;
+            case "'any:Any":
+                outputCap = "Any";
                 break;
             default:
                 outputCap = capitalize(method.getOutputType());
@@ -230,6 +242,9 @@ public class ServerUtils {
                 break;
             case "map<anydata>":
                 outputCap = "Struct";
+                break;
+            case "'any:Any":
+                outputCap = "Any";
                 break;
             default:
                 outputCap = capitalize(method.getOutputType());
@@ -396,7 +411,11 @@ public class ServerUtils {
 
         String streamParam = outCap + "Stream";
         if (isBallerinaProtobufType(method.getOutputType())) {
-            streamParam = "s" + getProtobufType(method.getOutputType()) + ":" + streamParam;
+            String streamParamPrefix = "s" + getProtobufType(method.getOutputType());
+            if (inputCap.equals("Any")) {
+                streamParamPrefix = "sany";
+            }
+            streamParam = streamParamPrefix + ":" + streamParam;
         }
         VariableDeclaration stream = new VariableDeclaration(
                 getTypedBindingPatternNode(

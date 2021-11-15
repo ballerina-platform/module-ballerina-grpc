@@ -1,0 +1,3 @@
+resources:
+  - route_guide_server_streaming.yaml
+  - ingress.yaml

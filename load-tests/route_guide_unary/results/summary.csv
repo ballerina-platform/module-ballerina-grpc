@@ -1,0 +1,2 @@
+Label,# Samples,Average,Median,90% Line,95% Line,99% Line,Min,Max,Error %,Throughput,Received KB/sec,Std. Dev.,Date,Payload,Users
+gRPC Route Guide Unary,2900,118.044027586207,96.2,204.41,298.7,876.8,0.12,900.85,5.172413793103448,483.3333333333333,0,131.45244415292754,1635720932,0,50

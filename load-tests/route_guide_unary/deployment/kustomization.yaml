@@ -1,0 +1,3 @@
+resources:
+  - route_guide_unary.yaml
+  - ingress.yaml

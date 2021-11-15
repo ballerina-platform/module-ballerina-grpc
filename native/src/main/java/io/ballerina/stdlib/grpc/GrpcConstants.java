@@ -133,8 +133,25 @@ public class GrpcConstants {
     public static final String TIMESTAMP_MESSAGE = "Timestamp";
     public static final String DURATION_MESSAGE = "Duration";
     public static final String STRUCT_MESSAGE = "Struct";
+    public static final String ANY_MESSAGE = "Any";
     public static final String IS_BIDI_STREAMING = "isBidiStreaming";
     public static final String IS_STREAM_CANCELLED = "isStreamCancelled";
+
+    // proto predefined messages paths
+    public static final String WRAPPER_DOUBLE_TYPE_NAME = "google.protobuf.DoubleValue";
+    public static final String WRAPPER_FLOAT_TYPE_NAME = "google.protobuf.FloatValue";
+    public static final String WRAPPER_INT64_TYPE_NAME = "google.protobuf.Int64Value";
+    public static final String WRAPPER_UINT64_TYPE_NAME = "google.protobuf.UInt64Value";
+    public static final String WRAPPER_INT32_TYPE_NAME = "google.protobuf.Int32Value";
+    public static final String WRAPPER_UINT32_TYPE_NAME = "google.protobuf.UInt32Value";
+    public static final String WRAPPER_BOOL_TYPE_NAME = "google.protobuf.BoolValue";
+    public static final String WRAPPER_STRING_TYPE_NAME = "google.protobuf.StringValue";
+    public static final String WRAPPER_BYTES_TYPE_NAME = "google.protobuf.BytesValue";
+    public static final String ANY_TYPE_NAME = "google.protobuf.Any";
+    public static final String EMPTY_TYPE_NAME = "google.protobuf.Empty";
+    public static final String TIMESTAMP_TYPE_NAME = "google.protobuf.Timestamp";
+    public static final String DURATION_TYPE_NAME = "google.protobuf.Duration";
+    public static final String STRUCT_TYPE_NAME = "google.protobuf.Struct";
 
     // Server Streaming method resources.
     public static final String ON_COMPLETE_RESOURCE = "onComplete";
@@ -285,4 +302,6 @@ public class GrpcConstants {
     //context message field name constants
     public static final String CONTENT_FIELD = "content";
     public static final String HEADER_FIELD = "headers";
+
+    public static final String STREAMING_NEXT_FUNCTION = "next";
 }

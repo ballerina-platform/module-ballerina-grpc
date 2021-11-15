@@ -42,10 +42,20 @@ public class MessageParser {
         this.fieldDescriptors = computeFieldTagValues(messageDescriptor);
     }
 
+    public MessageParser(String messageName, Type bType, Descriptors.Descriptor messageDescriptor) {
+        this.messageName = messageName;
+        this.bType = bType;
+        this.fieldDescriptors = computeFieldTagValues(messageDescriptor);
+    }
+
     MessageParser(Descriptors.Descriptor descriptor, Type bType) {
         this.messageName = descriptor.getName();
         this.bType = bType;
         this.fieldDescriptors = computeFieldTagValues(descriptor);
+    }
+
+    public Map<Integer, Descriptors.FieldDescriptor> getFieldDescriptors() {
+        return fieldDescriptors;
     }
 
     /**
