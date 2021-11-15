@@ -7,7 +7,7 @@ on:
       - 'load-tests/**/results/summary.csv'
 jobs:
   createPullRequest:
-    name: Create summary update PR
+    name: Create Summary Update PR
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
