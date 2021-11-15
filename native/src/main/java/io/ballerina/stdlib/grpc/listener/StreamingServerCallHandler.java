@@ -21,6 +21,7 @@ package io.ballerina.stdlib.grpc.listener;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
@@ -183,7 +184,8 @@ public class StreamingServerCallHandler extends ServerCallHandler {
                 responseObserver, isEmptyResponse(), this.methodDescriptor.getOutputType(), context);
 
         String functionName = resource.getFunctionName();
-        if (resource.getService().getType().isIsolated(functionName)) {
+        ObjectType serviceObjectType = resource.getService().getType();
+        if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
             resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), resource.getFunctionName(), null,
                     GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
                     resource.getReturnType(), requestParams);

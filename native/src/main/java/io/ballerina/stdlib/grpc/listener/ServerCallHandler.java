@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.TypeTags;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -180,7 +181,8 @@ public abstract class ServerCallHandler {
         properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
 
         String functionName = resource.getFunctionName();
-        if (resource.getService().getType().isIsolated(functionName)) {
+        ObjectType serviceObjectType = resource.getService().getType();
+        if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
             resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
                     GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
                     resource.getReturnType(), requestParams);
