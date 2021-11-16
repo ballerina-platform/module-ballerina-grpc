@@ -68,9 +68,20 @@ isolated function tryAuthenticate(ListenerAuthConfig[] authConfig, map<string|st
     return error UnauthenticatedError("Failed to authenticate client");
 }
 
+isolated map<ListenerAuthHandler> authHandlers = {};
+
 isolated function authenticateWithFileUserStore(FileUserStoreConfigWithScopes config, map<string|string[]> headers)
  returns PermissionDeniedError|boolean {
-    ListenerFileUserStoreBasicAuthHandler handler = new(config.fileUserStoreConfig);
+    ListenerFileUserStoreBasicAuthHandler handler;
+    lock {
+        string key = config.fileUserStoreConfig.toString();
+        if (authHandlers.hasKey(key)) {
+            handler = <ListenerFileUserStoreBasicAuthHandler> authHandlers.get(key);
+        } else {
+            handler = new(config.fileUserStoreConfig.cloneReadOnly());
+            authHandlers[key] = handler;
+        }
+    }
     auth:UserDetails|UnauthenticatedError authn = handler.authenticate(headers);
     string|string[]? scopes = config?.scopes;
     if authn is auth:UserDetails {
@@ -87,7 +98,16 @@ isolated function authenticateWithFileUserStore(FileUserStoreConfigWithScopes co
 
 isolated function authenticateWithLdapUserStore(LdapUserStoreConfigWithScopes config, map<string|string[]> headers)
  returns PermissionDeniedError|boolean {
-    ListenerLdapUserStoreBasicAuthHandler handler = new(config.ldapUserStoreConfig);
+    ListenerLdapUserStoreBasicAuthHandler handler;
+    lock {
+        string key = config.ldapUserStoreConfig.toString();
+        if (authHandlers.hasKey(key)) {
+            handler = <ListenerLdapUserStoreBasicAuthHandler> authHandlers.get(key);
+        } else {
+            handler = new(config.ldapUserStoreConfig.cloneReadOnly());
+            authHandlers[key] = handler;
+        }
+    }
     auth:UserDetails|UnauthenticatedError authn = handler->authenticate(headers);
     string|string[]? scopes = config?.scopes;
     if authn is auth:UserDetails {
@@ -104,7 +124,16 @@ isolated function authenticateWithLdapUserStore(LdapUserStoreConfigWithScopes co
 
 isolated function authenticateWithJwtValidator(JwtValidatorConfigWithScopes config, map<string|string[]> headers)
  returns PermissionDeniedError|boolean {
-    ListenerJwtAuthHandler handler = new(config.jwtValidatorConfig);
+    ListenerJwtAuthHandler handler;
+    lock {
+        string key = config.jwtValidatorConfig.toString();
+        if (authHandlers.hasKey(key)) {
+            handler = <ListenerJwtAuthHandler> authHandlers.get(key);
+        } else {
+            handler = new(config.jwtValidatorConfig.cloneReadOnly());
+            authHandlers[key] = handler;
+        }
+    }
     jwt:Payload|UnauthenticatedError authn = handler.authenticate(headers);
     string|string[]? scopes = config?.scopes;
     if authn is jwt:Payload {
@@ -122,7 +151,16 @@ isolated function authenticateWithJwtValidator(JwtValidatorConfigWithScopes conf
 isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionConfigWithScopes config, map<string|string[]> headers)
  returns PermissionDeniedError|boolean {
     // Here, config is OAuth2IntrospectionConfigWithScopes
-    ListenerOAuth2Handler handler = new(config.oauth2IntrospectionConfig);
+    ListenerOAuth2Handler handler;
+    lock {
+        string key = config.oauth2IntrospectionConfig.toString();
+        if (authHandlers.hasKey(key)) {
+            handler = <ListenerOAuth2Handler> authHandlers.get(key);
+        } else {
+            handler = new(config.oauth2IntrospectionConfig.cloneReadOnly());
+            authHandlers[key] = handler;
+        }
+    }
     oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError auth = handler->authorize(headers, config?.scopes);
     if auth is oauth2:IntrospectionResponse {
         return true;
