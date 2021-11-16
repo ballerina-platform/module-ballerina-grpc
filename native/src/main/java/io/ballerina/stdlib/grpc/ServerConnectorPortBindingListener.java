@@ -21,10 +21,10 @@ import io.ballerina.stdlib.http.transport.contract.PortBindingEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintStream;
-
 import static io.ballerina.stdlib.grpc.GrpcConstants.HTTPS_ENDPOINT_STARTED;
 import static io.ballerina.stdlib.grpc.GrpcConstants.HTTPS_ENDPOINT_STOPPED;
+import static io.ballerina.stdlib.grpc.GrpcConstants.HTTP_ENDPOINT_STARTED;
+import static io.ballerina.stdlib.grpc.GrpcConstants.HTTP_ENDPOINT_STOPPED;
 
 /**
  * Server Connector Port Binding Listener.
@@ -34,29 +34,24 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.HTTPS_ENDPOINT_STOPPED;
 public class ServerConnectorPortBindingListener implements PortBindingEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(ServerConnectorPortBindingListener.class);
-    private static final PrintStream console;
 
     public void onOpen(String serverConnectorId, boolean isHttps) {
-        if (isHttps) {
-            console.println(HTTPS_ENDPOINT_STARTED + serverConnectorId);
-        } else {
-            console.println(GrpcConstants.HTTP_ENDPOINT_STARTED + serverConnectorId);
+
+        if (log.isDebugEnabled()) {
+            String message = isHttps ? HTTPS_ENDPOINT_STARTED : HTTP_ENDPOINT_STARTED;
+            log.debug(message + serverConnectorId);
         }
     }
 
     public void onClose(String serverConnectorId, boolean isHttps) {
-        if (isHttps) {
-            console.println(HTTPS_ENDPOINT_STOPPED + serverConnectorId);
-        } else {
-            console.println(GrpcConstants.HTTP_ENDPOINT_STOPPED + serverConnectorId);
+
+        if (log.isDebugEnabled()) {
+            String message = isHttps ? HTTPS_ENDPOINT_STOPPED : HTTP_ENDPOINT_STOPPED;
+            log.debug(message + serverConnectorId);
         }
     }
 
     public void onError(Throwable throwable) {
         log.error("Error in http endpoint", throwable);
-    }
-
-    static {
-        console = System.out;
     }
 }
