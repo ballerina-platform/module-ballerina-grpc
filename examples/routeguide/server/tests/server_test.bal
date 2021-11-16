@@ -34,7 +34,7 @@ function serverTest() returns error? {
     io:println(`ListFeatures: lowLat=${rectangle.lo.latitude},  lowLon=${rectangle.lo.latitude}, hiLat=${rectangle.hi.latitude},  hiLon=${rectangle.hi.latitude}`);
     stream<Feature, grpc:Error?> features = check ep->ListFeatures(rectangle);
     int serverStreamingCount = 0;
-    error? e = features.forEach(function(Feature f) {
+    check features.forEach(function(Feature f) {
         serverStreamingCount += 1;
     });
     test:assertEquals(serverStreamingCount, 64);

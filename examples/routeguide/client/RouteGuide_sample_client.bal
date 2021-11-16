@@ -30,7 +30,7 @@ public function main() returns error? {
     };
     io:println(`ListFeatures: lowLat=${rectangle.lo.latitude},  lowLon=${rectangle.lo.longitude}, hiLat=${rectangle.hi.latitude},  hiLon=${rectangle.hi.longitude}`);
     stream<Feature, grpc:Error?> features = check ep->ListFeatures(rectangle);
-    error? e = features.forEach(function(Feature f) {
+    check features.forEach(function(Feature f) {
         io:println(`Result: lat=${f.location.latitude}, lon=${f.location.longitude}`);
     });
 
