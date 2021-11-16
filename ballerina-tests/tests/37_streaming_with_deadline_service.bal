@@ -27,9 +27,9 @@ listener grpc:Listener ep37 = new (9127);
 }
 service "HelloWorld37" on ep37 {
     
-    remote isolated function callWithDeadline(wrappers:ContextStringStream clientStream) returns wrappers:ContextStringStream|grpc:Error {
+    remote isolated function callWithDeadline(wrappers:ContextStringStream clientStream) returns wrappers:ContextStringStream|error {
         log:printInfo("Connected sucessfully.");
-        error? e = clientStream.content.forEach(isolated function(string val) {
+        check clientStream.content.forEach(isolated function(string val) {
             io:println(val);
         });
         string[] response = [

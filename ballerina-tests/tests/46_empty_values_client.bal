@@ -29,7 +29,7 @@ function testServerStreamingWithEmptyValues() returns error? {
     stream<string, error?> strm = check ep->serverStrWithEmpty();
     int i = 0;
     string[] arr = ["WSO2", "Ballerina", "Microsoft", "Azure"];
-    error? e = strm.forEach(function(string s) {
+    check strm.forEach(function(string s) {
         test:assertEquals(s, arr[i]);
         i += 1;
     });

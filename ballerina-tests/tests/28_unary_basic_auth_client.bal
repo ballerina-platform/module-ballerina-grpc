@@ -80,7 +80,6 @@ isolated function testStringValueReturnWithInvalidBasicAuth() returns grpc:Error
 
 @test:Config {enable: true}
 isolated function testStringValueReturnWithBasicAuthWithEmpty() returns grpc:Error? {
-    HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
     map<string|string[]> requestHeaders = {};
 
     grpc:CredentialsConfig config = {

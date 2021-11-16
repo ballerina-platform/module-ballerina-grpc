@@ -19,7 +19,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testReceiveStreamingResponseFromReturn() returns grpc:Error? {
+function testReceiveStreamingResponseFromReturn() returns error? {
     string name = "WSO2";
     // Client endpoint configuration
     HelloWorld25Client helloWorldEp = check new("http://localhost:9115");
@@ -31,7 +31,7 @@ function testReceiveStreamingResponseFromReturn() returns grpc:Error? {
         io:println("Connected successfully");
         string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
         int count = 0;
-        error? e = result.forEach(function(anydata value) {
+        check result.forEach(function(anydata value) {
             test:assertEquals(value, expectedResults[count]);
             count += 1;
         });

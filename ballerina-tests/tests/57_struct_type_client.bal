@@ -135,7 +135,7 @@ function testServerStreamStructType1() returns error? {
     } else {
         int count = 0;
         map<anydata>[] receivedData = [];
-        error? e = result.forEach(function(map<anydata> value) {
+        check result.forEach(function(map<anydata> value) {
             receivedData[count] = <map<anydata>>value;
             count += 1;
         });
@@ -178,7 +178,7 @@ function testServerStreamStructType2() returns error? {
     } else {
         int count = 0;
         StructMsg[] receivedData = [];
-        error? e = result.forEach(function(StructMsg value) {
+        check result.forEach(function(StructMsg value) {
             receivedData[count] = <StructMsg>value;
             count += 1;
         });
@@ -294,7 +294,7 @@ function testBidirectionalStreamStructType1() returns error? {
 
     int count = 0;
     map<anydata>[] receivedData = [];
-    error? e = requests.forEach(function(map<anydata> value) {
+    _ = requests.forEach(function(map<anydata> value) {
         map<anydata>|error? result = streamClient->receiveStruct();
         if result is map<anydata> {
             receivedData[count] = result;
@@ -342,7 +342,7 @@ function testBidirectionalStreamStructType2() returns error? {
 
     int count = 0;
     StructMsg[] receivedData = [];
-    error? e = requests.forEach(function(StructMsg value) {
+    _ = requests.forEach(function(StructMsg value) {
         StructMsg|error? result = streamClient->receiveStructMsg();
         if result is StructMsg {
             receivedData[count] = result;

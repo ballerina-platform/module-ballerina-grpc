@@ -29,7 +29,7 @@ service "HelloWorld50" on ep50 {
         if caller.isCancelled() {
             cancelled = true;
         }
-        result = clientStream.next();
+        _ = check clientStream.next();
         check caller->complete();
     }
 

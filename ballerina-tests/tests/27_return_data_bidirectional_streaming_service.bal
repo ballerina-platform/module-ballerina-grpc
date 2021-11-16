@@ -25,10 +25,10 @@ listener grpc:Listener ep27 = new (9117);
 }
 service "ChatFromReturn" on ep27 {
 
-    remote function chat27(stream<ChatMessage27,error?> clientStream) returns stream<string, error?> {
+    remote function chat27(stream<ChatMessage27,error?> clientStream) returns stream<string, error?>|error? {
         string[] messages = [];
         int i = 0;
-        error? e = clientStream.forEach(function(ChatMessage27 reqMsg) {
+        check clientStream.forEach(function(ChatMessage27 reqMsg) {
             io:println(reqMsg);
             messages[i] = reqMsg.message + " " + reqMsg.name;
             i += 1;

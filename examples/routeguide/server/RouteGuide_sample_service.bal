@@ -55,7 +55,7 @@ service "RouteGuide" on ep {
         int distance = 0;
 
         decimal startTime = time:monotonicNow();
-        error? e = clientStream.forEach(function(Point p) {
+        check clientStream.forEach(function(Point p) {
             pointCount += 1;
             if pointExistsInFeatures(FEATURES, p) {
                 featureCount += 1;

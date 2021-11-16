@@ -38,7 +38,7 @@ function testNestedMessagesWithServerStreaming() returns error? {
     ];
     stream<NestedMsg, grpc:Error?> messages = check ep->nestedMsgServerStreaming("Server Streaming RPC");
     int i = 0;
-    error? e = messages.forEach(function(NestedMsg m) {
+    check messages.forEach(function(NestedMsg m) {
         test:assertEquals(m, expectedMessages[i]);
         i += 1;
     });

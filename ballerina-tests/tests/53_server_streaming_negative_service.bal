@@ -25,9 +25,6 @@ service "helloWorld53" on ep53 {
     remote function hello53(HelloWorld53StringCaller caller, string value) returns stream<string, error?> {
         log:printInfo(value.toString());
         string[] arr = ["a", "b", "c"];
-        map<string> headers = {
-            h1: "v1"
-        };
         return arr.toStream();
     }
 }

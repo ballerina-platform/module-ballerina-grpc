@@ -24,7 +24,7 @@ service "BidiStreamingTimestampService" on ep48 {
 
     remote function bidiStreamingGreetServer(BidiStreamingTimestampServiceBiDiGreetingCaller caller,
      stream<string, error?> clientStream) returns error? {
-        error? e = clientStream.forEach(function(string value) {
+        check clientStream.forEach(function(string value) {
             BiDiGreeting greeting = {
                 name: value,
                 time: checkpanic time:utcFromString("2012-12-03T11:13:30.472Z")
@@ -35,7 +35,7 @@ service "BidiStreamingTimestampService" on ep48 {
 
     remote function bidiStreamingGreetBoth(BidiStreamingTimestampServiceBiDiGreetingCaller caller,
      stream<BiDiGreeting, grpc:Error?> clientStream) returns error? {
-        error? e = clientStream.forEach(function(BiDiGreeting value) {
+        check clientStream.forEach(function(BiDiGreeting value) {
             BiDiGreeting greeting = {
                 name: value.name,
                 time: checkpanic time:utcFromString("2012-12-03T11:13:30.472Z")
@@ -47,7 +47,7 @@ service "BidiStreamingTimestampService" on ep48 {
     remote function bidiStreamingExchangeTime(BidiStreamingTimestampServiceTimestampCaller caller,
      stream<time:Utc, grpc:Error?> clientStream) returns error? {
         time:Utc responseTime = check time:utcFromString("2021-12-03T11:13:30.472Z");
-        error? e = clientStream.forEach(function(time:Utc value) {
+        check clientStream.forEach(function(time:Utc value) {
             checkpanic caller->sendTimestamp(responseTime);
         });
     }

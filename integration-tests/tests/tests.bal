@@ -46,7 +46,7 @@ function testServiceInputParamFromAnotherModuleServerStreaming() returns error? 
     ];
     api:ContextSMResStream responses = check ep->serverStreamingContext(reqContext);
     int i = 0;
-    error? e = responses.content.forEach(function(api:SMRes m) {
+    check responses.content.forEach(function(api:SMRes m) {
         test:assertEquals(m, expectedResponses[i]);
         i += 1;
     });
@@ -64,17 +64,11 @@ function testServiceInputParamFromAnotherModuleClientStreaming() returns error? 
         {name: "Nick", id: 13}, 
         {name: "Holand", id: 14}
     ];
-    api:SMRes[] responses = [
-        {name: "Anne", id: 12}, 
-        {name: "Nick", id: 13}, 
-        {name: "Holand", id: 14}
-    ];
     api:ClientStreamingStreamingClient sc = check ep->clientStreaming();
     foreach api:SMReq req in requests {
         check sc->sendSMReq(req);
     }
     check sc->complete();
-    int i = 0;
     api:SMRes? response = check sc->receiveSMRes();
     if response is api:SMRes {
         test:assertEquals(response, {name: "Anne", id: 12});

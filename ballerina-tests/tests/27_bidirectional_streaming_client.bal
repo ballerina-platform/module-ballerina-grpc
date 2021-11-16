@@ -20,7 +20,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-isolated function testBidiStreamingFromReturn() returns grpc:Error? {
+isolated function testBidiStreamingFromReturn() returns error? {
     Chat27StreamingClient streamingClient;
     ChatFromReturnClient chatEp = check new ("http://localhost:9117");
     // Executing unary non-blocking call registering server message listener.
@@ -39,9 +39,9 @@ isolated function testBidiStreamingFromReturn() returns grpc:Error? {
         {name:"Jack", message:"How are you"}
     ];
     foreach ChatMessage27 msg in messages {
-        error? r = streamingClient->sendChatMessage27(msg);
+        check streamingClient->sendChatMessage27(msg);
     }
-    error? r = streamingClient->complete();
+    check streamingClient->complete();
     int i = 0;
     string[] expectedOutput = ["Hi Sam", "Hey Ann", "Hello John", "How are you Jack"];
     var result = streamingClient->receiveString();

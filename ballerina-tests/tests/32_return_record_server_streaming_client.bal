@@ -19,7 +19,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testReceiveStreamingResponseFromReturnWithBasicAuth() returns grpc:Error? {
+function testReceiveStreamingResponseFromReturnWithBasicAuth() returns error? {
     SampleMsg32 reqMsg = {name:"WSO2", id:2};
     HelloWorld32Client helloWorldEp = check new("http://localhost:9122");
 
@@ -35,7 +35,7 @@ function testReceiveStreamingResponseFromReturnWithBasicAuth() returns grpc:Erro
             {name: "Google", id: 3}
         ];
         int count = 0;
-        error? e = result.forEach(function(anydata value) {
+        check result.forEach(function(anydata value) {
             test:assertEquals(<SampleMsg32>value, expectedResults[count]);
             count += 1;
         });
@@ -44,7 +44,7 @@ function testReceiveStreamingResponseFromReturnWithBasicAuth() returns grpc:Erro
 }
 
 @test:Config {enable:true}
-function testReceiveStreamingResponseWithHeaders() returns grpc:Error? {
+function testReceiveStreamingResponseWithHeaders() returns error? {
     SampleMsg32 reqMsg = {name:"WSO2", id:2};
     HelloWorld32Client helloWorldEp = check new("http://localhost:9222");
 
@@ -60,7 +60,7 @@ function testReceiveStreamingResponseWithHeaders() returns grpc:Error? {
             {name: "Google", id: 3}
         ];
         int count = 0;
-        error? e = result.content.forEach(function(SampleMsg32 value) {
+        check result.content.forEach(function(SampleMsg32 value) {
             test:assertEquals(value, expectedResults[count]);
             count += 1;
         });
