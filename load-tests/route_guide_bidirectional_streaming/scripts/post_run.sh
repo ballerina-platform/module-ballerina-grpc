@@ -29,4 +29,4 @@ echo "----------Setting Up Ballerina----------"
 sudo dpkg -i ballerina-linux-installer-x64-swan-lake-beta3.deb
 
 echo "----------Finalizing results----------"
-bal run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Bidirectional Streaming" 50 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "300"
+bal run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Bidirectional Streaming" 10 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "1800"
