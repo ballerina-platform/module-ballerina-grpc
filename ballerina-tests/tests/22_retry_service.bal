@@ -33,7 +33,7 @@ service "RetryService" on retryListener {
         // Identifying the client to maintain state to track retry attempts.
         if clientName != value {
             requestCount = 0;
-            clientName = <@untainted>value;
+            clientName = value;
         }
         requestCount += 1;
         log:printInfo(clientName + ": Attempt No. " + requestCount.toString());

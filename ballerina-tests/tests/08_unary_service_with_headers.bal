@@ -34,7 +34,7 @@ service "HelloWorld101" on ep8 {
         map<string|string[]> responseHeaders = {};
 
         if !request.headers.hasKey("x-id") {
-            grpc:Error? err = caller->sendError(error grpc:AbortedError("x-id header is missing"));
+            check caller->sendError(error grpc:AbortedError("x-id header is missing"));
         } else {
             string headerValue = check grpc:getHeader(request.headers, "x-id");
             io:println("Request Header: " +  headerValue);

@@ -41,7 +41,7 @@ listener grpc:Listener ep3 = new (9093, {
     }
 });
 
-@tainted map<ChatStringCaller> connectionsMap = {};
+map<ChatStringCaller> connectionsMap = {};
 boolean initialized = false;
 
 @grpc:ServiceDescriptor {
@@ -86,7 +86,7 @@ service "Chat" on ep3 {
         if e is () {
             string msg = string `${caller.getId()} left the chat`;
             log:printInfo(msg);
-            var v = connectionsMap.remove(caller.getId().toString());
+            _ = connectionsMap.remove(caller.getId().toString());
             log:printInfo("Starting client left broadcast. Connection map status");
             log:printInfo("Map length: " + connectionsMap.length().toString());
             log:printInfo(connectionsMap.toString());

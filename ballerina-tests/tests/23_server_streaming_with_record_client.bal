@@ -19,7 +19,7 @@ import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
-function testServerStreamingWithRecord() returns grpc:Error? {
+function testServerStreamingWithRecord() returns error? {
     string name = "WSO2";
     helloWorldServerStreamingClient helloWorldEp = check new("http://localhost:9113");
     HelloRequest newreq = {name: name};
@@ -30,7 +30,7 @@ function testServerStreamingWithRecord() returns grpc:Error? {
         io:println("Connected successfully");
         string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
         int waitCount = 0;
-        error? e = result.forEach(function(anydata response) {
+        check result.forEach(function(anydata response) {
             HelloResponse helloResponse = <HelloResponse> response;
             test:assertEquals(helloResponse.message, expectedResults[waitCount]);
             waitCount += 1;

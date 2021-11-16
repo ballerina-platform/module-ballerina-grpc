@@ -129,17 +129,17 @@ service "StructService" on ep57 {
         }
     }
 
-    remote function bidirectionalStreamStructType1(stream<map<anydata>, error?> clientStream) returns stream<map<anydata>, error?> {
+    remote function bidirectionalStreamStructType1(stream<map<anydata>, error?> clientStream) returns stream<map<anydata>, error?>|error? {
         map<anydata>[] response = [];
-        error? e = clientStream.forEach(function(map<anydata> val) {
+        check clientStream.forEach(function(map<anydata> val) {
             response.push(val);
         });
         return response.toStream();
     }
 
-    remote function bidirectionalStreamStructType2(stream<StructMsg, error?> clientStream) returns stream<StructMsg, error?> {
+    remote function bidirectionalStreamStructType2(stream<StructMsg, error?> clientStream) returns stream<StructMsg, error?>|error? {
         StructMsg[] response = [];
-        error? e = clientStream.forEach(function(StructMsg val) {
+        check clientStream.forEach(function(StructMsg val) {
             response.push(val);
         });
         return response.toStream();

@@ -26,27 +26,27 @@ listener grpc:Listener  negotiatorep = new (9109);
 }
 service "Negotiator" on negotiatorep {
 
-    isolated remote function handshake(NegotiatorHandshakeResponseCaller caller, HandshakeRequest value) {
+    isolated remote function handshake(NegotiatorHandshakeResponseCaller caller, HandshakeRequest value) returns grpc:Error? {
         log:printInfo(string `Handshake request: ${value.toString()}`);
 
         if value.jsonStr != "" {
-            error? sendError = caller->sendError(error grpc:InvalidArgumentError("jsonStr should be an empty string."));
+            check caller->sendError(error grpc:InvalidArgumentError("jsonStr should be an empty string."));
             return;
         }
         if value.programHash != "" {
-            error? sendError = caller->sendError(error grpc:InvalidArgumentError("programHash should be an empty string."));
+            check caller->sendError(error grpc:InvalidArgumentError("programHash should be an empty string."));
             return;
         }
         if value.userId != "" {
-            error? sendError = caller->sendError(error grpc:InvalidArgumentError("userId should be an empty string."));
+            check caller->sendError(error grpc:InvalidArgumentError("userId should be an empty string."));
             return;
         }
         if value.instanceId != "" {
-            error? sendError = caller->sendError(error grpc:InvalidArgumentError("instanceId should be an empty string."));
+            check caller->sendError(error grpc:InvalidArgumentError("instanceId should be an empty string."));
             return;
         }
         if value.applicationId != "" {
-            error? sendError = caller->sendError(error grpc:InvalidArgumentError("applicationId should be an empty string."));
+            check caller->sendError(error grpc:InvalidArgumentError("applicationId should be an empty string."));
             return;
         }
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
@@ -54,7 +54,7 @@ service "Negotiator" on negotiatorep {
         if send is error {
             log:printError("Error while sending the response.", 'error = send);
         } else {
-            error? complete = caller->complete();
+            check caller->complete();
         }
     }
 

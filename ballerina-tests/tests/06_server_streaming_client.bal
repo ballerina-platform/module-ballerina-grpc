@@ -22,7 +22,7 @@ int msgCount = 0;
 boolean eof = false;
 
 @test:Config {enable:true}
-function testReceiveStreamingResponse() returns grpc:Error? {
+function testReceiveStreamingResponse() returns error? {
     string name = "WSO2";
     // Client endpoint configuration
     HelloWorld45Client helloWorldEp = check new("http://localhost:9096");
@@ -34,7 +34,7 @@ function testReceiveStreamingResponse() returns grpc:Error? {
         io:println("Connected successfully");
         string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
         int waitCount = 0;
-        error? e = result.forEach(function(anydata str) {
+        check result.forEach(function(anydata str) {
             test:assertEquals(str, expectedResults[waitCount]);
             waitCount += 1;
         });

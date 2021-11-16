@@ -18,7 +18,7 @@ import ballerina/grpc;
 import ballerina/test;
 
 @test:Config {enable: true}
-function testServerStreamingWithDifferentTypes() returns grpc:Error? {
+function testServerStreamingWithDifferentTypes() returns error? {
     DataTypesServiceClient ep = check new ("http://localhost:9142");
     stream<Int32ArrMsg, grpc:Error?> int32Strm = check ep->helloWithInt32Array("int32");
     int c1 = 0;
@@ -29,7 +29,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: [1, 2, 3, 4, 5, 6]},
         {note: "note5", arr: [1, 2, 3, 4, 5, 6, 7]}
     ];
-    error? e1 = int32Strm.forEach(function(Int32ArrMsg msg) {
+    check int32Strm.forEach(function(Int32ArrMsg msg) {
         test:assertEquals(int32Arr[c1], msg);
         c1 += 1;
     });
@@ -44,7 +44,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: [1, 2, 3, 4, 5, 6]},
         {note: "note5", arr: [1, 2, 3, 4, 5, 6, 7]}
     ];
-    error? e2 = int64Strm.forEach(function(Int64ArrMsg msg) {
+    check int64Strm.forEach(function(Int64ArrMsg msg) {
         test:assertEquals(int64Arr[c2], msg);
         c2 += 1;
     });
@@ -59,7 +59,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: [1, 2, 3, 4, 5, 6]},
         {note: "note5", arr: [1, 2, 3, 4, 5, 6, 7]}
     ];
-    error? e3 = unsignedInt64Strm.forEach(function(UnsignedInt64ArrMsg msg) {
+    check unsignedInt64Strm.forEach(function(UnsignedInt64ArrMsg msg) {
         test:assertEquals(unsignedInt64Arr[c3], msg);
         c3 += 1;
     });
@@ -74,7 +74,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: [1, 2, 3, 4, 5, 6]},
         {note: "note5", arr: [1, 2, 3, 4, 5, 6, 7]}
     ];
-    error? e4 = fixed32Strm.forEach(function(Fixed32ArrMsg msg) {
+    check fixed32Strm.forEach(function(Fixed32ArrMsg msg) {
         test:assertEquals(fixed32Arr[c4], msg);
         c4 += 1;
     });
@@ -89,7 +89,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: [1, 2, 3, 4, 5, 6]},
         {note: "note5", arr: [1, 2, 3, 4, 5, 6, 7]}
     ];
-    error? e5 = fixed64Strm.forEach(function(Fixed64ArrMsg msg) {
+    check fixed64Strm.forEach(function(Fixed64ArrMsg msg) {
         test:assertEquals(fixed64Arr[c5], msg);
         c5 += 1;
     });
@@ -104,7 +104,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]},
         {note: "note5", arr: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]}
     ];
-    error? e6 = floatStrm.forEach(function(FloatArrMsg msg) {
+    check floatStrm.forEach(function(FloatArrMsg msg) {
         test:assertEquals(floatArr[c6], msg);
         c6 += 1;
     });
@@ -119,7 +119,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]},
         {note: "note5", arr: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]}
     ];
-    error? e7 = doubleStrm.forEach(function(DoubleArrMsg msg) {
+    check doubleStrm.forEach(function(DoubleArrMsg msg) {
         test:assertEquals(doubleArr[c7], msg);
         c7 += 1;
     });
@@ -134,7 +134,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: ["A", "B", "C", "D"]},
         {note: "note5", arr: ["A", "B", "C", "D", "E"]}
     ];
-    error? e8 = stringStrm.forEach(function(StringArrMsg msg) {
+    check stringStrm.forEach(function(StringArrMsg msg) {
         test:assertEquals(stringArr[c8], msg);
         c8 += 1;
     });
@@ -149,7 +149,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: [true, false, true, false]},
         {note: "note5", arr: [true, false, true, false, true]}
     ];
-    error? e9 = booleanStrm.forEach(function(BooleanArrMsg msg) {
+    check booleanStrm.forEach(function(BooleanArrMsg msg) {
         test:assertEquals(booleanArr[c9], msg);
         c9 += 1;
     });
@@ -164,7 +164,7 @@ function testServerStreamingWithDifferentTypes() returns grpc:Error? {
         {note: "note4", arr: "D".toBytes()},
         {note: "note5", arr: "E".toBytes()}
     ];
-    error? e10 = bytesStrm.forEach(function(BytesArrMsg msg) {
+    check bytesStrm.forEach(function(BytesArrMsg msg) {
         test:assertEquals(bytesArr[c10], msg);
         c10 += 1;
     });

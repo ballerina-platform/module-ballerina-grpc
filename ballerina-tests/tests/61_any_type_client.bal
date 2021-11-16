@@ -67,7 +67,7 @@ public function testProtbufAnyType() returns error? {
 
     stream<'any:Any, error?> serverStream = check ep->serverStreamingCall('any:pack(true));
     'any:Any[] returnedTeachers = [];
-    error? e = serverStream.forEach(function('any:Any value) {
+    check serverStream.forEach(function('any:Any value) {
         returnedTeachers.push(value);
     });
 
@@ -83,9 +83,9 @@ public function testProtbufAnyType() returns error? {
 
     ClientStreamingCallStreamingClient csClient = check ep->clientStreamingCall();
     foreach 'any:Any t in teachers {
-        grpc:Error? e1 = csClient->sendAny(t);
+        check csClient->sendAny(t);
     }
-    grpc:Error? e2 = csClient->complete();
+    check csClient->complete();
     'any:Any? clientStreamingValue = check csClient->receiveAny();
     if clientStreamingValue is 'any:Any {
         Person1 p1ForCs = check 'any:unpack(clientStreamingValue, Person1);
@@ -96,10 +96,9 @@ public function testProtbufAnyType() returns error? {
 
     BidirectionalStreamingCallStreamingClient bdClient = check ep->bidirectionalStreamingCall();
     foreach 'any:Any t in teachers {
-        grpc:Error? e3 = bdClient->sendAny(t);
+        check bdClient->sendAny(t);
     }
-    grpc:Error? e4 = bdClient->complete();
-    int i = 1;
+    check bdClient->complete();
     'any:Any[] returnedTeachersForBidi = [];
     'any:Any? response = check bdClient->receiveAny();
     if response is 'any:Any {

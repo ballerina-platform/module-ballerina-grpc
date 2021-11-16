@@ -39,7 +39,7 @@ function testRouteGuideMessagesWithServerStreaming() returns error? {
     };
     stream<Feature, grpc:Error?> features = check ep->ListFeatures(rectangle);
     int i = 0;
-    error? e = features.forEach(function(Feature f) {
+    check features.forEach(function(Feature f) {
         test:assertEquals(f, fs[i]);
         i += 1;
     });

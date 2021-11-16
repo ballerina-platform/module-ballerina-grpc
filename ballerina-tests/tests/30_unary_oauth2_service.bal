@@ -27,7 +27,7 @@ listener grpc:Listener ep30 = new (9120);
 }
 service /HelloWorld30 on ep30 {
 
-    remote isolated function testStringValueReturn(HelloWorld30StringCaller caller, ContextString request) {
+    remote isolated function testStringValueReturn(HelloWorld30StringCaller caller, ContextString request) returns grpc:Error? {
         io:println("name: " + request.content);
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
@@ -45,7 +45,7 @@ service /HelloWorld30 on ep30 {
             }
         };
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
-            grpc:Error? err = caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
+            check caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
             grpc:ListenerOAuth2Handler handler = new(config);
             oauth2:IntrospectionResponse|grpc:UnauthenticatedError|grpc:PermissionDeniedError authResult = handler->authorize(request.headers, "read");
@@ -59,14 +59,13 @@ service /HelloWorld30 on ep30 {
                     io:println("Server send response : " + message);
                 }
             } else {
-                grpc:Error? err = caller->sendError(error grpc:AbortedError("Unauthorized"));
+                check caller->sendError(error grpc:AbortedError("Unauthorized"));
             }
         }
-        checkpanic caller->complete();
+        check caller->complete();
     }
 
-    remote isolated function testStringValueNegative(HelloWorld30StringCaller caller, ContextString request) {
-        map<string|string[]> responseHeaders = {};
+    remote isolated function testStringValueNegative(HelloWorld30StringCaller caller, ContextString request) returns grpc:Error? {
         grpc:OAuth2IntrospectionConfig config = {
             url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect",
             tokenTypeHint: "access_token",
@@ -83,13 +82,13 @@ service /HelloWorld30 on ep30 {
         grpc:ListenerOAuth2Handler handler = new(config);
         oauth2:IntrospectionResponse|grpc:UnauthenticatedError|grpc:PermissionDeniedError authResult = handler->authorize(request.headers, "read");
         if authResult is grpc:UnauthenticatedError|grpc:PermissionDeniedError {
-            grpc:Error? err = caller->sendError(authResult);
+            check caller->sendError(authResult);
         } else {
-            grpc:Error? err = caller->sendError(error grpc:AbortedError("Expected error was not found."));
+            check caller->sendError(error grpc:AbortedError("Expected error was not found."));
         }
     }
 
-    remote isolated function testStringValueNoScope(HelloWorld30StringCaller caller, ContextString request) {
+    remote isolated function testStringValueNoScope(HelloWorld30StringCaller caller, ContextString request) returns grpc:Error? {
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
         grpc:OAuth2IntrospectionConfig config = {
@@ -106,7 +105,7 @@ service /HelloWorld30 on ep30 {
             }
         };
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
-            grpc:Error? err = caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
+            check caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
             grpc:ListenerOAuth2Handler handler = new(config);
             oauth2:IntrospectionResponse|grpc:UnauthenticatedError|grpc:PermissionDeniedError authResult = handler->authorize(request.headers, ());
@@ -120,9 +119,9 @@ service /HelloWorld30 on ep30 {
                     io:println("Server send response : " + message);
                 }
             } else {
-                grpc:Error? err = caller->sendError(error grpc:AbortedError("Unauthorized"));
+                check caller->sendError(error grpc:AbortedError("Unauthorized"));
             }
         }
-        checkpanic caller->complete();
+        check caller->complete();
     }
 }

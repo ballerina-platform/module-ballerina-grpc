@@ -79,7 +79,6 @@ isolated function testBidiStreaming() returns grpc:Error? {
 
 @test:Config {enable:true}
 isolated function testBidiStreamingInvalidSecureSocketConfigs() returns grpc:Error? {
-    ChatStreamingClient ep;
     ChatClient|grpc:Error result = new ("https://localhost:9093", {
         secureSocket: {
             key: {
@@ -175,7 +174,6 @@ isolated function testBidiStreamingInvalidSecureSocketConfigs() returns grpc:Err
 
 @test:Config {enable:true}
 isolated function testBidiStreamingNullCertField() returns grpc:Error? {
-    ChatStreamingClient ep;
     ChatClient|grpc:Error result = new ("https://localhost:9093", {
         secureSocket: {
             key: {
@@ -233,7 +231,6 @@ isolated function testBidiStreamingWithPublicCertPrivateKey() returns grpc:Error
 
 @test:Config {enable:true}
 isolated function testBidiStreamingWithNoCertFile() returns grpc:Error? {
-    ChatStreamingClient ep;
     ChatClient|grpc:Error result = new ("https://localhost:9093", {
         secureSocket: {
             key: {
@@ -261,7 +258,6 @@ isolated function testBidiStreamingWithNoCertFile() returns grpc:Error? {
 
 @test:Config {enable:true}
 isolated function testBidiStreamingWithNoKeyFile() returns grpc:Error? {
-    ChatStreamingClient ep;
     ChatClient|grpc:Error result = new ("https://localhost:9093", {
         secureSocket: {
             key: {
@@ -289,7 +285,6 @@ isolated function testBidiStreamingWithNoKeyFile() returns grpc:Error? {
 
 @test:Config {enable:true}
 isolated function testBidiStreamingWithNoPublicCertFile() returns grpc:Error? {
-    ChatStreamingClient ep;
     ChatClient|grpc:Error result = new ("https://localhost:9093", {
         secureSocket: {
             key: {

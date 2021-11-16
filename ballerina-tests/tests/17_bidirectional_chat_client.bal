@@ -62,7 +62,7 @@ isolated function testBidiStreamingInChatClient() returns grpc:Error? {
     } else if responseMsg is () {
         test:assertFail(msg = "stream can't be closed without a response message");
     } else {
-        [anydata, map<string|string[]>][content, headers] = responseMsg;
+        [anydata, map<string|string[]>][content, _] = responseMsg;
         test:assertEquals(content.toString(), "Sam: Hi");
     }
 

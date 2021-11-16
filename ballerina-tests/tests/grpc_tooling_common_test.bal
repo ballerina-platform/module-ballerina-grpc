@@ -195,7 +195,7 @@ function testHelloWorldWithInvalidDependency() {
 
 @test:Config {enable:true}
 function testMultipleWrapperTypes() returns error? {
-    var result =  check assertGeneratedDataTypeSources("data-types", "multiple_wrapper_types.proto", "multiple_wrapper_types_pb.bal", "tool_test_data_type_20");
+    _ =  check assertGeneratedDataTypeSources("data-types", "multiple_wrapper_types.proto", "multiple_wrapper_types_pb.bal", "tool_test_data_type_20");
 }
 
 @test:Config {enable:true}
@@ -208,14 +208,14 @@ function testProtoDirectory() returns error? {
     string expectedStubFilePath1 = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "helloWorldBoolean_pb.bal");
     string expectedStubFilePath2 = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "helloWorldInt_pb.bal");
     string expectedStubFilePath3 = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "helloWorldString_pb.bal");
-    string expectedStubFilePath4 = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "helloWorldWithDependency_pb.bal");
-    string expectedStubFilePath5 = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "message_pb.bal");
+    _ = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "helloWorldWithDependency_pb.bal");
+    _ = check file:joinPath(BAL_FILE_DIRECTORY, "tool_test_proto_dir", "message_pb.bal");
 
     string actualStubFilePath1 = check file:joinPath(outputDirPath, "helloWorldBoolean_pb.bal");
     string actualStubFilePath2 = check file:joinPath(outputDirPath, "helloWorldInt_pb.bal");
     string actualStubFilePath3 = check file:joinPath(outputDirPath, "helloWorldString_pb.bal");
     string actualStubFilePath4 = check file:joinPath(outputDirPath, "helloWorldWithDependency_pb.bal");
-    string actualStubFilePath5 = check file:joinPath(outputDirPath, "message_pb.bal");
+    _ = check file:joinPath(outputDirPath, "message_pb.bal");
 
     test:assertTrue(check file:test(actualStubFilePath1, file:EXISTS));
     test:assertFalse(hasDiagnostics(actualStubFilePath1));
@@ -285,7 +285,7 @@ function assertGeneratedDataTypeSourcesNegative(string subDir, string protoFile,
     string protoFilePath = check file:joinPath(PROTO_FILE_DIRECTORY, subDir, protoFile);
     string outputDirPath = check file:joinPath(GENERATED_SOURCES_DIRECTORY, outputDir);
 
-    string expectedStubFilePath = check file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
+    _ = check file:joinPath(BAL_FILE_DIRECTORY, outputDir, stubFile);
     string actualStubFilePath = check file:joinPath(outputDirPath, stubFile);
 
     generateSourceCode(protoFilePath, outputDirPath);

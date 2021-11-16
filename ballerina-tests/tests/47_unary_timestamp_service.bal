@@ -50,12 +50,13 @@ service "TimestampService" on ep47 {
             check caller->sendError(error grpc:Error("Timestamp does not match"));
             check caller->complete();
         }
+        return;
     }
 
     remote function serverStreamTime(TimestampServiceTimestampCaller caller, time:Utc value) returns error? {
         time:Utc responseTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
         time:Utc[] timearr = [responseTime, responseTime, responseTime, responseTime];
-        error? e = timearr.forEach(function(time:Utc val) {
+        _ = timearr.forEach(function(time:Utc val) {
             checkpanic caller->sendContextTimestamp({
                 headers: {},
                 content: val
@@ -65,7 +66,7 @@ service "TimestampService" on ep47 {
 
     remote function clientStreamTime(TimestampServiceTimestampCaller caller, stream<time:Utc, grpc:Error?> clientStream) returns error? {
         time:Utc[] timearr = [];
-        error? e = clientStream.forEach(function(time:Utc value) {
+        check clientStream.forEach(function(time:Utc value) {
             timearr.push(value.cloneReadOnly());
         });
         check caller->sendContextTimestamp({

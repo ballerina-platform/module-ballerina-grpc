@@ -221,8 +221,8 @@ function testHello55LdapAuth() returns error? {
 
             remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller, 
             stream<string, error?> clientStream) returns error? {
-                record {|string value;|}|error? result = clientStream.next();
-                result = clientStream.next();
+                _ = check clientStream.next();
+                _ = check clientStream.next();
                 check caller->sendString("Hello");
                 check caller->complete();
             }
