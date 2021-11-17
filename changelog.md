@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- [Protobuf Any type support](https://github.com/ballerina-platform/module-ballerina-grpc/pull/509)
+
+### Changed
+- [Remove the start and stop logs of the listener](https://github.com/ballerina-platform/module-ballerina-grpc/pull/539)
+- [Mark gRPC Service type distinct](https://github.com/ballerina-platform/ballerina-standard-library/issues/2398)
+
+## [1.0.0] - 2021-10-09
+### Added
 - [Add Timestamp record type generation and runtime support](https://github.com/ballerina-platform/ballerina-standard-library/issues/393)
 - [Add gRPC Duration support](https://github.com/ballerina-platform/ballerina-standard-library/issues/1610)
 - [Support a directory with protos as input in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/1626)

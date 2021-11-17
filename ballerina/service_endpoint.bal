@@ -92,7 +92,7 @@ public isolated class Listener {
 }
 
 # The gRPC service type.
-public type Service service object {
+public type Service distinct service object {
 
 };
 
