@@ -215,7 +215,7 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
 function testHello55LdapAuth() returns error? {
 
     if !isWindowsEnvironment() {
-        service object {} helloWorld55 = @grpc:ServiceConfig {auth: [ldapUserStoreconfig55WithScopes]} 
+        grpc:Service helloWorld55 = @grpc:ServiceConfig {auth: [ldapUserStoreconfig55WithScopes]}
         @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()} 
         service object {
 
@@ -348,7 +348,7 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
 @test:Config {enable: true}
 function testHello55LdapAuthWithEmptyScope() returns error? {
     if !isWindowsEnvironment() {
-        service object {} helloWorld55EmptyScope = @grpc:ServiceConfig {auth: [ldapUserStoreconfig55EmptyScope]} 
+        grpc:Service helloWorld55EmptyScope = @grpc:ServiceConfig {auth: [ldapUserStoreconfig55EmptyScope]}
         @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()} 
         service object {
 
