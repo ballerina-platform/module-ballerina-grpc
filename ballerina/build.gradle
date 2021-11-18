@@ -204,6 +204,8 @@ publishing {
     }
 }
 
+build.outputs.dir artifactLibParent // To pack Ballerina gRPC CLI
+
 updateTomlFiles.dependsOn copyStdlibs
 
 build.dependsOn "generatePomFileForMavenPublication"
