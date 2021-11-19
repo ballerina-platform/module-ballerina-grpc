@@ -10,7 +10,7 @@ jobs:
     name: Create Summary Update PR
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v2
       - name: Check for existing PRs
         id: checkPRs
