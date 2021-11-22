@@ -19,7 +19,7 @@
 
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="BallerinaGraphqlCompilerPluginTests">
+<suite name="BallerinaGrpcCompilerPluginTests">
     <test name="UnitTests">
         <classes>
             <class name="io.ballerina.stdlib.grpc.plugin.CompilerPluginTest"/>
