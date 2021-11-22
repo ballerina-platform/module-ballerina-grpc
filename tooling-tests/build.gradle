@@ -19,7 +19,7 @@
 plugins {
     id 'java'
     id 'checkstyle'
-//    id 'com.github.spotbugs'
+    id 'com.github.spotbugs'
 }
 
 description = 'Ballerina - gRPC Tooling Test'
@@ -38,7 +38,6 @@ dependencies {
     testImplementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
     testImplementation group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
     testImplementation project(":grpc-native")
-    testImplementation project(":grpc-test-utils")
     testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
 }
 
@@ -54,23 +53,23 @@ checkstyle {
 
 checkstyleTest.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
 
-//spotbugsTest {
-//    effort "max"
-//    reportLevel "low"
-//    reportsDir = file("$project.buildDir/reports/spotbugs")
-//    reports {
-//        html.enabled true
-//        text.enabled = true
-//    }
-//    def excludeFile = file("${rootDir}/spotbugs-exclude.xml")
-//    if(excludeFile.exists()) {
-//        excludeFilter = excludeFile
-//    }
-//}
-//
-//spotbugsMain {
-//    enabled false
-//}
+spotbugsTest {
+    effort "max"
+    reportLevel "low"
+    reportsDir = file("$project.buildDir/reports/spotbugs")
+    reports {
+        html.enabled true
+        text.enabled = true
+    }
+    def excludeFile = file("${rootDir}/spotbugs-exclude.xml")
+    if(excludeFile.exists()) {
+        excludeFilter = excludeFile
+    }
+}
+
+spotbugsMain {
+    enabled false
+}
 
 checkstyleMain {
     enabled false
