@@ -6,17 +6,14 @@ import io.ballerina.projects.Package;
 import io.ballerina.projects.PackageCompilation;
 import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.directory.BuildProject;
-import io.ballerina.projects.directory.SingleFileProject;
 import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.environment.EnvironmentBuilder;
 import io.ballerina.stdlib.grpc.protobuf.cmd.GrpcCmd;
-import io.ballerina.tools.diagnostics.Diagnostic;
 import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 import org.testng.Assert;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,11 +33,9 @@ public class ToolingTestUtils {
             .toAbsolutePath();
     private static final Path DISTRIBUTION_PATH = Paths.get("../", "target", "ballerina-runtime")
             .toAbsolutePath();
-
-    private static PrintStream console = System.out;
+    private static final Path BALLERINA_TOML_PATH = Paths.get(RESOURCE_DIRECTORY.toString(), "Ballerina.toml");
 
     private static ProjectEnvironmentBuilder getEnvironmentBuilder() {
-
         Environment environment = EnvironmentBuilder.getBuilder().setBallerinaHome(DISTRIBUTION_PATH).build();
         return ProjectEnvironmentBuilder.getBuilder(environment);
     }
@@ -63,14 +58,8 @@ public class ToolingTestUtils {
         generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), null, null);
         Assert.assertTrue(Files.exists(actualStubFilePath));
 
-        Path balTomlPath = Paths.get(RESOURCE_DIRECTORY.toString(), "Ballerina.toml");
-        Path destBalTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, "Ballerina.toml");
-        console.println(balTomlPath + " " + destBalTomlFile);
-        try {
-            Files.copy(balTomlPath, destBalTomlFile, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            Assert.fail("Failed to copy Ballerina.toml", e);
-        }
+        Path destTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, "Ballerina.toml");
+        copyBallerinaToml(destTomlFile);
 
         Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
         Assert.assertEquals(readContent(expectedStubFilePath.toString()), readContent(actualStubFilePath.toString()));
@@ -103,6 +92,12 @@ public class ToolingTestUtils {
         Assert.assertEquals(readContent(expectedStubFilePath.toString()), readContent(actualStubFilePath.toString()));
         Assert.assertEquals(readContent(expectedServiceFilePath.toString()),
                 readContent(actualServiceFilePath.toString()));
+
+        try {
+            Files.deleteIfExists(actualServiceFilePath);
+        } catch (IOException e) {
+            Assert.fail("Failed to delete stub file", e);
+        }
     }
 
     public static void assertGeneratedSourcesNegative(String input, String output, String outputDir, String mode) {
@@ -126,9 +121,15 @@ public class ToolingTestUtils {
             actualStubFilePath = Paths.get("temp", stubFile);
             generateSourceCode(protoFilePath.toString(), "", null, null);
             Assert.assertTrue(Files.exists(actualStubFilePath));
-            Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath.toString()));
+
+            Path destTomlFile = Paths.get("temp", "Ballerina.toml");
+            copyBallerinaToml(destTomlFile);
+
+            Assert.assertFalse(hasSemanticDiagnostics("temp"));
             try {
                 Files.deleteIfExists(actualStubFilePath);
+                Files.deleteIfExists(destTomlFile);
+                Files.deleteIfExists(Paths.get("temp"));
             } catch (IOException e) {
                 Assert.fail("Failed to delete stub file", e);
             }
@@ -136,7 +137,11 @@ public class ToolingTestUtils {
             actualStubFilePath = Paths.get(outputDirPath.toString(), stubFile);
             generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), null, null);
             Assert.assertTrue(Files.exists(actualStubFilePath));
-            Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath.toString()));
+
+            Path destTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, "Ballerina.toml");
+            copyBallerinaToml(destTomlFile);
+
+            Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
             Assert.assertEquals(readContent(expectedStubFilePath.toString()),
                     readContent(actualStubFilePath.toString()));
         }
@@ -208,5 +213,13 @@ public class ToolingTestUtils {
             return "";
         }
         return content.replaceAll("\\s+", "");
+    }
+
+    public static void copyBallerinaToml(Path destTomlPath) {
+        try {
+            Files.copy(BALLERINA_TOML_PATH, destTomlPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
