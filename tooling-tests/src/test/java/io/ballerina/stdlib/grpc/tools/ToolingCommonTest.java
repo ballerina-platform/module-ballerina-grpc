@@ -21,7 +21,6 @@ package io.ballerina.stdlib.grpc.tools;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +32,7 @@ import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.RESOURCE_DIRECTORY
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.assertGeneratedDataTypeSources;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.assertGeneratedDataTypeSourcesNegative;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.assertGeneratedSources;
+import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.copyBallerinaToml;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.generateSourceCode;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.hasSemanticDiagnostics;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.readContent;
@@ -42,7 +42,7 @@ import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.readContent;
  */
 public class ToolingCommonTest {
 
-    @Test
+    @Test(enabled = false)
     public void testHelloWorldWithDependency() {
         assertGeneratedDataTypeSources("data-types", "helloWorldWithDependency.proto",
                 "helloWorldWithDependency_pb.bal", "tool_test_data_type_1");
@@ -77,7 +77,7 @@ public class ToolingCommonTest {
                 "helloWorldWithPackage_pb.bal", "tool_test_data_type_8");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testHelloWorldWithReservedNames() {
         assertGeneratedDataTypeSources("data-types", "helloWorldWithReservedNames.proto",
                 "helloWorldWithReservedNames_pb.bal", "tool_test_data_type_9");
@@ -137,7 +137,7 @@ public class ToolingCommonTest {
         "AnyTypeServer_sample_client.bal", "tool_test_data_type_21");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testHelloWorldChild() {
         assertGeneratedDataTypeSources("data-types", "child.proto", "parent_pb.bal",
                 "tool_test_data_type_14");
@@ -177,7 +177,7 @@ public class ToolingCommonTest {
                 "multiple_wrapper_types_pb.bal", "tool_test_data_type_20");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testProtoDirectory() {
         Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, "proto-dir");
         Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_proto_dir");
@@ -199,27 +199,30 @@ public class ToolingCommonTest {
         Path actualStubFilePath4 = Paths.get(outputDirPath.toString(), "helloWorldWithDependency_pb.bal");
 //        _ = Paths.get(outputDirPath, "message_pb.bal");
 
+        Path destTomlFile = Paths.get(outputDirPath.toString(), "Ballerina.toml");
+        copyBallerinaToml(destTomlFile);
+
         Assert.assertTrue(Files.exists(actualStubFilePath1));
-        Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath1.toString()));
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
         Assert.assertEquals(readContent(expectedStubFilePath1.toString()), readContent(actualStubFilePath1.toString()));
 
         Assert.assertTrue(Files.exists(actualStubFilePath2));
-        Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath2.toString()));
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
         Assert.assertEquals(readContent(expectedStubFilePath2.toString()), readContent(actualStubFilePath2.toString()));
 
         Assert.assertTrue(Files.exists(actualStubFilePath3));
-        Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath3.toString()));
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
         Assert.assertEquals(readContent(expectedStubFilePath3.toString()), readContent(actualStubFilePath3.toString()));
 
         Assert.assertTrue(Files.exists(actualStubFilePath4));
-        Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath4.toString()));
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
 
         //Assert.assertTrue(check file:test(actualStubFilePath5, file:EXISTS));
         //Assert.assertFalse(hasDiagnostics(actualStubFilePath5));
         //Assert.assertEquals(readContent(expectedStubFilePath5), readContent(actualStubFilePath5));
     }
 
-    @Test
+    @Test(enabled = false)
     public void testExternalImportPaths() {
         Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, "external-imports",
                 "myproj", "foo", "bar", "child.proto");
@@ -229,19 +232,23 @@ public class ToolingCommonTest {
 
         Path actualRootStubFilePath = Paths.get(outputDirPath.toString(), "child_pb.bal");
         Path actualDependentStubFilePath = Paths.get(outputDirPath.toString(), "parent_pb.bal");
-        Path expectedRootStubFilePath = Paths.get(BAL_FILE_DIRECTORY, "tool_test_external_imports", "child_pb.bal");
-        Path expectedDependentStubFilePath = Paths.get(BAL_FILE_DIRECTORY, "tool_test_external_imports",
-                "parent_pb.bal");
+        Path expectedRootStubFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+                "tool_test_external_imports", "child_pb.bal");
+        Path expectedDependentStubFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+                "tool_test_external_imports", "parent_pb.bal");
 
-        generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), "stubs", importDirPath);
+        generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), "stubs", importDirPath.toString());
+
+        Path destTomlFile = Paths.get(outputDirPath.toString(), "Ballerina.toml");
+        copyBallerinaToml(destTomlFile);
 
         Assert.assertTrue(Files.exists(actualRootStubFilePath));
-        Assert.assertFalse(hasSemanticDiagnostics(actualRootStubFilePath.toString()));
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
         Assert.assertEquals(readContent(expectedRootStubFilePath.toString()),
                 readContent(actualRootStubFilePath.toString()));
 
         Assert.assertTrue(Files.exists(actualDependentStubFilePath));
-        Assert.assertFalse(hasSemanticDiagnostics(actualDependentStubFilePath.toString()));
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
         Assert.assertEquals(readContent(expectedDependentStubFilePath.toString()),
                 readContent(actualDependentStubFilePath.toString()));
     }
