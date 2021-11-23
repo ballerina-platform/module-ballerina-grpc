@@ -6,6 +6,7 @@ import io.ballerina.projects.Package;
 import io.ballerina.projects.PackageCompilation;
 import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.directory.BuildProject;
+import io.ballerina.projects.directory.SingleFileProject;
 import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.environment.EnvironmentBuilder;
 import io.ballerina.stdlib.grpc.protobuf.cmd.GrpcCmd;
@@ -61,7 +62,7 @@ public class ToolingTestUtils {
         Path destTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, "Ballerina.toml");
         copyBallerinaToml(destTomlFile);
 
-        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString(), false));
         Assert.assertEquals(readContent(expectedStubFilePath.toString()), readContent(actualStubFilePath.toString()));
         try {
             Files.deleteIfExists(actualStubFilePath);
@@ -73,7 +74,7 @@ public class ToolingTestUtils {
         generateSourceCode(protoFilePath.toString(), outputDirPath.toString(), "client", null);
         Assert.assertTrue(Files.exists(actualStubFilePath));
         Assert.assertTrue(Files.exists(actualClientFilePath));
-        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString(), false));
         Assert.assertEquals(readContent(expectedStubFilePath.toString()), readContent(actualStubFilePath.toString()));
         Assert.assertEquals(readContent(expectedClientFilePath.toString()),
                 readContent(actualClientFilePath.toString()));
@@ -125,7 +126,7 @@ public class ToolingTestUtils {
             Path destTomlFile = Paths.get("temp", "Ballerina.toml");
             copyBallerinaToml(destTomlFile);
 
-            Assert.assertFalse(hasSemanticDiagnostics("temp"));
+            Assert.assertFalse(hasSemanticDiagnostics("temp", false));
             try {
                 Files.deleteIfExists(actualStubFilePath);
                 Files.deleteIfExists(destTomlFile);
@@ -141,7 +142,7 @@ public class ToolingTestUtils {
             Path destTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, "Ballerina.toml");
             copyBallerinaToml(destTomlFile);
 
-            Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString()));
+            Assert.assertFalse(hasSemanticDiagnostics(outputDirPath.toString(), false));
             Assert.assertEquals(readContent(expectedStubFilePath.toString()),
                     readContent(actualStubFilePath.toString()));
         }
@@ -184,9 +185,16 @@ public class ToolingTestUtils {
         }
     }
 
-    public static boolean hasSemanticDiagnostics(String projectPath) {
-        BuildProject buildProject = BuildProject.load(getEnvironmentBuilder(), Paths.get(projectPath));
-        Package currentPackage = buildProject.currentPackage();
+    public static boolean hasSemanticDiagnostics(String projectPath, boolean isSingleFile) {
+        Package currentPackage;
+        if (isSingleFile) {
+            SingleFileProject singleFileProject = SingleFileProject.load(getEnvironmentBuilder(),
+                    Paths.get(projectPath));
+            currentPackage = singleFileProject.currentPackage();
+        } else {
+            BuildProject buildProject = BuildProject.load(getEnvironmentBuilder(), Paths.get(projectPath));
+            currentPackage = buildProject.currentPackage();
+        }
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         return diagnosticResult.hasErrors();
