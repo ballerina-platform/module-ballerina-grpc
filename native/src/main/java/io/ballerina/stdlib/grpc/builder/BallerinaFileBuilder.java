@@ -120,7 +120,7 @@ public class BallerinaFileBuilder {
             String filePackage = fileDescriptorSet.getPackage();
             StubFile stubFileObject = new StubFile(filename);
 
-            if (descriptor == rootDescriptor) {
+            if (descriptor == rootDescriptor || serviceDescriptorList.size() > 0) {
                 // Add root descriptor.
                 Descriptor rootDesc = Descriptor.newBuilder(descriptor).build();
                 stubRootDescriptor = rootDesc.getData();
