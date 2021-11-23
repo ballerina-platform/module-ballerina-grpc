@@ -104,4 +104,15 @@ test {
     finalizedBy jacocoTestReport
 }
 
+jacoco {
+    toolVersion = "${jacocoVersion}"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled true
+    }
+}
+
 test.dependsOn ":grpc-ballerina:build"
