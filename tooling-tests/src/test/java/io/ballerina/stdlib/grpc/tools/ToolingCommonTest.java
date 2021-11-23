@@ -178,7 +178,7 @@ public class ToolingCommonTest {
                 "multiple_wrapper_types_pb.bal", "tool_test_data_type_20");
     }
 
-    @Test(enabled = false)
+    @Test
     public void testProtoDirectory() {
         Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, "proto-dir");
         Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_proto_dir");
@@ -201,9 +201,6 @@ public class ToolingCommonTest {
         Path actualStubFilePath3 = Paths.get(outputDirPath.toString(), "helloWorldString_pb.bal");
         Path actualStubFilePath4 = Paths.get(outputDirPath.toString(), "helloWorldWithDependency_pb.bal");
         Path actualStubFilePath5 = Paths.get(outputDirPath.toString(), "message_pb.bal");
-
-        Path destTomlFile = Paths.get(outputDirPath.toString(), "Ballerina.toml");
-        copyBallerinaToml(destTomlFile);
 
         Assert.assertTrue(Files.exists(actualStubFilePath1));
         Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath1.toString(), true));
