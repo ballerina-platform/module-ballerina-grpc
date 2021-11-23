@@ -20,13 +20,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="BallerinaGrpcToolingTests">
-    <test name="UnitTests">
-        <classes>
-            <class name="io.ballerina.stdlib.grpc.tools.ToolingCommonTest"/>
-            <class name="io.ballerina.stdlib.grpc.tools.ToolingUnaryTest"/>
-            <class name="io.ballerina.stdlib.grpc.tools.ToolingServerTest"/>
-            <class name="io.ballerina.stdlib.grpc.tools.ToolingClientTest"/>
-            <class name="io.ballerina.stdlib.grpc.tools.ToolingBidirectionalTest"/>
-        </classes>
+    <test name="grpc-tools-test-suite" preserve-order="true" parallel="false">
+        <packages>
+            <package name="io.ballerina.stdlib.grpc.tools.*"/>
+        </packages>
     </test>
 </suite>
