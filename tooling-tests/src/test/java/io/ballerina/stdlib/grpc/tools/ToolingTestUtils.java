@@ -158,10 +158,10 @@ public class ToolingTestUtils {
             if (!sOutputDirPath.toString().isBlank()) {
                 grpcCmd.setBalOutPath(sOutputDirPath.toAbsolutePath().toString());
             }
-            if (mode instanceof String) {
+            if (mode != null) {
                 grpcCmd.setMode(mode);
             }
-            if (sImportDirPath instanceof Path) {
+            if (sImportDirPath != null) {
                 grpcCmd.setImportPath(sImportDirPath.toAbsolutePath().toString());
             }
             grpcCmd.execute();
