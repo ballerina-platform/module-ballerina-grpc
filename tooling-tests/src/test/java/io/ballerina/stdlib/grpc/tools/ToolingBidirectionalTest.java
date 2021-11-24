@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.assertGeneratedSources;
 
 /**
- * gRPC tool common tests.
+ * gRPC tool bidirectional tests.
  */
 public class ToolingBidirectionalTest {
 

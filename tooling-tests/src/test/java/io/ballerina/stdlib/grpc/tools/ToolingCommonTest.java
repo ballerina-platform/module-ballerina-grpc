@@ -246,7 +246,7 @@ public class ToolingCommonTest {
         Assert.assertEquals(readContent(expectedDependentStubFilePath), readContent(actualDependentStubFilePath));
     }
 
-    @Test(enabled = true, description = "This test case is to generate stub files for all grpc tests. " +
+    @Test(enabled = false, description = "This test case is to generate stub files for all grpc tests. " +
             "We can use this to verify the generated output files manually.")
     public void generateStubFilesForBallerinaTests() {
         Path outputDirPath = Paths.get("../ballerina-tests/tests/");
