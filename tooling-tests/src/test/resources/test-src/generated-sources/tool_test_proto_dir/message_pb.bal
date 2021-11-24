@@ -5,3 +5,4 @@ public type HelloResponse record {|
 public type HelloRequest record {|
     string greet = "";
 |};
+
