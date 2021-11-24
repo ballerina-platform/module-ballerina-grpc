@@ -193,14 +193,14 @@ public class ToolingCommonTest {
                 "tool_test_proto_dir", "helloWorldString_pb.bal");
         Path expectedStubFilePath4 = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
                 "tool_test_proto_dir", "helloWorldWithDependency_pb.bal");
-        Path expectedStubFilePath5 = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
-                "tool_test_proto_dir", "message_pb.bal");
+//        Path expectedStubFilePath5 = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+//                "tool_test_proto_dir", "message_pb.bal");
 
         Path actualStubFilePath1 = Paths.get(outputDirPath.toString(), "helloWorldBoolean_pb.bal");
         Path actualStubFilePath2 = Paths.get(outputDirPath.toString(), "helloWorldInt_pb.bal");
         Path actualStubFilePath3 = Paths.get(outputDirPath.toString(), "helloWorldString_pb.bal");
         Path actualStubFilePath4 = Paths.get(outputDirPath.toString(), "helloWorldWithDependency_pb.bal");
-        Path actualStubFilePath5 = Paths.get(outputDirPath.toString(), "message_pb.bal");
+//        Path actualStubFilePath5 = Paths.get(outputDirPath.toString(), "message_pb.bal");
 
         Assert.assertTrue(Files.exists(actualStubFilePath1));
         Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath1.toString(), true));
