@@ -100,6 +100,8 @@ jacoco {
 
 jacocoTestReport {
     dependsOn test
+    def classFiles = new File("${rootDir}/native/build/classes/java/main/io/ballerina/stdlib/grpc")
+    additionalClassDirs(classFiles)
     reports {
         xml.enabled true
     }
