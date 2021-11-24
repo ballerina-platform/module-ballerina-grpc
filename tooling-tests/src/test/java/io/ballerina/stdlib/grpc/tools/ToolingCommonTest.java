@@ -220,7 +220,8 @@ public class ToolingCommonTest {
 
 //        Assert.assertTrue(Files.exists(actualStubFilePath5));
 //        Assert.assertFalse(hasSemanticDiagnostics(actualStubFilePath5.toString(), true));
-//        Assert.assertEquals(readContent(expectedStubFilePath5.toString()), readContent(actualStubFilePath5.toString()));
+//        Assert.assertEquals(readContent(expectedStubFilePath5.toString()),
+//        readContent(actualStubFilePath5.toString()));
     }
 
     @Test
