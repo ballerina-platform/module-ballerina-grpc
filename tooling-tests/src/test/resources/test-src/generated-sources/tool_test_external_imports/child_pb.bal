@@ -123,30 +123,6 @@ public client class CallChild2StreamingClient {
     }
 }
 
-public class ParentMessageStream {
-    private stream<anydata, grpc:Error?> anydataStream;
-
-    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
-        self.anydataStream = anydataStream;
-    }
-
-    public isolated function next() returns record {|ParentMessage value;|}|grpc:Error? {
-        var streamValue = self.anydataStream.next();
-        if (streamValue is ()) {
-            return streamValue;
-        } else if (streamValue is grpc:Error) {
-            return streamValue;
-        } else {
-            record {|ParentMessage value;|} nextRecord = {value: <ParentMessage>streamValue.value};
-            return nextRecord;
-        }
-    }
-
-    public isolated function close() returns grpc:Error? {
-        return self.anydataStream.close();
-    }
-}
-
 public client class CallChild4StreamingClient {
     private grpc:StreamingClient sClient;
 
