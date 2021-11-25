@@ -78,7 +78,7 @@ public class BallerinaFileBuilder {
         setRootDescriptor(rootDescriptor);
         this.dependentDescriptors = dependentDescriptors;
         this.balOutPath = balOutPath;
-         streamClassMap = new HashMap<>();
+        streamClassMap = new HashMap<>();
     }
 
     public void build(String mode) throws CodeBuilderException {
