@@ -1,4 +1,4 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
@@ -19,10 +19,10 @@
 
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="BallerinaGrpcCompilerPluginTests">
-    <test name="UnitTests">
-        <classes>
-            <class name="io.ballerina.stdlib.grpc.plugin.CompilerPluginTest"/>
-        </classes>
+<suite name="BallerinaGrpcToolingTests">
+    <test name="grpc-tools-test-suite" preserve-order="true" parallel="false">
+        <packages>
+            <package name="io.ballerina.stdlib.grpc.tools.*"/>
+        </packages>
     </test>
 </suite>

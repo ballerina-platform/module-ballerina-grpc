@@ -24,8 +24,7 @@
     <listeners>
         <listener class-name="io.ballerina.stdlib.grpc.util.TestNGListener" />
     </listeners>
-    <test name="ballerina-lang-test-suite" preserve-order="true" parallel="false">
-        <parameter name="enableJBallerinaTests" value="true"/>
+    <test name="grpc-native-test-suite" preserve-order="true" parallel="false">
         <packages>
             <package name="io.ballerina.stdlib.grpc.*"/>
         </packages>

@@ -61,6 +61,7 @@ import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMIN
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependentValueTypeMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.streamClassMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFunctionCallExpressionNode;
@@ -175,7 +176,11 @@ public class SyntaxTreeGenerator {
                 client.addMember(getServerStreamingFunction(method).getFunctionDefinitionNode());
                 client.addMember(getServerStreamingContextFunction(method).getFunctionDefinitionNode());
                 if (!isBallerinaProtobufType(method.getOutputType())) {
-                    serverStreamingClasses.put(method.getOutputType(), getServerStreamClass(method));
+                    if (!streamClassMap.containsKey(method.getOutputType())) {
+                        Class serverStreamClass = getServerStreamClass(method);
+                        serverStreamingClasses.put(method.getOutputType(), serverStreamClass);
+                        streamClassMap.put(method.getOutputType(), serverStreamClass);
+                    }
                 } else {
                     grpcStreamImports.add(getProtobufType(method.getOutputType()));
                 }

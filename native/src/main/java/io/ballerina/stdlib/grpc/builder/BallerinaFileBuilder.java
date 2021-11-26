@@ -31,6 +31,7 @@ import io.ballerina.stdlib.grpc.builder.stub.ServiceFile;
 import io.ballerina.stdlib.grpc.builder.stub.ServiceStub;
 import io.ballerina.stdlib.grpc.builder.stub.StubFile;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.SyntaxTreeGenerator;
+import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Class;
 import io.ballerina.stdlib.grpc.exception.CodeBuilderException;
 import org.apache.commons.lang3.StringUtils;
 import org.ballerinalang.formatter.core.Formatter;
@@ -65,16 +66,19 @@ public class BallerinaFileBuilder {
     private static final String PROTO_FILE_EXTENSION = ".proto";
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
     public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
+    public static Map<String, Class> streamClassMap;
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
         this.dependentDescriptors = dependentDescriptors;
+        streamClassMap = new HashMap<>();
     }
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors, String balOutPath) {
         setRootDescriptor(rootDescriptor);
         this.dependentDescriptors = dependentDescriptors;
         this.balOutPath = balOutPath;
+        streamClassMap = new HashMap<>();
     }
 
     public void build(String mode) throws CodeBuilderException {
@@ -120,7 +124,7 @@ public class BallerinaFileBuilder {
             String filePackage = fileDescriptorSet.getPackage();
             StubFile stubFileObject = new StubFile(filename);
 
-            if (descriptor == rootDescriptor) {
+            if (descriptor == rootDescriptor || serviceDescriptorList.size() > 0) {
                 // Add root descriptor.
                 Descriptor rootDesc = Descriptor.newBuilder(descriptor).build();
                 stubRootDescriptor = rootDesc.getData();
@@ -215,8 +219,7 @@ public class BallerinaFileBuilder {
                                     stubFileObject.getFileName()
                             ),
                             serviceFilePath
-                    )
-                    ;
+                    );
                 } else if (BalGenConstants.GRPC_CLIENT.equals(mode)) {
                     String clientFilePath = generateOutputFile(this.balOutPath,
                             serviceStub.getServiceName() + BalGenConstants.SAMPLE_FILE_PREFIX
