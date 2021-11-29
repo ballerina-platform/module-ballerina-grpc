@@ -43,6 +43,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getWildcardBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 
@@ -205,7 +206,7 @@ public class CommonUtils {
                 .functionName().toString().endsWith("Context")) {
             bindingPatternNode = getTypedBindingPatternNode(
                     getSimpleNameReferenceNode("var"),
-                    getCaptureBindingPatternNode("_")
+                    getWildcardBindingPatternNode()
             );
         } else {
             bindingPatternNode = getTypedBindingPatternNode(
