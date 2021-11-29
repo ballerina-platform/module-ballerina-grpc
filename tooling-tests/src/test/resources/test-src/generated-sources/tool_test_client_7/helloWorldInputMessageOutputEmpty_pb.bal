@@ -37,7 +37,7 @@ public client class TestInputStructNoOutputStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] _ = response;
+            _ = response;
         }
     }
 

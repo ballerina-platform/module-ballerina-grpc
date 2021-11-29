@@ -20,7 +20,7 @@ public isolated client class helloWorldClient {
         } else {
             message = req;
         }
-        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testInputStructNoOutput", message, headers);
+        _ = check self.grpcClient->executeSimpleRPC("grpcservices.helloWorld/testInputStructNoOutput", message, headers);
     }
 
     isolated remote function testInputStructNoOutputContext(HelloRequest|ContextHelloRequest req) returns empty:ContextNil|grpc:Error {
