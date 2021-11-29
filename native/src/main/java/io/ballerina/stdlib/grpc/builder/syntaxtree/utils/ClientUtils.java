@@ -38,6 +38,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Statement.getAssignmentStatementNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
@@ -263,18 +264,6 @@ public class ClientUtils {
                         )
                 )
         );
-        TypedBindingPatternNode receiveArgsPattern;
-        if (method.getOutputType() == null) {
-            receiveArgsPattern = getTypedBindingPatternNode(
-                    getTupleTypeDescriptorNode(receiveArgs),
-                    getWildcardBindingPatternNode()
-            );
-        } else {
-            receiveArgsPattern = getTypedBindingPatternNode(
-                    getTupleTypeDescriptorNode(receiveArgs),
-                    getListBindingPatternNode(new String[]{"payload", "_"})
-            );
-        }
         if (method.getOutputType() != null) {
             function.addReturns(
                     TypeDescriptor.getUnionTypeDescriptorNode(
@@ -310,12 +299,26 @@ public class ClientUtils {
                         getSimpleNameReferenceNode("response")
                 )
         );
-        responseCheck.addElseStatement(
-                new VariableDeclaration(
-                        receiveArgsPattern,
-                        getSimpleNameReferenceNode("response")
-                ).getVariableDeclarationNode()
-        );
+
+        if (method.getOutputType() == null) {
+            responseCheck.addElseStatement(
+                    getAssignmentStatementNode(
+                            getWildcardBindingPatternNode().toSourceCode(),
+                            getSimpleNameReferenceNode("response")
+                    )
+            );
+        } else {
+            responseCheck.addElseStatement(
+                    new VariableDeclaration(
+                            getTypedBindingPatternNode(
+                                    getTupleTypeDescriptorNode(receiveArgs),
+                                    getListBindingPatternNode(new String[]{"payload", "_"})
+                            ),
+                            getSimpleNameReferenceNode("response")
+                    ).getVariableDeclarationNode()
+            );
+        }
+
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("string")) {
                 responseCheck.addElseStatement(
