@@ -64,7 +64,7 @@ public isolated client class NegotiatorClient {
         } else {
             message = req;
         }
-        var _ = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", message, headers);
+        _ = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", message, headers);
     }
 
     isolated remote function publishMetricsContext(MetricsPublishRequest|ContextMetricsPublishRequest req) returns empty:ContextNil|grpc:Error {
@@ -90,7 +90,7 @@ public isolated client class NegotiatorClient {
         } else {
             message = req;
         }
-        var _ = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", message, headers);
+        _ = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", message, headers);
     }
 
     isolated remote function publishTracesContext(TracesPublishRequest|ContextTracesPublishRequest req) returns empty:ContextNil|grpc:Error {

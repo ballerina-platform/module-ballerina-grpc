@@ -288,19 +288,19 @@ public client class Hello2StreamingClient {
 
 //public client class Hello2StreamingClient {
 //    private grpc:StreamingClient sClient;
-
+//
 //    isolated function init(grpc:StreamingClient sClient) {
 //        self.sClient = sClient;
 //    }
-
+//
 //    isolated remote function sendString(string message) returns grpc:Error? {
 //        return self.sClient->send(message);
 //    }
-
+//
 //    isolated remote function sendContextString(wrappers:ContextString message) returns grpc:Error? {
 //        return self.sClient->send(message);
 //    }
-
+//
 //    isolated remote function receiveString() returns string|grpc:Error? {
 //        var response = check self.sClient->receive();
 //        if response is () {
@@ -310,7 +310,7 @@ public client class Hello2StreamingClient {
 //            return payload.toString();
 //        }
 //    }
-
+//
 //    isolated remote function receiveContextString() returns wrappers:ContextString|grpc:Error? {
 //        var response = check self.sClient->receive();
 //        if response is () {
@@ -320,11 +320,11 @@ public client class Hello2StreamingClient {
 //            return {content: payload.toString(), headers: headers};
 //        }
 //    }
-
+//
 //    isolated remote function sendError(grpc:Error response) returns grpc:Error? {
 //        return self.sClient->sendError(response);
 //    }
-
+//
 //    isolated remote function complete() returns grpc:Error? {
 //        return self.sClient->complete();
 //    }

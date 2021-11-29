@@ -193,7 +193,7 @@ public isolated client class HelloWorld100Client {
         } else {
             message = req;
         }
-        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoResponse", message, headers);
+        _ = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoResponse", message, headers);
     }
 
     isolated remote function testNoResponseContext(string|wrappers:ContextString req) returns empty:ContextNil|grpc:Error {
