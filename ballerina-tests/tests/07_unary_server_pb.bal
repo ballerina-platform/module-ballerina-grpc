@@ -193,7 +193,7 @@ public isolated client class HelloWorld100Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoResponse", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoResponse", message, headers);
     }
 
     isolated remote function testNoResponseContext(string|wrappers:ContextString req) returns empty:ContextNil|grpc:Error {
@@ -206,7 +206,7 @@ public isolated client class HelloWorld100Client {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("grpcservices.HelloWorld100/testNoResponse", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {headers: respHeaders};
     }
 

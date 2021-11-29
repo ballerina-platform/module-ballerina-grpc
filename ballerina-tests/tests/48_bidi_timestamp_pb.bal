@@ -65,7 +65,7 @@ public client class BidiStreamingGreetServerStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <BiDiGreeting>payload;
         }
     }
@@ -109,7 +109,7 @@ public client class BidiStreamingGreetBothStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <BiDiGreeting>payload;
         }
     }
@@ -153,7 +153,7 @@ public client class BidiStreamingExchangeTimeStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <time:Utc>payload.cloneReadOnly();
         }
     }

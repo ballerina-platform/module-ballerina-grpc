@@ -115,7 +115,7 @@ public client class RecordRouteStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <RouteSummary>payload;
         }
     }
@@ -183,7 +183,7 @@ public client class RouteChatStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <RouteNote>payload;
         }
     }

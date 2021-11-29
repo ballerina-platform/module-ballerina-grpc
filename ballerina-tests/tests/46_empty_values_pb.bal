@@ -32,14 +32,14 @@ public isolated client class EmptyHandlerClient {
     isolated remote function unaryWithEmpty() returns grpc:Error? {
         empty:Empty message = {};
         map<string|string[]> headers = {};
-        var payload = check self.grpcClient->executeSimpleRPC("EmptyHandler/unaryWithEmpty", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("EmptyHandler/unaryWithEmpty", message, headers);
     }
 
     isolated remote function unaryWithEmptyContext() returns empty:ContextNil|grpc:Error {
         empty:Empty message = {};
         map<string|string[]> headers = {};
         var payload = check self.grpcClient->executeSimpleRPC("EmptyHandler/unaryWithEmpty", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {headers: respHeaders};
     }
 
@@ -87,7 +87,7 @@ public client class ClientStrWithEmptyStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] _ = response;
         }
     }
 
@@ -96,7 +96,7 @@ public client class ClientStrWithEmptyStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [_, headers] = response;
             return {headers: headers};
         }
     }

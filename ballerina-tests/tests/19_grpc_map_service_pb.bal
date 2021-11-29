@@ -64,7 +64,7 @@ public isolated client class NegotiatorClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", message, headers);
     }
 
     isolated remote function publishMetricsContext(MetricsPublishRequest|ContextMetricsPublishRequest req) returns empty:ContextNil|grpc:Error {
@@ -77,7 +77,7 @@ public isolated client class NegotiatorClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishMetrics", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {headers: respHeaders};
     }
 
@@ -90,7 +90,7 @@ public isolated client class NegotiatorClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", message, headers);
+        var _ = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", message, headers);
     }
 
     isolated remote function publishTracesContext(TracesPublishRequest|ContextTracesPublishRequest req) returns empty:ContextNil|grpc:Error {
@@ -103,7 +103,7 @@ public isolated client class NegotiatorClient {
             message = req;
         }
         var payload = check self.grpcClient->executeSimpleRPC("Negotiator/publishTraces", message, headers);
-        [anydata, map<string|string[]>] [result, respHeaders] = payload;
+        [anydata, map<string|string[]>] [_, respHeaders] = payload;
         return {headers: respHeaders};
     }
 }
