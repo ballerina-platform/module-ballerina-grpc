@@ -218,7 +218,6 @@ test.dependsOn ":${packageName}-native:test"
 test.dependsOn ":${packageName}-test-utils:build"
 test.dependsOn ":${packageName}-compiler-plugin:build"
 build.finalizedBy ":${packageName}-ballerina-tests:build"
-build.finalizedBy ":${packageName}-tooling-tests:build"
 
 publishToMavenLocal.dependsOn copyExternalJars
 publish.dependsOn copyExternalJars
