@@ -21,6 +21,7 @@ package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
+import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Map;
@@ -216,10 +217,20 @@ public class UnaryUtils {
                         )
                 )
         );
+        TypedBindingPatternNode bindingPatternNode;
+        if (method.getOutputType() == null) {
+            bindingPatternNode = getTypedBindingPatternNode(
+                    getTupleTypeDescriptorNode(payloadArgs),
+                    getListBindingPatternNode(new String[]{"_", "respHeaders"})
+            );
+        } else {
+            bindingPatternNode = getTypedBindingPatternNode(
+                    getTupleTypeDescriptorNode(payloadArgs),
+                    getListBindingPatternNode(new String[]{"result", "respHeaders"})
+            );
+        }
         VariableDeclaration payload = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        getTupleTypeDescriptorNode(payloadArgs),
-                        getListBindingPatternNode(new String[]{"result", "respHeaders"})),
+                bindingPatternNode,
                 getSimpleNameReferenceNode("payload")
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());

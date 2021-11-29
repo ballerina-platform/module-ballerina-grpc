@@ -19,6 +19,7 @@
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
+import io.ballerina.compiler.syntax.tree.TypedBindingPatternNode;
 import io.ballerina.stdlib.grpc.builder.stub.Field;
 import io.ballerina.stdlib.grpc.builder.stub.Message;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
@@ -155,6 +156,8 @@ public class CommonUtils {
                 new Map().getMappingConstructorExpressionNode()
         );
         function.addVariableStatement(headers.getVariableDeclarationNode());
+
+        TypedBindingPatternNode bindingPatternNode;
         if (method.getInputType() != null) {
             TypeDescriptorNode messageType;
             if (method.getInputType().equals("string")) {
@@ -198,10 +201,20 @@ public class CommonUtils {
             );
             function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
         }
+        if (method.getOutputType() == null && !function.getFunctionDefinitionNode()
+                .functionName().toString().endsWith("Context")) {
+            bindingPatternNode = getTypedBindingPatternNode(
+                    getSimpleNameReferenceNode("var"),
+                    getCaptureBindingPatternNode("_")
+            );
+        } else {
+            bindingPatternNode = getTypedBindingPatternNode(
+                    getBuiltinSimpleNameReferenceNode("var"),
+                    getCaptureBindingPatternNode("payload")
+            );
+        }
         VariableDeclaration payload = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        getBuiltinSimpleNameReferenceNode("var"),
-                        getCaptureBindingPatternNode("payload")),
+                bindingPatternNode,
                 getCheckExpressionNode(
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "grpcClient"),

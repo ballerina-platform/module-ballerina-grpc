@@ -262,9 +262,18 @@ public class ClientUtils {
                         )
                 )
         );
-        TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
-                getTupleTypeDescriptorNode(receiveArgs),
-                getListBindingPatternNode(new String[]{"payload", "headers"}));
+        TypedBindingPatternNode receiveArgsPattern;
+        if (method.getOutputType() == null) {
+            receiveArgsPattern = getTypedBindingPatternNode(
+                    getTupleTypeDescriptorNode(receiveArgs),
+                    getCaptureBindingPatternNode("_")
+            );
+        } else {
+            receiveArgsPattern = getTypedBindingPatternNode(
+                    getTupleTypeDescriptorNode(receiveArgs),
+                    getListBindingPatternNode(new String[]{"payload", "_"})
+            );
+        }
         if (method.getOutputType() != null) {
             function.addReturns(
                     TypeDescriptor.getUnionTypeDescriptorNode(
@@ -381,10 +390,18 @@ public class ClientUtils {
                         )
                 )
         );
-        TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
-                getTupleTypeDescriptorNode(receiveArgs),
-                getListBindingPatternNode(new String[]{"payload", "headers"})
-        );
+        TypedBindingPatternNode receiveArgsPattern;
+        if (method.getOutputType() == null) {
+            receiveArgsPattern = getTypedBindingPatternNode(
+                    getTupleTypeDescriptorNode(receiveArgs),
+                    getListBindingPatternNode(new String[]{"_", "headers"})
+            );
+        } else {
+            receiveArgsPattern = getTypedBindingPatternNode(
+                    getTupleTypeDescriptorNode(receiveArgs),
+                    getListBindingPatternNode(new String[]{"payload", "headers"})
+            );
+        }
         String contextParam = "Context" + outCap;
         if (isBallerinaProtobufType(method.getOutputType())) {
             contextParam = getProtobufType(method.getOutputType()) + ":" + contextParam;
