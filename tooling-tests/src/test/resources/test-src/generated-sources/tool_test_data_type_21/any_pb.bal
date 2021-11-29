@@ -157,7 +157,7 @@ public client class ClientStreamingCallStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <'any:Any>payload;
         }
     }
@@ -201,7 +201,7 @@ public client class BidirectionalStreamingCallStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <'any:Any>payload;
         }
     }

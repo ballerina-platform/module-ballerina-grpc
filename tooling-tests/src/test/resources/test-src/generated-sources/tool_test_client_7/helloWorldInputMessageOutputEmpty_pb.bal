@@ -37,7 +37,7 @@ public client class TestInputStructNoOutputStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] _ = response;
         }
     }
 
@@ -46,7 +46,7 @@ public client class TestInputStructNoOutputStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [_, headers] = response;
             return {headers: headers};
         }
     }
