@@ -189,7 +189,7 @@ public client class Hello55ClientStreamingStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return payload.toString();
         }
     }
@@ -233,7 +233,7 @@ public client class Hello55BiDiWithCallerStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return payload.toString();
         }
     }
@@ -277,7 +277,7 @@ public client class Hello55BiDiWithReturnStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return payload.toString();
         }
     }

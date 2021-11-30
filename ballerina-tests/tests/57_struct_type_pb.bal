@@ -298,7 +298,7 @@ public client class ClientStreamStructType1StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <map<anydata>>payload;
         }
     }
@@ -342,7 +342,7 @@ public client class ClientStreamStructType2StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <StructMsg>payload;
         }
     }
@@ -410,7 +410,7 @@ public client class BidirectionalStreamStructType1StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <map<anydata>>payload;
         }
     }
@@ -454,7 +454,7 @@ public client class BidirectionalStreamStructType2StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <StructMsg>payload;
         }
     }

@@ -316,7 +316,7 @@ public client class Call5StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <Msg>payload;
         }
     }
@@ -360,7 +360,7 @@ public client class Call6StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <Msg>payload;
         }
     }
@@ -404,7 +404,7 @@ public client class Call7StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <Msg>payload;
         }
     }
@@ -448,7 +448,7 @@ public client class Call8StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <Msg>payload;
         }
     }
