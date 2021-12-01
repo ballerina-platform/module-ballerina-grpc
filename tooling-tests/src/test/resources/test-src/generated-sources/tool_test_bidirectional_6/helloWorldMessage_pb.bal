@@ -41,7 +41,7 @@ public client class HelloStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <HelloResponse>payload;
         }
     }
@@ -85,7 +85,7 @@ public client class ByeStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <ByeResponse>payload;
         }
     }

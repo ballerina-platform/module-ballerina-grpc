@@ -38,6 +38,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getTypeTestExpressionNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Statement.getAssignmentStatementNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Statement.getReturnStatementNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
@@ -51,6 +52,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getWildcardBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
@@ -262,9 +264,6 @@ public class ClientUtils {
                         )
                 )
         );
-        TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
-                getTupleTypeDescriptorNode(receiveArgs),
-                getListBindingPatternNode(new String[]{"payload", "headers"}));
         if (method.getOutputType() != null) {
             function.addReturns(
                     TypeDescriptor.getUnionTypeDescriptorNode(
@@ -300,12 +299,26 @@ public class ClientUtils {
                         getSimpleNameReferenceNode("response")
                 )
         );
-        responseCheck.addElseStatement(
-                new VariableDeclaration(
-                        receiveArgsPattern,
-                        getSimpleNameReferenceNode("response")
-                ).getVariableDeclarationNode()
-        );
+
+        if (method.getOutputType() == null) {
+            responseCheck.addElseStatement(
+                    getAssignmentStatementNode(
+                            getWildcardBindingPatternNode().toSourceCode(),
+                            getSimpleNameReferenceNode("response")
+                    )
+            );
+        } else {
+            responseCheck.addElseStatement(
+                    new VariableDeclaration(
+                            getTypedBindingPatternNode(
+                                    getTupleTypeDescriptorNode(receiveArgs),
+                                    getListBindingPatternNode(new String[]{"payload", "_"})
+                            ),
+                            getSimpleNameReferenceNode("response")
+                    ).getVariableDeclarationNode()
+            );
+        }
+
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("string")) {
                 responseCheck.addElseStatement(
@@ -381,10 +394,18 @@ public class ClientUtils {
                         )
                 )
         );
-        TypedBindingPatternNode receiveArgsPattern = getTypedBindingPatternNode(
-                getTupleTypeDescriptorNode(receiveArgs),
-                getListBindingPatternNode(new String[]{"payload", "headers"})
-        );
+        TypedBindingPatternNode receiveArgsPattern;
+        if (method.getOutputType() == null) {
+            receiveArgsPattern = getTypedBindingPatternNode(
+                    getTupleTypeDescriptorNode(receiveArgs),
+                    getListBindingPatternNode(new String[]{"_", "headers"})
+            );
+        } else {
+            receiveArgsPattern = getTypedBindingPatternNode(
+                    getTupleTypeDescriptorNode(receiveArgs),
+                    getListBindingPatternNode(new String[]{"payload", "headers"})
+            );
+        }
         String contextParam = "Context" + outCap;
         if (isBallerinaProtobufType(method.getOutputType())) {
             contextParam = getProtobufType(method.getOutputType()) + ":" + contextParam;

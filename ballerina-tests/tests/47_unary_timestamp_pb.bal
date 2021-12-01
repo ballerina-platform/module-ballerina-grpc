@@ -170,7 +170,7 @@ public client class ClientStreamTimeStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <time:Utc>payload.cloneReadOnly();
         }
     }

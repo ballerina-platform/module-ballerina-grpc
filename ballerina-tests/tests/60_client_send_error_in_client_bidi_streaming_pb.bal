@@ -58,7 +58,7 @@ public client class SendErrorClientStreamingStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <int>payload;
         }
     }
@@ -102,7 +102,7 @@ public client class SendErrorBidiStreamingStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <int>payload;
         }
     }

@@ -99,7 +99,7 @@ public client class CallChild2StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <ChildMessage>payload;
         }
     }
@@ -143,7 +143,7 @@ public client class CallChild4StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <ParentMessage>payload;
         }
     }

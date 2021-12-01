@@ -18,6 +18,7 @@
 
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
+import io.ballerina.compiler.syntax.tree.CheckExpressionNode;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import io.ballerina.stdlib.grpc.builder.stub.Field;
 import io.ballerina.stdlib.grpc.builder.stub.Message;
@@ -42,6 +43,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getWildcardBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 
@@ -155,6 +157,7 @@ public class CommonUtils {
                 new Map().getMappingConstructorExpressionNode()
         );
         function.addVariableStatement(headers.getVariableDeclarationNode());
+
         if (method.getInputType() != null) {
             TypeDescriptorNode messageType;
             if (method.getInputType().equals("string")) {
@@ -198,19 +201,29 @@ public class CommonUtils {
             );
             function.addIfElseStatement(reqIsContext.getIfElseStatementNode());
         }
-        VariableDeclaration payload = new VariableDeclaration(
-                getTypedBindingPatternNode(
-                        getBuiltinSimpleNameReferenceNode("var"),
-                        getCaptureBindingPatternNode("payload")),
-                getCheckExpressionNode(
-                        getRemoteMethodCallActionNode(
-                                getFieldAccessExpressionNode("self", "grpcClient"),
-                                methodName,
-                                new String[]{"\"" + method.getMethodId() + "\"", "message", "headers"}
-                        )
+        CheckExpressionNode checkExpressionNode = getCheckExpressionNode(
+                getRemoteMethodCallActionNode(
+                        getFieldAccessExpressionNode("self", "grpcClient"),
+                        methodName,
+                        new String[]{"\"" + method.getMethodId() + "\"", "message", "headers"}
                 )
         );
-        function.addVariableStatement(payload.getVariableDeclarationNode());
+        if (method.getOutputType() == null && !function.getFunctionDefinitionNode()
+                .functionName().toString().endsWith("Context")) {
+            function.addAssignmentStatement(
+                getWildcardBindingPatternNode(),
+                checkExpressionNode
+            );
+        } else {
+            VariableDeclaration payload = new VariableDeclaration(
+                getTypedBindingPatternNode(
+                    getBuiltinSimpleNameReferenceNode("var"),
+                    getCaptureBindingPatternNode("payload")
+                ),
+                checkExpressionNode
+            );
+            function.addVariableStatement(payload.getVariableDeclarationNode());
+        }
     }
 
     public static boolean checkForImportsInServices(List<Method> methodList, String type) {

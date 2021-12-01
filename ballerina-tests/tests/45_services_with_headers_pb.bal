@@ -115,7 +115,7 @@ public client class ClientStrStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <HSRes>payload;
         }
     }
@@ -183,7 +183,7 @@ public client class BidirectionalStrStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <HSRes>payload;
         }
     }

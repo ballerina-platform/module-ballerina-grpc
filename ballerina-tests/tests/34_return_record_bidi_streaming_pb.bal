@@ -52,7 +52,7 @@ public client class SayHello34StreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return <SampleMsg34>payload;
         }
     }

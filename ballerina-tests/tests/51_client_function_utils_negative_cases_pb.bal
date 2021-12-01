@@ -117,7 +117,7 @@ public client class StringClientStreamingStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return payload.toString();
         }
     }
@@ -161,7 +161,7 @@ public client class StringBiDiStreamingClient {
         if response is () {
             return response;
         } else {
-            [anydata, map<string|string[]>] [payload, headers] = response;
+            [anydata, map<string|string[]>] [payload, _] = response;
             return payload.toString();
         }
     }
