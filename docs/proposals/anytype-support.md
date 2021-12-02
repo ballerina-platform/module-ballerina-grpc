@@ -1,6 +1,6 @@
 # Proposal: Protocol Buffers Any Type Support for gRPC
 
-_Ownes_: @shafreenAnfar @daneshk @BuddhiWathsala @MadhukaHarith92 @dilanSachi  
+_Owners_: @shafreenAnfar @daneshk @BuddhiWathsala @MadhukaHarith92 @dilanSachi  
 _Reviewers_: @shafreenAnfar @daneshk @MadhukaHarith92 @dilanSachi  
 _Created_: 2021/11/05   
 _Updated_: 2021/11/10  
