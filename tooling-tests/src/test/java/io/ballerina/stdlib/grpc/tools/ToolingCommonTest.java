@@ -44,7 +44,7 @@ import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.readContent;
  */
 public class ToolingCommonTest {
 
-    @Test(enabled = false)
+    @Test
     public void testHelloWorldWithDependency() {
         assertGeneratedDataTypeSources("data-types", "helloWorldWithDependency.proto",
                 "helloWorldWithDependency_pb.bal", "tool_test_data_type_1");
