@@ -322,5 +322,6 @@ public class ToolingCommonTest {
         generateSourceCode(outputDirPath.resolve("60_client_send_error_in_client_bidi_streaming.proto"),
                 outputDirPath, null, null);
         generateSourceCode(outputDirPath.resolve("61_any_type.proto"), outputDirPath, null, null);
+        generateSourceCode(outputDirPath.resolve("62_message_size.proto"), outputDirPath, null, null);
     }
 }
