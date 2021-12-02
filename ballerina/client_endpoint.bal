@@ -275,6 +275,7 @@ public type ClientConfiguration record {|
     Compression compression = COMPRESSION_AUTO;
     RetryConfiguration? retryConfiguration = ();
     ClientAuthConfig? auth = ();
+    int maxInboundMessageSize = 4194304;
 |};
 
 # Configurations for facilitating secure communication with a remote gRPC endpoint.

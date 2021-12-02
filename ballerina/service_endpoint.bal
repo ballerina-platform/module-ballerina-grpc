@@ -175,6 +175,7 @@ public type ListenerConfiguration record {|
     string host = "0.0.0.0";
     ListenerSecureSocket? secureSocket = ();
     decimal timeout = DEFAULT_LISTENER_TIMEOUT;
+    int maxInboundMessageSize = 4194304;
 |};
 
 # Configurations for facilitating secure communication for the gRPC server endpoint.
