@@ -9,12 +9,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Prints payload
-        run: |
-          echo ${{ github.event.client_payload.status }}
-          results="${{ github.event.client_payload.result }}"
-          echo $results
-          echo ${{ github.event.client_payload.errorRate }}
       - name: Process results
         if: ${{ github.event.client_payload.status == 'success' }}
         run: |
