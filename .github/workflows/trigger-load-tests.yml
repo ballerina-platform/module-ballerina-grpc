@@ -11,6 +11,11 @@ on:
         description: 'Cluster name'
         default: 'grpc-perf-cluster-test'
         required: false
+      dispatchType:
+        description: >
+          Repository dispatch type. Specify the dispatch type in order to trigger the result processing workflow.
+        default: 'grpc-load-test'
+        required: false
 
 jobs:
   invokeLoadTests:
@@ -49,4 +54,4 @@ jobs:
           repo: ballerina-platform/ballerina-performance-cloud
           ref: refs/heads/main
           token: ${{ secrets.BALLERINA_BOT_TOKEN }}
-          inputs: '{ "repo-name": "module-ballerina-grpc", "tests": "${{ steps.formatTestNames.outputs.testNames }}", "zipURL": ${{ steps.setRuntimeUrl.outputs.runtimeUrl}}, "clusterName": "${{ github.event.inputs.clusterName }}" }'
+          inputs: '{ "repo-name": "module-ballerina-grpc", "tests": "${{ steps.formatTestNames.outputs.testNames }}", "zipURL": ${{ steps.setRuntimeUrl.outputs.runtimeUrl}}, "clusterName": "${{ github.event.inputs.clusterName }}", "dispatchType": "${{ github.event.inputs.dispatchType }}" }'
