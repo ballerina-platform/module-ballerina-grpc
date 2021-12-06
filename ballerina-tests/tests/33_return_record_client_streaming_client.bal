@@ -21,15 +21,8 @@ import ballerina/test;
 @test:Config {enable:true}
 isolated function testClientStreamingFromReturnRecord() returns grpc:Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
-    SayHelloStreamingClient streamingClient;
-    var res = helloWorldEp->sayHello();
-    if res is grpc:Error {
-        test:assertFail("Error from Connector: " + res.message());
-        return;
-    } else {
-        streamingClient = res;
-    }
-    io:println("Initialized connection sucessfully.");
+    SayHelloStreamingClient streamingClient = check helloWorldEp->sayHello();
+
     SampleMsg33[] requests = [
         {name: "WSO2", id: 0},
         {name: "Microsoft", id: 1},
@@ -53,15 +46,7 @@ isolated function testClientStreamingFromReturnRecord() returns grpc:Error? {
 @test:Config {enable:true}
 isolated function testClientStreamingSendError() returns grpc:Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
-    SayHelloStreamingClient streamingClient;
-    var res = helloWorldEp->sayHello();
-    if res is grpc:Error {
-        test:assertFail("Error from Connector: " + res.message());
-        return;
-    } else {
-        streamingClient = res;
-    }
-    io:println("Initialized connection sucessfully.");
+    SayHelloStreamingClient streamingClient = check helloWorldEp->sayHello();
 
     check streamingClient->sendSampleMsg33({name: "WSO2", id: 0});
     check streamingClient->sendError(error grpc:UnKnownError("Unknown gRPC error occured."));
