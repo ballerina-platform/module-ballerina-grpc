@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -39,16 +38,8 @@ isolated function testBidiStreamingInChatClient() returns grpc:Error? {
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         });
 
-    grpc:StreamingClient ep;
     // Executes unary non-blocking call registering server message listener.
-    var res = chatEp->chat();
-    if res is grpc:Error {
-        test:assertFail(string `Error from Connector: ${res.message()}`);
-        return;
-    } else {
-        ep = res;
-    }
-    runtime:sleep(1);
+    grpc:StreamingClient ep = check chatEp->chat();
     // Produces a message to the specified subject.
     ChatMessage mes = {name: "Sam", message: "Hi"};
     grpc:Error? result = ep->send(mes);
