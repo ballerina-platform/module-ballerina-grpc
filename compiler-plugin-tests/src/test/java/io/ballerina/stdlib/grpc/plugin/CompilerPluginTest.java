@@ -253,10 +253,10 @@ public class CompilerPluginTest {
         Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
 
-        String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(20:9,20:26)] invalid service name /HelloBallerina. " +
-                "Service name should not be a hierarchical name";
-        String errMsg2 = "ERROR [HelloWorld_sample_service.bal:(22:9,22:10)] invalid service name /HelloWorld. " +
-                "Service name should not be a hierarchical name";
+        String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(20:9,20:26)] invalid service name " +
+         "/HelloBallerina. Service name should not be a hierarchical name";
+        String errMsg2 = "ERROR [HelloWorld_sample_service.bal:(22:9,22:10)] invalid service name " +
+         "/HelloWorld. Service name should not be a hierarchical name";
         String[] actualErrors  = {diagnostic1.toString(), diagnostic2.toString()};
         String[] expectedErrors  = {errMsg1, errMsg2};
         Assert.assertEqualsNoOrder(actualErrors, expectedErrors);
