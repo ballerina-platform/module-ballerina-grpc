@@ -14,13 +14,14 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
 
-@test:Config {enable: true}
-isolated function testGenerateMethodId() returns error? {
-    string result = generateMethodId((), "testService", "testRPC");
-    test:assertEquals(result, "testService/testRPC");
+package messagesize;
 
-    result = generateMethodId("testPackage", "testService", "testRPC");
-    test:assertEquals(result, "testPackage.testService/testRPC");
+service HelloWorld62 {
+	rpc msgSizeUnary (google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc msgSizeClientStreaming (stream google.protobuf.StringValue) returns (google.protobuf.StringValue);
+	rpc msgSizeServerStreaming (google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
+	rpc msgSizeBidiStreaming (stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
 }
