@@ -32,8 +32,9 @@ import static io.ballerina.stdlib.http.api.HttpConstants.RESPONSE_STATUS_CODE_FI
 public class ObservableClientConnectorListener extends ClientConnectorListener {
     private final DataContext context;
 
-    public ObservableClientConnectorListener(ClientCall.ClientStreamListener streamListener, DataContext context) {
-        super(streamListener);
+    public ObservableClientConnectorListener(ClientCall.ClientStreamListener streamListener, DataContext context,
+                                             Long maxInboundMsgSize) {
+        super(streamListener, maxInboundMsgSize);
         this.context = context;
     }
 

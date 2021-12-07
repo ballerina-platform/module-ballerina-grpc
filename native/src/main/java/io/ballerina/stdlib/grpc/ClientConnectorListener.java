@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_ENCODING;
-import static io.ballerina.stdlib.grpc.GrpcConstants.DEFAULT_MAX_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_MESSAGE_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_STATUS_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MESSAGE_ENCODING;
@@ -48,8 +47,8 @@ public class ClientConnectorListener implements HttpClientConnectorListener {
     private static ExecutorService workerExecutor = Executors.newFixedThreadPool(10,
             new GrpcThreadFactory(new ThreadGroup("grpc-worker"), "grpc-client-worker-thread-pool"));
 
-    ClientConnectorListener(ClientCall.ClientStreamListener streamListener) {
-        this.stateListener = new ClientInboundStateListener(DEFAULT_MAX_MESSAGE_SIZE, streamListener);
+    ClientConnectorListener(ClientCall.ClientStreamListener streamListener, Long maxInboundMsgSize) {
+        this.stateListener = new ClientInboundStateListener(maxInboundMsgSize, streamListener);
     }
 
     final void setDecompressorRegistry(DecompressorRegistry decompressorRegistry) {
@@ -228,7 +227,7 @@ public class ClientConnectorListener implements HttpClientConnectorListener {
         private boolean statusReported;
         private boolean listenerClosed;
 
-        ClientInboundStateListener(int maxMessageSize, ClientCall.ClientStreamListener listener) {
+        ClientInboundStateListener(long maxMessageSize, ClientCall.ClientStreamListener listener) {
             super(maxMessageSize);
             this.listener = listener;
         }

@@ -151,7 +151,7 @@ public class InboundMessage {
 
         private MessageDeframer deframer;
 
-        InboundStateListener(int maxMessageSize) {
+        InboundStateListener(long maxMessageSize) {
             deframer = new MessageDeframer(
                     this,
                     Codec.Identity.NONE,
