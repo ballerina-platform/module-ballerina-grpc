@@ -338,5 +338,9 @@ public final class ClientCall {
             }
             close(status, trailers);
         }
+
+        public void cancelCall(Throwable cause) {
+            cancel(cause.getMessage(), cause);
+        }
     }
 }

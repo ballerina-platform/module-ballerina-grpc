@@ -319,6 +319,7 @@ public class ClientConnectorListener implements HttpClientConnectorListener {
 
         @Override
         public void deframeFailed(Throwable cause) {
+            listener().cancelCall(cause);
             transportReportStatus(Status.fromThrowable(cause), true, new DefaultHttpHeaders());
         }
     }
