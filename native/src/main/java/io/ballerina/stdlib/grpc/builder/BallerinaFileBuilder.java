@@ -119,7 +119,8 @@ public class BallerinaFileBuilder {
                 File protoFile = new File(fileDescriptorSet.getName());
                 filename = protoFile.getName().replace(PROTO_FILE_EXTENSION, "");
             } else {
-                filename = fileDescriptorSet.getName().replace(PROTO_FILE_EXTENSION, "");
+                filename = fileDescriptorSet.getName().replace(PROTO_FILE_EXTENSION, "")
+                        .replace("/", "_");
             }
             String filePackage = fileDescriptorSet.getPackage();
             StubFile stubFileObject = new StubFile(filename);

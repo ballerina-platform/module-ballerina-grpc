@@ -73,7 +73,7 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_03");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] only `error?` return type is allowed " +
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(28:5,39:6)] only `error?` return type is allowed " +
                 "with the caller";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
@@ -89,7 +89,7 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_04");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,38:5)] when there are two parameters to " +
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(28:5,39:6)] when there are two parameters to " +
                 "a remote function, the first one must be a caller type";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
@@ -105,7 +105,7 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_05");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(29:0,42:1)] undefined annotation: " +
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(30:1,43:2)] undefined annotation: " +
                 "grpc:ServiceDescriptor";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Stream<Diagnostic> grpcErrorDiagnostic = diagnosticResult.errors().stream().filter(
@@ -119,7 +119,7 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_06");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(40:4,42:5)] only remote functions are " +
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(41:5,43:6)] only remote functions are " +
                 "allowed inside gRPC services";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
@@ -135,7 +135,7 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_07");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(27:4,39:5)] expected caller type " +
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(28:5,40:6)] expected caller type " +
                 "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"CustomCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
@@ -160,8 +160,8 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_09");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_service.bal:(25:4,37:5)] expected caller type " +
-         "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloWStringCaller\"";
+        String errMsg = "ERROR [grpc_service.bal:(26:5,38:6)] expected caller type " +
+                "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloWStringCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
         Assert.assertEquals(diagnosticResult.errors().size(), 1);
@@ -185,7 +185,7 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_11");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_service.bal:(25:4,37:5)] expected caller type " +
+        String errMsg = "ERROR [grpc_service.bal:(26:5,38:6)] expected caller type " +
          "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"HelloStringCaller\"";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
@@ -228,9 +228,9 @@ public class CompilerPluginTest {
         Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
 
-        String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(18:0,27:1)] invalid service name. " +
+        String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(19:1,28:2)] invalid service name. " +
                 "Service name cannot be nil";
-        String errMsg2 = "ERROR [HelloWorld_sample_service.bal:(24:8,24:10)] invalid service name. " +
+        String errMsg2 = "ERROR [HelloWorld_sample_service.bal:(25:9,25:11)] invalid service name. " +
                 "Service name cannot be nil";
         String[] actualErrors  = {diagnostic1.toString(), diagnostic2.toString()};
         String[] expectedErrors  = {errMsg1, errMsg2};
@@ -253,10 +253,10 @@ public class CompilerPluginTest {
         Assert.assertEquals(diagnostic2.diagnosticInfo().code(),
                 GrpcCompilerPluginConstants.CompilationErrors.INVALID_SERVICE_NAME.getErrorCode());
 
-        String errMsg1 = "ERROR [HelloWorld_sample_service.bal:(21:8,21:9)] invalid service name /HelloWorld. " +
-                "Service name should not be a hierarchical name";
-        String errMsg2 = "ERROR [HelloBallerina_sample_service.bal:(19:8,19:25)] invalid service name " +
-                "/HelloBallerina. Service name should not be a hierarchical name";
+        String errMsg1 = "ERROR [HelloBallerina_sample_service.bal:(20:9,20:26)] invalid service name " +
+         "/HelloBallerina. Service name should not be a hierarchical name";
+        String errMsg2 = "ERROR [HelloWorld_sample_service.bal:(22:9,22:10)] invalid service name " +
+         "/HelloWorld. Service name should not be a hierarchical name";
         String[] actualErrors  = {diagnostic1.toString(), diagnostic2.toString()};
         String[] expectedErrors  = {errMsg1, errMsg2};
         Assert.assertEqualsNoOrder(actualErrors, expectedErrors);

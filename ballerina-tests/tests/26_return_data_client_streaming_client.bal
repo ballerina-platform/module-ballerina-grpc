@@ -23,15 +23,7 @@ isolated function testClientStreamingFromReturn() returns grpc:Error? {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
     HelloWorld26Client helloWorldEp = check new ("http://localhost:9116");
 
-    LotsOfGreetingsStreamingClient streamingClient;
-    var res = helloWorldEp->lotsOfGreetings();
-    if res is grpc:Error {
-        test:assertFail("Error from Connector: " + res.message());
-        return;
-    } else {
-        streamingClient = res;
-    }
-    io:println("Initialized connection sucessfully.");
+    LotsOfGreetingsStreamingClient streamingClient = check helloWorldEp->lotsOfGreetings();
 
     foreach var greet in requests {
         grpc:Error? err = streamingClient->sendString(greet);

@@ -26,15 +26,8 @@ isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error?
     time:Utc deadline = time:utcAddSeconds(current, 300);
     map<string|string[]> headers = grpc:setDeadline(deadline);
 
-    CallWithDeadlineStreamingClient streamingClient;
-    var res = helloWorldCaller->callWithDeadline();
-    if res is grpc:Error {
-        test:assertFail("Error from Connector: " + res.message());
-        return;
-    } else {
-        streamingClient = res;
-    }
-    io:println("Initialized connection sucessfully.");
+    CallWithDeadlineStreamingClient streamingClient = check helloWorldCaller->callWithDeadline();
+
     string[] requests = [
         "WSO2",
         "Microsoft",

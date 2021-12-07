@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -24,27 +23,21 @@ isolated function testClientStreaming() returns grpc:Error? {
     // Client endpoint configuration
     HelloWorld7Client helloWorldEp = check new ("http://localhost:9094");
 
-    LotsOfGreetingsStreamingClient ep;
+    LotsOfGreetingsStreamingClient|grpc:Error ep = helloWorldEp->lotsOfGreetings();
     // Executing unary non-blocking call registering server message listener.
-    var res = helloWorldEp->lotsOfGreetings();
-    if res is grpc:Error {
-        test:assertFail("Error from Connector: " + res.message());
-        return;
+    if ep is grpc:Error {
+        test:assertFail("Error from Connector: " + ep.message());
     } else {
-        ep = res;
-    }
-    io:println("Initialized connection sucessfully.");
-
-    foreach var greet in requests {
-        grpc:Error? err = ep->sendString(greet);
-        if err is grpc:Error {
-            test:assertFail("Error from Connector: " + err.message());
+        foreach var greet in requests {
+            grpc:Error? err = ep->sendString(greet);
+            if err is grpc:Error {
+                test:assertFail("Error from Connector: " + err.message());
+            }
         }
+        check ep->complete();
+        anydata response = checkpanic ep->receiveString();
+        test:assertEquals(<string> response, "Ack");
     }
-    check ep->complete();
-    io:println("completed successfully");
-    anydata response = checkpanic ep->receiveString();
-    test:assertEquals(<string> response, "Ack");
 }
 
 @test:Config {enable:true}

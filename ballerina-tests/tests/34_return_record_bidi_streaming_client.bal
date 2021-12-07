@@ -21,15 +21,8 @@ import ballerina/test;
 @test:Config {enable:true}
 isolated function testBidiStreamingFromReturnRecord() returns grpc:Error? {
     HelloWorld34Client helloWorldEp = check new ("http://localhost:9124");
-    SayHello34StreamingClient streamingClient;
-    var res = helloWorldEp->sayHello34();
-    if res is grpc:Error {
-        test:assertFail("Error from Connector: " + res.message());
-        return;
-    } else {
-        streamingClient = res;
-    }
-    io:println("Initialized connection sucessfully.");
+    SayHello34StreamingClient streamingClient = check helloWorldEp->sayHello34();
+
     SampleMsg34[] requests = [
         {name: "WSO2", id: 0},
         {name: "Microsoft", id: 1},
