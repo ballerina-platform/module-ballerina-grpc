@@ -43,7 +43,7 @@ service "HelloWorld62" on msgSizeService {
 
     remote function msgSizeClientStreaming(stream<string, error?> clientStream) returns string|error? {
         boolean sendLargePayload = false;
-        _ = check clientStream.forEach(function(string val) {
+        check clientStream.forEach(function(string val) {
             if val == "large" {
                 sendLargePayload = true;
             }
@@ -54,19 +54,14 @@ service "HelloWorld62" on msgSizeService {
         return "Hello Client";
     }
 
-    remote function msgSizeBidiStreaming(stream<string, error?> clientStream) returns stream<string, error?>|error? {
-        string[] response;
-        boolean sendLargePayload = false;
-        _ = check clientStream.forEach(function(string val) {
+    remote function msgSizeBidiStreaming(HelloWorld62StringCaller caller, stream<string, error?> clientStream) returns error? {
+        check clientStream.forEach(function(string val) {
             if val == "large" {
-                sendLargePayload = true;
+                checkpanic caller->sendString(LARGE_PAYLOAD);
+            } else {
+                checkpanic caller->sendString(val);
             }
         });
-        if sendLargePayload {
-            response = ["Hi", LARGE_PAYLOAD];
-        } else {
-            response = ["Hi", "Hey", "Hello"];
-        }
-        return response.toStream();
+        check caller->complete();
     }
 }

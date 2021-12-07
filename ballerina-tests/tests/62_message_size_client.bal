@@ -97,7 +97,7 @@ function testServerStreamingCases() returns error? {
     // Streaming normal size messages
     stream<string, error?> response = check helloWorldEp->msgSizeServerStreaming("small");
 
-    _ = check response.forEach(function(anydata value) {
+    check response.forEach(function(anydata value) {
         test:assertEquals(value, "Hello Client");
     });
 
@@ -158,10 +158,7 @@ function testBidiStreamingCases() returns grpc:Error? {
         test:assertFail("Error from Connector: " + err.message());
     }
     check streamingClient->complete();
-
     string|grpc:Error? result = streamingClient->receiveString();
-    test:assertEquals(result, "Hi");
-    result = streamingClient->receiveString();
     test:assertTrue(result is error);
     if result is error {
         test:assertEquals(result.message(), "Frame size 2503 exceeds maximum: 1024.");
@@ -174,7 +171,6 @@ function testBidiStreamingCases() returns grpc:Error? {
         test:assertFail("Error from Connector: " + err.message());
     }
     check streamingClient->complete();
-
     result = streamingClient->receiveString();
     test:assertTrue(result is error);
     if result is error {
