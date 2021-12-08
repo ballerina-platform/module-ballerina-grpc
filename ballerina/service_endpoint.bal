@@ -171,7 +171,7 @@ const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 # + secureSocket - The SSL configurations for the server endpoint
 # + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
 #                   disable the timeout
-# + maxInboundMessageSize - The maximum message size to be permitted for inbound messages
+# + maxInboundMessageSize - The maximum message size to be permitted for inbound messages. Default value is 4 MB
 public type ListenerConfiguration record {|
     string host = "0.0.0.0";
     ListenerSecureSocket? secureSocket = ();

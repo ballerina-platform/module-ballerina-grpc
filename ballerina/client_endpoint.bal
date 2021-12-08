@@ -268,7 +268,7 @@ public type RetryConfiguration record {|
 # + compression - Specifies the way of handling compression (`accept-encoding`) header
 # + retryConfiguration - Configures the retry functionality
 # + auth - Configurations related to client authentication
-# + maxInboundMessageSize - The maximum message size to be permitted for inbound messages
+# + maxInboundMessageSize - The maximum message size to be permitted for inbound messages. Default value is 4 MB
 public type ClientConfiguration record {|
     decimal timeout = 60;
     PoolConfiguration? poolConfig = ();
