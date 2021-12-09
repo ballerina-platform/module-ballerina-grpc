@@ -37,7 +37,6 @@ import java.lang.ref.WeakReference;
 public class ProtoUtils {
 
     private static final int BUF_SIZE = 8192;
-    private static final int DEFAULT_MAX_MESSAGE_SIZE = 4 * 1024 * 1024;
     private static final ThreadLocal<Reference<byte[]>> bufs = ThreadLocal.withInitial(() -> new WeakReference<>(new
             byte[4096]));
 
@@ -57,12 +56,12 @@ public class ProtoUtils {
             }
 
             @Override
-            public Message parse(InputStream stream) {
+            public Message parse(InputStream stream, long maxInboundMessageSize) {
                 CodedInputStream cis = null;
                 try {
                     if (stream instanceof KnownLength) {
                         int size = stream.available();
-                        if (size > 0 && size <= DEFAULT_MAX_MESSAGE_SIZE) {
+                        if (size > 0 && size <= maxInboundMessageSize) {
                             // buf should not be used after this method has returned.
                             byte[] buf = bufs.get().get();
                             if (buf == null || buf.length < size) {

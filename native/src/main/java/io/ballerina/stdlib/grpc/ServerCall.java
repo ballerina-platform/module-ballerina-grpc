@@ -25,6 +25,9 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 
 import java.io.InputStream;
+import java.util.Map;
+
+import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 
 /**
  * Encapsulates a single call received from a remote client.
@@ -57,18 +60,21 @@ public final class ServerCall {
     private Compressor compressor;
     private final String messageAcceptEncoding;
     private ObserverContext context = null;
+    private Map<String, Long> messageSizeMap;
 
     private DecompressorRegistry decompressorRegistry;
     private CompressorRegistry compressorRegistry;
 
-    ServerCall(InboundMessage inboundMessage, OutboundMessage outboundMessage, MethodDescriptor
-            method, DecompressorRegistry decompressorRegistry, CompressorRegistry compressorRegistry) {
+    ServerCall(InboundMessage inboundMessage, OutboundMessage outboundMessage, MethodDescriptor method,
+               DecompressorRegistry decompressorRegistry, CompressorRegistry compressorRegistry,
+               Map<String, Long> messageSizeMap) {
         this.inboundMessage = inboundMessage;
         this.outboundMessage = outboundMessage;
         this.method = method;
         this.decompressorRegistry = decompressorRegistry;
         this.compressorRegistry = compressorRegistry;
         this.messageAcceptEncoding = inboundMessage.getHeader(MESSAGE_ACCEPT_ENCODING);
+        this.messageSizeMap = messageSizeMap;
     }
 
     public void sendHeaders(HttpHeaders headers) {
@@ -169,7 +175,7 @@ public final class ServerCall {
     }
 
     ServerStreamListener newServerStreamListener(ServerCallHandler.Listener listener) {
-        return new ServerStreamListener(this, listener);
+        return new ServerStreamListener(this, listener, messageSizeMap);
     }
 
     public MethodDescriptor getMethodDescriptor() {
@@ -187,10 +193,12 @@ public final class ServerCall {
 
         private final ServerCall call;
         private final ServerCallHandler.Listener listener;
+        private Map<String, Long> messageSizeMap;
 
-        ServerStreamListener(ServerCall call, ServerCallHandler.Listener listener) {
+        ServerStreamListener(ServerCall call, ServerCallHandler.Listener listener, Map<String, Long> messageSizeMap) {
             this.call = call;
             this.listener = listener;
+            this.messageSizeMap = messageSizeMap;
         }
 
         @Override
@@ -200,7 +208,7 @@ public final class ServerCall {
                 return;
             }
             try {
-                Message request = call.method.parseRequest(message); // place
+                Message request = call.method.parseRequest(message, messageSizeMap.get(MAX_INBOUND_MESSAGE_SIZE));
                 request.setHeaders(call.inboundMessage.getHeaders());
                 listener.onMessage(request);
             } catch (StatusRuntimeException ex) {

@@ -108,7 +108,7 @@ public final class MethodDescriptor {
          * @param stream of bytes for serialized value
          * @return parsed value
          */
-        Message parse(InputStream stream);
+        Message parse(InputStream stream, long maxInboundMessageSize);
     }
 
     private MethodDescriptor(
@@ -149,8 +149,8 @@ public final class MethodDescriptor {
      * @param input stream containing response message to parse.
      * @return parsed response message object.
      */
-    public Message parseResponse(InputStream input) {
-        return responseMarshaller.parse(input);
+    public Message parseResponse(InputStream input, long maxInboundMessageSize) {
+        return responseMarshaller.parse(input, maxInboundMessageSize);
     }
 
     /**
@@ -169,8 +169,8 @@ public final class MethodDescriptor {
      * @param input the serialized message as a byte stream.
      * @return a parsed instance of the message.
      */
-    public Message parseRequest(InputStream input) {
-        return requestMarshaller.parse(input);
+    public Message parseRequest(InputStream input, long maxInboundMessageSize) {
+        return requestMarshaller.parse(input, maxInboundMessageSize);
     }
 
     /**

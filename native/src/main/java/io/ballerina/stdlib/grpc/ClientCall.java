@@ -39,6 +39,7 @@ import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_
 import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_HTTP_URL;
 import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_PEER_ADDRESS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_TYPE_KEY;
+import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MESSAGE_ACCEPT_ENCODING;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MESSAGE_ENCODING;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TE_KEY;
@@ -65,17 +66,19 @@ public final class ClientCall {
     private ClientConnectorListener connectorListener;
     private boolean cancelCalled;
     private boolean halfCloseCalled;
+    private Map<String, Long> messageSizeMap;
     private DecompressorRegistry decompressorRegistry = DecompressorRegistry.getDefaultInstance();
     private CompressorRegistry compressorRegistry = CompressorRegistry.getDefaultInstance();
 
     public ClientCall(HttpClientConnector connector, OutboundMessage outboundMessage, MethodDescriptor method,
-                      DataContext context) {
+                      DataContext context, Map<String, Long> messageSizeMap) {
         this.method = method;
         this.unaryRequest = method.getType() == MethodDescriptor.MethodType.UNARY
                 || method.getType() == MethodDescriptor.MethodType.SERVER_STREAMING;
         this.connector = connector;
         this.context = context;
         this.outboundMessage = outboundMessage;
+        this.messageSizeMap = messageSizeMap;
     }
 
     private void prepareHeaders(
@@ -165,8 +168,9 @@ public final class ClientCall {
         prepareHeaders(compressor);
         ClientStreamListener clientStreamListener = new ClientStreamListener(observer);
         connectorListener = ObserveUtils.isObservabilityEnabled() ?
-                new ObservableClientConnectorListener(clientStreamListener, context) :
-                new ClientConnectorListener(clientStreamListener);
+                new ObservableClientConnectorListener(clientStreamListener, context,
+                        messageSizeMap.get(MAX_INBOUND_MESSAGE_SIZE)) :
+                new ClientConnectorListener(clientStreamListener, messageSizeMap.get(MAX_INBOUND_MESSAGE_SIZE));
         outboundMessage.framer().setCompressor(compressor);
         connectorListener.setDecompressorRegistry(decompressorRegistry);
         HttpResponseFuture responseFuture = connector.send(outboundMessage.getResponseMessage());
@@ -311,7 +315,7 @@ public final class ClientCall {
                 return;
             }
             try {
-                Message responseMessage = method.parseResponse(message);
+                Message responseMessage = method.parseResponse(message, messageSizeMap.get(MAX_INBOUND_MESSAGE_SIZE));
                 responseMessage.setHeaders(responseHeaders);
                 observer.onMessage(responseMessage);
                 message.close();
@@ -333,6 +337,10 @@ public final class ClientCall {
                 return;
             }
             close(status, trailers);
+        }
+
+        public void cancelCall(Throwable cause) {
+            cancel(cause.getMessage(), cause);
         }
     }
 }

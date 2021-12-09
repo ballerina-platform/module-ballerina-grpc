@@ -20,6 +20,7 @@ package io.ballerina.stdlib.grpc.nativeimpl.client;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -47,10 +48,13 @@ import io.netty.handler.codec.http.HttpHeaders;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.CLIENT_CONNECTOR;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONFIG;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ENDPOINT_URL;
+import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.METHOD_DESCRIPTORS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.SERVICE_STUB;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getConnectionManager;
@@ -224,12 +228,17 @@ public class FunctionUtils extends AbstractExecute {
         requestMsg.setHeaders(headers);
         Stub stub = (Stub) connectionStub;
         DataContext dataContext = null;
+
+        Map<String, Long> messageSizeMap = new HashMap<>();
+        messageSizeMap.put(MAX_INBOUND_MESSAGE_SIZE, (Long) clientEndpoint.getMapValue(CONFIG)
+                .get(StringUtils.fromString((MAX_INBOUND_MESSAGE_SIZE))));
         try {
             MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
             if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
 
                 dataContext = new DataContext(env, env.markAsync());
-                stub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()), dataContext);
+                stub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()),
+                        dataContext, messageSizeMap);
             } else {
                 return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
                         methodType.name() + " not supported");
@@ -293,9 +302,14 @@ public class FunctionUtils extends AbstractExecute {
         requestMsg.setHeaders(headers);
         Stub stub = (Stub) connectionStub;
         DataContext dataContext = null;
+
+        Map<String, Long> messageSizeMap = new HashMap<>();
+        messageSizeMap.put(MAX_INBOUND_MESSAGE_SIZE, (Long) clientEndpoint.getMapValue(CONFIG)
+                .get(StringUtils.fromString((MAX_INBOUND_MESSAGE_SIZE))));
         try {
             dataContext = new DataContext(env, env.markAsync());
-            stub.executeServerStreaming(requestMsg, methodDescriptors.get(methodName.getValue()), dataContext);
+            stub.executeServerStreaming(requestMsg, methodDescriptors.get(methodName.getValue()),
+                    dataContext, messageSizeMap);
         } catch (Exception e) {
             if (dataContext != null) {
                 dataContext.getFuture().complete(e);
@@ -348,12 +362,16 @@ public class FunctionUtils extends AbstractExecute {
             return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
         }
 
+        Map<String, Long> messageSizeMap = new HashMap<>();
+        messageSizeMap.put(MAX_INBOUND_MESSAGE_SIZE, (Long) clientEndpoint.getMapValue(CONFIG)
+                .get(StringUtils.fromString((MAX_INBOUND_MESSAGE_SIZE))));
         try {
             Stub stub = (Stub) connectionStub;
             // Update request headers when request headers exists in the context.
             HttpHeaders headers = convertToHttpHeaders(headerValues);
             DataContext context = new DataContext(env, null);
-            return stub.executeClientStreaming(headers, methodDescriptors.get(methodName.getValue()), context);
+            return stub.executeClientStreaming(headers, methodDescriptors.get(methodName.getValue()),
+                    context, messageSizeMap);
         } catch (Exception e) {
             return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }
@@ -403,12 +421,17 @@ public class FunctionUtils extends AbstractExecute {
             return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
         }
 
+        Map<String, Long> messageSizeMap = new HashMap<>();
+        messageSizeMap.put(MAX_INBOUND_MESSAGE_SIZE, (Long) clientEndpoint.getMapValue(CONFIG)
+                .get(StringUtils.fromString((MAX_INBOUND_MESSAGE_SIZE))));
+
         try {
             Stub stub = (Stub) connectionStub;
             // Update request headers when request headers exists in the context.
             HttpHeaders headers = convertToHttpHeaders(headerValues);
             DataContext context = new DataContext(env, null);
-            return stub.executeBidirectionalStreaming(headers, methodDescriptors.get(methodName.getValue()), context);
+            return stub.executeBidirectionalStreaming(headers, methodDescriptors.get(methodName.getValue()),
+                    context, messageSizeMap);
         } catch (Exception e) {
             return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }

@@ -67,7 +67,7 @@ public class MessageDeframer implements Closeable {
     }
 
     private Listener listener;
-    private int maxInboundMessageSize;
+    private long maxInboundMessageSize;
     private Decompressor decompressor;
     private State state = State.HEADER;
     private int requiredLength = HEADER_LENGTH;
@@ -88,7 +88,7 @@ public class MessageDeframer implements Closeable {
     MessageDeframer(
             Listener listener,
             Decompressor decompressor,
-            int maxMessageSize) {
+            long maxMessageSize) {
         this.listener = listener;
         this.decompressor = decompressor;
         this.maxInboundMessageSize = maxMessageSize;
@@ -242,8 +242,7 @@ public class MessageDeframer implements Closeable {
         requiredLength = nextFrame.readInt();
         if (requiredLength < 0 || requiredLength > maxInboundMessageSize) {
             throw Status.Code.RESOURCE_EXHAUSTED.toStatus().withDescription(
-                    String.format("Frame size %d exceeds maximum: %d. ",
-                            requiredLength, maxInboundMessageSize))
+                    String.format("Frame size %d exceeds maximum: %d.", requiredLength, maxInboundMessageSize))
                     .asRuntimeException();
         }
         // Continue reading the frame body.

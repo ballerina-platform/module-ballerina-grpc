@@ -268,6 +268,7 @@ public type RetryConfiguration record {|
 # + compression - Specifies the way of handling compression (`accept-encoding`) header
 # + retryConfiguration - Configures the retry functionality
 # + auth - Configurations related to client authentication
+# + maxInboundMessageSize - The maximum message size to be permitted for inbound messages. Default value is 4 MB
 public type ClientConfiguration record {|
     decimal timeout = 60;
     PoolConfiguration? poolConfig = ();
@@ -275,6 +276,7 @@ public type ClientConfiguration record {|
     Compression compression = COMPRESSION_AUTO;
     RetryConfiguration? retryConfiguration = ();
     ClientAuthConfig? auth = ();
+    int maxInboundMessageSize = 4194304;
 |};
 
 # Configurations for facilitating secure communication with a remote gRPC endpoint.

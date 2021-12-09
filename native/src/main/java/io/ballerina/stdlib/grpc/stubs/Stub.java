@@ -37,6 +37,7 @@ import io.ballerina.stdlib.http.transport.contract.HttpClientConnector;
 import io.netty.handler.codec.http.HttpHeaders;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -62,9 +63,9 @@ public class Stub extends AbstractStub {
      * @throws Exception if an error occur while processing client call.
      */
     public void executeUnary(Message request, MethodDescriptor methodDescriptor,
-                             DataContext dataContext) throws Exception {
+                             DataContext dataContext, Map<String, Long> messageSizeMap) throws Exception {
         ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
-                methodDescriptor, dataContext);
+                methodDescriptor, dataContext, messageSizeMap);
         call.start(new UnaryCallListener(dataContext));
         try {
             call.sendMessage(request);
@@ -83,9 +84,9 @@ public class Stub extends AbstractStub {
      * @throws Exception if an error occur while processing client call.
      */
     public void executeServerStreaming(Message request, MethodDescriptor methodDescriptor,
-                                         DataContext context) throws Exception {
+                                         DataContext context, Map<String, Long> messageSizeMap) throws Exception {
         ClientCall call = new ClientCall(getConnector(), createOutboundRequest(request.getHeaders()),
-                methodDescriptor, context);
+                methodDescriptor, context, messageSizeMap);
         Stub.ServerStreamingCallListener streamingCallListener = new Stub.ServerStreamingCallListener(context);
         call.start(streamingCallListener);
         try {
@@ -104,9 +105,9 @@ public class Stub extends AbstractStub {
      * @param context Data Context.
      */
     public BObject executeClientStreaming(HttpHeaders requestHeaders, MethodDescriptor methodDescriptor,
-                                          DataContext context) {
+                                          DataContext context, Map<String, Long> messageSizeMap) {
         ClientCall call = new ClientCall(getConnector(), createOutboundRequest(requestHeaders),
-                methodDescriptor, context);
+                methodDescriptor, context, messageSizeMap);
         ClientCallStreamObserver streamObserver = new ClientCallStreamObserver(call);
         Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(false);
         call.start(streamingCallListener);
@@ -130,9 +131,9 @@ public class Stub extends AbstractStub {
      * @param context Data Context.
      */
     public BObject executeBidirectionalStreaming(HttpHeaders requestHeaders, MethodDescriptor methodDescriptor,
-                                                 DataContext context) {
+                                                 DataContext context, Map<String, Long> messageSizeMap) {
         ClientCall call = new ClientCall(getConnector(), createOutboundRequest(requestHeaders), methodDescriptor,
-                context);
+                context, messageSizeMap);
         ClientCallStreamObserver streamObserver = new ClientCallStreamObserver(call);
         Stub.StreamingCallListener streamingCallListener = new Stub.StreamingCallListener(true);
         call.start(streamingCallListener);
@@ -248,7 +249,9 @@ public class Stub extends AbstractStub {
             if (status.isOk()) {
                 messageQueue.add(new Message(GrpcConstants.COMPLETED_MESSAGE, null));
             } else {
-                messageQueue.add(new Message(status.asRuntimeException()));
+                Message errorMsg = new Message(status.asRuntimeException());
+                errorMsg.setHeaders(trailers);
+                messageQueue.add(errorMsg);
             }
         }
 

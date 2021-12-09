@@ -37,9 +37,9 @@ import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY
 import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_HTTP_METHOD;
 import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_HTTP_URL;
 import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_PROTOCOL;
-import static io.ballerina.stdlib.grpc.GrpcConstants.DEFAULT_MAX_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_MESSAGE_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_STATUS_KEY;
+import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.MessageUtils.statusCodeToHttpCode;
 
 /**
@@ -53,10 +53,12 @@ public class ServerConnectorListener implements HttpConnectorListener {
     private static final String SERVER_CONNECTOR_GRPC = "grpc";
 
     private final ServicesRegistry servicesRegistry;
+    private Map<String, Long> messageSizeMap;
 
-    public ServerConnectorListener(ServicesRegistry servicesRegistry) {
+    public ServerConnectorListener(ServicesRegistry servicesRegistry, Map<String, Long> messageSizeMap) {
 
         this.servicesRegistry = servicesRegistry;
+        this.messageSizeMap = messageSizeMap;
     }
 
     private ExecutorService workerExecutor = Executors.newFixedThreadPool(10,
@@ -101,8 +103,8 @@ public class ServerConnectorListener implements HttpConnectorListener {
             ServerCall.ServerStreamListener listener;
             try {
                 listener = startCall(inboundMessage, outboundMessage, method);
-                ServerInboundStateListener stateListener = new ServerInboundStateListener(DEFAULT_MAX_MESSAGE_SIZE,
-                        listener, inboundMessage);
+                ServerInboundStateListener stateListener = new ServerInboundStateListener(
+                        messageSizeMap.get(MAX_INBOUND_MESSAGE_SIZE), listener, inboundMessage);
                 stateListener.setDecompressor(inboundMessage.getMessageDecompressor());
 
                 HttpContent httpContent = inboundMessage.getHttpCarbonMessage().getHttpContent();
@@ -132,7 +134,7 @@ public class ServerConnectorListener implements HttpConnectorListener {
         // Create service call instance for the inboundMessage.
         ServerCall call = new ServerCall(inboundMessage, outboundMessage, methodDefinition
                 .getMethodDescriptor(), DecompressorRegistry.getDefaultInstance(), CompressorRegistry
-                .getDefaultInstance());
+                .getDefaultInstance(), messageSizeMap);
         if (ObserveUtils.isObservabilityEnabled()) {
             call.setObserverContext(getObserverContext(fullMethodName, inboundMessage));
         }
@@ -203,7 +205,7 @@ public class ServerConnectorListener implements HttpConnectorListener {
         final ServerCall.ServerStreamListener listener;
         final InboundMessage inboundMessage;
 
-        ServerInboundStateListener(int maxMessageSize, ServerCall.ServerStreamListener listener,
+        ServerInboundStateListener(long maxMessageSize, ServerCall.ServerStreamListener listener,
                                    InboundMessage inboundMessage) {
             super(maxMessageSize);
             this.listener = listener;
@@ -233,10 +235,10 @@ public class ServerConnectorListener implements HttpConnectorListener {
                 StatusRuntimeException exp = (StatusRuntimeException) cause;
                 handleFailure(inboundMessage.getHttpCarbonMessage(), statusCodeToHttpCode(exp.getStatus().getCode()),
                         exp.getStatus().getCode(), exp.getStatus().getDescription());
+                listener.closed(exp.getStatus());
             } else {
                 handleFailure(inboundMessage.getHttpCarbonMessage(), 500, Status.Code.INTERNAL, cause.getMessage());
             }
-
         }
 
         /**

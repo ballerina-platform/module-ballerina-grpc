@@ -43,8 +43,12 @@ import io.ballerina.stdlib.http.transport.contract.config.ListenerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONFIG;
+import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getListenerConfig;
 import static io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils.externComplete;
 import static io.ballerina.stdlib.http.api.HttpConstants.ENDPOINT_CONFIG_PORT;
@@ -123,9 +127,13 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
 
     private static Object startServerConnector(BObject listener, ServicesRegistry servicesRegistry) {
 
+        Map<String, Long> messageSizeMap = new HashMap<>();
+        messageSizeMap.put(MAX_INBOUND_MESSAGE_SIZE, (Long) listener.getMapValue(CONFIG)
+                .get(StringUtils.fromString((MAX_INBOUND_MESSAGE_SIZE))));
+
         ServerConnector serverConnector = getServerConnector(listener);
         ServerConnectorFuture serverConnectorFuture = serverConnector.start();
-        serverConnectorFuture.setHttpConnectorListener(new ServerConnectorListener(servicesRegistry));
+        serverConnectorFuture.setHttpConnectorListener(new ServerConnectorListener(servicesRegistry, messageSizeMap));
 
         serverConnectorFuture.setPortBindingEventListener(new ServerConnectorPortBindingListener());
         try {

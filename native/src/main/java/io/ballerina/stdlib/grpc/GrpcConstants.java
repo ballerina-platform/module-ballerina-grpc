@@ -51,9 +51,7 @@ public class GrpcConstants {
     public static final String SERVICE_REGISTRY_BUILDER = "SERVICE_REGISTRY_BUILDER";
     public static final String SERVER_CONNECTOR = "SERVER_CONNECTOR";
     public static final String CONNECTOR_STARTED = "CONNECTOR_STARTED";
-    public static final String LISTENER = "Listener";
     public static final String CALLER = "Caller";
-    public static final String CALLER_ENDPOINT_TYPE = PROTOCOL_STRUCT_PACKAGE_GRPC + ":" + CALLER;
     public static final String RESPONSE_OBSERVER = "RESPONSE_OBSERVER";
     public static final String RESPONSE_MESSAGE_DEFINITION = "RESPONSE_DEFINITION";
     public static final BString CALLER_ID = StringUtils.fromString("instanceId");
@@ -64,38 +62,28 @@ public class GrpcConstants {
     public static final String ITERATOR_OBJECT_ENTRY = "streamIterator";
 
     // Service Descriptor Annotation
-    public static final String DESCRIPTOR_MAP = "getDescriptorMap";
     public static final String ROOT_DESCRIPTOR = "ROOT_DESCRIPTOR";
     public static final String ANN_SERVICE_DESCRIPTOR = "ServiceDescriptor";
-    public static final String ANN_RECORD_DESCRIPTOR_DATA = "ServiceDescriptorData";
-    public static final String ANN_FIELD_DESCRIPTOR = "descriptor";
-    public static final String ANN_FIELD_DESC_MAP = "descMap";
     public static final String ANN_SERVICE_DESCRIPTOR_FQN = PROTOCOL_STRUCT_PACKAGE_GRPC + ":" + ANN_SERVICE_DESCRIPTOR;
 
     //client side endpoint constants
-    public static final String CLIENT_ENDPOINT_TYPE = "Client";
     public static final String CLIENT_ENDPOINT_RESPONSE_OBSERVER = "ResponseObserver";
     public static final String CLIENT_CONNECTOR = "ClientConnector";
     public static final String ENDPOINT_URL = "url";
-    public static final String MESSAGE_HEADERS = "MessageHeaders";
     public static final String RECEIVE_ENTRY = "receive";
     public static final String CONTEXT_ENTRY = "context";
 
     public static final String SERVICE_STUB = "Stub";
     public static final String METHOD_DESCRIPTORS = "MethodDescriptors";
-    public static final String BLOCKING_TYPE = "blocking";
-    public static final String NON_BLOCKING_TYPE = "non-blocking";
     public static final String REQUEST_SENDER = "REQUEST_SENDER";
     public static final String REQUEST_MESSAGE_DEFINITION = "REQUEST_DEFINITION";
     public static final String REGEX_DOT_SEPERATOR = "\\.";
     public static final String DOT = ".";
-    public static final String NO_PACKAGE = ".";
 
-    public static final String CLIENT = "Client";
     public static final String STREAMING_CLIENT = "StreamingClient";
     public static final String HEADERS = "Headers";
-    public static final String ANN_RESOURCE_CONFIG = "ResourceConfig";
-    public static final String ANN_ATTR_RESOURCE_SERVER_STREAM = "streaming";
+
+    public static final String MAX_INBOUND_MESSAGE_SIZE = "maxInboundMessageSize";
     
     public static final Map<DescriptorProtos.FieldDescriptorProto.Type, Integer> WIRE_TYPE_MAP;
 
@@ -154,16 +142,7 @@ public class GrpcConstants {
     public static final String STRUCT_TYPE_NAME = "google.protobuf.Struct";
 
     // Server Streaming method resources.
-    public static final String ON_COMPLETE_RESOURCE = "onComplete";
     public static final String ON_MESSAGE_RESOURCE = "onMessage";
-    public static final String ON_ERROR_RESOURCE = "onError";
-    
-    public static final String STRING = "string";
-    public static final String INT = "int";
-    public static final String FLOAT = "float";
-    public static final String DOUBLE = "double";
-    public static final String BOOLEAN = "boolean";
-    public static final String BYTE = "byte";
 
     //stub template builder constants
     public static final String EMPTY_DATATYPE_NAME = "Empty";
@@ -197,14 +176,8 @@ public class GrpcConstants {
     //The content-encoding used to compress the full gRPC stream.
     static final String CONTENT_ENCODING = "content-encoding";
 
-    //The default maximum uncompressed size (in bytes) for inbound messages. Defaults to 4 MiB.
-    static final int DEFAULT_MAX_MESSAGE_SIZE = 4 * 1024 * 1024;
-
     private GrpcConstants() {
     }
-
-    // Listener struct fields
-    public static final String LISTENER_CONNECTION_FIELD = "conn";
 
     // Error codes
     public static final String CANCELLED_ERROR = "CancelledError";
@@ -261,12 +234,6 @@ public class GrpcConstants {
     public static final StrandMetadata ON_MESSAGE_METADATA =
             new StrandMetadata(BALLERINA_BUILTIN_PKG_PREFIX, PROTOCOL_PACKAGE_GRPC, PROTOCOL_PACKAGE_VERSION_GRPC,
                                ON_MESSAGE_RESOURCE);
-    public static final StrandMetadata ON_ERROR_METADATA =
-            new StrandMetadata(BALLERINA_BUILTIN_PKG_PREFIX, PROTOCOL_PACKAGE_GRPC, PROTOCOL_PACKAGE_VERSION_GRPC,
-                               ON_ERROR_RESOURCE);
-    public static final StrandMetadata ON_COMPLETE_METADATA =
-            new StrandMetadata(BALLERINA_BUILTIN_PKG_PREFIX, PROTOCOL_PACKAGE_GRPC, PROTOCOL_PACKAGE_VERSION_GRPC,
-                               ON_COMPLETE_RESOURCE);
 
     public static final BString ENDPOINT_CONFIG_SECURESOCKET = StringUtils.fromString("secureSocket");
     public static final BString SECURESOCKET_CONFIG_DISABLE_SSL = StringUtils.fromString("enable");
@@ -304,4 +271,6 @@ public class GrpcConstants {
     public static final String HEADER_FIELD = "headers";
 
     public static final String STREAMING_NEXT_FUNCTION = "next";
+
+    public static final BString CONFIG = StringUtils.fromString("config");
 }
