@@ -22,7 +22,7 @@ service helloWorldWithReservedNames {
     rpc hello(HelloRequest) returns (HelloResponse);
     rpc bye(ByeRequest) returns (ByeResponse);
 }
-
+// `error`, `anydata` and `json` are not tested until lang issue(#30268, #32239) gets fixed.
 message HelloRequest {
     string control = 1;
     string data = 2;
