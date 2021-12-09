@@ -18,6 +18,11 @@
 package io.ballerina.stdlib.grpc.builder.stub;
 
 import com.google.protobuf.DescriptorProtos;
+import org.wso2.ballerinalang.compiler.util.Names;
+
+import java.util.Arrays;
+
+import static io.ballerina.stdlib.grpc.builder.stub.utils.StubUtils.RESERVED_LITERAL_NAMES;
 
 /**
  * Enum Field definition.
@@ -46,7 +51,12 @@ public class EnumField {
         private final DescriptorProtos.EnumValueDescriptorProto fieldDescriptor;
         
         public EnumField build() {
-            return new EnumField(fieldDescriptor.getName());
+            String fieldName = fieldDescriptor.getName();
+            if (Arrays.stream(RESERVED_LITERAL_NAMES).anyMatch(fieldName::equalsIgnoreCase) || Names.ERROR.value
+                    .equalsIgnoreCase(fieldName)) {
+                fieldName = "'" + fieldName;
+            }
+            return new EnumField(fieldName);
         }
 
         private Builder(DescriptorProtos.EnumValueDescriptorProto fieldDescriptor) {

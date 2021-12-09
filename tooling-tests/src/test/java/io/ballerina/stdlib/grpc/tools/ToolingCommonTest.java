@@ -79,7 +79,7 @@ public class ToolingCommonTest {
                 "helloWorldWithPackage_pb.bal", "tool_test_data_type_8");
     }
 
-    @Test(enabled = false)
+    @Test
     public void testHelloWorldWithReservedNames() {
         assertGeneratedDataTypeSources("data-types", "helloWorldWithReservedNames.proto",
                 "helloWorldWithReservedNames_pb.bal", "tool_test_data_type_9");
