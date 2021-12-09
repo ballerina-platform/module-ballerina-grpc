@@ -14,13 +14,25 @@ jobs:
         run: |
           git config --global user.email "ballerina-bot@ballerina.org"
           git config --global user.name "ballerina-bot"
-          branch_name="nightly-load-test-results"
+          branch_name="load-test-results"
           test_scenario="${{ github.event.client_payload.name }}"
-          git checkout -b $branch_name
+          git pull
+          git checkout $branch_name || git checkout -b $branch_name
           echo ${{ github.event.client_payload.result }} >> load-tests/$test_scenario/results/summary.csv
           git add load-tests/$test_scenario/results/summary.csv
           git commit -m "Update $test_scenario test results on $(date)"
           git push origin "${branch_name}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+      - name: Check for existing PRs
+        id: checkPRs
+        shell: bash
+        run: printf "::set-output name=prNotExists::%s" $(gh pr list --json headRefName --jq 'isempty(.[]| .headRefName | match("load-test-results"))')
+        env:
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+      - name: Create pull request for new summary
+        if: ${{ steps.checkPRs.outputs.prNotExists == 'true' }}
+        run: gh pr create --title "[Automated] Update summary csv files" --body "Update summary csv files"
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
       - name: Fail workflow
