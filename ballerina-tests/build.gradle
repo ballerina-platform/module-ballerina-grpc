@@ -296,6 +296,7 @@ ballerinaTest.dependsOn startLdapServer
 ballerinaTest.finalizedBy stopGoServer
 ballerinaTest.dependsOn startGoServer
 ballerinaTest.dependsOn ":${packageName}-test-utils:build"
+ballerinaTest.dependsOn ":${packageName}-tooling-tests:build"
 ballerinaTest.dependsOn copyExternalJars
 test.dependsOn ballerinaTest
 build.dependsOn test
