@@ -47,7 +47,7 @@ that makes it easier to use, combine, and create network services.
 
 
 # 1. Overview
-Ballerina gRPC standard library has five primary aspects in handling time values.
+Ballerina gRPC standard library has five primary aspects in handling values.
 1. gRPC CLI (command line interface)
 2. Protocol buffers to Ballerina data mapping
 3. gRPC communication
@@ -82,6 +82,7 @@ The following table illustrates the data mapping of protocol buffers data types 
 |google.protobuf.Empty|()|
 |google.protobuf.Timestamp|time:Utc|
 |google.protobuf.Duration|time:Seconds|
+|google.protobuf.Struct|map<anydata>|
 |google.protobuf.Any|'any:Any|
 
 Note that here the `'any` is the namespace of the `ballerina/protobuf.types.'any` submodule. Additionally, the `google.protobuf.Any` need serialization and deserialization mechanisms. To do that, `ballerina/protobuf.types.'any` module contains two APIs called pack and unpack to serialize and deserialize `Any` type records.
