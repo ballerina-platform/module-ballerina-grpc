@@ -148,6 +148,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 Here, the RPC implementation creates a featured record and directly return it from the remote method.
 
 **RPC Using a Caller**
+
 The Ballerina implementation of the same unary RPC using a caller is as follows.
 
 ```ballerina
@@ -175,6 +176,7 @@ service RouteGuide {
 ```
 
 **RPC Using Direct Return**
+
 The Ballerina implementation of the server streaming RPC using a direct return is as follows.
 
 ```ballerina
@@ -194,6 +196,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 ```
 
 **RPC Using a Caller**
+
 The Ballerina implementation of the server streaming RPC using a caller return is as follows.
 
 ```ballerina
@@ -219,6 +222,7 @@ service RouteGuide {
 ```
 
 **RPC Using Direct Return**
+
 The Ballerina implementation of the client streaming RPC using a direct return is as follows.
 
 ```ballerina
@@ -250,6 +254,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 ```
 
 **RPC Using a Caller**
+
 The Ballerina implementation of the client streaming RPC using a caller return is as follows.
 
 ```ballerina
@@ -289,6 +294,7 @@ service RouteGuide {
 ```
 
 **RPC Using Direct Return**
+
 The Ballerina implementation of the bidirectional streaming RPC using a direct return is as follows.
 
 ```ballerina
@@ -312,6 +318,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 Note that, here using direct return will not address the exact use case. This example was added, only for completeness.
 
 **RPC Using a Caller**
+
 The Ballerina implementation of the bidirectional streaming RPC using a caller return is as follows.
 
 ```ballerina
@@ -538,7 +545,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 #### 5.1.1.8 Client - OAuth2
 Ballerina gRPC clients enable authentication using OAuth2 by setting the `grpc:OAuth2GrantConfig` configurations in the client. OAuth2 can configure in 4 ways:
 
-**i. Credentials Grant Type**
+_i. Credentials Grant Type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
@@ -556,7 +563,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 );
 ```
 
-**ii. Password Grant Type**
+_ii. Password Grant Type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
@@ -584,7 +591,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
     }
 );
 ```
-**iii. Refresh Token Grant Type**
+_iii. Refresh Token Grant Type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
@@ -603,7 +610,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 );
 ```
 
-**iv. JWT Bearer Grant Type**
+_iv. JWT Bearer Grant Type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
