@@ -25,13 +25,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
       - name: Check for existing PRs
+        if: ${{ github.event.client_payload.status == 'success' }}
         id: checkPRs
         shell: bash
         run: printf "::set-output name=prNotExists::%s" $(gh pr list --json headRefName --jq 'isempty(.[]| .headRefName | match("load-test-results"))')
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
       - name: Create pull request for new summary
-        if: ${{ steps.checkPRs.outputs.prNotExists == 'true' }}
+        if: ${{ steps.checkPRs.outputs.prNotExists == 'true' && github.event.client_payload.status == 'success' }}
         run: gh pr create --title "[Automated] Update summary csv files" --body "Update summary csv files"
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
