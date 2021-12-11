@@ -2,7 +2,7 @@
 org = "ballerina"
 name = "grpc"
 version = "@toml.version@"
-distribution = "slbeta3"
+distribution = "slbeta6"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
