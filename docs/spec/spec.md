@@ -878,7 +878,7 @@ listener grpc:Listener securedEP = new(9090,
 
 # 6. gRPC Utility Functions
 
-# 6.1. gRPC Deadline
+## 6.1. gRPC Deadline
 The following API sets a deadline for each request.
 
 ```ballerina
@@ -897,7 +897,7 @@ public isolated function setDeadline(time:Utc deadline, map<string|string[]> hea
 
 If a particular RPC exceeds the specified deadline, the response will be a `grpc:DeadlineExceededError`.
 
-# 6.2. gRPC Compression
+## 6.2. gRPC Compression
 The following API enables compression for gRPC calls. Currently, Gzip compression is supported by the Ballerina gRPC library.
 ```ballerina
 # Enables the compression support by adding the `grpc-encoding` header to the given headers.
@@ -910,7 +910,7 @@ The following API enables compression for gRPC calls. Currently, Gzip compressio
 # + return - The header map that includes the compression headers
 public isolated function setCompression(CompressionType compressionType, map<string|string[]> headerMap = {}) returns map<string|string[]>;
 ```
-# 6.3. gRPC Access and Trace Logs
+## 6.3. gRPC Access and Trace Logs
 Access and trace logs can be enabled by adding the following configurations to the `Config.toml` file in a Ballerina project.
 
 ```toml
@@ -930,7 +930,7 @@ console = true              # Default is false
 path = "testTraceLog.txt"   # Optional
 ```
 
-# 6.4. gRPC Retry
+## 6.4. gRPC Retry
 Client-level retrying can be enabled by passing the following configurations to the client initialization.
 
 ```ballerina
