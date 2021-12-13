@@ -64,9 +64,6 @@ path = "./lib/bcprov-jdk15on-@bouncy.castle.version@.jar"
 path = "./lib/bcpkix-jdk15on-@bouncy.castle.version@.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@.jar"
-
-[[platform.java11.dependency]]
 path = "./lib/netty-tcnative-classes-@nettytcnative.version@.jar"
 
 [[platform.java11.dependency]]
