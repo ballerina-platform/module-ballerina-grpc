@@ -38,11 +38,11 @@ public isolated class ListenerJwtAuthHandler {
     # + return - The `jwt:Payload` instance or else an `UnauthenticatedError` error
     public isolated function authenticate(map<string|string[]> headers) returns jwt:Payload|UnauthenticatedError {
         string|Error credential = extractCredential(headers);
-        if (credential is Error) {
+        if credential is Error {
             return error UnauthenticatedError(credential.message());
         } else {
             jwt:Payload|jwt:Error details = self.provider.authenticate(credential);
-            if (details is jwt:Payload) {
+            if details is jwt:Payload {
                 return details;
             } else {
                 return error UnauthenticatedError(details.message());
@@ -58,16 +58,16 @@ public isolated class ListenerJwtAuthHandler {
     public isolated function authorize(jwt:Payload jwtPayload, string|string[] expectedScopes) returns PermissionDeniedError? {
         string scopeKey = self.scopeKey;
         var actualScope = jwtPayload[scopeKey];
-        if (actualScope is string) {
+        if actualScope is string {
             boolean matched = matchScopes(convertToArray(actualScope), expectedScopes);
-            if (matched) {
+            if matched {
                 return;
             }
-        } else if (actualScope is json[]) {
+        } else if actualScope is json[] {
             string[]|error scopes = actualScope.cloneWithType(stringArray);
-            if (scopes is string[]) {
+            if scopes is string[] {
                 boolean matched = matchScopes(scopes, expectedScopes);
-                if (matched) {
+                if matched {
                     return;
                 }
             }

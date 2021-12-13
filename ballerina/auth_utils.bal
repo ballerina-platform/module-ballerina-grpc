@@ -20,7 +20,7 @@ import ballerina/regex;
 // Logs and prepares the `error` as an `http:ClientAuthError`.
 isolated function prepareClientAuthError(string message, error? err = ()) returns ClientAuthError {
     log:printError(message, 'error = err);
-    if (err is error) {
+    if err is error {
         return error ClientAuthError(message + " " + err.message(), err);
     }
     return error ClientAuthError(message);
@@ -30,7 +30,7 @@ isolated function prepareClientAuthError(string message, error? err = ()) return
 isolated function extractCredential(map<string|string[]> headers) returns string|Error {
     string authHeader = check getHeader(headers, AUTH_HEADER);
     string[] splittedHeader = regex:split(<string>authHeader, " ");
-    if (splittedHeader.length() > 1) {
+    if splittedHeader.length() > 1 {
         return splittedHeader[1];
     } else {
         return error UnauthenticatedError("Empty authentication header.");
@@ -39,27 +39,27 @@ isolated function extractCredential(map<string|string[]> headers) returns string
 
 // Match the expectedScopes with actualScopes and return if there is a match.
 isolated function matchScopes(string|string[] actualScopes, string|string[] expectedScopes) returns boolean {
-    if (expectedScopes is string) {
-        if (actualScopes is string) {
+    if expectedScopes is string {
+        if actualScopes is string {
             return actualScopes == expectedScopes;
         } else {
             foreach string actualScope in actualScopes {
-                if (actualScope == expectedScopes) {
+                if actualScope == expectedScopes {
                     return true;
                 }
             }
         }
     } else {
-        if (actualScopes is string) {
+        if actualScopes is string {
             foreach string expectedScope in expectedScopes {
-                if (actualScopes == expectedScope) {
+                if actualScopes == expectedScope {
                     return true;
                 }
             }
         } else {
             foreach string actualScope in actualScopes {
                 foreach string expectedScope in expectedScopes {
-                    if (actualScope == expectedScope) {
+                    if actualScope == expectedScope {
                         return true;
                     }
                 }
@@ -73,7 +73,7 @@ isolated function matchScopes(string|string[] actualScopes, string|string[] expe
 
 // Constructs an array of groups from the given space-separated string of groups.
 isolated function convertToArray(string spaceSeperatedString) returns string[] {
-    if (spaceSeperatedString.length() == 0) {
+    if spaceSeperatedString.length() == 0 {
         return [];
     }
     return regex:split(spaceSeperatedString, " ");
