@@ -25,34 +25,34 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.1.0-20211212-014900-ee02084.jar"
+path = "./lib/http-native-2.1.0-20211212-215200-2b9d44a.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-common-4.1.68.Final.jar"
+path = "./lib/netty-common-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-buffer-4.1.68.Final.jar"
+path = "./lib/netty-buffer-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-transport-4.1.68.Final.jar"
+path = "./lib/netty-transport-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-resolver-4.1.68.Final.jar"
+path = "./lib/netty-resolver-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-handler-4.1.68.Final.jar"
+path = "./lib/netty-handler-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-codec-http-4.1.68.Final.jar"
+path = "./lib/netty-codec-http-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-codec-4.1.68.Final.jar"
+path = "./lib/netty-codec-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-handler-proxy-4.1.68.Final.jar"
+path = "./lib/netty-handler-proxy-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-codec-http2-4.1.68.Final.jar"
+path = "./lib/netty-codec-http2-4.1.71.Final.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/commons-pool-1.5.6.wso2v1.jar"
@@ -64,7 +64,7 @@ path = "./lib/bcprov-jdk15on-1.69.jar"
 path = "./lib/bcpkix-jdk15on-1.69.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-2.0.43.Final.jar"
+path = "./lib/netty-tcnative-classes-2.0.46.Final.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/protobuf-java-3.9.1.jar"
