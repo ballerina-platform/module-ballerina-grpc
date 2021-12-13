@@ -34,7 +34,7 @@ public isolated class ClientBasicAuthHandler {
     # + return - The updated `map<string|string[]>` headers map  instance or else a `grpc:ClientAuthError` in case of an error
     public isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|auth:Error result = self.provider.generateToken();
-        if (result is string) {
+        if result is string {
             string token = AUTH_SCHEME_BASIC + " " + result;
             headers[AUTH_HEADER] = [token];
             return headers;

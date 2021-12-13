@@ -34,11 +34,11 @@ public isolated class ListenerFileUserStoreBasicAuthHandler {
     # + return - The `auth:UserDetails` instance or else an `UnauthenticatedError` error
     public isolated function authenticate(map<string|string[]> headers) returns auth:UserDetails|UnauthenticatedError {
         string|Error credential = extractCredential(headers);
-        if (credential is Error) {
+        if credential is Error {
             return error UnauthenticatedError(credential.message());
         } else {
             auth:UserDetails|auth:Error details = self.provider.authenticate(credential);
-            if (details is auth:UserDetails) {
+            if details is auth:UserDetails {
                 return details;
             } else {
                 return error UnauthenticatedError(details.message());
@@ -53,10 +53,10 @@ public isolated class ListenerFileUserStoreBasicAuthHandler {
     # + return - `()`, if it is successful or else a `PermissionDeniedError` error
     public isolated function authorize(auth:UserDetails userDetails, string|string[] expectedScopes) returns PermissionDeniedError? {
         string[]? actualScopes = userDetails?.scopes;
-        if (actualScopes is string[]) {
+        if actualScopes is string[] {
             boolean matched = matchScopes(actualScopes, expectedScopes);
-            if (matched) {
-                return ();
+            if matched {
+                return;
             }
         }
         return error PermissionDeniedError(PERMISSION_DENIED_ERROR_MSG);

@@ -34,11 +34,11 @@ public isolated client class ListenerLdapUserStoreBasicAuthHandler {
     # + return - The `auth:UserDetails` instance or else an `UnauthenticatedError` error
     remote isolated function authenticate(map<string|string[]> headers) returns auth:UserDetails|UnauthenticatedError {
         string|Error credential = extractCredential(headers);
-        if (credential is Error) {
+        if credential is Error {
             return error UnauthenticatedError(credential.message());
         } else {
             auth:UserDetails|auth:Error details = self.provider.authenticate(credential);
-            if (details is auth:UserDetails) {
+            if details is auth:UserDetails {
                 return details;
             } else {
                 return error UnauthenticatedError(details.message());
@@ -53,9 +53,9 @@ public isolated client class ListenerLdapUserStoreBasicAuthHandler {
     # + return - `()`, if it is successful or else a `PermissionDeniedError` error
     remote isolated function authorize(auth:UserDetails userDetails, string|string[] expectedScopes) returns PermissionDeniedError? {
         string[]? actualScopes = userDetails?.scopes;
-        if (actualScopes is string[]) {
+        if actualScopes is string[] {
             boolean matched = matchScopes(actualScopes, expectedScopes);
-            if (matched) {
+            if matched {
                 return;
             }
         }
