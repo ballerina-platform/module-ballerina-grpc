@@ -10,14 +10,14 @@ license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/grpc-native-1.1.0-SNAPSHOT.jar"
+path = "../native/build/libs/grpc-native-1.1.0.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.1.0-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.1.0.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2.0.0-beta.6-20211211-193900-8a474932.jar"
+path = "./lib/ballerina-cli-2.0.0-beta.6.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -25,7 +25,7 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.1.0-20211212-215200-2b9d44a.jar"
+path = "./lib/http-native-2.1.0.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.71.Final.jar"
@@ -73,7 +73,7 @@ path = "./lib/protobuf-java-3.9.1.jar"
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/formatter-core-2.0.0-beta.6-20211211-193900-8a474932.jar"
+path = "./lib/formatter-core-2.0.0-beta.6.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-parser-2.0.0-beta.6-20211211-193900-8a474932.jar"
+path = "./lib/ballerina-parser-2.0.0-beta.6.jar"
