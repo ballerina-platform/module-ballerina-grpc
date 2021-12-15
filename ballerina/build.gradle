@@ -106,8 +106,6 @@ task updateTomlFiles {
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
         newBallerinaToml = newBallerinaToml.replace("@antlr.version@", project.wso2OrbitAntlrVersion)
-        newBallerinaToml = newBallerinaToml.replace("@commons.pool.version@", project.wso2CommonsPoolVersion)
-        newBallerinaToml = newBallerinaToml.replace("@bouncy.castle.version@", project.bouncycastleVersion)
         newBallerinaToml = newBallerinaToml.replace("@protobuf.java.version@", project.protobufJavaVersion)
         newBallerinaToml = newBallerinaToml.replace("@proto.google.commons.version@", project.protoGoogleCommonsVersion)
         newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
