@@ -75,7 +75,7 @@ isolated function authenticateWithFileUserStore(FileUserStoreConfigWithScopes co
     ListenerFileUserStoreBasicAuthHandler handler;
     lock {
         string key = config.fileUserStoreConfig.toString();
-        if (authHandlers.hasKey(key)) {
+        if authHandlers.hasKey(key) {
             handler = <ListenerFileUserStoreBasicAuthHandler> authHandlers.get(key);
         } else {
             handler = new(config.fileUserStoreConfig.cloneReadOnly());
@@ -101,7 +101,7 @@ isolated function authenticateWithLdapUserStore(LdapUserStoreConfigWithScopes co
     ListenerLdapUserStoreBasicAuthHandler handler;
     lock {
         string key = config.ldapUserStoreConfig.toString();
-        if (authHandlers.hasKey(key)) {
+        if authHandlers.hasKey(key) {
             handler = <ListenerLdapUserStoreBasicAuthHandler> authHandlers.get(key);
         } else {
             handler = new(config.ldapUserStoreConfig.cloneReadOnly());
@@ -127,7 +127,7 @@ isolated function authenticateWithJwtValidator(JwtValidatorConfigWithScopes conf
     ListenerJwtAuthHandler handler;
     lock {
         string key = config.jwtValidatorConfig.toString();
-        if (authHandlers.hasKey(key)) {
+        if authHandlers.hasKey(key) {
             handler = <ListenerJwtAuthHandler> authHandlers.get(key);
         } else {
             handler = new(config.jwtValidatorConfig.cloneReadOnly());
@@ -154,7 +154,7 @@ isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionC
     ListenerOAuth2Handler handler;
     lock {
         string key = config.oauth2IntrospectionConfig.toString();
-        if (authHandlers.hasKey(key)) {
+        if authHandlers.hasKey(key) {
             handler = <ListenerOAuth2Handler> authHandlers.get(key);
         } else {
             handler = new(config.oauth2IntrospectionConfig.cloneReadOnly());

@@ -2,7 +2,7 @@
 org = "ballerina"
 name = "grpc"
 version = "@toml.version@"
-distribution = "slbeta3"
+distribution = "slbeta6"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -64,7 +64,7 @@ path = "./lib/bcprov-jdk15on-@bouncy.castle.version@.jar"
 path = "./lib/bcpkix-jdk15on-@bouncy.castle.version@.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@.jar"
+path = "./lib/netty-tcnative-classes-@nettytcnative.version@.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/protobuf-java-@protobuf.java.version@.jar"

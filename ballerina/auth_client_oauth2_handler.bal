@@ -35,7 +35,7 @@ public isolated client class ClientOAuth2Handler {
     # an error
     remote isolated function enrich(map<string|string[]> headers) returns map<string|string[]>|ClientAuthError {
         string|oauth2:Error result = self.provider.generateToken();
-        if (result is string) {
+        if result is string {
             string token = AUTH_SCHEME_BEARER + " " + result;
             headers[AUTH_HEADER] = [token];
             return headers;
