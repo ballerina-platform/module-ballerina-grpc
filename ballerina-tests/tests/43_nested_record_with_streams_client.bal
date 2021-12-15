@@ -45,7 +45,7 @@ function testNestedMessagesWithServerStreaming() returns error? {
     test:assertEquals(i, 5);
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testNestedMessagesWithClientStreaming() returns error? {
     NestedMsgServiceClient ep = check new ("http://localhost:9143");
     NestedMsg[] messages = [
@@ -68,7 +68,7 @@ function testNestedMessagesWithClientStreaming() returns error? {
     }
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testNestedMessagesWithBidirectionalStreaming() returns error? {
     NestedMsgServiceClient ep = check new ("http://localhost:9143");
     NestedMsg[] sendingMessages = [
