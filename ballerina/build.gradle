@@ -105,8 +105,6 @@ task updateTomlFiles {
         def newBallerinaToml = ballerinaTomlFilePlaceHolder.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
-        newBallerinaToml = newBallerinaToml.replace("@netty.version@", project.nettyVersion)
-        newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", project.nettyTcnativeVersion)
         newBallerinaToml = newBallerinaToml.replace("@antlr.version@", project.wso2OrbitAntlrVersion)
         newBallerinaToml = newBallerinaToml.replace("@commons.pool.version@", project.wso2CommonsPoolVersion)
         newBallerinaToml = newBallerinaToml.replace("@bouncy.castle.version@", project.bouncycastleVersion)
