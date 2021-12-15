@@ -28,45 +28,6 @@ scope = "testOnly"
 path = "./lib/http-native-@http.native.version@.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-common-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-buffer-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-transport-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-resolver-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-handler-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-codec-http-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-codec-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-handler-proxy-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-codec-http2-@netty.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/commons-pool-@commons.pool.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/bcprov-jdk15on-@bouncy.castle.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/bcpkix-jdk15on-@bouncy.castle.version@.jar"
-
-[[platform.java11.dependency]]
-path = "./lib/netty-tcnative-classes-@nettytcnative.version@.jar"
-
-[[platform.java11.dependency]]
 path = "./lib/protobuf-java-@protobuf.java.version@.jar"
 
 [[platform.java11.dependency]]

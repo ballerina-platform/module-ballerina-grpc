@@ -77,45 +77,6 @@ dependencies {
     externalJars(group: 'io.ballerina.stdlib', name: 'http-native', version: "${stdlibHttpVersion}") {
         transitive = false
     }
-    externalJars(group: 'io.netty', name: 'netty-common', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-buffer', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-transport', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-resolver', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-handler', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-codec', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-handler-proxy', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-codec-http2', version: "${nettyVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: "${bouncycastleVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: "${bouncycastleVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.netty', name: 'netty-tcnative-classes', version: "${nettyTcnativeVersion}") {
-        transitive = false
-    }
     externalJars(group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
         transitive = false
     }
