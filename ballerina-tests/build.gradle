@@ -60,9 +60,6 @@ dependencies {
     jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
     }
-    externalJars(group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
-        transitive = false
-    }
     externalJars(group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
         transitive = false
     }
