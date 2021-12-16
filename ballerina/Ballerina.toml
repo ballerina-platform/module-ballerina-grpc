@@ -25,7 +25,7 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.5.1-20211216-153500-97e726d.jar"
+path = "./lib/http-native-2.6.1-20211216-224800-a39d6e1.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/protobuf-java-3.9.1.jar"
