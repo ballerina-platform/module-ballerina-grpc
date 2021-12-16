@@ -17,6 +17,10 @@
 import ballerina/jballerina.java;
 import ballerina/http as _;
 
+// Above unnecessary HTTP import can remove when one of the following issues are fixed:
+// 1. https://github.com/ballerina-platform/ballerina-lang/issues/34357
+// 2. https://github.com/netty/netty/issues/11921
+
 function init() {
     setModule();
     _ = initializeGrpcLogs(traceLogConsole, traceLogAdvancedConfig, accessLogConfig);
