@@ -47,7 +47,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "grpc"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "crypto"},

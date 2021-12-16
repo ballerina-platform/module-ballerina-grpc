@@ -1,7 +1,7 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.1.0"
+version = "1.1.1"
 distribution = "slbeta6"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
@@ -10,10 +10,10 @@ license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/grpc-native-1.1.0.jar"
+path = "../native/build/libs/grpc-native-1.1.1-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.1.0.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.1.1-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -25,7 +25,7 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.1.0.jar"
+path = "./lib/http-native-2.5.1-20211216-153500-97e726d.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.71.Final.jar"
