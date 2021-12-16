@@ -56,7 +56,7 @@ Ballerina gRPC standard library has five primary aspects in handling values.
 
 # 2. gRPC Command Line Interface (CLI)
 
-Ballerina language comes up with a command-line interface that manages the lifecycle of a Ballerina program (such as build, test, and run). In addition, Ballerina CLI contains all the gRPC related stub and service skeleton generation capabilities. The gRPC command in Ballerina CLI is as follows.
+Ballerina language has a command-line interface that manages the lifecycle of a Ballerina program (such as build, test, and run). In addition, Ballerina CLI contains all the gRPC related stub and service skeleton generation capabilities. The gRPC command in Ballerina CLI is as follows.
 
 ```sh
 bal grpc --input <proto-file-path> --output <output-directory> --mode client|service
