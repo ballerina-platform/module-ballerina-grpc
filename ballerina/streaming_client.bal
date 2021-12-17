@@ -55,7 +55,7 @@ public client class StreamingClient {
 
     # Receives server responses in client streaming and bidirectional streaming.
     # ```ballerina
-    # anydata|grpc:Error? result = streamingClient->receive();
+    # [anydata, map<string|string[]>]|grpc:Error? result = streamingClient->receive();
     # ```
     #
     # + return - An `anydata` value
