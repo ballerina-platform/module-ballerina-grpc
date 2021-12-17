@@ -61,51 +61,51 @@ public client class StreamingClient {
     # + return - An `anydata` value
     isolated remote function receive() returns [anydata, map<string|string[]>]|Error? {
         map<string|string[]> headers = {};
-        if (externIsBidirectional(self)) {
-            if (self.serverStream is stream<anydata, Error?>) {
+        if externIsBidirectional(self) {
+            if self.serverStream is stream<anydata, Error?> {
                 var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
                 var headerMap = externGetHeaderMap(self, true);
-                if (headerMap is map<string|string[]>) {
+                if headerMap is map<string|string[]> {
                     headers = headerMap;
                 }
-                if (nextRecord is record {|anydata value;|}) {
+                if nextRecord is record {|anydata value;|} {
                     return [nextRecord.value, headers];
                 } else {
                     return nextRecord;
                 }
             } else {
                 var result = externReceive(self);
-                if (result is stream<anydata, Error?>) {
+                if result is stream<anydata, Error?> {
                     self.serverStream = result;
                     var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
                     var headerMap = externGetHeaderMap(self, true);
-                    if (headerMap is map<string|string[]>) {
+                    if headerMap is map<string|string[]> {
                         headers = headerMap;
                     }
-                    if (nextRecord is record {|anydata value;|}) {
+                    if nextRecord is record {|anydata value;|} {
                         return [nextRecord.value, headers];
                     } else {
                         return nextRecord;
                     }
-                } else if (result is anydata) {
-                   return error DataMismatchError("Expected a stream but found an anydata type.");
+                } else if result is anydata {
+                    return error DataMismatchError("Expected a stream but found an anydata type.");
                 } else {
                     return result;
                 }
             }
         } else {
-           var result = externReceive(self);
-           var headerMap = externGetHeaderMap(self, false);
-           if (headerMap is map<string|string[]>) {
-               headers = headerMap;
-           }
-           if (result is anydata) {
-               return [result, headers];
-           } else if (result is stream<anydata, Error?>) {
-               return error DataMismatchError("Expected an anydata type but found a stream.");
-           } else {
-               return result;
-           }
+            var result = externReceive(self);
+            var headerMap = externGetHeaderMap(self, false);
+            if headerMap is map<string|string[]> {
+                headers = headerMap;
+            }
+            if result is anydata {
+                return [result, headers];
+            } else if result is stream<anydata, Error?> {
+                return error DataMismatchError("Expected an anydata type but found a stream.");
+            } else {
+                return result;
+            }
         }
     }
 }

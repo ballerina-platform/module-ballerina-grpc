@@ -20,34 +20,34 @@
 # + keyFile - A file containing the private key
 # + keyPassword - Password of the private key if it is encrypted
 public type CertKey record {|
-   string certFile;
-   string keyFile;
-   string keyPassword?;
+    string certFile;
+    string keyFile;
+    string keyPassword?;
 |};
 
 # Represents client verify options.
 public enum VerifyClient {
-   REQUIRE,
-   OPTIONAL
+    REQUIRE,
+    OPTIONAL
 }
 
 # Represents protocol options.
 public enum Protocol {
-   SSL,
-   TLS,
-   DTLS
+    SSL,
+    TLS,
+    DTLS
 }
 
 # Represents certification validation type options.
 public enum CertValidationType {
-   OCSP_CRL,
-   OCSP_STAPLING
+    OCSP_CRL,
+    OCSP_STAPLING
 }
 
 # Represents compression options.
 #
 # `AUTO`: When the service behaves as a HTTP gateway, the inbound request/response accept-encoding option is set as the
-#         outbound request/response accept-encoding/content-encoding option
+# outbound request/response accept-encoding/content-encoding option
 # `ALWAYS`: Always set accept-encoding/content-encoding in outbound request/response
 # `NEVER`: Never set accept-encoding/content-encoding header in outbound request/response
 public type Compression COMPRESSION_AUTO|COMPRESSION_ALWAYS|COMPRESSION_NEVER;

@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-
 # Service descriptor data generated at the compile time.
 #
 # + descriptor - Service descriptor, which should be set at the compile time

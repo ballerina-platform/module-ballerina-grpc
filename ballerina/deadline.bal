@@ -67,9 +67,9 @@ public isolated function isCancelled(map<string|string[]> headerMap) returns boo
 # + return - `deadline` value when the deadline is correctly specified, `()` when the deadline is not specified, or else a `time:Error` when a `deadline`-parsing error occurred
 public isolated function getDeadline(map<string|string[]> headerMap) returns time:Utc?|time:Error {
     string|string[]? deadlineStringValue = headerMap[DEALINE_HEADER];
-    if (deadlineStringValue is string) {
+    if deadlineStringValue is string {
         time:Utc deadline = check time:utcFromString(deadlineStringValue);
         return deadline;
     }
-    return ();
+    return;
 }
