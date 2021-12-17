@@ -31,6 +31,7 @@ service "BidiStreamingTimestampService" on ep48 {
             };
             checkpanic caller->sendBiDiGreeting(greeting);
         });
+        check caller->complete();
     }
 
     remote function bidiStreamingGreetBoth(BidiStreamingTimestampServiceBiDiGreetingCaller caller,
@@ -42,6 +43,7 @@ service "BidiStreamingTimestampService" on ep48 {
             };
             checkpanic caller->sendBiDiGreeting(greeting);
         });
+        check caller->complete();
     }
     
     remote function bidiStreamingExchangeTime(BidiStreamingTimestampServiceTimestampCaller caller,
@@ -50,5 +52,6 @@ service "BidiStreamingTimestampService" on ep48 {
         check clientStream.forEach(function(time:Utc value) {
             checkpanic caller->sendTimestamp(responseTime);
         });
+        check caller->complete();
     }
 }
