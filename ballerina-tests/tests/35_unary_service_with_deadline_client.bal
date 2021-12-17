@@ -19,30 +19,23 @@ import ballerina/test;
 import ballerina/time;
 import ballerina/protobuf.types.wrappers;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testCallWithingDeadline() returns grpc:Error? {
     HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
     time:Utc current = time:utcNow();
     time:Utc deadline = time:utcAddSeconds(current, 300);
     map<string|string[]> headers = grpc:setDeadline(deadline);
-    var context = helloWorldClient->callWithinDeadlineContext({content: "WSO2", headers: headers});
-    if context is wrappers:ContextString {
-        test:assertEquals(context.content, "Ack");
-    } else {
-        test:assertFail(context.message());
-    }
+    wrappers:ContextString context = check helloWorldClient->callWithinDeadlineContext({content: "WSO2", headers: headers});
+    test:assertEquals(context.content, "Ack");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testCallExceededDeadline() returns grpc:Error? {
     HelloWorld35Client helloWorldClient = check new ("http://localhost:9125");
     time:Utc current = time:utcNow();
     time:Utc deadline = time:utcAddSeconds(current, 5);
     map<string|string[]> headers = grpc:setDeadline(deadline);
-    var context = helloWorldClient->callExceededDeadlineContext({content: "WSO2", headers: headers});
-    if context is grpc:DeadlineExceededError {
-        test:assertEquals(context.message(), "Exceeded the configured deadline");
-    } else {
-        test:assertFail("Expected grpc:DeadlineExceededError not found");
-    }
+    wrappers:ContextString|grpc:Error context = helloWorldClient->callExceededDeadlineContext({content: "WSO2", headers: headers});
+    test:assertTrue(context is grpc:DeadlineExceededError);
+    test:assertEquals((<grpc:Error>context).message(), "Exceeded the configured deadline");
 }

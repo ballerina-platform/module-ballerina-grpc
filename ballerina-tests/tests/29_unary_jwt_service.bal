@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 import ballerina/jwt;
 
@@ -28,7 +27,6 @@ listener grpc:Listener ep29 = new (9119);
 service /HelloWorld29 on ep29 {
 
     remote isolated function testStringValueReturn(HelloWorld29StringCaller caller, ContextString request) returns grpc:Error? {
-        io:println("name: " + request.content);
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
         grpc:JwtValidatorConfig config = {
@@ -48,27 +46,18 @@ service /HelloWorld29 on ep29 {
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
             check caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
-            grpc:ListenerJwtAuthHandler handler = new(config);
-            jwt:Payload|grpc:UnauthenticatedError authResult = handler.authenticate(request.headers);
-            if authResult is grpc:UnauthenticatedError {
-                check caller->sendError(authResult);
+            grpc:ListenerJwtAuthHandler handler = new (config);
+            jwt:Payload authResult = check handler.authenticate(request.headers);
+            grpc:PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
+            if authrzResult is () {
+                responseHeaders["x-id"] = ["1234567890", "2233445677"];
+                wrappers:ContextString responseMessage = {content: message, headers: responseHeaders};
+                check caller->sendContextString(responseMessage);
             } else {
-                grpc:PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
-                if authrzResult is () {
-                    responseHeaders["x-id"] = ["1234567890", "2233445677"];
-                    wrappers:ContextString responseMessage = {content: message, headers: responseHeaders};
-                    grpc:Error? err = caller->sendContextString(responseMessage);
-                    if err is grpc:Error {
-                        io:println("Error from Connector: " + err.message());
-                    } else {
-                        io:println("Server send response : " + message);
-                    }
-                } else {
-                    check caller->sendError(authrzResult);
-                }
+                check caller->sendError(authrzResult);
             }
         }
-        checkpanic caller->complete();
+        check caller->complete();
     }
 
     remote isolated function testStringValueReturnNegative(HelloWorld29StringCaller caller, ContextString request) returns grpc:Error? {
@@ -89,17 +78,13 @@ service /HelloWorld29 on ep29 {
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
             check caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
-            grpc:ListenerJwtAuthHandler handler = new(config);
-            jwt:Payload|grpc:UnauthenticatedError authResult = handler.authenticate(request.headers);
-            if authResult is grpc:UnauthenticatedError {
-                check caller->sendError(authResult);
+            grpc:ListenerJwtAuthHandler handler = new (config);
+            jwt:Payload authResult = check handler.authenticate(request.headers);
+            grpc:PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
+            if authrzResult is grpc:PermissionDeniedError {
+                check caller->sendError(authrzResult);
             } else {
-                grpc:PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
-                if authrzResult is grpc:PermissionDeniedError {
-                    check caller->sendError(authrzResult);
-                } else {
-                    check caller->sendError(error grpc:AbortedError("Expected error was not found."));
-                }
+                check caller->sendError(error grpc:AbortedError("Expected error was not found."));
             }
         }
     }

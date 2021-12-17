@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 
 listener grpc:Listener ep31 = new (9121);
 
@@ -25,8 +24,6 @@ listener grpc:Listener ep31 = new (9121);
 }
 service "HelloWorld31" on ep31 {
     remote isolated function sayHello(SampleMsg31 reqMsg) returns ContextSampleMsg31|error {
-        io:print("Received input for testRecordValueReturn: ");
-        io:println(reqMsg);
         if reqMsg.name == "" {
             return error grpc:InvalidArgumentError("Name must not be empty.");
         }
@@ -34,6 +31,6 @@ service "HelloWorld31" on ep31 {
             name: "Ballerina Lang",
             id: 7
         };
-        return {content:respMsg, headers: {xxx: "yyy"}};
+        return {content: respMsg, headers: {xxx: "yyy"}};
     }
 }

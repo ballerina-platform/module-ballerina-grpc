@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 
 listener grpc:Listener ep32 = new (9122);
 
@@ -26,7 +25,6 @@ listener grpc:Listener ep32 = new (9122);
 service "HelloWorld32" on ep32 {
 
     remote isolated function sayHello(SampleMsg32 value) returns stream<SampleMsg32, error?> {
-        io:println(value);
         SampleMsg32[] respArr = [
             {name: "WSO2", id: 0},
             {name: "Microsoft", id: 1},

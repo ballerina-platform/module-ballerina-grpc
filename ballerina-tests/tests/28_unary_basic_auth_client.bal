@@ -21,79 +21,56 @@ import ballerina/test;
 @test:Config {enable: true}
 isolated function testStringValueReturnWithBasicAuth() returns grpc:Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
-    map<string|string[]> requestHeaders = {};
-
     grpc:CredentialsConfig config = {
         username: "admin",
         password: "123"
     };
 
     grpc:ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
 
     wrappers:ContextString requestMessage = {
         content: "WSO2",
         headers: requestHeaders
     };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is grpc:Error {
-        test:assertFail(msg = response.message());
-    } else {
-        test:assertEquals(response, "Hello WSO2");
-    }
+    string response = check helloWorldEp->testStringValueReturn(requestMessage);
+    test:assertEquals(response, "Hello WSO2");
 }
 
 @test:Config {enable: true}
 isolated function testStringValueReturnWithInvalidBasicAuth() returns grpc:Error? {
     HelloWorld28Client helloWorldEp = check new ("http://localhost:9118");
-    map<string|string[]> requestHeaders = {};
-
     grpc:CredentialsConfig config = {
         username: "admin",
         password: "1234"
     };
 
     grpc:ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
 
     wrappers:ContextString requestMessage = {
         content: "WSO2",
         headers: requestHeaders
     };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is grpc:Error {
-        test:assertEquals(response.message(), "Failed to authenticate username 'admin' from file user store.");
-    } else {
-        test:assertFail(msg = "Expected grpc:Error not found.");
-    }
+    string|grpc:Error response = helloWorldEp->testStringValueReturn(requestMessage);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Failed to authenticate username 'admin' from file user store.");
 }
 
 @test:Config {enable: true}
 isolated function testStringValueReturnWithBasicAuthWithEmpty() returns grpc:Error? {
     map<string|string[]> requestHeaders = {};
-
     grpc:CredentialsConfig config = {
         username: "",
         password: "1234"
     };
 
     grpc:ClientBasicAuthHandler handler = new (config);
-    map<string|string[]>| grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is  grpc:ClientAuthError {
-        test:assertEquals(result.message(), "Failed to enrich request with Basic Auth token. Username or password cannot be empty.");
-    } else {
-        test:assertFail(msg = "Expected grpc:Error not found.");
-    }
+    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Failed to enrich request with Basic Auth token. Username or password cannot be empty.");
 }
 
 @test:Config {enable: true}
@@ -107,10 +84,7 @@ isolated function testStringValueReturnWithBasicAuthWithInvalidHeader() returns 
         content: "WSO2",
         headers: requestHeaders
     };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is grpc:Error {
-        test:assertEquals(response.message(), "Empty authentication header.");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    string|grpc:Error response = helloWorldEp->testStringValueReturn(requestMessage);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Empty authentication header.");
 }

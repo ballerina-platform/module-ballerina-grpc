@@ -18,16 +18,14 @@ import ballerina/grpc;
 import ballerina/test;
 import ballerina/protobuf.types.wrappers;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturnWithJwt1() returns grpc:Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
-    map<string|string[]> requestHeaders = {};
-
     grpc:JwtIssuerConfig config = {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "write" },
+        customClaims: {"scope": "write"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -39,34 +37,23 @@ isolated function testStringValueReturnWithJwt1() returns grpc:Error? {
             }
         }
     };
-    grpc:ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
+    grpc:ClientSelfSignedJwtAuthHandler handler = new (config);
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
     requestHeaders["x-id"] = ["0987654321"];
     wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
-    var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertFail(msg = unionResp.message());
-    } else {
-        test:assertEquals(unionResp, "Hello WSO2");
-    }
+    string response = check helloWorldEp->testStringValueReturn(requestMessage);
+    test:assertEquals(response, "Hello WSO2");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturnWithJwt2() returns grpc:Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
-    map<string|string[]> requestHeaders = {};
-
     grpc:JwtIssuerConfig config = {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "write update" },
+        customClaims: {"scope": "write update"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -78,34 +65,23 @@ isolated function testStringValueReturnWithJwt2() returns grpc:Error? {
             }
         }
     };
-    grpc:ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
+    grpc:ClientSelfSignedJwtAuthHandler handler = new (config);
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
     requestHeaders["x-id"] = ["0987654321"];
     wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
-    var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertFail(msg = unionResp.message());
-    } else {
-        test:assertEquals(unionResp, "Hello WSO2");
-    }
+    string response = check helloWorldEp->testStringValueReturn(requestMessage);
+    test:assertEquals(response, "Hello WSO2");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturnWithJwt3() returns grpc:Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
-    map<string|string[]> requestHeaders = {};
-
     grpc:JwtIssuerConfig config = {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": ["write", "update"] },
+        customClaims: {"scope": ["write", "update"]},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -117,34 +93,23 @@ isolated function testStringValueReturnWithJwt3() returns grpc:Error? {
             }
         }
     };
-    grpc:ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
+    grpc:ClientSelfSignedJwtAuthHandler handler = new (config);
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
     requestHeaders["x-id"] = ["0987654321"];
     wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
-    var unionResp = helloWorldEp->testStringValueReturn(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertFail(msg = unionResp.message());
-    } else {
-        test:assertEquals(unionResp, "Hello WSO2");
-    }
+    string response = check helloWorldEp->testStringValueReturn(requestMessage);
+    test:assertEquals(response, "Hello WSO2");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturnWithUnauthorizedJwt1() returns grpc:Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
-    map<string|string[]> requestHeaders = {};
-
     grpc:JwtIssuerConfig config = {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "delete" },
+        customClaims: {"scope": "delete"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -156,34 +121,24 @@ isolated function testStringValueReturnWithUnauthorizedJwt1() returns grpc:Error
             }
         }
     };
-    grpc:ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
+    grpc:ClientSelfSignedJwtAuthHandler handler = new (config);
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
     requestHeaders["x-id"] = ["0987654321"];
     wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
-    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertEquals(unionResp.message(), "Permission denied");
-    } else {
-        test:assertFail(msg = "Expected an error.");
-    }
+    string|grpc:Error response = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Permission denied");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturnWithUnauthorizedJwt2() returns grpc:Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
-    map<string|string[]> requestHeaders = {};
-
     grpc:JwtIssuerConfig config = {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": "read delete" },
+        customClaims: {"scope": "read delete"},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -195,34 +150,24 @@ isolated function testStringValueReturnWithUnauthorizedJwt2() returns grpc:Error
             }
         }
     };
-    grpc:ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
+    grpc:ClientSelfSignedJwtAuthHandler handler = new (config);
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
     requestHeaders["x-id"] = ["0987654321"];
     wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
-    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertEquals(unionResp.message(), "Permission denied");
-    } else {
-        test:assertFail(msg = "Expected an error.");
-    }
+    string|grpc:Error response = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Permission denied");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturnWithUnauthorizedJwt3() returns grpc:Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
-    map<string|string[]> requestHeaders = {};
-
     grpc:JwtIssuerConfig config = {
         username: "admin",
         issuer: "wso2",
         audience: ["ballerina"],
-        customClaims: { "scope": ["read", "delete"] },
+        customClaims: {"scope": ["read", "delete"]},
         signatureConfig: {
             config: {
                 keyStore: {
@@ -234,25 +179,17 @@ isolated function testStringValueReturnWithUnauthorizedJwt3() returns grpc:Error
             }
         }
     };
-    grpc:ClientSelfSignedJwtAuthHandler handler = new(config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
+    grpc:ClientSelfSignedJwtAuthHandler handler = new (config);
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
     requestHeaders["x-id"] = ["0987654321"];
     wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
-    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertEquals(unionResp.message(), "Permission denied");
-    } else {
-        test:assertFail(msg = "Expected an error.");
-    }
+    string|grpc:Error response = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Permission denied");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturnWithInvalidHeaderJwt() returns grpc:Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {
@@ -261,15 +198,12 @@ isolated function testStringValueReturnWithInvalidHeaderJwt() returns grpc:Error
     };
 
     wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
-    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertEquals(unionResp.message(), "Credential format does not match to JWT format.");
-    } else {
-        test:assertFail(msg = "Expected an error.");
-    }
+    string|grpc:Error response = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Credential format does not match to JWT format.");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturnWithEmptyHeaderJwt() returns grpc:Error? {
     HelloWorld29Client helloWorldEp = check new ("http://localhost:9119");
     map<string|string[]> requestHeaders = {
@@ -278,10 +212,7 @@ isolated function testStringValueReturnWithEmptyHeaderJwt() returns grpc:Error? 
     };
 
     wrappers:ContextString requestMessage = {content: "WSO2", headers: requestHeaders};
-    var unionResp = helloWorldEp->testStringValueReturnNegative(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertEquals(unionResp.message(), "Empty authentication header.");
-    } else {
-        test:assertFail(msg = "Expected an error.");
-    }
+    string|grpc:Error response = helloWorldEp->testStringValueReturnNegative(requestMessage);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Empty authentication header.");
 }
