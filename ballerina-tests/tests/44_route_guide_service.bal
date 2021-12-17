@@ -26,7 +26,7 @@ service "RouteGuide" on ep44 {
         return {location: point, name: "f1"};
     }
     isolated remote function RecordRoute(stream<Point, grpc:Error?> clientStream) returns RouteSummary|error {
-        check clientStream.forEach(function(Point value) {
+        check clientStream.forEach(isolated function(Point value) {
             io:println(value);
         });
         return {point_count: 1, feature_count: 1, distance: 1, elapsed_time: 1};

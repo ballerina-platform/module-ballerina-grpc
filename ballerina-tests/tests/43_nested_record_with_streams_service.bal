@@ -38,14 +38,14 @@ service "NestedMsgService" on ep43 {
     }
 
     isolated remote function nestedMsgClientStreaming(stream<NestedMsg, grpc:Error?> clientStream) returns error|string {
-        check clientStream.forEach(function(NestedMsg value) {
+        check clientStream.forEach(isolated function(NestedMsg value) {
             io:println(value);
         });
         return "Ack 43";
     }
 
     isolated remote function nestedMsgBidirectionalStreaming(stream<NestedMsg, grpc:Error?> clientStream) returns error|stream<NestedMsg, error?> {
-        check clientStream.forEach(function(NestedMsg value) {
+        check clientStream.forEach(isolated function(NestedMsg value) {
             io:println(value);
         });
         NestedMsg[] messages = [
