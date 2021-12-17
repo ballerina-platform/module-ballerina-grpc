@@ -17,16 +17,12 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testErrorResponse() returns grpc:Error? {
     string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld13Client helloWorld13BlockingEp = check new("http://localhost:9103");
-    var unionResp = helloWorld13BlockingEp->hello(name);
-
-    if unionResp is grpc:Error {
-        test:assertEquals(unionResp.message(), "Details");
-    } else {
-        test:assertFail(unionResp);
-    }
+    HelloWorld13Client helloWorld13BlockingEp = check new ("http://localhost:9103");
+    string|grpc:Error response = helloWorld13BlockingEp->hello(name);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Details");
 }

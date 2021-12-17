@@ -15,11 +15,10 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/log;
 
 listener grpc:Listener ep9 = new (9099, {
-    host:"localhost",
-    secureSocket:{
+    host: "localhost",
+    secureSocket: {
         key: {
             path: KEYSTORE_PATH,
             password: "ballerina"
@@ -32,7 +31,7 @@ listener grpc:Listener ep9 = new (9099, {
         },
         protocol: {
             name: grpc:TLS,
-            versions: ["TLSv1.2","TLSv1.1"]
+            versions: ["TLSv1.2", "TLSv1.1"]
         }
     }
 });
@@ -42,15 +41,9 @@ listener grpc:Listener ep9 = new (9099, {
     descMap: getDescriptorMap09GrpcSecuredUnaryService()
 }
 service "HelloWorld85" on ep9 {
-    isolated remote function hello(HelloWorld85StringCaller caller, string name) {
-        log:printInfo("name: " + name);
+    isolated remote function hello(HelloWorld85StringCaller caller, string name) returns grpc:Error? {
         string message = "Hello " + name;
-        grpc:Error? err = caller->sendString(message);
-        if err is grpc:Error {
-            log:printError(err.message(), 'error = err);
-        } else {
-            log:printInfo("Server send response : " + message);
-        }
-        checkpanic caller->complete();
+        check caller->sendString(message);
+        check caller->complete();
     }
 }

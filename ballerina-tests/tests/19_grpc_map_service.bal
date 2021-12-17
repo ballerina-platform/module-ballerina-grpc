@@ -15,10 +15,9 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/log;
 
-listener grpc:Listener  negotiatorep = new (9109);
+listener grpc:Listener negotiatorep = new (9109);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_19_GRPC_MAP_SERVICE,
@@ -50,34 +49,29 @@ service "Negotiator" on negotiatorep {
             return;
         }
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
-        error? send = caller->sendHandshakeResponse(response);
-        if send is error {
-            log:printError("Error while sending the response.", 'error = send);
-        } else {
-            check caller->complete();
-        }
+        check caller->sendHandshakeResponse(response);
+        check caller->complete();
     }
 
-    isolated remote function publishMetrics(NegotiatorNilCaller caller, MetricsPublishRequest value) {
+    isolated remote function publishMetrics(NegotiatorNilCaller caller, MetricsPublishRequest value) returns grpc:Error? {
         log:printInfo(string `publishMetrics request: ${value.toString()}`);
 
         if value.metrics.length() < 0 {
-            error? sendError = caller->sendError(error grpc:InvalidArgumentError("metrics cannot be an empty array."));
+            check caller->sendError(error grpc:InvalidArgumentError("metrics cannot be an empty array."));
             return;
         }
         foreach var metric in value.metrics {
             log:printInfo(string `metric value: ${metric.toString()}`);
             if metric.tags.length() < 0 {
-                error? sendError = caller->sendError(error grpc:InvalidArgumentError("tags cannot be an empty array."));
+                check caller->sendError(error grpc:InvalidArgumentError("tags cannot be an empty array."));
                 return;
             }
         }
-        error? complete = caller->complete();
+        check caller->complete();
     }
 
-    isolated remote function publishTraces(NegotiatorNilCaller caller, TracesPublishRequest value) {
+    isolated remote function publishTraces(NegotiatorNilCaller caller, TracesPublishRequest value) returns grpc:Error? {
         log:printInfo(string `publishTraces request: ${value.toString()}`);
-        error? complete = caller->complete();
-        io:println(complete);
+        check caller->complete();
     }
 }

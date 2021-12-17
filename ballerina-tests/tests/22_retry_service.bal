@@ -22,7 +22,7 @@ int requestCount = 0;
 
 string clientName = "";
 
-listener grpc:Listener  retryListener = new (9112);
+listener grpc:Listener retryListener = new (9112);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_22_RETRY_SERVICE,

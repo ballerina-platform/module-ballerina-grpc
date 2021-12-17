@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_15_GRPC_ONEOF_FIELD_SERVICE,
@@ -23,7 +22,7 @@ import ballerina/io;
 }
 service "OneofFieldService" on new grpc:Listener(9105) {
 
-    isolated remote function hello(OneofFieldServiceResponse1Caller caller, Request1 value) {
+    isolated remote function hello(OneofFieldServiceResponse1Caller caller, Request1 value) returns grpc:Error? {
         string? request = "";
         if value?.first_name is string {
             request = value?.first_name;
@@ -31,13 +30,12 @@ service "OneofFieldService" on new grpc:Listener(9105) {
             request = value?.last_name;
         }
         Response1 response = {message: "Hello " + <string>request};
-        io:println(response);
-        checkpanic caller->sendResponse1(response);
-        checkpanic caller->complete();
+        check caller->sendResponse1(response);
+        check caller->complete();
     }
 
-    isolated remote function testOneofField(OneofFieldServiceZZZCaller caller, ZZZ req) {
-        checkpanic caller->sendZZZ(req);
-        checkpanic caller->complete();
+    isolated remote function testOneofField(OneofFieldServiceZZZCaller caller, ZZZ req) returns grpc:Error? {
+        check caller->sendZZZ(req);
+        check caller->complete();
     }
 }

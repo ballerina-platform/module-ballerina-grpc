@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
+import ballerina/log;
 
 listener grpc:Listener ep7 = new (9097);
 
@@ -24,92 +24,57 @@ listener grpc:Listener ep7 = new (9097);
     descMap: getDescriptorMap07UnaryServer()
 }
 service "HelloWorld100" on ep7 {
-    isolated remote function hello(HelloWorld100StringCaller caller, string name) {
-        io:println("name: " + name);
+    isolated remote function hello(HelloWorld100StringCaller caller, string name) returns grpc:Error? {
         string message = "Hello " + name;
-        grpc:Error? err = ();
         if name == "invalid" {
-            err = caller->sendError(error grpc:AbortedError("Operation aborted"));
+            check caller->sendError(error grpc:AbortedError("Operation aborted"));
         } else {
-            err = caller->sendString(message);
+            check caller->sendString(message);
         }
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        }
-        checkpanic caller->complete();
+        check caller->complete();
     }
 
-    isolated remote function testInt(HelloWorld100IntCaller caller, int age) {
-        io:println("age: " + age.toString());
+    isolated remote function testInt(HelloWorld100IntCaller caller, int age) returns grpc:Error? {
         int displayAge = age - 2;
-        grpc:Error? err = caller->sendInt(displayAge);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("display age : " + displayAge.toString());
-        }
-        checkpanic caller->complete();
+        check caller->sendInt(displayAge);
+        check caller->complete();
     }
 
-    isolated remote function testFloat(HelloWorld100FloatCaller caller, float salary) {
-        io:println("gross salary: " + salary.toString());
+    isolated remote function testFloat(HelloWorld100FloatCaller caller, float salary) returns grpc:Error? {
         float netSalary = salary * 0.88;
-        grpc:Error? err = caller->sendFloat(netSalary);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("net salary : " + netSalary.toString());
-        }
-        checkpanic caller->complete();
+        check caller->sendFloat(netSalary);
+        check caller->complete();
     }
 
-    isolated remote function testBoolean(HelloWorld100BooleanCaller caller, boolean available) {
-        io:println("is available: " + available.toString());
+    isolated remote function testBoolean(HelloWorld100BooleanCaller caller, boolean available) returns grpc:Error? {
         boolean aval = available || true;
-        grpc:Error? err = caller->sendBoolean(aval);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("avaliability : " + aval.toString());
-        }
-        checkpanic caller->complete();
+        check caller->sendBoolean(aval);
+        check caller->complete();
     }
 
-    isolated remote function testStruct(HelloWorld100ResponseCaller caller, Request msg) {
-        io:println(msg.name + " : " + msg.message);
-        Response response = {resp:"Acknowledge " + msg.name};
-        grpc:Error? err = caller->sendResponse(response);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("msg : " + response.resp);
-        }
-        checkpanic caller->complete();
+    isolated remote function testStruct(HelloWorld100ResponseCaller caller, Request msg) returns grpc:Error? {
+        Response response = {resp: "Acknowledge " + msg.name};
+        check caller->sendResponse(response);
+        check caller->complete();
     }
 
-    isolated remote function testNoRequest(HelloWorld100StringCaller caller) {
+    isolated remote function testNoRequest(HelloWorld100StringCaller caller) returns grpc:Error? {
         string resp = "service invoked with no request";
-        grpc:Error? err = caller->sendString(resp);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("response : " + resp);
-        }
-        checkpanic caller->complete();
+        check caller->sendString(resp);
+        check caller->complete();
     }
 
-    isolated remote function testNoResponse(HelloWorld100NilCaller caller, string msg) {
-        io:println("Request: " + msg);
+    isolated remote function testNoResponse(HelloWorld100NilCaller caller, string msg) returns grpc:Error? {
+        log:printInfo("Request: " + msg);
     }
 
-    isolated remote function testResponseInsideMatch(HelloWorld100ResponseCaller caller, string msg) {
-        io:println("Request: " + msg);
-        Response? res = {resp:"Acknowledge " + msg};
+    isolated remote function testResponseInsideMatch(HelloWorld100ResponseCaller caller, string msg) returns grpc:Error? {
+        Response? res = {resp: "Acknowledge " + msg};
         if res is Response {
-            checkpanic caller->sendResponse(res);
+            check caller->sendResponse(res);
         } else {
-            checkpanic caller->sendError(error grpc:NotFoundError("No updates from that drone"));
+            check caller->sendError(error grpc:NotFoundError("No updates from that drone"));
         }
-        checkpanic caller->complete();
+        check caller->complete();
     }
 }

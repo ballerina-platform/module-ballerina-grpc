@@ -50,19 +50,16 @@ boolean initialized = false;
 }
 service "Chat" on ep3 {
 
-    remote function chat(ChatStringCaller caller, stream<ChatMessage, error?> clientStream) {
+    remote function chat(ChatStringCaller caller, stream<ChatMessage, error?> clientStream) returns error? {
         log:printInfo(string `${caller.getId()} connected to chat`);
         connectionsMap[caller.getId().toString()] = caller;
-        log:printInfo("Client registration completed. Connection map status");
-        log:printInfo("Map length: " + connectionsMap.length().toString());
-        log:printInfo(connectionsMap.toString());
         initialized = true;
-        error? e = clientStream.forEach(function(ChatMessage chatMsg) {
+        check clientStream.forEach(function(ChatMessage chatMsg) {
             ChatStringCaller conn;
             string msg = string `${chatMsg.name}: ${chatMsg.message}`;
             log:printInfo("Server received message: " + msg);
             int waitCount = 0;
-            while(!initialized) {
+            while !initialized {
                 runtime:sleep(1);
                 log:printInfo("Waiting till connection initialize. status: " + initialized.toString());
                 if waitCount > 10 {
@@ -70,9 +67,6 @@ service "Chat" on ep3 {
                 }
                 waitCount += 1;
             }
-            log:printInfo("Starting message broadcast. Connection map status");
-            log:printInfo("Map length: " + connectionsMap.length().toString());
-            log:printInfo(connectionsMap.toString());
             foreach var [callerId, connection] in connectionsMap.entries() {
                 conn = connection;
                 grpc:Error? err = conn->sendString(msg);
@@ -83,25 +77,20 @@ service "Chat" on ep3 {
                 }
             }
         });
-        if e is () {
-            string msg = string `${caller.getId()} left the chat`;
-            log:printInfo(msg);
-            _ = connectionsMap.remove(caller.getId().toString());
-            log:printInfo("Starting client left broadcast. Connection map status");
-            log:printInfo("Map length: " + connectionsMap.length().toString());
-            log:printInfo(connectionsMap.toString());
-            foreach var [callerId, connection] in connectionsMap.entries() {
-                ChatStringCaller conn;
-                conn = connection;
-                grpc:Error? err = conn->sendString(msg);
-                if err is grpc:Error {
-                    log:printError("Error from Connector: " + err.message());
-                } else {
-                    log:printInfo("Server message to caller " + callerId + " sent successfully.");
-                }
+        string msg = string `${caller.getId()} left the chat`;
+        _ = connectionsMap.remove(caller.getId().toString());
+        log:printInfo("Starting client left broadcast. Connection map status");
+        log:printInfo("Map length: " + connectionsMap.length().toString());
+        log:printInfo(connectionsMap.toString());
+        foreach var [callerId, connection] in connectionsMap.entries() {
+            ChatStringCaller conn;
+            conn = connection;
+            grpc:Error? err = conn->sendString(msg);
+            if err is grpc:Error {
+                log:printError("Error from Connector: " + err.message());
+            } else {
+                log:printInfo("Server message to caller " + callerId + " sent successfully.");
             }
-        } else {
-            log:printError("Error from Connector: " + e.message());
         }
     }
 }

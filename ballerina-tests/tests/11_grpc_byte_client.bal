@@ -20,37 +20,23 @@ import ballerina/test;
 
 type ByteArrayTypedesc typedesc<byte[]>;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testByteArray() returns grpc:Error? {
-    byteServiceClient blockingEp  = check new ("http://localhost:9101");
+    byteServiceClient blockingEp = check new ("http://localhost:9101");
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();
-    var addResponse = blockingEp->checkBytes(bytes);
-    if addResponse is grpc:Error {
-        test:assertFail(string `Error from Connector: ${addResponse.message()}`);
-    } else {
-        test:assertEquals(addResponse, bytes);
-    }
+
+    byte[] response = check blockingEp->checkBytes(bytes);
+    test:assertEquals(response, bytes);
 }
 
-@test:Config {enable:true}
-isolated function testLargeByteArray() returns grpc:Error? {
+@test:Config {enable: true}
+isolated function testLargeByteArray() returns error? {
     string filePath = "tests/resources/sample_bytes.txt";
-    byteServiceClient blockingEp  = check new ("http://localhost:9101");
-    var rch = <@untainted> io:openReadableFile(filePath);
-    if rch is error {
-        test:assertFail("Error while reading the file.");
-    } else {
-        var resultBytes = rch.read(10000);
-        if resultBytes is byte[] {
-            var addResponse = blockingEp->checkBytes(resultBytes);
-            if addResponse is grpc:Error {
-                test:assertFail(string `Error from Connector: ${addResponse.message()}`);
-            } else {
-                test:assertEquals(addResponse, resultBytes);
-            }
-        } else {
-            test:assertFail(string `File read error: ${resultBytes.message()}`);
-        }
-    }
+    byteServiceClient blockingEp = check new ("http://localhost:9101");
+    io:ReadableByteChannel rch = check io:openReadableFile(filePath);
+
+    byte[] resultBytes = check rch.read(10000);
+    byte[] response = check blockingEp->checkBytes(resultBytes);
+    test:assertEquals(response, resultBytes);
 }

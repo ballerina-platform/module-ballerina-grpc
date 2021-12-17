@@ -17,7 +17,7 @@
 import ballerina/grpc;
 
 listener grpc:Listener ep12 = new (9102, {
-    host:"localhost"
+    host: "localhost"
 });
 
 @grpc:ServiceDescriptor {
@@ -25,12 +25,12 @@ listener grpc:Listener ep12 = new (9102, {
     descMap: getDescriptorMap12GrpcEnumTestService()
 }
 service "testEnumService" on ep12 {
-    isolated remote function testEnum(TestEnumServiceStringCaller caller, OrderInfo orderReq) {
+    isolated remote function testEnum(TestEnumServiceStringCaller caller, OrderInfo orderReq) returns grpc:Error? {
         string permission = "";
         if orderReq.mode == r {
             permission = "r";
         }
-        checkpanic caller->sendString(permission);
-        checkpanic caller->complete();
+        check caller->sendString(permission);
+        check caller->complete();
     }
 }

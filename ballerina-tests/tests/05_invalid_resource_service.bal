@@ -18,6 +18,7 @@ import ballerina/grpc;
 import ballerina/log;
 
 listener grpc:Listener ep5 = new (9095);
+
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_05_INVALID_RESOURCE_SERVICE,
     descMap: getDescriptorMap05InvalidResourceService()
@@ -35,10 +36,9 @@ service "HelloWorld98" on ep5 {
         if err is grpc:Error {
             log:printError(err.message(), 'error = err);
         }
-        checkpanic caller->complete();
     }
 
-    isolated remote function testInt(HelloWorld98IntCaller caller, string age) {
+    isolated remote function testInt(HelloWorld98IntCaller caller, string age) returns grpc:Error? {
         log:printInfo("age: " + age);
         int displayAge = 0;
         if age == "" {
@@ -46,12 +46,6 @@ service "HelloWorld98" on ep5 {
         } else {
             displayAge = 1;
         }
-        grpc:Error? err = caller->sendInt(displayAge);
-        if err is grpc:Error {
-            log:printError(err.message(), 'error = err);
-        } else {
-            log:printInfo("display age : " + displayAge.toString());
-        }
-        checkpanic caller->complete();
+        check caller->sendInt(displayAge);
     }
 }

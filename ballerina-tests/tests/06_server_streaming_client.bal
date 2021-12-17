@@ -15,28 +15,22 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 int msgCount = 0;
 boolean eof = false;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testReceiveStreamingResponse() returns error? {
     string name = "WSO2";
     // Client endpoint configuration
-    HelloWorld45Client helloWorldEp = check new("http://localhost:9096");
+    HelloWorld45Client helloWorldEp = check new ("http://localhost:9096");
 
-    var result = helloWorldEp->lotsOfReplies(name);
-    if result is grpc:Error {
-        test:assertFail("Error from Connector: " + result.message());
-    } else {
-        io:println("Connected successfully");
-        string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
-        int waitCount = 0;
-        check result.forEach(function(anydata str) {
-            test:assertEquals(str, expectedResults[waitCount]);
-            waitCount += 1;
-        });
-    }
+    stream<string, grpc:Error?> result = check helloWorldEp->lotsOfReplies(name);
+    string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
+    int waitCount = 0;
+    check result.forEach(function(anydata str) {
+        test:assertEquals(str, expectedResults[waitCount]);
+        waitCount += 1;
+    });
 }

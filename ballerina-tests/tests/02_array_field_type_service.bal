@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
+import ballerina/log;
 
 listener grpc:Listener ep2 = new (9092, {
     host:"localhost"
@@ -27,40 +27,27 @@ listener grpc:Listener ep2 = new (9092, {
 }
 service "HelloWorld3" on ep2 {
 
-    isolated remote function testIntArrayInput(HelloWorld3IntCaller caller, TestInt req) {
-        io:println(req);
+    isolated remote function testIntArrayInput(HelloWorld3IntCaller caller, TestInt req) returns grpc:Error? {
         int[] numbers = req.values;
         int result = 0;
         foreach var number in numbers {
             result = result + number;
         }
-        grpc:Error? err = caller->sendInt(result);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("Result: " + result.toString());
-        }
-        checkpanic caller->complete();
+        check caller->sendInt(result);
+        check caller->complete();
     }
 
-    isolated remote function testStringArrayInput(HelloWorld3StringCaller caller, TestString req) {
-        io:println(req);
+    isolated remote function testStringArrayInput(HelloWorld3StringCaller caller, TestString req) returns grpc:Error? {
         string[] values = req.values;
         string result = "";
         foreach var value in values {
             result = result + "," + value;
         }
-        grpc:Error? err = caller->sendString(result);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("Result: " + result);
-        }
-        checkpanic caller->complete();
+        check caller->sendString(result);
+        check caller->complete();
     }
 
-    isolated remote function testFloatArrayInput(HelloWorld3FloatCaller caller, TestFloat req) {
-        io:println(req);
+    isolated remote function testFloatArrayInput(HelloWorld3FloatCaller caller, TestFloat req) returns grpc:Error? {
         float[] values = req.values;
         float result = 0.0;
         foreach var value in values {
@@ -68,99 +55,63 @@ service "HelloWorld3" on ep2 {
         }
         grpc:Error? err = caller->sendFloat(result);
         if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("Result: " + result.toString());
+            log:printError("Error from Connector: " + err.message());
         }
-        checkpanic caller->complete();
+        check caller->complete();
     }
 
-    isolated remote function testBooleanArrayInput(HelloWorld3BooleanCaller caller, TestBoolean req) {
-        io:println(req);
+    isolated remote function testBooleanArrayInput(HelloWorld3BooleanCaller caller, TestBoolean req) returns grpc:Error? {
         boolean[] values = req.values;
         boolean result = false;
         foreach var value in values {
             result = result || value;
         }
-        grpc:Error? err = caller->sendBoolean(result);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("Result: " + result.toString());
-        }
-        checkpanic caller->complete();
+        check caller->sendBoolean(result);
+        check caller->complete();
     }
 
-    isolated remote function testStructArrayInput(HelloWorld3StringCaller caller, TestStruct req) {
-        io:println(req);
+    isolated remote function testStructArrayInput(HelloWorld3StringCaller caller, TestStruct req) returns grpc:Error? {
         A[] values = req.values;
         string result = "";
         foreach var value in values {
             result = result + "," + <string> value.name;
         }
-        grpc:Error? err = caller->sendString(result);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("Result: " + result);
-        }
-        checkpanic caller->complete();
+        check caller->sendString(result);
+        check caller->complete();
     }
 
-    isolated remote function testIntArrayOutput(HelloWorld3TestIntCaller caller) {
+    isolated remote function testIntArrayOutput(HelloWorld3TestIntCaller caller) returns grpc:Error? {
         TestInt intArray = {values:[1, 2, 3, 4, 5]};
-        grpc:Error? err = caller->sendTestInt(intArray);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println(intArray);
-        }
-        checkpanic caller->complete();
+        check caller->sendTestInt(intArray);
+        check caller->complete();
     }
 
-    isolated remote function testStringArrayOutput(HelloWorld3TestStringCaller caller) {
+    isolated remote function testStringArrayOutput(HelloWorld3TestStringCaller caller) returns grpc:Error? {
         TestString stringArray = {values:["A", "B", "C"]};
         grpc:Error? err = caller->sendTestString(stringArray);
         if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println(stringArray);
+            log:printError("Error from Connector: " + err.message());
         }
-        checkpanic caller->complete();
+        check caller->complete();
     }
 
-    isolated remote function testFloatArrayOutput(HelloWorld3TestFloatCaller caller) {
+    isolated remote function testFloatArrayOutput(HelloWorld3TestFloatCaller caller) returns grpc:Error? {
         TestFloat floatArray = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
-        grpc:Error? err = caller->sendTestFloat(floatArray);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println(floatArray);
-        }
-        checkpanic caller->complete();
+        check caller->sendTestFloat(floatArray);
+        check caller->complete();
     }
 
-    isolated remote function testBooleanArrayOutput(HelloWorld3TestBooleanCaller caller) {
+    isolated remote function testBooleanArrayOutput(HelloWorld3TestBooleanCaller caller) returns grpc:Error? {
         TestBoolean booleanArray = {values:[true, false, true]};
-        grpc:Error? err = caller->sendTestBoolean(booleanArray);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println(booleanArray);
-        }
-        checkpanic caller->complete();
+        check caller->sendTestBoolean(booleanArray);
+        check caller->complete();
     }
 
-    isolated remote function testStructArrayOutput(HelloWorld3TestStructCaller caller) {
+    isolated remote function testStructArrayOutput(HelloWorld3TestStructCaller caller) returns grpc:Error? {
         A a1 = {name:"Sam"};
         A a2 = {name:"John"};
         TestStruct structArray = {values:[a1, a2]};
-        grpc:Error? err = caller->sendTestStruct(structArray);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println(structArray);
-        }
-        checkpanic caller->complete();
+        check caller->sendTestStruct(structArray);
+        check caller->complete();
     }
 }

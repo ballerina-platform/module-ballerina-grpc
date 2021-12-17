@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/io;
 
-listener grpc:Listener  ordermgtep = new (9111);
+listener grpc:Listener ordermgtep = new (9111);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_21_GRPC_GZIP_ENCODING_SERVICE,
@@ -32,7 +32,7 @@ service "OrderManagement" on ordermgtep {
     }
 
     isolated remote function getOrder(OrderManagementOrderCaller caller, string value) returns grpc:Error? {
-        Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
+        Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price: 2300.00};
         map<string|string[]> headers = {};
         headers = grpc:setCompression(grpc:GZIP);
         check caller->sendContextOrder({content: 'order, headers: headers});

@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/log;
 
 listener grpc:Listener  checkoutep = new (9108);
 
@@ -25,17 +24,9 @@ listener grpc:Listener  checkoutep = new (9108);
 }
 service "CheckoutService" on checkoutep {
 
-    isolated remote function PlaceOrder(CheckoutServicePlaceOrderResponseCaller caller, PlaceOrderRequest value) {
-        var addr = value.address;
-        log:printInfo("Address: " + addr.toString());
+    isolated remote function PlaceOrder(CheckoutServicePlaceOrderResponseCaller caller, PlaceOrderRequest value) returns grpc:Error? {
         PlaceOrderResponse response = {'order: "This is a address"};
-        var result = caller->sendPlaceOrderResponse(response);
-        if result is error {
-            log:printError("Error while sending response.", 'error = result);
-        }
-        var complete = caller->complete();
-        if complete is error {
-            log:printError("Error while completing the response.", 'error = complete);
-        }
+        check caller->sendPlaceOrderResponse(response);
+        check caller->complete();
     }
 }

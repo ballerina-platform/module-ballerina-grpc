@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 
 listener grpc:Listener ep24 = new (9114);
 
@@ -26,38 +25,24 @@ listener grpc:Listener ep24 = new (9114);
 service /HelloWorld24 on ep24 {
 
     remote isolated function testStringValueReturn(string value) returns string {
-        io:print("Received input for testStringValueReturn: ");
-        io:println(value);
         return value;
     }
     remote isolated function testFloatValueReturn(float value) returns float {
-        io:print("Received input for testFloatValueReturn: ");
-        io:println(value);
         return value;
     }
     remote isolated function testDoubleValueReturn(float value) returns float {
-        io:print("Received input for testDoubleValueReturn: ");
-        io:println(value);
         return value;
     }
     remote isolated function testInt64ValueReturn(int value) returns int {
-        io:print("Received input for testInt64ValueReturn: ");
-        io:println(value);
         return value;
     }
     remote isolated function testBoolValueReturn(boolean value) returns boolean {
-        io:print("Received input for testBoolValueReturn: ");
-        io:println(value);
         return value;
     }
     remote isolated function testBytesValueReturn(byte[] value) returns byte[] {
-        io:print("Received input for testBytesValueReturn: ");
-        io:println(value);
         return value;
     }
     remote isolated function testRecordValueReturn(string value) returns SampleMsg24 {
-        io:print("Received input for testRecordValueReturn: ");
-        io:println(value);
         SampleMsg24 msg = {
             name: "Ballerina Language",
             id: 0
@@ -65,13 +50,11 @@ service /HelloWorld24 on ep24 {
         return msg;
     }
     remote isolated function testRecordValueReturnStream(string value) returns stream<SampleMsg24, error?> {
-        io:print("Received input for testRecordValueReturnStream: ");
-        io:println(value);
         SampleMsg24[] arr = [
-            { name: "WSO2", id: 0},
-            { name: "Microsoft", id: 1},
-            { name: "Google", id: 2},
-            { name: "IBM", id: 3}
+            {name: "WSO2", id: 0},
+            {name: "Microsoft", id: 1},
+            {name: "Google", id: 2},
+            {name: "IBM", id: 3}
         ];
         return arr.toStream();
     }
