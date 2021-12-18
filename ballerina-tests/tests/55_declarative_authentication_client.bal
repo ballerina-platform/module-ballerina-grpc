@@ -423,7 +423,7 @@ function testHello55ClientStreamingOAuth2Auth() returns error? {
 @test:Config {enable: true}
 function testHello55EmptyAuthHeader() returns error? {
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
-    string|grpc:Error response = check hClient->hello55EmptyScope("Hello");
+    string|grpc:Error response = hClient->hello55EmptyScope("Hello");
     test:assertTrue(response is grpc:Error);
     test:assertEquals((<grpc:Error>response).message(), "Authorization header does not exist");
 }

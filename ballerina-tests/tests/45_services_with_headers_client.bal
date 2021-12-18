@@ -24,7 +24,7 @@ function testUnaryWithHeadersContext() returns error? {
 
     ContextHSRes response = check ep->unaryContext({content: reqMsg, headers: headers});
     test:assertEquals(response.content, reqMsg);
-    test:assertEquals(response.headers["unary-response-header"], ["abcde", "fgh"]);
+    test:assertEquals(response.headers["unary-res-header"], ["abcde", "fgh"]);
 }
 
 @test:Config {enable: true}
@@ -34,7 +34,7 @@ function testServerStreamingWithHeadersContext() returns error? {
     map<string|string[]> headers = {"server-steaming-req-header": ["1234567890", "2233445677"]};
 
     ContextHSResStream response = check ep->serverStrContext({content: reqMsg, headers: headers});
-    test:assertEquals(response.headers["server-steaming-response-header"], ["1234567890", "2233445677"]);
+    test:assertEquals(response.headers["server-steaming-res-header"], ["1234567890", "2233445677"]);
 
 }
 
@@ -60,7 +60,7 @@ function testClientStreamingWithContextHeaders() returns error? {
     ContextHSRes? response = check streamingClient->receiveContextHSRes();
     test:assertTrue(response is ContextHSRes);
     test:assertEquals((<ContextHSRes>response).content, {name: "Ann", message: "Hey"});
-    test:assertEquals((<ContextHSRes>response).headers["client-steaming-response-header"], ["1234567890", "2233445677"]);
+    test:assertEquals((<ContextHSRes>response).headers["client-steaming-res-header"], ["1234567890", "2233445677"]);
 }
 
 @test:Config {enable: true}
@@ -85,5 +85,5 @@ function testBidirectionalStreamingWithContextHeaders() returns error? {
     ContextHSRes? response = check streamingClient->receiveContextHSRes();
     test:assertTrue(response is ContextHSRes);
     test:assertEquals((<ContextHSRes>response).content, {name: "Ann", message: "Hey"});
-    test:assertEquals((<ContextHSRes>response).headers["bidi-steaming-response-header"], ["1234567890", "2233445677"]);
+    test:assertEquals((<ContextHSRes>response).headers["bidi-steaming-res-header"], ["1234567890", "2233445677"]);
 }
