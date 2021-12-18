@@ -16,8 +16,6 @@
 
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/log;
-import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 
 listener grpc:Listener ep36 = new (9126);
@@ -28,9 +26,8 @@ const string TEST_DEADLINE_HEADER = "testdeadline";
     descMap: getDescriptorMap36UnaryServiceWithDeadlinePropagation()
 }
 service "HelloWorld36S1" on ep36 {
-    
+
     remote isolated function call1(ContextString request) returns wrappers:ContextString|grpc:Error {
-        log:printInfo("Invoked call1");
         var cancel = grpc:isCancelled(request.headers);
         if cancel is boolean {
             if cancel {
@@ -60,7 +57,6 @@ service "HelloWorld36S1" on ep36 {
 }
 service "HelloWorld36S2" on ep36 {
     remote isolated function call2(ContextString request) returns wrappers:ContextString|error {
-        log:printInfo("Invoked call2");
         if request.headers[TEST_DEADLINE_HEADER] != () {
             string|string[]? deadlineStringValue = request.headers[TEST_DEADLINE_HEADER];
             if deadlineStringValue is string {
@@ -69,10 +65,9 @@ service "HelloWorld36S2" on ep36 {
                 if deadline is time:Utc {
                     [int, decimal] [deadlineSeconds, deadlineSecondFraction] = deadline;
                     [int, decimal] [currentSeconds, currentSecondFraction] = currentTime;
-                    io:println(deadline);
                     if currentSeconds < deadlineSeconds {
                         return {content: "Ack", headers: {}};
-                    } else if currentSeconds == deadlineSeconds && currentSecondFraction <= deadlineSecondFraction{
+                    } else if currentSeconds == deadlineSeconds && currentSecondFraction <= deadlineSecondFraction {
                         return {content: "Ack", headers: {}};
                     } else {
                         return error grpc:DeadlineExceededError("Exceeded the configured deadline");

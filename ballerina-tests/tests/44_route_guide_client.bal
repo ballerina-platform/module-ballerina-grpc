@@ -29,8 +29,8 @@ isolated function testRouteGuideMessagesWithUnary() returns error? {
 function testRouteGuideMessagesWithServerStreaming() returns error? {
     RouteGuideClient ep = check new ("http://localhost:9144");
     Feature[] fs = [
-        {location: {latitude: 1, longitude: 2}, name: "l1"}, 
-        {location: {latitude: 3, longitude: 4}, name: "l2"}, 
+        {location: {latitude: 1, longitude: 2}, name: "l1"},
+        {location: {latitude: 3, longitude: 4}, name: "l2"},
         {location: {latitude: 5, longitude: 6}, name: "l3"}
     ];
     Rectangle rectangle = {
@@ -50,8 +50,8 @@ function testRouteGuideMessagesWithServerStreaming() returns error? {
 function testRouteGuideMessagesWithClientStreaming() returns error? {
     RouteGuideClient ep = check new ("http://localhost:9144");
     Point[] points = [
-        {latitude: 406109563, longitude: -742186778}, 
-        {latitude: 411733222, longitude: -744228360}, 
+        {latitude: 406109563, longitude: -742186778},
+        {latitude: 411733222, longitude: -744228360},
         {latitude: 744228334, longitude: -742186778}
     ];
     RecordRouteStreamingClient sc = check ep->RecordRoute();
@@ -60,19 +60,16 @@ function testRouteGuideMessagesWithClientStreaming() returns error? {
     }
     check sc->complete();
     RouteSummary? response = check sc->receiveRouteSummary();
-    if response is RouteSummary {
-        test:assertEquals(response, {point_count: 1, feature_count: 1, distance: 1, elapsed_time: 1});
-    } else {
-        test:assertFail(msg = "Unexpected empty response");
-    }
+    test:assertTrue(response is RouteSummary);
+    test:assertEquals(<RouteSummary>response, {point_count: 1, feature_count: 1, distance: 1, elapsed_time: 1});
 }
 
 @test:Config {enable: true}
 function testRouteGuideMessagesWithBidirectionalStreaming() returns error? {
     RouteGuideClient ep = check new ("http://localhost:9144");
     RouteNote[] routeNotes = [
-        {location: {latitude: 406109563, longitude: -742186778}, message: "m1"}, 
-        {location: {latitude: 411733222, longitude: -744228360}, message: "m2"}, 
+        {location: {latitude: 406109563, longitude: -742186778}, message: "m1"},
+        {location: {latitude: 411733222, longitude: -744228360}, message: "m2"},
         {location: {latitude: 406109563, longitude: -742186778}, message: "m3"}
     ];
     RouteChatStreamingClient sc = check ep->RouteChat();

@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testUnaryCases() returns grpc:Error? {
     HelloWorld62Client helloWorldEp = check new ("http://localhost:9162", maxInboundMessageSize = 1024);
 
@@ -35,12 +35,10 @@ function testUnaryCases() returns grpc:Error? {
     // Receiving a large message than the `maxInboundMessageSize`
     result = helloWorldEp->msgSizeUnary("large");
     test:assertTrue(result is error);
-    if result is error {
-        test:assertEquals(result.message(), "Frame size 2503 exceeds maximum: 1024.");
-    }
+    test:assertEquals((<error>result).message(), "Frame size 2503 exceeds maximum: 1024.");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testClientStreamingCases() returns grpc:Error? {
     string[] requests = ["Hi", "Hey", "Hello"];
 
@@ -62,35 +60,25 @@ function testClientStreamingCases() returns grpc:Error? {
     // Receiving large size messages
     streamingClient = check helloWorldEp->msgSizeClientStreaming();
 
-    grpc:Error? err = streamingClient->sendString("large");
-    if err is grpc:Error {
-        test:assertFail("Error from Connector: " + err.message());
-    }
+    check streamingClient->sendString("large");
     check streamingClient->complete();
 
     string|grpc:Error? result = streamingClient->receiveString();
     test:assertTrue(result is error);
-    if result is error {
-        test:assertEquals(result.message(), "Frame size 2503 exceeds maximum: 1024.");
-    }
+    test:assertEquals((<error>result).message(), "Frame size 2503 exceeds maximum: 1024.");
 
     // Streaming large size messages
     streamingClient = check helloWorldEp->msgSizeClientStreaming();
 
-    err = streamingClient->sendString(LARGE_PAYLOAD);
-    if err is grpc:Error {
-        test:assertFail("Error from Connector: " + err.message());
-    }
+    check streamingClient->sendString(LARGE_PAYLOAD);
     check streamingClient->complete();
 
     result = streamingClient->receiveString();
     test:assertTrue(result is error);
-    if result is error {
-        test:assertEquals(result.message(), "HTTP status code 500\ninvalid content-type: text/plain\nMESSAGE DATA: Frame size 2503 exceeds maximum: 1024.");
-    }
+    test:assertEquals((<error>result).message(), "HTTP status code 500\ninvalid content-type: text/plain\nMESSAGE DATA: Frame size 2503 exceeds maximum: 1024.");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testServerStreamingCases() returns error? {
     HelloWorld62Client helloWorldEp = check new ("http://localhost:9162", maxInboundMessageSize = 1024);
 
@@ -108,9 +96,7 @@ function testServerStreamingCases() returns error? {
         test:assertFail("Expected error from client");
     });
     test:assertTrue(err is error);
-    if err is error {
-        test:assertEquals(err.message(), "Frame size 2503 exceeds maximum: 1024.");
-    }
+    test:assertEquals((<error>err).message(), "Frame size 2503 exceeds maximum: 1024.");
 
     // Sending large size messages
     response = check helloWorldEp->msgSizeServerStreaming(LARGE_PAYLOAD);
@@ -119,12 +105,10 @@ function testServerStreamingCases() returns error? {
         test:assertFail("Expected error from client");
     });
     test:assertTrue(err is error);
-    if err is error {
-        test:assertEquals(err.message(), "HTTP status code 500\ninvalid content-type: text/plain\nMESSAGE DATA: Frame size 2503 exceeds maximum: 1024.");
-    }
+    test:assertEquals((<error>err).message(), "HTTP status code 500\ninvalid content-type: text/plain\nMESSAGE DATA: Frame size 2503 exceeds maximum: 1024.");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testBidiStreamingCases() returns grpc:Error? {
     string[] requests = ["Hi", "Hey", "Hello"];
 
@@ -142,7 +126,7 @@ function testBidiStreamingCases() returns grpc:Error? {
     check streamingClient->complete();
 
     int count = 0;
-    
+
     foreach string request in requests {
         string? res = check streamingClient->receiveString();
         test:assertEquals(res, request);
@@ -153,27 +137,17 @@ function testBidiStreamingCases() returns grpc:Error? {
     // Receiving large size messages
     streamingClient = check helloWorldEp->msgSizeBidiStreaming();
 
-    grpc:Error? err = streamingClient->sendString("large");
-    if err is grpc:Error {
-        test:assertFail("Error from Connector: " + err.message());
-    }
+    check streamingClient->sendString("large");
     check streamingClient->complete();
     string|grpc:Error? result = streamingClient->receiveString();
     test:assertTrue(result is error);
-    if result is error {
-        test:assertEquals(result.message(), "Frame size 2503 exceeds maximum: 1024.");
-    }
+    test:assertEquals((<error>result).message(), "Frame size 2503 exceeds maximum: 1024.");
 
     // Streaming large size messages
     streamingClient = check helloWorldEp->msgSizeBidiStreaming();
-    err = streamingClient->sendString(LARGE_PAYLOAD);
-    if err is grpc:Error {
-        test:assertFail("Error from Connector: " + err.message());
-    }
+    check streamingClient->sendString(LARGE_PAYLOAD);
     check streamingClient->complete();
     result = streamingClient->receiveString();
     test:assertTrue(result is error);
-    if result is error {
-        test:assertEquals(result.message(), "HTTP status code 500\ninvalid content-type: text/plain\nMESSAGE DATA: Frame size 2503 exceeds maximum: 1024.");
-    }
+    test:assertEquals((<error>result).message(), "HTTP status code 500\ninvalid content-type: text/plain\nMESSAGE DATA: Frame size 2503 exceeds maximum: 1024.");
 }

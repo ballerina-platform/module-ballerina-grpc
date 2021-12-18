@@ -22,7 +22,7 @@ listener grpc:Listener ep56 = new (9156);
 service "HelloWorld56" on ep56 {
 
     remote function hello56BiDi(HelloWorld56StringCaller caller,
-     stream<string, error?> clientStream) returns error? {
+    stream<string, error?> clientStream) returns error? {
         check caller->sendError(error grpc:Error("Test error from service"));
         panic error grpc:Error("Panic in service");
     }

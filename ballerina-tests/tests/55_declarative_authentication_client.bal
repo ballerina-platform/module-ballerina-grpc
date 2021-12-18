@@ -42,11 +42,8 @@ function testHello55JWTAuthBiDiWithCaller() returns error? {
     check strClient->sendString("Hello");
     check strClient->complete();
     string? s = check strClient->receiveString();
-    if s is () {
-        test:assertFail("Expected a response");
-    } else {
-        test:assertEquals(s, "Hello");
-    }
+    test:assertTrue(s is string);
+    test:assertEquals(<string>s, "Hello");
 }
 
 @test:Config {enable: true}
@@ -64,11 +61,8 @@ function testHello55JWTAuthBiDiWithCallerUnauthenticated() returns error? {
     });
     check strClient->complete();
     string|grpc:Error? s = strClient->receiveString();
-    if s is grpc:UnauthenticatedError {
-        test:assertEquals(s.message(), "Failed to authenticate client");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(s is grpc:UnauthenticatedError);
+    test:assertEquals((<grpc:UnauthenticatedError>s).message(), "Failed to authenticate client");
 }
 
 @test:Config {enable: true}
@@ -95,11 +89,8 @@ function testHello55JWTAuthBiDiWithCallerInvalidPermission() returns error? {
     check strClient->sendString("Hello");
     check strClient->complete();
     string|grpc:Error? s = strClient->receiveString();
-    if s is grpc:PermissionDeniedError {
-        test:assertEquals(s.message(), "Permission denied");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(s is grpc:PermissionDeniedError);
+    test:assertEquals((<grpc:PermissionDeniedError>s).message(), "Permission denied");
 }
 
 @test:Config {enable: true}
@@ -129,15 +120,12 @@ function testHello55JWTAuthBiDiWithReturn() returns error? {
     check strClient->sendString("Hello");
     check strClient->complete();
     string? s = check strClient->receiveString();
-    if s is () {
-        test:assertFail("Expected a response");
-    } else {
-        test:assertEquals(s, "Hello");
-    }
+    test:assertTrue(s is string);
+    test:assertEquals(<string>s, "Hello");
 }
 
 @test:Config {enable: true}
-function testHello55JWTAuthUnary() returns error? {
+function testHello55JWTAuthUnary() returns grpc:Error? {
     grpc:JwtIssuerConfig config = {
         username: "admin",
         issuer: "wso2",
@@ -156,12 +144,8 @@ function testHello55JWTAuthUnary() returns error? {
     };
 
     helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
-    string|grpc:Error result = hClient->hello55UnaryWithCaller("Hello");
-    if result is grpc:Error {
-        test:assertFail(result.message());
-    } else {
-        test:assertEquals(result, "Hello");
-    }
+    string result = check hClient->hello55UnaryWithCaller("Hello");
+    test:assertEquals(result, "Hello");
 }
 
 @test:Config {enable: true}
@@ -176,11 +160,8 @@ function testHello55JWTAuthUnaryUnauthenticated() returns error? {
 
     helloWorld55Client hClient = check new ("http://localhost:9155");
     string|grpc:Error result = hClient->hello55UnaryWithCaller(ctxString);
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "Failed to authenticate client");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Failed to authenticate client");
 }
 
 @test:Config {enable: true}
@@ -204,11 +185,8 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
 
     helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     string|grpc:Error result = hClient->hello55UnaryWithCaller("Hello");
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "Permission denied");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Permission denied");
 }
 
 @test:Config {enable: true}
@@ -216,10 +194,10 @@ function testHello55LdapAuth() returns error? {
 
     if !isWindowsEnvironment() {
         grpc:Service helloWorld55 = @grpc:ServiceConfig {auth: [ldapUserStoreconfig55WithScopes]}
-        @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()} 
+        @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
         service object {
 
-            remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller, 
+            remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
             stream<string, error?> clientStream) returns error? {
                 _ = check clientStream.next();
                 _ = check clientStream.next();
@@ -227,7 +205,7 @@ function testHello55LdapAuth() returns error? {
                 check caller->complete();
             }
 
-            remote function hello55BiDiWithReturn(stream<string, error?> clientStream) 
+            remote function hello55BiDiWithReturn(stream<string, error?> clientStream)
             returns stream<string, error?>|error? {
                 return clientStream;
             }
@@ -266,34 +244,26 @@ function testHello55LdapAuth() returns error? {
         };
 
         helloWorld55Client hClient = check new ("http://localhost:9256", {auth: config});
-        string|grpc:Error response = hClient->hello55UnaryWithReturn("Hello");
-        if response is grpc:Error {
-            test:assertFail(response.message());
-        } else {
-            test:assertEquals(response, "Hello");
-        }
+        string response = check hClient->hello55UnaryWithReturn("Hello");
+        test:assertEquals(response, "Hello");
         check ep55WithLdapAndScopes.immediateStop();
     }
 }
 
 @test:Config {enable: true}
-function testHello55BasicAuth() returns error? {
+function testHello55BasicAuth() returns grpc:Error? {
     grpc:CredentialsConfig config = {
         username: "admin",
         password: "123"
     };
 
     helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
-    string|grpc:Error response = hClient->hello55UnaryWithReturn("Hello");
-    if response is grpc:Error {
-        test:assertFail(response.message());
-    } else {
-        test:assertEquals(response, "Hello");
-    }
+    string response = check hClient->hello55UnaryWithReturn("Hello");
+    test:assertEquals(response, "Hello");
 }
 
 @test:Config {enable: true}
-function testHello55OAuth2Auth() returns error? {
+function testHello55OAuth2Auth() returns grpc:Error? {
     grpc:OAuth2ClientCredentialsGrantConfig config = {
         tokenUrl: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token",
         clientId: "3MVG9YDQS5WtC11paU2WcQjBB3L5w4gz52uriT8ksZ3nUVjKvrfQMrU4uvZohTftxStwNEW4cfStBEGRxRL68",
@@ -310,12 +280,8 @@ function testHello55OAuth2Auth() returns error? {
     };
 
     helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
-    string|grpc:Error response = hClient->hello55UnaryWithReturn("Hello");
-    if response is grpc:Error {
-        test:assertFail(response.message());
-    } else {
-        test:assertEquals(response, "Hello");
-    }
+    string response = check hClient->hello55UnaryWithReturn("Hello");
+    test:assertEquals(response, "Hello");
 }
 
 @test:Config {enable: true}
@@ -337,19 +303,16 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
     };
 
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
-    string|grpc:Error? result = check hClient->hello55EmptyScope("Hello");
-    if result is () {
-        test:assertFail("Expected a response");
-    } else {
-        test:assertEquals(result, "Hello");
-    }
+    string? result = check hClient->hello55EmptyScope("Hello");
+    test:assertTrue(result is string);
+    test:assertEquals(<string>result, "Hello");
 }
 
 @test:Config {enable: true}
 function testHello55LdapAuthWithEmptyScope() returns error? {
     if !isWindowsEnvironment() {
         grpc:Service helloWorld55EmptyScope = @grpc:ServiceConfig {auth: [ldapUserStoreconfig55EmptyScope]}
-        @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()} 
+        @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
         service object {
 
             remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) returns error? {
@@ -365,12 +328,8 @@ function testHello55LdapAuthWithEmptyScope() returns error? {
             password: "alice@123"
         };
         helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9257", {auth: config});
-        string|grpc:Error response = hClient->hello55EmptyScope("Hello");
-        if response is grpc:Error {
-            test:assertFail(response.message());
-        } else {
-            test:assertEquals(response, "Hello");
-        }
+        string response = check hClient->hello55EmptyScope("Hello");
+        test:assertEquals(response, "Hello");
         check ep55WithLdapAndEmptyScope.immediateStop();
     }
 }
@@ -383,12 +342,8 @@ function testHello55BasicAuthWithEmptyScope() returns error? {
     };
 
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
-    string|grpc:Error response = hClient->hello55EmptyScope("Hello");
-    if response is grpc:Error {
-        test:assertFail(response.message());
-    } else {
-        test:assertEquals(response, "Hello");
-    }
+    string response = check hClient->hello55EmptyScope("Hello");
+    test:assertEquals(response, "Hello");
 }
 
 @test:Config {enable: true}
@@ -408,12 +363,8 @@ function testHello55OAuth2AuthWithEmptyScope() returns error? {
     };
 
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
-    string|grpc:Error response = hClient->hello55EmptyScope("Hello");
-    if response is grpc:Error {
-        test:assertFail(response.message());
-    } else {
-        test:assertEquals(response, "Hello");
-    }
+    string response = check hClient->hello55EmptyScope("Hello");
+    test:assertEquals(response, "Hello");
 }
 
 @test:Config {enable: true}
@@ -433,21 +384,13 @@ function testHello55ServerStreamingOAuth2Auth() returns error? {
     };
 
     helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
-    stream<string, error?>|grpc:Error response = hClient->hello55ServerStreaming("Hello");
-    if response is grpc:Error {
-        test:assertFail(response.message());
-    } else {
-        var value1 = response.next();
-        var value2 = response.next();
-        if value1 is error || value2 is error {
-            test:assertFail("Error occured");
-        } else if value1 is () || value2 is () {
-            test:assertFail("Expected a non null response");
-        } else {
-            test:assertEquals(value1["value"], "Hello 1");
-            test:assertEquals(value2["value"], "Hello 2");
-        }
-    }
+    stream<string, error?> response = check hClient->hello55ServerStreaming("Hello");
+    var value1 = check response.next();
+    var value2 = check response.next();
+    test:assertFalse(value1 is ());
+    test:assertFalse(value2 is ());
+    test:assertEquals((<record {|string value;|}>value1)["value"], "Hello 1");
+    test:assertEquals((<record {|string value;|}>value2)["value"], "Hello 2");
 }
 
 @test:Config {enable: true}
@@ -472,23 +415,15 @@ function testHello55ClientStreamingOAuth2Auth() returns error? {
     check sClient->sendString("World");
     check sClient->complete();
 
-    string|grpc:Error? response = sClient->receiveString();
-    if response is grpc:Error {
-        test:assertFail(response.message());
-    } else if response is () {
-        test:assertFail("Expected a response");
-    } else {
-        test:assertEquals(response, "Hello World");
-    }
+    string? response = check sClient->receiveString();
+    test:assertTrue(response is string);
+    test:assertEquals(<string>response, "Hello World");
 }
 
 @test:Config {enable: true}
 function testHello55EmptyAuthHeader() returns error? {
     helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
-    string|grpc:Error response = hClient->hello55EmptyScope("Hello");
-    if response is grpc:Error {
-        test:assertEquals(response.message(), "Authorization header does not exist");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    string|grpc:Error response = check hClient->hello55EmptyScope("Hello");
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Authorization header does not exist");
 }

@@ -23,7 +23,7 @@ isolated function testGetGreeting() returns error? {
     TimestampServiceClient utsClient = check new ("http://localhost:9147");
     Greeting greeting = check utsClient->getGreeting("Hello");
     time:Utc customTime = [1196676930, 0.12];
-    Greeting expectedGreeting = {"name": "Hello","time": customTime};
+    Greeting expectedGreeting = {"name": "Hello", "time": customTime};
     test:assertEquals(greeting, expectedGreeting);
 }
 
@@ -97,8 +97,8 @@ isolated function testTimestampClientStream() returns error? {
     ClientStreamTimeStreamingClient result = check utsClient->clientStreamTime();
     check result->sendTimestamp(sendingTime);
     check result->complete();
-    time:Utc? res = check result->receiveTimestamp();
-    test:assertEquals(res, sendingTime);
+    time:Utc? response = check result->receiveTimestamp();
+    test:assertEquals(response, sendingTime);
 }
 
 @test:Config {enable: true}
@@ -111,10 +111,7 @@ isolated function testTimestampContextClientStream() returns error? {
         content: sendingTime
     });
     check result->complete();
-    timestamp:ContextTimestamp? res = check result->receiveContextTimestamp();
-    if res is timestamp:ContextTimestamp {
-        test:assertEquals(res.content, sendingTime);
-    } else {
-        test:assertFail(msg = "Expected a context timestamp");
-    }
+    timestamp:ContextTimestamp? response = check result->receiveContextTimestamp();
+    test:assertTrue(response is timestamp:ContextTimestamp);
+    test:assertEquals((<timestamp:ContextTimestamp>response).content, sendingTime);
 }

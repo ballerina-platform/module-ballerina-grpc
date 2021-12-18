@@ -21,25 +21,22 @@ import ballerina/test;
 isolated function testServerStreamingNegative() returns error? {
     helloWorld53Client ep = check new ("http://localhost:9153");
     stream<string, error?> strm = check ep->hello53("hey");
-    record {| string value; |}|error? content = strm.next();
+    record {|string value;|}|error? content = strm.next();
     if content is error {
-        test:assertFail(msg = content.message());
+        test:assertFail(content.message());
     } else {
         test:assertEquals(content["value"], "a");
     }
-    
+
     check strm.close();
-    record {| string value; |}|error? result = strm.next();
+    record {|string value;|}|error? result = strm.next();
     if result is grpc:Error {
         test:assertEquals(result.message(), "Stream is closed. Therefore, no operations are allowed further on the stream.");
     } else {
-        test:assertFail(msg = "Expected an error");
+        test:assertFail("Expected an error");
     }
 
-    error? res = strm.close();
-    if res is grpc:Error {
-        test:assertEquals(res.message(), "Stream is closed. Therefore, no operations are allowed further on the stream.");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    error? response = strm.close();
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Stream is closed. Therefore, no operations are allowed further on the stream.");
 }

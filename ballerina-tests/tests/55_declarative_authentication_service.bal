@@ -110,15 +110,15 @@ grpc:FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope = {
 
 @grpc:ServiceConfig {
     auth: [
-        jwtAuthConfig55WithScopes, 
-        oauth2config55WithScopes, 
+        jwtAuthConfig55WithScopes,
+        oauth2config55WithScopes,
         fileUserStoreConfig55WithScopes
     ]
 }
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
 service "helloWorld55" on ep55WithScopes {
 
-    remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller, 
+    remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
     stream<string, error?> clientStream) returns error? {
         _ = check clientStream.next();
         _ = check clientStream.next();
@@ -126,7 +126,7 @@ service "helloWorld55" on ep55WithScopes {
         check caller->complete();
     }
 
-    remote function hello55BiDiWithReturn(stream<string, error?> clientStream) 
+    remote function hello55BiDiWithReturn(stream<string, error?> clientStream)
     returns stream<string, error?>|error? {
         return clientStream;
     }
@@ -160,8 +160,8 @@ service "helloWorld55" on ep55WithScopes {
 
 @grpc:ServiceConfig {
     auth: [
-        jwtAuthConfig55EmptyScope, 
-        oauth2config55EmptyScope, 
+        jwtAuthConfig55EmptyScope,
+        oauth2config55EmptyScope,
         fileUserStoreConfig55EmptyScope
     ]
 }

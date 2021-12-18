@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/log;
 import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 
@@ -26,9 +25,8 @@ listener grpc:Listener ep37 = new (9127);
     descMap: getDescriptorMap37StreamingWithDeadline()
 }
 service "HelloWorld37" on ep37 {
-    
+
     remote isolated function callWithDeadline(wrappers:ContextStringStream clientStream) returns wrappers:ContextStringStream|error {
-        log:printInfo("Connected sucessfully.");
         check clientStream.content.forEach(isolated function(string val) {
             io:println(val);
         });

@@ -51,7 +51,7 @@ service "HelloWorld52" on ep52 {
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
             return error grpc:AbortedError("AUTH_HEADER header is missing");
         } else {
-            grpc:ListenerLdapUserStoreBasicAuthHandler handler = new(config);
+            grpc:ListenerLdapUserStoreBasicAuthHandler handler = new (config);
             auth:UserDetails|grpc:UnauthenticatedError authnResult = handler->authenticate(request.headers);
             if authnResult is grpc:UnauthenticatedError {
                 return authnResult;
