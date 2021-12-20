@@ -38,7 +38,7 @@ service "HelloWorld98" on ep5 {
         }
     }
 
-    isolated remote function testInt(HelloWorld98IntCaller caller, string age) returns grpc:Error? {
+    isolated remote function testInt(HelloWorld98IntCaller caller, string age) {
         log:printInfo("age: " + age);
         int displayAge = 0;
         if age == "" {
@@ -46,6 +46,6 @@ service "HelloWorld98" on ep5 {
         } else {
             displayAge = 1;
         }
-        check caller->sendInt(displayAge);
+        checkpanic caller->sendInt(displayAge);
     }
 }

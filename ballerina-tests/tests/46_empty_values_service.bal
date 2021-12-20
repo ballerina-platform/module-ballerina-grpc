@@ -22,12 +22,12 @@ listener grpc:Listener ep46 = new (9146);
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_46_EMPTY_VALUES, descMap: getDescriptorMap46EmptyValues()}
 service "EmptyHandler" on ep46 {
 
-    remote function unaryWithEmpty() returns error? {
+    remote function unaryWithEmpty() {
         log:printInfo("Unary call with empty");
     }
-    remote function clientStrWithEmpty(stream<string, error?> clientStream) returns error? {
+    remote function clientStrWithEmpty(stream<string, error?> clientStream) {
         log:printInfo("Client streaming call with empty");
-        check clientStream.forEach(function(string s) {
+        checkpanic clientStream.forEach(function(string s) {
             log:printInfo(s);
         });
         return;

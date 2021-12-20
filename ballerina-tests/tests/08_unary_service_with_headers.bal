@@ -32,11 +32,11 @@ service "HelloWorld101" on ep8 {
         map<string|string[]> responseHeaders = {};
 
         if !request.headers.hasKey("x-id") {
-            check caller->sendError(error grpc:AbortedError("x-id header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("x-id header is missing"));
         } else {
             responseHeaders["x-id"] = ["1234567890", "2233445677"];
         }
         wrappers:ContextString responseMessage = {content: message, headers: responseHeaders};
-        check caller->sendContextString(responseMessage);
+        checkpanic caller->sendContextString(responseMessage);
     }
 }

@@ -23,13 +23,13 @@ import ballerina/lang.runtime as runtime;
 }
 service "HelloWorld14" on new grpc:Listener(9104) {
 
-    isolated remote function hello(HelloWorld14StringCaller caller, string name) returns grpc:Error? {
+    isolated remote function hello(HelloWorld14StringCaller caller, string name) {
         string message = "Hello " + name;
         runtime:sleep(2);
         // Sends response message with headers.
-        check caller->sendString(message);
+        checkpanic caller->sendString(message);
 
         // Sends `completed` notification to caller.
-        check caller->complete();
+        checkpanic caller->complete();
     }
 }

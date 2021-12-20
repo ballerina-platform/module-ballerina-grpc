@@ -25,17 +25,17 @@ listener grpc:Listener ordermgtep = new (9111);
 }
 service "OrderManagement" on ordermgtep {
 
-    isolated remote function addOrder(OrderManagementStringCaller caller, Order value) returns grpc:Error? {
+    isolated remote function addOrder(OrderManagementStringCaller caller, Order value) {
         io:println(value);
-        check caller->sendString("Order is added " + value.id);
-        check caller->complete();
+        checkpanic caller->sendString("Order is added " + value.id);
+        checkpanic caller->complete();
     }
 
-    isolated remote function getOrder(OrderManagementOrderCaller caller, string value) returns grpc:Error? {
+    isolated remote function getOrder(OrderManagementOrderCaller caller, string value) {
         Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price: 2300.00};
         map<string|string[]> headers = {};
         headers = grpc:setCompression(grpc:GZIP);
-        check caller->sendContextOrder({content: 'order, headers: headers});
-        check caller->complete();
+        checkpanic caller->sendContextOrder({content: 'order, headers: headers});
+        checkpanic caller->complete();
     }
 }

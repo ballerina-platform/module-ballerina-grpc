@@ -22,7 +22,7 @@ import ballerina/grpc;
 }
 service "OneofFieldService" on new grpc:Listener(9105) {
 
-    isolated remote function hello(OneofFieldServiceResponse1Caller caller, Request1 value) returns grpc:Error? {
+    isolated remote function hello(OneofFieldServiceResponse1Caller caller, Request1 value) {
         string? request = "";
         if value?.first_name is string {
             request = value?.first_name;
@@ -30,12 +30,12 @@ service "OneofFieldService" on new grpc:Listener(9105) {
             request = value?.last_name;
         }
         Response1 response = {message: "Hello " + <string>request};
-        check caller->sendResponse1(response);
-        check caller->complete();
+        checkpanic caller->sendResponse1(response);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testOneofField(OneofFieldServiceZZZCaller caller, ZZZ req) returns grpc:Error? {
-        check caller->sendZZZ(req);
-        check caller->complete();
+    isolated remote function testOneofField(OneofFieldServiceZZZCaller caller, ZZZ req) {
+        checkpanic caller->sendZZZ(req);
+        checkpanic caller->complete();
     }
 }

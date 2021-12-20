@@ -42,9 +42,9 @@ listener grpc:Listener ep10 = new (9100,
     descMap: getDescriptorMap10GrpcSslServer()
 }
 service "grpcMutualSslService" on ep10 {
-    isolated remote function hello(GrpcMutualSslServiceStringCaller caller, string name) returns grpc:Error? {
+    isolated remote function hello(GrpcMutualSslServiceStringCaller caller, string name) {
         string message = "Hello " + name;
-        check caller->sendString(message);
-        check caller->complete();
+        checkpanic caller->sendString(message);
+        checkpanic caller->complete();
     }
 }

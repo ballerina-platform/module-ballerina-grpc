@@ -26,7 +26,7 @@ listener grpc:Listener ep30 = new (9120);
 }
 service /HelloWorld30 on ep30 {
 
-    remote isolated function testStringValueReturn(HelloWorld30StringCaller caller, ContextString request) returns grpc:Error? {
+    remote isolated function testStringValueReturn(HelloWorld30StringCaller caller, ContextString request) {
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
         grpc:OAuth2IntrospectionConfig config = {
@@ -43,22 +43,22 @@ service /HelloWorld30 on ep30 {
             }
         };
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
-            check caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
             grpc:ListenerOAuth2Handler handler = new (config);
             oauth2:IntrospectionResponse|grpc:UnauthenticatedError|grpc:PermissionDeniedError authResult = handler->authorize(request.headers, "read");
             if authResult is oauth2:IntrospectionResponse {
                 responseHeaders["x-id"] = ["1234567890", "2233445677"];
                 wrappers:ContextString responseMessage = {content: message, headers: responseHeaders};
-                check caller->sendContextString(responseMessage);
+                checkpanic caller->sendContextString(responseMessage);
             } else {
-                check caller->sendError(error grpc:AbortedError("Unauthorized"));
+                checkpanic caller->sendError(error grpc:AbortedError("Unauthorized"));
             }
         }
-        check caller->complete();
+        checkpanic caller->complete();
     }
 
-    remote isolated function testStringValueNegative(HelloWorld30StringCaller caller, ContextString request) returns grpc:Error? {
+    remote isolated function testStringValueNegative(HelloWorld30StringCaller caller, ContextString request) {
         grpc:OAuth2IntrospectionConfig config = {
             url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect",
             tokenTypeHint: "access_token",
@@ -75,13 +75,13 @@ service /HelloWorld30 on ep30 {
         grpc:ListenerOAuth2Handler handler = new (config);
         oauth2:IntrospectionResponse|grpc:UnauthenticatedError|grpc:PermissionDeniedError authResult = handler->authorize(request.headers, "read");
         if authResult is grpc:UnauthenticatedError|grpc:PermissionDeniedError {
-            check caller->sendError(authResult);
+            checkpanic caller->sendError(authResult);
         } else {
-            check caller->sendError(error grpc:AbortedError("Expected error was not found."));
+            checkpanic caller->sendError(error grpc:AbortedError("Expected error was not found."));
         }
     }
 
-    remote isolated function testStringValueNoScope(HelloWorld30StringCaller caller, ContextString request) returns grpc:Error? {
+    remote isolated function testStringValueNoScope(HelloWorld30StringCaller caller, ContextString request) {
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
         grpc:OAuth2IntrospectionConfig config = {
@@ -98,18 +98,18 @@ service /HelloWorld30 on ep30 {
             }
         };
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
-            check caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
             grpc:ListenerOAuth2Handler handler = new (config);
             oauth2:IntrospectionResponse|grpc:UnauthenticatedError|grpc:PermissionDeniedError authResult = handler->authorize(request.headers, ());
             if authResult is oauth2:IntrospectionResponse {
                 responseHeaders["x-id"] = ["1234567890", "2233445677"];
                 wrappers:ContextString responseMessage = {content: message, headers: responseHeaders};
-                check caller->sendContextString(responseMessage);
+                checkpanic caller->sendContextString(responseMessage);
             } else {
-                check caller->sendError(error grpc:AbortedError("Unauthorized"));
+                checkpanic caller->sendError(error grpc:AbortedError("Unauthorized"));
             }
         }
-        check caller->complete();
+        checkpanic caller->complete();
     }
 }

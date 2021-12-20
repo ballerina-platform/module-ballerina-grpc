@@ -25,10 +25,10 @@ listener grpc:Listener ep6 = new (9096);
 }
 service "HelloWorld45" on ep6 {
 
-    isolated remote function lotsOfReplies(HelloWorld45StringCaller caller, string name) returns grpc:Error? {
+    isolated remote function lotsOfReplies(HelloWorld45StringCaller caller, string name) {
         string[] greets = ["Hi", "Hey", "GM"];
         foreach var greet in greets {
-            check caller->sendString(greet + " " + name);
+            checkpanic caller->sendString(greet + " " + name);
         }
     }
 }

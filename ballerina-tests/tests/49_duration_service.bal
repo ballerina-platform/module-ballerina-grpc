@@ -26,11 +26,11 @@ service "DurationHandler" on ep49 {
     remote function unaryCall1(string value) returns time:Seconds|error {
         return 12.34d;
     }
-    remote function unaryCall2(DurationHandlerDurationMsgCaller caller, DurationMsg dm) returns grpc:Error? {
-        check caller->sendDurationMsg(dm);
+    remote function unaryCall2(DurationHandlerDurationMsgCaller caller, DurationMsg dm) {
+        checkpanic caller->sendDurationMsg(dm);
     }
-    remote function clientStreaming(stream<time:Seconds, grpc:Error?> clientStream) returns string|error {
-        check clientStream.forEach(function(time:Seconds d) {
+    remote function clientStreaming(stream<time:Seconds, grpc:Error?> clientStream) returns string {
+        checkpanic clientStream.forEach(function(time:Seconds d) {
             log:printInfo(d.toString());
         });
         return "Ack";

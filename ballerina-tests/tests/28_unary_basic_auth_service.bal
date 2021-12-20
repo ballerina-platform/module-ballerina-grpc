@@ -30,7 +30,7 @@ service "HelloWorld28" on ep28 {
             return error grpc:AbortedError("AUTH_HEADER header is missing");
         }
         grpc:ListenerFileUserStoreBasicAuthHandler handler = new;
-        auth:UserDetails authnResult = check handler.authenticate(request.headers);
+        auth:UserDetails authnResult = checkpanic handler.authenticate(request.headers);
         grpc:PermissionDeniedError? authzResult = handler.authorize(<auth:UserDetails>authnResult, "write");
         if authzResult is () {
             return "Hello WSO2";

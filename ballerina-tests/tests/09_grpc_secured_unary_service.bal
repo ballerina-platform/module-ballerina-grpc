@@ -41,9 +41,9 @@ listener grpc:Listener ep9 = new (9099, {
     descMap: getDescriptorMap09GrpcSecuredUnaryService()
 }
 service "HelloWorld85" on ep9 {
-    isolated remote function hello(HelloWorld85StringCaller caller, string name) returns grpc:Error? {
+    isolated remote function hello(HelloWorld85StringCaller caller, string name) {
         string message = "Hello " + name;
-        check caller->sendString(message);
-        check caller->complete();
+        checkpanic caller->sendString(message);
+        checkpanic caller->complete();
     }
 }

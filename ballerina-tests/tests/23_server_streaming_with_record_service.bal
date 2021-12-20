@@ -25,16 +25,16 @@ listener grpc:Listener helloWorldStreamingep = new (9113);
 }
 service "helloWorldServerStreaming" on helloWorldStreamingep {
 
-    isolated remote function lotsOfReplies(HelloWorldServerStreamingHelloResponseCaller caller, HelloRequest value) returns grpc:Error? {
+    isolated remote function lotsOfReplies(HelloWorldServerStreamingHelloResponseCaller caller, HelloRequest value) {
         log:printInfo("Server received hello from " + value.name);
         string[] greets = ["Hi", "Hey", "GM"];
 
         foreach string greet in greets {
             string message = greet + " " + value.name;
             HelloResponse msg = {message: message};
-            check caller->sendHelloResponse(msg);
+            checkpanic caller->sendHelloResponse(msg);
         }
 
-        check caller->complete();
+        checkpanic caller->complete();
     }
 }

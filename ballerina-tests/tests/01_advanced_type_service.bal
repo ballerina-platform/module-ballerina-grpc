@@ -27,25 +27,25 @@ listener grpc:Listener ep = new (9091, {
 }
 service "HelloWorld" on ep {
 
-    isolated remote function testInputNestedStruct(HelloWorldStringCaller caller, Person req) returns grpc:Error? {
+    isolated remote function testInputNestedStruct(HelloWorldStringCaller caller, Person req) {
         log:printInfo("name: " + req.name);
         string message = "Submitted name: " + req.name;
-        check caller->sendString(message);
-        check caller->complete();
+        checkpanic caller->sendString(message);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testOutputNestedStruct(HelloWorldPersonCaller caller, string name) returns grpc:Error? {
+    isolated remote function testOutputNestedStruct(HelloWorldPersonCaller caller, string name) {
         log:printInfo("requested name: " + name);
         Person person = {name: "Sam", address: {postalCode: 10300, state: "CA", country: "USA"}};
-        check caller->sendPerson(person);
-        check caller->complete();
+        checkpanic caller->sendPerson(person);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testInputStructOutputStruct(HelloWorldStockQuoteCaller caller, StockRequest req) returns grpc:Error? {
+    isolated remote function testInputStructOutputStruct(HelloWorldStockQuoteCaller caller, StockRequest req) {
         log:printInfo("Getting stock details for symbol: " + req.name);
         StockQuote res = {symbol: "WSO2", name: "WSO2.com", last: 149.52, low: 150.70, high: 149.18};
-        check caller->sendStockQuote(res);
-        check caller->complete();
+        checkpanic caller->sendStockQuote(res);
+        checkpanic caller->complete();
     }
 
     isolated remote function testInputStructNoOutput(HelloWorldNilCaller caller, StockQuote req) {
@@ -56,18 +56,18 @@ service "HelloWorld" on ep {
         log:printInfo("High: " + req.high.toString());
     }
 
-    isolated remote function testNoInputOutputStruct(HelloWorldStockQuotesCaller caller) returns grpc:Error? {
+    isolated remote function testNoInputOutputStruct(HelloWorldStockQuotesCaller caller) {
         StockQuote res = {symbol: "WSO2", name: "WSO2 Inc.", last: 14.0, low: 15.0, high: 16.0};
         StockQuote res1 = {symbol: "Google", name: "Google Inc.", last: 100.0, low: 101.0, high: 102.0};
         StockQuotes quotes = {stock: [res, res1]};
-        check caller->sendStockQuotes(quotes);
-        check caller->complete();
+        checkpanic caller->sendStockQuotes(quotes);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testNoInputOutputArray(HelloWorldStockNamesCaller caller) returns grpc:Error? {
+    isolated remote function testNoInputOutputArray(HelloWorldStockNamesCaller caller) {
         string[] names = ["WSO2", "Google"];
         StockNames stockNames = {names: names};
-        check caller->sendStockNames(stockNames);
-        check caller->complete();
+        checkpanic caller->sendStockNames(stockNames);
+        checkpanic caller->complete();
     }
 }

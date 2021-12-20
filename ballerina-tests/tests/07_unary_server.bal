@@ -24,57 +24,57 @@ listener grpc:Listener ep7 = new (9097);
     descMap: getDescriptorMap07UnaryServer()
 }
 service "HelloWorld100" on ep7 {
-    isolated remote function hello(HelloWorld100StringCaller caller, string name) returns grpc:Error? {
+    isolated remote function hello(HelloWorld100StringCaller caller, string name) {
         string message = "Hello " + name;
         if name == "invalid" {
-            check caller->sendError(error grpc:AbortedError("Operation aborted"));
+            checkpanic caller->sendError(error grpc:AbortedError("Operation aborted"));
         } else {
-            check caller->sendString(message);
+            checkpanic caller->sendString(message);
         }
-        check caller->complete();
+        checkpanic caller->complete();
     }
 
-    isolated remote function testInt(HelloWorld100IntCaller caller, int age) returns grpc:Error? {
+    isolated remote function testInt(HelloWorld100IntCaller caller, int age) {
         int displayAge = age - 2;
-        check caller->sendInt(displayAge);
-        check caller->complete();
+        checkpanic caller->sendInt(displayAge);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testFloat(HelloWorld100FloatCaller caller, float salary) returns grpc:Error? {
+    isolated remote function testFloat(HelloWorld100FloatCaller caller, float salary) {
         float netSalary = salary * 0.88;
-        check caller->sendFloat(netSalary);
-        check caller->complete();
+        checkpanic caller->sendFloat(netSalary);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testBoolean(HelloWorld100BooleanCaller caller, boolean available) returns grpc:Error? {
+    isolated remote function testBoolean(HelloWorld100BooleanCaller caller, boolean available) {
         boolean aval = available || true;
-        check caller->sendBoolean(aval);
-        check caller->complete();
+        checkpanic caller->sendBoolean(aval);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testStruct(HelloWorld100ResponseCaller caller, Request msg) returns grpc:Error? {
+    isolated remote function testStruct(HelloWorld100ResponseCaller caller, Request msg) {
         Response response = {resp: "Acknowledge " + msg.name};
-        check caller->sendResponse(response);
-        check caller->complete();
+        checkpanic caller->sendResponse(response);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testNoRequest(HelloWorld100StringCaller caller) returns grpc:Error? {
+    isolated remote function testNoRequest(HelloWorld100StringCaller caller) {
         string resp = "service invoked with no request";
-        check caller->sendString(resp);
-        check caller->complete();
+        checkpanic caller->sendString(resp);
+        checkpanic caller->complete();
     }
 
-    isolated remote function testNoResponse(HelloWorld100NilCaller caller, string msg) returns grpc:Error? {
+    isolated remote function testNoResponse(HelloWorld100NilCaller caller, string msg) {
         log:printInfo("Request: " + msg);
     }
 
-    isolated remote function testResponseInsideMatch(HelloWorld100ResponseCaller caller, string msg) returns grpc:Error? {
+    isolated remote function testResponseInsideMatch(HelloWorld100ResponseCaller caller, string msg) {
         Response? res = {resp: "Acknowledge " + msg};
         if res is Response {
-            check caller->sendResponse(res);
+            checkpanic caller->sendResponse(res);
         } else {
-            check caller->sendError(error grpc:NotFoundError("No updates from that drone"));
+            checkpanic caller->sendError(error grpc:NotFoundError("No updates from that drone"));
         }
-        check caller->complete();
+        checkpanic caller->complete();
     }
 }

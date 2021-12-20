@@ -25,53 +25,53 @@ listener grpc:Listener negotiatorep = new (9109);
 }
 service "Negotiator" on negotiatorep {
 
-    isolated remote function handshake(NegotiatorHandshakeResponseCaller caller, HandshakeRequest value) returns grpc:Error? {
+    isolated remote function handshake(NegotiatorHandshakeResponseCaller caller, HandshakeRequest value) {
         log:printInfo(string `Handshake request: ${value.toString()}`);
 
         if value.jsonStr != "" {
-            check caller->sendError(error grpc:InvalidArgumentError("jsonStr should be an empty string."));
+            checkpanic caller->sendError(error grpc:InvalidArgumentError("jsonStr should be an empty string."));
             return;
         }
         if value.programHash != "" {
-            check caller->sendError(error grpc:InvalidArgumentError("programHash should be an empty string."));
+            checkpanic caller->sendError(error grpc:InvalidArgumentError("programHash should be an empty string."));
             return;
         }
         if value.userId != "" {
-            check caller->sendError(error grpc:InvalidArgumentError("userId should be an empty string."));
+            checkpanic caller->sendError(error grpc:InvalidArgumentError("userId should be an empty string."));
             return;
         }
         if value.instanceId != "" {
-            check caller->sendError(error grpc:InvalidArgumentError("instanceId should be an empty string."));
+            checkpanic caller->sendError(error grpc:InvalidArgumentError("instanceId should be an empty string."));
             return;
         }
         if value.applicationId != "" {
-            check caller->sendError(error grpc:InvalidArgumentError("applicationId should be an empty string."));
+            checkpanic caller->sendError(error grpc:InvalidArgumentError("applicationId should be an empty string."));
             return;
         }
         HandshakeResponse response = {id: "123456", protocols: ["http", "https"]};
-        check caller->sendHandshakeResponse(response);
-        check caller->complete();
+        checkpanic caller->sendHandshakeResponse(response);
+        checkpanic caller->complete();
     }
 
-    isolated remote function publishMetrics(NegotiatorNilCaller caller, MetricsPublishRequest value) returns grpc:Error? {
+    isolated remote function publishMetrics(NegotiatorNilCaller caller, MetricsPublishRequest value) {
         log:printInfo(string `publishMetrics request: ${value.toString()}`);
 
         if value.metrics.length() < 0 {
-            check caller->sendError(error grpc:InvalidArgumentError("metrics cannot be an empty array."));
+            checkpanic caller->sendError(error grpc:InvalidArgumentError("metrics cannot be an empty array."));
             return;
         }
         foreach var metric in value.metrics {
             log:printInfo(string `metric value: ${metric.toString()}`);
             if metric.tags.length() < 0 {
-                check caller->sendError(error grpc:InvalidArgumentError("tags cannot be an empty array."));
+                checkpanic caller->sendError(error grpc:InvalidArgumentError("tags cannot be an empty array."));
                 return;
             }
         }
-        check caller->complete();
+        checkpanic caller->complete();
     }
 
-    isolated remote function publishTraces(NegotiatorNilCaller caller, TracesPublishRequest value) returns grpc:Error? {
+    isolated remote function publishTraces(NegotiatorNilCaller caller, TracesPublishRequest value) {
         log:printInfo(string `publishTraces request: ${value.toString()}`);
-        check caller->complete();
+        checkpanic caller->complete();
     }
 }

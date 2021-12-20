@@ -54,7 +54,7 @@ service "Chat" on ep3 {
         log:printInfo(string `${caller.getId()} connected to chat`);
         connectionsMap[caller.getId().toString()] = caller;
         initialized = true;
-        check clientStream.forEach(function(ChatMessage chatMsg) {
+        checkpanic clientStream.forEach(function(ChatMessage chatMsg) {
             ChatStringCaller conn;
             string msg = string `${chatMsg.name}: ${chatMsg.message}`;
             log:printInfo("Server received message: " + msg);

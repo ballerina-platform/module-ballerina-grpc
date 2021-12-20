@@ -24,9 +24,9 @@ listener grpc:Listener  checkoutep = new (9108);
 }
 service "CheckoutService" on checkoutep {
 
-    isolated remote function PlaceOrder(CheckoutServicePlaceOrderResponseCaller caller, PlaceOrderRequest value) returns grpc:Error? {
+    isolated remote function PlaceOrder(CheckoutServicePlaceOrderResponseCaller caller, PlaceOrderRequest value) {
         PlaceOrderResponse response = {'order: "This is a address"};
-        check caller->sendPlaceOrderResponse(response);
-        check caller->complete();
+        checkpanic caller->sendPlaceOrderResponse(response);
+        checkpanic caller->complete();
     }
 }

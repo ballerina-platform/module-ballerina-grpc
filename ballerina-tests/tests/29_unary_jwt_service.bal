@@ -26,7 +26,7 @@ listener grpc:Listener ep29 = new (9119);
 }
 service /HelloWorld29 on ep29 {
 
-    remote isolated function testStringValueReturn(HelloWorld29StringCaller caller, ContextString request) returns grpc:Error? {
+    remote isolated function testStringValueReturn(HelloWorld29StringCaller caller, ContextString request) {
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
         grpc:JwtValidatorConfig config = {
@@ -44,23 +44,23 @@ service /HelloWorld29 on ep29 {
             scopeKey: "scope"
         };
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
-            check caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
             grpc:ListenerJwtAuthHandler handler = new (config);
-            jwt:Payload authResult = check handler.authenticate(request.headers);
+            jwt:Payload authResult = checkpanic handler.authenticate(request.headers);
             grpc:PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
             if authrzResult is () {
                 responseHeaders["x-id"] = ["1234567890", "2233445677"];
                 wrappers:ContextString responseMessage = {content: message, headers: responseHeaders};
-                check caller->sendContextString(responseMessage);
+                checkpanic caller->sendContextString(responseMessage);
             } else {
-                check caller->sendError(authrzResult);
+                checkpanic caller->sendError(authrzResult);
             }
         }
-        check caller->complete();
+        checkpanic caller->complete();
     }
 
-    remote isolated function testStringValueReturnNegative(HelloWorld29StringCaller caller, ContextString request) returns grpc:Error? {
+    remote isolated function testStringValueReturnNegative(HelloWorld29StringCaller caller, ContextString request) {
         grpc:JwtValidatorConfig config = {
             issuer: "wso2",
             audience: "ballerina",
@@ -76,15 +76,15 @@ service /HelloWorld29 on ep29 {
             scopeKey: "scope"
         };
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
-            check caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
             grpc:ListenerJwtAuthHandler handler = new (config);
-            jwt:Payload authResult = check handler.authenticate(request.headers);
+            jwt:Payload authResult = checkpanic handler.authenticate(request.headers);
             grpc:PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
             if authrzResult is grpc:PermissionDeniedError {
-                check caller->sendError(authrzResult);
+                checkpanic caller->sendError(authrzResult);
             } else {
-                check caller->sendError(error grpc:AbortedError("Expected error was not found."));
+                checkpanic caller->sendError(error grpc:AbortedError("Expected error was not found."));
             }
         }
     }

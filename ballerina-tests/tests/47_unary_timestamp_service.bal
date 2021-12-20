@@ -22,39 +22,39 @@ listener grpc:Listener ep47 = new (9147);
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_47_UNARY_TIMESTAMP, descMap: getDescriptorMap47UnaryTimestamp()}
 service "TimestampService" on ep47 {
 
-    remote function getGreeting(TimestampServiceGreetingCaller caller, string value) returns error? {
+    remote function getGreeting(TimestampServiceGreetingCaller caller, string value) {
         Greeting greeting = {
             name: value,
-            time: check time:utcFromString("2007-12-03T10:15:30.120Z")
+            time: checkpanic time:utcFromString("2007-12-03T10:15:30.120Z")
         };
-        check caller->sendGreeting(greeting);
-        check caller->complete();
+        checkpanic caller->sendGreeting(greeting);
+        checkpanic caller->complete();
     }
 
-    remote function exchangeGreeting(TimestampServiceGreetingCaller caller, Greeting value) returns error? {
+    remote function exchangeGreeting(TimestampServiceGreetingCaller caller, Greeting value) {
         Greeting greeting = {
             name: value.name,
-            time: check time:utcFromString("2008-12-03T11:15:30.120Z")
+            time: checkpanic time:utcFromString("2008-12-03T11:15:30.120Z")
         };
-        check caller->sendGreeting(greeting);
-        check caller->complete();
+        checkpanic caller->sendGreeting(greeting);
+        checkpanic caller->complete();
     }
 
     remote function exchangeTime(TimestampServiceTimestampCaller caller, time:Utc value) returns time:Utc|error? {
-        time:Utc expectedTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
+        time:Utc expectedTime = checkpanic time:utcFromString("2008-12-03T11:15:30.120Z");
         if expectedTime == value {
-            time:Utc sendingTime = check time:utcFromString("2012-12-03T11:13:30.472Z");
-            check caller->sendTimestamp(sendingTime);
-            check caller->complete();
+            time:Utc sendingTime = checkpanic time:utcFromString("2012-12-03T11:13:30.472Z");
+            checkpanic caller->sendTimestamp(sendingTime);
+            checkpanic caller->complete();
         } else {
-            check caller->sendError(error grpc:Error("Timestamp does not match"));
-            check caller->complete();
+            checkpanic caller->sendError(error grpc:Error("Timestamp does not match"));
+            checkpanic caller->complete();
         }
         return;
     }
 
-    remote function serverStreamTime(TimestampServiceTimestampCaller caller, time:Utc value) returns error? {
-        time:Utc responseTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
+    remote function serverStreamTime(TimestampServiceTimestampCaller caller, time:Utc value) {
+        time:Utc responseTime = checkpanic time:utcFromString("2008-12-03T11:15:30.120Z");
         time:Utc[] timearr = [responseTime, responseTime, responseTime, responseTime];
         _ = timearr.forEach(function(time:Utc val) {
             checkpanic caller->sendContextTimestamp({
@@ -64,12 +64,12 @@ service "TimestampService" on ep47 {
         });
     }
 
-    remote function clientStreamTime(TimestampServiceTimestampCaller caller, stream<time:Utc, grpc:Error?> clientStream) returns error? {
+    remote function clientStreamTime(TimestampServiceTimestampCaller caller, stream<time:Utc, grpc:Error?> clientStream) {
         time:Utc[] timearr = [];
-        check clientStream.forEach(function(time:Utc value) {
+        checkpanic clientStream.forEach(function(time:Utc value) {
             timearr.push(value.cloneReadOnly());
         });
-        check caller->sendContextTimestamp({
+        checkpanic caller->sendContextTimestamp({
             headers: {},
             content: timearr[0]
         });

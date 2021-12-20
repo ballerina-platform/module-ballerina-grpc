@@ -28,10 +28,10 @@ service "HelloWorld7" on ep4 {
 
     remote isolated function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error?> clientStream) returns error? {
         log:printInfo("connected sucessfully.");
-        check clientStream.forEach(isolated function(string name) {
+        checkpanic clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);
         });
         log:printInfo("Server Response");
-        check caller->sendString("Ack");
+        checkpanic caller->sendString("Ack");
     }
 }
