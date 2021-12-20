@@ -25,9 +25,9 @@ service "EmptyHandler" on ep46 {
     remote function unaryWithEmpty() {
         log:printInfo("Unary call with empty");
     }
-    remote function clientStrWithEmpty(stream<string, error?> clientStream) {
+    remote function clientStrWithEmpty(stream<string, error?> clientStream) returns error? {
         log:printInfo("Client streaming call with empty");
-        checkpanic clientStream.forEach(function(string s) {
+        check clientStream.forEach(function(string s) {
             log:printInfo(s);
         });
         return;

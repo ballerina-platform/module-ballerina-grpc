@@ -26,7 +26,7 @@ listener grpc:Listener ep29 = new (9119);
 }
 service /HelloWorld29 on ep29 {
 
-    remote isolated function testStringValueReturn(HelloWorld29StringCaller caller, ContextString request) {
+    remote isolated function testStringValueReturn(HelloWorld29StringCaller caller, ContextString request) returns error? {
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
         grpc:JwtValidatorConfig config = {
@@ -47,7 +47,7 @@ service /HelloWorld29 on ep29 {
             checkpanic caller->sendError(error grpc:AbortedError("AUTH_HEADER header is missing"));
         } else {
             grpc:ListenerJwtAuthHandler handler = new (config);
-            jwt:Payload authResult = checkpanic handler.authenticate(request.headers);
+            jwt:Payload authResult = check handler.authenticate(request.headers);
             grpc:PermissionDeniedError? authrzResult = handler.authorize(<jwt:Payload>authResult, "write");
             if authrzResult is () {
                 responseHeaders["x-id"] = ["1234567890", "2233445677"];

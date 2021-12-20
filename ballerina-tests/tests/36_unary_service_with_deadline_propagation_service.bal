@@ -33,7 +33,7 @@ service "HelloWorld36S1" on ep36 {
             if cancel {
                 return error grpc:DeadlineExceededError("Exceeded the configured deadline");
             } else {
-                HelloWorld36S2Client helloWorldClient = checkpanic new ("http://localhost:9126");
+                HelloWorld36S2Client helloWorldClient = check new ("http://localhost:9126");
                 var deadline = grpc:getDeadline(request.headers);
                 if deadline is time:Utc {
                     string deadlineStringValue = time:utcToString(deadline);

@@ -28,7 +28,7 @@ service "HelloWorld7" on ep4 {
 
     remote isolated function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error?> clientStream) returns error? {
         log:printInfo("connected sucessfully.");
-        checkpanic clientStream.forEach(isolated function(string name) {
+        check clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);
         });
         log:printInfo("Server Response");

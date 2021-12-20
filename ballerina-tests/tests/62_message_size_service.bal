@@ -55,7 +55,7 @@ service "HelloWorld62" on msgSizeService {
     }
 
     remote function msgSizeBidiStreaming(HelloWorld62StringCaller caller, stream<string, error?> clientStream) returns error? {
-        checkpanic clientStream.forEach(function(string val) {
+        check clientStream.forEach(function(string val) {
             if val == "large" {
                 checkpanic caller->sendString(LARGE_PAYLOAD);
             } else {

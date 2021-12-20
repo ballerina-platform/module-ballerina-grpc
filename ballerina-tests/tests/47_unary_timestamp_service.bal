@@ -31,19 +31,19 @@ service "TimestampService" on ep47 {
         checkpanic caller->complete();
     }
 
-    remote function exchangeGreeting(TimestampServiceGreetingCaller caller, Greeting value) {
+    remote function exchangeGreeting(TimestampServiceGreetingCaller caller, Greeting value) returns error? {
         Greeting greeting = {
             name: value.name,
-            time: checkpanic time:utcFromString("2008-12-03T11:15:30.120Z")
+            time: check time:utcFromString("2008-12-03T11:15:30.120Z")
         };
         checkpanic caller->sendGreeting(greeting);
         checkpanic caller->complete();
     }
 
     remote function exchangeTime(TimestampServiceTimestampCaller caller, time:Utc value) returns time:Utc|error? {
-        time:Utc expectedTime = checkpanic time:utcFromString("2008-12-03T11:15:30.120Z");
+        time:Utc expectedTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
         if expectedTime == value {
-            time:Utc sendingTime = checkpanic time:utcFromString("2012-12-03T11:13:30.472Z");
+            time:Utc sendingTime = check time:utcFromString("2012-12-03T11:13:30.472Z");
             checkpanic caller->sendTimestamp(sendingTime);
             checkpanic caller->complete();
         } else {
@@ -53,8 +53,8 @@ service "TimestampService" on ep47 {
         return;
     }
 
-    remote function serverStreamTime(TimestampServiceTimestampCaller caller, time:Utc value) {
-        time:Utc responseTime = checkpanic time:utcFromString("2008-12-03T11:15:30.120Z");
+    remote function serverStreamTime(TimestampServiceTimestampCaller caller, time:Utc value) returns error? {
+        time:Utc responseTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
         time:Utc[] timearr = [responseTime, responseTime, responseTime, responseTime];
         _ = timearr.forEach(function(time:Utc val) {
             checkpanic caller->sendContextTimestamp({
@@ -64,9 +64,9 @@ service "TimestampService" on ep47 {
         });
     }
 
-    remote function clientStreamTime(TimestampServiceTimestampCaller caller, stream<time:Utc, grpc:Error?> clientStream) {
+    remote function clientStreamTime(TimestampServiceTimestampCaller caller, stream<time:Utc, grpc:Error?> clientStream) returns error? {
         time:Utc[] timearr = [];
-        checkpanic clientStream.forEach(function(time:Utc value) {
+        check clientStream.forEach(function(time:Utc value) {
             timearr.push(value.cloneReadOnly());
         });
         checkpanic caller->sendContextTimestamp({

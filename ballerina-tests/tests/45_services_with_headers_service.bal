@@ -22,13 +22,13 @@ listener grpc:Listener ep45 = new (9145);
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_45_SERVICES_WITH_HEADERS, descMap: getDescriptorMap45ServicesWithHeaders()}
 service "HeadersService" on ep45 {
 
-    remote function unary(HeadersServiceHSResCaller caller, ContextHSReq req) {
+    remote function unary(HeadersServiceHSResCaller caller, ContextHSReq req) returns error? {
         map<string|string[]> responseHeaders = {};
         if !req.headers.hasKey("unary-req-header") {
             checkpanic caller->sendError(error grpc:AbortedError("unary-req-header header is missing"));
             return;
         } else {
-            string headerValue = checkpanic grpc:getHeader(req.headers, "unary-req-header");
+            string headerValue = check grpc:getHeader(req.headers, "unary-req-header");
             log:printInfo("Request Header: " + headerValue);
             responseHeaders["unary-res-header"] = ["abcde", "fgh"];
         }
@@ -36,13 +36,13 @@ service "HeadersService" on ep45 {
         checkpanic caller->complete();
     }
 
-    remote function serverStr(HeadersServiceHSResCaller caller, ContextHSReq req) {
+    remote function serverStr(HeadersServiceHSResCaller caller, ContextHSReq req) returns error? {
         map<string|string[]> responseHeaders = {};
         if !req.headers.hasKey("server-steaming-req-header") {
             checkpanic caller->sendError(error grpc:AbortedError("server-steaming-req-header header is missing"));
             return;
         } else {
-            string headerValue = checkpanic grpc:getHeader(req.headers, "server-steaming-req-header");
+            string headerValue = check grpc:getHeader(req.headers, "server-steaming-req-header");
             log:printInfo("Request Header: " + headerValue);
             responseHeaders["server-steaming-res-header"] = ["1234567890", "2233445677"];
         }
@@ -86,7 +86,7 @@ service "HeadersService" on ep45 {
             checkpanic caller->sendError(error grpc:AbortedError("bidi-steaming-req-header header is missing"));
             return;
         } else {
-            string headerValue = checkpanic grpc:getHeader(req.headers, "bidi-steaming-req-header");
+            string headerValue = check grpc:getHeader(req.headers, "bidi-steaming-req-header");
             log:printInfo("Request Header: " + headerValue);
             responseHeaders["bidi-steaming-res-header"] = ["1234567890", "2233445677"];
         }

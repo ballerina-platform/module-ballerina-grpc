@@ -119,9 +119,9 @@ grpc:FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope = {
 service "helloWorld55" on ep55WithScopes {
 
     remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
-    stream<string, error?> clientStream) {
-        _ = checkpanic clientStream.next();
-        _ = checkpanic clientStream.next();
+    stream<string, error?> clientStream) returns error? {
+        _ = check clientStream.next();
+        _ = check clientStream.next();
         checkpanic caller->sendString("Hello");
         checkpanic caller->complete();
     }

@@ -23,13 +23,13 @@ boolean cancelled = false;
 service "HelloWorld50" on ep50 {
 
     remote function sendString(HelloWorld50StringCaller caller,
-    stream<string, error?> clientStream) {
-        _ = checkpanic clientStream.next();
-        _ = checkpanic clientStream.next();
+    stream<string, error?> clientStream) returns error? {
+        _ = check clientStream.next();
+        _ = check clientStream.next();
         if caller.isCancelled() {
             cancelled = true;
         }
-        _ = checkpanic clientStream.next();
+        _ = check clientStream.next();
         checkpanic caller->complete();
     }
 
