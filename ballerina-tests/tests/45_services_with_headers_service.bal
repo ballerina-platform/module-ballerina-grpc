@@ -59,18 +59,18 @@ service "HeadersService" on ep45 {
         checkpanic caller->complete();
     }
 
-    remote function clientStr(HeadersServiceHSResCaller caller, ContextHSReqStream req) {
+    remote function clientStr(HeadersServiceHSResCaller caller, ContextHSReqStream req) returns error? {
         map<string|string[]> responseHeaders = {};
         if !req.headers.hasKey("client-steaming-req-header") {
             checkpanic caller->sendError(error grpc:AbortedError("client-steaming-req-header header is missing"));
             return;
         } else {
-            string headerValue = checkpanic grpc:getHeader(req.headers, "client-steaming-req-header");
+            string headerValue = check grpc:getHeader(req.headers, "client-steaming-req-header");
             log:printInfo("Request Header: " + headerValue);
             responseHeaders["client-steaming-res-header"] = ["1234567890", "2233445677"];
         }
         int i = 0;
-        checkpanic req.content.forEach(function(HSReq req) {
+        check req.content.forEach(function(HSReq req) {
             HSRes res = {name: req.name, message: req.message};
             if i == 0 {
                 checkpanic caller->sendContextHSRes({content: res, headers: responseHeaders});
@@ -80,7 +80,7 @@ service "HeadersService" on ep45 {
         });
     }
 
-    remote function bidirectionalStr(HeadersServiceHSResCaller caller, ContextHSReqStream req) {
+    remote function bidirectionalStr(HeadersServiceHSResCaller caller, ContextHSReqStream req) returns error? {
         map<string|string[]> responseHeaders = {};
         if !req.headers.hasKey("bidi-steaming-req-header") {
             checkpanic caller->sendError(error grpc:AbortedError("bidi-steaming-req-header header is missing"));
@@ -91,7 +91,7 @@ service "HeadersService" on ep45 {
             responseHeaders["bidi-steaming-res-header"] = ["1234567890", "2233445677"];
         }
         int i = 0;
-        checkpanic req.content.forEach(function(HSReq req) {
+        check req.content.forEach(function(HSReq req) {
             HSRes res = {name: req.name, message: req.message};
             if i == 0 {
                 checkpanic caller->sendContextHSRes({content: res, headers: responseHeaders});

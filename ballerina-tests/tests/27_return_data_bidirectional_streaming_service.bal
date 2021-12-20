@@ -27,7 +27,7 @@ service "ChatFromReturn" on ep27 {
     remote function chat27(stream<ChatMessage27, error?> clientStream) returns stream<string, error?>|error? {
         string[] messages = [];
         int i = 0;
-        checkpanic clientStream.forEach(function(ChatMessage27 reqMsg) {
+        check clientStream.forEach(function(ChatMessage27 reqMsg) {
             messages[i] = reqMsg.message + " " + reqMsg.name;
             i += 1;
         });

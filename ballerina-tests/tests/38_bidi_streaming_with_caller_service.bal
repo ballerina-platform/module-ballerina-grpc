@@ -27,7 +27,7 @@ service "Chat38" on new grpc:Listener(9128) {
         log:printInfo("Invoke the chat RPC");
         int i = 0;
         // Read and process each message in the client stream.
-        checkpanic clientStream.forEach(function(ChatMessage38 value) {
+        check clientStream.forEach(function(ChatMessage38 value) {
             // responses[i] = string `${chatMsg.message}: ${chatMsg.name}`;
             checkpanic caller->sendString(string `${value.message}: ${value.name}`);
             i += 1;
