@@ -25,7 +25,7 @@ listener grpc:Listener ep11 = new (9101, {
     descMap: getDescriptorMap11GrpcByteService()
 }
 service "byteService" on ep11 {
-    isolated remote function checkpanicBytes(ByteServiceByteCaller caller, byte[] value) {
+    isolated remote function checkBytes(ByteServiceByteCaller caller, byte[] value) {
         checkpanic caller->sendBytes(value);
         checkpanic caller->complete();
     }
