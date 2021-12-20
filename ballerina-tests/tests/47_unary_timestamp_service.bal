@@ -22,10 +22,10 @@ listener grpc:Listener ep47 = new (9147);
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_47_UNARY_TIMESTAMP, descMap: getDescriptorMap47UnaryTimestamp()}
 service "TimestampService" on ep47 {
 
-    remote function getGreeting(TimestampServiceGreetingCaller caller, string value) {
+    remote function getGreeting(TimestampServiceGreetingCaller caller, string value) returns error? {
         Greeting greeting = {
             name: value,
-            time: checkpanic time:utcFromString("2007-12-03T10:15:30.120Z")
+            time: check time:utcFromString("2007-12-03T10:15:30.120Z")
         };
         checkpanic caller->sendGreeting(greeting);
         checkpanic caller->complete();
