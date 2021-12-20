@@ -43,7 +43,7 @@ service "HelloWorld62" on msgSizeService {
 
     remote function msgSizeClientStreaming(stream<string, error?> clientStream) returns string|error? {
         boolean sendLargePayload = false;
-        checkpanic clientStream.forEach(function(string val) {
+        check clientStream.forEach(function(string val) {
             if val == "large" {
                 sendLargePayload = true;
             }
