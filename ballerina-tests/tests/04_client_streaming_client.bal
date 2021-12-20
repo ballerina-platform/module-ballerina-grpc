@@ -29,7 +29,7 @@ isolated function testClientStreaming() returns grpc:Error? {
         check ep->sendString(greet);
     }
     check ep->complete();
-    anydata response = checkpanic ep->receiveString();
+    anydata response = check ep->receiveString();
     test:assertEquals(<string>response, "Ack");
 }
 
