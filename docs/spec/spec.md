@@ -168,6 +168,18 @@ service "RouteGuide" on new grpc:Listener(8980) {
 }
 ```
 
+**RPC Invocation**
+
+For each RPC in the protobuf definition, the generated Ballerina stub contains a client. That generated client interacts with the actual RPC service during an RPC call.
+
+```ballerina
+public function main() returns error? {
+    RouteGuideClient ep = check new ("http://localhost:8980");
+    Feature feature = check ep->GetFeature({latitude: 406109563, longitude: -742186778});
+}
+```
+
+
 ## 4.2. Server Streaming RPC
 The RPC service definition of a server streaming call is as follows.
 ```proto
@@ -211,6 +223,24 @@ service "RouteGuide" on new grpc:Listener(8980) {
             }
         }
     }
+}
+```
+
+**RPC Invocation**
+
+For each RPC in the protobuf definition, the generated Ballerina stub contains a client which interacts with the actual RPC service. In Ballerina gRPC, invoking a server streaming returns a Ballerina streaming object that can iterate through using streaming operations provided by the language.
+
+```ballerina
+public function main() returns error? {
+    RouteGuideClient ep = check new ("http://localhost:8980");
+    Rectangle rectangle = {
+        lo: {latitude: 400000000, longitude: -750000000},
+        hi: {latitude: 420000000, longitude: -730000000}
+    };
+    stream<Feature, grpc:Error?> features = check ep->ListFeatures(rectangle);
+    check features.forEach(function(Feature f) {
+        io:println(`Result: lat=${f.location.latitude}, lon=${f.location.longitude}`);
+    });
 }
 ```
 
@@ -286,6 +316,29 @@ service "RouteGuide" on new grpc:Listener(8980) {
 }
 ```
 
+**RPC Invocation**
+
+For each RPC in the protobuf definition, the generated Ballerina stub contains a client. That generated client interacts with the actual RPC service during an RPC call. Unlike the server streaming scenario, the Ballerina client streaming does not use a streaming object to pass data to the client-side because it should allow users to send and receive data asynchronously. Instead, it uses a streaming object to send and receive data from the server.
+```ballerina
+public function main() returns error? {
+    RouteGuideClient ep = check new ("http://localhost:8980");
+    Point[] points = [
+        {latitude: 406109563, longitude: -742186778}, 
+        {latitude: 411733222, longitude: -744228360}, 
+        {latitude: 744228334, longitude: -742186778}
+    ];
+    RecordRouteStreamingClient recordRouteStrmClient = check ep->RecordRoute();
+    foreach Point p in points {
+        check recordRouteStrmClient->sendPoint(p);
+    }
+    check recordRouteStrmClient->complete();
+    RouteSummary? routeSummary = check recordRouteStrmClient->receiveRouteSummary();
+    if routeSummary is RouteSummary {
+        io:println(`Finished trip with ${routeSummary.point_count} points. Passed ${routeSummary.feature_count} features. "Travelled ${routeSummary.distance} meters. It took ${routeSummary.elapsed_time} seconds.`);
+    }
+}
+```
+
 ## 4.4. Bidirectional Streaming RPC
 The RPC service definition of a bidirectional streaming call is as follows.
 ```proto
@@ -334,6 +387,33 @@ service "RouteGuide" on new grpc:Listener(8980) {
             error? waitErr = wait f1;
         });
     }
+}
+```
+
+**RPC Invocation**
+
+For each RPC in the protobuf definition, the generated Ballerina stub contains a client. That generated client interacts with the actual RPC service during an RPC call. As the client streaming scenario, the bidirectional streaming case also uses a streaming object to send and receive data from servers.
+```ballerina
+public function main() returns error? {
+    RouteGuideClient ep = check new ("http://localhost:8980");
+    // Bidirectional streaming
+    RouteNote[] routeNotes = [
+        {location: {latitude: 406109563, longitude: -742186778}, message: "m1"}, 
+        {location: {latitude: 411733222, longitude: -744228360}, message: "m2"}, 
+        {location: {latitude: 406109563, longitude: -742186778}, message: "m3"}, 
+        {location: {latitude: 411733222, longitude: -744228360}, message: "m4"}, 
+        {location: {latitude: 411733222, longitude: -744228360}, message: "m5"}
+    ];
+    RouteChatStreamingClient routeClient = check ep->RouteChat();
+
+    future<error?> f1 = start readResponse(routeClient);
+
+    foreach RouteNote n in routeNotes {
+        check routeClient->sendRouteNote(n);
+    }
+    check routeClient->complete();
+
+    check wait f1;
 }
 ```
 
