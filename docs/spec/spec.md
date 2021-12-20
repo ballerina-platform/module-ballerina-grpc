@@ -15,7 +15,7 @@ that makes it easier to use, combine, and create network services.
 2. [gRPC Command Line Interface (CLI)](#1-grpc-command-line-interface-cli)
 3. [Protocol Buffers to Ballerina Data Mapping](#3-protocol-buffers-to-ballerina-data-mapping)
 4. [gRPC Communication](#4-grpc-communication)
-   * 4.1. [Unary RPC](#41-unary-rpc)
+   * 4.1. [Simple RPC](#41-simple-rpc)
    * 4.2. [Server Streaming RPC](#42-server-streaming-rpc)
    * 4.3. [Client Streaming RPC](#43-client-streaming-rpc)
    * 4.4. [Bidirectional Streaming RPC](#44-bidirectional-streaming-rpc)
@@ -105,7 +105,7 @@ public isolated function unpack(Any anyValue, ValueTypeDesc targetTypeOfAny = <>
 # 4. gRPC Communication
 
 gRPC has 4 types of RPCs (Remote Procedure Calls), and Ballerina supports all of them.
-1. Unary
+1. Simple
 2. Server streaming
 3. Client streaming
 4. Bidirectional streaming
@@ -114,9 +114,9 @@ Note that, to explain the behaviour of these 4 RPC types, this document uses the
 - [Details of the route guide example](https://grpc.io/docs/languages/go/basics/)
 - [Protocol buffer definition of the route guide example](https://github.com/ballerina-platform/module-ballerina-grpc/blob/674bda12a90f99c2735badc5567cd7dd7e14ba09/examples/routeguide/proto-file/route_guide.proto)
 
-## 4.1. Unary RPC
+## 4.1. Simple RPC
 
-The RPC service definition of a unary call is as follows.
+The RPC service definition of a simple RPCs is as follows.
 ```proto
 service RouteGuide {
     rpc GetFeature(Point) returns (Feature) {}
@@ -126,11 +126,11 @@ The Ballerina service implementation of a gRPC can be done in two ways.
 1. Using direct returning
 2. Using a caller
 
-Directly returning the response is the most convenient implementation. However, for asynchronous RPC calls, directly returning is not suitable, and for such use cases, using a caller is the ideal approach. In addition, each RPC call (unary, server streaming, client streaming, and bidirectional streaming) can be implemented in both ways.
+Directly returning the response is the most convenient implementation. However, for asynchronous RPC calls, directly returning is not suitable, and for such use cases, using a caller is the ideal approach. In addition, each RPC call (simple, server streaming, client streaming, and bidirectional streaming) can be implemented in both ways.
 
 **RPC Using Direct Return**
 
-Ballerina CLI generates the relevant service skeleton, and the implementation of the unary RPC call using direct return is as follows.
+Ballerina CLI generates the relevant service skeleton, and the implementation of the simple RPC call using direct return is as follows.
 
 ```ballerina
 service "RouteGuide" on new grpc:Listener(8980) {
@@ -150,7 +150,7 @@ Here, the RPC implementation creates a featured record and directly return it fr
 
 **RPC Using a Caller**
 
-The Ballerina implementation of the same unary RPC using a caller is as follows.
+The Ballerina implementation of the same simple RPC using a caller is as follows.
 
 ```ballerina
 service "RouteGuide" on new grpc:Listener(8980) {
@@ -343,7 +343,7 @@ public function main() returns error? {
 The RPC service definition of a bidirectional streaming call is as follows.
 ```proto
 service RouteGuide {
-    rpc ListFeatures(Rectangle) returns (stream Feature) {}
+    rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
 }
 ```
 
