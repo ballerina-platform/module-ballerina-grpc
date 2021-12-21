@@ -17,6 +17,7 @@
 import ballerina/auth;
 import ballerina/jballerina.java;
 import ballerina/jwt;
+import ballerina/log;
 import ballerina/oauth2;
 
 // This function is used for declarative auth design, where the authentication/authorization decision is taken by
@@ -59,12 +60,16 @@ isolated function tryAuthenticate(ListenerAuthConfig[] authConfig, map<string|st
                     authResult = authenticateWithFileUserStoreConfig(config, headers);
                 } else if config is LdapUserStoreConfigWithScopes {
                     authResult = authenticateWithLdapUserStoreConfig(config, headers);
+                } else {
+                    log:printDebug("Invalid configurations for 'Basic' scheme.");
                 }
             } else if scheme == AUTH_SCHEME_BEARER {
                 if config is JwtValidatorConfigWithScopes {
                     authResult = authenticateWithJwtValidatorConfig(config, headers);
                 } else if config is OAuth2IntrospectionConfigWithScopes {
                     authResult = authenticateWithOAuth2IntrospectionConfig(config, headers);
+                } else {
+                    log:printDebug("Invalid configurations for 'Bearer' scheme.");
                 }
             }
             if authResult is () || authResult is PermissionDeniedError {
@@ -99,9 +104,8 @@ isolated function authenticateWithFileUserStoreConfig(FileUserStoreConfigWithSco
             }
         }
         return;
-    } else {
-        return authn;
     }
+    return authn;
 }
 
 isolated function authenticateWithLdapUserStoreConfig(LdapUserStoreConfigWithScopes config, map<string|string[]> headers)
@@ -126,9 +130,8 @@ isolated function authenticateWithLdapUserStoreConfig(LdapUserStoreConfigWithSco
             }
         }
         return;
-    } else {
-        return authn;
     }
+    return authn;
 }
 
 isolated function authenticateWithJwtValidatorConfig(JwtValidatorConfigWithScopes config, map<string|string[]> headers)
@@ -153,9 +156,8 @@ isolated function authenticateWithJwtValidatorConfig(JwtValidatorConfigWithScope
             }
         }
         return;
-    } else {
-        return authn;
     }
+    return authn;
 }
 
 isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionConfigWithScopes config, map<string|string[]> headers)
@@ -174,9 +176,8 @@ isolated function authenticateWithOAuth2IntrospectionConfig(OAuth2IntrospectionC
     oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError auth = handler->authorize(headers, config?.scopes);
     if auth is oauth2:IntrospectionResponse {
         return;
-    } else {
-        return auth;
     }
+    return auth;
 }
 
 isolated function getServiceAuthConfig(Service serviceRef) returns ListenerAuthConfig[]? {
