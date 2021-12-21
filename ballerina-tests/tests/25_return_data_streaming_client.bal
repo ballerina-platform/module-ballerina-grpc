@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -24,17 +23,12 @@ function testReceiveStreamingResponseFromReturn() returns error? {
     // Client endpoint configuration
     HelloWorld25Client helloWorldEp = check new("http://localhost:9115");
 
-    var result = helloWorldEp->lotsOfReplies(name);
-    if result is grpc:Error {
-        test:assertFail("Error from Connector: " + result.message());
-    } else {
-        io:println("Connected successfully");
-        string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
-        int count = 0;
-        check result.forEach(function(anydata value) {
-            test:assertEquals(value, expectedResults[count]);
-            count += 1;
-        });
-        test:assertEquals(count, 3);
-    }
+    stream<string, grpc:Error?> result = check helloWorldEp->lotsOfReplies(name);
+    string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];
+    int count = 0;
+    check result.forEach(function(anydata value) {
+        test:assertEquals(value, expectedResults[count]);
+        count += 1;
+    });
+    test:assertEquals(count, 3);
 }

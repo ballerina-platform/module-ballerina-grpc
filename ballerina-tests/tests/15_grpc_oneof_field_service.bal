@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_15_GRPC_ONEOF_FIELD_SERVICE,
@@ -31,7 +30,6 @@ service "OneofFieldService" on new grpc:Listener(9105) {
             request = value?.last_name;
         }
         Response1 response = {message: "Hello " + <string>request};
-        io:println(response);
         checkpanic caller->sendResponse1(response);
         checkpanic caller->complete();
     }

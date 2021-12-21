@@ -15,14 +15,13 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 // Client endpoint configuration.
-Chat38Client chatEp = check new("http://localhost:9128");
+Chat38Client chatEp = check new ("http://localhost:9128");
 
-@test:Config {enable:true}
-function testBidiStreamingServerResponseCount () returns error? {
+@test:Config {enable: true}
+function testBidiStreamingServerResponseCount() returns error? {
     // Executes the RPC call and receives the customized streaming client.
     Chat38StreamingClient streamingClient = check chatEp->chat38();
 
@@ -40,15 +39,11 @@ function testBidiStreamingServerResponseCount () returns error? {
     // Receives the server stream response iteratively.
     int i = 0;
     var result = streamingClient->receiveString();
-    while !((result is ()) ||  (result is grpc:Error)) {
-        io:println(result);
+    while !((result is ()) || (result is grpc:Error)) {
         result = streamingClient->receiveString();
         i += 1;
     }
-    test:assertEquals(i, 3, "Server response message count is not equal to 3");
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "Request Aborted.");
-    } else {
-        test:assertFail("Client should receive an error response");
-    }
+    test:assertEquals(i, 3);
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Request Aborted.");
 }

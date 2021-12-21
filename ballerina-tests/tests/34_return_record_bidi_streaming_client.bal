@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -36,17 +35,11 @@ isolated function testBidiStreamingFromReturnRecord() returns grpc:Error? {
         }
     }
     check streamingClient->complete();
-    io:println("Completed successfully");
-    var result = streamingClient->receiveSampleMsg34();
+    SampleMsg34? result = check streamingClient->receiveSampleMsg34();
     int i = 0;
     while !(result is ()) {
-        io:println(result);
-        if result is SampleMsg34 {
-            test:assertEquals(<SampleMsg34> result, requests[i]);
-        } else {
-            test:assertFail("Unexpected output in the stream");
-        }
-        result = streamingClient->receiveSampleMsg34();
+        test:assertEquals(<SampleMsg34> result, requests[i]);
+        result = check streamingClient->receiveSampleMsg34();
         i += 1;
     }
     test:assertEquals(i, 4);

@@ -18,7 +18,7 @@ import ballerina/grpc;
 import ballerina/io;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testClientStreamingFromReturnRecord() returns grpc:Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClient streamingClient = check helloWorldEp->sayHello();
@@ -30,45 +30,35 @@ isolated function testClientStreamingFromReturnRecord() returns grpc:Error? {
         {name: "Google", id: 3}
     ];
     foreach var r in requests {
-        grpc:Error? err = streamingClient->sendSampleMsg33(r);
-        if err is grpc:Error {
-            test:assertFail("Error from Connector: " + err.message());
-        }
+        check streamingClient->sendSampleMsg33(r);
     }
     check streamingClient->complete();
     io:println("Completed successfully");
     var response = check streamingClient->receiveContextSampleMsg33();
-    if response is ContextSampleMsg33 {
-        test:assertEquals(<SampleMsg33>response.content, {name: "WSO2", id: 1});
-    }
+    test:assertTrue(response is ContextSampleMsg33);
+    test:assertEquals(<SampleMsg33>(<ContextSampleMsg33>response).content, {name: "WSO2", id: 1});
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testClientStreamingSendError() returns grpc:Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClient streamingClient = check helloWorldEp->sayHello();
 
     check streamingClient->sendSampleMsg33({name: "WSO2", id: 0});
     check streamingClient->sendError(error grpc:UnKnownError("Unknown gRPC error occured."));
-    grpc:Error? err3 = streamingClient->complete();
-    if err3 is grpc:Error {
-        test:assertEquals(err3.message(), "Client call was cancelled.");
-    } else {
-        test:assertFail("Expected grpc:Error not found");
-    }
+    grpc:Error? err = streamingClient->complete();
+    test:assertTrue(err is grpc:Error);
+    test:assertEquals((<grpc:Error>err).message(), "Client call was cancelled.");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testClientStreamingReceiveAfterSendError() returns grpc:Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClient streamingClient = check helloWorldEp->sayHello();
 
     check streamingClient->sendSampleMsg33({name: "WSO2", id: 0});
     check streamingClient->sendError(error grpc:UnKnownError("Unknown gRPC error occured."));
-    SampleMsg33|grpc:Error? err3 = streamingClient->receiveSampleMsg33();
-    if err3 is grpc:Error {
-        test:assertEquals(err3.message(), "Client call was already cancelled.");
-    } else {
-        test:assertFail("Expected grpc:Error not found");
-    }
+    SampleMsg33|grpc:Error? err = streamingClient->receiveSampleMsg33();
+    test:assertTrue(err is grpc:Error);
+    test:assertEquals((<grpc:Error>err).message(), "Client call was already cancelled.");
 }

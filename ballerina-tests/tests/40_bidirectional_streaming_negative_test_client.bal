@@ -25,10 +25,7 @@ isolated function testBidiStreamingWithCustomError() returns grpc:Error? {
         name: "John",
         message: "Hello Lisa"
     });
-    string|grpc:Error? content = streamingCaller->receiveString();
-    if content is string || content is () {
-        test:assertFail(msg = "Expected grpc:Error not found.");
-    } else {
-        test:assertEquals(content.message(), "Unknown gRPC error occured.");
-    }
+    string|grpc:Error? response = streamingCaller->receiveString();
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Unknown gRPC error occured.");
 }

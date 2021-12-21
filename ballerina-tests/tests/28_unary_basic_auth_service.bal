@@ -28,19 +28,13 @@ service "HelloWorld28" on ep28 {
     isolated remote function testStringValueReturn(ContextString request) returns string|error {
         if !request.headers.hasKey(grpc:AUTH_HEADER) {
             return error grpc:AbortedError("AUTH_HEADER header is missing");
-        } else {
-            grpc:ListenerFileUserStoreBasicAuthHandler handler = new;
-            auth:UserDetails|grpc:UnauthenticatedError authnResult = handler.authenticate(request.headers);
-            if authnResult is grpc:UnauthenticatedError {
-                return authnResult;
-            } else {
-                grpc:PermissionDeniedError? authzResult = handler.authorize(<auth:UserDetails>authnResult, "write");
-                if authzResult is () {
-                    return "Hello WSO2";
-                } else {
-                    return authzResult;
-                }
-            }
         }
+        grpc:ListenerFileUserStoreBasicAuthHandler handler = new;
+        auth:UserDetails authnResult = check handler.authenticate(request.headers);
+        grpc:PermissionDeniedError? authzResult = handler.authorize(<auth:UserDetails>authnResult, "write");
+        if authzResult is () {
+            return "Hello WSO2";
+        }
+        return authzResult;
     }
 }

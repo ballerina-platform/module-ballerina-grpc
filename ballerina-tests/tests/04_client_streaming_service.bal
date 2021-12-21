@@ -26,21 +26,12 @@ listener grpc:Listener ep4 = new (9094);
 }
 service "HelloWorld7" on ep4 {
 
-    remote isolated function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error?>clientStream) {
+    remote isolated function lotsOfGreetings(HelloWorld7StringCaller caller, stream<string, error?> clientStream) returns error? {
         log:printInfo("connected sucessfully.");
-        error? e = clientStream.forEach(isolated function(string name) {
+        check clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);
         });
-        if e is () {
-            log:printInfo("Server Response");
-            grpc:Error? err = caller->sendString("Ack");
-            if err is grpc:Error {
-                log:printError("Error from Connector: " + err.message());
-            } else {
-                log:printInfo("Server send response : Ack");
-            }
-        } else {
-            log:printError("Something unexpected happens at server :: " + e.message());
-        }
+        log:printInfo("Server Response");
+        checkpanic caller->sendString("Ack");
     }
 }

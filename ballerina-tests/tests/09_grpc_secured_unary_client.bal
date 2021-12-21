@@ -15,16 +15,15 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testUnarySecuredBlocking() returns grpc:Error? {
     HelloWorld85Client helloWorld9BlockingEp = check new ("https://localhost:9099", {
-        secureSocket:{
-            cert:{
-               path: TRUSTSTORE_PATH,
-               password: "ballerina"
+        secureSocket: {
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
             },
             key: {
                 path: KEYSTORE_PATH,
@@ -32,17 +31,11 @@ isolated function testUnarySecuredBlocking() returns grpc:Error? {
             },
             protocol: {
                 name: grpc:TLS,
-                versions: ["TLSv1.2","TLSv1.1"]
+                versions: ["TLSv1.2", "TLSv1.1"]
             }
         }
     });
 
-    string|grpc:Error unionResp = helloWorld9BlockingEp->hello("WSO2");
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, "Hello WSO2");
-    }
+    string response = check helloWorld9BlockingEp->hello("WSO2");
+    test:assertEquals(response, "Hello WSO2");
 }

@@ -15,61 +15,46 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testReceiveStreamingResponseFromReturnWithBasicAuth() returns error? {
-    SampleMsg32 reqMsg = {name:"WSO2", id:2};
-    HelloWorld32Client helloWorldEp = check new("http://localhost:9122");
+    SampleMsg32 reqMsg = {name: "WSO2", id: 2};
+    HelloWorld32Client helloWorldEp = check new ("http://localhost:9122");
 
-    var result = helloWorldEp->sayHello(reqMsg);
-    if result is grpc:Error {
-        test:assertFail("Error from Connector: " + result.message());
-    } else {
-        io:println("Connected successfully");
-        SampleMsg32[] expectedResults = [
-            {name: "WSO2", id: 0},
-            {name: "Microsoft", id: 1},
-            {name: "Facebook", id: 2},
-            {name: "Google", id: 3}
-        ];
-        int count = 0;
-        check result.forEach(function(anydata value) {
-            test:assertEquals(<SampleMsg32>value, expectedResults[count]);
-            count += 1;
-        });
-        test:assertEquals(count, 4);
-    }
+    stream<SampleMsg32, grpc:Error?> result = check helloWorldEp->sayHello(reqMsg);
+    SampleMsg32[] expectedResults = [
+        {name: "WSO2", id: 0},
+        {name: "Microsoft", id: 1},
+        {name: "Facebook", id: 2},
+        {name: "Google", id: 3}
+    ];
+    int count = 0;
+    check result.forEach(function(anydata value) {
+        test:assertEquals(<SampleMsg32>value, expectedResults[count]);
+        count += 1;
+    });
+    test:assertEquals(count, 4);
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testReceiveStreamingResponseWithHeaders() returns error? {
-    SampleMsg32 reqMsg = {name:"WSO2", id:2};
-    HelloWorld32Client helloWorldEp = check new("http://localhost:9222");
+    SampleMsg32 reqMsg = {name: "WSO2", id: 2};
+    HelloWorld32Client helloWorldEp = check new ("http://localhost:9222");
 
-    var result = helloWorldEp->sayHelloContext(reqMsg);
-    if result is grpc:Error {
-        test:assertFail("Error from Connector: " + result.message());
-    } else {
-        io:println("Connected successfully");
-        SampleMsg32[] expectedResults = [
-            {name: "WSO2", id: 0},
-            {name: "Microsoft", id: 1},
-            {name: "Facebook", id: 2},
-            {name: "Google", id: 3}
-        ];
-        int count = 0;
-        check result.content.forEach(function(SampleMsg32 value) {
-            test:assertEquals(value, expectedResults[count]);
-            count += 1;
-        });
-        test:assertEquals(count, 4);
-        var resHeaderValue = grpc:getHeader(result.headers, "zzz");
-        if resHeaderValue is grpc:Error {
-            test:assertFail("Error reading response headers: " + resHeaderValue.message());
-        } else {
-            test:assertEquals(resHeaderValue, "yyy");
-        }
-    }
+    ContextSampleMsg32Stream result = check helloWorldEp->sayHelloContext(reqMsg);
+    SampleMsg32[] expectedResults = [
+        {name: "WSO2", id: 0},
+        {name: "Microsoft", id: 1},
+        {name: "Facebook", id: 2},
+        {name: "Google", id: 3}
+    ];
+    int count = 0;
+    check result.content.forEach(function(SampleMsg32 value) {
+        test:assertEquals(value, expectedResults[count]);
+        count += 1;
+    });
+    test:assertEquals(count, 4);
+    string resHeaderValue = check grpc:getHeader(result.headers, "zzz");
+    test:assertEquals(resHeaderValue, "yyy");
 }

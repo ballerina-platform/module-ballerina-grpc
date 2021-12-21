@@ -26,11 +26,9 @@ listener grpc:Listener ep34 = new (9124);
 service "HelloWorld34" on ep34 {
 
     remote isolated function sayHello34(stream<SampleMsg34, error?> clientStream) returns stream<SampleMsg34, error?>|error? {
-        io:println("Connected sucessfully.");
         check clientStream.forEach(isolated function(SampleMsg34 val) {
             io:println(val);
         });
-        io:println("Send");
         SampleMsg34[] respArr = [
             {name: "WSO2", id: 0},
             {name: "Microsoft", id: 1},

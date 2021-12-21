@@ -26,7 +26,6 @@ listener grpc:Listener ep26 = new (9116);
 service "HelloWorld26" on ep26 {
 
     remote isolated function lotsOfGreetings(stream<string, error?> clientStream) returns string {
-        log:printInfo("connected sucessfully.");
         error? e = clientStream.forEach(isolated function(string name) {
             log:printInfo("greet received: " + name);
         });

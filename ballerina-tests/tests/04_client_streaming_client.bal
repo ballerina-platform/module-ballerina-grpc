@@ -17,42 +17,34 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testClientStreaming() returns grpc:Error? {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
     // Client endpoint configuration
     HelloWorld7Client helloWorldEp = check new ("http://localhost:9094");
 
-    LotsOfGreetingsStreamingClient|grpc:Error ep = helloWorldEp->lotsOfGreetings();
+    LotsOfGreetingsStreamingClient ep = check helloWorldEp->lotsOfGreetings();
     // Executing unary non-blocking call registering server message listener.
-    if ep is grpc:Error {
-        test:assertFail("Error from Connector: " + ep.message());
-    } else {
-        foreach var greet in requests {
-            grpc:Error? err = ep->sendString(greet);
-            if err is grpc:Error {
-                test:assertFail("Error from Connector: " + err.message());
-            }
-        }
-        check ep->complete();
-        anydata response = checkpanic ep->receiveString();
-        test:assertEquals(<string> response, "Ack");
+    foreach var greet in requests {
+        check ep->sendString(greet);
     }
+    check ep->complete();
+    anydata response = check ep->receiveString();
+    test:assertEquals(<string>response, "Ack");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testClientStreamingSendMessageAfterError() returns grpc:Error? {
     HelloWorld7Client helloWorldEp = check new ("http://localhost:9094");
     LotsOfGreetingsStreamingClient res = check helloWorldEp->lotsOfGreetings();
 
     check res->sendError(error grpc:AbortedError("Aborted for testing"));
     grpc:Error? err = res->sendString("Hey");
-    if err is grpc:Error {
-        test:assertEquals(err.message(), "Client call was already cancelled.");
-    }
+    test:assertTrue(err is grpc:Error);
+    test:assertEquals((<grpc:Error>err).message(), "Client call was already cancelled.");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testClientStreamingSendMessageAfterComplete() returns grpc:Error? {
     grpc:ClientConfiguration config = {
         compression: grpc:COMPRESSION_ALWAYS
@@ -62,7 +54,6 @@ isolated function testClientStreamingSendMessageAfterComplete() returns grpc:Err
     grpc:Error? err = res->sendString("Hey");
     check res->complete();
     err = res->sendString("Hey");
-    if err is grpc:Error {
-        test:assertEquals(err.message(), "Client call was already closed.");
-    }
+    test:assertTrue(err is grpc:Error);
+    test:assertEquals((<grpc:Error>err).message(), "Client call was already closed.");
 }

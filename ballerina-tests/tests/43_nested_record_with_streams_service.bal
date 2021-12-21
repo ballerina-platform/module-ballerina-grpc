@@ -27,10 +27,10 @@ service "NestedMsgService" on ep43 {
 
     isolated remote function nestedMsgServerStreaming(string value) returns error|stream<NestedMsg, error?> {
         NestedMsg[] messages = [
-            {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}}, 
-            {name: "Name 02", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 2}}}}, 
-            {name: "Name 03", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 3}}}}, 
-            {name: "Name 04", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 4}}}}, 
+            {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}},
+            {name: "Name 02", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 2}}}},
+            {name: "Name 03", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 3}}}},
+            {name: "Name 04", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 4}}}},
             {name: "Name 05", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 5}}}}
         ];
         return messages.toStream();
@@ -42,10 +42,10 @@ service "NestedMsgService" on ep43 {
 
     isolated remote function nestedMsgBidirectionalStreaming(stream<NestedMsg, grpc:Error?> clientStream) returns error|stream<NestedMsg, error?> {
         NestedMsg[] messages = [
-            {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}}, 
-            {name: "Name 02", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 2}}}}, 
-            {name: "Name 03", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 3}}}}, 
-            {name: "Name 04", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 4}}}}, 
+            {name: "Name 01", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 1}}}},
+            {name: "Name 02", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 2}}}},
+            {name: "Name 03", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 3}}}},
+            {name: "Name 04", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 4}}}},
             {name: "Name 05", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 5}}}}
         ];
         return messages.toStream();

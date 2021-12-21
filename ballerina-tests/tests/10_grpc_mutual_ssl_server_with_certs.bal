@@ -15,28 +15,27 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/log;
 
 listener grpc:Listener ep10 = new (9100,
     host = "localhost",
     secureSocket = {
-        key: {
-            path: KEYSTORE_PATH,
+    key: {
+        path: KEYSTORE_PATH,
+        password: "ballerina"
+    },
+    mutualSsl: {
+        verifyClient: grpc:REQUIRE,
+        cert: {
+            path: TRUSTSTORE_PATH,
             password: "ballerina"
-        },
-        mutualSsl: {
-            verifyClient: grpc:REQUIRE,
-            cert: {
-                path: TRUSTSTORE_PATH,
-                password: "ballerina"
-            }
-        },
-        protocol: {
-            name: grpc:TLS,
-            versions: ["TLSv1.2","TLSv1.1"]
-        },
-        ciphers:["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
-    });
+        }
+    },
+    protocol: {
+        name: grpc:TLS,
+        versions: ["TLSv1.2", "TLSv1.1"]
+    },
+    ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+});
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_10_GRPC_SSL_SERVER,
@@ -44,14 +43,8 @@ listener grpc:Listener ep10 = new (9100,
 }
 service "grpcMutualSslService" on ep10 {
     isolated remote function hello(GrpcMutualSslServiceStringCaller caller, string name) {
-        log:printInfo("name: " + name);
         string message = "Hello " + name;
-        grpc:Error? err = caller->sendString(message);
-        if err is grpc:Error {
-            log:printError(err.message(), 'error = err);
-        } else {
-            log:printInfo("Server send response : " + message);
-        }
+        checkpanic caller->sendString(message);
         checkpanic caller->complete();
     }
 }

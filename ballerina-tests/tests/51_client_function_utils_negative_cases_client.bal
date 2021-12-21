@@ -20,38 +20,26 @@ import ballerina/test;
 @test:Config {enable: true}
 function testClientFunctionUtilsMalformedUrl() returns error? {
     HelloWorld51Client|grpc:Error hClient = new ("localhost:9151");
-    if hClient is grpc:Error {
-        test:assertEquals(hClient.message(), "Malformed URL: localhost:9151");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    test:assertTrue(hClient is grpc:Error);
+    test:assertEquals((<grpc:Error>hClient).message(), "Malformed URL: localhost:9151");
 }
 
 @test:Config {enable: true}
 function testClientFunctionUtilsInvalidRPCCall() returns error? {
     HelloWorld51Client hClient = check new ("http://localhost:9151");
     string|grpc:Error unaryResult = hClient->stringUnary("Hey");
-    if unaryResult is grpc:Error {
-        test:assertEquals(unaryResult.message(), "Error while executing the client call. Method type BIDI_STREAMING not supported");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    test:assertTrue(unaryResult is grpc:Error);
+    test:assertEquals((<grpc:Error>unaryResult).message(), "Error while executing the client call. Method type BIDI_STREAMING not supported");
+
     StringClientStreamingStreamingClient|grpc:Error clientResult = hClient->stringClientStreaming();
-    if clientResult is grpc:Error {
-        test:assertEquals(clientResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    test:assertTrue(clientResult is grpc:Error);
+    test:assertEquals((<grpc:Error>clientResult).message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
+
     stream<string, error?>|grpc:Error serverResult = hClient->stringServerStreaming("Hey");
-    if serverResult is grpc:Error {
-        test:assertEquals(serverResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    test:assertTrue(serverResult is grpc:Error);
+    test:assertEquals((<grpc:Error>serverResult).message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
+
     StringBiDiStreamingClient|grpc:Error biDiResult = hClient->stringBiDi();
-    if biDiResult is grpc:Error {
-        test:assertEquals(biDiResult.message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    test:assertTrue(biDiResult is grpc:Error);
+    test:assertEquals((<grpc:Error>biDiResult).message(), "No registered method descriptor for 'HelloWorld51/InvalidRPCCall'");
 }

@@ -15,170 +15,86 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 final HelloWorld3Client helloWorld3Client = check new ("http://localhost:9092");
 
-@test:Config {enable:true}
-function testSendIntArray() {
-    TestInt req = {values: [1, 2, 3, 4, 5]};
-    io:println("testIntArrayInput: input:");
-    io:println(req);
-    int|grpc:Error unionResp = helloWorld3Client->testIntArrayInput(req);
-    io:println(unionResp);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, 15);
-    }
+@test:Config {enable: true}
+function testSendIntArray() returns grpc:Error? {
+    TestInt request = {values: [1, 2, 3, 4, 5]};
+    int response = check helloWorld3Client->testIntArrayInput(request);
+    test:assertEquals(response, 15);
 }
 
-@test:Config {enable:true}
-function testSendStringArray() {
-    TestString req = {values:["A", "B", "C"]};
-    io:println("testStringArrayInput: input:");
-    io:println(req);
-    string|grpc:Error unionResp = helloWorld3Client->testStringArrayInput(req);
-    io:println(unionResp);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, ",A,B,C");
-    }
+@test:Config {enable: true}
+function testSendStringArray() returns grpc:Error? {
+    TestString request = {values: ["A", "B", "C"]};
+    string response = check helloWorld3Client->testStringArrayInput(request);
+    test:assertEquals(response, ",A,B,C");
 }
 
-@test:Config {enable:true}
-function testSendFloatArray() {
-    TestFloat req = {values:[1.1, 1.2, 1.3, 1.4, 1.5]};
-    io:println("testFloatArrayInput: input:");
-    io:println(req);
-    float|grpc:Error unionResp = helloWorld3Client->testFloatArrayInput(req);
-    io:println(unionResp);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, 6.5);
-    }
+@test:Config {enable: true}
+function testSendFloatArray() returns grpc:Error? {
+    TestFloat request = {values: [1.1, 1.2, 1.3, 1.4, 1.5]};
+    float response = check helloWorld3Client->testFloatArrayInput(request);
+    test:assertEquals(response, 6.5);
 }
 
-@test:Config {enable:true}
-function testSendBooleanArray() {
-    TestBoolean req = {values:[true, false, true]};
-    io:println("testBooleanArrayInput: input:");
-    io:println(req);
-    boolean|grpc:Error unionResp = helloWorld3Client->testBooleanArrayInput(req);
-    io:println(unionResp);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertTrue(unionResp);
-    }
+@test:Config {enable: true}
+function testSendBooleanArray() returns grpc:Error? {
+    TestBoolean request = {values: [true, false, true]};
+    boolean response = check helloWorld3Client->testBooleanArrayInput(request);
+    test:assertTrue(response);
 }
 
-@test:Config {enable:true}
-function testSendStructArray() {
+@test:Config {enable: true}
+function testSendStructArray() returns grpc:Error? {
     TestStruct testStruct = {values: [{name: "Sam"}, {name: "John"}]};
-    io:println("testStructArrayInput: input:");
-    io:println(testStruct);
-    string|grpc:Error unionResp = helloWorld3Client->testStructArrayInput(testStruct);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, ",Sam,John");
-    }
+    string response = check helloWorld3Client->testStructArrayInput(testStruct);
+    test:assertEquals(response, ",Sam,John");
 }
 
-@test:Config {enable:true}
-function testReceiveIntArray() {
-    io:println("testIntArrayOutput: No input:");
-    TestInt|grpc:Error unionResp = helloWorld3Client->testIntArrayOutput();
-    io:println(unionResp);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp.values.length(), 5);
-        test:assertEquals(unionResp.values[0], 1);
-        test:assertEquals(unionResp.values[1], 2);
-        test:assertEquals(unionResp.values[2], 3);
-        test:assertEquals(unionResp.values[3], 4);
-        test:assertEquals(unionResp.values[4], 5);
-    }
+@test:Config {enable: true}
+function testReceiveIntArray() returns grpc:Error? {
+    TestInt response = check helloWorld3Client->testIntArrayOutput();
+    test:assertEquals(response.values.length(), 5);
+    test:assertEquals(response.values[0], 1);
+    test:assertEquals(response.values[1], 2);
+    test:assertEquals(response.values[2], 3);
+    test:assertEquals(response.values[3], 4);
+    test:assertEquals(response.values[4], 5);
 }
 
-@test:Config {enable:true}
-function testReceiveStringArray() {
-    io:println("testStringArrayOutput: No input:");
-    TestString|grpc:Error unionResp = helloWorld3Client->testStringArrayOutput();
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp.values.length(), 3);
-        test:assertEquals(unionResp.values[0], "A");
-        test:assertEquals(unionResp.values[1], "B");
-        test:assertEquals(unionResp.values[2], "C");
-    }
+@test:Config {enable: true}
+function testReceiveStringArray() returns grpc:Error? {
+    TestString response = check helloWorld3Client->testStringArrayOutput();
+    test:assertEquals(response.values.length(), 3);
+    test:assertEquals(response.values[0], "A");
+    test:assertEquals(response.values[1], "B");
+    test:assertEquals(response.values[2], "C");
 }
 
-@test:Config {enable:true}
-function testReceiveFloatArray() {
-    io:println("testFloatArrayOutput: No input:");
-    TestFloat|grpc:Error unionResp = helloWorld3Client->testFloatArrayOutput();
-    io:println(unionResp);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp.values.length(), 5);
-        test:assertEquals(unionResp.values[0], 1.1);
-        test:assertEquals(unionResp.values[1], 1.2);
-        test:assertEquals(unionResp.values[2], 1.3);
-    }
+@test:Config {enable: true}
+function testReceiveFloatArray() returns grpc:Error? {
+    TestFloat response = check helloWorld3Client->testFloatArrayOutput();
+    test:assertEquals(response.values.length(), 5);
+    test:assertEquals(response.values[0], 1.1);
+    test:assertEquals(response.values[1], 1.2);
+    test:assertEquals(response.values[2], 1.3);
 }
 
-@test:Config {enable:true}
-function testReceiveBooleanArray() {
-    io:println("testBooleanArrayOutput: No input:");
-    TestBoolean|grpc:Error unionResp = helloWorld3Client->testBooleanArrayOutput();
-    io:println(unionResp);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp.values.length(), 3);
-        test:assertTrue(unionResp.values[0]);
-        test:assertFalse(unionResp.values[1]);
-        test:assertTrue(unionResp.values[2]);
-    }
+@test:Config {enable: true}
+function testReceiveBooleanArray() returns grpc:Error? {
+    TestBoolean response = check helloWorld3Client->testBooleanArrayOutput();
+    test:assertEquals(response.values.length(), 3);
+    test:assertTrue(response.values[0]);
+    test:assertFalse(response.values[1]);
+    test:assertTrue(response.values[2]);
 }
 
-@test:Config {enable:true}
-function testReceiveStructArray() {
-    io:println("testStructArrayOutput: No input:");
-    TestStruct|grpc:Error unionResp = helloWorld3Client->testStructArrayOutput();
-    io:println(unionResp);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp.values.length(), 2);
-        test:assertEquals(unionResp.values[0].name, "Sam");
-    }
+@test:Config {enable: true}
+function testReceiveStructArray() returns grpc:Error? {
+    TestStruct response = check helloWorld3Client->testStructArrayOutput();
+    test:assertEquals(response.values.length(), 2);
+    test:assertEquals(response.values[0].name, "Sam");
 }

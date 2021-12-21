@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 @test:Config {enable:true}
@@ -37,12 +36,6 @@ isolated function testUnarySecuredBlockingWithCerts() returns grpc:Error? {
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         });
 
-    string|grpc:Error unionResp = helloWorldBlockingEp->hello("WSO2");
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, "Hello WSO2");
-    }
+    string response = check helloWorldBlockingEp->hello("WSO2");
+    test:assertEquals(response, "Hello WSO2");
 }

@@ -15,46 +15,31 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 import ballerina/protobuf.types.wrappers;
 
 // Client endpoint configuration
 final HelloWorld101Client helloWorld8BlockingEp = check new ("http://localhost:9098");
 
-@test:Config {enable:true}
-function testHeadersInUnaryClient() {
+@test:Config {enable: true}
+function testHeadersInUnaryClient() returns grpc:Error? {
 
     //Working with custom headers
-    wrappers:ContextString requestMessage = {content: "WSO2", headers:  {"x-id": "0987654321"}};
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: {"x-id": "0987654321"}};
     // Executing unary blocking call
-    wrappers:ContextString|grpc:Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        string result = unionResp.content;
-        map<string|string[]> resHeaders = unionResp.headers;
-        io:println("Client Got Response : ");
-        io:println(result);
-        if resHeaders.hasKey("x-id") {
-            _ = resHeaders.remove("x-id");
-        }
-        test:assertEquals(result, "Hello WSO2");
+    wrappers:ContextString response = check helloWorld8BlockingEp->helloContext(requestMessage);
+    map<string|string[]> resHeaders = response.headers;
+    if resHeaders.hasKey("x-id") {
+        _ = resHeaders.remove("x-id");
     }
+    test:assertEquals(response.content, "Hello WSO2");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testHeadersInBlockingClient() returns grpc:Error? {
     wrappers:ContextString requestMessage = {content: "WSO2", headers: {"x-id": "0987654321"}};
     // Executing unary blocking call
-    wrappers:ContextString|grpc:Error unionResp = helloWorld8BlockingEp->helloContext(requestMessage);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        string result = unionResp.content;
-        map<string|string[]> resHeaders = unionResp.headers;
-        io:println("Client Got Response : ");
-        io:println(result);
-        test:assertEquals(check grpc:getHeaders(resHeaders, "x-id"), ["0987654321","1234567890","2233445677"]);
-    }
+    wrappers:ContextString response = check helloWorld8BlockingEp->helloContext(requestMessage);
+    map<string|string[]> resHeaders = response.headers;
+    test:assertEquals(check grpc:getHeaders(resHeaders, "x-id"), ["0987654321", "1234567890", "2233445677"]);
 }

@@ -25,13 +25,13 @@
 # + headerName - The header name
 # + return - First header value if exists or else error
 public isolated function getHeader(map<string|string[]> headerMap, string headerName) returns string|Error {
-    if (!headerMap.hasKey(headerName)) {
+    if !headerMap.hasKey(headerName) {
         return error NotFoundError("Header does not exist for " + headerName);
     }
     string|string[] headerValue = headerMap.get(headerName);
-    if (headerValue is string) {
+    if headerValue is string {
         return headerValue;
-    } else if (headerValue.length() > 0) {
+    } else if headerValue.length() > 0 {
         return headerValue[0];
     } else {
         return error NotFoundError("Header value does not exist for " + headerName);
@@ -48,11 +48,11 @@ public isolated function getHeader(map<string|string[]> headerMap, string header
 # + headerName - The header name
 # + return - Header value array
 public isolated function getHeaders(map<string|string[]> headerMap, string headerName) returns string[]|Error {
-    if (!headerMap.hasKey(headerName)) {
+    if !headerMap.hasKey(headerName) {
         return error NotFoundError("Header does not exist for " + headerName);
     }
     string|string[] headerValue = headerMap.get(headerName);
-    if (headerValue is string) {
+    if headerValue is string {
         return [headerValue];
     } else {
         return headerValue;

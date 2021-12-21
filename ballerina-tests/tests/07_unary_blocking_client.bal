@@ -15,123 +15,70 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 final HelloWorld100Client helloWorld7BlockingEp = check new ("http://localhost:9097");
 
 //type ResponseTypedesc typedesc<Response>;
 
-@test:Config {enable:true}
-function testUnaryBlockingClient() {
+@test:Config {enable: true}
+function testUnaryBlockingClient() returns grpc:Error? {
     string name = "WSO2";
-    string|grpc:Error unionResp = helloWorld7BlockingEp->hello(name);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, "Hello WSO2");
-    }
+    string response = check helloWorld7BlockingEp->hello(name);
+    test:assertEquals(response, "Hello WSO2");
 }
 
-@test:Config {enable:true}
-function testUnaryBlockingIntClient() {
+@test:Config {enable: true}
+function testUnaryBlockingIntClient() returns grpc:Error? {
     int age = 10;
-    int|grpc:Error unionResp = helloWorld7BlockingEp->testInt(age);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client got response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, 8);
-    }
+    int response = check helloWorld7BlockingEp->testInt(age);
+    test:assertEquals(response, 8);
 }
 
-@test:Config {enable:true}
-function testUnaryBlockingFloatClient() {
+@test:Config {enable: true}
+function testUnaryBlockingFloatClient() returns grpc:Error? {
     float salary = 1000.5;
-    float|grpc:Error unionResp = helloWorld7BlockingEp->testFloat(salary);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client got response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp, 880.44);
-    }
+    float response = check helloWorld7BlockingEp->testFloat(salary);
+    test:assertEquals(response, 880.44);
 }
 
-@test:Config {enable:true}
-function testUnaryBlockingBoolClient() {
+@test:Config {enable: true}
+function testUnaryBlockingBoolClient() returns grpc:Error? {
     boolean isAvailable = false;
-    boolean|grpc:Error unionResp = helloWorld7BlockingEp->testBoolean(isAvailable);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client got response : ");
-        io:println(unionResp);
-        test:assertTrue(unionResp);
-    }
+    boolean response = check helloWorld7BlockingEp->testBoolean(isAvailable);
+    test:assertTrue(response);
 }
 
-@test:Config {enable:true}
-function testUnaryBlockingReceiveRecord() {
+@test:Config {enable: true}
+function testUnaryBlockingReceiveRecord() returns grpc:Error? {
     string msg = "WSO2";
-    Response|grpc:Error unionResp = helloWorld7BlockingEp->testResponseInsideMatch(msg);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client got response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp.resp, "Acknowledge WSO2");
-    }
+    Response response = check helloWorld7BlockingEp->testResponseInsideMatch(msg);
+    test:assertEquals(response.resp, "Acknowledge WSO2");
 }
 
-@test:Config {enable:true}
-function testUnaryBlockingStructClient() {
-    Request req = {name:"Sam", message:"Testing."};
-    Response|grpc:Error unionResp = helloWorld7BlockingEp->testStruct(req);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client got response : ");
-        io:println(unionResp);
-        test:assertEquals(unionResp.resp, "Acknowledge Sam");
-    }
+@test:Config {enable: true}
+function testUnaryBlockingStructClient() returns grpc:Error? {
+    Request req = {name: "Sam", message: "Testing."};
+    Response response = check helloWorld7BlockingEp->testStruct(req);
+    test:assertEquals(response.resp, "Acknowledge Sam");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testUnaryClientWithNegativeTimeout() returns grpc:Error? {
-    HelloWorld100Client|grpc:Error hClient = new ("http://localhost:9097", {
+    HelloWorld100Client hClient = check new ("http://localhost:9097", {
         timeout: -10
     });
-    if hClient is grpc:Error {
-        test:assertFail(hClient.message());
-    } else {
-        string name = "WSO2";
-        string|grpc:Error unionResp = hClient->hello(name);
-        if unionResp is grpc:Error {
-            test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-        } else {
-            test:assertEquals(unionResp, "Hello WSO2");
-        }
-    }
+    string name = "WSO2";
+    string response = check hClient->hello(name);
+    test:assertEquals(response, "Hello WSO2");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testUnaryClientWithOverflowingTimeout() returns grpc:Error? {
-    HelloWorld100Client|grpc:Error hClient = new ("http://localhost:9097", {
+    HelloWorld100Client hClient = check new ("http://localhost:9097", {
         timeout: 2147483699
     });
-    if hClient is grpc:Error {
-        test:assertFail(hClient.message());
-    } else {
-        string name = "WSO2";
-        string|grpc:Error unionResp = hClient->hello(name);
-        if unionResp is grpc:Error {
-            test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-        } else {
-            test:assertEquals(unionResp, "Hello WSO2");
-        }
-    }
+    string name = "WSO2";
+    string response = check hClient->hello(name);
+    test:assertEquals(response, "Hello WSO2");
 }

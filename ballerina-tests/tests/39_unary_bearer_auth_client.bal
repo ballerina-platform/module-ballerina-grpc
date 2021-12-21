@@ -21,53 +21,31 @@ import ballerina/protobuf.types.wrappers;
 @test:Config {enable: true}
 isolated function testStringValueReturnWithBearerTokenAuth() returns grpc:Error? {
     HelloWorld39Client helloWorldEp = check new ("http://localhost:9129");
-    map<string|string[]> requestHeaders = {};
-
     grpc:BearerTokenConfig config = {token: "eyJhbGciOiJSUzI1NiIsICJ0eXAiOiJKV1QifQ"};
-
     grpc:ClientBearerTokenAuthHandler handler = new (config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
 
     wrappers:ContextString requestMessage = {
         content: "WSO2",
         headers: requestHeaders
     };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is grpc:Error {
-        test:assertFail(msg = response.message());
-    } else {
-        test:assertEquals(response, "Hello WSO2");
-    }
+    string response = check helloWorldEp->testStringValueReturn(requestMessage);
+    test:assertEquals(response, "Hello WSO2");
 }
 
 @test:Config {enable: true}
 isolated function testStringValueReturnWithInvalidBearerTokenAuth() returns grpc:Error? {
     HelloWorld39Client helloWorldEp = check new ("http://localhost:9129");
-    map<string|string[]> requestHeaders = {};
-
     grpc:BearerTokenConfig config = {token: "ABCD"};
-
     grpc:ClientBearerTokenAuthHandler handler = new (config);
-    map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-    if result is grpc:ClientAuthError {
-        test:assertFail(msg = "Test Failed! " + result.message());
-    } else {
-        requestHeaders = result;
-    }
-
+    map<string|string[]> requestHeaders = {};
+    requestHeaders = check handler.enrich(requestHeaders);
     wrappers:ContextString requestMessage = {
         content: "WSO2",
         headers: requestHeaders
     };
-    var response = helloWorldEp->testStringValueReturn(requestMessage);
-    if response is grpc:Error {
-        test:assertEquals(response.message(), "Invalid basic auth token: Bearer ABCD");
-    } else {
-        test:assertFail(msg = "Expected grpc:Error not found.");
-    }
+    string|grpc:Error response = helloWorldEp->testStringValueReturn(requestMessage);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Invalid basic auth token: Bearer ABCD");
 }

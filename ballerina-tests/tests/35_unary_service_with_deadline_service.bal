@@ -17,7 +17,6 @@
 import ballerina/grpc;
 import ballerina/log;
 import ballerina/lang.runtime;
-import ballerina/io;
 
 listener grpc:Listener ep35 = new (9125);
 
@@ -26,33 +25,28 @@ listener grpc:Listener ep35 = new (9125);
     descMap: getDescriptorMap35UnaryServiceWithDeadline()
 }
 service "HelloWorld35" on ep35 {
-    
+
     remote isolated function callWithinDeadline(ContextString request) returns ContextString|grpc:Error {
         log:printInfo("Invoked callWithingDeadline");
         var cancel = grpc:isCancelled(request.headers);
         if cancel is boolean {
             if cancel {
                 return error grpc:DeadlineExceededError("Exceeded the configured deadline");
-            } else {
-                return {content: "Ack", headers: {}};
             }
-        } else {
-            return error grpc:CancelledError(cancel.message());
+            return {content: "Ack", headers: {}};
         }
+        return error grpc:CancelledError(cancel.message());
     }
     remote isolated function callExceededDeadline(ContextString request) returns ContextString|grpc:Error {
         log:printInfo("Invoked callExceededDeadline");
-        io:println(request);
         runtime:sleep(10);
         var cancel = grpc:isCancelled(request.headers);
         if cancel is boolean {
             if cancel {
                 return error grpc:DeadlineExceededError("Exceeded the configured deadline");
-            } else {
-                return {content: "Ack", headers: {}};
             }
-        } else {
-            return error grpc:CancelledError(cancel.message());
+            return {content: "Ack", headers: {}};
         }
+        return error grpc:CancelledError(cancel.message());
     }
 }

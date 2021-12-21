@@ -24,7 +24,7 @@ service "ProductCatalog" on ep54 {
     isolated remote function getProduct(string value) returns ChangedProduct|error {
         return {name: "Noodles", id: 1009, additional: "add"};
     }
-    
+
     isolated remote function sendCustomer(Customer value) returns string|error {
         return value.name;
     }

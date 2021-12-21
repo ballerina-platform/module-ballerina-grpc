@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 
 listener grpc:Listener ep27 = new (9117);
 
@@ -25,11 +24,10 @@ listener grpc:Listener ep27 = new (9117);
 }
 service "ChatFromReturn" on ep27 {
 
-    remote function chat27(stream<ChatMessage27,error?> clientStream) returns stream<string, error?>|error? {
+    remote function chat27(stream<ChatMessage27, error?> clientStream) returns stream<string, error?>|error? {
         string[] messages = [];
         int i = 0;
         check clientStream.forEach(function(ChatMessage27 reqMsg) {
-            io:println(reqMsg);
             messages[i] = reqMsg.message + " " + reqMsg.name;
             i += 1;
         });

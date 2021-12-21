@@ -50,12 +50,12 @@ public isolated client class Client {
     # grpc:Error? result = grpcClient.initStub(self, ROOT_DESCRIPTOR, getDescriptorMap());
     # ```
     #
-    # + clientEndpoint -  Client endpoint
+    # + clientEndpoint - Client endpoint
     # + descriptorKey - Key of the proto descriptor
     # + descriptorMap - Proto descriptor map with all the dependent descriptors
     # + return - A `grpc:Error` if an error occurs while initializing the stub or else `()`
     public isolated function initStub(AbstractClientEndpoint clientEndpoint, string descriptorKey,
-                             map<any> descriptorMap) returns Error? {
+                            map<any> descriptorMap) returns Error? {
         return externInitStub(self, clientEndpoint, descriptorKey, descriptorMap);
     }
 
@@ -69,7 +69,7 @@ public isolated client class Client {
     # + headers - Optional headers parameter. The header value are passed only if needed. The default value is `()`
     # + return - The response as an `anydata` type value or else a `grpc:Error`
     isolated remote function executeSimpleRPC(string methodID, anydata payload, map<string|string[]> headers = {})
-                                   returns ([anydata, map<string|string[]>]|Error) {
+                                    returns ([anydata, map<string|string[]>]|Error) {
         var retryConfig = self.config.retryConfiguration;
         map<string|string[]> enrichedHeaders = headers;
         if self.clientAuthHandler is ClientAuthHandler {
@@ -115,7 +115,6 @@ public isolated client class Client {
         return externExecuteClientStreaming(self, methodID, enrichedHeaders);
     }
 
-
     # Calls when executing a bi-directional streaming call with a gRPC service.
     # ```ballerina
     # grpc:StreamingClient|grpc:Error result = grpcClient->executeBidirectionalStreaming("HelloWorld/hello", headers);
@@ -143,7 +142,7 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
     ErrorType[] errorTypes = retryConfig.errorTypes;
     error? cause = ();
 
-    while (currentRetryCount <= retryCount) {
+    while currentRetryCount <= retryCount {
         var result = externExecuteSimpleRPC(grpcClient, methodID, payload, headers);
         if result is [anydata, map<string|string[]>] {
             return result;
@@ -169,7 +168,7 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
 isolated function generateMethodId(string? pkgName, string svcName, string rpcName) returns string {
     string methodID;
     if pkgName is () {
-       methodID = svcName + "/" + rpcName;
+        methodID = svcName + "/" + rpcName;
     } else {
         methodID = pkgName + "." + svcName + "/" + rpcName;
     }
@@ -179,17 +178,17 @@ isolated function generateMethodId(string? pkgName, string svcName, string rpcNa
 // Initialize the client auth handler based on the provided configurations
 isolated function initClientAuthHandler(ClientAuthConfig authConfig) returns ClientAuthHandler {
     if authConfig is CredentialsConfig {
-        ClientBasicAuthHandler handler = new(authConfig);
+        ClientBasicAuthHandler handler = new (authConfig);
         return handler;
     } else if authConfig is BearerTokenConfig {
-        ClientBearerTokenAuthHandler handler = new(authConfig);
+        ClientBearerTokenAuthHandler handler = new (authConfig);
         return handler;
     } else if authConfig is JwtIssuerConfig {
-        ClientSelfSignedJwtAuthHandler handler = new(authConfig);
+        ClientSelfSignedJwtAuthHandler handler = new (authConfig);
         return handler;
     } else {
         // Here, `authConfig` is `OAuth2GrantConfig`
-        ClientOAuth2Handler handler = new(authConfig);
+        ClientOAuth2Handler handler = new (authConfig);
         return handler;
     }
 }
@@ -215,7 +214,7 @@ globalPoolConfig)
 } external;
 
 isolated function externInitStub(Client genericEndpoint, AbstractClientEndpoint clientEndpoint, string descriptorKey,
-                                 map<any> descriptorMap) returns Error? = @java:Method {
+                                map<any> descriptorMap) returns Error? = @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
@@ -230,18 +229,18 @@ isolated function externExecuteServerStreaming(Client clientEndpoint, string met
 } external;
 
 isolated function externExecuteClientStreaming(Client clientEndpoint, string methodID, map<string|string[]> headers)
-               returns StreamingClient|Error = @java:Method {
+                returns StreamingClient|Error = @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
 isolated function externExecuteBidirectionalStreaming(Client clientEndpoint, string methodID, map<string|string[]> headers)
-               returns StreamingClient|Error = @java:Method {
+                returns StreamingClient|Error = @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 
-
 # Represents the abstract gRPC client endpoint. This abstract object is used in the generated client.
-public type AbstractClientEndpoint object {};
+public type AbstractClientEndpoint object {
+};
 
 final ErrorType[] & readonly defaultErrorTypes = [InternalError];
 
@@ -253,11 +252,11 @@ final ErrorType[] & readonly defaultErrorTypes = [InternalError];
 # + backoffFactor - Retry interval will be multiplied by this factor, in between retry attempts
 # + errorTypes - Error types which should be considered as failure scenarios to retry
 public type RetryConfiguration record {|
-   int retryCount;
-   decimal interval;
-   decimal maxInterval;
-   decimal backoffFactor;
-   ErrorType[] errorTypes = defaultErrorTypes;
+    int retryCount;
+    decimal interval;
+    decimal maxInterval;
+    decimal backoffFactor;
+    ErrorType[] errorTypes = defaultErrorTypes;
 |};
 
 # Configurations for managing the gRPC client endpoint.
@@ -287,7 +286,7 @@ public type ClientConfiguration record {|
 # + protocol - SSL/TLS protocol related options
 # + certValidation - Certificate validation against OCSP_CRL, OCSP_STAPLING related options
 # + ciphers - List of ciphers to be used
-#             eg: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+# eg: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
 # + verifyHostName - Enable/disable host name verification
 # + shareSession - Enable/disable new SSL session creation
 # + handshakeTimeout - SSL handshake time out(in seconds)

@@ -24,10 +24,6 @@ isolated function testGzipEncoding() returns grpc:Error? {
     Order 'order = {id: "101", items: ["xyz", "abc"], destination: "LK", price:2300.00};
     map<string|string[]> headers = grpc:setCompression(grpc:GZIP);
     ContextOrder reqOrder = {content: 'order, headers: headers};
-    string|error result = OrderMgtBlockingEp->addOrder(reqOrder);
-    if result is error {
-        test:assertFail(string `Error from Connector: ${result.message()}`);
-    } else {
-        test:assertEquals(result, "Order is added 101");
-    }
+    string result = check OrderMgtBlockingEp->addOrder(reqOrder);
+    test:assertEquals(result, "Order is added 101");
 }
