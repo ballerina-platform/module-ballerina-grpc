@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/jballerina.java;
-import ballerina/http as _;
 
 // Above unnecessary HTTP import can remove when one of the following issues are fixed:
 // 1. https://github.com/ballerina-platform/ballerina-lang/issues/34357
