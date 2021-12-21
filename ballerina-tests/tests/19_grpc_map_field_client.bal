@@ -19,30 +19,25 @@ import ballerina/test;
 
 final NegotiatorClient negotiatorEp = check new ("http://localhost:9109");
 
-@test:Config {enable:true}
-function testMapFields() {
+@test:Config {enable: true}
+function testMapFields() returns grpc:Error? {
     MetricsPublishRequest request = {
         id: "xxxxx",
-        metrics: [{
-            timestamp: 1580966325916,
-            name: "ballerina/http/Caller_3XX_requests_total_count",
-            value: 0.0,
-            tags: [{key: "action", value: "respond"}]
-        }]
+        metrics: [
+            {
+                timestamp: 1580966325916,
+                name: "ballerina/http/Caller_3XX_requests_total_count",
+                value: 0.0,
+                tags: [{key: "action", value: "respond"}]
+            }
+        ]
     };
-    grpc:Error? publishMetrics = negotiatorEp->publishMetrics(request);
-    if publishMetrics is grpc:Error {
-        test:assertFail(string `Metrics publish failed: ${publishMetrics.message()}`);
-    }
+    check negotiatorEp->publishMetrics(request);
 }
 
-@test:Config {enable:true}
-function testOptionalFields() {
+@test:Config {enable: true}
+function testOptionalFields() returns grpc:Error? {
     HandshakeRequest request = {};
-    HandshakeResponse|grpc:Error result = negotiatorEp->handshake(request);
-    if result is grpc:Error {
-        test:assertFail(string `Handshake failed: ${result.message()}`);
-    } else {
-        test:assertEquals(result.id, "123456");
-    }
+    HandshakeResponse result = check negotiatorEp->handshake(request);
+    test:assertEquals(result.id, "123456");
 }

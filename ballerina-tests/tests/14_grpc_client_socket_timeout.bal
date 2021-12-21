@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/lang.runtime as runtime;
 
 @grpc:ServiceDescriptor {
@@ -24,15 +23,11 @@ import ballerina/lang.runtime as runtime;
 }
 service "HelloWorld14" on new grpc:Listener(9104) {
 
-    isolated remote function hello (HelloWorld14StringCaller caller, string name,
-                             map<string|string[]> headers) {
+    isolated remote function hello(HelloWorld14StringCaller caller, string name) {
         string message = "Hello " + name;
         runtime:sleep(2);
         // Sends response message with headers.
-        grpc:Error? err = caller->sendString(message);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        }
+        checkpanic caller->sendString(message);
 
         // Sends `completed` notification to caller.
         checkpanic caller->complete();

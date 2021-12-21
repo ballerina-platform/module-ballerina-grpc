@@ -14,29 +14,21 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/grpc;// This is client implementation for bidirectional streaming scenario
-
-import ballerina/io;
+// This is client implementation for bidirectional streaming scenario
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testBidiStreamingFromReturn() returns error? {
-    Chat27StreamingClient streamingClient;
+
     ChatFromReturnClient chatEp = check new ("http://localhost:9117");
     // Executing unary non-blocking call registering server message listener.
-    var res = chatEp->chat27();
-    if res is grpc:Error {
-        io:println(string `Error from Connector: ${res.message()}`);
-        return;
-    } else {
-        streamingClient = res;
-    }
+    Chat27StreamingClient streamingClient = check chatEp->chat27();
 
     ChatMessage27[] messages = [
-        {name:"Sam", message:"Hi"},
-        {name:"Ann", message:"Hey"},
-        {name:"John", message:"Hello"},
-        {name:"Jack", message:"How are you"}
+        {name: "Sam", message: "Hi"},
+        {name: "Ann", message: "Hey"},
+        {name: "John", message: "Hello"},
+        {name: "Jack", message: "How are you"}
     ];
     foreach ChatMessage27 msg in messages {
         check streamingClient->sendChatMessage27(msg);
@@ -46,12 +38,8 @@ isolated function testBidiStreamingFromReturn() returns error? {
     string[] expectedOutput = ["Hi Sam", "Hey Ann", "Hello John", "How are you Jack"];
     var result = streamingClient->receiveString();
     while !(result is ()) {
-        io:println(result);
-        if result is grpc:Error {
-            test:assertFail("Unexpected output in the stream");
-        } else {
-            test:assertEquals(result, expectedOutput[i]);
-        }
+        test:assertTrue(result is string);
+        test:assertEquals(result, expectedOutput[i]);
         result = streamingClient->receiveString();
         i += 1;
     }

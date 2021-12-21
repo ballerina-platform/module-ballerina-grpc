@@ -17,10 +17,9 @@
 import ballerina/grpc;
 import ballerina/test;
 import ballerina/time;
-import ballerina/io;
 
-@test:Config {enable:true}
-isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error? {
+@test:Config {enable: true}
+isolated function testBidiStreamingFromReturnRecordWithDeadline() returns grpc:Error? {
     HelloWorld37Client helloWorldCaller = check new ("http://localhost:9127");
     time:Utc current = time:utcNow();
     time:Utc deadline = time:utcAddSeconds(current, 300);
@@ -35,22 +34,15 @@ isolated function testBidiStreamingFromReturnRecordWithDeadline() returns error?
         "Google"
     ];
     foreach string s in requests {
-        grpc:Error? err = streamingClient->sendContextString({content: s, headers: headers});
-        if err is grpc:Error {
-            test:assertFail("Error from Connector: " + err.message());
-        }
+        check streamingClient->sendContextString({content: s, headers: headers});
     }
     check streamingClient->complete();
-    io:println("Completed successfully");
-    var result = streamingClient->receiveString();
+    string? result = check streamingClient->receiveString();
     int i = 0;
     while !(result is ()) {
-        if result is string {
-            test:assertEquals(result, requests[i]);
-        } else {
-            test:assertFail("Unexpected output in the stream");
-        }
-        result = streamingClient->receiveString();
+        test:assertTrue(result is string);
+        test:assertEquals(<string>result, requests[i]);
+        result = check streamingClient->receiveString();
         i += 1;
     }
     test:assertEquals(i, 4);

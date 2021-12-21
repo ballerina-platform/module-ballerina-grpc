@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/log;
 
-listener grpc:Listener  helloWorldStreamingep = new (9113);
+listener grpc:Listener helloWorldStreamingep = new (9113);
 
 @grpc:ServiceDescriptor {
     descriptor: ROOT_DESCRIPTOR_23_SERVER_STREAMING_WITH_RECORD_SERVICE,
@@ -32,18 +32,9 @@ service "helloWorldServerStreaming" on helloWorldStreamingep {
         foreach string greet in greets {
             string message = greet + " " + value.name;
             HelloResponse msg = {message: message};
-            grpc:Error? err = caller->sendHelloResponse(msg);
-            if err is grpc:Error {
-                log:printError("Error from Connector: " + err.message());
-            } else {
-                log:printInfo("Send reply: " + msg.toString());
-            }
+            checkpanic caller->sendHelloResponse(msg);
         }
 
-        grpc:Error? result = caller->complete();
-        if result is grpc:Error {
-            log:printError("Error in sending completed notification to caller",
-                'error = result);
-        }
+        checkpanic caller->complete();
     }
 }

@@ -27,8 +27,8 @@ service "TimestampService" on ep47 {
             name: value,
             time: check time:utcFromString("2007-12-03T10:15:30.120Z")
         };
-        check caller->sendGreeting(greeting);
-        check caller->complete();
+        checkpanic caller->sendGreeting(greeting);
+        checkpanic caller->complete();
     }
 
     remote function exchangeGreeting(TimestampServiceGreetingCaller caller, Greeting value) returns error? {
@@ -36,19 +36,19 @@ service "TimestampService" on ep47 {
             name: value.name,
             time: check time:utcFromString("2008-12-03T11:15:30.120Z")
         };
-        check caller->sendGreeting(greeting);
-        check caller->complete();
+        checkpanic caller->sendGreeting(greeting);
+        checkpanic caller->complete();
     }
 
     remote function exchangeTime(TimestampServiceTimestampCaller caller, time:Utc value) returns time:Utc|error? {
         time:Utc expectedTime = check time:utcFromString("2008-12-03T11:15:30.120Z");
         if expectedTime == value {
             time:Utc sendingTime = check time:utcFromString("2012-12-03T11:13:30.472Z");
-            check caller->sendTimestamp(sendingTime);
-            check caller->complete();
+            checkpanic caller->sendTimestamp(sendingTime);
+            checkpanic caller->complete();
         } else {
-            check caller->sendError(error grpc:Error("Timestamp does not match"));
-            check caller->complete();
+            checkpanic caller->sendError(error grpc:Error("Timestamp does not match"));
+            checkpanic caller->complete();
         }
         return;
     }
@@ -69,7 +69,7 @@ service "TimestampService" on ep47 {
         check clientStream.forEach(function(time:Utc value) {
             timearr.push(value.cloneReadOnly());
         });
-        check caller->sendContextTimestamp({
+        checkpanic caller->sendContextTimestamp({
             headers: {},
             content: timearr[0]
         });

@@ -29,10 +29,7 @@ isolated function testServerStreamingWithCustomHeaders() returns grpc:Error? {
 isolated function testServerStreamingWithCustomError() returns error? {
     Chat41Client ep = check new ("http://localhost:9141");
     stream<string, error?> strm = check ep->call2({name: "John", message: "Hi Bella"});
-    var content = strm.next();
-    if content is record {| string value; |} || content is () {
-        test:assertFail(msg = "Expected grpc:Error not found.");
-    } else {
-        test:assertEquals(content.message(), "Unknown gRPC error occured.");
-    }
+    var response = strm.next();
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Unknown gRPC error occured.");
 }

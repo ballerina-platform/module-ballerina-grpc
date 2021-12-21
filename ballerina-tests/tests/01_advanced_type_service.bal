@@ -15,10 +15,10 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
+import ballerina/log;
 
 listener grpc:Listener ep = new (9091, {
-    host:"localhost"
+    host: "localhost"
 });
 
 @grpc:ServiceDescriptor {
@@ -28,65 +28,46 @@ listener grpc:Listener ep = new (9091, {
 service "HelloWorld" on ep {
 
     isolated remote function testInputNestedStruct(HelloWorldStringCaller caller, Person req) {
-        io:println("name: " + req.name);
+        log:printInfo("name: " + req.name);
         string message = "Submitted name: " + req.name;
-        io:println("Response message " + message);
-        grpc:Error? err = caller->sendString(message);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        }
+        checkpanic caller->sendString(message);
         checkpanic caller->complete();
     }
 
     isolated remote function testOutputNestedStruct(HelloWorldPersonCaller caller, string name) {
-        io:println("requested name: " + name);
-        Person person = {name:"Sam", address:{postalCode:10300, state:"CA", country:"USA"}};
-        io:println(person);
-        grpc:Error? err = caller->sendPerson(person);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        }
+        log:printInfo("requested name: " + name);
+        Person person = {name: "Sam", address: {postalCode: 10300, state: "CA", country: "USA"}};
+        checkpanic caller->sendPerson(person);
         checkpanic caller->complete();
     }
 
     isolated remote function testInputStructOutputStruct(HelloWorldStockQuoteCaller caller, StockRequest req) {
-        io:println("Getting stock details for symbol: " + req.name);
-        StockQuote res = {symbol:"WSO2", name:"WSO2.com", last:149.52, low:150.70, high:149.18};
-        io:println(res);
-        grpc:Error? err = caller->sendStockQuote(res);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        }
+        log:printInfo("Getting stock details for symbol: " + req.name);
+        StockQuote res = {symbol: "WSO2", name: "WSO2.com", last: 149.52, low: 150.70, high: 149.18};
+        checkpanic caller->sendStockQuote(res);
         checkpanic caller->complete();
     }
 
     isolated remote function testInputStructNoOutput(HelloWorldNilCaller caller, StockQuote req) {
-        io:println("Symbol: " + req.symbol);
-        io:println("Name: " + req.name);
-        io:println("Last: " + req.last.toString());
-        io:println("Low: " + req.low.toString());
-        io:println("High: " + req.high.toString());
+        log:printInfo("Symbol: " + req.symbol);
+        log:printInfo("Name: " + req.name);
+        log:printInfo("Last: " + req.last.toString());
+        log:printInfo("Low: " + req.low.toString());
+        log:printInfo("High: " + req.high.toString());
     }
 
     isolated remote function testNoInputOutputStruct(HelloWorldStockQuotesCaller caller) {
-        StockQuote res = {symbol:"WSO2", name:"WSO2 Inc.", last:14.0, low:15.0, high:16.0};
-        StockQuote res1 = {symbol:"Google", name:"Google Inc.", last:100.0, low:101.0, high:102.0};
-        StockQuotes quotes = {stock:[res, res1]};
-
-        grpc:Error? err = caller->sendStockQuotes(quotes);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        }
+        StockQuote res = {symbol: "WSO2", name: "WSO2 Inc.", last: 14.0, low: 15.0, high: 16.0};
+        StockQuote res1 = {symbol: "Google", name: "Google Inc.", last: 100.0, low: 101.0, high: 102.0};
+        StockQuotes quotes = {stock: [res, res1]};
+        checkpanic caller->sendStockQuotes(quotes);
         checkpanic caller->complete();
     }
 
     isolated remote function testNoInputOutputArray(HelloWorldStockNamesCaller caller) {
         string[] names = ["WSO2", "Google"];
-        StockNames stockNames = {names:names};
-        grpc:Error? err = caller->sendStockNames(stockNames);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        }
+        StockNames stockNames = {names: names};
+        checkpanic caller->sendStockNames(stockNames);
         checkpanic caller->complete();
     }
 }

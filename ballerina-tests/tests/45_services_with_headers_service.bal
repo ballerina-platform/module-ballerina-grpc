@@ -25,21 +25,21 @@ service "HeadersService" on ep45 {
     remote function unary(HeadersServiceHSResCaller caller, ContextHSReq req) returns error? {
         map<string|string[]> responseHeaders = {};
         if !req.headers.hasKey("unary-req-header") {
-            check caller->sendError(error grpc:AbortedError("unary-req-header header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("unary-req-header header is missing"));
             return;
         } else {
             string headerValue = check grpc:getHeader(req.headers, "unary-req-header");
             log:printInfo("Request Header: " + headerValue);
             responseHeaders["unary-res-header"] = ["abcde", "fgh"];
         }
-        check caller->sendContextHSRes({content: req.content, headers: responseHeaders});
-        check caller->complete();
+        checkpanic caller->sendContextHSRes({content: req.content, headers: responseHeaders});
+        checkpanic caller->complete();
     }
 
     remote function serverStr(HeadersServiceHSResCaller caller, ContextHSReq req) returns error? {
         map<string|string[]> responseHeaders = {};
         if !req.headers.hasKey("server-steaming-req-header") {
-            check caller->sendError(error grpc:AbortedError("server-steaming-req-header header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("server-steaming-req-header header is missing"));
             return;
         } else {
             string headerValue = check grpc:getHeader(req.headers, "server-steaming-req-header");
@@ -54,15 +54,15 @@ service "HeadersService" on ep45 {
             {name: "Miller", message: "Bro"}
         ];
         foreach HSRes res in responses {
-            check caller->sendContextHSRes({content: res, headers: responseHeaders});
+            checkpanic caller->sendContextHSRes({content: res, headers: responseHeaders});
         }
-        check caller->complete();
+        checkpanic caller->complete();
     }
 
     remote function clientStr(HeadersServiceHSResCaller caller, ContextHSReqStream req) returns error? {
         map<string|string[]> responseHeaders = {};
         if !req.headers.hasKey("client-steaming-req-header") {
-            check caller->sendError(error grpc:AbortedError("client-steaming-req-header header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("client-steaming-req-header header is missing"));
             return;
         } else {
             string headerValue = check grpc:getHeader(req.headers, "client-steaming-req-header");
@@ -83,7 +83,7 @@ service "HeadersService" on ep45 {
     remote function bidirectionalStr(HeadersServiceHSResCaller caller, ContextHSReqStream req) returns error? {
         map<string|string[]> responseHeaders = {};
         if !req.headers.hasKey("bidi-steaming-req-header") {
-            check caller->sendError(error grpc:AbortedError("bidi-steaming-req-header header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("bidi-steaming-req-header header is missing"));
             return;
         } else {
             string headerValue = check grpc:getHeader(req.headers, "bidi-steaming-req-header");
@@ -101,7 +101,7 @@ service "HeadersService" on ep45 {
             i += 1;
         });
         log:printInfo("client messages", count = i);
-        check caller->complete();
+        checkpanic caller->complete();
     }
 }
 

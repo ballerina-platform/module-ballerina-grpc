@@ -37,7 +37,7 @@ isolated function createSecureRequest(string headerValue) returns http:Request {
 }
 
 // Mock OAuth2 authorization server implementation, which treats the APIs with successful responses.
-listener http:Listener oauth2Listener = new(oauth2AuthorizationServerPort, {
+listener http:Listener oauth2Listener = new (oauth2AuthorizationServerPort, {
     secureSocket: {
         key: {
             path: KEYSTORE_PATH,
@@ -74,15 +74,15 @@ service /oauth2 on oauth2Listener {
     resource isolated function post token/introspect(http:Caller caller, http:Request request) {
         string|http:ClientError payload = request.getTextPayload();
         json response = ();
-        if (payload is string) {
+        if payload is string {
             string[] parts = regex:split(payload, "&");
             foreach string part in parts {
-                if (part.indexOf("token=") is int) {
+                if part.indexOf("token=") is int {
                     string token = regex:split(part, "=")[1];
-                    if (token == ACCESS_TOKEN) {
-                        response = { "active": true, "exp": 3600, "scp": "read write" };
+                    if token == ACCESS_TOKEN {
+                        response = {"active": true, "exp": 3600, "scp": "read write"};
                     } else {
-                        response = { "active": false };
+                        response = {"active": false};
                     }
                     break;
                 }

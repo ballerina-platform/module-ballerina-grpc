@@ -37,8 +37,8 @@ public isolated client class ListenerOAuth2Handler {
     # + optionalParams - Map of optionalParams parameters that need to be sent to introspection endpoint
     # + return - The `oauth2:IntrospectionResponse` instance or else `UnauthenticatedError` or `PermissionDeniedError` type error
     remote isolated function authorize(map<string|string[]> headers, string|string[]? expectedScopes = (),
-                                       map<string>? optionalParams = ())
-                                       returns oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError {
+                                        map<string>? optionalParams = ())
+                                        returns oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError {
         string|Error credential = extractCredential(headers);
         if credential is Error {
             return error UnauthenticatedError(credential.message());

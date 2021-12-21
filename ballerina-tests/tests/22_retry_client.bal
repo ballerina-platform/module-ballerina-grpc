@@ -33,32 +33,21 @@ grpc:RetryConfiguration failingRetryConfig = {
     errorTypes: [grpc:UnavailableError, grpc:InternalError]
 };
 
-final RetryServiceClient retryClient = check new("http://localhost:9112", timeout = 1, retryConfiguration = retryConfig);
-final RetryServiceClient failingRetryClient = check new("http://localhost:9112", timeout = 1, retryConfiguration = failingRetryConfig);
+final RetryServiceClient retryClient = check new ("http://localhost:9112", timeout = 1, retryConfiguration = retryConfig);
+final RetryServiceClient failingRetryClient = check new ("http://localhost:9112", timeout = 1, retryConfiguration = failingRetryConfig);
 
-@test:Config {enable:true}
-function testRetry() {
-    var result = retryClient->getResult("UnavailableError");
-    if result is grpc:Error {
-        test:assertFail(result.toString());
-    } else {
-        test:assertEquals(result, "Total Attempts: 4");
-    }
+@test:Config {enable: true}
+function testRetry() returns grpc:Error? {
+    string result = check retryClient->getResult("UnavailableError");
+    test:assertEquals(result, "Total Attempts: 4");
 
-    result = retryClient->getResult("InternalError");
-    if result is grpc:Error {
-        test:assertFail(result.toString());
-    } else {
-        test:assertEquals(result, "Total Attempts: 4");
-    }
+    result = check retryClient->getResult("InternalError");
+    test:assertEquals(result, "Total Attempts: 4");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testRetryFailingClient() {
-    var result = failingRetryClient->getResult("FailingRetryClient");
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "Maximum retry attempts completed without getting a result");
-    } else {
-        test:assertFail(result);
-    }
+    string|grpc:Error result = failingRetryClient->getResult("FailingRetryClient");
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Maximum retry attempts completed without getting a result");
 }

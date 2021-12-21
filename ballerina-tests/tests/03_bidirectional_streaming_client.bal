@@ -15,13 +15,11 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
 @test:Config {enable:true}
 isolated function testBidiStreaming() returns grpc:Error? {
-    ChatStreamingClient ep;
     ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {
             key: {
@@ -40,41 +38,23 @@ isolated function testBidiStreaming() returns grpc:Error? {
         }
     });
     // Executing unary non-blocking call registering server message listener.
-    var res = chatEp->chat();
-    if res is grpc:Error {
-        io:println(string `Error from Connector: ${res.message()}`);
-        return;
-    } else {
-        ep = res;
-    }
+    ChatStreamingClient ep = check chatEp->chat();
     runtime:sleep(1);
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
-    grpc:Error? connErr = ep->sendChatMessage(mes1);
-    if connErr is grpc:Error {
-        test:assertFail(string `Error from Connector: ${connErr.message()}`);
-    }
+    check ep->sendChatMessage(mes1);
 
-    var responseMsg = ep->receiveString();
-    if responseMsg is string {
-        test:assertEquals(responseMsg, "Sam: Hi");
-    } else if responseMsg is error {
-        test:assertFail(msg = responseMsg.message());
-    }
+    string? responseMsg = check ep->receiveString();
+    test:assertTrue(responseMsg is string);
+    test:assertEquals((<string>responseMsg), "Sam: Hi");
 
     ChatMessage mes2 = {name:"Sam", message:"GM"};
-    connErr = ep->sendChatMessage(mes2);
-    if connErr is grpc:Error {
-        test:assertFail(string `Error from Connector: ${connErr.message()}`);
-    }
+    check ep->sendChatMessage(mes2);
 
-    responseMsg = ep->receiveString();
-    if responseMsg is string {
-        test:assertEquals(responseMsg, "Sam: GM");
-    } else if responseMsg is grpc:Error {
-        test:assertFail(msg = responseMsg.message());
-    }
+    responseMsg = check ep->receiveString();
+    test:assertTrue(responseMsg is string);
+    test:assertEquals(<string>responseMsg, "Sam: GM");
 
-    checkpanic ep->complete();
+    check ep->complete();
 }
 
 @test:Config {enable:true}
@@ -96,11 +76,8 @@ isolated function testBidiStreamingInvalidSecureSocketConfigs() returns grpc:Err
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "KeyStore file location must be provided for secure connection.");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "KeyStore file location must be provided for secure connection.");
 
     result = new ("https://localhost:9093", {
         secureSocket: {
@@ -119,11 +96,8 @@ isolated function testBidiStreamingInvalidSecureSocketConfigs() returns grpc:Err
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "KeyStore password must be provided for secure connection.");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "KeyStore password must be provided for secure connection.");
 
     result = new ("https://localhost:9093", {
         secureSocket: {
@@ -142,11 +116,8 @@ isolated function testBidiStreamingInvalidSecureSocketConfigs() returns grpc:Err
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "TrustStore file location must be provided for secure connection.");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "TrustStore file location must be provided for secure connection.");
 
     result = new ("https://localhost:9093", {
         secureSocket: {
@@ -165,11 +136,8 @@ isolated function testBidiStreamingInvalidSecureSocketConfigs() returns grpc:Err
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "TrustStore password must be provided for secure connection.");
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "TrustStore password must be provided for secure connection.");
 }
 
 @test:Config {enable:true}
@@ -187,12 +155,8 @@ isolated function testBidiStreamingNullCertField() returns grpc:Error? {
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
-    if result is grpc:Error {
-        string expectedError = "Need to configure cert with client SSL certificates file";
-        test:assertEquals(result.message(), expectedError);
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Need to configure cert with client SSL certificates file");
 }
 
 @test:Config {enable:true}
@@ -213,19 +177,11 @@ isolated function testBidiStreamingWithPublicCertPrivateKey() returns grpc:Error
     });
     ChatStreamingClient ep = check chatEp->chat();
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
-    grpc:Error? connErr = ep->sendChatMessage(mes1);
-    if connErr is grpc:Error {
-        test:assertFail(string `Error from Connector: ${connErr.message()}`);
-    }
+    check ep->sendChatMessage(mes1);
 
-    string|grpc:Error? responseMsg = ep->receiveString();
-    if responseMsg is string {
-        test:assertEquals(responseMsg, "Sam: Hi");
-    } else if responseMsg is error {
-        test:assertFail(msg = responseMsg.message());
-    } else {
-        test:assertFail(msg = "Expected a string value");
-    }
+    string? responseMsg = check ep->receiveString();
+    test:assertTrue(responseMsg is string);
+    test:assertEquals(<string>responseMsg, "Sam: Hi");
     check ep->complete();
 }
 
@@ -248,12 +204,8 @@ isolated function testBidiStreamingWithNoCertFile() returns grpc:Error? {
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
-    if result is grpc:Error {
-        string expectedError = "Certificate file location must be provided for secure connection.";
-        test:assertEquals(result.message(), expectedError);
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Certificate file location must be provided for secure connection.");
 }
 
 @test:Config {enable:true}
@@ -275,12 +227,8 @@ isolated function testBidiStreamingWithNoKeyFile() returns grpc:Error? {
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
-    if result is grpc:Error {
-        string expectedError = "Private key file location must be provided for secure connection.";
-        test:assertEquals(result.message(), expectedError);
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Private key file location must be provided for secure connection.");
 }
 
 @test:Config {enable:true}
@@ -299,12 +247,8 @@ isolated function testBidiStreamingWithNoPublicCertFile() returns grpc:Error? {
             ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
         }
     });
-    if result is grpc:Error {
-        string expectedError = "Certificate file location must be provided for secure connection.";
-        test:assertEquals(result.message(), expectedError);
-    } else {
-        test:assertFail("Expected an error");
-    }
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "Certificate file location must be provided for secure connection.");
 }
 
 @test:Config {enable:true}
@@ -325,14 +269,9 @@ isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns grpc:
     });
     ChatStreamingClient strClient = check chatClient->chat();
     ChatMessage mes1 = {name:"Sam", message:"Hi"};
-    grpc:Error? connErr = strClient->sendChatMessage(mes1);
-    if connErr is grpc:Error {
-        test:assertFail(string `Error from Connector: ${connErr.message()}`);
-    }
-    string|grpc:Error? res = strClient->receiveString();
-    if res is grpc:Error {
-        test:assertTrue(res.message().startsWith("Connection refused: "));
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    check strClient->sendChatMessage(mes1);
+    
+    string|grpc:Error? err = strClient->receiveString();
+    test:assertTrue(err is grpc:Error);
+    test:assertTrue((<grpc:Error>err).message().startsWith("Connection refused: "));
 }

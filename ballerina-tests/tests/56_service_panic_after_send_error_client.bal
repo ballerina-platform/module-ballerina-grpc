@@ -22,21 +22,15 @@ function testHello56BiDi() returns error? {
     HelloWorld56Client hClient = check new ("http://localhost:9156");
     Hello56BiDiStreamingClient strClient = check hClient->hello56BiDi();
     check strClient->sendString("Hello from client");
-    grpc:Error|string? result = strClient->receiveString();
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "Test error from service");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    grpc:Error|string? response = strClient->receiveString();
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Test error from service");
 }
 
 @test:Config {enable: true}
 function testHello56Unary() returns error? {
     HelloWorld56Client hClient = check new ("http://localhost:9156");
-    grpc:Error|string? result = hClient->hello56Unary("Hello from client");
-    if result is grpc:Error {
-        test:assertEquals(result.message(), "Test error from service");
-    } else {
-        test:assertFail(msg = "Expected an error");
-    }
+    grpc:Error|string? response = hClient->hello56Unary("Hello from client");
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Test error from service");
 }
