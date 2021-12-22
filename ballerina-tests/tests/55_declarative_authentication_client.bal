@@ -193,60 +193,14 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
 function testHello55LdapAuth() returns error? {
 
     if !isWindowsEnvironment() {
-        grpc:Service helloWorld55 = @grpc:ServiceConfig {auth: [ldapUserStoreconfig55WithScopes]}
-        @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
-        service object {
-
-            remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
-            stream<string, error?> clientStream) returns error? {
-                _ = check clientStream.next();
-                _ = check clientStream.next();
-                check caller->sendString("Hello");
-                check caller->complete();
-            }
-
-            remote function hello55BiDiWithReturn(stream<string, error?> clientStream)
-            returns stream<string, error?>|error? {
-                return clientStream;
-            }
-
-            remote function hello55UnaryWithCaller(HelloWorld55StringCaller caller, string value) returns error? {
-                check caller->sendString(value);
-                check caller->complete();
-            }
-
-            remote function hello55UnaryWithReturn(string value) returns string|error? {
-                return value;
-            }
-
-            remote function hello55ServerStreaming(HelloWorld55StringCaller caller, string value) returns error? {
-                check caller->sendString(value + " 1");
-                check caller->sendString(value + " 2");
-                check caller->complete();
-            }
-
-            remote function hello55ClientStreaming(HelloWorld55StringCaller caller, stream<string, error?> clientStream) returns error? {
-                var value1 = clientStream.next();
-                var value2 = clientStream.next();
-                if value1 is error || value1 is () || value2 is error || value2 is () {
-                    check caller->sendError(error grpc:Error("Invalid request"));
-                } else {
-                    check caller->sendString(value1["value"] + " " + value2["value"]);
-                }
-                check caller->complete();
-            }
-        };
-        check ep55WithLdapAndScopes.attach(helloWorld55, "helloWorld55");
-        check ep55WithLdapAndScopes.'start();
         grpc:CredentialsConfig config = {
             username: "alice",
             password: "alice@123"
         };
 
-        helloWorld55Client hClient = check new ("http://localhost:9256", {auth: config});
+        helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
         string response = check hClient->hello55UnaryWithReturn("Hello");
         test:assertEquals(response, "Hello");
-        check ep55WithLdapAndScopes.immediateStop();
     }
 }
 
@@ -311,26 +265,13 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
 @test:Config {enable: true}
 function testHello55LdapAuthWithEmptyScope() returns error? {
     if !isWindowsEnvironment() {
-        grpc:Service helloWorld55EmptyScope = @grpc:ServiceConfig {auth: [ldapUserStoreconfig55EmptyScope]}
-        @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
-        service object {
-
-            remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) returns error? {
-                check caller->sendString(value);
-                check caller->complete();
-            }
-        };
-        check ep55WithLdapAndEmptyScope.attach(helloWorld55EmptyScope, "helloWorld55EmptyScope");
-        check ep55WithLdapAndEmptyScope.'start();
-
         grpc:CredentialsConfig config = {
             username: "alice",
             password: "alice@123"
         };
-        helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9257", {auth: config});
+        helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
         string response = check hClient->hello55EmptyScope("Hello");
         test:assertEquals(response, "Hello");
-        check ep55WithLdapAndEmptyScope.immediateStop();
     }
 }
 
