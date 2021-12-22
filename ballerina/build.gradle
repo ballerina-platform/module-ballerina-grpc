@@ -77,6 +77,45 @@ dependencies {
     externalJars(group: 'io.ballerina.stdlib', name: 'http-native', version: "${stdlibHttpVersion}") {
         transitive = false
     }
+    externalJars(group: 'io.netty', name: 'netty-common', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-buffer', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-transport', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-resolver', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-handler', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-codec-http', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-codec', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-handler-proxy', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-codec-http2', version: "${nettyVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: "${bouncycastleVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: "${bouncycastleVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.netty', name: 'netty-tcnative-classes', version: "${nettyTcnativeVersion}") {
+        transitive = false
+    }
     externalJars(group: 'com.google.protobuf', name: 'protobuf-java', version: "${protobufJavaVersion}") {
         transitive = false
     }
@@ -98,6 +137,9 @@ dependencies {
     externalJars(group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}") {
         transitive = false
     }
+    externalJars(group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: "${nettyTcnativeVersion}") {
+        transitive = false
+    }
 }
 
 task updateTomlFiles {
@@ -109,6 +151,10 @@ task updateTomlFiles {
         newBallerinaToml = newBallerinaToml.replace("@protobuf.java.version@", project.protobufJavaVersion)
         newBallerinaToml = newBallerinaToml.replace("@proto.google.commons.version@", project.protoGoogleCommonsVersion)
         newBallerinaToml = newBallerinaToml.replace("@ballerinalang.version@", ballerinaLangVersion)
+        newBallerinaToml = newBallerinaToml.replace("@netty.version@", project.nettyVersion)
+        newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", project.nettyTcnativeVersion)
+        newBallerinaToml = newBallerinaToml.replace("@commons.pool.version@", project.wso2CommonsPoolVersion)
+        newBallerinaToml = newBallerinaToml.replace("@bouncy.castle.version@", project.bouncycastleVersion)
         ballerinaTomlFile.text = newBallerinaToml
 
         def newCompilerPluginToml = compilerPluginTomlFilePlaceHolder.text.replace("@project.version@", project.version)
