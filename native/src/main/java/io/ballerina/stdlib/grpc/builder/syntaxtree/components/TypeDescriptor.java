@@ -20,6 +20,7 @@ package io.ballerina.stdlib.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.AnnotationNode;
+import io.ballerina.compiler.syntax.tree.ArrayDimensionNode;
 import io.ballerina.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.BindingPatternNode;
 import io.ballerina.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
@@ -129,20 +130,28 @@ public class TypeDescriptor {
     }
 
     public static ArrayTypeDescriptorNode getArrayTypeDescriptorNode(String type) {
-        return NodeFactory.createArrayTypeDescriptorNode(
-                getBuiltinSimpleNameReferenceNode(type),
+        ArrayDimensionNode arrayDimensionNode = NodeFactory.createArrayDimensionNode(
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
         );
+        NodeList<ArrayDimensionNode> dimensionList = NodeFactory.createNodeList(arrayDimensionNode);
+        return NodeFactory.createArrayTypeDescriptorNode(
+                getBuiltinSimpleNameReferenceNode(type),
+                dimensionList
+        );
     }
 
     public static ArrayTypeDescriptorNode getArrayTypeDescriptorNode(Record type) {
-        return NodeFactory.createArrayTypeDescriptorNode(
-                type.getRecordTypeDescriptorNode(),
+        ArrayDimensionNode arrayDimensionNode = NodeFactory.createArrayDimensionNode(
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACKET,
                 null,
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACKET
+        );
+        NodeList<ArrayDimensionNode> dimensionList = NodeFactory.createNodeList(arrayDimensionNode);
+        return NodeFactory.createArrayTypeDescriptorNode(
+                type.getRecordTypeDescriptorNode(),
+                dimensionList
         );
     }
 

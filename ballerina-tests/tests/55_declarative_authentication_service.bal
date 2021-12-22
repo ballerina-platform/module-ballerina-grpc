@@ -18,8 +18,6 @@ import ballerina/grpc;
 
 listener grpc:Listener ep55WithScopes = new (9155);
 listener grpc:Listener ep55EmptyScope = new (9255);
-listener grpc:Listener ep55WithLdapAndScopes = new (9256);
-listener grpc:Listener ep55WithLdapAndEmptyScope = new (9257);
 
 grpc:JwtValidatorConfig jwtAuthConfig55 = {
     issuer: "wso2",
@@ -112,7 +110,8 @@ grpc:FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope = {
     auth: [
         jwtAuthConfig55WithScopes,
         oauth2config55WithScopes,
-        fileUserStoreConfig55WithScopes
+        fileUserStoreConfig55WithScopes,
+        ldapUserStoreconfig55WithScopes
     ]
 }
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
@@ -162,7 +161,8 @@ service "helloWorld55" on ep55WithScopes {
     auth: [
         jwtAuthConfig55EmptyScope,
         oauth2config55EmptyScope,
-        fileUserStoreConfig55EmptyScope
+        fileUserStoreConfig55EmptyScope,
+        ldapUserStoreconfig55EmptyScope
     ]
 }
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
