@@ -18,8 +18,6 @@ import ballerina/grpc;
 
 listener grpc:Listener ep55WithScopes = new (9155);
 listener grpc:Listener ep55EmptyScope = new (9255);
-listener grpc:Listener ep55WithLdapAndScopes = new (9256);
-listener grpc:Listener ep55WithLdapAndEmptyScope = new (9257);
 
 grpc:JwtValidatorConfig jwtAuthConfig55 = {
     issuer: "wso2",
@@ -110,66 +108,68 @@ grpc:FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope = {
 
 @grpc:ServiceConfig {
     auth: [
-        jwtAuthConfig55WithScopes, 
-        oauth2config55WithScopes, 
-        fileUserStoreConfig55WithScopes
+        jwtAuthConfig55WithScopes,
+        oauth2config55WithScopes,
+        fileUserStoreConfig55WithScopes,
+        ldapUserStoreconfig55WithScopes
     ]
 }
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
 service "helloWorld55" on ep55WithScopes {
 
-    remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller, 
+    remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
     stream<string, error?> clientStream) returns error? {
         _ = check clientStream.next();
         _ = check clientStream.next();
-        check caller->sendString("Hello");
-        check caller->complete();
+        checkpanic caller->sendString("Hello");
+        checkpanic caller->complete();
     }
 
-    remote function hello55BiDiWithReturn(stream<string, error?> clientStream) 
+    remote function hello55BiDiWithReturn(stream<string, error?> clientStream)
     returns stream<string, error?>|error? {
         return clientStream;
     }
 
-    remote function hello55UnaryWithCaller(HelloWorld55StringCaller caller, string value) returns error? {
-        check caller->sendString(value);
-        check caller->complete();
+    remote function hello55UnaryWithCaller(HelloWorld55StringCaller caller, string value) {
+        checkpanic caller->sendString(value);
+        checkpanic caller->complete();
     }
 
     remote function hello55UnaryWithReturn(string value) returns string|error? {
         return value;
     }
 
-    remote function hello55ServerStreaming(HelloWorld55StringCaller caller, string value) returns error? {
-        check caller->sendString(value + " 1");
-        check caller->sendString(value + " 2");
-        check caller->complete();
+    remote function hello55ServerStreaming(HelloWorld55StringCaller caller, string value) {
+        checkpanic caller->sendString(value + " 1");
+        checkpanic caller->sendString(value + " 2");
+        checkpanic caller->complete();
     }
 
-    remote function hello55ClientStreaming(HelloWorld55StringCaller caller, stream<string, error?> clientStream) returns error? {
+    remote function hello55ClientStreaming(HelloWorld55StringCaller caller, stream<string, error?> clientStream) {
         var value1 = clientStream.next();
         var value2 = clientStream.next();
         if value1 is error || value1 is () || value2 is error || value2 is () {
-            check caller->sendError(error grpc:Error("Invalid request"));
+            checkpanic caller->sendError(error grpc:Error("Invalid request"));
         } else {
-            check caller->sendString(value1["value"] + " " + value2["value"]);
+            checkpanic caller->sendString(value1["value"] + " " + value2["value"]);
         }
-        check caller->complete();
+        checkpanic caller->complete();
     }
 }
 
 @grpc:ServiceConfig {
     auth: [
-        jwtAuthConfig55EmptyScope, 
-        oauth2config55EmptyScope, 
-        fileUserStoreConfig55EmptyScope
+        jwtAuthConfig55EmptyScope,
+        oauth2config55EmptyScope,
+        fileUserStoreConfig55EmptyScope,
+        ldapUserStoreconfig55EmptyScope
     ]
 }
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
 service "helloWorld55EmptyScope" on ep55EmptyScope {
 
-    remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) returns error? {
-        check caller->sendString(value);
-        check caller->complete();
+    remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) {
+        checkpanic caller->sendString(value);
+        checkpanic caller->complete();
     }
 }

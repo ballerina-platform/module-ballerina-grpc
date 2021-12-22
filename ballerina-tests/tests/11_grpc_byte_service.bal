@@ -17,7 +17,7 @@
 import ballerina/grpc;
 
 listener grpc:Listener ep11 = new (9101, {
-    host:"localhost"
+    host: "localhost"
 });
 
 @grpc:ServiceDescriptor {

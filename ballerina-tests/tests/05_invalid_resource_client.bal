@@ -15,33 +15,21 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
 final HelloWorld98Client helloWorld5BlockingEp = check new ("http://localhost:9095");
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testInvalidRemoteMethod() {
     string name = "WSO2";
-    string|grpc:Error unionResp = helloWorld5BlockingEp->hello(name);
-    if unionResp is grpc:Error {
-        test:assertEquals(unionResp.message(), "No registered method descriptor for " +
-                                                               "'grpcservices.HelloWorld98/hello1'");
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp);
-        test:assertFail("Client got response: " + unionResp);
-    }
+    string|grpc:Error result = helloWorld5BlockingEp->hello(name);
+    test:assertTrue(result is grpc:Error);
+    test:assertEquals((<grpc:Error>result).message(), "No registered method descriptor for 'grpcservices.HelloWorld98/hello1'");
 }
 
-@test:Config {enable:true}
-function testInvalidInputParameter() {
+@test:Config {enable: true}
+function testInvalidInputParameter() returns grpc:Error? {
     string age = "";
-    int|grpc:Error unionResp = helloWorld5BlockingEp->testInt(age);
-    if unionResp is grpc:Error {
-        test:assertFail(string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        io:println("Client got response : ");
-        test:assertEquals(unionResp, -1);
-    }
+    int response = check helloWorld5BlockingEp->testInt(age);
+    test:assertEquals(response, -1);
 }

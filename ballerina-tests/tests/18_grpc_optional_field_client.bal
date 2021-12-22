@@ -15,12 +15,11 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/log;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testOptionalFieldMessage() returns grpc:Error? {
-    CheckoutServiceClient checkoutServiceBlockingEp = check new("http://localhost:9108");
+    CheckoutServiceClient checkoutServiceBlockingEp = check new ("http://localhost:9108");
 
     PlaceOrderRequest orderRequest = {
         user_id: "2e8f27b9-b966-45b0-b51f-dcccea697d01",
@@ -33,11 +32,6 @@ isolated function testOptionalFieldMessage() returns grpc:Error? {
             credit_card_number: "1"
         }
     };
-    var result = checkoutServiceBlockingEp->PlaceOrder(orderRequest);
-    if result is error {
-        log:printError("Error response.", 'error = result);
-        test:assertFail("Error occurred while calling remote method, placeorder");
-    } else {
-        test:assertEquals(result.'order, "This is a address");
-    }
+    PlaceOrderResponse result = check checkoutServiceBlockingEp->PlaceOrder(orderRequest);
+    test:assertEquals(result.'order, "This is a address");
 }

@@ -41,7 +41,7 @@ public isolated class Listener {
     #
     # + return - An `error` if an error occurred during the listener stopping process or else `()`
     public isolated function gracefulStop() returns error? {
-        return ();
+        return;
     }
 
     # Stops the registered service.
@@ -102,17 +102,17 @@ class StreamIterator {
     private boolean isClosed = false;
 
     public isolated function next() returns record {|anydata value;|}|error? {
-        if (self.isClosed) {
+        if self.isClosed {
             return error StreamClosedError("Stream is closed. Therefore, no operations are allowed further on the stream.");
         }
         anydata|handle|error? result = nextResult(self);
-        if (result is anydata) {
-            if (result is ()) {
+        if result is anydata {
+            if result is () {
                 self.isClosed = true;
                 return result;
             }
             return {value: result};
-        } else if (result is handle) {
+        } else if result is handle {
             return {value: java:toString(result)};
         } else {
             return result;
@@ -120,7 +120,7 @@ class StreamIterator {
     }
 
     public isolated function close() returns error? {
-        if (!self.isClosed) {
+        if !self.isClosed {
             self.isClosed = true;
             return closeStream(self);
         } else {
@@ -170,7 +170,7 @@ const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 # + host - The server hostname
 # + secureSocket - The SSL configurations for the server endpoint
 # + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
-#                   disable the timeout
+# disable the timeout
 # + maxInboundMessageSize - The maximum message size to be permitted for inbound messages. Default value is 4 MB
 public type ListenerConfiguration record {|
     string host = "0.0.0.0";
@@ -186,7 +186,7 @@ public type ListenerConfiguration record {|
 # + protocol - SSL/TLS protocol related options
 # + certValidation - Certificate validation against OCSP_CRL, OCSP_STAPLING related options
 # + ciphers - List of ciphers to be used
-#             eg: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+# eg: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
 # + shareSession - Enable/Disable new SSL session creation
 # + handshakeTimeout - SSL handshake time out(in seconds)
 # + sessionTimeout - SSL session time out(in seconds)
@@ -205,11 +205,17 @@ public type ListenerSecureSocket record {|
         int cacheSize;
         int cacheValidityPeriod;
     |} certValidation?;
-    string[] ciphers = ["TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256", "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
-                        "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256", "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
-                        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA", "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
-                        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-                        "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"];
+    string[] ciphers = [
+        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+        "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256",
+        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+        "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
+        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+        "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
+    ];
     boolean shareSession = true;
     decimal handshakeTimeout?;
     decimal sessionTimeout?;

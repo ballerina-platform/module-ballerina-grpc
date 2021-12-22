@@ -31,12 +31,8 @@ isolated function testClientStreamingSendErrorToService() returns grpc:Error? {
     check streamingClient->sendString("Hello");
     check streamingClient->complete();
     int? errorCount = check streamingClient->receiveInt();
-
-    if errorCount != () {
-        test:assertEquals(errorCount, 1);
-    } else {
-        test:assertFail("Server has not received the error sent by the client");
-    }
+    test:assertTrue(errorCount is int);
+    test:assertEquals(<int>errorCount, 1);
 }
 
 @test:Config {
@@ -54,12 +50,8 @@ isolated function testClientStreamingSendErrorAsFirstMessageToService() returns 
     check streamingClient->sendString("Hello");
     check streamingClient->complete();
     int? errorCount = check streamingClient->receiveInt();
-
-    if errorCount != () {
-        test:assertEquals(errorCount, 2);
-    } else {
-        test:assertFail("Server has not received the error sent by the client");
-    }
+    test:assertTrue(errorCount is int);
+    test:assertEquals(<int>errorCount, 2);
 }
 
 @test:Config {enable:true}
@@ -75,12 +67,8 @@ isolated function testBidiStreamingSendErrorToService() returns grpc:Error? {
     check streamingClient->sendString("Hello");
     check streamingClient->complete();
     int? errorCount = check streamingClient->receiveInt();
-
-    if errorCount != () {
-        test:assertEquals(errorCount, 1);
-    } else {
-        test:assertFail("Server has not received the error sent by the client");
-    }
+    test:assertTrue(errorCount is int);
+    test:assertEquals(<int>errorCount, 1);
 }
 
 @test:Config {
@@ -99,10 +87,6 @@ isolated function testBidiStreamingSendErrorAsFirstMessageToService() returns gr
     check streamingClient->sendString("Hello");
     check streamingClient->complete();
     int? errorCount = check streamingClient->receiveInt();
-
-    if errorCount != () {
-        test:assertEquals(errorCount, 2);
-    } else {
-        test:assertFail("Server has not received the error sent by the client");
-    }
+    test:assertTrue(errorCount is int);
+    test:assertEquals(<int>errorCount, 2);
 }

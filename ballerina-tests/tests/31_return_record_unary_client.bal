@@ -17,28 +17,20 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testUnaryRecordValueReturn() returns grpc:Error? {
     HelloWorld31Client ep = check new ("http://localhost:9121");
     SampleMsg31 reqMsg = {name: "WSO2", id: 8};
-    var unionResp = ep->sayHello(reqMsg);
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        SampleMsg31 resMsg = unionResp;
-        test:assertEquals(resMsg.name, "Ballerina Lang");
-        test:assertEquals(resMsg.id, 7);
-    }
+    SampleMsg31 response = check ep->sayHello(reqMsg);
+    test:assertEquals(response.name, "Ballerina Lang");
+    test:assertEquals(response.id, 7);
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testUnaryErrorReturn() returns grpc:Error? {
     HelloWorld31Client ep = check new ("http://localhost:9121");
     SampleMsg31 reqMsg = {id: 8};
-    var unionResp = ep->sayHello(reqMsg);
-    if unionResp is grpc:InvalidArgumentError {
-        test:assertEquals(unionResp.message(), "Name must not be empty.");
-    } else {
-        test:assertFail("RPC call should return an InvalidArgumentError");
-    }
+    var response = ep->sayHello(reqMsg);
+    test:assertTrue(response is grpc:Error);
+    test:assertEquals((<grpc:Error>response).message(), "Name must not be empty.");
 }

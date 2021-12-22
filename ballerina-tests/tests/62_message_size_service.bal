@@ -62,6 +62,6 @@ service "HelloWorld62" on msgSizeService {
                 checkpanic caller->sendString(val);
             }
         });
-        check caller->complete();
+        checkpanic caller->complete();
     }
 }

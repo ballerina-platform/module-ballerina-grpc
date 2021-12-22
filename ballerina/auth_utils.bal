@@ -37,6 +37,13 @@ isolated function extractCredential(map<string|string[]> headers) returns string
     }
 }
 
+// Extract the scheme from `map<string|string[]>`
+isolated function extractScheme(map<string|string[]> headers) returns string|Error {
+    string authHeader = check getHeader(headers, AUTH_HEADER);
+    string[] splittedHeader = regex:split(<string>authHeader, " ");
+    return splittedHeader[0];
+}
+
 // Match the expectedScopes with actualScopes and return if there is a match.
 isolated function matchScopes(string|string[] actualScopes, string|string[] expectedScopes) returns boolean {
     if expectedScopes is string {
@@ -67,7 +74,7 @@ isolated function matchScopes(string|string[] actualScopes, string|string[] expe
         }
     }
     log:printDebug("Failed to match the scopes. Expected '" + expectedScopes.toString() + "', but found '" +
-                   actualScopes.toString());
+                    actualScopes.toString());
     return false;
 }
 

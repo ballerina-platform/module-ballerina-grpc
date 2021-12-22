@@ -22,9 +22,9 @@ function testUnaryWithHeadersContext() returns error? {
     HSReq reqMsg = {name: "Ann", message: "Hey"};
     map<string|string[]> headers = {"unary-req-header": ["1234567890", "2233445677"]};
 
-    ContextHSRes res = check ep->unaryContext({content: reqMsg, headers: headers});
-    test:assertEquals(res.content, reqMsg);
-    test:assertEquals(res.headers["unary-res-header"], ["abcde", "fgh"]);
+    ContextHSRes response = check ep->unaryContext({content: reqMsg, headers: headers});
+    test:assertEquals(response.content, reqMsg);
+    test:assertEquals(response.headers["unary-res-header"], ["abcde", "fgh"]);
 }
 
 @test:Config {enable: true}
@@ -33,8 +33,8 @@ function testServerStreamingWithHeadersContext() returns error? {
     HSReq reqMsg = {name: "Ann", message: "Hey"};
     map<string|string[]> headers = {"server-steaming-req-header": ["1234567890", "2233445677"]};
 
-    ContextHSResStream res = check ep->serverStrContext({content: reqMsg, headers: headers});
-    test:assertEquals(res.headers["server-steaming-res-header"], ["1234567890","2233445677"]);
+    ContextHSResStream response = check ep->serverStrContext({content: reqMsg, headers: headers});
+    test:assertEquals(response.headers["server-steaming-res-header"], ["1234567890", "2233445677"]);
 
 }
 
@@ -48,22 +48,19 @@ function testClientStreamingWithContextHeaders() returns error? {
     ];
     int i = 0;
     map<string|string[]> headers = {"client-steaming-req-header": ["1234567890", "2233445677"]};
-    foreach HSRes res in responses {
+    foreach HSRes response in responses {
         if i == 0 {
-            check streamingClient->sendContextHSReq({content: res, headers: headers});
+            check streamingClient->sendContextHSReq({content: response, headers: headers});
         } else {
-            check streamingClient->sendHSReq(res);
+            check streamingClient->sendHSReq(response);
         }
         i += 1;
     }
     check streamingClient->complete();
-    ContextHSRes? res = check streamingClient->receiveContextHSRes();
-    if res is ContextHSRes {
-        test:assertEquals(res.content, {name: "Ann", message: "Hey"});
-        test:assertEquals(res.headers["client-steaming-res-header"], ["1234567890","2233445677"]);
-    } else {
-        test:assertFail(msg = "Expected output not found");
-    }
+    ContextHSRes? response = check streamingClient->receiveContextHSRes();
+    test:assertTrue(response is ContextHSRes);
+    test:assertEquals((<ContextHSRes>response).content, {name: "Ann", message: "Hey"});
+    test:assertEquals((<ContextHSRes>response).headers["client-steaming-res-header"], ["1234567890", "2233445677"]);
 }
 
 @test:Config {enable: true}
@@ -76,20 +73,17 @@ function testBidirectionalStreamingWithContextHeaders() returns error? {
     ];
     int i = 0;
     map<string|string[]> headers = {"bidi-steaming-req-header": ["1234567890", "2233445677"]};
-    foreach HSRes res in responses {
+    foreach HSRes response in responses {
         if i == 0 {
-            check streamingClient->sendContextHSReq({content: res, headers: headers});
+            check streamingClient->sendContextHSReq({content: response, headers: headers});
         } else {
-            check streamingClient->sendHSReq(res);
+            check streamingClient->sendHSReq(response);
         }
         i += 1;
     }
     check streamingClient->complete();
-    ContextHSRes? res = check streamingClient->receiveContextHSRes();
-    if res is ContextHSRes {
-        test:assertEquals(res.content, {name: "Ann", message: "Hey"});
-        test:assertEquals(res.headers["bidi-steaming-res-header"], ["1234567890","2233445677"]);
-    } else {
-        test:assertFail(msg = "Expected output not found");
-    }
+    ContextHSRes? response = check streamingClient->receiveContextHSRes();
+    test:assertTrue(response is ContextHSRes);
+    test:assertEquals((<ContextHSRes>response).content, {name: "Ann", message: "Hey"});
+    test:assertEquals((<ContextHSRes>response).headers["bidi-steaming-res-header"], ["1234567890", "2233445677"]);
 }

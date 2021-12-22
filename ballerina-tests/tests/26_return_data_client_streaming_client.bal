@@ -15,10 +15,9 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testClientStreamingFromReturn() returns grpc:Error? {
     string[] requests = ["Hi Sam", "Hey Sam", "GM Sam"];
     HelloWorld26Client helloWorldEp = check new ("http://localhost:9116");
@@ -31,10 +30,8 @@ isolated function testClientStreamingFromReturn() returns grpc:Error? {
             test:assertFail("Error from Connector: " + err.message());
         }
     }
-    checkpanic streamingClient->complete();
-    io:println("completed successfully");
+    check streamingClient->complete();
     string? response = check streamingClient->receiveString();
-    if response is string {
-        test:assertEquals(response, "Ack");
-    }
+    test:assertTrue(response is string);
+    test:assertEquals(response, "Ack");
 }

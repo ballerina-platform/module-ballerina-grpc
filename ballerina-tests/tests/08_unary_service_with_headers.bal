@@ -15,12 +15,11 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 
 // Server endpoint configuration
 listener grpc:Listener ep8 = new (9098, {
-    host:"localhost"
+    host: "localhost"
 });
 
 @grpc:ServiceDescriptor {
@@ -29,25 +28,15 @@ listener grpc:Listener ep8 = new (9098, {
 }
 service "HelloWorld101" on ep8 {
     isolated remote function hello(HelloWorld101StringCaller caller, ContextString request) returns error? {
-        io:println("name: " + request.content);
         string message = "Hello " + request.content;
         map<string|string[]> responseHeaders = {};
 
         if !request.headers.hasKey("x-id") {
-            check caller->sendError(error grpc:AbortedError("x-id header is missing"));
+            checkpanic caller->sendError(error grpc:AbortedError("x-id header is missing"));
         } else {
-            string headerValue = check grpc:getHeader(request.headers, "x-id");
-            io:println("Request Header: " +  headerValue);
             responseHeaders["x-id"] = ["1234567890", "2233445677"];
-            io:print("Response headers: ");
-            io:println(grpc:getHeaders(request.headers, "x-id"));
         }
         wrappers:ContextString responseMessage = {content: message, headers: responseHeaders};
-        grpc:Error? err = caller->sendContextString(responseMessage);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("Server send response : " + message);
-        }
+        checkpanic caller->sendContextString(responseMessage);
     }
 }

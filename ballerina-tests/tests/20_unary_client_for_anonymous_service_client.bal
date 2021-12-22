@@ -14,13 +14,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/grpc;
 import ballerina/test;
-import ballerina/log;
 
 @test:Config {enable: true}
 function testAnonymousService() returns error? {
-    log:printInfo("Starting the AnonService");
     check ep20.attach(AnonService1, "AnonService1");
     check ep20.'start();
 
@@ -32,7 +29,6 @@ function testAnonymousService() returns error? {
 
 @test:Config {dependsOn: [testAnonymousService], enable: true}
 function testAnonymousServiceMultipleTimes() returns error? {
-    log:printInfo("Starting the AnonService");
     check ep20.attach(AnonService1, "AnonService1");
     check ep20.'start();
     check ep20.'start();
@@ -45,52 +41,36 @@ function testAnonymousServiceMultipleTimes() returns error? {
 
 @test:Config {dependsOn: [testAnonymousServiceMultipleTimes], enable: true}
 function testAnonymousUnregisteredService() returns error? {
-    log:printInfo("Starting the unregistered service");
     error? err = ep20.attach(unregisteredService);
-    if err is error {
-        test:assertEquals(err.message(), "Error while registering the service. Invalid service path. " + 
+    test:assertTrue(err is error);
+    test:assertEquals((<error>err).message(), "Error while registering the service. Invalid service path. " +
             "Service path cannot be nil");
-    } else {
-        test:assertFail("Expected internal error not found");
-    }
 }
 
 @test:Config {dependsOn: [testAnonymousUnregisteredService], enable: true}
 function testAnonymousServiceWithoutRPCImplemented() returns error? {
-    string msg1 = "Error while registering the service. " + 
+    string msg1 = "Error while registering the service. " +
     "Simple remote function 'AnonService1.hello2' does not exist.";
-    string msg2 = "Error while registering the service. " + 
+    string msg2 = "Error while registering the service. " +
     "Server streaming remote function 'AnonService2.hello2' does not exist.";
-    string msg3 = "Error while registering the service. " + 
+    string msg3 = "Error while registering the service. " +
     "Client streaming remote function 'AnonService3.hello2' does not exist.";
-    string msg4 = "Error while registering the service. " + 
+    string msg4 = "Error while registering the service. " +
     "Bidirectional streaming remote function 'AnonService4.hello2' does not exist.";
 
-    var err1 = ep20.attach(IncompleteService, "AnonService1");
-    if err1 is grpc:Error {
-        test:assertEquals(err1.message(), msg1);
-    } else {
-        test:assertFail("Expected internal error not found");
-    }
+    error? err1 = ep20.attach(IncompleteService, "AnonService1");
+    test:assertTrue(err1 is error);
+    test:assertEquals((<error>err1).message(), msg1);
 
-    var err2 = ep20.attach(IncompleteService, "AnonService2");
-    if err2 is grpc:Error {
-        test:assertEquals(err2.message(), msg2);
-    } else {
-        test:assertFail("Expected internal error not found");
-    }
+    error? err2 = ep20.attach(IncompleteService, "AnonService2");
+    test:assertTrue(err2 is error);
+    test:assertEquals((<error>err2).message(), msg2);
 
     var err3 = ep20.attach(IncompleteService, "AnonService3");
-    if err3 is grpc:Error {
-        test:assertEquals(err3.message(), msg3);
-    } else {
-        test:assertFail("Expected internal error not found");
-    }
+    test:assertTrue(err3 is error);
+    test:assertEquals((<error>err3).message(), msg3);
 
     var err4 = ep20.attach(IncompleteService, "AnonService4");
-    if err4 is grpc:Error {
-        test:assertEquals(err4.message(), msg4);
-    } else {
-        test:assertFail("Expected internal error not found");
-    }
+    test:assertTrue(err4 is error);
+    test:assertEquals((<error>err4).message(), msg4);
 }

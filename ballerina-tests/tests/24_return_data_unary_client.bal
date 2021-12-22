@@ -18,99 +18,64 @@ import ballerina/grpc;
 import ballerina/test;
 import ballerina/lang.'string as langstring;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testStringValueReturn() returns grpc:Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
-    var unionResp = helloWorldBlockingEp->testStringValueReturn("WSO2");
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        test:assertEquals(unionResp, "WSO2");
-    }
+    string response = check helloWorldBlockingEp->testStringValueReturn("WSO2");
+    test:assertEquals(response, "WSO2");
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testFloatValueReturn() returns grpc:Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     float n = 4.5;
-    var unionResp = helloWorldBlockingEp->testFloatValueReturn(n);
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        test:assertEquals(unionResp, n);
-    }
+    float response = check helloWorldBlockingEp->testFloatValueReturn(n);
+    test:assertEquals(response, n);
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 public isolated function testDoubleValueReturn() returns grpc:Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     float n = 4.5;
-    var unionResp = helloWorldBlockingEp->testDoubleValueReturn(n);
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        test:assertEquals(unionResp, n);
-    }
+    float response = check helloWorldBlockingEp->testDoubleValueReturn(n);
+    test:assertEquals(response, n);
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 public isolated function testInt64ValueReturn() returns grpc:Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     int n = 45;
-    var unionResp = helloWorldBlockingEp->testInt64ValueReturn(n);
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        test:assertEquals(unionResp, n);
-    }
+    int response = check helloWorldBlockingEp->testInt64ValueReturn(n);
+    test:assertEquals(response, n);
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 public isolated function testBoolValueReturn() returns grpc:Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     boolean b = true;
-    var unionResp = helloWorldBlockingEp->testBoolValueReturn(b);
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        test:assertTrue(unionResp);
-    }
+    boolean response = check helloWorldBlockingEp->testBoolValueReturn(b);
+    test:assertTrue(response);
 }
 
-@test:Config {enable:true}
-public isolated function testBytesValueReturn() returns grpc:Error? {
+@test:Config {enable: true}
+public isolated function testBytesValueReturn() returns error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
     string s = "Ballerina";
-    var unionResp = helloWorldBlockingEp->testBytesValueReturn(s.toBytes());
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        string|error returnedString = langstring:fromBytes(unionResp);
-        if returnedString is string {
-            test:assertEquals(returnedString, s);
-        } else {
-            test:assertFail(msg = returnedString.message());
-        }
-    }
+    byte[] response = check helloWorldBlockingEp->testBytesValueReturn(s.toBytes());
+    string returnedString = check langstring:fromBytes(response);
+    test:assertEquals(returnedString, s);
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 public isolated function testRecordValueReturn() returns grpc:Error? {
     HelloWorld24Client helloWorldBlockingEp = check new ("http://localhost:9114");
-    var unionResp = helloWorldBlockingEp->testRecordValueReturn("WSO2");
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    } else {
-        test:assertEquals(unionResp.name, "Ballerina Language");
-        test:assertEquals(unionResp.id, 0);
-    }
+    SampleMsg24 response = check helloWorldBlockingEp->testRecordValueReturn("WSO2");
+    test:assertEquals(response.name, "Ballerina Language");
+    test:assertEquals(response.id, 0);
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 public isolated function testRecordValueReturnStream() returns grpc:Error? {
     HelloWorld24Client helloWorldEp = check new ("http://localhost:9114");
-    var unionResp = helloWorldEp->testRecordValueReturnStream("WSO2");
-    if unionResp is grpc:Error {
-        test:assertFail(msg = string `Error from Connector: ${unionResp.message()}`);
-    }
+    _ = check helloWorldEp->testRecordValueReturnStream("WSO2");
 }

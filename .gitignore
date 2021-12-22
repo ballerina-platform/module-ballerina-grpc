@@ -25,11 +25,18 @@ hs_err_pid*
 build
 .gradle/
 target
+
 # IDEA Files
 .idea/
 *.iml
 *.ipr
 *.iws
+
+# VSCode files
+.project
+.classpath
+.settings
+bin/
 
 # MacOS
 *.DS_Store

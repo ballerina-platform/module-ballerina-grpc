@@ -17,15 +17,10 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testSendAndReceiveEnum() returns grpc:Error? {
     testEnumServiceClient blockingEp = check new ("http://localhost:9102");
-
-    OrderInfo orderReq = { id:"100500", mode:r };
-    var addResponse = blockingEp->testEnum(orderReq);
-    if addResponse is grpc:Error {
-        test:assertFail(string `Error from Connector: ${addResponse.message()}`);
-    } else {
-        test:assertEquals(addResponse, "r");
-    }
+    OrderInfo orderReq = {id: "100500", mode: r};
+    string response = check blockingEp->testEnum(orderReq);
+    test:assertEquals(response, "r");
 }

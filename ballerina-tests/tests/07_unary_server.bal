@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
+import ballerina/log;
 
 listener grpc:Listener ep7 = new (9097);
 
@@ -25,86 +25,51 @@ listener grpc:Listener ep7 = new (9097);
 }
 service "HelloWorld100" on ep7 {
     isolated remote function hello(HelloWorld100StringCaller caller, string name) {
-        io:println("name: " + name);
         string message = "Hello " + name;
-        grpc:Error? err = ();
         if name == "invalid" {
-            err = caller->sendError(error grpc:AbortedError("Operation aborted"));
+            checkpanic caller->sendError(error grpc:AbortedError("Operation aborted"));
         } else {
-            err = caller->sendString(message);
-        }
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
+            checkpanic caller->sendString(message);
         }
         checkpanic caller->complete();
     }
 
     isolated remote function testInt(HelloWorld100IntCaller caller, int age) {
-        io:println("age: " + age.toString());
         int displayAge = age - 2;
-        grpc:Error? err = caller->sendInt(displayAge);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("display age : " + displayAge.toString());
-        }
+        checkpanic caller->sendInt(displayAge);
         checkpanic caller->complete();
     }
 
     isolated remote function testFloat(HelloWorld100FloatCaller caller, float salary) {
-        io:println("gross salary: " + salary.toString());
         float netSalary = salary * 0.88;
-        grpc:Error? err = caller->sendFloat(netSalary);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("net salary : " + netSalary.toString());
-        }
+        checkpanic caller->sendFloat(netSalary);
         checkpanic caller->complete();
     }
 
     isolated remote function testBoolean(HelloWorld100BooleanCaller caller, boolean available) {
-        io:println("is available: " + available.toString());
         boolean aval = available || true;
-        grpc:Error? err = caller->sendBoolean(aval);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("avaliability : " + aval.toString());
-        }
+        checkpanic caller->sendBoolean(aval);
         checkpanic caller->complete();
     }
 
     isolated remote function testStruct(HelloWorld100ResponseCaller caller, Request msg) {
-        io:println(msg.name + " : " + msg.message);
-        Response response = {resp:"Acknowledge " + msg.name};
-        grpc:Error? err = caller->sendResponse(response);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("msg : " + response.resp);
-        }
+        Response response = {resp: "Acknowledge " + msg.name};
+        checkpanic caller->sendResponse(response);
         checkpanic caller->complete();
     }
 
     isolated remote function testNoRequest(HelloWorld100StringCaller caller) {
         string resp = "service invoked with no request";
-        grpc:Error? err = caller->sendString(resp);
-        if err is grpc:Error {
-            io:println("Error from Connector: " + err.message());
-        } else {
-            io:println("response : " + resp);
-        }
+        checkpanic caller->sendString(resp);
         checkpanic caller->complete();
     }
 
     isolated remote function testNoResponse(HelloWorld100NilCaller caller, string msg) {
-        io:println("Request: " + msg);
+        log:printInfo("Request: " + msg);
     }
 
     isolated remote function testResponseInsideMatch(HelloWorld100ResponseCaller caller, string msg) {
-        io:println("Request: " + msg);
-        Response? res = {resp:"Acknowledge " + msg};
+        Response? res = {resp: "Acknowledge " + msg};
         if res is Response {
             checkpanic caller->sendResponse(res);
         } else {

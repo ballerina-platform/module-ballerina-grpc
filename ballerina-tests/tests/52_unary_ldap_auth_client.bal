@@ -25,31 +25,20 @@ import ballerina/protobuf.types.wrappers;
 isolated function testStringValueReturnWithLdapAuth() returns grpc:Error? {
     if !isWindowsEnvironment() {
         HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
-        map<string|string[]> requestHeaders = {};
-
         grpc:CredentialsConfig config = {
             username: "alice",
             password: "alice@123"
         };
 
         grpc:ClientBasicAuthHandler handler = new (config);
-        map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-        if result is grpc:ClientAuthError {
-            test:assertFail(msg = "Test Failed! " + result.message());
-        } else {
-            requestHeaders = result;
-        }
-
+        map<string|string[]> requestHeaders = {};
+        requestHeaders = check handler.enrich(requestHeaders);
         wrappers:ContextString requestMessage = {
             content: "WSO2",
             headers: requestHeaders
         };
-        var response = helloWorldEp->testStringValueReturn(requestMessage);
-        if response is grpc:Error {
-            test:assertFail(msg = response.message());
-        } else {
-            test:assertEquals(response, "Hello WSO2");
-        }
+        string response = check helloWorldEp->testStringValueReturn(requestMessage);
+        test:assertEquals(response, "Hello WSO2");
     }
 }
 
@@ -119,31 +108,21 @@ isolated function testStringValueReturnWithEmptyLdapAuth() returns grpc:Error? {
 isolated function testStringValueReturnWithUnauthorizedLdapAuth() returns grpc:Error? {
     if !isWindowsEnvironment() {
         HelloWorld52Client helloWorldEp = check new ("http://localhost:9152");
-        map<string|string[]> requestHeaders = {};
-
         grpc:CredentialsConfig config = {
             username: "bob",
             password: "bobgreen@123"
         };
 
         grpc:ClientBasicAuthHandler handler = new (config);
-        map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
-        if result is grpc:ClientAuthError {
-            test:assertFail(msg = "Test Failed! " + result.message());
-        } else {
-            requestHeaders = result;
-        }
-
+        map<string|string[]> requestHeaders = {};
+        requestHeaders = check handler.enrich(requestHeaders);
         wrappers:ContextString requestMessage = {
             content: "WSO2",
             headers: requestHeaders
         };
         var response = helloWorldEp->testStringValueReturn(requestMessage);
-        if response is grpc:Error {
-            test:assertEquals(response.message(), "Permission denied");
-        } else {
-            test:assertFail(msg = "Expected grpc:Error not found.");
-        }
+        test:assertTrue(response is grpc:Error);
+        test:assertEquals((<grpc:Error>response).message(), "Permission denied");
     }
 }
 

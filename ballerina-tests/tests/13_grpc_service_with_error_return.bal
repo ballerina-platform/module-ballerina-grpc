@@ -22,7 +22,7 @@ import ballerina/grpc;
 }
 service "HelloWorld13" on new grpc:Listener(9103) {
 
-    isolated remote function hello (string name) returns error? {
+    isolated remote function hello(string name) returns error? {
 
         return error("Details");
     }

@@ -73,43 +73,43 @@ StructMsg sendingStructMsg = {
     struct: sendingStruct
 };
 
-@test:Config{}
+@test:Config {}
 function testGetStructType1() returns error? {
     map<anydata> res = check structClient->getStructType1("Hello");
     test:assertEquals(res, expectedStruct);
 }
 
-@test:Config{}
+@test:Config {}
 function testGetStructType2() returns error? {
     StructMsg res = check structClient->getStructType2("Hello");
     test:assertEquals(res, expectedStructMsg);
 }
 
-@test:Config{}
+@test:Config {}
 function testSendStructType1() returns error? {
     string res = check structClient->sendStructType1(sendingStruct);
     test:assertEquals(res, "OK");
 }
 
-@test:Config{}
+@test:Config {}
 function testSendStructType2() returns error? {
     string res = check structClient->sendStructType2(sendingStructMsg);
     test:assertEquals(res, "OK");
 }
 
-@test:Config{}
+@test:Config {}
 function testExchangeStructType1() returns error? {
     map<anydata> res = check structClient->exchangeStructType1(sendingStruct);
     test:assertEquals(res, expectedStruct);
 }
 
-@test:Config{}
+@test:Config {}
 function testExchangeStructType2() returns error? {
     StructMsg res = check structClient->exchangeStructType2(sendingStructMsg);
     test:assertEquals(res, expectedStructMsg);
 }
 
-@test:Config{}
+@test:Config {}
 function testServerStreamStructType1() returns error? {
     map<anydata>[] expectedStructArr = [
         {
@@ -129,21 +129,17 @@ function testServerStreamStructType1() returns error? {
         expectedStruct
     ];
 
-    var result = structClient->serverStreamStructType1(expectedStructArr[3]);
-    if result is grpc:Error {
-        test:assertFail(result.message());
-    } else {
-        int count = 0;
-        map<anydata>[] receivedData = [];
-        check result.forEach(function(map<anydata> value) {
-            receivedData[count] = <map<anydata>>value;
-            count += 1;
-        });
-        test:assertEquals(receivedData, expectedStructArr);
-    }
+    stream<map<anydata>, grpc:Error?> result = check structClient->serverStreamStructType1(expectedStructArr[3]);
+    int count = 0;
+    map<anydata>[] receivedData = [];
+    check result.forEach(function(map<anydata> value) {
+        receivedData[count] = <map<anydata>>value;
+        count += 1;
+    });
+    test:assertEquals(receivedData, expectedStructArr);
 }
 
-@test:Config{}
+@test:Config {}
 function testServerStreamStructType2() returns error? {
     StructMsg exStructmsg1 = {
         name: "SM1",
@@ -172,21 +168,17 @@ function testServerStreamStructType2() returns error? {
         expectedStructMsg
     ];
 
-    var result = structClient->serverStreamStructType2(exStructmsg1);
-    if result is grpc:Error {
-        test:assertFail(result.message());
-    } else {
-        int count = 0;
-        StructMsg[] receivedData = [];
-        check result.forEach(function(StructMsg value) {
-            receivedData[count] = <StructMsg>value;
-            count += 1;
-        });
-        test:assertEquals(receivedData, exStructArr);
-    }
+    stream<StructMsg, grpc:Error?> result = check structClient->serverStreamStructType2(exStructmsg1);
+    int count = 0;
+    StructMsg[] receivedData = [];
+    check result.forEach(function(StructMsg value) {
+        receivedData[count] = <StructMsg>value;
+        count += 1;
+    });
+    test:assertEquals(receivedData, exStructArr);
 }
 
-@test:Config{}
+@test:Config {}
 function testClientStreamStructType1() returns error? {
     ClientStreamStructType1StreamingClient streamClient = check structClient->clientStreamStructType1();
     map<anydata>[] requests = [
@@ -221,7 +213,7 @@ function testClientStreamStructType1() returns error? {
     test:assertEquals(<map<anydata>>result, expectedNestedStruct);
 }
 
-@test:Config{}
+@test:Config {}
 function testClientStreamStructType2() returns error? {
     ClientStreamStructType2StreamingClient streamClient = check structClient->clientStreamStructType2();
     StructMsg exStructmsg1 = {
@@ -267,7 +259,7 @@ function testClientStreamStructType2() returns error? {
     test:assertEquals(<StructMsg>result, expectedNestedStruct);
 }
 
-@test:Config{}
+@test:Config {}
 function testBidirectionalStreamStructType1() returns error? {
     BidirectionalStreamStructType1StreamingClient streamClient = check structClient->bidirectionalStreamStructType1();
     map<anydata>[] requests = [
@@ -306,7 +298,7 @@ function testBidirectionalStreamStructType1() returns error? {
     test:assertEquals(receivedData, requests);
 }
 
-@test:Config{}
+@test:Config {}
 function testBidirectionalStreamStructType2() returns error? {
     BidirectionalStreamStructType2StreamingClient streamClient = check structClient->bidirectionalStreamStructType2();
     StructMsg exStructmsg1 = {

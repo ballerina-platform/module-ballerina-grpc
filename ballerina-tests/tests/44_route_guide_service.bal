@@ -33,8 +33,8 @@ service "RouteGuide" on ep44 {
     }
     isolated remote function ListFeatures(Rectangle value) returns stream<Feature, error?>|error {
         Feature[] fs = [
-            {location: {latitude: 1, longitude: 2}, name: "l1"}, 
-            {location: {latitude: 3, longitude: 4}, name: "l2"}, 
+            {location: {latitude: 1, longitude: 2}, name: "l1"},
+            {location: {latitude: 3, longitude: 4}, name: "l2"},
             {location: {latitude: 5, longitude: 6}, name: "l3"}
         ];
         return fs.toStream();

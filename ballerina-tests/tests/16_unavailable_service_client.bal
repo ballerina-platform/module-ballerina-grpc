@@ -15,20 +15,14 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 import ballerina/test;
 
-@test:Config {enable:false}
+@test:Config {enable: false}
 isolated function testInvokeUnavailableService() returns grpc:Error? {
     HelloWorld16Client helloWorld16BlockingEp = check new ("http://localhost:9106");
     string name = "WSO2";
-    string|grpc:Error unionResp16 = helloWorld16BlockingEp->hello(name);
-    if unionResp16 is grpc:Error {
-        test:assertTrue(unionResp16.message().startsWith("Connection refused:"), msg = "Failed with error: " +
-        unionResp16.message());
-    } else {
-        io:println("Client Got Response : ");
-        io:println(unionResp16);
-        test:assertFail(unionResp16);
-    }
+    string|grpc:Error response = helloWorld16BlockingEp->hello(name);
+    test:assertTrue(response is grpc:Error);
+    test:assertTrue((<grpc:Error>response).message().startsWith("Connection refused:"), msg = "Failed with error: " +
+        (<grpc:Error>response).message());
 }

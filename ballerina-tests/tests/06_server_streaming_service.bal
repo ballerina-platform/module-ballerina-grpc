@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/io;
 
 // Server endpoint configuration
 listener grpc:Listener ep6 = new (9096);
@@ -27,18 +26,9 @@ listener grpc:Listener ep6 = new (9096);
 service "HelloWorld45" on ep6 {
 
     isolated remote function lotsOfReplies(HelloWorld45StringCaller caller, string name) {
-        io:println("Server received hello from " + name);
         string[] greets = ["Hi", "Hey", "GM"];
         foreach var greet in greets {
-            grpc:Error? err = caller->sendString(greet + " " + name);
-            if err is grpc:Error {
-                io:println("Error from Connector: " + err.message());
-            } else {
-                io:println("send reply: " + greet + " " + name);
-            }
+            checkpanic caller->sendString(greet + " " + name);
         }
-        // Once all messages are sent, server send complete message to notify the client, I’m done.
-        checkpanic caller->complete();
-        io:println("send all responses sucessfully.");
     }
 }

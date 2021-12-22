@@ -56,11 +56,8 @@ function testDurationClientStreaming() returns grpc:Error? {
     }
     check sc->complete();
     string? ack = check sc->receiveString();
-    if ack is string {
-        test:assertEquals(ack, "Ack");
-    } else {
-        test:assertFail(msg = "Expected string acknowledgement not found");
-    }
+    test:assertTrue(ack is string);
+    test:assertEquals(<string>ack, "Ack");
 
 }
 
@@ -68,9 +65,9 @@ function testDurationClientStreaming() returns grpc:Error? {
 function testDurationBidirectionalStreaming() returns grpc:Error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
     DurationMsg[] durationMessages = [
-        {name: "duration 01", duration: 1.11d}, 
-        {name: "duration 02", duration: 2.22d}, 
-        {name: "duration 03", duration: 3.33d}, 
+        {name: "duration 01", duration: 1.11d},
+        {name: "duration 02", duration: 2.22d},
+        {name: "duration 03", duration: 3.33d},
         {name: "duration 04", duration: 4.44d}
     ];
     BidirectionalStreamingStreamingClient sc = check ep->bidirectionalStreaming();
