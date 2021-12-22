@@ -1,8 +1,8 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.1.1"
-distribution = "slbeta6"
+version = "1.2.0"
+distribution = "2201.0.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -10,14 +10,14 @@ license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/grpc-native-1.1.1.jar"
+path = "../native/build/libs/grpc-native-1.2.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.1.1.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.2.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2.0.0-beta.6.jar"
+path = "./lib/ballerina-cli-2201.0.0-20211220-171700-44f9bf90.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -25,7 +25,7 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.1.0.jar"
+path = "./lib/http-native-2.2.0-20211220-231000-bd0a791.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/protobuf-java-3.9.1.jar"
@@ -34,7 +34,7 @@ path = "./lib/protobuf-java-3.9.1.jar"
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/formatter-core-2.0.0-beta.6.jar"
+path = "./lib/formatter-core-2201.0.0-20211220-171700-44f9bf90.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-parser-2.0.0-beta.6.jar"
+path = "./lib/ballerina-parser-2201.0.0-20211220-171700-44f9bf90.jar"
