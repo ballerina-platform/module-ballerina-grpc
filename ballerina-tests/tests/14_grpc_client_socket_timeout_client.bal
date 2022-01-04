@@ -26,10 +26,16 @@ isolated function testClientTimeout() returns grpc:Error? {
 }
 
 @test:Config {}
-isolated function testConnectionRefused() returns grpc:Error? {
-    HelloWorld14Client ep = check new("http://localhost:1111", timeout = 1);
-    string|grpc:Error err = ep->hello("Hello");
-    test:assertTrue(err is grpc:Error);
-    test:assertEquals((<grpc:Error>err).message(), "Connection refused: localhost/127.0.0.1:1111");
+isolated function testConnectionRefused() {
+    HelloWorld14Client|grpc:Error ep = new ("http://localhost:1111", timeout = 1);
+    if ep is HelloWorld14Client {
+        string|grpc:Error err = ep->hello("Hello");
+        test:assertTrue(err is grpc:Error);
+        test:assertTrue((<grpc:Error>err).message().includes("Connection refused"));
+        test:assertTrue((<grpc:Error>err).message().includes("localhost/127.0.0.1:1111"));
+    } else {
+        test:assertTrue((<grpc:Error>ep).message().includes("Connection refused"));
+        test:assertTrue((<grpc:Error>ep).message().includes("localhost/127.0.0.1:1111"));
+    }
 }
 
