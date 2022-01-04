@@ -114,6 +114,7 @@ public class FunctionUtils extends AbstractExecute {
         String scheme = url.getProtocol();
         Map<String, Object> properties =
                 HttpConnectorUtil.getTransportProperties(connectionManager.getTransportConfig());
+        properties.put(HttpConstants.CLIENT_CONFIG_HASH_CODE, clientEndpointConfig.toString().hashCode());
         SenderConfiguration senderConfiguration =
                 HttpConnectorUtil.getSenderConfiguration(connectionManager.getTransportConfig(), scheme);
 
