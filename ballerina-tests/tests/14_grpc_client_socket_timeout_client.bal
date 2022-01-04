@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable = true}
+@test:Config {enable:true}
 isolated function testClientTimeout() returns grpc:Error? {
     HelloWorld14Client ep = check new("http://localhost:9104", timeout = 1);
     string|grpc:Error err = ep->hello("Hello");
