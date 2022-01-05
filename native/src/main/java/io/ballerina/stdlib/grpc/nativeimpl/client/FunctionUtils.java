@@ -99,7 +99,7 @@ public class FunctionUtils extends AbstractExecute {
      */
     @SuppressWarnings("unchecked")
     public static Object externInit(BObject clientEndpoint, BString urlString,
-                                    BMap clientEndpointConfig, BMap globalPoolConfig) {
+                                    BMap clientEndpointConfig, BMap globalPoolConfig, BString optionsString) {
 
         HttpConnectionManager connectionManager = HttpConnectionManager.getInstance();
         URL url;
@@ -114,6 +114,7 @@ public class FunctionUtils extends AbstractExecute {
         String scheme = url.getProtocol();
         Map<String, Object> properties =
                 HttpConnectorUtil.getTransportProperties(connectionManager.getTransportConfig());
+        properties.put(HttpConstants.CLIENT_CONFIG_HASH_CODE, optionsString.hashCode());
         SenderConfiguration senderConfiguration =
                 HttpConnectorUtil.getSenderConfiguration(connectionManager.getTransportConfig(), scheme);
 

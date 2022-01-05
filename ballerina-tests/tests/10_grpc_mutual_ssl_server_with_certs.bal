@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+import ballerina/lang.runtime as runtime;
 
 listener grpc:Listener ep10 = new (9100,
     host = "localhost",
@@ -44,6 +45,7 @@ listener grpc:Listener ep10 = new (9100,
 service "grpcMutualSslService" on ep10 {
     isolated remote function hello(GrpcMutualSslServiceStringCaller caller, string name) {
         string message = "Hello " + name;
+        runtime:sleep(2);
         checkpanic caller->sendString(message);
         checkpanic caller->complete();
     }

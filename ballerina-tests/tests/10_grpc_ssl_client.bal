@@ -39,3 +39,27 @@ isolated function testUnarySecuredBlockingWithCerts() returns grpc:Error? {
     string response = check helloWorldBlockingEp->hello("WSO2");
     test:assertEquals(response, "Hello WSO2");
 }
+
+@test:Config {enable:true}
+isolated function testUnarySecuredBlockingWithCertsWithTimeouts() returns grpc:Error? {
+    grpcMutualSslServiceClient helloWorldBlockingEp = check new ("https://localhost:9100",
+        secureSocket = {
+            key: {
+                path: KEYSTORE_PATH,
+                password: "ballerina"
+            },
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
+            protocol:{
+                name: grpc:TLS,
+                versions: ["TLSv1.2", "TLSv1.1"]
+            },
+            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }, timeout = 1);
+
+    string|grpc:Error err = helloWorldBlockingEp->hello("WSO2");
+    test:assertTrue(err is grpc:Error);
+    test:assertEquals((<grpc:Error>err).message(), "Idle timeout triggered before initiating inbound response");
+}
