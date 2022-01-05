@@ -42,7 +42,7 @@ public isolated client class Client {
         } else {
             self.clientAuthHandler = ();
         }
-        return externInit(self, self.url, self.config, globalGrpcClientConnPool);
+        return externInit(self, self.url, self.config, globalGrpcClientConnPool, config.toString());
     }
 
     # Calls when initializing the client endpoint with the service descriptor data extracted from the proto file.
@@ -208,7 +208,7 @@ isolated function enrichHeaders(ClientAuthHandler clientAuthHandler, map<string|
 }
 
 isolated function externInit(Client clientEndpoint, string url, ClientConfiguration config, PoolConfiguration
-globalPoolConfig)
+globalPoolConfig, string optionString)
                 returns Error? = @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
