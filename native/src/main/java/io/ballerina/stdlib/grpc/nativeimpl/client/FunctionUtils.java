@@ -245,10 +245,13 @@ public class FunctionUtils extends AbstractExecute {
                         methodType.name() + " not supported");
             }
         } catch (Exception e) {
-            if (dataContext != null) {
-                dataContext.getFuture().complete(e);
+            try {
+                if (dataContext != null) {
+                    dataContext.getFuture().complete(e);
+                }
+            } finally {
+                return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
             }
-            return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }
         return null;
     }
