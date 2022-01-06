@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+import ballerina/log;
 
 listener grpc:Listener ep43 = new (9143);
 
@@ -37,6 +38,9 @@ service "NestedMsgService" on ep43 {
     }
 
     isolated remote function nestedMsgClientStreaming(stream<NestedMsg, grpc:Error?> clientStream) returns error|string {
+        check clientStream.forEach(isolated function(NestedMsg value) {
+            log:printInfo(value.name);
+        });
         return "Ack 43";
     }
 
@@ -48,6 +52,9 @@ service "NestedMsgService" on ep43 {
             {name: "Name 04", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 4}}}},
             {name: "Name 05", msg: {name1: "Level 01", msg1: {name2: "Level 02", msg2: {name3: "Level 03", id: 5}}}}
         ];
+        check clientStream.forEach(isolated function(NestedMsg value) {
+            log:printInfo(value.name);
+        });
         return messages.toStream();
     }
 }
