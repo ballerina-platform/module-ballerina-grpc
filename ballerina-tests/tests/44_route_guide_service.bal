@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/grpc;
+import ballerina/log;
 
 listener grpc:Listener ep44 = new (9144);
 
@@ -25,6 +26,9 @@ service "RouteGuide" on ep44 {
         return {location: point, name: "f1"};
     }
     isolated remote function RecordRoute(stream<Point, grpc:Error?> clientStream) returns RouteSummary|error {
+        check clientStream.forEach(isolated function(Point value) {
+            log:printInfo(value.toString());
+        });
         return {point_count: 1, feature_count: 1, distance: 1, elapsed_time: 1};
     }
     isolated remote function ListFeatures(Rectangle value) returns stream<Feature, error?>|error {
