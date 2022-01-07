@@ -17,6 +17,7 @@
 import ballerina/time;
 import ballerina/grpc;
 import ballerina/protobuf.types.'any;
+import ballerina/log;
 
 listener grpc:Listener ep61 = new (9161);
 
@@ -54,6 +55,9 @@ service "AnyTypeServer" on ep61 {
     }
     remote function clientStreamingCall(stream<'any:Any, grpc:Error?> clientStream) returns 'any:Any|error {
         Person1 p1 = {name: "John", code: 23};
+        check clientStream.forEach(isolated function('any:Any value) {
+            log:printInfo(value.toString());
+        });
         return 'any:pack(p1);
     }
     remote function serverStreamingCall('any:Any value) returns stream<'any:Any, error?>|error {
