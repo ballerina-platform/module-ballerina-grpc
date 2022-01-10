@@ -18,7 +18,7 @@ path = "../test-utils/build/libs/grpc-test-utils-1.2.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2201.0.0-20220105-065600-5c8987c1.jar"
+path = "./lib/ballerina-cli-2201.0.0-20220106-161300-2509bf6c.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -26,7 +26,7 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.2.0-20220105-153000-6257cc8.jar"
+path = "./lib/http-native-2.2.0-20220107-134000-72c7dd6.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.71.Final.jar"
@@ -71,13 +71,13 @@ path = "./lib/netty-tcnative-classes-2.0.46.Final.jar"
 path = "./lib/netty-tcnative-boringssl-static-2.0.46.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/protobuf-java-3.9.1.jar"
+path = "./lib/protobuf-java-3.19.2.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/formatter-core-2201.0.0-20220105-065600-5c8987c1.jar"
+path = "./lib/formatter-core-2201.0.0-20220106-161300-2509bf6c.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-parser-2201.0.0-20220105-065600-5c8987c1.jar"
+path = "./lib/ballerina-parser-2201.0.0-20220106-161300-2509bf6c.jar"
