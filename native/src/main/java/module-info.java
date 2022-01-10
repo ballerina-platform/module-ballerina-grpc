@@ -20,7 +20,6 @@ module io.ballerina.stdlib.grpc {
     requires io.netty.codec.http;
     requires org.slf4j;
     requires io.netty.buffer;
-    requires protobuf.java;
     requires org.apache.commons.lang3;
     requires proto.google.common.protos;
     requires io.ballerina.stdlib.http;
