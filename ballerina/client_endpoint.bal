@@ -207,7 +207,7 @@ isolated function enrichHeaders(ClientAuthHandler clientAuthHandler, map<string|
         // https://github.com/ballerina-platform/ballerina-lang/issues/31040
         object {} ob = clientAuthHandler;
         if ob is ClientOAuth2Handler {
-            return clientAuthHandler->enrich(headers);
+            return ob->enrich(headers);
         } else {
             string errorMsg = "invalid client auth-handler found. expected one of grpc:ClientBasicAuthHandler|grpc:ClientBearerTokenAuthHandler|grpc:ClientSelfSignedJwtAuthHandler|grpc:ClientOAuth2Handler";
             panic error ClientAuthError(errorMsg);
