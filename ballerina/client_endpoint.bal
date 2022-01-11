@@ -201,9 +201,11 @@ isolated function enrichHeaders(ClientAuthHandler clientAuthHandler, map<string|
         return clientAuthHandler.enrich(headers);
     } else if clientAuthHandler is ClientSelfSignedJwtAuthHandler {
         return clientAuthHandler.enrich(headers);
-    } else {
+    } else if clientAuthHandler is ClientOAuth2Handler {
         // Here, `clientAuthHandler` is `ClientOAuth2Handler`
         return clientAuthHandler->enrich(headers);
+    } else {
+        return error ClientAuthError("Unsuported client auth handler type");
     }
 }
 
