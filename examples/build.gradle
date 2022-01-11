@@ -23,7 +23,15 @@ apply plugin: 'java'
 description = 'Ballerina - gRPC Examples'
 
 def ballerinaDist = "${project.rootDir}/target/ballerina-runtime"
-def examples = ["routeguide/server", "routeguide/client", "onlineboutiquemicroservice/productcatalogservice", "onlineboutiquemicroservice/adservice", "onlineboutiquemicroservice/recommendationservice"]
+def examples = [
+    "routeguide/server",
+    "routeguide/client",
+    "onlineboutiquemicroservice/productcatalogservice",
+    "onlineboutiquemicroservice/adservice",
+    "onlineboutiquemicroservice/recommendationservice",
+    "program_analyzer/server",
+    "program_analyzer/client"
+]
 
 dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
