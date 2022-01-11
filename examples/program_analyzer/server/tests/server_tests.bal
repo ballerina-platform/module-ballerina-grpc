@@ -19,7 +19,7 @@ import ballerina/test;
 
 @test:Config{}
 isolated function testCompression() returns error? {
-    BalProgramAnalyzerClient ep = check new ("http://localhost:9090", maxInboundMessageSize = 424193);
+    BalProgramAnalyzerClient ep = check new ("http://localhost:8981", maxInboundMessageSize = 424193);
     string s = check ep->syntaxTree();
     json j = check value:fromJsonString(s);
     test:assertEquals(j.ballerinaVersion, "2201.0.0-20220106-161300-2509bf6c");

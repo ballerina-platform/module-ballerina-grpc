@@ -20,7 +20,7 @@ import ballerina/lang.value;
 public function main() returns error? {
 
     // Change the maximum inbound message size accordingly
-    BalProgramAnalyzerClient ep = check new ("http://localhost:9090", maxInboundMessageSize = 424193);
+    BalProgramAnalyzerClient ep = check new ("http://localhost:8981", maxInboundMessageSize = 424193);
     string s = check ep->syntaxTree();
     json j = check value:fromJsonString(s);
     io:println(j.ballerinaVersion);

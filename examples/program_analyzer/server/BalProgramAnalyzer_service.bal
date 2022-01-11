@@ -18,7 +18,7 @@ import ballerina/grpc;
 import ballerina/io;
 import ballerina/protobuf.types.wrappers;
 
-listener grpc:Listener ep = new (9090);
+listener grpc:Listener ep = new (8981);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_PROGRAM_ANALYZER, descMap: getDescriptorMapProgramAnalyzer()}
 service "BalProgramAnalyzer" on ep {
