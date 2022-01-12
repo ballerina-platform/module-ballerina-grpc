@@ -44,6 +44,7 @@ def compilerPluginTomlFile = new File("$project.projectDir/CompilerPlugin.toml")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 // external jar file which need to pack to distribution
 def externalGoogleProtosCommonJar = file("$project.projectDir/lib/proto-google-common-protos-${protoGoogleCommonsVersion}.jar")
+def externalProtobufJavaJar = file("$project.projectDir/lib/protobuf-java-${protobufJavaVersion}.jar")
 def targetNativeJar = file("$project.rootDir/native/build/libs/${packageName}-native-${project.version}.jar")
 
 def stripBallerinaExtensionVersion(String extVersion) {
@@ -131,6 +132,10 @@ task commitTomlFiles {
 
 task copyExternalJars {
     doLast {
+        copy {
+            from externalProtobufJavaJar
+            into file("$artifactLibParent/libs")
+        }
         copy {
             from targetNativeJar
             into file("$artifactLibParent/libs")
