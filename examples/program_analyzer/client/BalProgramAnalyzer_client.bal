@@ -21,8 +21,8 @@ public function main() returns error? {
 
     // Change the maximum inbound message size accordingly
     BalProgramAnalyzerClient ep = check new ("http://localhost:8981", maxInboundMessageSize = 424193);
-    string s = check ep->syntaxTree();
-    json j = check value:fromJsonString(s);
-    io:println(j.ballerinaVersion);
+    string syntaxTreeString = check ep->syntaxTree();
+    json syntaxTreeJson = check value:fromJsonString(syntaxTreeString);
+    io:println(syntaxTreeJson.ballerinaVersion);
 }
 
