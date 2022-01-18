@@ -87,7 +87,7 @@ public class GrpcCmd implements BLauncherCmd {
     @CommandLine.Option(names = {"--protocVersion"}, hidden = true)
     private String protocVersion = "3.9.1";
 
-    @CommandLine.Option(names = {"--proto_path"}, description = "Path to a directory in which to look for .proto " +
+    @CommandLine.Option(names = {"--proto-path"}, description = "Path to a directory in which to look for .proto " +
             "files when resolving import directives")
     private String importPath = "";
 
@@ -182,7 +182,7 @@ public class GrpcCmd implements BLauncherCmd {
             File protoFilePath = new File(protoPath);
             if (!isInSubDirectory(importFilePath, protoFilePath)) {
                 String errorMessage = "Input .proto file does not reside within the path specified using " +
-                        "--proto_path. You must specify a --proto_path which encompasses the .proto file.";
+                        "--proto-path. You must specify a --proto-path which encompasses the .proto file.";
                 outStream.println(errorMessage);
                 return;
             }
