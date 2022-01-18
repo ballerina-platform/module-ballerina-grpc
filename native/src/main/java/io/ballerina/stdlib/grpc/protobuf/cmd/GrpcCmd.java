@@ -84,7 +84,7 @@ public class GrpcCmd implements BLauncherCmd {
 
     private String protocExePath;
 
-    @CommandLine.Option(names = {"--protocVersion"}, hidden = true)
+    @CommandLine.Option(names = {"--protoc-version"}, hidden = true)
     private String protocVersion = "3.9.1";
 
     @CommandLine.Option(names = {"--proto-path"}, description = "Path to a directory in which to look for .proto " +
