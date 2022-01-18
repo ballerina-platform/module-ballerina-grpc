@@ -112,31 +112,31 @@ public class ToolingCommonTest {
     @Test
     public void testHelloWorldWithDurationType1() {
         assertGeneratedSources("data-types", "duration_type1.proto", "duration_type1_pb.bal",
-        "DurationHandler_sample_service.bal", "DurationHandler_sample_client.bal", "tool_test_data_type_15");
+        "durationhandler_service.bal", "durationhandler_client.bal", "tool_test_data_type_15");
     }
 
     @Test
     public void testHelloWorldWithDurationType2() {
         assertGeneratedSources("data-types", "duration_type2.proto", "duration_type2_pb.bal",
-        "DurationHandler_sample_service.bal", "DurationHandler_sample_client.bal", "tool_test_data_type_16");
+        "durationhandler_service.bal", "durationhandler_client.bal", "tool_test_data_type_16");
     }
 
     @Test
     public void testHelloWorldWithStructType1() {
         assertGeneratedSources("data-types", "struct_type1.proto", "struct_type1_pb.bal",
-        "StructHandler_sample_service.bal", "StructHandler_sample_client.bal", "tool_test_data_type_17");
+        "structhandler_service.bal", "structhandler_client.bal", "tool_test_data_type_17");
     }
 
     @Test
     public void testHelloWorldWithStructType2() {
         assertGeneratedSources("data-types", "struct_type2.proto", "struct_type2_pb.bal",
-        "StructHandler_sample_service.bal", "StructHandler_sample_client.bal", "tool_test_data_type_18");
+        "structhandler_service.bal", "structhandler_client.bal", "tool_test_data_type_18");
     }
 
     @Test
     public void testHelloWorldWithAnyType() {
-        assertGeneratedSources("data-types", "any.proto", "any_pb.bal", "AnyTypeServer_sample_service.bal",
-        "AnyTypeServer_sample_client.bal", "tool_test_data_type_21");
+        assertGeneratedSources("data-types", "any.proto", "any_pb.bal", "anytypeserver_service.bal",
+        "anytypeserver_client.bal", "tool_test_data_type_21");
     }
 
     @Test
