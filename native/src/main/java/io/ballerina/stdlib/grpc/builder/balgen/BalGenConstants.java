@@ -34,9 +34,9 @@ public class BalGenConstants {
 
     public static final String STUB_FILE_PREFIX = "_pb.bal";
 
-    public static final String SAMPLE_FILE_PREFIX = "_sample_client.bal";
+    public static final String SAMPLE_FILE_PREFIX = "_client.bal";
 
-    public static final String SAMPLE_SERVICE_FILE_PREFIX = "_sample_service.bal";
+    public static final String SAMPLE_SERVICE_FILE_PREFIX = "_service.bal";
 
     public static final String EMPTY_DATA_TYPE = "Empty";
 

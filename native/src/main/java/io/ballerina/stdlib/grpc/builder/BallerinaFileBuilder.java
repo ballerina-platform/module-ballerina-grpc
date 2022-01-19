@@ -211,8 +211,9 @@ public class BallerinaFileBuilder {
             int serviceIndex = 0;
             for (ServiceStub serviceStub : stubFileObject.getStubList()) {
                 if (BalGenConstants.GRPC_SERVICE.equals(mode)) {
-                    String serviceFilePath = generateOutputFile(this.balOutPath, serviceStub.getServiceName() +
-                            BalGenConstants.SAMPLE_SERVICE_FILE_PREFIX);
+                    String serviceFilePath = generateOutputFile(this.balOutPath,
+                            serviceStub.getServiceName().toLowerCase() +
+                                    BalGenConstants.SAMPLE_SERVICE_FILE_PREFIX);
                     writeOutputFile(
                             SyntaxTreeGenerator.generateSyntaxTreeForServiceSample(
                                     serviceStub,
@@ -223,7 +224,7 @@ public class BallerinaFileBuilder {
                     );
                 } else if (BalGenConstants.GRPC_CLIENT.equals(mode)) {
                     String clientFilePath = generateOutputFile(this.balOutPath,
-                            serviceStub.getServiceName() + BalGenConstants.SAMPLE_FILE_PREFIX
+                            serviceStub.getServiceName().toLowerCase() + BalGenConstants.SAMPLE_FILE_PREFIX
                     );
                     writeOutputFile(SyntaxTreeGenerator.generateSyntaxTreeForClientSample(serviceStub), clientFilePath);
                 }
