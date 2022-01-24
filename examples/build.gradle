@@ -26,9 +26,9 @@ def ballerinaDist = "${project.rootDir}/target/ballerina-runtime"
 def examples = [
     "routeguide/server",
     "routeguide/client",
-    "onlineboutiquemicroservice/productcatalogservice",
-    "onlineboutiquemicroservice/adservice",
-    "onlineboutiquemicroservice/recommendationservice",
+    "online-boutique-microservice/product-catalog-service",
+    "online-boutique-microservice/ad-service",
+    "online-boutique-microservice/recommendation-service",
     "program_analyzer/server",
     "program_analyzer/client"
 ]

@@ -17,6 +17,6 @@ PRGDIR=`dirname "$PRG"`
 # Only set DEMO_HOME if not already set
 [ -z "$DEMO_HOME" ] && DEMO_HOME=`cd "$PRGDIR/.." ; pwd`
 
-kubectl delete -f  $DEMO_HOME/productcatalogservice/target/kubernetes/productcatalogservice/productcatalogservice.yaml
-kubectl delete -f  $DEMO_HOME/recommendationservice/target/kubernetes/recommendationservice/recommendationservice.yaml
-kubectl delete -f  $DEMO_HOME/adservice/target/kubernetes/adservice/adservice.yaml
+kubectl delete -f  $DEMO_HOME/product-catalog-service/target/kubernetes/productcatalogservice/productcatalogservice.yaml
+kubectl delete -f  $DEMO_HOME/recommendation-service/target/kubernetes/recommendationservice/recommendationservice.yaml
+kubectl delete -f  $DEMO_HOME/ad-service/target/kubernetes/adservice/adservice.yaml

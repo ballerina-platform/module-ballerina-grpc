@@ -44,16 +44,16 @@ For this example to work, all the 10 microservices must be running. Therefore, y
 * [Loadgenerator](https://github.com/GoogleCloudPlatform/microservices-demo/tree/master/src/loadgenerator)
 
 1. Clone the [cloud-native microservices demo application](https://github.com/GoogleCloudPlatform/microservices-demo) of [Google Cloud Platform](https://github.com/GoogleCloudPlatform) and continue to the repository directory.
-2. The `kubernetes-manifests` file contains the deploying instructions for all the 10 services. Therefore, first remove the content related to the `adservice, recommendationservice` and `productcatalogservice`.
+2. The `kubernetes-manifests` file contains the deploying instructions for all the 10 services. Therefore, first remove the content related to the `ad-service, recommendation-service` and `product-catalog-service`.
 3. Run `kubectl apply -f ./release/kubernetes-manifests.yaml`to deploy the 7 services.
    
     Note: You can run `kubectl delete -f ./release/kubernetes-manifests.yaml` to stop the 7 services when in need.
-4. Now clone this repository and run `sh examples/onlineboutiquemicroservice/scripts/start.sh`(This will build the 3 services and deploy in kubernetes).
+4. Now clone this repository and run `sh examples/online-boutique-microservice/scripts/start.sh`(This will build the 3 services and deploy in kubernetes).
 5. Run `kubectl get pods` to see whether pods are in a Ready state.
 6. If all the pods are running, run `kubectl get service/frontend-external` to get the frontend-external ip.
 7. Visit the application on your browser to confirm installation.
    
    Note: If you are on Minikube, get the hostname by executing `minikube ip`. e.g., <MINIKUBE_IP>:<FRONTEND_EXTERNAL_PORT>
-8. Run `sh examples/onlineboutiquemicroservice/scripts/stop.sh` to stop the 3 services.
+8. Run `sh examples/online-boutique-microservice/scripts/stop.sh` to stop the 3 services.
 
 You can rewrite any of the above 7 services using Ballerina to replace the existing services and deploy on kubernetes.
