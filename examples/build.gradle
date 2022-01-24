@@ -29,8 +29,8 @@ def examples = [
     "online-boutique-microservice/product-catalog-service",
     "online-boutique-microservice/ad-service",
     "online-boutique-microservice/recommendation-service",
-    "program_analyzer/server",
-    "program_analyzer/client"
+    "program-analyzer/server",
+    "program-analyzer/client"
 ]
 
 dependencies {

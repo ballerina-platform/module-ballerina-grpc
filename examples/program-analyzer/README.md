@@ -25,13 +25,13 @@ First, clone this repository, and then run the following commands to run this ex
 
 ```sh
 // Run the program analyzer server in port 8981
-$ cd examples/program_analyzer/server
+$ cd examples/program-analyzer/server
 $ bal run
 ```
 
 In another terminal, run the client as follows.
 ```sh
 // Run the program analyzer client
-$ cd examples/program_analyzer/client
+$ cd examples/program-analyzer/client
 $ bal run
 ```
