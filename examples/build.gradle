@@ -24,8 +24,8 @@ description = 'Ballerina - gRPC Examples'
 
 def ballerinaDist = "${project.rootDir}/target/ballerina-runtime"
 def examples = [
-    "routeguide/server",
-    "routeguide/client",
+    "route-guide/server",
+    "route-guide/client",
     "online-boutique-microservice/product-catalog-service",
     "online-boutique-microservice/ad-service",
     "online-boutique-microservice/recommendation-service",

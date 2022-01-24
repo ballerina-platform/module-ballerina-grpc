@@ -23,13 +23,13 @@ First, clone this repository, and then run the following commands to run this ex
 
 ```sh
 // Run the route guide server in port 8980
-$ cd examples/routeguide/server
+$ cd examples/route-guide/server
 $ bal run
 ```
 
 In another terminal, run the client as follows.
 ```sh
 // Run the route guide client
-$ cd examples/routeguide/client
+$ cd examples/route-guide/client
 $ bal run
 ```
