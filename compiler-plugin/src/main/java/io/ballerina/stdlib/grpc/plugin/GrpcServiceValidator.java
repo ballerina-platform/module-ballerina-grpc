@@ -179,7 +179,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
         boolean hasRemoteKeyword = functionDefinitionNode.qualifierList().stream()
                 .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
-        if (!hasRemoteKeyword) {
+        boolean isInitFunction = "init".equals(functionDefinitionNode.functionName().toString());
+        if (!(hasRemoteKeyword || isInitFunction)) {
             reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
                     GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getError(),
                     GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());

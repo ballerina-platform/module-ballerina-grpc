@@ -35,7 +35,7 @@ public class GrpcCompilerPluginConstants {
      */
     public enum CompilationErrors {
         UNDEFINED_ANNOTATION("undefined annotation: ", "GRPC_101", DiagnosticSeverity.ERROR),
-        ONLY_REMOTE_FUNCTIONS("only remote functions are allowed inside gRPC services", "GRPC_102",
+        ONLY_REMOTE_FUNCTIONS("only an init function or remote methods are allowed inside gRPC services", "GRPC_102",
                 DiagnosticSeverity.ERROR),
         RETURN_WITH_CALLER("only `error?` return type is allowed with the caller", "GRPC_103",
                 DiagnosticSeverity.ERROR),
