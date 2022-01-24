@@ -1,6 +1,6 @@
 [package]
 org = "grpc_test"
-name = "package_05"
+name = "package_06"
 version = "0.1.0"
 
 [build-options]
