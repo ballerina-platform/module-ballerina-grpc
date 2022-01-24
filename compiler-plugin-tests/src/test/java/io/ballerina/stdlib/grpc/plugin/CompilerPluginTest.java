@@ -119,8 +119,8 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_06");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(41:5,43:6)] only remote functions are " +
-                "allowed inside gRPC services";
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(41:5,43:6)] only an init function or remote " +
+         "methods are allowed inside gRPC services";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
         Assert.assertEquals(diagnosticResult.errors().size(), 1);
@@ -260,6 +260,14 @@ public class CompilerPluginTest {
         String[] actualErrors  = {diagnostic1.toString(), diagnostic2.toString()};
         String[] expectedErrors  = {errMsg1, errMsg2};
         Assert.assertEqualsNoOrder(actualErrors, expectedErrors);
+    }
+
+    @Test
+    public void testCompilerPluginWithInitFunction() {
+        Package currentPackage = loadPackage("package_16");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
     private Package loadPackage(String path) {
