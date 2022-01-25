@@ -119,13 +119,13 @@ public class CompilerPluginTest {
 
         Package currentPackage = loadPackage("package_06");
         PackageCompilation compilation = currentPackage.getCompilation();
-        String errMsg = "ERROR [grpc_server_streaming_service.bal:(41:5,43:6)] only an init function or remote " +
-         "methods are allowed inside gRPC services";
+        String errMsg = "ERROR [grpc_server_streaming_service.bal:(41:5,43:6)] resource methods are not allowed " +
+         "inside gRPC services";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
         Assert.assertEquals(diagnosticResult.errors().size(), 1);
         Assert.assertEquals(diagnostic.diagnosticInfo().code(),
-                GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
+                GrpcCompilerPluginConstants.CompilationErrors.RESOURCES_NOT_ALLOWED.getErrorCode());
         Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
                 d -> errMsg.equals(d.toString())));
     }
@@ -263,7 +263,7 @@ public class CompilerPluginTest {
     }
 
     @Test
-    public void testCompilerPluginWithInitFunction() {
+    public void testCompilerPluginWithInitAndNormalFunctions() {
         Package currentPackage = loadPackage("package_16");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();

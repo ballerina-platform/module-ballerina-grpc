@@ -28,10 +28,11 @@ service "HelloWorld" on ep {
     function init() {
         log:printInfo("init");
     }
+
     remote function hello(ContextString request) returns ContextString|error {
         log:printInfo("Invoked the hello RPC call.");
         // Reads the request content.
-        string message = "Hello " + request.content;
+        string message = "Hello " + request.content + self.foo();
 
         // Reads custom headers in request message.
         string reqHeader = check grpc:getHeader(request.headers, "client_header_key");
@@ -42,5 +43,9 @@ service "HelloWorld" on ep {
             content: message,
             headers: {server_header_key: "Response Header value"}
         };
+    }
+
+    function foo() returns string {
+        return " msg";
     }
 }
