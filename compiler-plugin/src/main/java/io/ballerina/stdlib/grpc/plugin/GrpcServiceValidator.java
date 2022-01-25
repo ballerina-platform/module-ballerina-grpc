@@ -177,13 +177,12 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
     private void validateServiceFunctions(FunctionDefinitionNode functionDefinitionNode,
                                           SyntaxNodeAnalysisContext syntaxNodeAnalysisContext) {
 
-        boolean hasRemoteKeyword = functionDefinitionNode.qualifierList().stream()
-                .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
-        boolean isInitFunction = "init".equals(functionDefinitionNode.functionName().toString());
-        if (!(hasRemoteKeyword || isInitFunction)) {
+        boolean hasResourceKeyword = functionDefinitionNode.qualifierList().stream()
+                .filter(q -> q.kind() == SyntaxKind.RESOURCE_KEYWORD).toArray().length == 1;
+        if (hasResourceKeyword) {
             reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                    GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getError(),
-                    GrpcCompilerPluginConstants.CompilationErrors.ONLY_REMOTE_FUNCTIONS.getErrorCode());
+                    GrpcCompilerPluginConstants.CompilationErrors.RESOURCES_NOT_ALLOWED.getError(),
+                    GrpcCompilerPluginConstants.CompilationErrors.RESOURCES_NOT_ALLOWED.getErrorCode());
         }
     }
 
