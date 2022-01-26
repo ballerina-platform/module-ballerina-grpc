@@ -198,8 +198,8 @@ public class GrpcCmd implements BLauncherCmd {
         try {
             downloadProtocexe();
         } catch (IOException | CodeGeneratorException e) {
-            String errorMessage = "Error while preparing protoc executable. " + e.getMessage();
-            LOG.error("Error while preparing protoc executable.", e);
+            String errorMessage = "Error while preparing the protoc executable. " + e.getMessage();
+            LOG.error("Error while preparing the protoc executable.", e);
             outStream.println(errorMessage);
             return;
         }
@@ -218,12 +218,12 @@ public class GrpcCmd implements BLauncherCmd {
                     exportResource(file, classLoader);
                 }
             } catch (Exception e) {
-                LOG.error("Error extracting resource file ", e);
-                outStream.println("Error while reading proto library files. " + e.getMessage());
+                LOG.error("Error extracting the resource file. ", e);
+                outStream.println("Error while reading the library files. " + e.getMessage());
                 return;
             }
             if (msg.toString().isEmpty()) {
-                outStream.println("Successfully extracted library files.");
+                outStream.println("Successfully extracted the library files.");
             } else {
                 outStream.println(msg);
                 return;
@@ -248,18 +248,18 @@ public class GrpcCmd implements BLauncherCmd {
                     );
                 }
             } catch (CodeGeneratorException e) {
-                String errorMessage = "Error occurred when generating proto descriptor. " + e.getMessage();
-                LOG.error("Error occurred when generating proto descriptor.", e);
+                String errorMessage = "An error occurred when generating the proto descriptor. " + e.getMessage();
+                LOG.error("An error occurred when generating the proto descriptor.", e);
                 outStream.println(errorMessage);
                 return;
             }
             if (root.length == 0) {
-                String errorMsg = "Error occurred when generating proto descriptor.";
+                String errorMsg = "An error occurred when generating the proto descriptor.";
                 LOG.error(errorMsg);
                 outStream.println(errorMsg);
                 return;
             }
-            LOG.debug("Successfully generated root descriptor.");
+            LOG.debug("Successfully generated the root descriptor.");
             try {
                 if (importPath.isBlank()) {
                     dependant = DescriptorsGenerator.generateDependentDescriptor(
@@ -275,12 +275,13 @@ public class GrpcCmd implements BLauncherCmd {
                     );
                 }
             } catch (CodeGeneratorException e) {
-                String errorMessage = "Error occurred when generating dependent proto descriptor. " + e.getMessage();
+                String errorMessage =
+                        "An error occurred when generating the dependent proto descriptor. " + e.getMessage();
                 LOG.error(errorMessage, e);
                 outStream.println(errorMessage);
                 return;
             }
-            LOG.debug("Successfully generated dependent descriptor.");
+            LOG.debug("Successfully generated the dependent descriptor.");
         } finally {
             //delete temporary meta files
             File tempDir = new File(BalGenerationConstants.TMP_DIRECTORY_PATH);
@@ -299,13 +300,13 @@ public class GrpcCmd implements BLauncherCmd {
         try {
             ballerinaFileBuilder.build(this.mode);
         } catch (CodeBuilderException e) {
-            LOG.error("Error generating ballerina file.", e);
-            msg.append("Error generating ballerina file.").append(e.getMessage())
+            LOG.error("Error generating the Ballerina file.", e);
+            msg.append("Error generating the Ballerina file.").append(e.getMessage())
                     .append(BalGenerationConstants.NEW_LINE_CHARACTER);
             outStream.println(msg);
             return;
         }
-        msg.append("Successfully generated ballerina file.").append(BalGenerationConstants.NEW_LINE_CHARACTER);
+        msg.append("Successfully generated the Ballerina file.").append(BalGenerationConstants.NEW_LINE_CHARACTER);
         outStream.println(msg);
     }
 
@@ -378,7 +379,7 @@ public class GrpcCmd implements BLauncherCmd {
             File protocExeFile = new File(BalGenerationConstants.TMP_DIRECTORY_PATH, protocFilename);
             protocExePath = protocExeFile.getAbsolutePath(); // if file already exists will do nothing
             if (!protocExeFile.exists()) {
-                outStream.println("Downloading protoc executor file - " + protocFilename);
+                outStream.println("Downloading the protoc executor file - " + protocFilename);
                 String protocDownloadurl = BalGenerationConstants.PROTOC_PLUGIN_EXE_URL_SUFFIX +
                         protocVersion + "/" + protocFilename;
                 File tempDownloadFile = new File(
@@ -395,7 +396,7 @@ public class GrpcCmd implements BLauncherCmd {
                 outStream.println("Download successfully completed. Executor file path - " + protocExeFile.getPath());
             } else {
                 BalFileGenerationUtils.grantPermission(protocExeFile);
-                outStream.println("Continue with existing protoc executor file at " + protocExeFile.getPath());
+                outStream.println("Continue with the existing protoc executor file at " + protocExeFile.getPath());
             }
         } else {
             outStream.println("Continue with provided protoc executor file at " + protocExePath);
