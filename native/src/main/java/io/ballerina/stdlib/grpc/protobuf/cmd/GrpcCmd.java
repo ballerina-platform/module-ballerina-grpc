@@ -396,10 +396,10 @@ public class GrpcCmd implements BLauncherCmd {
                 outStream.println("Download successfully completed. Executor file path - " + protocExeFile.getPath());
             } else {
                 BalFileGenerationUtils.grantPermission(protocExeFile);
-                outStream.println("Continue with the existing protoc executor file at " + protocExeFile.getPath());
+                outStream.println("Continuing with the existing protoc executor file at " + protocExeFile.getPath());
             }
         } else {
-            outStream.println("Continue with provided protoc executor file at " + protocExePath);
+            outStream.println("Continuing with the provided protoc executor file at " + protocExePath);
         }
     }
     
