@@ -17,11 +17,11 @@ PRGDIR=`dirname "$PRG"`
 # Only set DEMO_HOME if not already set
 [ -z "$DEMO_HOME" ] && DEMO_HOME=`cd "$PRGDIR/.." ; pwd`
 
-for service in recommendationservice productcatalogservice adservice; do
+for service in recommendation-service product-catalog-service ad-service; do
   (cd $DEMO_HOME/$service
   test --offline)
 done
 
-kubectl apply -f  $DEMO_HOME/productcatalogservice/target/kubernetes/productcatalogservice/productcatalogservice.yaml
-kubectl apply -f  $DEMO_HOME/adservice/target/kubernetes/adservice/adservice.yaml
-kubectl apply -f  $DEMO_HOME/recommendationservice/target/kubernetes/recommendationservice/recommendationservice.yaml
+kubectl apply -f  $DEMO_HOME/product-catalog-service/target/kubernetes/productcatalogservice/productcatalogservice.yaml
+kubectl apply -f  $DEMO_HOME/ad-service/target/kubernetes/adservice/adservice.yaml
+kubectl apply -f  $DEMO_HOME/recommendation-service/target/kubernetes/recommendationservice/recommendationservice.yaml
