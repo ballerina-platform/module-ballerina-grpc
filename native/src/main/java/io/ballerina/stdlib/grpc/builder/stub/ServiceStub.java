@@ -104,23 +104,23 @@ public class ServiceStub {
                 serviceStub.callerMap.put(callerTypeName, method.getOutputType());
                 switch (method.getMethodType()) {
                     case UNARY:
-                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.FALSE);
-                        serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.FALSE);
+                        updateValueTypeMap(serviceStub, method.getInputType(), Boolean.FALSE);
+                        updateValueTypeMap(serviceStub, method.getOutputType(), Boolean.FALSE);
                         serviceStub.unaryFunctions.add(method);
                         break;
                     case SERVER_STREAMING:
-                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.FALSE);
-                        serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.TRUE);
+                        updateValueTypeMap(serviceStub, method.getInputType(), Boolean.FALSE);
+                        updateValueTypeMap(serviceStub, method.getOutputType(), Boolean.TRUE);
                         serviceStub.serverStreamingFunctions.add(method);
                         break;
                     case CLIENT_STREAMING:
-                        serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.FALSE);
-                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.TRUE);
+                        updateValueTypeMap(serviceStub, method.getInputType(), Boolean.TRUE);
+                        updateValueTypeMap(serviceStub, method.getOutputType(), Boolean.FALSE);
                         serviceStub.clientStreamingFunctions.add(method);
                         break;
                     case BIDI_STREAMING:
-                        serviceStub.valueTypeMap.put(method.getInputType(), Boolean.TRUE);
-                        serviceStub.valueTypeMap.put(method.getOutputType(), Boolean.TRUE);
+                        updateValueTypeMap(serviceStub, method.getInputType(), Boolean.TRUE);
+                        updateValueTypeMap(serviceStub, method.getOutputType(), Boolean.TRUE);
                         serviceStub.bidiStreamingFunctions.add(method);
                         break;
                     default:
@@ -128,6 +128,16 @@ public class ServiceStub {
                 }
             }
             return serviceStub;
+        }
+
+        private void updateValueTypeMap(ServiceStub serviceStub, String key, Boolean value) {
+            if (!serviceStub.valueTypeMap.containsKey(key)) {
+                serviceStub.valueTypeMap.put(key, value);
+            } else {
+                if (!serviceStub.valueTypeMap.get(key)) {
+                    serviceStub.valueTypeMap.put(key, value);
+                }
+            }
         }
     }
 }
