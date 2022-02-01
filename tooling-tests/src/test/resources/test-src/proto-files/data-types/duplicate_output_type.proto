@@ -18,10 +18,12 @@
 
 syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
-service Store {
+service RecordStore {
   rpc getAlbums(google.protobuf.Empty) returns (stream Album);
+  rpc getAlbumById(google.protobuf.StringValue) returns (Album);
   rpc storeAlbum(Album) returns (Album);
 }
 
