@@ -180,6 +180,12 @@ public class ToolingCommonTest {
     }
 
     @Test
+    public void testDuplicateOutputType() {
+        assertGeneratedDataTypeSources("data-types", "duplicate_output_type.proto",
+                "duplicate_output_type_pb.bal", "tool_test_data_type_22");
+    }
+
+    @Test
     public void testProtoDirectory() {
         Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, "proto-dir");
         Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_proto_dir");
