@@ -22,8 +22,10 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
 service RecordStore {
+  rpc updateAlbums(stream Album) returns (stream Album);
   rpc getAlbums(google.protobuf.Empty) returns (stream Album);
   rpc getAlbumById(google.protobuf.StringValue) returns (Album);
+  rpc getTotalValue(stream Album) returns (google.protobuf.Int32Value);
   rpc storeAlbum(Album) returns (Album);
 }
 
