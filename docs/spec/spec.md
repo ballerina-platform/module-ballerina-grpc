@@ -27,18 +27,18 @@ Conforming implementation of the specification is released and included in the d
 5. [gRPC Security](#51-authentication-and-authorization)
    * 5.1. [Authentication and Authorization](#51-authentication-and-authorization)
       * 5.1.1. [Declarative Approach](#511-declarative-approach)
-         * 5.1.1.1. [Service - File User Store](#5111-service---file-user-store)
-         * 5.1.1.2. [Service - LDAP User Store](#5112-service---ldap-user-store)
-         * 5.1.1.3. [Service - JWT](#5113-service---jwt)
+         * 5.1.1.1. [Service - Basic Auth - File User Store](#5111-service---basic-auth---file-user-store)
+         * 5.1.1.2. [Service - Basic Auth - LDAP User Store](#5112-service---basic-auth---ldap-user-store)
+         * 5.1.1.3. [Service - JWT Auth](#5113-service---jwt-auth)
          * 5.1.1.4. [Service - OAuth2](#5114-service---oauth2)
          * 5.1.1.5. [Client - Basic Auth](#5115-client---basic-auth)
          * 5.1.1.6. [Client - Bearer Token Auth](#5116-client---bearer-token-auth)
          * 5.1.1.7. [Client - Self Signed JWT Auth](#5117-client---self-signed-jwt-auth)
          * 5.1.1.8. [Client - OAuth2](#5118-client---oauth2)
       * 5.1.2 [Imperative Approach](#512-imperative-approach)
-         * 5.1.2.1. [Service - File User Store](#5121-service---file-user-store)
-         * 5.1.2.2. [Service - LDAP User Store](#5122-service---ldap-user-store)
-         * 5.1.2.3. [Service - JWT](#5123-service---jwt)
+         * 5.1.2.1. [Service - Basic Auth - File User Store](#5121-service---basic-auth---file-user-store)
+         * 5.1.2.2. [Service - Basic Auth - LDAP User Store](#5122-service---basic-auth---ldap-user-store)
+         * 5.1.2.3. [Service - JWT Auth](#5123-service---jwt-auth)
          * 5.1.2.4. [Service - OAuth2](#5124-service---oauth2)
          * 5.1.2.5. [Client - Basic Auth](#5125-client---basic-auth)
          * 5.1.2.6. [Client - Bearer Token Auth](#5126-client---bearer-token-auth)
@@ -436,7 +436,8 @@ This is also known as the configuration-driven approach, which is used for simpl
 
 The service configurations are used to define the authentication and authorization configurations. Users can configure the configurations needed for different authentication schemes and configurations needed for authorizations of each authentication scheme. Also, the configurations can be provided at the service level. The priority will be given from bottom to top. Then, the auth handler creation and request authentication/authorization is handled internally without user intervention. The requests that succeeded both authentication and/or authorization phases according to the configurations will be passed to the business logic layer.
 
-#### 5.1.1.1 Service - File User Store
+#### 5.1.1.1 Service - Basic Auth - File User Store
+
 Ballerina gRPC services enable authentication and authorization using a file user store by setting the `grpc:FileUserStoreConfigWithScopes` configurations in the listener.
 
 ```ballerina
@@ -477,7 +478,8 @@ username="eve"
 password="eve@123"
 ```
 
-#### 5.1.1.2 Service - LDAP User Store
+#### 5.1.1.2 Service - Basic Auth - LDAP User Store
+
 Ballerina gRPC services enable authentication and authorization using an LDAP user store by setting the `grpc:LdapUserStoreConfigWithScopes` configurations in the listener.
 
 ```ballerina
@@ -520,7 +522,8 @@ service "HelloWorld" on new grpc:Listener(9090) {
 }
 ```
 
-#### 5.1.1.3 Service - JWT
+#### 5.1.1.3 Service - JWT Auth
+
 Ballerina gRPC services enable authentication and authorization using JWTs by setting the `grpc:JwtValidatorConfigWithScopes` configurations in the listener.
 
 ```ballerina
@@ -531,7 +534,7 @@ Ballerina gRPC services enable authentication and authorization using JWTs by se
                 issuer: "wso2",
                 audience: "ballerina",
                 signatureConfig: {
-                    certFile: "../resource/path/to/public.crt"
+                    certFile: "/path/to/public.crt"
                 },
                 scopeKey: "scp"
             },
@@ -551,6 +554,7 @@ service "HelloWorld" on new grpc:Listener(9090) {
 ```
 
 #### 5.1.1.4 Service - OAuth2
+
 Ballerina gRPC services enable authentication and authorization using OAuth2 by setting the `grpc:OAuth2IntrospectionConfigWithScopes` configurations in the listener.
 
 ```ballerina
@@ -564,7 +568,7 @@ Ballerina gRPC services enable authentication and authorization using OAuth2 by 
                 clientConfig: {
                     customHeaders: {"Authorization": "Basic YWRtaW46YWRtaW4="},
                     secureSocket: {
-                        cert: "../resource/path/to/public.crt"
+                        cert: "/path/to/public.crt"
                     }
                 }
             },
@@ -584,6 +588,7 @@ service "HelloWorld" on securedEP {
 ```
 
 #### 5.1.1.5 Client - Basic Auth
+
 Ballerina gRPC clients enable basic auth with credentials by setting the `grpc:CredentialsConfig` configurations in the client.
 
 ```ballerina
@@ -596,6 +601,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 ```
 
 #### 5.1.1.6 Client - Bearer Token Auth
+
 Ballerina gRPC clients enable authentication using bearer tokens by setting the `grpc:BearerTokenConfig` configurations in the client.
 
 ```ballerina 
@@ -607,6 +613,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 ```
 
 #### 5.1.1.7 Client - Self Signed JWT Auth
+
 Ballerina gRPC clients enable authentication using JWTs by setting the `grpc:JwtIssuerConfig` configurations in the client.
 
 ```ballerina
@@ -621,7 +628,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
         expTime: 3600,
         signatureConfig: {
             config: {
-                keyFile: "../resource/path/to/private.key"
+                keyFile: "/path/to/private.key"
             }
         }
     }
@@ -629,9 +636,10 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 ```
 
 #### 5.1.1.8 Client - OAuth2
+
 Ballerina gRPC clients enable authentication using OAuth2 by setting the `grpc:OAuth2GrantConfig` configurations in the client. OAuth2 can configure in 4 ways:
 
-_i. Credentials Grant Type_
+_i. Client Credentials Grant Type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
@@ -642,7 +650,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
         scopes: ["admin"],
         clientConfig: {
             secureSocket: {
-                cert: "../resource/path/to/public.crt"
+                cert: "/path/to/public.crt"
             }
         }
     }
@@ -665,13 +673,13 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
             scopes: ["hello"],
             clientConfig: {
                 secureSocket: {
-                    cert: "../resource/path/to/public.crt"
+                    cert: "/path/to/public.crt"
                 }
             }
         },
         clientConfig: {
             secureSocket: {
-                cert: "../resource/path/to/public.crt"
+                cert: "/path/to/public.crt"
             }
         }
     }
@@ -689,7 +697,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
         scopes: ["admin"],
         clientConfig: {
             secureSocket: {
-                cert: "../resource/path/to/public.crt"
+                cert: "/path/to/public.crt"
             }
         }
     }
@@ -708,50 +716,44 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
         scopes: ["admin"],
         clientConfig: {
             secureSocket: {
-                cert: "../resource/path/to/public.crt"
+                cert: "/path/to/public.crt"
             }
         }
     }
 );
 ```
 ### 5.1.2 Imperative Approach
+
 This is also known as the code-driven approach, which is used for advanced use cases, where users need to be worried more about how authentication and authorization work and need to have further customizations. The user has full control of the code-driven approach. The handler creation and authentication/authorization calls are made by the user at the business logic layer.
 
-#### 5.1.2.1 Service - File User Store
+#### 5.1.2.1 Service - Basic Auth - File User Store
+
 Ballerina gRPC services enable authentication and authorization using a file user store by employing the class `grpc:ListenerFileUserStoreBasicAuthHandler`.
 
 ```ballerina
 service "HelloWorld" on new grpc:Listener(9090) {
-
     remote function sayHello(ContextString request) returns string|error {
-
         grpc:ListenerFileUserStoreBasicAuthHandler handler = new;
         auth:UserDetails|grpc:UnauthenticatedError authnResult = handler.authenticate(request.headers);
-
     }
 }
 ```
 
 ```toml
 # Config.toml
-[ballerina.observe]
-enabled=true
-provider="noop"
-
 [[auth.users]]
 username="admin"
 password="123"
 scopes=["write", "update"]
 ```
 
-#### 5.1.2.2 Service - LDAP User Store
+#### 5.1.2.2 Service - Basic Auth - LDAP User Store
+
 Ballerina gRPC services enable authentication and authorization using an LDAP user store by employing the class `grpc:ListenerLdapUserStoreBasicAuthHandler`.
 
 ```ballerina
 service "HelloWorld" on new grpc:Listener(9090) {
-
     remote function sayHello(ContextString request) returns string|error {
-
         grpc:LdapUserStoreConfig config = {
             domainName: "avix.lk",
             connectionUrl: "ldap://localhost:389",
@@ -773,22 +775,18 @@ service "HelloWorld" on new grpc:Listener(9090) {
             connectionTimeout: 5,
             readTimeout: 60
         };
-
         grpc:ListenerLdapUserStoreBasicAuthHandler handler = new(config);
         auth:UserDetails|grpc:UnauthenticatedError authnResult = handler->authenticate(request.headers);
-
-
     }
 }
 ```
-#### 5.1.2.3 Service - JWT
+#### 5.1.2.3 Service - JWT Auth
+
 Ballerina gRPC services enable authentication and authorization using JWTs by employing the class `grpc:ListenerJwtAuthHandler`.
 
 ```ballerina
 service "HelloWorld" on new grpc:Listener(9090) {
-
     remote function sayHello(ContextString request) returns string|error {
-
         grpc:JwtValidatorConfig config = {
             issuer: "wso2",
             audience: "ballerina",
@@ -803,20 +801,18 @@ service "HelloWorld" on new grpc:Listener(9090) {
             },
             scopeKey: "scope"
         };
-
         grpc:ListenerJwtAuthHandler handler = new(config);
         jwt:Payload|grpc:UnauthenticatedError authResult = handler.authenticate(request.headers);
     }
 }
 ```
 #### 5.1.2.4 Service - OAuth2
+
 Ballerina gRPC services enable authentication and authorization using OAuth2 by employing the class `grpc:OAuth2IntrospectionConfig`.
 
 ```ballerina
 service "HelloWorld" on new grpc:Listener(9090) {
-
     remote function sayHello(ContextString request) returns string|error {
-
         grpc:OAuth2IntrospectionConfig config = {
             url: "https://localhost:" + oauth2AuthorizationServerPort.toString() + "/oauth2/token/introspect",
             tokenTypeHint: "access_token",
@@ -830,13 +826,13 @@ service "HelloWorld" on new grpc:Listener(9090) {
                 }
             }
         };
-
         grpc:ListenerOAuth2Handler handler = new(config);
         oauth2:IntrospectionResponse|grpc:UnauthenticatedError|grpc:PermissionDeniedError authResult = handler->authorize(request.headers, "read");
     }
 }
 ```
 #### 5.1.2.5 Client - Basic Auth
+
 Ballerina gRPC clients enable authentication and authorization using basic auth by employing class `grpc:ClientBasicAuthHandler`. To enable authentication and authorization, the generated headers of the `enrich` API needs to pass to the RPC call.
 
 ```ballerina
@@ -848,7 +844,9 @@ grpc:CredentialsConfig config = {
 grpc:ClientBasicAuthHandler handler = new (config);
 map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
 ```
+
 #### 5.1.2.6 Client - Bearer Token Auth
+
 Ballerina gRPC clients enable authentication and authorization using bearer tokens by employing class `grpc:ClientBearerTokenAuthHandler`. To enable authentication and authorization, the generated headers of the `enrich` API needs to pass to the RPC call.
 
 ```ballerina
@@ -857,7 +855,9 @@ grpc:BearerTokenConfig config = {token: "eyJhbGciOiJSUzI1NiIsICJ0eXAiOiJKV1QifQ"
 grpc:ClientBearerTokenAuthHandler handler = new (config);
 map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
 ```
+
 #### 5.1.2.7 Client - Self Signed JWT Auth
+
 Ballerina gRPC clients enable authentication and authorization using JWTs by employing class `grpc:ClientSelfSignedJwtAuthHandler`. To enable authentication and authorization, the generated headers of the `enrich` API needs to pass to the RPC call.
 
 ```ballerina
@@ -880,7 +880,9 @@ grpc:JwtIssuerConfig config = {
 grpc:ClientSelfSignedJwtAuthHandler handler = new(config);
 map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
 ```
+
 #### 5.1.2.8 Client - OAuth2
+
 Ballerina gRPC clients enable authentication and authorization using OAuth2 by employing class `grpc:ClientOAuth2Handler`. To enable authentication and authorization, the generated headers of the `enrich` API needs to pass to the RPC call.
 
 ```ballerina
@@ -903,14 +905,15 @@ map<string|string[]>|grpc:ClientAuthError result = handler->enrich(requestHeader
 ```
 
 ## 5.2 SSL/TLS and Mutual SSL
+
 A gRPC listener with configuration `grpc:ListenerSecureSocket` exposes gRPC services with SSL/TLS.
 
 ```ballerina
 listener grpc:Listener securedEp = new(9090,
     secureSocket = {
         key: {
-            certFile: "./resources/public.crt",
-            keyFile: "./resources/private.key"
+            certFile: "/path/to/public.crt",
+            keyFile: "/path/to/private.key"
         }
     }
 );
@@ -925,12 +928,13 @@ service "HelloWorld" on securedEp {
     }
 }
 ```
+
 A gRPC client with configuration `grpc:ClientSecureSocket` can invoke gRPC services with SSL/TLS.
 
 ```ballerina
 HelloWorldClient securedEp = check new("https://localhost:9090",
     secureSocket = {
-        cert: "../resource/path/to/public.crt"
+        cert: "/path/to/public.crt"
     }
 );
 ```
@@ -941,22 +945,18 @@ By configuring the mutualSsl entry in the `grpc:ListenerSecureSocket`, gRPC serv
 listener grpc:Listener securedEP = new(9090,
     secureSocket = {
         key: {
-            certFile: "../resource/path/to/public.crt",
-            keyFile: "../resource/path/to/private.key"
+            certFile: "/path/to/public.crt",
+            keyFile: "/path/to/private.key"
         },
-
         mutualSsl: {
             verifyClient: grpc:REQUIRE,
-            cert: "../resource/path/to/public.crt"
+            cert: "/path/to/public.crt"
         },
-
         protocol: {
             name: grpc:TLS,
             versions: ["TLSv1.2", "TLSv1.1"]
         },
-
         ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
-
     }
 );
 ```
