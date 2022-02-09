@@ -20,5 +20,5 @@ set -e
 source base-scenario.sh
 
 echo "----------Running load tests----------"
-./ghz --skipTLS --proto $scriptsDir/route_guide.proto --rps 500 --duration 1800s --concurrency 10 --duration-stop wait --call routeguide.RouteGuide.RouteChat --stream-call-count=5 -d '[{"location": {"latitude": 406109563, "longitude": -742186778}, "message": "m1"},{"location": {"latitude": 411733222, "longitude": -744228360}, "message": "m2"}, {"location": {"latitude": 411733222, "longitude": -744228360}, "message": "m2"}]' bal.perf.test:443 --format influx-summary --output $scriptsDir/ghz_output.csv
+./ghz --skipTLS --proto $scriptsDir/route_guide.proto --rps 500 --duration 1800s --concurrency 10 --connections 10 --skipFirst 1000 --duration-stop wait --call routeguide.RouteGuide.RouteChat --stream-call-count=5 -d '[{"location": {"latitude": 406109563, "longitude": -742186778}, "message": "m1"},{"location": {"latitude": 411733222, "longitude": -744228360}, "message": "m2"}, {"location": {"latitude": 411733222, "longitude": -744228360}, "message": "m2"}]' bal.perf.test:443 --format influx-summary --output $scriptsDir/ghz_output.csv
 head $scriptsDir/ghz_output.csv
