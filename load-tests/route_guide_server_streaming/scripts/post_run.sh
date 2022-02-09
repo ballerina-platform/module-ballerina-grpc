@@ -18,8 +18,8 @@
 # ----------------------------------------------------------------------------
 set -e
 
-export scriptsDir="home/ballerina/module-ballerina-grpc/load-tests/route_guide_unary/scripts"
-export resultsDir="home/ballerina/module-ballerina-grpc/load-tests/route_guide_unary/results"
+export scriptsDir="/home/ballerina/module-ballerina-grpc/load-tests/route_guide_server_streaming/scripts"
+export resultsDir="/home/ballerina/module-ballerina-grpc/load-tests/route_guide_server_streaming/results"
 
 # Using the ballerina zip version for testing. Once finalized, can use a docker image with process_csv_output util
 echo "----------Downloading Ballerina----------"
