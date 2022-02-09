@@ -18,8 +18,8 @@
 # ----------------------------------------------------------------------------
 set -e
 
-export scriptsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_bidirectional_streaming/scripts"
-export resultsDir="/home/bal-admin/module-ballerina-grpc/load-tests/route_guide_bidirectional_streaming/results"
+export scriptsDir="home/ballerina/module-ballerina-grpc/load-tests/route_guide_unary/scripts"
+export resultsDir="home/ballerina/module-ballerina-grpc/load-tests/route_guide_unary/results"
 
 # Using the ballerina zip version for testing. Once finalized, can use a docker image with process_csv_output util
 echo "----------Downloading Ballerina----------"
@@ -29,4 +29,4 @@ echo "----------Setting Up Ballerina----------"
 sudo dpkg -i ballerina-linux-installer-x64-swan-lake-beta3.deb
 
 echo "----------Finalizing results----------"
-bal run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Bidirectional Streaming" 10 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "1800"
+bal run $scriptsDir/process_csv_output/ -- "gRPC Route Guide Bidirectional Streaming" 1 "$scriptsDir/ghz_output.csv" "$resultsDir/summary.csv" "1800"
