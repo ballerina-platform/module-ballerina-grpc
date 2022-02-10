@@ -21,9 +21,9 @@ public isolated class ListenerFileUserStoreBasicAuthHandler {
 
     private final auth:ListenerFileUserStoreBasicAuthProvider provider;
 
-    # Initializes the `http:ListenerFileUserStoreBasicAuthHandler` object.
+    # Initializes the `grpc:ListenerFileUserStoreBasicAuthHandler` object.
     #
-    # + config - The `http:FileUserStoreConfig` instance
+    # + config - The `grpc:FileUserStoreConfig` instance
     public isolated function init(FileUserStoreConfig config = {}) {
         self.provider = new (config);
     }

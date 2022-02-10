@@ -31,7 +31,7 @@ public isolated client class ListenerLdapUserStoreBasicAuthHandler {
     # Authenticates with the relevant authentication requirements.
     #
     # + headers - The headers map `map<string|string[]>` as an input
-    # + return - The `auth:UserDetails` instance or else an `UnauthenticatedError` error
+    # + return - The `auth:UserDetails` instance or else an `grpc:UnauthenticatedError` error
     remote isolated function authenticate(map<string|string[]> headers) returns auth:UserDetails|UnauthenticatedError {
         string|Error credential = extractCredential(headers);
         if credential is Error {
@@ -50,7 +50,7 @@ public isolated client class ListenerLdapUserStoreBasicAuthHandler {
     #
     # + userDetails - The `auth:UserDetails` instance which is received from authentication results
     # + expectedScopes - The expected scopes as `string` or `string[]`
-    # + return - `()`, if it is successful or else a `PermissionDeniedError` error
+    # + return - `()`, if it is successful or else a `grpc:PermissionDeniedError` error
     remote isolated function authorize(auth:UserDetails userDetails, string|string[] expectedScopes) returns PermissionDeniedError? {
         string[]? actualScopes = userDetails?.scopes;
         if actualScopes is string[] {
