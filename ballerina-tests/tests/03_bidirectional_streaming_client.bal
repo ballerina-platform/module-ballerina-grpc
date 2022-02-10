@@ -253,25 +253,27 @@ isolated function testBidiStreamingWithNoPublicCertFile() returns grpc:Error? {
 
 @test:Config {enable:true}
 isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns grpc:Error? {
-    ChatClient chatClient = check new ("https://localhost", {
-        secureSocket: {
-            key: {
-                certFile: PUBLIC_CRT_PATH,
-                keyFile: PRIVATE_KEY_PATH
-            },
-            cert: PUBLIC_CRT_PATH,
-            protocol:{
-                name: grpc:TLS,
-                versions: ["TLSv1.2", "TLSv1.1"]
-            },
-            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
-        }
-    });
-    ChatStreamingClient strClient = check chatClient->chat();
-    ChatMessage mes1 = {name:"Sam", message:"Hi"};
-    check strClient->sendChatMessage(mes1);
-    
-    string|grpc:Error? err = strClient->receiveString();
-    test:assertTrue(err is grpc:Error);
-    test:assertTrue((<grpc:Error>err).message().startsWith("Connection refused: "));
+    if !isWindowsEnvironment() {
+        ChatClient chatClient = check new ("https://localhost", {
+            secureSocket: {
+                key: {
+                    certFile: PUBLIC_CRT_PATH,
+                    keyFile: PRIVATE_KEY_PATH
+                },
+                cert: PUBLIC_CRT_PATH,
+                protocol:{
+                    name: grpc:TLS,
+                    versions: ["TLSv1.2", "TLSv1.1"]
+                },
+                ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+            }
+        });
+        ChatStreamingClient strClient = check chatClient->chat();
+        ChatMessage mes1 = {name:"Sam", message:"Hi"};
+        check strClient->sendChatMessage(mes1);
+
+        string|grpc:Error? err = strClient->receiveString();
+        test:assertTrue(err is grpc:Error);
+        test:assertTrue((<grpc:Error>err).message().startsWith("Connection refused: "));
+    }
 }
