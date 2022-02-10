@@ -37,13 +37,13 @@ service "RouteGuide" on ep {
         int top = int:max(rectangle.lo.latitude, rectangle.hi.latitude);
         int bottom = int:min(rectangle.lo.latitude, rectangle.hi.latitude);
 
-        Feature[] selectedFeatures = from var feature in FEATURES
-            where feature.name != ""
-            where feature.location.longitude >= left
-            where feature.location.longitude <= right
-            where feature.location.latitude >= bottom
-            where feature.location.latitude <= top
-            select feature;
+        Feature[] selectedFeatures = [];
+        foreach Feature feature in FEATURES {
+            if feature.name != "" && feature.location.longitude >= left && feature.location.longitude <= right
+            && feature.location.latitude >= bottom && feature.location.latitude <= top {
+                selectedFeatures.push(feature);
+            }
+        }
 
         selectedFeatures.push(FEATURES[0]);
 
