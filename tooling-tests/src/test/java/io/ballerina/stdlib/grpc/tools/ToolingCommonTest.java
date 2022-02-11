@@ -186,6 +186,13 @@ public class ToolingCommonTest {
     }
 
     @Test
+    public void testHelloWorldWithReservedKeywords() {
+
+        assertGeneratedDataTypeSources("data-types", "enumWithKeywords.proto",
+                "enumWithKeywords_pb.bal", "tool_test_data_type_23");
+    }
+
+    @Test
     public void testProtoDirectory() {
         Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, "proto-dir");
         Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_proto_dir");
