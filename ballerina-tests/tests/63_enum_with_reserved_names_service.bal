@@ -18,7 +18,7 @@ import ballerina/grpc;
 
 listener grpc:Listener ep63 = new (9163);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_ENUMWITHKEYWORDS, descMap: getDescriptorMapEnumWithKeywords()}
+@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_ENUMWITHRESERVEDNAMES, descMap: getDescriptorMapEnumWithReservedNames()}
 service "MessageService" on ep63 {
 
     remote function UnaryCall(MessageInfo messageInfo) returns MessageState|error {
