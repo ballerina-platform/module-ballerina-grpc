@@ -180,7 +180,8 @@ public class Message {
 
         BMap<BString, Object> bBMap = null;
         BArray bArray = null;
-        isAnyTypedMessage = GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(messageName);
+        isAnyTypedMessage = GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(messageName) &&
+                fieldDescriptors.values().stream().allMatch(fd -> fd.getFullName().contains(GOOGLE_PROTOBUF_ANY));
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG && !isAnyTypedMessage) {
             bBMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
             bMessage = bBMap;
