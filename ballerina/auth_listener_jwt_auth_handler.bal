@@ -35,7 +35,7 @@ public isolated class ListenerJwtAuthHandler {
     # Authenticates with the relevant authentication requirements.
     #
     # + headers - The headers map `map<string|string[]>` as an input
-    # + return - The `jwt:Payload` instance or else an `UnauthenticatedError` error
+    # + return - The `jwt:Payload` instance or else an `grpc:UnauthenticatedError` error
     public isolated function authenticate(map<string|string[]> headers) returns jwt:Payload|UnauthenticatedError {
         string|Error credential = extractCredential(headers);
         if credential is Error {
@@ -54,7 +54,7 @@ public isolated class ListenerJwtAuthHandler {
     #
     # + jwtPayload - The `jwt:Payload` instance which is received from authentication results
     # + expectedScopes - The expected scopes as `string` or `string[]`
-    # + return - `()`, if it is successful or else a `PermissionDeniedError` error
+    # + return - `()`, if it is successful or else a `grpc:PermissionDeniedError` error
     public isolated function authorize(jwt:Payload jwtPayload, string|string[] expectedScopes) returns PermissionDeniedError? {
         string scopeKey = self.scopeKey;
         var actualScope = jwtPayload[scopeKey];

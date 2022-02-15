@@ -86,6 +86,13 @@ public class ToolingCommonTest {
     }
 
     @Test
+    public void testStubGenerationWithReservedNames() {
+
+        assertGeneratedDataTypeSources("data-types", "enumWithReservedNames.proto",
+                "enumWithReservedNames_pb.bal", "tool_test_data_type_23");
+    }
+
+    @Test
     public void testMessage() {
         assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal",
                 "tool_test_data_type_10");

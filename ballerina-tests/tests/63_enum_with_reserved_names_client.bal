@@ -1,4 +1,4 @@
-// Copyright (c) 2020 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -14,13 +14,14 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/jballerina.java;
+import ballerina/test;
 
-function init() {
-    setModule();
-    _ = initializeGrpcLogs(traceLogConsole, traceLogAdvancedConfig, accessLogConfig);
+@test:Config
+function testEnumMessageWithReservedKeywordsInCapital() returns error? {
+    MessageServiceClient messageClient = check new ("http://localhost:9163");
+    MessageState state1 = check messageClient->UnaryCall({id: "new", 'new: "new"});
+    test:assertEquals(state1, {state: NEW});
+
+    MessageState state2 = check messageClient->UnaryCall({id: "error", 'new: "new"});
+    test:assertEquals(state2, {state: ERROR});
 }
-
-function setModule() = @java:Method {
-    'class: "io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils"
-} external;

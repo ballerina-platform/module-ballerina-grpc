@@ -49,11 +49,12 @@ public class EnumField {
      */
     public static class Builder {
         private final DescriptorProtos.EnumValueDescriptorProto fieldDescriptor;
-        
+
         public EnumField build() {
+
             String fieldName = fieldDescriptor.getName();
-            if (Arrays.stream(RESERVED_LITERAL_NAMES).anyMatch(fieldName::equalsIgnoreCase) || Names.ERROR.value
-                    .equalsIgnoreCase(fieldName)) {
+            if (Arrays.asList(RESERVED_LITERAL_NAMES).contains(fieldName) || Names.ERROR.value
+                    .equals(fieldName)) {
                 fieldName = "'" + fieldName;
             }
             return new EnumField(fieldName);

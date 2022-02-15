@@ -35,7 +35,7 @@ public isolated client class ListenerOAuth2Handler {
     # + headers - The headers map `map<string|string[]>` as an input
     # + expectedScopes - The expected scopes as `string` or `string[]`
     # + optionalParams - Map of optionalParams parameters that need to be sent to introspection endpoint
-    # + return - The `oauth2:IntrospectionResponse` instance or else `UnauthenticatedError` or `PermissionDeniedError` type error
+    # + return - The `oauth2:IntrospectionResponse` instance or else `grpc:UnauthenticatedError` or `grpc:PermissionDeniedError` type error
     remote isolated function authorize(map<string|string[]> headers, string|string[]? expectedScopes = (),
                                         map<string>? optionalParams = ())
                                         returns oauth2:IntrospectionResponse|UnauthenticatedError|PermissionDeniedError {

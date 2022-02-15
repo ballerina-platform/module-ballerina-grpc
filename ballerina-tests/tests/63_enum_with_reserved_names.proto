@@ -1,4 +1,4 @@
-// Copyright (c) 2020 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -14,13 +14,22 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/jballerina.java;
+syntax = "proto3";
 
-function init() {
-    setModule();
-    _ = initializeGrpcLogs(traceLogConsole, traceLogAdvancedConfig, accessLogConfig);
+message MessageInfo {
+  string id = 1;
+  string new = 2;
 }
 
-function setModule() = @java:Method {
-    'class: "io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils"
-} external;
+message MessageState {
+  enum State {
+    UNDEFINED = 0;
+    NEW = 1;
+    ERROR = 3;
+  }
+  State state = 2;
+}
+
+service MessageService {
+  rpc UnaryCall(MessageInfo) returns (MessageState);
+}

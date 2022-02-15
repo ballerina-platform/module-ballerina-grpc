@@ -1,4 +1,4 @@
-// Copyright (c) 2020 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -14,13 +14,18 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/jballerina.java;
+import ballerina/grpc;
 
-function init() {
-    setModule();
-    _ = initializeGrpcLogs(traceLogConsole, traceLogAdvancedConfig, accessLogConfig);
+listener grpc:Listener ep63 = new (9163);
+
+@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_ENUMWITHRESERVEDNAMES, descMap: getDescriptorMapEnumWithReservedNames()}
+service "MessageService" on ep63 {
+
+    remote function UnaryCall(MessageInfo messageInfo) returns MessageState|error {
+        if messageInfo.id == "new" {
+            return {state: NEW};
+        }
+        return {state: ERROR};
+    }
 }
 
-function setModule() = @java:Method {
-    'class: "io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils"
-} external;
