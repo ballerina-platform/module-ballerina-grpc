@@ -19,11 +19,26 @@ syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 
 service ServiceWithEmpty {
-    rpc UnaryCallEmpty(google.protobuf.StringValue) returns (Empty) {}
+    rpc UnaryCallEmptyInput(Empty) returns (google.protobuf.StringValue) {}
+    rpc UnaryCallEmptyOutput(google.protobuf.StringValue) returns (Empty) {}
+
+    rpc ClientCallEmptyInput(stream Empty) returns (google.protobuf.StringValue) {}
+    rpc ClientCallEmptyOutput(stream google.protobuf.StringValue) returns (Empty) {}
+
+    rpc ServerCallEmptyInput(Empty) returns (stream google.protobuf.StringValue) {}
+    rpc ServerCallEmptyOutput(google.protobuf.StringValue) returns (stream Empty) {}
+
+    rpc BidiCallEmptyInput(stream Empty) returns (stream google.protobuf.StringValue) {}
+    rpc BidiCallEmptyOutput(stream google.protobuf.StringValue) returns (stream Empty) {}
+
     rpc UnaryCallAny(google.protobuf.StringValue) returns (Any) {}
-    rpc UnaryCallDuration(google.protobuf.StringValue) returns (Empty) {}
+    rpc UnaryCallDuration(google.protobuf.StringValue) returns (Duration) {}
+    rpc UnaryCallStruct(google.protobuf.StringValue) returns (Struct) {}
+    rpc UnaryCallTimestamp(google.protobuf.StringValue) returns (Timestamp) {}
 }
 
 message Empty {}
 message Any {}
 message Duration {}
+message Struct {}
+message Timestamp {}
