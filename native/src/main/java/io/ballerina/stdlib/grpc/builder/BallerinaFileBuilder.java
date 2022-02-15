@@ -188,7 +188,7 @@ public class BallerinaFileBuilder {
                                         StandardDescriptorBuilder.getFileDescriptor(
                                                 StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY).getMessageTypes()
                                                 .get(0).toProto(),
-                                        filePackage).build();
+                                        "", filePackage, StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY).build();
                         messageList.add(message);
                         stubFileObject.addMessage(message);
                         hasEmptyMessage = true;
