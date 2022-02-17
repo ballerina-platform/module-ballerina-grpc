@@ -1,0 +1,44 @@
+// Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+//
+// WSO2 Inc. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+service ServiceWithPredefinedNames {
+    rpc UnaryCallEmptyInput(Empty) returns (google.protobuf.StringValue) {}
+    rpc UnaryCallEmptyOutput(google.protobuf.StringValue) returns (Empty) {}
+
+    rpc ClientCallEmptyInput(stream Empty) returns (google.protobuf.StringValue) {}
+    rpc ClientCallEmptyOutput(stream google.protobuf.StringValue) returns (Empty) {}
+
+    rpc ServerCallEmptyInput(Empty) returns (stream google.protobuf.StringValue) {}
+    rpc ServerCallEmptyOutput(google.protobuf.StringValue) returns (stream Empty) {}
+
+    rpc BidiCallEmptyInput(stream Empty) returns (stream google.protobuf.StringValue) {}
+    rpc BidiCallEmptyOutput(stream google.protobuf.StringValue) returns (stream Empty) {}
+
+    rpc UnaryCallAny(google.protobuf.StringValue) returns (Any) {}
+    rpc UnaryCallDuration(google.protobuf.StringValue) returns (Duration) {}
+    rpc UnaryCallStruct(google.protobuf.StringValue) returns (Struct) {}
+    rpc UnaryCallTimestamp(google.protobuf.StringValue) returns (Timestamp) {}
+}
+
+message Empty {}
+message Any {}
+message Duration {}
+message Struct {}
+message Timestamp {}

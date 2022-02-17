@@ -263,8 +263,16 @@ public class CompilerPluginTest {
     }
 
     @Test
-    public void testCompilerPluginWithInitAndNormalFunctions() {
+    public void testCompilerPluginWithInitAndNormalFunctions1() {
         Package currentPackage = loadPackage("package_16");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
+    }
+
+    @Test
+    public void testCompilerPluginWithInitAndNormalFunctions2() {
+        Package currentPackage = loadPackage("package_17");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Assert.assertEquals(diagnosticResult.errors().size(), 0);
