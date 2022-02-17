@@ -90,8 +90,11 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                     // Check functions are remote or not
                     validateServiceFunctions(functionDefinitionNode, syntaxNodeAnalysisContext);
                     // Check params and return types
-                    validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext, serviceName);
-
+                    boolean isRemoteFunction = functionDefinitionNode.qualifierList().stream()
+                            .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
+                    if (isRemoteFunction) {
+                        validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext, serviceName);
+                    }
                 });
             }
 
@@ -189,67 +192,62 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
     private void validateFunctionSignature(FunctionDefinitionNode functionDefinitionNode,
                                            SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String serviceName) {
 
-        boolean isRemoteFunction = functionDefinitionNode.qualifierList().stream()
-                .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
+        FunctionSignatureNode functionSignatureNode = functionDefinitionNode.functionSignature();
+        SeparatedNodeList<ParameterNode> parameterNodes = functionSignatureNode.parameters();
+        if (parameterNodes.size() == 2) {
+            String firstParameter = typeNameFromParameterNode(functionSignatureNode.parameters().get(0));
 
-        if (isRemoteFunction) {
-            FunctionSignatureNode functionSignatureNode = functionDefinitionNode.functionSignature();
-            SeparatedNodeList<ParameterNode> parameterNodes = functionSignatureNode.parameters();
-            if (parameterNodes.size() == 2) {
-                String firstParameter = typeNameFromParameterNode(functionSignatureNode.parameters().get(0));
-
-                if (!firstParameter.toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
-                    reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                            GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getError(),
-                            GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
-                } else if (!(firstParameter.startsWith(serviceName) && firstParameter.endsWith(GRPC_EXACT_CALLER))) {
-                    String expectedCaller = serviceName + GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
-                    String diagnosticMessage = GrpcCompilerPluginConstants.CompilationErrors
-                            .INVALID_CALLER_TYPE.getError() +
-                            expectedCaller + "\" but found \"" + firstParameter + "\"";
-                    reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext, diagnosticMessage,
-                            GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
-                } else if (functionSignatureNode.returnTypeDesc().isPresent()) {
-                    Node returnTypeNode = functionSignatureNode.returnTypeDesc().get().type();
-                    if (!(SyntaxKind.NIL_TYPE_DESC == returnTypeNode.kind())) {
-                        if (SyntaxKind.OPTIONAL_TYPE_DESC == returnTypeNode.kind() &&
-                                ((OptionalTypeDescriptorNode) returnTypeNode).children().size() == 2) {
-                            for (Node value : ((OptionalTypeDescriptorNode) returnTypeNode).children()) {
-                                if (!(value.kind() == SyntaxKind.ERROR_TYPE_DESC ||
-                                        value.kind() == SyntaxKind.QUESTION_MARK_TOKEN)) {
-                                    reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                                            GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
-                                            GrpcCompilerPluginConstants.CompilationErrors
-                                                    .RETURN_WITH_CALLER.getErrorCode());
-                                    break;
-                                }
+            if (!firstParameter.toLowerCase(Locale.ENGLISH).contains(GRPC_GENERIC_CALLER)) {
+                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                        GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getError(),
+                        GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
+            } else if (!(firstParameter.startsWith(serviceName) && firstParameter.endsWith(GRPC_EXACT_CALLER))) {
+                String expectedCaller = serviceName + GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
+                String diagnosticMessage = GrpcCompilerPluginConstants.CompilationErrors
+                        .INVALID_CALLER_TYPE.getError() +
+                        expectedCaller + "\" but found \"" + firstParameter + "\"";
+                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext, diagnosticMessage,
+                        GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
+            } else if (functionSignatureNode.returnTypeDesc().isPresent()) {
+                Node returnTypeNode = functionSignatureNode.returnTypeDesc().get().type();
+                if (!(SyntaxKind.NIL_TYPE_DESC == returnTypeNode.kind())) {
+                    if (SyntaxKind.OPTIONAL_TYPE_DESC == returnTypeNode.kind() &&
+                            ((OptionalTypeDescriptorNode) returnTypeNode).children().size() == 2) {
+                        for (Node value : ((OptionalTypeDescriptorNode) returnTypeNode).children()) {
+                            if (!(value.kind() == SyntaxKind.ERROR_TYPE_DESC ||
+                                    value.kind() == SyntaxKind.QUESTION_MARK_TOKEN)) {
+                                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                                        GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
+                                        GrpcCompilerPluginConstants.CompilationErrors
+                                                .RETURN_WITH_CALLER.getErrorCode());
+                                break;
                             }
-                        } else if (SyntaxKind.UNION_TYPE_DESC == returnTypeNode.kind() &&
-                                ((UnionTypeDescriptorNode) returnTypeNode).children().size() == 3) {
-                            for (Node value : ((UnionTypeDescriptorNode) returnTypeNode).children()) {
-                                if (!(value.kind() == SyntaxKind.ERROR_TYPE_DESC ||
-                                        value.kind() == SyntaxKind.PIPE_TOKEN ||
-                                        value.kind() == SyntaxKind.NIL_TYPE_DESC)) {
-                                    reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                                            GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
-                                            GrpcCompilerPluginConstants.CompilationErrors
-                                                    .RETURN_WITH_CALLER.getErrorCode());
-                                    break;
-                                }
-                            }
-                        } else {
-                            reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                                    GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
-                                    GrpcCompilerPluginConstants.CompilationErrors
-                                            .RETURN_WITH_CALLER.getErrorCode());
                         }
+                    } else if (SyntaxKind.UNION_TYPE_DESC == returnTypeNode.kind() &&
+                            ((UnionTypeDescriptorNode) returnTypeNode).children().size() == 3) {
+                        for (Node value : ((UnionTypeDescriptorNode) returnTypeNode).children()) {
+                            if (!(value.kind() == SyntaxKind.ERROR_TYPE_DESC ||
+                                    value.kind() == SyntaxKind.PIPE_TOKEN ||
+                                    value.kind() == SyntaxKind.NIL_TYPE_DESC)) {
+                                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                                        GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
+                                        GrpcCompilerPluginConstants.CompilationErrors
+                                                .RETURN_WITH_CALLER.getErrorCode());
+                                break;
+                            }
+                        }
+                    } else {
+                        reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                                GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
+                                GrpcCompilerPluginConstants.CompilationErrors
+                                        .RETURN_WITH_CALLER.getErrorCode());
                     }
                 }
-            } else if (parameterNodes.size() > 2) {
-                reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
-                        GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getError(),
-                        GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getErrorCode());
             }
+        } else if (parameterNodes.size() > 2) {
+            reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
+                    GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getError(),
+                    GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getErrorCode());
         }
     }
 
