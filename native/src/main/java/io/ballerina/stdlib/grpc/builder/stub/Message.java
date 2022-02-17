@@ -37,12 +37,10 @@ public class Message {
     private List<EnumMessage> enumList;
     private List<Message> nestedMessageList;
     private List<Message> mapList;
-    private String qualifiedName;
 
-    private Message(String messageName, List<Field> fieldList, String qualifiedName) {
+    private Message(String messageName, List<Field> fieldList) {
         this.messageName = messageName;
         this.fieldList = fieldList;
-        this.qualifiedName = qualifiedName;
     }
 
     private void setOneofFieldMap(Map<String, List<Field>> oneofFieldMap) {
@@ -70,17 +68,12 @@ public class Message {
     }
 
     public static Message.Builder newBuilder(DescriptorProtos.DescriptorProto messageDescriptor, String packageName) {
-        return new Message.Builder(messageDescriptor, messageDescriptor.getName(), packageName, "");
+        return new Message.Builder(messageDescriptor, messageDescriptor.getName(), packageName);
     }
 
     public static Message.Builder newBuilder(DescriptorProtos.DescriptorProto messageDescriptor, String messageName,
                                              String packageName) {
-        return new Message.Builder(messageDescriptor, messageName, packageName, "");
-    }
-
-    public static Message.Builder newBuilder(DescriptorProtos.DescriptorProto messageDescriptor, String messageName,
-                                             String packageName, String qualifiedName) {
-        return new Message.Builder(messageDescriptor, messageName, packageName, qualifiedName);
+        return new Message.Builder(messageDescriptor, messageName, packageName);
     }
 
     public List<Message> getNestedMessageList() {
@@ -103,10 +96,6 @@ public class Message {
         this.messageName = messageName;
     }
 
-    public String getQualifiedName() {
-        return qualifiedName;
-    }
-
     /**
      * Message Definition.Builder.
      */
@@ -114,7 +103,6 @@ public class Message {
         private final DescriptorProtos.DescriptorProto messageDescriptor;
         private final String messageName;
         private final String packageName;
-        private final String qualifiedName;
 
         public Message build() {
             List<Message> nestedMessageList = new ArrayList<>();
@@ -178,7 +166,7 @@ public class Message {
                 }
             }
 
-            Message message = new Message(messageName, fieldList, qualifiedName);
+            Message message = new Message(messageName, fieldList);
 
             if (!oneofFieldMap.isEmpty()) {
                 message.setOneofFieldMap(oneofFieldMap);
@@ -195,12 +183,10 @@ public class Message {
             return message;
         }
 
-        private Builder(DescriptorProtos.DescriptorProto messageDescriptor, String messageName, String packageName,
-                        String qualifiedName) {
+        private Builder(DescriptorProtos.DescriptorProto messageDescriptor, String messageName, String packageName) {
             this.messageDescriptor = messageDescriptor;
             this.messageName = messageName;
             this.packageName = packageName;
-            this.qualifiedName = qualifiedName;
         }
     }
 

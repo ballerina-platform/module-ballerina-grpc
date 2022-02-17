@@ -27,7 +27,6 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
-import io.ballerina.stdlib.grpc.StandardDescriptorBuilder;
 import io.ballerina.stdlib.grpc.builder.stub.Descriptor;
 import io.ballerina.stdlib.grpc.builder.stub.EnumMessage;
 import io.ballerina.stdlib.grpc.builder.stub.Message;
@@ -255,10 +254,8 @@ public class SyntaxTreeGenerator {
             moduleMembers = moduleMembers.add(valueType.getValue().getTypeDefinitionNode());
         }
         for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
-            if (!message.getValue().getQualifiedName().equals(StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY)) {
-                for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
-                    moduleMembers = moduleMembers.add(messageNode);
-                }
+            for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
+                moduleMembers = moduleMembers.add(messageNode);
             }
         }
 
