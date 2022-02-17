@@ -56,7 +56,6 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_TYPE_NAME;
-import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BOOL_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BYTES_TYPE_NAME;
@@ -180,12 +179,13 @@ public class Message {
 
         BMap<BString, Object> bBMap = null;
         BArray bArray = null;
-        isAnyTypedMessage = GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(messageName);
+        isAnyTypedMessage = GOOGLE_PROTOBUF_ANY.equals(messageName) &&
+                fieldDescriptors.values().stream().allMatch(fd -> fd.getFullName().contains(GOOGLE_PROTOBUF_ANY));
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG && !isAnyTypedMessage) {
             bBMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
             bMessage = bBMap;
         } else if (type.getTag() == TypeTags.INTERSECTION_TAG ||
-                (type.getTag() == TypeTags.TUPLE_TAG && messageName.equals(TIMESTAMP_MESSAGE))) { // for Timestamp type
+                (type.getTag() == TypeTags.TUPLE_TAG && messageName.equals(TIMESTAMP_TYPE_NAME))) { // for Timestamp
             TupleType tupleType = TypeCreator.createTupleType(
                     Arrays.asList(PredefinedTypes.TYPE_INT, PredefinedTypes.TYPE_DECIMAL));
             bArray = ValueCreator.createTupleValue(tupleType);

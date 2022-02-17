@@ -32,6 +32,7 @@ module io.ballerina.stdlib.grpc {
     requires info.picocli;
     requires io.ballerina.cli;
     requires io.ballerina.stdlib.protobuf;
+    requires com.google.protobuf;
     exports io.ballerina.stdlib.grpc;
     exports io.ballerina.stdlib.grpc.exception;
     exports io.ballerina.stdlib.grpc.protobuf.cmd;

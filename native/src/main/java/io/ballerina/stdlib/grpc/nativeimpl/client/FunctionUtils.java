@@ -222,7 +222,7 @@ public class FunctionUtils extends AbstractExecute {
             return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
         }
 
-        Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payloadBValue);
+        Message requestMsg = new Message(methodDescriptor.getInputType(), payloadBValue);
 
         // Update request headers when request headers exists in the context.
         HttpHeaders headers = convertToHttpHeaders(headerValues);
@@ -299,7 +299,7 @@ public class FunctionUtils extends AbstractExecute {
             return notifyErrorReply(INTERNAL, "No registered method descriptor for '" + methodName.getValue() + "'");
         }
 
-        Message requestMsg = new Message(methodDescriptor.getInputType().getName(), payload);
+        Message requestMsg = new Message(methodDescriptor.getInputType(), payload);
 
         // Update request headers when request headers exists in the context.
         HttpHeaders headers = convertToHttpHeaders(headerValues);
