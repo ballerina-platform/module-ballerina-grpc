@@ -18,7 +18,7 @@ syntax = "proto3";
 
 import "google/protobuf/wrappers.proto";
 
-service ServiceWithEmpty {
+service ServiceWithPredefinedNames {
     rpc UnaryCallEmptyInput(Empty) returns (google.protobuf.StringValue) {}
     rpc UnaryCallEmptyOutput(google.protobuf.StringValue) returns (Empty) {}
 

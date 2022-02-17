@@ -2,7 +2,7 @@ import ballerina/grpc;
 import ballerina/protobuf.types.wrappers;
 import ballerina/grpc.types.wrappers as swrappers;
 
-public isolated client class ServiceWithEmptyClient {
+public isolated client class ServiceWithPredefinedNamesClient {
     *grpc:AbstractClientEndpoint;
 
     private final grpc:Client grpcClient;
@@ -21,7 +21,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallEmptyInput", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallEmptyInput", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
@@ -35,7 +35,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallEmptyInput", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallEmptyInput", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
@@ -49,7 +49,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallEmptyOutput", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallEmptyOutput", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <Empty>result;
     }
@@ -63,7 +63,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallEmptyOutput", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallEmptyOutput", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <Empty>result, headers: respHeaders};
     }
@@ -77,7 +77,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallAny", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallAny", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <Any>result;
     }
@@ -91,7 +91,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallAny", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallAny", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <Any>result, headers: respHeaders};
     }
@@ -105,7 +105,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallDuration", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallDuration", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <Duration>result;
     }
@@ -119,7 +119,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallDuration", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallDuration", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <Duration>result, headers: respHeaders};
     }
@@ -133,7 +133,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallStruct", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallStruct", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <Struct>result;
     }
@@ -147,7 +147,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallStruct", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallStruct", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <Struct>result, headers: respHeaders};
     }
@@ -161,7 +161,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallTimestamp", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallTimestamp", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <Timestamp>result;
     }
@@ -175,18 +175,18 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithEmpty/UnaryCallTimestamp", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("ServiceWithPredefinedNames/UnaryCallTimestamp", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <Timestamp>result, headers: respHeaders};
     }
 
     isolated remote function ClientCallEmptyInput() returns ClientCallEmptyInputStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("ServiceWithEmpty/ClientCallEmptyInput");
+        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("ServiceWithPredefinedNames/ClientCallEmptyInput");
         return new ClientCallEmptyInputStreamingClient(sClient);
     }
 
     isolated remote function ClientCallEmptyOutput() returns ClientCallEmptyOutputStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("ServiceWithEmpty/ClientCallEmptyOutput");
+        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("ServiceWithPredefinedNames/ClientCallEmptyOutput");
         return new ClientCallEmptyOutputStreamingClient(sClient);
     }
 
@@ -199,7 +199,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("ServiceWithEmpty/ServerCallEmptyInput", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("ServiceWithPredefinedNames/ServerCallEmptyInput", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
@@ -214,7 +214,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("ServiceWithEmpty/ServerCallEmptyInput", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("ServiceWithPredefinedNames/ServerCallEmptyInput", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return {content: new stream<string, grpc:Error?>(outputStream), headers: respHeaders};
@@ -229,7 +229,7 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("ServiceWithEmpty/ServerCallEmptyOutput", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("ServiceWithPredefinedNames/ServerCallEmptyOutput", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         EmptyStream outputStream = new EmptyStream(result);
         return new stream<Empty, grpc:Error?>(outputStream);
@@ -244,19 +244,19 @@ public isolated client class ServiceWithEmptyClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("ServiceWithEmpty/ServerCallEmptyOutput", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("ServiceWithPredefinedNames/ServerCallEmptyOutput", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         EmptyStream outputStream = new EmptyStream(result);
         return {content: new stream<Empty, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
     isolated remote function BidiCallEmptyInput() returns BidiCallEmptyInputStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("ServiceWithEmpty/BidiCallEmptyInput");
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("ServiceWithPredefinedNames/BidiCallEmptyInput");
         return new BidiCallEmptyInputStreamingClient(sClient);
     }
 
     isolated remote function BidiCallEmptyOutput() returns BidiCallEmptyOutputStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("ServiceWithEmpty/BidiCallEmptyOutput");
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("ServiceWithPredefinedNames/BidiCallEmptyOutput");
         return new BidiCallEmptyOutputStreamingClient(sClient);
     }
 }
@@ -461,7 +461,7 @@ public client class BidiCallEmptyOutputStreamingClient {
     }
 }
 
-public client class ServiceWithEmptyEmptyCaller {
+public client class ServiceWithPredefinedNamesEmptyCaller {
     private grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
@@ -493,7 +493,7 @@ public client class ServiceWithEmptyEmptyCaller {
     }
 }
 
-public client class ServiceWithEmptyDurationCaller {
+public client class ServiceWithPredefinedNamesDurationCaller {
     private grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
@@ -525,7 +525,7 @@ public client class ServiceWithEmptyDurationCaller {
     }
 }
 
-public client class ServiceWithEmptyStringCaller {
+public client class ServiceWithPredefinedNamesStringCaller {
     private grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
@@ -557,7 +557,7 @@ public client class ServiceWithEmptyStringCaller {
     }
 }
 
-public client class ServiceWithEmptyStructCaller {
+public client class ServiceWithPredefinedNamesStructCaller {
     private grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
@@ -589,7 +589,7 @@ public client class ServiceWithEmptyStructCaller {
     }
 }
 
-public client class ServiceWithEmptyTimestampCaller {
+public client class ServiceWithPredefinedNamesTimestampCaller {
     private grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
@@ -621,7 +621,7 @@ public client class ServiceWithEmptyTimestampCaller {
     }
 }
 
-public client class ServiceWithEmptyAnyCaller {
+public client class ServiceWithPredefinedNamesAnyCaller {
     private grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
