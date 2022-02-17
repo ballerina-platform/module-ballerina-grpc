@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [Fix issue in ordering of services with duplicate output types](https://github.com/ballerina-platform/ballerina-standard-library/issues/2637)
-- [Fix issue in ordering of services with duplicate output types](https://github.com/ballerina-platform/ballerina-standard-library/issues/2637)
 - [Improve the enum creation logic to escape case sensitivity](https://github.com/ballerina-platform/ballerina-standard-library/issues/2678)
 - [Constraint the compiler plugin validations only for remote functions](https://github.com/ballerina-platform/ballerina-standard-library/issues/2695)
 
