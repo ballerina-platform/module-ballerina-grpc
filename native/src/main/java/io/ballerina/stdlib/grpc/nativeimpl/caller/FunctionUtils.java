@@ -135,7 +135,7 @@ public class FunctionUtils {
                         content = responseValue;
                     }
                     //Message responseMessage = MessageUtils.generateProtoMessage(responseValue, outputType);
-                    Message responseMessage = new Message(outputType.getName(), content);
+                    Message responseMessage = new Message(outputType, content);
                     // Update response headers when request headers exists in the context.
                     HttpHeaders headers = convertToHttpHeaders(headerValues);
                     responseMessage.setHeaders(headers);

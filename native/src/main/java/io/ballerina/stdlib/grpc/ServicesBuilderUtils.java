@@ -116,10 +116,10 @@ public class ServicesBuilderUtils {
             Descriptors.Descriptor responseDescriptor = methodDescriptor.getOutputType();
             MessageRegistry messageRegistry = MessageRegistry.getInstance();
             // update request message descriptors.
-            messageRegistry.addMessageDescriptor(requestDescriptor.getName(), requestDescriptor);
+            messageRegistry.addMessageDescriptor(requestDescriptor.getFullName(), requestDescriptor);
             MessageUtils.setNestedMessages(requestDescriptor, messageRegistry);
             // update response message descriptors.
-            messageRegistry.addMessageDescriptor(responseDescriptor.getName(), responseDescriptor);
+            messageRegistry.addMessageDescriptor(responseDescriptor.getFullName(), responseDescriptor);
             MessageUtils.setNestedMessages(responseDescriptor, messageRegistry);
 
             MethodDescriptor.MethodType methodType;
@@ -133,7 +133,7 @@ public class ServicesBuilderUtils {
                     Type inputParameterType = getRemoteInputParameterType(function);
                     mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
                             methodDescriptor);
-                    reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getName(),
+                    reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getFullName(),
                             inputParameterType));
                     inputParameterPackage = inputParameterType.getPackage();
                     break;
@@ -156,11 +156,12 @@ public class ServicesBuilderUtils {
             }
             if (reqMarshaller == null) {
                 reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor
-                        .getName(), getBallerinaValueType(service.getType().getPackage(),
+                        .getFullName(), getBallerinaValueType(service.getType().getPackage(),
                         requestDescriptor.getName())));
             }
-            MethodDescriptor.Marshaller resMarshaller = ProtoUtils.marshaller(new MessageParser(responseDescriptor
-                    .getName(), getBallerinaValueType(service.getType().getPackage(), responseDescriptor.getName())));
+            MethodDescriptor.Marshaller resMarshaller = ProtoUtils.marshaller(
+                    new MessageParser(responseDescriptor.getFullName(),
+                            getBallerinaValueType(service.getType().getPackage(), responseDescriptor.getName())));
             MethodDescriptor.Builder methodBuilder = MethodDescriptor.newBuilder();
             MethodDescriptor grpcMethodDescriptor = methodBuilder.setType(methodType)
                     .setFullMethodName(methodName)
