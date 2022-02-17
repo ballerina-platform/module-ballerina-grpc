@@ -90,8 +90,11 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                     // Check functions are remote or not
                     validateServiceFunctions(functionDefinitionNode, syntaxNodeAnalysisContext);
                     // Check params and return types
-                    validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext, serviceName);
-
+                    boolean isRemoteFunction = functionDefinitionNode.qualifierList().stream()
+                            .filter(q -> q.kind() == SyntaxKind.REMOTE_KEYWORD).toArray().length == 1;
+                    if (isRemoteFunction) {
+                        validateFunctionSignature(functionDefinitionNode, syntaxNodeAnalysisContext, serviceName);
+                    }
                 });
             }
 
@@ -191,7 +194,6 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
         FunctionSignatureNode functionSignatureNode = functionDefinitionNode.functionSignature();
         SeparatedNodeList<ParameterNode> parameterNodes = functionSignatureNode.parameters();
-
         if (parameterNodes.size() == 2) {
             String firstParameter = typeNameFromParameterNode(functionSignatureNode.parameters().get(0));
 
@@ -224,7 +226,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                     } else if (SyntaxKind.UNION_TYPE_DESC == returnTypeNode.kind() &&
                             ((UnionTypeDescriptorNode) returnTypeNode).children().size() == 3) {
                         for (Node value : ((UnionTypeDescriptorNode) returnTypeNode).children()) {
-                            if (!(value.kind() == SyntaxKind.ERROR_TYPE_DESC || value.kind() == SyntaxKind.PIPE_TOKEN ||
+                            if (!(value.kind() == SyntaxKind.ERROR_TYPE_DESC ||
+                                    value.kind() == SyntaxKind.PIPE_TOKEN ||
                                     value.kind() == SyntaxKind.NIL_TYPE_DESC)) {
                                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
                                         GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getError(),
@@ -246,7 +249,6 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                     GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getError(),
                     GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getErrorCode());
         }
-
     }
 
     private void reportErrorDiagnostic(Node node, SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message,
