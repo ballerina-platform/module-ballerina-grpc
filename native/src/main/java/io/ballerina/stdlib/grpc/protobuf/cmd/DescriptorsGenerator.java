@@ -49,7 +49,9 @@ class DescriptorsGenerator {
         File initialFile = new File(rootDescriptorPath);
         try (InputStream targetStream = new FileInputStream(initialFile)) {
             DescriptorProtos.FileDescriptorSet descSet = DescriptorProtos.FileDescriptorSet.parseFrom(targetStream);
+            String originalProtoFolderPath = protoFolderPath;
             for (String dependentFilePath : descSet.getFile(0).getDependencyList()) {
+                protoFolderPath = originalProtoFolderPath;
                 if (BalFileGenerationUtils.isWindows()) {
                     dependentFilePath = dependentFilePath.replaceAll("/", "\\\\");
                 }
