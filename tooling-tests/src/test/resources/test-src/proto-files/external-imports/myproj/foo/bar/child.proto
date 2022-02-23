@@ -26,7 +26,6 @@ service ChildTest {
     rpc callChild2 (stream ParentMessage) returns (ChildMessage);
     rpc callChild3 (ParentMessage) returns (stream ParentMessage);
     rpc callChild4 (stream ParentMessage) returns (stream ParentMessage);
-
     rpc callChild5 (google.protobuf.StringValue) returns (ParentMessage);
 }
 
