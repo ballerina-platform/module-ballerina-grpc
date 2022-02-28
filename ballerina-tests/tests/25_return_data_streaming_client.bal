@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 function testReceiveStreamingResponseFromReturn() returns error? {
     string name = "WSO2";
     // Client endpoint configuration

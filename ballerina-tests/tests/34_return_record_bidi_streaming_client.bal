@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testBidiStreamingFromReturnRecord() returns grpc:Error? {
     HelloWorld34Client helloWorldEp = check new ("http://localhost:9124");
     SayHello34StreamingClient streamingClient = check helloWorldEp->sayHello34();
