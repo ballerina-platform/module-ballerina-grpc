@@ -591,6 +591,17 @@ public class Message {
                                         TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_STRING,
                                                 PredefinedTypes.TYPE_ANYDATA)), input).bMessage;
                                 bBMap.put(tupleval.getBString(0), tupleval.get(1));
+                            } else if (fieldDescriptor.isRepeated() &&
+                                    fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
+                                BArray valueArray = bBMap.get(bFieldName) != null ?
+                                        (BArray) bBMap.get(bFieldName) : null;
+                                Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                                if (valueArray == null || valueArray.size() == 0) {
+                                    valueArray = ValueCreator.createArrayValue((ArrayType) fieldType);
+                                    bBMap.put(bFieldName, valueArray);
+                                }
+                                valueArray.add(valueArray.size(), readMessage(fieldDescriptor,
+                                        ((ArrayType) fieldType).getElementType(), input).bMessage);
                             } else if (fieldDescriptor.isRepeated()) {
                                 BArray structArray = bBMap.get(bFieldName) != null ?
                                         (BArray) bBMap.get(bFieldName) : null;
@@ -867,6 +878,16 @@ public class Message {
                             output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                             output.writeUInt32NoTag(message.getSerializedSize());
                             message.writeTo(output);
+                        } else if (bValue instanceof BArray
+                                && fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                Object anyTypeInstance = valueArray.getRefValue(i);
+                                Message message = new Message(fieldDescriptor.getMessageType(), anyTypeInstance);
+                                output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
+                                output.writeUInt32NoTag(message.getSerializedSize());
+                                message.writeTo(output);
+                            }
                         } else if (bValue instanceof BArray
                                 && !fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY_VALUE)) {
                             BArray valueArray = (BArray) bValue;
@@ -1204,6 +1225,14 @@ public class Message {
                             BArray valueArray = (BArray) bValue;
                             Message message = new Message(fieldDescriptor.getMessageType(), valueArray);
                             size += computeMessageSize(fieldDescriptor, message);
+                        } else if (bValue instanceof BArray
+                                && fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                Object anyTypeInstance = valueArray.getRefValue(i);
+                                Message message = new Message(fieldDescriptor.getMessageType(), anyTypeInstance);
+                                size += computeMessageSize(fieldDescriptor, message);
+                            }
                         } else if (bValue instanceof BArray
                                 && !fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
                             BArray valueArray = (BArray) bValue;
