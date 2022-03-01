@@ -103,38 +103,53 @@ public class MessageUtils {
     private static Type getMessageType(Message message) {
         Record messageRecord = new Record();
         for (Field field : message.getFieldList()) {
-            switch (field.getFieldType()) {
-                case "string":
-                case "int":
-                case "float":
-                case "boolean":
-                    if (field.getFieldLabel() == null) {
+            if (field.getFieldLabel() == null) {
+                switch (field.getFieldType()) {
+                    case "string":
+                    case "int":
+                    case "float":
+                    case "boolean":
                         messageRecord.addBasicFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
                                 field.getDefaultValue());
-                    } else {
-                        messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
-                    }
-                    break;
-                case "byte[]":
-                    messageRecord.addArrayFieldWithDefaultValue("byte", field.getFieldName());
-                    break;
-                case "Timestamp":
-                    messageRecord.addCustomFieldWithDefaultValue("time:Utc", field.getFieldName(), "[0, 0.0d]");
-                    break;
-                case "Duration":
-                    messageRecord.addCustomFieldWithDefaultValue("time:Seconds", field.getFieldName(), "0.0d");
-                    break;
-                case "Struct":
-                    messageRecord.addMapFieldWithDefaultValue(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
-                            field.getFieldName());
-                    break;
-                default:
-                    if (field.getFieldLabel() == null) {
+                        break;
+                    case "byte[]":
+                        messageRecord.addArrayFieldWithDefaultValue("byte", field.getFieldName());
+                        break;
+                    case "Timestamp":
+                        messageRecord.addCustomFieldWithDefaultValue("time:Utc", field.getFieldName(), "[0, 0.0d]");
+                        break;
+                    case "Duration":
+                        messageRecord.addCustomFieldWithDefaultValue("time:Seconds", field.getFieldName(), "0.0d");
+                        break;
+                    case "Struct":
+                        messageRecord.addMapFieldWithDefaultValue(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
+                                field.getFieldName());
+                        break;
+                    default:
                         messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
                                 field.getDefaultValue());
-                    } else {
+                }
+            } else {
+                switch (field.getFieldType()) {
+                    case "byte[]":
+                        messageRecord.addArrayFieldWithDefaultValue("byte", field.getFieldName());
+                        break;
+                    case "Timestamp":
+                        messageRecord.addArrayFieldWithDefaultValue("time:Utc", field.getFieldName());
+                        break;
+                    case "Duration":
+                        messageRecord.addArrayFieldWithDefaultValue("time:Seconds", field.getFieldName());
+                        break;
+                    case "Struct":
+                        messageRecord.addArrayFieldWithDefaultValue("map<anydata>", field.getFieldName());
+                        break;
+                    case "string":
+                    case "int":
+                    case "float":
+                    case "boolean":
+                    default:
                         messageRecord.addArrayFieldWithDefaultValue(field.getFieldType(), field.getFieldName());
-                    }
+                }
             }
         }
         if (message.getOneofFieldMap() != null) {
