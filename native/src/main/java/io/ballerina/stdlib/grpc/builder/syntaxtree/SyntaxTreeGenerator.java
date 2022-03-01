@@ -155,10 +155,7 @@ public class SyntaxTreeGenerator {
             imports = imports.add(importForTime);
         }
         if (importAny) {
-            ImportDeclarationNode importForAny = Imports.getImportDeclarationNode(
-                    "ballerina", "protobuf.types.'any"
-            );
-            imports = imports.add(importForAny);
+            protobufImports.add("'any");
         }
 
         java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();
