@@ -121,6 +121,7 @@ public class SyntaxTreeGenerator {
             imports = imports.add(importForGrpc);
         }
         boolean importTime = false;
+        boolean importAny = false;
         for (ServiceStub serviceStub : stubFile.getStubList()) {
             List<Method> methodList = new ArrayList<>();
             methodList.addAll(serviceStub.getUnaryFunctions());
@@ -131,7 +132,9 @@ public class SyntaxTreeGenerator {
             if (checkForImportsInServices(methodList, "time:Utc")
                     || checkForImportsInServices(methodList, "time:Seconds")) {
                 importTime = true;
-                break;
+            }
+            if (checkForImportsInServices(methodList, "'any:Any")) {
+                importAny = true;
             }
         }
         if (!importTime) {
@@ -140,11 +143,22 @@ public class SyntaxTreeGenerator {
                 importTime = true;
             }
         }
+        if (!importAny) {
+            if (checkForImportsInMessageMap(stubFile, "'any:Any")) {
+                importAny = true;
+            }
+        }
         if (importTime) {
             ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
                     "ballerina", "time"
             );
             imports = imports.add(importForTime);
+        }
+        if (importAny) {
+            ImportDeclarationNode importForAny = Imports.getImportDeclarationNode(
+                    "ballerina", "protobuf.types.'any"
+            );
+            imports = imports.add(importForAny);
         }
 
         java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();
