@@ -47,7 +47,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "grpc"
-version = "1.2.2"
+version = "1.2.3"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "crypto"},
@@ -203,7 +203,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "protobuf"
-version = "1.2.2"
+version = "1.2.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "time"}
