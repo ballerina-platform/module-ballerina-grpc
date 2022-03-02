@@ -3,4 +3,4 @@ id = "grpc-compiler-plugin"
 class = "io.ballerina.stdlib.grpc.plugin.GrpcCompilerPlugin"
 
 [[dependency]]
-path = "../compiler-plugin/build/libs/grpc-compiler-plugin-1.2.2.jar"
+path = "../compiler-plugin/build/libs/grpc-compiler-plugin-1.2.3-SNAPSHOT.jar"
