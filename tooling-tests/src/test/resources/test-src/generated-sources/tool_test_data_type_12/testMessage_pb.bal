@@ -14,7 +14,7 @@ public type Test5 record {|
 
 public type Test4 record {|
     time:Utc timeDetails = [0, 0.0d];
-    'any:Any anyDetails = ();
+    'any:Any anyDetails = {};
     map<anydata> structDetails = {};
     time:Seconds durationDetails = 0.0d;
 |};

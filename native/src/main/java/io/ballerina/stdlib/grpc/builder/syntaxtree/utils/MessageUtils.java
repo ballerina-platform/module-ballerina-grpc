@@ -125,6 +125,9 @@ public class MessageUtils {
                         messageRecord.addMapFieldWithDefaultValue(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
                                 field.getFieldName());
                         break;
+                    case "'any:Any":
+                        messageRecord.addCustomFieldWithDefaultValue("'any:Any", field.getFieldName(), "{}");
+                        break;
                     default:
                         messageRecord.addCustomFieldWithDefaultValue(field.getFieldType(), field.getFieldName(),
                                 field.getDefaultValue());
@@ -142,6 +145,9 @@ public class MessageUtils {
                         break;
                     case "Struct":
                         messageRecord.addArrayFieldWithDefaultValue("map<anydata>", field.getFieldName());
+                        break;
+                    case "'any:Any":
+                        messageRecord.addArrayFieldWithDefaultValue("'any:Any", field.getFieldName());
                         break;
                     case "string":
                     case "int":
