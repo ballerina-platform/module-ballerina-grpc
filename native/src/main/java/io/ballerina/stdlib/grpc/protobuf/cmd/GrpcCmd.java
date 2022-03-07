@@ -42,7 +42,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -90,6 +92,8 @@ public class GrpcCmd implements BLauncherCmd {
     @CommandLine.Option(names = {"--proto-path"}, description = "Path to a directory in which to look for .proto " +
             "files when resolving import directives")
     private String importPath = "";
+
+    public static Map<String, List<String>> unusedImports;
 
     /**
      * Export a resource embedded into a Jar file to the local file path.
@@ -170,6 +174,7 @@ public class GrpcCmd implements BLauncherCmd {
     }
 
     private void generateBalFile(String protoPath) {
+        unusedImports = new HashMap<>();
         if (!Files.isReadable(Paths.get(protoPath))) {
             String errorMessage = "Provided service proto file is not readable. Please input valid proto file " +
                     "location.";
@@ -298,7 +303,7 @@ public class GrpcCmd implements BLauncherCmd {
             ballerinaFileBuilder = new BallerinaFileBuilder(root, dependant, balOutPath);
         }
         try {
-            ballerinaFileBuilder.build(this.mode);
+            ballerinaFileBuilder.build(this.mode, unusedImports);
         } catch (CodeBuilderException e) {
             LOG.error("Error generating the Ballerina file.", e);
             msg.append("Error generating the Ballerina file.").append(e.getMessage())

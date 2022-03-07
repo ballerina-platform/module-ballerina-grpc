@@ -66,6 +66,7 @@ public class BallerinaFileBuilder {
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
     public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
     public static Map<String, Class> streamClassMap;
+    public static Map<String, List<String>> unusedImports;
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
@@ -80,7 +81,8 @@ public class BallerinaFileBuilder {
         streamClassMap = new HashMap<>();
     }
 
-    public void build(String mode) throws CodeBuilderException {
+    public void build(String mode, Map<String, List<String>> unusedImports) throws CodeBuilderException {
+        BallerinaFileBuilder.unusedImports = unusedImports;
         // compute dependent descriptor source code.
         for (byte[] descriptorData : dependentDescriptors) {
             computeSourceContent(descriptorData, null, false);
@@ -124,6 +126,17 @@ public class BallerinaFileBuilder {
             String filePackage = fileDescriptorSet.getPackage();
             StubFile stubFileObject = new StubFile(filename);
 
+            // Add imports
+            for (String protobufImport : fileDescriptorSet.getDependencyList()) {
+                if (unusedImports.containsKey(fileDescriptorSet.getName())) {
+                    if (!unusedImports.get(fileDescriptorSet.getName()).contains(protobufImport)) {
+                        stubFileObject.addImport(protobufImport);
+                    }
+                } else {
+                    stubFileObject.addImport(protobufImport);
+                }
+            }
+
             if (descriptor == rootDescriptor || serviceDescriptorList.size() > 0) {
                 // Add root descriptor.
                 Descriptor rootDesc = Descriptor.newBuilder(descriptor).build();
@@ -156,7 +169,6 @@ public class BallerinaFileBuilder {
                                 BalGenConstants.FILE_SEPARATOR) : BalGenConstants.DEFAULT_PACKAGE;
             }
 
-            boolean hasEmptyMessage = false;
             // update message types in stub file object
             stubFileObject.setMessageMap(messageList.stream().collect(Collectors.toMap(Message::getMessageName,
                     message -> message)));
@@ -261,7 +273,6 @@ public class BallerinaFileBuilder {
     }
 
     private void setRootDescriptor(byte[] rootDescriptor) {
-        this.rootDescriptor = new byte[rootDescriptor.length];
         this.rootDescriptor = Arrays.copyOf(rootDescriptor, rootDescriptor.length);
     }
 }

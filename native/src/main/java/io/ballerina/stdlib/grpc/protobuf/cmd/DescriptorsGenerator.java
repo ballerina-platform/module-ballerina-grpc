@@ -89,7 +89,7 @@ class DescriptorsGenerator {
                 String command = new ProtocCommandBuilder(exePath, BalFileGenerationUtils.escapeSpaces(protoPath),
                         BalFileGenerationUtils.escapeSpaces(protoFolderPath),
                         BalFileGenerationUtils.escapeSpaces(dependentDescFile.getAbsolutePath())).build();
-                BalFileGenerationUtils.generateDescriptor(command);
+                BalFileGenerationUtils.generateDescriptor(command, protoPath);
                 File childFile = new File(tempDir, relativeDescFilepath);
                 try (InputStream childStream = new FileInputStream(childFile)) {
                     DescriptorProtos.FileDescriptorSet childDescSet = DescriptorProtos.FileDescriptorSet
@@ -134,7 +134,7 @@ class DescriptorsGenerator {
                 BalFileGenerationUtils.escapeSpaces(protoFolderPath),
                 BalFileGenerationUtils.escapeSpaces(descriptorPath)
         ).build();
-        BalFileGenerationUtils.generateDescriptor(command);
+        BalFileGenerationUtils.generateDescriptor(command, protoPath);
         File initialFile = new File(descriptorPath);
         try (InputStream targetStream = new FileInputStream(initialFile)) {
             DescriptorProtos.FileDescriptorSet set = DescriptorProtos.FileDescriptorSet.parseFrom(targetStream);

@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class StubFile extends AbstractStub {
     private final List<ServiceStub> stubList = new ArrayList<>();
+    private final List<String> importList = new ArrayList<>();
     private final String fileName;
     
     public StubFile(String fileName) {
@@ -44,5 +45,12 @@ public class StubFile extends AbstractStub {
     public List<ServiceStub> getStubList() {
         return stubList;
     }
-    
+
+    public List<String> getImportList() {
+        return importList;
+    }
+
+    public void addImport(String protobufImport) {
+        importList.add(protobufImport);
+    }
 }

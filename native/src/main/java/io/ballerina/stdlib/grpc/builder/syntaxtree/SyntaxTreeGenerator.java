@@ -84,7 +84,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInMessageMap;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addImports;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
@@ -109,54 +109,17 @@ public class SyntaxTreeGenerator {
     }
 
     public static SyntaxTree generateSyntaxTree(StubFile stubFile, boolean isRoot) {
+        Set<String> ballerinaImports = new LinkedHashSet<>();
         Set<String> protobufImports = new LinkedHashSet<>();
         Set<String> grpcStreamImports = new LinkedHashSet<>();
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
         if (stubFile.getStubList().size() > 0) {
-            ImportDeclarationNode importForGrpc = Imports.getImportDeclarationNode(
-                    "ballerina", "grpc"
-            );
-            imports = imports.add(importForGrpc);
+            ballerinaImports.add("grpc");
         }
-        boolean importTime = false;
-        boolean importAny = false;
-        for (ServiceStub serviceStub : stubFile.getStubList()) {
-            List<Method> methodList = new ArrayList<>();
-            methodList.addAll(serviceStub.getUnaryFunctions());
-            methodList.addAll(serviceStub.getClientStreamingFunctions());
-            methodList.addAll(serviceStub.getServerStreamingFunctions());
-            methodList.addAll(serviceStub.getBidiStreamingFunctions());
 
-            if (checkForImportsInServices(methodList, "time:Utc")
-                    || checkForImportsInServices(methodList, "time:Seconds")) {
-                importTime = true;
-            }
-            if (checkForImportsInServices(methodList, "'any:Any")) {
-                importAny = true;
-            }
-        }
-        if (!importTime) {
-            if (checkForImportsInMessageMap(stubFile, "Timestamp") ||
-                    checkForImportsInMessageMap(stubFile, "Duration")) {
-                importTime = true;
-            }
-        }
-        if (!importAny) {
-            if (checkForImportsInMessageMap(stubFile, "'any:Any")) {
-                importAny = true;
-            }
-        }
-        if (importTime) {
-            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
-                    "ballerina", "time"
-            );
-            imports = imports.add(importForTime);
-        }
-        if (importAny) {
-            protobufImports.add("'any");
-        }
+        addImports(stubFile, ballerinaImports, protobufImports);
 
         java.util.Map<String, Class> clientStreamingClasses = new LinkedHashMap<>();
         java.util.Map<String, Class> serverStreamingClasses = new LinkedHashMap<>();
@@ -219,6 +182,15 @@ public class SyntaxTreeGenerator {
             }
         }
 
+        // Add ballerina imports
+        for (String ballerinaImport : ballerinaImports) {
+            imports = imports.add(
+                    Imports.getImportDeclarationNode(
+                            "ballerina",
+                            ballerinaImport
+                    )
+            );
+        }
         // Add protobuf imports
         for (String protobufImport : protobufImports) {
             imports = imports.add(

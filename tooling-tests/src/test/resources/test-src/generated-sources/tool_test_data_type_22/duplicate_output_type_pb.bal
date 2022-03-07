@@ -1,6 +1,6 @@
 import ballerina/grpc;
-import ballerina/protobuf.types.empty;
 import ballerina/protobuf.types.wrappers;
+import ballerina/protobuf.types.empty;
 
 public isolated client class RecordStoreClient {
     *grpc:AbstractClientEndpoint;
