@@ -19,7 +19,7 @@ check streamingClient->complete();
 StreamCallResponse? response = check streamCall->receiveStreamCallResponse();
 ```
 
-There are two workers have been used in this example, one worker to handle the lifecycle of the phone call, and the other worker to handle the audio stream.
+There are two workers used in this example, one worker to handle the lifecycle of the phone call, and the other worker to handle the audio stream.
 ```ballerina
 // Handle the audio stream
 worker Streamer returns error? {
