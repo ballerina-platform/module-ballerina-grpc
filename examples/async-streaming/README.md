@@ -65,16 +65,19 @@ $ bal run
 
 ### Server-Side Output
 ```sh
-time = 2022-03-07T09:37:21.452+05:30 level = INFO module = ballerina/async_server message = "Received a phone call request for number 94771234567"
-time = 2022-03-07T09:37:23.480+05:30 level = INFO module = ballerina/async_server message = "Created a call session => session ID: 0, media: https://link.to.audio.resources"
-time = 2022-03-07T09:37:24.489+05:30 level = INFO module = ballerina/async_server message = "Call finished [94771234567]"
-time = 2022-03-07T09:37:24.491+05:30 level = INFO module = ballerina/async_server message = "Call session cleaned => session ID: 0, media: https://link.to.audio.resources"
+time = 2022-03-07T10:22:35.026+05:30 level = INFO module = ballerina/async_server message = "Received a phone call request for number 94771234567"
+time = 2022-03-07T10:22:37.036+05:30 level = INFO module = ballerina/async_server message = "Created a call session => session ID: 2, media: https://link.to.audio.resources"
+time = 2022-03-07T10:22:38.039+05:30 level = INFO module = ballerina/async_server message = "Call finished [94771234567]"
+time = 2022-03-07T10:22:38.040+05:30 level = INFO module = ballerina/async_server message = "Call session cleaned => session ID: 2, media: https://link.to.audio.resources"
 ```
 
 ### Client-Side Output
 ```sh
-time = 2022-03-07T09:37:21.292+05:30 level = INFO module = ballerina/async_server message = "Waiting for peer to connect [94771234567]..."
-time = 2022-03-07T09:37:22.521+05:30 level = INFO module = ballerina/async_server message = "Call toward [94771234567] enters [\"NEW\"] state"
-time = 2022-03-07T09:37:23.486+05:30 level = INFO module = ballerina/async_server message = "Call toward [94771234567] enters [\"ACTIVE\"] state"
-time = 2022-03-07T09:37:24.491+05:30 level = INFO module = ballerina/async_server message = "Call toward [94771234567] enters [\"ENDED\"] state"
+time = 2022-03-07T10:22:35.018+05:30 level = INFO module = ballerina/async_client message = "Waiting for peer to connect [94771234567]..."
+time = 2022-03-07T10:22:36.055+05:30 level = INFO module = ballerina/async_client message = "Call toward [94771234567] enters [\"NEW\"] state"
+time = 2022-03-07T10:22:37.042+05:30 level = INFO module = ballerina/async_client message = "Call toward [94771234567] enters [\"ACTIVE\"] state"
+time = 2022-03-07T10:22:37.044+05:30 level = INFO module = ballerina/async_client message = "Consuming audio resource [https://link.to.audio.resources]"
+time = 2022-03-07T10:22:38.041+05:30 level = INFO module = ballerina/async_client message = "Call toward [94771234567] enters [\"ENDED\"] state"
+time = 2022-03-07T10:22:38.044+05:30 level = INFO module = ballerina/async_client message = "Audio session finished [https://link.to.audio.resources]"
+time = 2022-03-07T10:22:38.046+05:30 level = INFO module = ballerina/async_client message = "Call finished"
 ```

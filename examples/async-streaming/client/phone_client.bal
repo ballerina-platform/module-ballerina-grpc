@@ -33,6 +33,7 @@ public function main() returns error? {
     if waitPeer(phoneNumber) {
         audioSession();
     }
+    log:printInfo("Call finished");
 }
 
 function call(StreamCallStreamingClient streamCall) returns error? {
@@ -59,19 +60,19 @@ function audioSession() {
         log:printInfo(string `Consuming audio resource [${media}]`);
     }
     while !isFinished() {
-        log:printInfo(string `call not finished ${callFinished}`);
     }
     log:printInfo(string `Audio session finished [${media}]`);
 }
 
 function waitPeer(string phoneNumber) returns boolean {
     @strand {thread: "any"}
-    worker Streamer returns error? {
+    worker Streamer returns boolean {
         log:printInfo(string `Waiting for peer to connect [${phoneNumber}]...`);
         while !isResponded() {
         }
+        return callState == ACTIVE;
     }
-    return callState == ACTIVE;
+    return wait Streamer;
 }
 
 function isResponded() returns boolean {
