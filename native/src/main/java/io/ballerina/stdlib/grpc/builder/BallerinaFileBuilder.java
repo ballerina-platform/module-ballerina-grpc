@@ -21,7 +21,6 @@ import com.google.api.AnnotationsProto;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.ExtensionRegistry;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
-import io.ballerina.stdlib.grpc.StandardDescriptorBuilder;
 import io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants;
 import io.ballerina.stdlib.grpc.builder.stub.Descriptor;
 import io.ballerina.stdlib.grpc.builder.stub.EnumMessage;
@@ -180,19 +179,6 @@ public class BallerinaFileBuilder {
                             setMessageMap(stubFileObject.getMessageMap()).build();
                     serviceStubBuilder.addMethod(method);
                     sampleServiceBuilder.addMethod(method);
-
-                    if (method.containsEmptyType() && !(stubFileObject.isMessageExists(BalGenConstants.EMPTY_DATA_TYPE))
-                            && !hasEmptyMessage) {
-                        Message message =
-                                Message.newBuilder(
-                                        StandardDescriptorBuilder.getFileDescriptor(
-                                                StandardDescriptorBuilder.EMPTY_PROTO_PACKAGE_KEY).getMessageTypes()
-                                                .get(0).toProto(),
-                                        filePackage).build();
-                        messageList.add(message);
-                        stubFileObject.addMessage(message);
-                        hasEmptyMessage = true;
-                    }
                 }
                 ServiceStub serviceStub = serviceStubBuilder.build();
                 stubFileObject.addServiceStub(serviceStub);

@@ -183,12 +183,12 @@ public class MessageUtils {
 
     static void setNestedMessages(Descriptors.Descriptor resMessage, MessageRegistry messageRegistry) {
         for (Descriptors.Descriptor nestedType : resMessage.getNestedTypes()) {
-            messageRegistry.addMessageDescriptor(nestedType.getName(), nestedType);
+            messageRegistry.addMessageDescriptor(nestedType.getFullName(), nestedType);
         }
         for (Descriptors.FieldDescriptor msgField : resMessage.getFields()) {
             if (Descriptors.FieldDescriptor.Type.MESSAGE.equals(msgField.getType())) {
                 Descriptors.Descriptor msgType = msgField.getMessageType();
-                messageRegistry.addMessageDescriptor(msgType.getName(), msgType);
+                messageRegistry.addMessageDescriptor(msgType.getFullName(), msgType);
             }
         }
     }

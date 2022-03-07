@@ -169,10 +169,10 @@ public final class ServiceDefinition {
             Descriptors.Descriptor resMessage = methodDescriptor.getOutputType();
             MessageRegistry messageRegistry = MessageRegistry.getInstance();
             // update request message descriptors.
-            messageRegistry.addMessageDescriptor(reqMessage.getName(), reqMessage);
+            messageRegistry.addMessageDescriptor(reqMessage.getFullName(), reqMessage);
             setNestedMessages(reqMessage, messageRegistry);
             // update response message descriptors
-            messageRegistry.addMessageDescriptor(resMessage.getName(), resMessage);
+            messageRegistry.addMessageDescriptor(resMessage.getFullName(), resMessage);
             setNestedMessages(resMessage, messageRegistry);
             String fullMethodName = generateFullMethodName(serviceDescriptor.getFullName(), methodName);
             Type requestType = getInputParameterType(methodDescriptor, attachedFunction);
@@ -184,9 +184,9 @@ public final class ServiceDefinition {
                     MethodDescriptor.newBuilder()
                             .setType(MessageUtils.getMethodType(methodDescriptor.toProto()))
                             .setFullMethodName(fullMethodName)
-                            .setRequestMarshaller(ProtoUtils.marshaller(new MessageParser(reqMessage.getName(),
+                            .setRequestMarshaller(ProtoUtils.marshaller(new MessageParser(reqMessage.getFullName(),
                                     requestType)))
-                            .setResponseMarshaller(ProtoUtils.marshaller(new MessageParser(resMessage.getName(),
+                            .setResponseMarshaller(ProtoUtils.marshaller(new MessageParser(resMessage.getFullName(),
                                     responseType == null ?
                                             getBallerinaValueType(clientEndpointType.getPackage(),
                                                     resMessage.getName()) : responseType)))

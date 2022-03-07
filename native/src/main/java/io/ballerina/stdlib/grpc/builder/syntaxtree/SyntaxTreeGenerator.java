@@ -254,10 +254,8 @@ public class SyntaxTreeGenerator {
             moduleMembers = moduleMembers.add(valueType.getValue().getTypeDefinitionNode());
         }
         for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
-            if (!message.getValue().getMessageName().equals("Empty")) {
-                for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
-                    moduleMembers = moduleMembers.add(messageNode);
-                }
+            for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
+                moduleMembers = moduleMembers.add(messageNode);
             }
         }
 

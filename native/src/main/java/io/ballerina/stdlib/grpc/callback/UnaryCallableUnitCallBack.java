@@ -126,7 +126,7 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                 if (content == null) {
                     requestSender.onCompleted();
                 } else {
-                    Message responseMessage = new Message(outputType.getName(), content);
+                    Message responseMessage = new Message(outputType, content);
                     responseMessage.setHeaders(headers);
                     if (observerContext != null) {
                         headers.entries().forEach(
@@ -185,10 +185,10 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             if (response != null) {
                 Message msg;
                 if (MessageUtils.isRecordMapValue(response)) {
-                    msg = new Message(this.outputType.getName(),
+                    msg = new Message(this.outputType,
                             ((BMap) response).get(StringUtils.fromString("value")));
                 } else {
-                    msg = new Message(this.outputType.getName(), response);
+                    msg = new Message(this.outputType, response);
                 }
                 if (headers != null) {
                     msg.setHeaders(headers);

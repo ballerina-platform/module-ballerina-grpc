@@ -5,12 +5,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [Fix issue in ordering of services with duplicate output types](https://github.com/ballerina-platform/ballerina-standard-library/issues/2637)
+- [Improve the enum creation logic to escape case sensitivity](https://github.com/ballerina-platform/ballerina-standard-library/issues/2678)
+- [Constraint the compiler plugin validations only for remote functions](https://github.com/ballerina-platform/ballerina-standard-library/issues/2695)
+
+## [1.2.0] - 2022-01-29
+### Fixed
+- [Allow any function except `resource` function in gRPC services by the compiler plugin](https://github.com/ballerina-platform/ballerina-standard-library/issues/2617)
+
+## [1.1.1] - 2021-12-15
+### Changed
+- [Pack HTTP library and remove repetitive JARs](https://github.com/ballerina-platform/module-ballerina-grpc/pull/598)
+
+## [1.1.0] - 2021-12-13
 ### Added
 - [Protobuf Any type support](https://github.com/ballerina-platform/module-ballerina-grpc/pull/509)
 
 ### Changed
 - [Remove the start and stop logs of the listener](https://github.com/ballerina-platform/module-ballerina-grpc/pull/539)
 - [Mark gRPC Service type distinct](https://github.com/ballerina-platform/ballerina-standard-library/issues/2398)
+- [Make gRPC service type distinct](https://github.com/ballerina-platform/ballerina-standard-library/issues/2398)
+- [Remove the start and stop logs of the listener](https://github.com/ballerina-platform/ballerina-standard-library/issues/2040)
 
 ## [1.0.0] - 2021-10-09
 ### Added

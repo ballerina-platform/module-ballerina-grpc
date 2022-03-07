@@ -81,7 +81,7 @@ public class FunctionUtils {
                 } else {
                     content = responseValue;
                 }
-                Message requestMessage = new Message(inputType.getName(), content);
+                Message requestMessage = new Message(inputType, content);
                 HttpHeaders headers = MessageUtils.convertToHttpHeaders(headerValues);
                 requestMessage.setHeaders(headers);
                 requestSender.onNext(requestMessage);

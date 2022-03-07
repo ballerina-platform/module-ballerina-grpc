@@ -93,6 +93,13 @@ public class ToolingCommonTest {
     }
 
     @Test
+    public void testEmptyMessageTypes() {
+
+        assertGeneratedDataTypeSources("data-types", "empty_message_types.proto",
+                "empty_message_types_pb.bal", "tool_test_data_type_24");
+    }
+
+    @Test
     public void testMessage() {
         assertGeneratedDataTypeSources("data-types", "message.proto", "message_pb.bal",
                 "tool_test_data_type_10");
