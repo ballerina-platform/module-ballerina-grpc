@@ -54,7 +54,6 @@ service "Phone" on new grpc:Listener(port) {
             cleanCallSession(callInfo);
             checkpanic caller->complete();
         });
-
     }
 }
 
