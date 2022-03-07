@@ -58,7 +58,7 @@ service "Phone" on new grpc:Listener(port) {
     }
 }
 
-function cleanCallSession(CallInfo info) {
+isolated function cleanCallSession(CallInfo info) {
     log:printInfo(string `Call session cleaned => session ID: ${info.session_id}, media: ${info.media}`);
 }
 

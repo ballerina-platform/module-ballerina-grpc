@@ -25,35 +25,32 @@ string sessionId = "";
 string media = "";
 
 public function main() returns error? {
-    StreamCallStreamingClient streamCall = check ep->StreamCall();
-    worker Caller returns error? {
-        if waitPeer(phoneNumber) {
-            audioSession();
-        }
-        [peerResponded, callFinished] = check <- CallStatusChecker;
-    }
-    worker CallStatusChecker returns [boolean, boolean]|error {
-        check streamCall->sendStreamCallRequest({phone_number: phoneNumber});
-        check streamCall->complete();
-        check call(streamCall);
-        [peerResponded, callFinished] -> Caller;
-        return [peerResponded, callFinished];
+    StreamCallStreamingClient streamingClient = check ep->StreamCall();
+    check streamingClient->sendStreamCallRequest({phone_number: phoneNumber});
+    check streamingClient->complete();
+    check call(streamingClient);
+
+    if waitPeer(phoneNumber) {
+        audioSession();
     }
 }
 
 function call(StreamCallStreamingClient streamCall) returns error? {
-    StreamCallResponse? response = check streamCall->receiveStreamCallResponse();
-    while response != () {
-        if response?.call_info is CallInfo {
-            CallInfo callInfo = <CallInfo>response?.call_info;
-            sessionId = callInfo.session_id;
-            media = callInfo.media;
-        } else if response?.call_state is CallState {
-            CallState currentState = <CallState>(response?.call_state);
-            callState = currentState.state;
-            onCallState(phoneNumber);
+    @strand {thread: "any"}
+    worker Caller returns error? {
+        StreamCallResponse? response = check streamCall->receiveStreamCallResponse();
+        while response != () {
+            if response?.call_info is CallInfo {
+                CallInfo callInfo = <CallInfo>response?.call_info;
+                sessionId = callInfo.session_id;
+                media = callInfo.media;
+            } else if response?.call_state is CallState {
+                CallState currentState = <CallState>(response?.call_state);
+                callState = currentState.state;
+                onCallState(phoneNumber);
+            }
+            response = check streamCall->receiveStreamCallResponse();
         }
-        response = check streamCall->receiveStreamCallResponse();
     }
 }
 
@@ -61,17 +58,32 @@ function audioSession() {
     if media != "" {
         log:printInfo(string `Consuming audio resource [${media}]`);
     }
-    while !callFinished {
+    while !isFinished() {
+        log:printInfo(string `call not finished ${callFinished}`);
     }
     log:printInfo(string `Audio session finished [${media}]`);
 }
 
 function waitPeer(string phoneNumber) returns boolean {
-    log:printInfo(string `Waiting for peer to connect [${phoneNumber}]...`);
-    while !peerResponded {
-        log:printInfo(string `wait peer ${peerResponded}`);
+    @strand {thread: "any"}
+    worker Streamer returns error? {
+        log:printInfo(string `Waiting for peer to connect [${phoneNumber}]...`);
+        while !isResponded() {
+        }
     }
     return callState == ACTIVE;
+}
+
+function isResponded() returns boolean {
+    lock {
+        return peerResponded;
+    }
+}
+
+function isFinished() returns boolean {
+    lock {
+        return callFinished;
+    }
 }
 
 function onCallState(string phoneNumber) {
@@ -80,7 +92,6 @@ function onCallState(string phoneNumber) {
         lock {
             peerResponded = true;
         }
-
     } else if callState is ENDED {
         lock {
             peerResponded = true;
