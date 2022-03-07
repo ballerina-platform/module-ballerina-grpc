@@ -36,21 +36,21 @@ public function main() returns error? {
     log:printInfo("Call finished");
 }
 
-function call(StreamCallStreamingClient streamCall) returns error? {
+function call(StreamCallStreamingClient streamingClient) returns error? {
     @strand {thread: "any"}
     worker Caller returns error? {
-        StreamCallResponse? response = check streamCall->receiveStreamCallResponse();
+        StreamCallResponse? response = check streamingClient->receiveStreamCallResponse();
         while response != () {
-            if response?.call_info is CallInfo {
-                CallInfo callInfo = <CallInfo>response?.call_info;
+            CallInfo? callInfo = response?.call_info;
+            CallState? currentState = response?.call_state;
+            if callInfo is CallInfo {
                 sessionId = callInfo.session_id;
                 media = callInfo.media;
-            } else if response?.call_state is CallState {
-                CallState currentState = <CallState>(response?.call_state);
+            } else if currentState is CallState {
                 callState = currentState.state;
                 onCallState(phoneNumber);
             }
-            response = check streamCall->receiveStreamCallResponse();
+            response = check streamingClient->receiveStreamCallResponse();
         }
     }
 }
@@ -88,7 +88,7 @@ function isFinished() returns boolean {
 }
 
 function onCallState(string phoneNumber) {
-    log:printInfo(string `Call toward [${phoneNumber}] enters [${callState.toBalString()}] state`);
+    log:printInfo(string `Call toward [${phoneNumber}] enters [${callState.toString()}] state`);
     if callState == ACTIVE {
         lock {
             peerResponded = true;
