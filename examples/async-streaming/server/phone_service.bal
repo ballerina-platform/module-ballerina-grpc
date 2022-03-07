@@ -29,7 +29,7 @@ service "Phone" on new grpc:Listener(port) {
         _ = check clientStream.forEach(function(StreamCallRequest callReq) {
 
             // Send call state NEW
-            log:printInfo(string `Received a phone call request for number ${callReq.phone_number}`);
+            log:printInfo("Received a phone call request", number = callReq.phone_number);
             runtime:sleep(1);
             checkpanic caller->sendStreamCallResponse({call_state: {state: 'NEW}});
 
@@ -41,14 +41,14 @@ service "Phone" on new grpc:Listener(port) {
 
             // Send call info
             runtime:sleep(1);
-            log:printInfo(string `Created a call session => session ID: ${sessionId}, media: ${MEDIA}`);
+            log:printInfo("Created a call session", sessionId = sessionId, media = MEDIA);
             CallInfo callInfo = {session_id: sessionId.toString(), media: MEDIA};
             checkpanic caller->sendStreamCallResponse({call_info: callInfo});
 
             checkpanic caller->sendStreamCallResponse({call_state: {state: ACTIVE}});
             runtime:sleep(1);
             checkpanic caller->sendStreamCallResponse({call_state: {state: ENDED}});
-            log:printInfo(string `Call finished [${callReq.phone_number}]`);
+            log:printInfo("Call finished", number = callReq.phone_number);
 
             // Clean the call session
             cleanCallSession(callInfo);
@@ -58,6 +58,6 @@ service "Phone" on new grpc:Listener(port) {
 }
 
 isolated function cleanCallSession(CallInfo info) {
-    log:printInfo(string `Call session cleaned => session ID: ${info.session_id}, media: ${info.media}`);
+    log:printInfo("Call session cleaned", sessionId = info.session_id, media = info.media);
 }
 

@@ -57,17 +57,17 @@ function call(StreamCallStreamingClient streamingClient) returns error? {
 
 function audioSession() {
     if media != "" {
-        log:printInfo(string `Consuming audio resource [${media}]`);
+        log:printInfo("Consuming audio resource", URL = media);
     }
     while !isFinished() {
     }
-    log:printInfo(string `Audio session finished [${media}]`);
+    log:printInfo("Audio session finished", URL = media);
 }
 
 function waitPeer(string phoneNumber) returns boolean {
     @strand {thread: "any"}
     worker Streamer returns boolean {
-        log:printInfo(string `Waiting for peer to connect [${phoneNumber}]...`);
+        log:printInfo("Waiting for peer to connect", phoneNumber = phoneNumber);
         while !isResponded() {
         }
         return callState == ACTIVE;
