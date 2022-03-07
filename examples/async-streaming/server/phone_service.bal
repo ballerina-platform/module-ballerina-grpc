@@ -31,7 +31,7 @@ service "Phone" on new grpc:Listener(port) {
             // Send call state NEW
             log:printInfo("Received a phone call request", number = callReq.phone_number);
             runtime:sleep(1);
-            checkpanic caller->sendStreamCallResponse({call_state: {state: 'NEW}});
+            self.sendPhoneCallState(caller, 'NEW);
 
             int sessionId = 0;
             lock {
@@ -43,21 +43,44 @@ service "Phone" on new grpc:Listener(port) {
             runtime:sleep(1);
             log:printInfo("Created a call session", sessionId = sessionId, media = MEDIA);
             CallInfo callInfo = {session_id: sessionId.toString(), media: MEDIA};
-            checkpanic caller->sendStreamCallResponse({call_info: callInfo});
+            self.sendPhoneCallInfo(caller, callInfo);
 
-            checkpanic caller->sendStreamCallResponse({call_state: {state: ACTIVE}});
+            self.sendPhoneCallState(caller, ACTIVE);
             runtime:sleep(1);
-            checkpanic caller->sendStreamCallResponse({call_state: {state: ENDED}});
+            self.sendPhoneCallState(caller, ENDED);
             log:printInfo("Call finished", number = callReq.phone_number);
 
             // Clean the call session
-            cleanCallSession(callInfo);
+            self.cleanPhoneCallSession(callInfo);
             checkpanic caller->complete();
         });
     }
-}
 
-isolated function cleanCallSession(CallInfo info) {
-    log:printInfo("Call session cleaned", sessionId = info.session_id, media = info.media);
-}
+    isolated function sendPhoneCallState(PhoneStreamCallResponseCaller caller, CallState_State data) {
+        grpc:Error? e = caller->sendStreamCallResponse({call_state: {state: data}});
+        if e is grpc:Error {
+            e = caller->sendError(e);
+            e = caller->complete();
+        }
+    }
 
+    isolated function sendPhoneCallInfo(PhoneStreamCallResponseCaller caller, CallInfo data) {
+        grpc:Error? e = caller->sendStreamCallResponse({call_info: data});
+        if e is grpc:Error {
+            e = caller->sendError(e);
+            e = caller->complete();
+        }
+    }
+
+    isolated function completePhoneCall(PhoneStreamCallResponseCaller caller) {
+        grpc:Error? e = caller->complete();
+        if e is grpc:Error {
+            e = caller->sendError(e);
+            e = caller->complete();
+        }
+    }
+
+    isolated function cleanPhoneCallSession(CallInfo info) {
+        log:printInfo("Call session cleaned", sessionId = info.session_id, media = info.media);
+    }
+}
