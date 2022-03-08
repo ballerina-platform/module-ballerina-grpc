@@ -1,0 +1,79 @@
+// Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+//
+// WSO2 Inc. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+service PredefinedTypesInService {
+  rpc anyCall(AnyMessageRequest) returns (AnyMessageResponse) {}
+  rpc structCall(StructMessageRequest) returns (StructMessageResponse) {}
+  rpc timestampCall(TimestampMessageRequest) returns (TimestampMessageResponse) {}
+  rpc durationCall(DurationMessageRequest) returns (DurationMessageResponse) {}
+}
+
+message AnyMessageRequest {
+    string name = 1;
+    google.protobuf.Any details = 2;
+};
+
+message AnyMessageResponse {
+   string name = 1;
+   int32 code = 2;
+   google.protobuf.Any details = 3;
+};
+
+message AnyTypeMsgForAnyMessage {
+  string name = 1;
+  int32 code = 2;
+};
+
+message StructMessageRequest {
+    string name = 1;
+    google.protobuf.Struct details = 2;
+};
+
+message StructMessageResponse {
+   string name = 1;
+   int32 code = 2;
+   google.protobuf.Struct details = 3;
+};
+
+message TimestampMessageRequest {
+    string name = 1;
+    google.protobuf.Timestamp details = 2;
+};
+
+message TimestampMessageResponse {
+   string name = 1;
+   int32 code = 2;
+   google.protobuf.Timestamp details = 3;
+};
+
+message DurationMessageRequest {
+    string name = 1;
+    google.protobuf.Duration details = 2;
+};
+
+message DurationMessageResponse {
+   string name = 1;
+   int32 code = 2;
+   google.protobuf.Duration details = 3;
+};
+
