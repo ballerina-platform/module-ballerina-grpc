@@ -869,8 +869,8 @@ public class Message {
                         if (fieldDescriptor.isRepeated() && bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                Object anyTypeInstance = valueArray.getRefValue(i);
-                                Message message = new Message(fieldDescriptor.getMessageType(), anyTypeInstance);
+                                Object value = valueArray.getRefValue(i);
+                                Message message = new Message(fieldDescriptor.getMessageType(), value);
                                 output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                                 output.writeUInt32NoTag(message.getSerializedSize());
                                 message.writeTo(output);
@@ -1200,8 +1200,8 @@ public class Message {
                          if (fieldDescriptor.isRepeated() && bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                Object anyTypeInstance = valueArray.getRefValue(i);
-                                Message message = new Message(fieldDescriptor.getMessageType(), anyTypeInstance);
+                                Object value = valueArray.getRefValue(i);
+                                Message message = new Message(fieldDescriptor.getMessageType(), value);
                                 size += computeMessageSize(fieldDescriptor, message);
                             }
                         } else {
