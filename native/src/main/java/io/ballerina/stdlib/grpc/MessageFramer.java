@@ -101,7 +101,7 @@ public class MessageFramer {
             throw e;
         } catch (IOException | RuntimeException e) {
             throw Status.Code.INTERNAL.toStatus()
-                    .withDescription("Failed to frame message")
+                    .withDescription("Failed to frame message: " + e.getMessage())
                     .withCause(e)
                     .asRuntimeException();
         }
