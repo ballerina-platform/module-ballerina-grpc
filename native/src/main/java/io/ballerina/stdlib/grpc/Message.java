@@ -81,6 +81,7 @@ public class Message {
     private static final String GOOGLE_PROTOBUF_TIMESTAMP = "google.protobuf.Timestamp";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_SECONDS = "google.protobuf.Timestamp.seconds";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_NANOS = "google.protobuf.Timestamp.nanos";
+    private static final String GOOGLE_PROTOBUF_DURATION = "google.protobuf.Duration";
     private static final String GOOGLE_PROTOBUF_DURATION_SECONDS = "google.protobuf.Duration.seconds";
     private static final String GOOGLE_PROTOBUF_DURATION_NANOS = "google.protobuf.Duration.nanos";
     private static final String GOOGLE_PROTOBUF_STRUCT = "google.protobuf.Struct";
@@ -160,6 +161,7 @@ public class Message {
             throws IOException {
         this(messageName);
         boolean isAnyTypedMessage = false;
+        boolean isTimestampMessage = false;
         String typeUrl = "";
 
         if (type instanceof UnionType && !(type instanceof AnydataType) && type.isNilable()) {
@@ -181,11 +183,12 @@ public class Message {
         BArray bArray = null;
         isAnyTypedMessage = GOOGLE_PROTOBUF_ANY.equals(messageName) &&
                 fieldDescriptors.values().stream().allMatch(fd -> fd.getFullName().contains(GOOGLE_PROTOBUF_ANY));
+        isTimestampMessage = (type.getTag() == TypeTags.INTERSECTION_TAG || type.getTag() == TypeTags.TUPLE_TAG)
+                && messageName.equals(TIMESTAMP_TYPE_NAME);
         if (type.getTag() == TypeTags.RECORD_TYPE_TAG && !isAnyTypedMessage) {
             bBMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
             bMessage = bBMap;
-        } else if (type.getTag() == TypeTags.INTERSECTION_TAG ||
-                (type.getTag() == TypeTags.TUPLE_TAG && messageName.equals(TIMESTAMP_TYPE_NAME))) { // for Timestamp
+        } else if (isTimestampMessage) { // for Timestamp
             TupleType tupleType = TypeCreator.createTupleType(
                     Arrays.asList(PredefinedTypes.TYPE_INT, PredefinedTypes.TYPE_DECIMAL));
             bArray = ValueCreator.createTupleValue(tupleType);
@@ -591,8 +594,7 @@ public class Message {
                                         TypeCreator.createTupleType(Arrays.asList(PredefinedTypes.TYPE_STRING,
                                                 PredefinedTypes.TYPE_ANYDATA)), input).bMessage;
                                 bBMap.put(tupleval.getBString(0), tupleval.get(1));
-                            } else if (fieldDescriptor.isRepeated() &&
-                                    fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
+                            } else if (fieldDescriptor.isRepeated()) {
                                 BArray valueArray = bBMap.get(bFieldName) != null ?
                                         (BArray) bBMap.get(bFieldName) : null;
                                 Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
@@ -601,16 +603,6 @@ public class Message {
                                     bBMap.put(bFieldName, valueArray);
                                 }
                                 valueArray.add(valueArray.size(), readMessage(fieldDescriptor,
-                                        ((ArrayType) fieldType).getElementType(), input).bMessage);
-                            } else if (fieldDescriptor.isRepeated()) {
-                                BArray structArray = bBMap.get(bFieldName) != null ?
-                                        (BArray) bBMap.get(bFieldName) : null;
-                                Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
-                                if (structArray == null || structArray.size() == 0) {
-                                    structArray = ValueCreator.createArrayValue((ArrayType) fieldType);
-                                    bBMap.put(bFieldName, structArray);
-                                }
-                                structArray.add(structArray.size(), readMessage(fieldDescriptor,
                                         ((ArrayType) fieldType).getElementType(), input).bMessage);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
@@ -654,6 +646,9 @@ public class Message {
             anyMap.put(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY), StringUtils.fromString(typeUrl));
             anyMap.put(StringUtils.fromString(BALLERINA_ANY_VALUE_ENTRY), bMessage);
             bMessage = anyMap;
+        }
+        if (isTimestampMessage && bMessage instanceof BArray) {
+            ((BArray) bMessage).freezeDirect();
         }
     }
 
@@ -871,29 +866,11 @@ public class Message {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE_VALUE: {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
                         Object bValue = bBMap.get(bFieldName);
-                        if (bValue instanceof BArray
-                                && fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP)) {
-                            BArray valueArray = (BArray) bValue;
-                            Message message = new Message(fieldDescriptor.getMessageType(), valueArray);
-                            output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
-                            output.writeUInt32NoTag(message.getSerializedSize());
-                            message.writeTo(output);
-                        } else if (bValue instanceof BArray
-                                && fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
+                        if (fieldDescriptor.isRepeated() && bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
                                 Object anyTypeInstance = valueArray.getRefValue(i);
                                 Message message = new Message(fieldDescriptor.getMessageType(), anyTypeInstance);
-                                output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
-                                output.writeUInt32NoTag(message.getSerializedSize());
-                                message.writeTo(output);
-                            }
-                        } else if (bValue instanceof BArray
-                                && !fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY_VALUE)) {
-                            BArray valueArray = (BArray) bValue;
-                            for (int i = 0; i < valueArray.size(); i++) {
-                                Message message = new Message(fieldDescriptor.getMessageType(),
-                                                              valueArray.getRefValue(i));
                                 output.writeTag(fieldDescriptor.getNumber(), WireFormat.WIRETYPE_LENGTH_DELIMITED);
                                 output.writeUInt32NoTag(message.getSerializedSize());
                                 message.writeTo(output);
@@ -1220,25 +1197,11 @@ public class Message {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE_VALUE: {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
                         Object bValue = bBMap.get(bFieldName);
-                        if (bValue instanceof BArray
-                                && fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_TIMESTAMP)) {
-                            BArray valueArray = (BArray) bValue;
-                            Message message = new Message(fieldDescriptor.getMessageType(), valueArray);
-                            size += computeMessageSize(fieldDescriptor, message);
-                        } else if (bValue instanceof BArray
-                                && fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
+                         if (fieldDescriptor.isRepeated() && bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
                                 Object anyTypeInstance = valueArray.getRefValue(i);
                                 Message message = new Message(fieldDescriptor.getMessageType(), anyTypeInstance);
-                                size += computeMessageSize(fieldDescriptor, message);
-                            }
-                        } else if (bValue instanceof BArray
-                                && !fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_ANY)) {
-                            BArray valueArray = (BArray) bValue;
-                            for (int i = 0; i < valueArray.size(); i++) {
-                                BMap<BString, Object> value = (BMap<BString, Object>) valueArray.getRefValue(i);
-                                Message message = new Message(fieldDescriptor.getMessageType(), value);
                                 size += computeMessageSize(fieldDescriptor, message);
                             }
                         } else {
