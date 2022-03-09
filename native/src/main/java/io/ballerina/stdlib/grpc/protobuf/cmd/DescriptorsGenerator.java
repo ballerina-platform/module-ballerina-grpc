@@ -19,19 +19,24 @@ package io.ballerina.stdlib.grpc.protobuf.cmd;
 
 import com.google.protobuf.DescriptorProtos;
 import io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants;
+import io.ballerina.stdlib.grpc.protobuf.descriptor.DescriptorMeta;
 import io.ballerina.stdlib.grpc.protobuf.exception.CodeGeneratorException;
 import io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils;
 import io.ballerina.stdlib.grpc.protobuf.utils.ProtocCommandBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,11 +45,12 @@ import java.util.Set;
 class DescriptorsGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(DescriptorsGenerator.class);
+    private static final PrintStream outStream = System.out;
 
-    static Set<byte[]> generateDependentDescriptor(String exePath, String protoFolderPath, String
+    static Set<DescriptorMeta> generateDependentDescriptor(String exePath, String protoFolderPath, String
             rootDescriptorPath) throws CodeGeneratorException {
 
-        Set<byte[]> dependentDescSet = new HashSet<>();
+        Set<DescriptorMeta> dependentDescSet = new HashSet<>();
         File tempDir = new File(BalGenerationConstants.TMP_DIRECTORY_PATH);
         File initialFile = new File(rootDescriptorPath);
         try (InputStream targetStream = new FileInputStream(initialFile)) {
@@ -89,13 +95,13 @@ class DescriptorsGenerator {
                 String command = new ProtocCommandBuilder(exePath, BalFileGenerationUtils.escapeSpaces(protoPath),
                         BalFileGenerationUtils.escapeSpaces(protoFolderPath),
                         BalFileGenerationUtils.escapeSpaces(dependentDescFile.getAbsolutePath())).build();
-                BalFileGenerationUtils.generateDescriptor(command, protoPath);
+                BufferedReader protocOutput = BalFileGenerationUtils.generateDescriptor(command);
                 File childFile = new File(tempDir, relativeDescFilepath);
                 try (InputStream childStream = new FileInputStream(childFile)) {
                     DescriptorProtos.FileDescriptorSet childDescSet = DescriptorProtos.FileDescriptorSet
                             .parseFrom(childStream);
                     if (childDescSet.getFile(0).getDependencyCount() != 0) {
-                        Set<byte[]> childList = generateDependentDescriptor(exePath, protoFolderPath,
+                        Set<DescriptorMeta> childList = generateDependentDescriptor(exePath, protoFolderPath,
                                 childFile.getAbsolutePath());
                         dependentDescSet.addAll(childList);
                     }
@@ -104,7 +110,8 @@ class DescriptorsGenerator {
                         throw new CodeGeneratorException("Error occurred at generating dependent proto " +
                                 "descriptor for dependent proto '" + relativeDescFilepath + "'.");
                     }
-                    dependentDescSet.add(dependentDesc);
+                    dependentDescSet.add(new DescriptorMeta(BalFileGenerationUtils.escapeSpaces(protoPath),
+                            dependentDesc, getUnusedImports(protocOutput)));
                 } catch (IOException e) {
                     throw new CodeGeneratorException("Error extracting dependent bal. " + e.getMessage(), e);
                 }
@@ -124,8 +131,8 @@ class DescriptorsGenerator {
      * @param descriptorPath file descriptor path.
      * @return byte array of generated proto file.
      */
-    static byte[] generateRootDescriptor(String exePath, String protoPath, String protoFolderPath,
-                                         String descriptorPath)
+    static DescriptorMeta generateRootDescriptor(String exePath, String protoPath, String protoFolderPath,
+                                                 String descriptorPath)
             throws CodeGeneratorException {
 
         String command = new ProtocCommandBuilder(
@@ -134,17 +141,36 @@ class DescriptorsGenerator {
                 BalFileGenerationUtils.escapeSpaces(protoFolderPath),
                 BalFileGenerationUtils.escapeSpaces(descriptorPath)
         ).build();
-        BalFileGenerationUtils.generateDescriptor(command, protoPath);
+        BufferedReader protocOutput = BalFileGenerationUtils.generateDescriptor(command);
         File initialFile = new File(descriptorPath);
         try (InputStream targetStream = new FileInputStream(initialFile)) {
             DescriptorProtos.FileDescriptorSet set = DescriptorProtos.FileDescriptorSet.parseFrom(targetStream);
             if (set.getFileList().size() > 0) {
-                return set.getFile(0).toByteArray();
+                return new DescriptorMeta(protoPath, set.getFile(0).toByteArray(), getUnusedImports(protocOutput));
             }
         } catch (IOException e) {
             throw new CodeGeneratorException("Error reading generated descriptor file '"
                     + descriptorPath + "'. " + e.getMessage(), e);
         }
-        return new byte[0];
+        return new DescriptorMeta(protoPath, null, getUnusedImports(protocOutput));
+    }
+
+    private static List<String> getUnusedImports(BufferedReader reader) throws CodeGeneratorException {
+        List<String> unusedImportList = new ArrayList<>();
+        String line;
+        while (true) {
+            try {
+                if ((line = reader.readLine()) == null) {
+                    break;
+                }
+            } catch (IOException e) {
+                throw new CodeGeneratorException("Failed to read protoc command output. " + e.getMessage(), e);
+            }
+            if (line.contains("warning: Import ") && line.contains(" but not used.")) {
+                unusedImportList.add((line.split("warning: Import ")[1]).split(" but not used.")[0]);
+                outStream.println(line);
+            }
+        }
+        return unusedImportList;
     }
 }

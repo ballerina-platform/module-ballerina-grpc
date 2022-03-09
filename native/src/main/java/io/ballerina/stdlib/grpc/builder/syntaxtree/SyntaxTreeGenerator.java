@@ -182,41 +182,9 @@ public class SyntaxTreeGenerator {
             }
         }
 
-        // Add ballerina imports
-        for (String ballerinaImport : ballerinaImports) {
-            imports = imports.add(
-                    Imports.getImportDeclarationNode(
-                            "ballerina",
-                            ballerinaImport
-                    )
-            );
-        }
-        // Add protobuf imports
-        for (String protobufImport : protobufImports) {
-            imports = imports.add(
-                    Imports.getImportDeclarationNode(
-                            "ballerina",
-                            "protobuf",
-                            new String[]{"types", protobufImport},
-                            ""
-                    )
-            );
-        }
-        // Add grpc server streaming imports
-        for (String sImport : grpcStreamImports) {
-            String prefix = sImport;
-            if (sImport.equals("'any")) {
-                prefix = "any";
-            }
-            imports = imports.add(
-                    Imports.getImportDeclarationNode(
-                            "ballerina",
-                            "grpc",
-                            new String[]{"types", sImport},
-                            "s" + prefix
-                    )
-            );
-        }
+        imports = addBallerinaImportNodes(imports, ballerinaImports);
+        imports = addProtobufImportNodes(imports, protobufImports);
+        imports = addGrpcStreamImportNodes(imports, grpcStreamImports);
 
         for (java.util.Map.Entry<String, Class> streamingClient : clientStreamingClasses.entrySet()) {
             moduleMembers = moduleMembers.add(streamingClient.getValue().getClassDefinitionNode());
@@ -451,5 +419,53 @@ public class SyntaxTreeGenerator {
             map.put(descriptor.getKey(), descriptor.getData());
         }
         return new TreeMap<>(map);
+    }
+
+    private static NodeList<ImportDeclarationNode> addBallerinaImportNodes(NodeList<ImportDeclarationNode> imports,
+                                                                           Set<String> ballerinaImports) {
+
+        for (String ballerinaImport : ballerinaImports) {
+            imports = imports.add(
+                    Imports.getImportDeclarationNode(
+                            "ballerina",
+                            ballerinaImport
+                    )
+            );
+        }
+        return imports;
+    }
+
+    private static NodeList<ImportDeclarationNode> addProtobufImportNodes(NodeList<ImportDeclarationNode> imports,
+                                                                          Set<String> protobufImports) {
+        for (String protobufImport : protobufImports) {
+            imports = imports.add(
+                    Imports.getImportDeclarationNode(
+                            "ballerina",
+                            "protobuf",
+                            new String[]{"types", protobufImport},
+                            ""
+                    )
+            );
+        }
+        return imports;
+    }
+
+    private static NodeList<ImportDeclarationNode> addGrpcStreamImportNodes(NodeList<ImportDeclarationNode> imports,
+                                                 Set<String> grpcStreamImports) {
+        for (String sImport : grpcStreamImports) {
+            String prefix = sImport;
+            if (sImport.equals("'any")) {
+                prefix = "any";
+            }
+            imports = imports.add(
+                    Imports.getImportDeclarationNode(
+                            "ballerina",
+                            "grpc",
+                            new String[]{"types", sImport},
+                            "s" + prefix
+                    )
+            );
+        }
+        return imports;
     }
 }

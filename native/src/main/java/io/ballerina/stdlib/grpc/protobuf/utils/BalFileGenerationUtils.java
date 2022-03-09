@@ -28,21 +28,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-
-import static io.ballerina.stdlib.grpc.protobuf.cmd.GrpcCmd.unusedImports;
 
 /**
  * Util function used when generating bal file from .proto definition.
  */
 public class BalFileGenerationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(BalFileGenerationUtils.class);
-    private static final PrintStream outStream = System.out;
 
     private BalFileGenerationUtils() {
     }
@@ -53,8 +47,8 @@ public class BalFileGenerationUtils {
      * @param command protoc executor command.
      * @throws CodeGeneratorException if an error occurred when executing protoc command.
      */
-    public static void generateDescriptor(String command, String protoFilePath) throws CodeGeneratorException {
-        List<String> unusedImportList = new ArrayList<>();
+    public static BufferedReader generateDescriptor(String command) throws CodeGeneratorException {
+        BufferedReader reader;
         boolean isWindows = System.getProperty("os.name")
                 .toLowerCase(Locale.ENGLISH).startsWith("windows");
         ProcessBuilder builder = new ProcessBuilder();
@@ -67,25 +61,7 @@ public class BalFileGenerationUtils {
         Process process;
         try {
             process = builder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String line;
-            while (true) {
-                try {
-                    if ((line = reader.readLine()) == null) {
-                        break;
-                    }
-                } catch (IOException e) {
-                    throw new CodeGeneratorException("Failed to read protoc command output. " + e.getMessage(), e);
-                }
-                if (line.contains("warning: Import ") && line.contains(" but not used.")) {
-                    unusedImportList.add((line.split("warning: Import ")[1]).split(" but not used.")[0]);
-                    outStream.println(line);
-                }
-            }
-            if (unusedImportList.size() > 0) {
-                File file = new File(protoFilePath);
-                unusedImports.put(file.getName(), unusedImportList);
-            }
+            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         } catch (IOException e) {
             throw new CodeGeneratorException("Error in executing protoc command '" + command + "'. " + e.getMessage(),
                     e);
@@ -109,6 +85,7 @@ public class BalFileGenerationUtils {
                 throw new CodeGeneratorException("Invalid command syntax. " + e.getMessage(), e);
             }
         }
+        return reader;
     }
     
     /**
