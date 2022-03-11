@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -47,7 +48,8 @@ public class BalFileGenerationUtils {
      * @param command protoc executor command.
      * @throws CodeGeneratorException if an error occurred when executing protoc command.
      */
-    public static BufferedReader generateDescriptor(String command) throws CodeGeneratorException {
+    public static ArrayList<String> generateDescriptor(String command) throws CodeGeneratorException {
+        ArrayList<String> output = new ArrayList<>();
         BufferedReader reader;
         boolean isWindows = System.getProperty("os.name")
                 .toLowerCase(Locale.ENGLISH).startsWith("windows");
@@ -61,10 +63,26 @@ public class BalFileGenerationUtils {
         Process process;
         try {
             process = builder.start();
-            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         } catch (IOException e) {
             throw new CodeGeneratorException("Error in executing protoc command '" + command + "'. " + e.getMessage(),
                     e);
+        }
+        try {
+            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String line;
+            while (true) {
+                try {
+                    if ((line = reader.readLine()) == null) {
+                        break;
+                    }
+                    output.add(line);
+                } catch (IOException e) {
+                    throw new CodeGeneratorException("Failed to read protoc command output. " + e.getMessage(), e);
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            throw new CodeGeneratorException("Failed to generate protoc command output. " + e.getMessage(), e);
         }
         try {
             process.waitFor();
@@ -85,7 +103,7 @@ public class BalFileGenerationUtils {
                 throw new CodeGeneratorException("Invalid command syntax. " + e.getMessage(), e);
             }
         }
-        return reader;
+        return output;
     }
     
     /**

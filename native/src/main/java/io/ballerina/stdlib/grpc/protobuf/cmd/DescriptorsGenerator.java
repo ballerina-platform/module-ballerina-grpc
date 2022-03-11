@@ -26,7 +26,6 @@ import io.ballerina.stdlib.grpc.protobuf.utils.ProtocCommandBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -95,7 +94,7 @@ class DescriptorsGenerator {
                 String command = new ProtocCommandBuilder(exePath, BalFileGenerationUtils.escapeSpaces(protoPath),
                         BalFileGenerationUtils.escapeSpaces(protoFolderPath),
                         BalFileGenerationUtils.escapeSpaces(dependentDescFile.getAbsolutePath())).build();
-                BufferedReader protocOutput = BalFileGenerationUtils.generateDescriptor(command);
+                ArrayList<String> protocOutput = BalFileGenerationUtils.generateDescriptor(command);
                 File childFile = new File(tempDir, relativeDescFilepath);
                 try (InputStream childStream = new FileInputStream(childFile)) {
                     DescriptorProtos.FileDescriptorSet childDescSet = DescriptorProtos.FileDescriptorSet
@@ -141,7 +140,7 @@ class DescriptorsGenerator {
                 BalFileGenerationUtils.escapeSpaces(protoFolderPath),
                 BalFileGenerationUtils.escapeSpaces(descriptorPath)
         ).build();
-        BufferedReader protocOutput = BalFileGenerationUtils.generateDescriptor(command);
+        ArrayList<String> protocOutput = BalFileGenerationUtils.generateDescriptor(command);
         File initialFile = new File(descriptorPath);
         try (InputStream targetStream = new FileInputStream(initialFile)) {
             DescriptorProtos.FileDescriptorSet set = DescriptorProtos.FileDescriptorSet.parseFrom(targetStream);
@@ -155,17 +154,9 @@ class DescriptorsGenerator {
         return new DescriptorMeta(protoPath, null, getUnusedImports(protocOutput));
     }
 
-    private static List<String> getUnusedImports(BufferedReader reader) throws CodeGeneratorException {
+    private static List<String> getUnusedImports(ArrayList<String> protocOutput) {
         List<String> unusedImportList = new ArrayList<>();
-        String line;
-        while (true) {
-            try {
-                if ((line = reader.readLine()) == null) {
-                    break;
-                }
-            } catch (IOException e) {
-                throw new CodeGeneratorException("Failed to read protoc command output. " + e.getMessage(), e);
-            }
+        for (String line : protocOutput) {
             if (line.contains("warning: Import ") && line.contains(" but not used.")) {
                 unusedImportList.add((line.split("warning: Import ")[1]).split(" but not used.")[0]);
                 outStream.println(line);
