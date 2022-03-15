@@ -43,10 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -174,7 +171,6 @@ public class GrpcCmd implements BLauncherCmd {
     }
 
     private void generateBalFile(String protoPath) {
-        Map<String, List<String>> unusedImports = new HashMap<>();
         if (!Files.isReadable(Paths.get(protoPath))) {
             String errorMessage = "Provided service proto file is not readable. Please input valid proto file " +
                     "location.";
@@ -252,9 +248,6 @@ public class GrpcCmd implements BLauncherCmd {
                             descFilePath.toAbsolutePath().toString()
                     );
                 }
-                if (root.getUnusedImports().size() > 0) {
-                    unusedImports.put(root.getProtoName(), root.getUnusedImports());
-                }
             } catch (CodeGeneratorException e) {
                 String errorMessage = "An error occurred when generating the proto descriptor. " + e.getMessage();
                 LOG.error("An error occurred when generating the proto descriptor.", e);
@@ -282,7 +275,6 @@ public class GrpcCmd implements BLauncherCmd {
                             descFilePath.toAbsolutePath().toString()
                     );
                 }
-                unusedImports.putAll(getUnusedImportsInDependentDescriptorSet(dependant));
             } catch (CodeGeneratorException e) {
                 String errorMessage =
                         "An error occurred when generating the dependent proto descriptor. " + e.getMessage();
@@ -302,13 +294,12 @@ public class GrpcCmd implements BLauncherCmd {
         BallerinaFileBuilder ballerinaFileBuilder;
         // If user provides output directory, generate service stub inside output directory.
         if (balOutPath == null) {
-            ballerinaFileBuilder = new BallerinaFileBuilder(root.getDescriptor(), getDependentDescriptorSet(dependant));
+            ballerinaFileBuilder = new BallerinaFileBuilder(root, dependant);
         } else {
-            ballerinaFileBuilder = new BallerinaFileBuilder(root.getDescriptor(), getDependentDescriptorSet(dependant),
-                    balOutPath);
+            ballerinaFileBuilder = new BallerinaFileBuilder(root, dependant, balOutPath);
         }
         try {
-            ballerinaFileBuilder.build(this.mode, unusedImports);
+            ballerinaFileBuilder.build(this.mode);
         } catch (CodeBuilderException e) {
             LOG.error("Error generating the Ballerina file.", e);
             msg.append("Error generating the Ballerina file.").append(e.getMessage())
@@ -470,23 +461,5 @@ public class GrpcCmd implements BLauncherCmd {
 
     public void setImportPath(String importPath) {
         this.importPath = importPath;
-    }
-
-    private Set<byte[]> getDependentDescriptorSet(Set<DescriptorMeta> descriptorMetaSet) {
-        Set<byte[]> dependentDescriptorSet = new HashSet<>();
-        for (DescriptorMeta descriptorMeta : descriptorMetaSet) {
-            dependentDescriptorSet.add(descriptorMeta.getDescriptor());
-        }
-        return dependentDescriptorSet;
-    }
-
-    private Map<String, List<String>> getUnusedImportsInDependentDescriptorSet(Set<DescriptorMeta> descriptorMetaSet) {
-        Map<String, List<String>> unusedImports = new HashMap<>();
-        for (DescriptorMeta descriptorMeta : descriptorMetaSet) {
-            if (descriptorMeta.getUnusedImports().size() > 0) {
-                unusedImports.put(descriptorMeta.getProtoName(), descriptorMeta.getUnusedImports());
-            }
-        }
-        return unusedImports;
     }
 }

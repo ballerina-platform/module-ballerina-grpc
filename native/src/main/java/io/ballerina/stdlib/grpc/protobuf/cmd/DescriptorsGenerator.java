@@ -151,7 +151,7 @@ class DescriptorsGenerator {
             throw new CodeGeneratorException("Error reading generated descriptor file '"
                     + descriptorPath + "'. " + e.getMessage(), e);
         }
-        return new DescriptorMeta(protoPath, null, getUnusedImports(protocOutput));
+        return new DescriptorMeta(protoPath, new byte[0], getUnusedImports(protocOutput));
     }
 
     private static List<String> getUnusedImports(ArrayList<String> protocOutput) {

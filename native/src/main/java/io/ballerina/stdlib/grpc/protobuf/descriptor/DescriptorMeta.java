@@ -35,14 +35,29 @@ public class DescriptorMeta {
         this.protoPath = protoPath;
     }
 
+    /**
+     * Get the descriptor.
+     *
+     * @return the descriptor byte[]
+     */
     public byte[] getDescriptor() {
         return descriptor;
     }
 
+    /**
+     * Get the unused imports of the descriptor.
+     *
+     * @return the unused imports as a list of strings
+     */
     public List<String> getUnusedImports() {
         return unusedImports;
     }
 
+    /**
+     * Get the proto file name related to the descriptor.
+     *
+     * @return the proto file name
+     */
     public String getProtoName() {
         File file = new File(protoPath);
         return file.getName();

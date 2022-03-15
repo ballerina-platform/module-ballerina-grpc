@@ -46,11 +46,11 @@ public class BalFileGenerationUtils {
      * Execute command and generate file descriptor.
      *
      * @param command protoc executor command.
+     * @return the output of the protoc command as a string array.
      * @throws CodeGeneratorException if an error occurred when executing protoc command.
      */
     public static ArrayList<String> generateDescriptor(String command) throws CodeGeneratorException {
         ArrayList<String> output = new ArrayList<>();
-        BufferedReader reader;
         boolean isWindows = System.getProperty("os.name")
                 .toLowerCase(Locale.ENGLISH).startsWith("windows");
         ProcessBuilder builder = new ProcessBuilder();
@@ -67,8 +67,7 @@ public class BalFileGenerationUtils {
             throw new CodeGeneratorException("Error in executing protoc command '" + command + "'. " + e.getMessage(),
                     e);
         }
-        try {
-            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
             String line;
             while (true) {
                 try {
@@ -80,7 +79,6 @@ public class BalFileGenerationUtils {
                     throw new CodeGeneratorException("Failed to read protoc command output. " + e.getMessage(), e);
                 }
             }
-            reader.close();
         } catch (IOException e) {
             throw new CodeGeneratorException("Failed to generate protoc command output. " + e.getMessage(), e);
         }
