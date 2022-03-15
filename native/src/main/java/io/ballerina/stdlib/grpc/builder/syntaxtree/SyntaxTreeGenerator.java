@@ -52,10 +52,10 @@ import io.ballerina.tools.text.TextDocuments;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
@@ -109,9 +109,9 @@ public class SyntaxTreeGenerator {
     }
 
     public static SyntaxTree generateSyntaxTree(StubFile stubFile, boolean isRoot) {
-        Set<String> ballerinaImports = new LinkedHashSet<>();
-        Set<String> protobufImports = new LinkedHashSet<>();
-        Set<String> grpcStreamImports = new LinkedHashSet<>();
+        Set<String> ballerinaImports = new TreeSet<>();
+        Set<String> protobufImports = new TreeSet<>();
+        Set<String> grpcStreamImports = new TreeSet<>();
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
 
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
