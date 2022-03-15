@@ -66,7 +66,7 @@ public class BallerinaFileBuilder {
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
     public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
     public static Map<String, Class> streamClassMap;
-    public static Map<String, List<String>> unusedImports;
+    private Map<String, List<String>> unusedImports;
 
     public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
         setRootDescriptor(rootDescriptor);
@@ -82,7 +82,7 @@ public class BallerinaFileBuilder {
     }
 
     public void build(String mode, Map<String, List<String>> unusedImports) throws CodeBuilderException {
-        BallerinaFileBuilder.unusedImports = unusedImports;
+        this.unusedImports = unusedImports;
         // compute dependent descriptor source code.
         for (byte[] descriptorData : dependentDescriptors) {
             computeSourceContent(descriptorData, null, false);
