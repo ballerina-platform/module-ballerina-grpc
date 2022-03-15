@@ -1197,7 +1197,7 @@ public class Message {
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_MESSAGE_VALUE: {
                     if (bBMap != null && bBMap.containsKey(bFieldName)) {
                         Object bValue = bBMap.get(bFieldName);
-                         if (fieldDescriptor.isRepeated() && bValue instanceof BArray) {
+                        if (fieldDescriptor.isRepeated() && bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
                                 Object value = valueArray.getRefValue(i);
