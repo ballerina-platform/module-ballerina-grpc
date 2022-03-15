@@ -1,7 +1,7 @@
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/protobuf.types.wrappers;
 import ballerina/protobuf.types.timestamp;
+import ballerina/protobuf.types.wrappers;
 import ballerina/grpc.types.timestamp as stimestamp;
 import ballerina/grpc.types.wrappers as swrappers;
 

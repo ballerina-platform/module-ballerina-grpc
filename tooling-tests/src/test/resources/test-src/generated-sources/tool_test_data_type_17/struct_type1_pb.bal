@@ -1,6 +1,6 @@
 import ballerina/grpc;
-import ballerina/protobuf.types.wrappers;
 import ballerina/protobuf.types.struct;
+import ballerina/protobuf.types.wrappers;
 import ballerina/grpc.types.struct as sstruct;
 
 public isolated client class StructHandlerClient {
