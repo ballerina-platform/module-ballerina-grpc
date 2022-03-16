@@ -32,6 +32,7 @@ import io.ballerina.stdlib.grpc.builder.stub.StubFile;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.SyntaxTreeGenerator;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Class;
 import io.ballerina.stdlib.grpc.exception.CodeBuilderException;
+import io.ballerina.stdlib.grpc.protobuf.descriptor.DescriptorMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.ballerinalang.formatter.core.Formatter;
 import org.ballerinalang.formatter.core.FormatterException;
@@ -45,8 +46,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,8 +58,8 @@ import java.util.stream.Collectors;
  * Class is responsible of generating the ballerina stub which is mapping proto definition.
  */
 public class BallerinaFileBuilder {
-    private byte[] rootDescriptor;
-    private final Set<byte[]> dependentDescriptors;
+    private final DescriptorMeta rootDescriptor;
+    private final Set<DescriptorMeta> dependentDescriptors;
     private String balOutPath;
 
     // Proto file extension
@@ -67,14 +68,15 @@ public class BallerinaFileBuilder {
     public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
     public static Map<String, Class> streamClassMap;
 
-    public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors) {
-        setRootDescriptor(rootDescriptor);
+    public BallerinaFileBuilder(DescriptorMeta rootDescriptor, Set<DescriptorMeta> dependentDescriptors) {
+        this.rootDescriptor = rootDescriptor;
         this.dependentDescriptors = dependentDescriptors;
         streamClassMap = new HashMap<>();
     }
 
-    public BallerinaFileBuilder(byte[] rootDescriptor, Set<byte[]> dependentDescriptors, String balOutPath) {
-        setRootDescriptor(rootDescriptor);
+    public BallerinaFileBuilder(DescriptorMeta rootDescriptor, Set<DescriptorMeta> dependentDescriptors,
+                                String balOutPath) {
+        this.rootDescriptor = rootDescriptor;
         this.dependentDescriptors = dependentDescriptors;
         this.balOutPath = balOutPath;
         streamClassMap = new HashMap<>();
@@ -82,14 +84,20 @@ public class BallerinaFileBuilder {
 
     public void build(String mode) throws CodeBuilderException {
         // compute dependent descriptor source code.
-        for (byte[] descriptorData : dependentDescriptors) {
+        for (byte[] descriptorData : getDependentDescriptorSet(dependentDescriptors)) {
             computeSourceContent(descriptorData, null, false);
         }
         // compute root descriptor source code.
-        computeSourceContent(rootDescriptor, mode, true);
+        computeSourceContent(rootDescriptor.getDescriptor(), mode, true);
     }
 
     private void computeSourceContent(byte[] descriptor, String mode, boolean isRoot) throws CodeBuilderException {
+        Map<String, List<String>> unusedImports = new HashMap<>();
+        if (rootDescriptor.getUnusedImports().size() > 0) {
+            unusedImports.put(rootDescriptor.getProtoName(), rootDescriptor.getUnusedImports());
+        }
+        unusedImports.putAll(getUnusedImportsInDependentDescriptorSet(dependentDescriptors));
+
         try (InputStream targetStream = new ByteArrayInputStream(descriptor)) {
             // define extension register and register custom option
             ExtensionRegistry extensionRegistry = ExtensionRegistry.newInstance();
@@ -124,14 +132,25 @@ public class BallerinaFileBuilder {
             String filePackage = fileDescriptorSet.getPackage();
             StubFile stubFileObject = new StubFile(filename);
 
-            if (descriptor == rootDescriptor || serviceDescriptorList.size() > 0) {
+            // Add imports
+            for (String protobufImport : fileDescriptorSet.getDependencyList()) {
+                if (unusedImports.containsKey(fileDescriptorSet.getName())) {
+                    if (!unusedImports.get(fileDescriptorSet.getName()).contains(protobufImport)) {
+                        stubFileObject.addImport(protobufImport);
+                    }
+                } else {
+                    stubFileObject.addImport(protobufImport);
+                }
+            }
+
+            if (descriptor == rootDescriptor.getDescriptor() || serviceDescriptorList.size() > 0) {
                 // Add root descriptor.
                 Descriptor rootDesc = Descriptor.newBuilder(descriptor).build();
                 stubRootDescriptor = rootDesc.getData();
                 descriptors.add(rootDesc);
 
                 // Add dependent descriptors.
-                for (byte[] descriptorData : dependentDescriptors) {
+                for (byte[] descriptorData : getDependentDescriptorSet(dependentDescriptors)) {
                     Descriptor dependentDescriptor = Descriptor.newBuilder(descriptorData).build();
                     descriptors.add(dependentDescriptor);
                 }
@@ -156,7 +175,6 @@ public class BallerinaFileBuilder {
                                 BalGenConstants.FILE_SEPARATOR) : BalGenConstants.DEFAULT_PACKAGE;
             }
 
-            boolean hasEmptyMessage = false;
             // update message types in stub file object
             stubFileObject.setMessageMap(messageList.stream().collect(Collectors.toMap(Message::getMessageName,
                     message -> message)));
@@ -260,8 +278,21 @@ public class BallerinaFileBuilder {
         }
     }
 
-    private void setRootDescriptor(byte[] rootDescriptor) {
-        this.rootDescriptor = new byte[rootDescriptor.length];
-        this.rootDescriptor = Arrays.copyOf(rootDescriptor, rootDescriptor.length);
+    private Set<byte[]> getDependentDescriptorSet(Set<DescriptorMeta> descriptorMetaSet) {
+        Set<byte[]> dependentDescriptorSet = new HashSet<>();
+        for (DescriptorMeta descriptorMeta : descriptorMetaSet) {
+            dependentDescriptorSet.add(descriptorMeta.getDescriptor());
+        }
+        return dependentDescriptorSet;
+    }
+
+    private Map<String, List<String>> getUnusedImportsInDependentDescriptorSet(Set<DescriptorMeta> descriptorMetaSet) {
+        Map<String, List<String>> unusedImports = new HashMap<>();
+        for (DescriptorMeta descriptorMeta : descriptorMetaSet) {
+            if (descriptorMeta.getUnusedImports().size() > 0) {
+                unusedImports.put(descriptorMeta.getProtoName(), descriptorMeta.getUnusedImports());
+            }
+        }
+        return unusedImports;
     }
 }

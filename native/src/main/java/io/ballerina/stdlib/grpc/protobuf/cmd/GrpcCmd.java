@@ -22,6 +22,7 @@ import io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder;
 import io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants;
 import io.ballerina.stdlib.grpc.exception.CodeBuilderException;
 import io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants;
+import io.ballerina.stdlib.grpc.protobuf.descriptor.DescriptorMeta;
 import io.ballerina.stdlib.grpc.protobuf.exception.CodeGeneratorException;
 import io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils;
 import org.slf4j.Logger;
@@ -208,8 +209,8 @@ public class GrpcCmd implements BLauncherCmd {
         createProtoPackageDirectories();
         StringBuilder msg = new StringBuilder();
         LOG.debug("Initializing the ballerina code generation.");
-        byte[] root;
-        Set<byte[]> dependant;
+        DescriptorMeta root;
+        Set<DescriptorMeta> dependant;
         try {
             ClassLoader classLoader = this.getClass().getClassLoader();
             try {
@@ -253,7 +254,7 @@ public class GrpcCmd implements BLauncherCmd {
                 outStream.println(errorMessage);
                 return;
             }
-            if (root.length == 0) {
+            if (root.getDescriptor().length == 0) {
                 String errorMsg = "An error occurred when generating the proto descriptor.";
                 LOG.error(errorMsg);
                 outStream.println(errorMsg);

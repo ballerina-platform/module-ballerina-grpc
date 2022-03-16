@@ -20,8 +20,6 @@ package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.CheckExpressionNode;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
-import io.ballerina.stdlib.grpc.builder.stub.Field;
-import io.ballerina.stdlib.grpc.builder.stub.Message;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
 import io.ballerina.stdlib.grpc.builder.stub.StubFile;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
@@ -30,6 +28,7 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Map;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaration;
 
 import java.util.List;
+import java.util.Set;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.UNARY;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
@@ -235,18 +234,29 @@ public class CommonUtils {
         return false;
     }
 
-    public static boolean checkForImportsInMessageMap(StubFile stubFile, String type) {
-        for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
-            for (Field field: message.getValue().getFieldList()) {
-                if (field.getFieldType().equals(type)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public static boolean isType(String methodType, String type) {
         return methodType != null && methodType.equals(type);
+    }
+
+    public static void addImports(StubFile stubFile, Set<String> ballerinaImports, Set<String> protobufImports) {
+        for (String protobufImport : stubFile.getImportList()) {
+            switch (protobufImport) {
+                case "google/protobuf/wrappers.proto" :
+                    protobufImports.add("wrappers");
+                    break;
+                case "google/protobuf/timestamp.proto" :
+                case "google/protobuf/duration.proto" :
+                    ballerinaImports.add("time");
+                    break;
+                case "google/protobuf/any.proto" :
+                    protobufImports.add("'any");
+                    break;
+                case "google/protobuf/empty.proto" :
+                    protobufImports.add("empty");
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

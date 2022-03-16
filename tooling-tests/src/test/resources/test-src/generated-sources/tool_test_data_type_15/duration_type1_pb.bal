@@ -1,7 +1,7 @@
 import ballerina/grpc;
 import ballerina/time;
-import ballerina/protobuf.types.wrappers;
 import ballerina/protobuf.types.duration;
+import ballerina/protobuf.types.wrappers;
 import ballerina/grpc.types.duration as sduration;
 
 public isolated client class DurationHandlerClient {

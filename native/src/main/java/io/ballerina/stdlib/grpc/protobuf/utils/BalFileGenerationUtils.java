@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -45,9 +46,11 @@ public class BalFileGenerationUtils {
      * Execute command and generate file descriptor.
      *
      * @param command protoc executor command.
+     * @return the output of the protoc command as a string array.
      * @throws CodeGeneratorException if an error occurred when executing protoc command.
      */
-    public static void generateDescriptor(String command) throws CodeGeneratorException {
+    public static ArrayList<String> generateDescriptor(String command) throws CodeGeneratorException {
+        ArrayList<String> output = new ArrayList<>();
         boolean isWindows = System.getProperty("os.name")
                 .toLowerCase(Locale.ENGLISH).startsWith("windows");
         ProcessBuilder builder = new ProcessBuilder();
@@ -63,6 +66,21 @@ public class BalFileGenerationUtils {
         } catch (IOException e) {
             throw new CodeGeneratorException("Error in executing protoc command '" + command + "'. " + e.getMessage(),
                     e);
+        }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+            String line;
+            while (true) {
+                try {
+                    if ((line = reader.readLine()) == null) {
+                        break;
+                    }
+                    output.add(line);
+                } catch (IOException e) {
+                    throw new CodeGeneratorException("Failed to read protoc command output. " + e.getMessage(), e);
+                }
+            }
+        } catch (IOException e) {
+            throw new CodeGeneratorException("Failed to generate protoc command output. " + e.getMessage(), e);
         }
         try {
             process.waitFor();
@@ -83,6 +101,7 @@ public class BalFileGenerationUtils {
                 throw new CodeGeneratorException("Invalid command syntax. " + e.getMessage(), e);
             }
         }
+        return output;
     }
     
     /**
@@ -127,20 +146,20 @@ public class BalFileGenerationUtils {
                             delete(fileDelete);
                         }
                         if (fileDelete.delete()) {
-                            LOG.debug("Successfully deleted file " + file.toString());
+                            LOG.debug("Successfully deleted file " + file);
                         }
                     }
                 }
             }
             if (file.delete()) {
-                LOG.debug("Successfully deleted file " + file.toString());
+                LOG.debug("Successfully deleted file " + file);
             }
             if ((file.getParentFile() != null) && (file.getParentFile().delete())) {
-                LOG.debug("Successfully deleted parent file " + file.toString());
+                LOG.debug("Successfully deleted parent file " + file);
             }
         } else if (file != null) {
             if (file.delete()) {
-                LOG.debug("Successfully deleted parent file " + file.toString());
+                LOG.debug("Successfully deleted parent file " + file);
             }
         }
     }
