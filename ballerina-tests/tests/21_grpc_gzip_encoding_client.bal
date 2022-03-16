@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testGzipEncoding() returns grpc:Error? {
     OrderManagementClient OrderMgtBlockingEp = check new("http://localhost:9111");
 

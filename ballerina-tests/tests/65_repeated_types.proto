@@ -1,0 +1,78 @@
+// Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+//
+// WSO2 Inc. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+service RepeatedTypesService {
+  rpc anyCall(AnyArrayRequest) returns (AnyArrayResponse) {}
+  rpc structCall(StructArrayRequest) returns (StructArrayResponse) {}
+  rpc timestampCall(TimestampArrayRequest) returns (TimestampArrayResponse) {}
+  rpc durationCall(DurationArrayRequest) returns (DurationArrayResponse) {}
+}
+
+message AnyArrayRequest {
+    string name = 1;
+    repeated google.protobuf.Any details = 2;
+};
+
+message AnyArrayResponse {
+   string name = 1;
+   int32 code = 2;
+   repeated google.protobuf.Any details = 3;
+};
+
+message AnyTypeMsg {
+  string name = 1;
+  int32 code = 2;
+};
+
+message StructArrayRequest {
+    string name = 1;
+    repeated google.protobuf.Struct details = 2;
+};
+
+message StructArrayResponse {
+   string name = 1;
+   int32 code = 2;
+   repeated google.protobuf.Struct details = 3;
+};
+
+message TimestampArrayRequest {
+    string name = 1;
+    repeated google.protobuf.Timestamp details = 2;
+};
+
+message TimestampArrayResponse {
+   string name = 1;
+   int32 code = 2;
+   repeated google.protobuf.Timestamp details = 3;
+};
+
+message DurationArrayRequest {
+    string name = 1;
+    repeated google.protobuf.Duration details = 2;
+};
+
+message DurationArrayResponse {
+   string name = 1;
+   int32 code = 2;
+   repeated google.protobuf.Duration details = 3;
+};

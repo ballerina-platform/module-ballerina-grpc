@@ -49,7 +49,7 @@ public class MessageParser {
     }
 
     MessageParser(Descriptors.Descriptor descriptor, Type bType) {
-        this.messageName = descriptor.getName();
+        this.messageName = descriptor.getFullName();
         this.bType = bType;
         this.fieldDescriptors = computeFieldTagValues(descriptor);
     }
