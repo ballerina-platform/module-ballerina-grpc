@@ -17,38 +17,38 @@ The conforming implementation of the specification is released and included in t
 
 # Contents
 1. [Overview](#1-overview)
-2. [gRPC Command Line Interface (CLI)](#1-grpc-command-line-interface-cli)
-3. [Protocol Buffers to Ballerina Data Mapping](#3-protocol-buffers-to-ballerina-data-mapping)
-4. [gRPC Communication](#4-grpc-communication)
+2. [gRPC command line interface (CLI)](#1-grpc-command-line-interface-cli)
+3. [Protocol buffers to Ballerina data mapping](#3-protocol-buffers-to-ballerina-data-mapping)
+4. [gRPC communication](#4-grpc-communication)
    * 4.1. [Simple RPC](#41-simple-rpc)
-   * 4.2. [Server Streaming RPC](#42-server-streaming-rpc)
-   * 4.3. [Client Streaming RPC](#43-client-streaming-rpc)
-   * 4.4. [Bidirectional Streaming RPC](#44-bidirectional-streaming-rpc)
-5. [gRPC Security](#51-authentication-and-authorization)
-   * 5.1. [Authentication and Authorization](#51-authentication-and-authorization)
-      * 5.1.1. [Declarative Approach](#511-declarative-approach)
-         * 5.1.1.1. [Service - Basic Auth - File User Store](#5111-service---basic-auth---file-user-store)
-         * 5.1.1.2. [Service - Basic Auth - LDAP User Store](#5112-service---basic-auth---ldap-user-store)
-         * 5.1.1.3. [Service - JWT Auth](#5113-service---jwt-auth)
+   * 4.2. [Server streaming RPC](#42-server-streaming-rpc)
+   * 4.3. [Client streaming RPC](#43-client-streaming-rpc)
+   * 4.4. [Bidirectional streaming RPC](#44-bidirectional-streaming-rpc)
+5. [gRPC security](#51-authentication-and-authorization)
+   * 5.1. [Authentication and authorization](#51-authentication-and-authorization)
+      * 5.1.1. [Declarative approach](#511-declarative-approach)
+         * 5.1.1.1. [Service - basic auth - file user store](#5111-service---basic-auth---file-user-store)
+         * 5.1.1.2. [Service - basic auth - LDAP user store](#5112-service---basic-auth---ldap-user-store)
+         * 5.1.1.3. [Service - JWT auth](#5113-service---jwt-auth)
          * 5.1.1.4. [Service - OAuth2](#5114-service---oauth2)
-         * 5.1.1.5. [Client - Basic Auth](#5115-client---basic-auth)
-         * 5.1.1.6. [Client - Bearer Token Auth](#5116-client---bearer-token-auth)
-         * 5.1.1.7. [Client - Self Signed JWT Auth](#5117-client---self-signed-jwt-auth)
+         * 5.1.1.5. [Client - basic auth](#5115-client---basic-auth)
+         * 5.1.1.6. [Client - bearer token auth](#5116-client---bearer-token-auth)
+         * 5.1.1.7. [Client - self-signed JWT auth](#5117-client---self-signed-jwt-auth)
          * 5.1.1.8. [Client - OAuth2](#5118-client---oauth2)
       * 5.1.2 [Imperative Approach](#512-imperative-approach)
-         * 5.1.2.1. [Service - Basic Auth - File User Store](#5121-service---basic-auth---file-user-store)
-         * 5.1.2.2. [Service - Basic Auth - LDAP User Store](#5122-service---basic-auth---ldap-user-store)
-         * 5.1.2.3. [Service - JWT Auth](#5123-service---jwt-auth)
+         * 5.1.2.1. [Service - basic auth - file user store](#5121-service---basic-auth---file-user-store)
+         * 5.1.2.2. [Service - basic auth - LDAP user store](#5122-service---basic-auth---ldap-user-store)
+         * 5.1.2.3. [Service - JWT auth](#5123-service---jwt-auth)
          * 5.1.2.4. [Service - OAuth2](#5124-service---oauth2)
-         * 5.1.2.5. [Client - Basic Auth](#5125-client---basic-auth)
-         * 5.1.2.6. [Client - Bearer Token Auth](#5126-client---bearer-token-auth)
-         * 5.1.2.7. [Client - Self Signed JWT Auth](#5127-client---self-signed-jwt-auth)
+         * 5.1.2.5. [Client - basic auth](#5125-client---basic-auth)
+         * 5.1.2.6. [Client - bearer token auth](#5126-client---bearer-token-auth)
+         * 5.1.2.7. [Client - self-signed JWT auth](#5127-client---self-signed-jwt-auth)
          * 5.1.2.8. [Client - OAuth2](#5128-client---oauth2)
-6. [gRPC Utility Functions](#6-grpc-utility-functions)
-   * 6.1. [gRPC Deadline](#61-grpc-deadline)
-   * 6.2. [gRPC Compression](#62-grpc-compression)
-   * 6.3. [gRPC Access and Trace Logs](#63-grpc-access-and-trace-logs)
-   * 6.4. [gRPC Retry](#64-grpc-retry)
+6. [gRPC utility functions](#6-grpc-utility-functions)
+   * 6.1. [gRPC deadline](#61-grpc-deadline)
+   * 6.2. [gRPC compression](#62-grpc-compression)
+   * 6.3. [gRPC access and trace logs](#63-grpc-access-and-trace-logs)
+   * 6.4. [gRPC retry](#64-grpc-retry)
 
 
 # 1. Overview
@@ -59,7 +59,7 @@ Ballerina gRPC standard library has five primary aspects in handling values.
 4. gRPC Security
 5. gRPC utility functions
 
-# 2. gRPC Command Line Interface (CLI)
+# 2. gRPC command line interface (CLI)
 
 Ballerina language has a command-line interface that manages the lifecycle of a Ballerina program (such as build, test, and run). In addition, Ballerina CLI contains all the gRPC related stub and service skeleton generation capabilities. The gRPC command in Ballerina CLI is as follows.
 
@@ -69,7 +69,7 @@ bal grpc --input <proto-file-path> --output <output-directory> --mode client|ser
 
 The `--input` parameter is the only mandatory parameter for the Ballerina gRPC command, and it specifies the path of the protobuf file of a gRPC service. The optional `--output` parameter indicates the path that output will be written to. If the output path is not specified, the output will be written to a directory corresponding to the package in the Protocol Buffers definition. If the package is not specified, the output will be written to a `temp` directory in the current location. The optional `--mode` indicate what type of output files are needed. For example, if mode specifies as service, the gRPC command will generate the relevant stub file along with a service skeleton. If the mode is client, the gRPC command will generate a sample client code along with the stub. If nothing is specified, only the stub file is generated. The optional `--proto-path`parameter states the path to a directory, in which to look for .proto files when resolving import directives.
 
-# 3. Protocol Buffers to Ballerina Data Mapping
+# 3. Protocol buffers to Ballerina data mapping
 
 The following table illustrates the data mapping of protocol buffers data types to relevant Ballerina types.
 
@@ -107,7 +107,7 @@ public isolated function pack(ValueType message) returns Any;
 public isolated function unpack(Any anyValue, ValueTypeDesc targetTypeOfAny = <>) returns targetTypeOfAny|Error;
 ```
 
-# 4. gRPC Communication
+# 4. gRPC communication
 
 gRPC has 4 types of RPCs (Remote Procedure Calls), and Ballerina supports all of them.
 1. Simple
@@ -133,7 +133,7 @@ The Ballerina service implementation of a gRPC can be done in two ways.
 
 Directly returning the response is the most convenient implementation. However, for asynchronous RPC calls, directly returning is not suitable, and for such use cases, using a caller is the ideal approach. In addition, each RPC call (simple, server streaming, client streaming, and bidirectional streaming) can be implemented in both ways.
 
-**RPC Using Direct Return**
+**RPC using direct return**
 
 Ballerina CLI generates the relevant service skeleton, and the implementation of the simple RPC call using direct return is as follows.
 
@@ -153,7 +153,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 
 Here, the RPC implementation creates a featured record and directly return it from the remote method.
 
-**RPC Using a Caller**
+**RPC using a caller**
 
 The Ballerina implementation of the same simple RPC using a caller is as follows.
 
@@ -173,7 +173,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 }
 ```
 
-**RPC Invocation**
+**RPC invocation**
 
 For each RPC in the protobuf definition, the generated Ballerina stub contains a client. That generated client interacts with the actual RPC service during an RPC call.
 
@@ -185,7 +185,7 @@ public function main() returns error? {
 ```
 
 
-## 4.2. Server Streaming RPC
+## 4.2. Server streaming RPC
 The RPC service definition of a server streaming call is as follows.
 ```proto
 service RouteGuide {
@@ -193,7 +193,7 @@ service RouteGuide {
 }
 ```
 
-**RPC Using Direct Return**
+**RPC using direct return**
 
 The Ballerina implementation of the server streaming RPC using a direct return is as follows.
 
@@ -213,7 +213,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 }
 ```
 
-**RPC Using a Caller**
+**RPC using a caller**
 
 The Ballerina implementation of the server streaming RPC using a caller return is as follows.
 
@@ -231,7 +231,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 }
 ```
 
-**RPC Invocation**
+**RPC invocation**
 
 For each RPC in the protobuf definition, the generated Ballerina stub contains a client which interacts with the actual RPC service. In Ballerina gRPC, invoking a server streaming returns a Ballerina streaming object that can iterate through using streaming operations provided by the language.
 
@@ -249,7 +249,7 @@ public function main() returns error? {
 }
 ```
 
-## 4.3. Client Streaming RPC
+## 4.3. Client streaming RPC
 The RPC service definition of a client streaming call is as follows.
 ```proto
 service RouteGuide {
@@ -257,7 +257,7 @@ service RouteGuide {
 }
 ```
 
-**RPC Using Direct Return**
+**RPC using direct return**
 
 The Ballerina implementation of the client streaming RPC using a direct return is as follows.
 
@@ -289,7 +289,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 }
 ```
 
-**RPC Using a Caller**
+**RPC using a caller**
 
 The Ballerina implementation of the client streaming RPC using a caller return is as follows.
 
@@ -321,7 +321,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 }
 ```
 
-**RPC Invocation**
+**RPC invocation**
 
 For each RPC in the protobuf definition, the generated Ballerina stub contains a client. That generated client interacts with the actual RPC service during an RPC call. Unlike the server streaming scenario, the Ballerina client streaming does not use a streaming object to pass data to the client-side because it should allow users to send and receive data asynchronously. Instead, it uses a streaming object to send and receive data from the server.
 ```ballerina
@@ -344,7 +344,7 @@ public function main() returns error? {
 }
 ```
 
-## 4.4. Bidirectional Streaming RPC
+## 4.4. Bidirectional streaming RPC
 The RPC service definition of a bidirectional streaming call is as follows.
 ```proto
 service RouteGuide {
@@ -352,7 +352,7 @@ service RouteGuide {
 }
 ```
 
-**RPC Using Direct Return**
+**RPC using direct return**
 
 The Ballerina implementation of the bidirectional streaming RPC using a direct return is as follows.
 
@@ -376,7 +376,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 
 Note that, here using direct return will not address the exact use case. This example was added, only for completeness.
 
-**RPC Using a Caller**
+**RPC using a caller**
 
 The Ballerina implementation of the bidirectional streaming RPC using a caller return is as follows.
 
@@ -395,7 +395,7 @@ service "RouteGuide" on new grpc:Listener(8980) {
 }
 ```
 
-**RPC Invocation**
+**RPC invocation**
 
 For each RPC in the protobuf definition, the generated Ballerina stub contains a client. That generated client interacts with the actual RPC service during an RPC call. As the client streaming scenario, the bidirectional streaming case also uses a streaming object to send and receive data from servers.
 ```ballerina
@@ -422,21 +422,21 @@ public function main() returns error? {
 }
 ```
 
-# 5. gRPC Security
+# 5. gRPC security
 
-## 5.1 Authentication and Authorization
+## 5.1 Authentication and authorization
 
 There are two ways to enable authentication and authorization in gRPC.
 1. Declarative approach
 2. Imperative approach
 
-### 5.1.1 Declarative Approach
+### 5.1.1 Declarative approach
 
 This is also known as the configuration-driven approach, which is used for simple use cases, where users have to provide a set of configurations and do not need to be worried more about how authentication and authorization works. The user does not have full control over the configuration-driven approach.
 
 The service configurations are used to define the authentication and authorization configurations. Users can configure the configurations needed for different authentication schemes and configurations needed for authorizations of each authentication scheme. Also, the configurations can be provided at the service level. The priority will be given from bottom to top. Then, the auth handler creation and request authentication/authorization is handled internally without user intervention. The requests that succeeded both authentication and/or authorization phases according to the configurations will be passed to the business logic layer.
 
-#### 5.1.1.1 Service - Basic Auth - File User Store
+#### 5.1.1.1 Service - basic auth - file user store
 
 Ballerina gRPC services enable authentication and authorization using a file user store by setting the `grpc:FileUserStoreConfigWithScopes` configurations in the listener.
 
@@ -478,7 +478,7 @@ username="eve"
 password="eve@123"
 ```
 
-#### 5.1.1.2 Service - Basic Auth - LDAP User Store
+#### 5.1.1.2 Service - basic auth - LDAP user store
 
 Ballerina gRPC services enable authentication and authorization using an LDAP user store by setting the `grpc:LdapUserStoreConfigWithScopes` configurations in the listener.
 
@@ -522,7 +522,7 @@ service "HelloWorld" on new grpc:Listener(9090) {
 }
 ```
 
-#### 5.1.1.3 Service - JWT Auth
+#### 5.1.1.3 Service - JWT auth
 
 Ballerina gRPC services enable authentication and authorization using JWTs by setting the `grpc:JwtValidatorConfigWithScopes` configurations in the listener.
 
@@ -587,7 +587,7 @@ service "HelloWorld" on securedEP {
 }
 ```
 
-#### 5.1.1.5 Client - Basic Auth
+#### 5.1.1.5 Client - basic auth
 
 Ballerina gRPC clients enable basic auth with credentials by setting the `grpc:CredentialsConfig` configurations in the client.
 
@@ -600,7 +600,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 );
 ```
 
-#### 5.1.1.6 Client - Bearer Token Auth
+#### 5.1.1.6 Client - bearer token auth
 
 Ballerina gRPC clients enable authentication using bearer tokens by setting the `grpc:BearerTokenConfig` configurations in the client.
 
@@ -612,7 +612,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 );
 ```
 
-#### 5.1.1.7 Client - Self Signed JWT Auth
+#### 5.1.1.7 Client - self-signed JWT auth
 
 Ballerina gRPC clients enable authentication using JWTs by setting the `grpc:JwtIssuerConfig` configurations in the client.
 
@@ -639,7 +639,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 
 Ballerina gRPC clients enable authentication using OAuth2 by setting the `grpc:OAuth2GrantConfig` configurations in the client. OAuth2 can configure in 4 ways:
 
-_i. Client Credentials Grant Type_
+_i. Client credentials grant type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
@@ -657,7 +657,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 );
 ```
 
-_ii. Password Grant Type_
+_ii. Password grant type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
@@ -685,7 +685,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
     }
 );
 ```
-_iii. Refresh Token Grant Type_
+_iii. Refresh token grant type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
@@ -704,7 +704,7 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
 );
 ```
 
-_iv. JWT Bearer Grant Type_
+_iv. JWT bearer grant type_
 
 ```ballerina
 HelloWorldClient securedEP = check new("https://localhost:9090",
@@ -722,11 +722,11 @@ HelloWorldClient securedEP = check new("https://localhost:9090",
     }
 );
 ```
-### 5.1.2 Imperative Approach
+### 5.1.2 Imperative approach
 
 This is also known as the code-driven approach, which is used for advanced use cases, where users need to be worried more about how authentication and authorization work and need to have further customizations. The user has full control of the code-driven approach. The handler creation and authentication/authorization calls are made by the user at the business logic layer.
 
-#### 5.1.2.1 Service - Basic Auth - File User Store
+#### 5.1.2.1 Service - basic auth - file user store
 
 Ballerina gRPC services enable authentication and authorization using a file user store by employing the class `grpc:ListenerFileUserStoreBasicAuthHandler`.
 
@@ -747,7 +747,7 @@ password="123"
 scopes=["write", "update"]
 ```
 
-#### 5.1.2.2 Service - Basic Auth - LDAP User Store
+#### 5.1.2.2 Service - basic auth - LDAP user store
 
 Ballerina gRPC services enable authentication and authorization using an LDAP user store by employing the class `grpc:ListenerLdapUserStoreBasicAuthHandler`.
 
@@ -780,7 +780,7 @@ service "HelloWorld" on new grpc:Listener(9090) {
     }
 }
 ```
-#### 5.1.2.3 Service - JWT Auth
+#### 5.1.2.3 Service - JWT auth
 
 Ballerina gRPC services enable authentication and authorization using JWTs by employing the class `grpc:ListenerJwtAuthHandler`.
 
@@ -831,7 +831,7 @@ service "HelloWorld" on new grpc:Listener(9090) {
     }
 }
 ```
-#### 5.1.2.5 Client - Basic Auth
+#### 5.1.2.5 Client - basic auth
 
 Ballerina gRPC clients enable authentication and authorization using basic auth by employing class `grpc:ClientBasicAuthHandler`. To enable authentication and authorization, the generated headers of the `enrich` API needs to pass to the RPC call.
 
@@ -845,7 +845,7 @@ grpc:ClientBasicAuthHandler handler = new (config);
 map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
 ```
 
-#### 5.1.2.6 Client - Bearer Token Auth
+#### 5.1.2.6 Client - bearer token auth
 
 Ballerina gRPC clients enable authentication and authorization using bearer tokens by employing class `grpc:ClientBearerTokenAuthHandler`. To enable authentication and authorization, the generated headers of the `enrich` API needs to pass to the RPC call.
 
@@ -856,7 +856,7 @@ grpc:ClientBearerTokenAuthHandler handler = new (config);
 map<string|string[]>|grpc:ClientAuthError result = handler.enrich(requestHeaders);
 ```
 
-#### 5.1.2.7 Client - Self Signed JWT Auth
+#### 5.1.2.7 Client - self-signed JWT auth
 
 Ballerina gRPC clients enable authentication and authorization using JWTs by employing class `grpc:ClientSelfSignedJwtAuthHandler`. To enable authentication and authorization, the generated headers of the `enrich` API needs to pass to the RPC call.
 
@@ -904,7 +904,7 @@ grpc:ClientOAuth2Handler handler = new(config);
 map<string|string[]>|grpc:ClientAuthError result = handler->enrich(requestHeaders);
 ```
 
-## 5.2 SSL/TLS and Mutual SSL
+## 5.2 SSL/TLS and mutual SSL
 
 A gRPC listener with configuration `grpc:ListenerSecureSocket` exposes gRPC services with SSL/TLS.
 
@@ -961,9 +961,9 @@ listener grpc:Listener securedEP = new(9090,
 );
 ```
 
-# 6. gRPC Utility Functions
+# 6. gRPC utility functions
 
-## 6.1. gRPC Deadline
+## 6.1. gRPC deadline
 The following API sets a deadline for each request.
 
 ```ballerina
@@ -982,7 +982,7 @@ public isolated function setDeadline(time:Utc deadline, map<string|string[]> hea
 
 If a particular RPC exceeds the specified deadline, the response will be a `grpc:DeadlineExceededError`.
 
-## 6.2. gRPC Compression
+## 6.2. gRPC compression
 The following API enables compression for gRPC calls. Currently, Gzip compression is supported by the Ballerina gRPC library.
 ```ballerina
 # Enables the compression support by adding the `grpc-encoding` header to the given headers.
@@ -995,7 +995,7 @@ The following API enables compression for gRPC calls. Currently, Gzip compressio
 # + return - The header map that includes the compression headers
 public isolated function setCompression(CompressionType compressionType, map<string|string[]> headerMap = {}) returns map<string|string[]>;
 ```
-## 6.3. gRPC Access and Trace Logs
+## 6.3. gRPC access and trace Logs
 Access and trace logs can be enabled by adding the following configurations to the `Config.toml` file in a Ballerina project.
 
 ```toml
@@ -1015,7 +1015,7 @@ console = true              # Default is false
 path = "testTraceLog.txt"   # Optional
 ```
 
-## 6.4. gRPC Retry
+## 6.4. gRPC retry
 Client-level retrying can be enabled by passing the following configurations to the client initialization.
 
 ```ballerina
