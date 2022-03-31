@@ -94,6 +94,8 @@ public class Message {
     private static final String GOOGLE_PROTOBUF_STRUCTVALUE_VALUES = "google.protobuf.StructValue.values";
     private static final String BALLERINA_ANY_VALUE_ENTRY = "value";
     private static final String BALLERINA_TYPE_URL_ENTRY = "typeUrl";
+    private static final String PROTOBUF_DESC_ANNOTATION = "ballerina/protobuf:1:Descriptor";
+    private static final String PROTOBUF_DESC_ANNOTATION_VALUE = "value";
     private static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
 
     private String messageName;
@@ -163,6 +165,11 @@ public class Message {
         boolean isAnyTypedMessage = false;
         boolean isTimestampMessage = false;
         String typeUrl = "";
+
+        if(fieldDescriptors.size() == 0 && type instanceof RecordType) {
+            descriptor = getDescriptor((RecordType) type);
+            fieldDescriptors = MessageParser.computeFieldTagValues(descriptor);
+        }
 
         if (type instanceof UnionType && !(type instanceof AnydataType) && type.isNilable()) {
             List<Type> memberTypes = ((UnionType) type).getMemberTypes();
@@ -657,11 +664,45 @@ public class Message {
         bBMap.put(StringUtils.fromString(fieldDescriptor.getName()), bValue);
     }
 
-    public com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-        if (descriptor != null) {
+    private com.google.protobuf.Descriptors.Descriptor getDescriptor() throws InvalidProtocolBufferException {
+        if (descriptor == null || this.descriptor.getFile().getFullName().endsWith(".placeholder.proto")) {
+            BMap<BString, Object> bMap = null;
+            if (bMessage != null && bMessage instanceof BMap) {
+                bMap = (BMap<BString, Object>) bMessage;
+                RecordType recordType = (RecordType) bMap.getType();
+                return getDescriptorFromRecord(recordType);
+            }
+        } else if (descriptor != null) {
             return descriptor;
         }
         return MessageRegistry.getInstance().getMessageDescriptor(messageName);
+    }
+
+    private com.google.protobuf.Descriptors.Descriptor getDescriptor(RecordType recordType) throws InvalidProtocolBufferException {
+        if (descriptor == null || this.descriptor.getFile().getFullName().endsWith(".placeholder.proto")) {;
+            return getDescriptorFromRecord(recordType);
+        } else {
+            return descriptor;
+        }
+    }
+
+    private com.google.protobuf.Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType) throws InvalidProtocolBufferException {
+        if (isDescriptorAnnotationAvailable(recordType)) {
+            BMap<BString, Object> annotations = recordType.getAnnotations();
+            byte[] b = annotations.getMapValue(StringUtils.fromString(PROTOBUF_DESC_ANNOTATION))
+                    .getArrayValue(StringUtils.fromString(PROTOBUF_DESC_ANNOTATION_VALUE)).getBytes();
+            DescriptorProtos.DescriptorProto desc = DescriptorProtos.FileDescriptorProto.parseFrom(b).getMessageTypeList().stream().filter(d -> d.getName().equals(recordType.getName())).findFirst().orElse(null);
+            if (desc != null) {
+                descriptor = desc.getDescriptorForType();
+                return descriptor;
+            }
+        }
+        return MessageRegistry.getInstance().getMessageDescriptor(messageName);
+    }
+
+    private boolean isDescriptorAnnotationAvailable(RecordType recordType) {
+        return Arrays.stream(recordType.getAnnotations().getKeys()).anyMatch(
+                s -> PROTOBUF_DESC_ANNOTATION.equals(s.getValue()));
     }
 
     @SuppressWarnings("unchecked")
@@ -961,7 +1002,7 @@ public class Message {
     }
 
     @SuppressWarnings("unchecked")
-    public int getSerializedSize() {
+    public int getSerializedSize() throws InvalidProtocolBufferException {
         int size = memoizedSize;
         if (size != -1) {
             return size;
@@ -1284,7 +1325,9 @@ public class Message {
         return size;
     }
 
-    private int computeMessageSize(Descriptors.FieldDescriptor fieldDescriptor, Message message) {
+    private int computeMessageSize(Descriptors.FieldDescriptor fieldDescriptor, Message message)
+            throws InvalidProtocolBufferException {
+
         return CodedOutputStream.computeTagSize(fieldDescriptor
                 .getNumber()) + CodedOutputStream.computeUInt32SizeNoTag
                 (message.getSerializedSize()) + message.getSerializedSize();
