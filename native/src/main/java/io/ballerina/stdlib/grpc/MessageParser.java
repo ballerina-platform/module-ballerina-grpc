@@ -18,7 +18,6 @@ package io.ballerina.stdlib.grpc;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.types.Type;
-import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -75,7 +74,9 @@ public class MessageParser {
         return new Message(messageName, bType, null, fieldDescriptors);
     }
 
-    public static Map<Integer, Descriptors.FieldDescriptor> computeFieldTagValues(Descriptors.Descriptor messageDescriptor) {
+    public static Map<Integer, Descriptors.FieldDescriptor> computeFieldTagValues(
+            Descriptors.Descriptor messageDescriptor) {
+
         Map<Integer, Descriptors.FieldDescriptor> fieldDescriptors = new HashMap<>();
         for (Descriptors.FieldDescriptor fieldDescriptor : messageDescriptor.getFields()) {
             Descriptors.FieldDescriptor.Type fieldType = fieldDescriptor.getType();

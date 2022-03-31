@@ -26,7 +26,6 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.flags.TypeFlags;
 import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;

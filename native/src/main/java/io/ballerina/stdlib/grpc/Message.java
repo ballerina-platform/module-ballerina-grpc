@@ -166,7 +166,7 @@ public class Message {
         boolean isTimestampMessage = false;
         String typeUrl = "";
 
-        if(fieldDescriptors.size() == 0 && type instanceof RecordType) {
+        if (fieldDescriptors.size() == 0 && type instanceof RecordType) {
             descriptor = getDescriptor((RecordType) type);
             fieldDescriptors = MessageParser.computeFieldTagValues(descriptor);
         }
@@ -678,20 +678,26 @@ public class Message {
         return MessageRegistry.getInstance().getMessageDescriptor(messageName);
     }
 
-    private com.google.protobuf.Descriptors.Descriptor getDescriptor(RecordType recordType) throws InvalidProtocolBufferException {
-        if (descriptor == null || this.descriptor.getFile().getFullName().endsWith(".placeholder.proto")) {;
+    private com.google.protobuf.Descriptors.Descriptor getDescriptor(RecordType recordType)
+            throws InvalidProtocolBufferException {
+
+        if (descriptor == null || this.descriptor.getFile().getFullName().endsWith(".placeholder.proto")) {
             return getDescriptorFromRecord(recordType);
         } else {
             return descriptor;
         }
     }
 
-    private com.google.protobuf.Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType) throws InvalidProtocolBufferException {
+    private com.google.protobuf.Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType)
+            throws InvalidProtocolBufferException {
+
         if (isDescriptorAnnotationAvailable(recordType)) {
             BMap<BString, Object> annotations = recordType.getAnnotations();
             byte[] b = annotations.getMapValue(StringUtils.fromString(PROTOBUF_DESC_ANNOTATION))
                     .getArrayValue(StringUtils.fromString(PROTOBUF_DESC_ANNOTATION_VALUE)).getBytes();
-            DescriptorProtos.DescriptorProto desc = DescriptorProtos.FileDescriptorProto.parseFrom(b).getMessageTypeList().stream().filter(d -> d.getName().equals(recordType.getName())).findFirst().orElse(null);
+            DescriptorProtos.DescriptorProto desc = DescriptorProtos.FileDescriptorProto.parseFrom(b)
+                    .getMessageTypeList().stream().filter(d -> d.getName().equals(recordType.getName()))
+                    .findFirst().orElse(null);
             if (desc != null) {
                 descriptor = desc.getDescriptorForType();
                 return descriptor;
