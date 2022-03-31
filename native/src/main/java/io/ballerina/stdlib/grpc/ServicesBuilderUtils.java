@@ -25,6 +25,7 @@ import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.flags.TypeFlags;
 import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.RecordType;
@@ -317,11 +318,10 @@ public class ServicesBuilderUtils {
         } else if (protoType.equals(STRUCT_MESSAGE)) {
             return PredefinedTypes.TYPE_MAP;
         } else if (protoType.equals(ANY_MESSAGE)) {
-            return TypeCreator.createRecordType("Any", ProtoTypesUtils.getProtoTypesAnyModule(), 0, true,
-                    TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
+            return ValueCreator.createRecordValue(ProtoTypesUtils.getProtoTypesAnyModule(), "Any")
+            .getType();
         } else {
-            return TypeCreator.createRecordType(protoType, module, 0, true,
-                    TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
+            return ValueCreator.createRecordValue(module, protoType).getType();
         }
     }
 
