@@ -13,37 +13,41 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import ballerina/io;
+
 import ballerina/grpc;
+import ballerina/log;
 
- public function main() returns error? {
-    SimpleServiceWithAnnotationClient annotClient = check new ("http://localhost:9090");
+listener grpc:Listener ep67 = new (9167);
 
-     SimpleResponseWithAnnotation unaryResponse = check annotClient->unary({name: "Request 01"});
-     io:println(unaryResponse);
+@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_SIMPLE_SERVICE_WITH_ANNOTATION, descMap: getDescriptorMapSimpleServiceWithAnnotation()}
+service "SimpleServiceWithAnnotation" on ep67 {
 
-     stream<SimpleResponseWithAnnotation, grpc:Error?> serverStreamResponse = check annotClient->serverStreaming({name: "Request 01"});
-     SimpleResponseWithAnnotation[] streamingResponses = [
-             {name: "Response 01"},
-             {name: "Response 02"},
-             {name: "Response 03"}
-         ];
-     int i = 0;
-     check serverStreamResponse.forEach(function (SimpleResponseWithAnnotation streamingResponse) {
-         io:println(streamingResponse);
-         i += 1;
-     });
-     io:println(i);
-
-    //SimpleRequestWithAnnotation[] streamingRequests = [
-    //        {name: "Response 01"}
-    //    ];
-    //ClientStreamingStreamingClient clientStreamingStreamingClient = check annotClient->clientStreaming();
-    //foreach SimpleRequestWithAnnotation req in streamingRequests {
-    //    check clientStreamingStreamingClient->sendSimpleRequestWithAnnotation(req);
-    //}
-    //check clientStreamingStreamingClient->complete();
-    //SimpleResponseWithAnnotation? clientStreamingResponse = check clientStreamingStreamingClient->receiveSimpleResponseWithAnnotation();
-    //io:println(clientStreamingResponse);
-
+    remote function unaryCallWithAnnotatedData(SimpleRequestWithAnnotation value) returns SimpleResponseWithAnnotation|error {
+        return {name: "Response 01"};
+    }
+    remote function serverStreamingWithAnnotatedData(SimpleRequestWithAnnotation value) returns stream<SimpleResponseWithAnnotation, error?>|error {
+        SimpleResponseWithAnnotation[] responses = [
+            {name: "Response 01"},
+            {name: "Response 02"},
+            {name: "Response 03"}
+        ];
+        return responses.toStream();
+    }
+    remote function clientStreamingWithAnnotatedData(stream<SimpleRequestWithAnnotation, grpc:Error?> clientStream) returns SimpleResponseWithAnnotation|error {
+        check clientStream.forEach(isolated function(SimpleRequestWithAnnotation value) {
+            log:printInfo(value.name);
+        });
+        return {name: "Response"};
+    }
+    remote function bidirectionalStreamingWithAnnotatedData(stream<SimpleRequestWithAnnotation, grpc:Error?> clientStream) returns stream<SimpleResponseWithAnnotation, error?>|error {
+        SimpleResponseWithAnnotation[] responses = [
+            {name: "Response 01"},
+            {name: "Response 02"},
+            {name: "Response 03"}
+        ];
+        _ = check clientStream.forEach(isolated function(SimpleRequestWithAnnotation value) {
+            log:printInfo(value.name);
+        });
+        return responses.toStream();
+    }
 }

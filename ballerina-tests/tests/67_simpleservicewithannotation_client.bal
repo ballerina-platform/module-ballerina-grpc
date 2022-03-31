@@ -13,41 +13,61 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/grpc;
-import ballerina/log;
+import ballerina/test;
 
-listener grpc:Listener ep67 = new (9090);
+@test:Config
+function testSimpleServiceWithAnnotation() returns error? {
+    SimpleServiceWithAnnotationClient annotClient = check new ("http://localhost:9167");
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_SIMPLE_SERVICE_WITH_ANNOTATION, descMap: getDescriptorMapSimpleServiceWithAnnotation()}
-service "SimpleServiceWithAnnotation" on ep67 {
+    SimpleResponseWithAnnotation unaryResponse = check annotClient->unaryCallWithAnnotatedData({name: "Request 01"});
+    test:assertEquals(unaryResponse, <SimpleResponseWithAnnotation>{name: "Response 01"});
 
-    remote function unary(SimpleRequestWithAnnotation value) returns SimpleResponseWithAnnotation|error {
-        return {name: "Response 01"};
+    stream<SimpleResponseWithAnnotation, grpc:Error?> serverStreamResponse = check annotClient->serverStreamingWithAnnotatedData({name: "Request 01"});
+    SimpleResponseWithAnnotation[] streamingResponses = [
+        {name: "Response 01"},
+        {name: "Response 02"},
+        {name: "Response 03"}
+    ];
+    int i = 0;
+    check serverStreamResponse.forEach(function(SimpleResponseWithAnnotation streamingResponse) {
+        test:assertEquals(streamingResponse, streamingResponses[i]);
+        i += 1;
+    });
+    test:assertEquals(i, 3);
+
+    SimpleRequestWithAnnotation[] streamingRequests = [
+        {name: "Response 01"},
+        {name: "Response 02"},
+        {name: "Response 03"}
+    ];
+    ClientStreamingWithAnnotatedDataStreamingClient clientStreamingStreamingClient = check annotClient->clientStreamingWithAnnotatedData();
+    foreach SimpleRequestWithAnnotation req in streamingRequests {
+        check clientStreamingStreamingClient->sendSimpleRequestWithAnnotation(req);
     }
-    remote function serverStreaming(SimpleRequestWithAnnotation value) returns stream<SimpleResponseWithAnnotation, error?>|error {
-        SimpleResponseWithAnnotation[] responses = [
-            {name: "Response 01"},
-            {name: "Response 02"},
-            {name: "Response 03"}
-        ];
-        return responses.toStream();
+    check clientStreamingStreamingClient->complete();
+    SimpleResponseWithAnnotation? clientStreamingResponse = check clientStreamingStreamingClient->receiveSimpleResponseWithAnnotation();
+    test:assertEquals(clientStreamingResponse, <SimpleResponseWithAnnotation>{name: "Response"});
+
+    BidirectionalStreamingWithAnnotatedDataStreamingClient bidirectionalStreamingStreamingClient = check annotClient->bidirectionalStreamingWithAnnotatedData();
+    foreach SimpleRequestWithAnnotation req in streamingRequests {
+        i += 1;
+        check bidirectionalStreamingStreamingClient->sendSimpleRequestWithAnnotation(req);
     }
-    remote function clientStreaming(stream<SimpleRequestWithAnnotation, grpc:Error?> clientStream) returns SimpleResponseWithAnnotation|error {
-        check clientStream.forEach(isolated function(SimpleRequestWithAnnotation value) {
-            log:printInfo(value.name);
-        });
-        return {name: "Response"};
+
+    check bidirectionalStreamingStreamingClient->complete();
+    i = 0;
+    SimpleResponseWithAnnotation? bidiStreamingResponse = check bidirectionalStreamingStreamingClient->receiveSimpleResponseWithAnnotation();
+    test:assertEquals(<SimpleResponseWithAnnotation>bidiStreamingResponse, streamingResponses[i]);
+    i += 1;
+    while !(bidiStreamingResponse is ()) {
+        bidiStreamingResponse = check bidirectionalStreamingStreamingClient->receiveSimpleResponseWithAnnotation();
+        if bidiStreamingResponse is SimpleResponseWithAnnotation {
+            test:assertEquals(<SimpleResponseWithAnnotation>bidiStreamingResponse, streamingResponses[i]);
+            i += 1;
+        }
     }
-    remote function bidirectionalStreaming(stream<SimpleRequestWithAnnotation, grpc:Error?> clientStream) returns stream<SimpleResponseWithAnnotation, error?>|error {
-        SimpleResponseWithAnnotation[] responses = [
-            {name: "Response 01"},
-            {name: "Response 02"},
-            {name: "Response 03"}
-        ];
-        _ = check clientStream.forEach(isolated function(SimpleRequestWithAnnotation value) {
-            log:printInfo(value.name);
-        });
-        return responses.toStream();
-    }
+    test:assertEquals(i, 3);
 }
 

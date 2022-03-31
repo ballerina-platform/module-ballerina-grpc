@@ -25,7 +25,7 @@ public isolated client class SimpleServiceWithAnnotationClient {
         check self.grpcClient.initStub(self, ROOT_DESCRIPTOR_SIMPLE_SERVICE_WITH_ANNOTATION, getDescriptorMapSimpleServiceWithAnnotation());
     }
 
-    isolated remote function unary(SimpleRequestWithAnnotation|ContextSimpleRequestWithAnnotation req) returns SimpleResponseWithAnnotation|grpc:Error {
+    isolated remote function unaryCallWithAnnotatedData(SimpleRequestWithAnnotation|ContextSimpleRequestWithAnnotation req) returns SimpleResponseWithAnnotation|grpc:Error {
         map<string|string[]> headers = {};
         SimpleRequestWithAnnotation message;
         if req is ContextSimpleRequestWithAnnotation {
@@ -34,12 +34,12 @@ public isolated client class SimpleServiceWithAnnotationClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("SimpleServiceWithAnnotation/unary", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("SimpleServiceWithAnnotation/unaryCallWithAnnotatedData", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <SimpleResponseWithAnnotation>result;
     }
 
-    isolated remote function unaryContext(SimpleRequestWithAnnotation|ContextSimpleRequestWithAnnotation req) returns ContextSimpleResponseWithAnnotation|grpc:Error {
+    isolated remote function unaryCallWithAnnotatedDataContext(SimpleRequestWithAnnotation|ContextSimpleRequestWithAnnotation req) returns ContextSimpleResponseWithAnnotation|grpc:Error {
         map<string|string[]> headers = {};
         SimpleRequestWithAnnotation message;
         if req is ContextSimpleRequestWithAnnotation {
@@ -48,17 +48,17 @@ public isolated client class SimpleServiceWithAnnotationClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("SimpleServiceWithAnnotation/unary", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("SimpleServiceWithAnnotation/unaryCallWithAnnotatedData", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <SimpleResponseWithAnnotation>result, headers: respHeaders};
     }
 
-    isolated remote function clientStreaming() returns ClientStreamingStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("SimpleServiceWithAnnotation/clientStreaming");
-        return new ClientStreamingStreamingClient(sClient);
+    isolated remote function clientStreamingWithAnnotatedData() returns ClientStreamingWithAnnotatedDataStreamingClient|grpc:Error {
+        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("SimpleServiceWithAnnotation/clientStreamingWithAnnotatedData");
+        return new ClientStreamingWithAnnotatedDataStreamingClient(sClient);
     }
 
-    isolated remote function serverStreaming(SimpleRequestWithAnnotation|ContextSimpleRequestWithAnnotation req) returns stream<SimpleResponseWithAnnotation, grpc:Error?>|grpc:Error {
+    isolated remote function serverStreamingWithAnnotatedData(SimpleRequestWithAnnotation|ContextSimpleRequestWithAnnotation req) returns stream<SimpleResponseWithAnnotation, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         SimpleRequestWithAnnotation message;
         if req is ContextSimpleRequestWithAnnotation {
@@ -67,13 +67,13 @@ public isolated client class SimpleServiceWithAnnotationClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("SimpleServiceWithAnnotation/serverStreaming", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("SimpleServiceWithAnnotation/serverStreamingWithAnnotatedData", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         SimpleResponseWithAnnotationStream outputStream = new SimpleResponseWithAnnotationStream(result);
         return new stream<SimpleResponseWithAnnotation, grpc:Error?>(outputStream);
     }
 
-    isolated remote function serverStreamingContext(SimpleRequestWithAnnotation|ContextSimpleRequestWithAnnotation req) returns ContextSimpleResponseWithAnnotationStream|grpc:Error {
+    isolated remote function serverStreamingWithAnnotatedDataContext(SimpleRequestWithAnnotation|ContextSimpleRequestWithAnnotation req) returns ContextSimpleResponseWithAnnotationStream|grpc:Error {
         map<string|string[]> headers = {};
         SimpleRequestWithAnnotation message;
         if req is ContextSimpleRequestWithAnnotation {
@@ -82,19 +82,19 @@ public isolated client class SimpleServiceWithAnnotationClient {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("SimpleServiceWithAnnotation/serverStreaming", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("SimpleServiceWithAnnotation/serverStreamingWithAnnotatedData", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         SimpleResponseWithAnnotationStream outputStream = new SimpleResponseWithAnnotationStream(result);
         return {content: new stream<SimpleResponseWithAnnotation, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function bidirectionalStreaming() returns BidirectionalStreamingStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("SimpleServiceWithAnnotation/bidirectionalStreaming");
-        return new BidirectionalStreamingStreamingClient(sClient);
+    isolated remote function bidirectionalStreamingWithAnnotatedData() returns BidirectionalStreamingWithAnnotatedDataStreamingClient|grpc:Error {
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("SimpleServiceWithAnnotation/bidirectionalStreamingWithAnnotatedData");
+        return new BidirectionalStreamingWithAnnotatedDataStreamingClient(sClient);
     }
 }
 
-public client class ClientStreamingStreamingClient {
+public client class ClientStreamingWithAnnotatedDataStreamingClient {
     private grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
@@ -162,7 +162,7 @@ public class SimpleResponseWithAnnotationStream {
     }
 }
 
-public client class BidirectionalStreamingStreamingClient {
+public client class BidirectionalStreamingWithAnnotatedDataStreamingClient {
     private grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
@@ -258,10 +258,8 @@ public type ContextSimpleResponseWithAnnotation record {|
     map<string|string[]> headers;
 |};
 
-const string ROOT_DESCRIPTOR_SIMPLE_SERVICE_WITH_ANNOTATION = "0A2473696D706C655F736572766963655F776974685F616E6E6F746174696F6E2E70726F746F1A2473696D706C655F726571756573745F776974685F616E6E6F746174696F6E2E70726F746F1A2573696D706C655F726573706F6E73655F776974685F616E6E6F746174696F6E2E70726F746F32EA020A1B53696D706C655365727669636557697468416E6E6F746174696F6E12460A05756E617279121C2E53696D706C655265717565737457697468416E6E6F746174696F6E1A1D2E53696D706C65526573706F6E736557697468416E6E6F746174696F6E220012520A0F73657276657253747265616D696E67121C2E53696D706C655265717565737457697468416E6E6F746174696F6E1A1D2E53696D706C65526573706F6E736557697468416E6E6F746174696F6E2200300112520A0F636C69656E7453747265616D696E67121C2E53696D706C655265717565737457697468416E6E6F746174696F6E1A1D2E53696D706C65526573706F6E736557697468416E6E6F746174696F6E22002801125B0A166269646972656374696F6E616C53747265616D696E67121C2E53696D706C655265717565737457697468416E6E6F746174696F6E1A1D2E53696D706C65526573706F6E736557697468416E6E6F746174696F6E22002801300142175A156578616D706C652E636F6D2F6D6573736167657331620670726F746F33";
+const string ROOT_DESCRIPTOR_SIMPLE_SERVICE_WITH_ANNOTATION = "0A2473696D706C655F736572766963655F776974685F616E6E6F746174696F6E2E70726F746F1A2473696D706C655F726571756573745F776974685F616E6E6F746174696F6E2E70726F746F1A2573696D706C655F726573706F6E73655F776974685F616E6E6F746174696F6E2E70726F746F32B2030A1B53696D706C655365727669636557697468416E6E6F746174696F6E125B0A1A756E61727943616C6C57697468416E6E6F746174656444617461121C2E53696D706C655265717565737457697468416E6E6F746174696F6E1A1D2E53696D706C65526573706F6E736557697468416E6E6F746174696F6E220012630A2073657276657253747265616D696E6757697468416E6E6F746174656444617461121C2E53696D706C655265717565737457697468416E6E6F746174696F6E1A1D2E53696D706C65526573706F6E736557697468416E6E6F746174696F6E2200300112630A20636C69656E7453747265616D696E6757697468416E6E6F746174656444617461121C2E53696D706C655265717565737457697468416E6E6F746174696F6E1A1D2E53696D706C65526573706F6E736557697468416E6E6F746174696F6E22002801126C0A276269646972656374696F6E616C53747265616D696E6757697468416E6E6F746174656444617461121C2E53696D706C655265717565737457697468416E6E6F746174696F6E1A1D2E53696D706C65526573706F6E736557697468416E6E6F746174696F6E22002801300142175A156578616D706C652E636F6D2F6D6573736167657331620670726F746F33";
 
-// Need to remove this.
 public isolated function getDescriptorMapSimpleServiceWithAnnotation() returns map<string> {
     return {};
 }
-
