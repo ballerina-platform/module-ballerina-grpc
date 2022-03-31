@@ -259,8 +259,7 @@ public class ServicesBuilderUtils {
             }
         }
         if (fileDescriptors.length > 0 && i == 0) {
-            throw new GrpcServerException("Error while reading the service proto descriptor. Couldn't find any " +
-                    "dependent descriptors.");
+            return Descriptors.FileDescriptor.buildFrom(descriptorProto, new Descriptors.FileDescriptor[i], true);
         }
         return Descriptors.FileDescriptor.buildFrom(descriptorProto, fileDescriptors);
     }
