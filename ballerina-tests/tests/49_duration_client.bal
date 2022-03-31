@@ -18,14 +18,14 @@ import ballerina/grpc;
 import ballerina/test;
 import ballerina/time;
 
-@test:Config {}
+@test:Config {enable: true}
 function testDurationUnaryCall1() returns grpc:Error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
     time:Seconds msg = check ep->unaryCall1("call1");
     test:assertEquals(msg, 12.34d);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testDurationUnaryCall2() returns grpc:Error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
     DurationMsg reqMsg = {name: "duration 01", duration: 1.11d};
@@ -33,7 +33,7 @@ function testDurationUnaryCall2() returns grpc:Error? {
     test:assertEquals(resMsg, reqMsg);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testDurationServerStreaming() returns error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
     stream<time:Seconds, error?> durationStream = check ep->serverStreaming("server streaming with duration");
@@ -46,7 +46,7 @@ function testDurationServerStreaming() returns error? {
     test:assertEquals(i, 4);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testDurationClientStreaming() returns grpc:Error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
     time:Seconds[] durations = [1.11d, 2.22d, 3.33d, 4.44d];
@@ -61,7 +61,7 @@ function testDurationClientStreaming() returns grpc:Error? {
 
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testDurationBidirectionalStreaming() returns grpc:Error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
     DurationMsg[] durationMessages = [

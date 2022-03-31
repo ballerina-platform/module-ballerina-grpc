@@ -16,7 +16,7 @@
 
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable: true}
 isolated function testBackwardCompatibility() returns error? {
     ProductCatalogClient ep = check new ("http://localhost:9154");
     Product product = check ep->getProduct("N001");
