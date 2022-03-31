@@ -75,12 +75,7 @@ public class MessageParser {
         return new Message(messageName, bType, null, fieldDescriptors);
     }
 
-    private Map<Integer, Descriptors.FieldDescriptor> computeFieldTagValues(Descriptors.Descriptor messageDescriptor) {
-        if (messageDescriptor == null) {
-            throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
-                    .fromCode(Status.Code.INTERNAL).withDescription("Couldn't find message descriptor for the " +
-                            "message name: " + messageName)));
-        }
+    public static Map<Integer, Descriptors.FieldDescriptor> computeFieldTagValues(Descriptors.Descriptor messageDescriptor) {
         Map<Integer, Descriptors.FieldDescriptor> fieldDescriptors = new HashMap<>();
         for (Descriptors.FieldDescriptor fieldDescriptor : messageDescriptor.getFields()) {
             Descriptors.FieldDescriptor.Type fieldType = fieldDescriptor.getType();
