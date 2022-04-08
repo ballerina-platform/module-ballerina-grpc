@@ -19,12 +19,16 @@
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.AnnotationNode;
 import io.ballerina.compiler.syntax.tree.BinaryExpressionNode;
+import io.ballerina.compiler.syntax.tree.MetadataNode;
 import io.ballerina.compiler.syntax.tree.ModuleMemberDeclarationNode;
+import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.stdlib.grpc.builder.stub.EnumMessage;
 import io.ballerina.stdlib.grpc.builder.stub.Field;
 import io.ballerina.stdlib.grpc.builder.stub.Message;
+import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Annotation;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.IfElse;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Record;
@@ -66,14 +70,22 @@ public class MessageUtils {
 
     }
 
-    public static NodeList<ModuleMemberDeclarationNode> getMessageNodes(Message message) {
+    public static NodeList<ModuleMemberDeclarationNode> getMessageNodes(Message message, String descriptorName) {
         NodeList<ModuleMemberDeclarationNode> messageMembers = AbstractNodeFactory.createEmptyNodeList();
+        NodeList<AnnotationNode> annotationNodes = AbstractNodeFactory.createEmptyNodeList();
 
-        messageMembers = messageMembers.add(getMessageType(message).getTypeDefinitionNode());
+        Annotation protobufDescriptor = new Annotation("protobuf", "Descriptor");
+        protobufDescriptor.addField(
+                "value",
+                descriptorName
+        );
+        annotationNodes = annotationNodes.add(protobufDescriptor.getAnnotationNode());
+        MetadataNode metadataNode = NodeFactory.createMetadataNode(null, annotationNodes);
+        messageMembers = messageMembers.add(getMessageType(message).getTypeDefinitionNode(metadataNode));
 
         if (message.getNestedMessageList() != null) {
             for (Message nestedMessage : message.getNestedMessageList()) {
-                for (ModuleMemberDeclarationNode messageNode : getMessageNodes(nestedMessage)) {
+                for (ModuleMemberDeclarationNode messageNode : getMessageNodes(nestedMessage, descriptorName)) {
                     messageMembers = messageMembers.add(messageNode);
                 }
             }

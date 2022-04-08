@@ -74,6 +74,10 @@ public class CommonUtils {
         return pascalCaseOutput.toString();
     }
 
+    public static String toCamelCase(String str) {
+        return toPascalCase(str).substring(0, 1).toLowerCase() + toPascalCase(str).substring(1);
+    }
+
     public static boolean isBallerinaBasicType(String type) {
         switch (type) {
             case "string" :
