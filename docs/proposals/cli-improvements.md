@@ -79,7 +79,7 @@ message Person {
 }
 ```
 ```ballerina
-string descriptorName = "0A2736385F73696D706C655F...";
+const string descriptorName = "0A2736385F73696D706C655F...";
 
 @protobuf:Descriptor { value: descriptorName }
 public type Person record {|
