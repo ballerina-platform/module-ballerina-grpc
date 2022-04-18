@@ -385,8 +385,7 @@ public class SyntaxTreeGenerator {
                                         "initStub",
                                         new String[]{
                                                 "self",
-                                                ROOT_DESCRIPTOR + fileName.toUpperCase(),
-                                                GET_DESCRIPTOR_MAP + toPascalCase(fileName) + "()"}
+                                                toCamelCase(fileName) + "Descriptor"}
                                 )
                         )
                 )
