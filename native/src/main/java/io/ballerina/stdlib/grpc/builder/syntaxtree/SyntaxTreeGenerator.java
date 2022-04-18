@@ -60,7 +60,6 @@ import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependentVal
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.streamClassMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFunctionCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getImplicitNewExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Statement.getCallStatementNode;
@@ -74,8 +73,6 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.GET_DESCRIPTOR_MAP;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.ROOT_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
@@ -84,7 +81,6 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.chec
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.toCamelCase;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.toPascalCase;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
@@ -274,11 +270,7 @@ public class SyntaxTreeGenerator {
         Annotation grpcServiceDescriptor = new Annotation("grpc", "ServiceDescriptor");
         grpcServiceDescriptor.addField(
                 "descriptor",
-                ROOT_DESCRIPTOR + fileName.toUpperCase()
-        );
-        grpcServiceDescriptor.addField(
-                "descMap",
-                getFunctionCallExpressionNode(GET_DESCRIPTOR_MAP + toPascalCase(fileName), new String[]{})
+                toCamelCase(fileName) + "Descriptor"
         );
         service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
 
