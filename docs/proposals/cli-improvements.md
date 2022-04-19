@@ -56,7 +56,7 @@ bal grpc –input proto/**.proto –output ballerina-out
 ### Problem 02 - Centralized Proto Descriptor
 #### Problem Definition
 In our current Ballerina gRPC library, the generated stub contains a large single descriptor (root descriptor + descriptor map), which is related to the service and the messages that the service uses. But, when we address problem 01 and create several stubs for each proto file in a directory, maintaining such a huge descriptor will be a difficult task. Therefore, we should decentralize our descriptor (especially the descriptor map) like other languages. For example, Java has the descriptor details in the message class itself and Golang has it in the generated struct.
-E.g.,
+E.g., 
 ```go
 …
 var file_messages2_proto_rawDesc = []byte{
@@ -90,8 +90,10 @@ public type Person record {|
 ```
 Note: Here the descriptor value should be unique. It can be generated as follows:
 ```sh
-descriptorName := <PROTO_FILE_NAME_IN_CAMEL_CASE>Descriptor
+descriptorName := <PROTO_FILE_NAME_IN_UPPER_CASE_WITH_UNDERSCORE>_DESC
 ```
+
+Also, adding the annotations would not entirely solve the problem of correctly deserializing `Any` messages, which descriptors are not available at the root level. As the next step to entirely solve this problem, we should move the deserialization of `Any` type to `'any:unpack` API in the protobuf module.
 
 ### Problem 03 - Packaging Support
 #### Problem Definition
@@ -106,7 +108,7 @@ Java Packages
 ```proto
 option java_package = "com.example.tutorial.protos";
 ```
-#### Proposed Solution
+#### Proposed Solution 
 To introduce a new option, we have to contribute to the [3] file. This will be a time-consuming task.
 
 ## Implementation
