@@ -19,7 +19,7 @@ import ballerina/test;
 
 @test:Config {enable: true}
 isolated function testSendAndReceiveEnum() returns grpc:Error? {
-    testEnumServiceClient blockingEp = check new ("http://localhost:9102");
+    TestEnumServiceClient blockingEp = check new ("http://localhost:9102");
     OrderInfo orderReq = {id: "100500", mode: r};
     string response = check blockingEp->testEnum(orderReq);
     test:assertEquals(response, "r");

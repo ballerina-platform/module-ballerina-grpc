@@ -20,7 +20,7 @@ import ballerina/test;
 @test:Config {enable: true}
 function testServerStreamingWithRecord() returns error? {
     string name = "WSO2";
-    helloWorldServerStreamingClient helloWorldEp = check new ("http://localhost:9113");
+    HelloWorldServerStreamingClient helloWorldEp = check new ("http://localhost:9113");
     HelloRequest newreq = {name: name};
     stream<HelloResponse, grpc:Error?> result = check helloWorldEp->lotsOfReplies(newreq);
     string[] expectedResults = ["Hi WSO2", "Hey WSO2", "GM WSO2"];

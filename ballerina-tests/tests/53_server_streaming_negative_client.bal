@@ -19,7 +19,7 @@ import ballerina/test;
 
 @test:Config {enable: true}
 isolated function testServerStreamingNegative() returns error? {
-    helloWorld53Client ep = check new ("http://localhost:9153");
+    HelloWorld53Client ep = check new ("http://localhost:9153");
     stream<string, error?> strm = check ep->hello53("hey");
     record {|string value;|}|error? content = strm.next();
     if content is error {
