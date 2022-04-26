@@ -23,7 +23,7 @@ listener grpc:Listener helloWorldStreamingep = new (9113);
     descriptor: ROOT_DESCRIPTOR_23_SERVER_STREAMING_WITH_RECORD_SERVICE,
     descMap: getDescriptorMap23ServerStreamingWithRecordService()
 }
-service "helloWorldServerStreaming" on helloWorldStreamingep {
+service "HelloWorldServerStreaming" on helloWorldStreamingep {
 
     isolated remote function lotsOfReplies(HelloWorldServerStreamingHelloResponseCaller caller, HelloRequest value) {
         log:printInfo("Server received hello from " + value.name);

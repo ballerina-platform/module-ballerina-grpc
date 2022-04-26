@@ -115,7 +115,7 @@ grpc:FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope = {
     ]
 }
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
-service "helloWorld55" on ep55WithScopes {
+service "HelloWorld55" on ep55WithScopes {
 
     remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
     stream<string, error?> clientStream) returns error? {
@@ -166,7 +166,7 @@ service "helloWorld55" on ep55WithScopes {
     ]
 }
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
-service "helloWorld55EmptyScope" on ep55EmptyScope {
+service "HelloWorld55EmptyScope" on ep55EmptyScope {
 
     remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) {
         checkpanic caller->sendString(value);

@@ -24,7 +24,7 @@ listener grpc:Listener ep30 = new (9120);
     descriptor: ROOT_DESCRIPTOR_30_UNARY_OAUTH2,
     descMap: getDescriptorMap30UnaryOauth2()
 }
-service /HelloWorld30 on ep30 {
+service "HelloWorld30" on ep30 {
 
     remote isolated function testStringValueReturn(HelloWorld30StringCaller caller, ContextString request) {
         string message = "Hello " + request.content;

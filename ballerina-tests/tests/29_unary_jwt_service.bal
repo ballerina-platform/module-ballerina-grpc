@@ -24,7 +24,7 @@ listener grpc:Listener ep29 = new (9119);
     descriptor: ROOT_DESCRIPTOR_29_UNARY_JWT,
     descMap: getDescriptorMap29UnaryJwt()
 }
-service /HelloWorld29 on ep29 {
+service "HelloWorld29" on ep29 {
 
     remote isolated function testStringValueReturn(HelloWorld29StringCaller caller, ContextString request) returns error? {
         string message = "Hello " + request.content;
