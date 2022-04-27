@@ -231,34 +231,37 @@ def checkGoServerStatus(containerName) {
 }
 
 task startGoServer() {
-    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-        def stdOut = new ByteArrayOutputStream()
-        exec {
-            commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
-            standardOutput = stdOut
-        }
-        if (!stdOut.toString().contains(testContainerName)) {
-            println "Starting Golang gRPC server."
-            def standardOutput = new ByteArrayOutputStream()
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
             exec {
-                commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d daneshk/go_grpc_simple_server:latest"
+                commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
+                standardOutput = stdOut
             }
-            def healthCheck = 1;
-            def counter = 0;
-            doLast {
-                while (healthCheck != 0 && counter < 12) {
-                    sleep(1000)
-                    healthCheck = checkGoServerStatus(testContainerName)
-                    counter = counter + 1;
+            if (!stdOut.toString().contains(testContainerName)) {
+                println "Starting Golang gRPC server."
+                def standardOutput = new ByteArrayOutputStream()
+                exec {
+                    commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d daneshk/go_grpc_simple_server:latest"
                 }
-                if (healthCheck != 0) {
-                    throw new GradleException("Docker container ${testContainerName} health test exceeded timeout!")
+                def healthCheck = 1;
+                def counter = 0;
+                doLast {
+                    while (healthCheck != 0 && counter < 12) {
+                        sleep(1000)
+                        healthCheck = checkGoServerStatus(testContainerName)
+                        counter = counter + 1;
+                    }
+                    if (healthCheck != 0) {
+                        throw new GradleException("Docker container ${testContainerName} health test exceeded timeout!")
+                    }
                 }
+            } else {
+                println "Golang gRPC server is already running."
             }
-        } else {
-            println "Golang gRPC server is already running."
         }
     }
+
 }
 
 task stopGoServer() {
