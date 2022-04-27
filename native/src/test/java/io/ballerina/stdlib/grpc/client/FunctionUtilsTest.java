@@ -49,9 +49,9 @@ public class FunctionUtilsTest {
     
     @BeforeTest()
     public void setupEnvironment() {
-        module = new Module("testOrg", "test", "1.2");
+        module = new Module("testOrg", "test", "1");
         valueCreator = getValueCreatorWithErrorValue();
-        ValueCreator.addValueCreator("testOrg", "test", "1.2", valueCreator);
+        ValueCreator.addValueCreator("testOrg", "test", "1", false, valueCreator);
         ModuleUtils.setModule(new Environment(null, module));
     }
 
