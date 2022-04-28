@@ -278,6 +278,31 @@ public class CompilerPluginTest {
         Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
+    @Test
+    public void testCompilerPluginServiceNameStartingWithSimpleCase() {
+
+        Package currentPackage = loadPackage("package_18");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
+    }
+
+    @Test
+    public void testCompilerPluginServiceNameStartingWithSimpleCaseInvalidCaller() {
+
+        Package currentPackage = loadPackage("package_19");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        String errMsg = "ERROR [helloworld_service.bal:(23:5,26:6)] expected caller type " +
+                "\"HelloWorld<RPC_RETURN_TYPE>Caller\" but found \"helloWorldStringCaller\"";
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.INVALID_CALLER_TYPE.getErrorCode());
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
+                d -> errMsg.equals(d.toString())));
+    }
+
     private Package loadPackage(String path) {
 
         Path projectDirPath = RESOURCE_DIRECTORY.resolve(path);
