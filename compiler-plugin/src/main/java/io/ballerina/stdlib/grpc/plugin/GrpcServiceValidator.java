@@ -202,8 +202,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                         GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getError(),
                         GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
             } else if (!isValidCallerParameter(firstParameter, serviceName)) {
-                String expectedCaller = serviceName.substring(0, 1).toUpperCase(Locale.ENGLISH) + serviceName.substring(1) +
-                        GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
+                String expectedCaller = serviceName.substring(0, 1).toUpperCase(Locale.ENGLISH) +
+                        serviceName.substring(1) + GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
                 String diagnosticMessage = GrpcCompilerPluginConstants.CompilationErrors
                         .INVALID_CALLER_TYPE.getError() +
                         expectedCaller + "\" but found \"" + firstParameter + "\"";
@@ -254,8 +254,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
     private boolean isValidCallerParameter(String callerTypeName, String serviceName) {
 
-        return callerTypeName.startsWith(serviceName.substring(0, 1).toUpperCase(Locale.ENGLISH) + serviceName.substring(1))
-                && callerTypeName.endsWith(GRPC_EXACT_CALLER);
+        return callerTypeName.startsWith(serviceName.substring(0, 1).toUpperCase(Locale.ENGLISH) +
+                serviceName.substring(1)) && callerTypeName.endsWith(GRPC_EXACT_CALLER);
     }
 
     private void reportErrorDiagnostic(Node node, SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message,
