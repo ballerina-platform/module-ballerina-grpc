@@ -61,7 +61,7 @@ function testDurationClientStreaming() returns grpc:Error? {
 
 }
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 function testDurationBidirectionalStreaming() returns grpc:Error? {
     DurationHandlerClient ep = check new ("http://localhost:9149");
     DurationMsg[] durationMessages = [
