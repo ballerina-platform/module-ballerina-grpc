@@ -251,7 +251,7 @@ isolated function testBidiStreamingWithNoPublicCertFile() returns grpc:Error? {
     test:assertEquals((<grpc:Error>result).message(), "Certificate file location must be provided for secure connection.");
 }
 
-@test:Config {enable:false}
+@test:Config {enable: true}
 isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns grpc:Error? {
     if !isWindowsEnvironment() {
         ChatClient chatClient = check new ("https://localhost", {
