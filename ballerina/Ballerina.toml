@@ -26,7 +26,7 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.3.0-20220511-091500-95578bd.jar"
+path = "./lib/http-native-2.3.0-20220511-184100-6e60fb7.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.71.Final.jar"
@@ -71,7 +71,7 @@ path = "./lib/netty-tcnative-classes-2.0.46.Final.jar"
 path = "./lib/netty-tcnative-boringssl-static-2.0.46.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/protobuf-java-3.19.2.jar"
+path = "./lib/protobuf-java-3.20.1.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/proto-google-common-protos-1.17.0.jar"
