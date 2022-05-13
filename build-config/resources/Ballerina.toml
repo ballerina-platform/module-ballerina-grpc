@@ -71,6 +71,21 @@ path = "./lib/netty-tcnative-classes-@nettytcnative.version@.jar"
 path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@.jar"
 
 [[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-@tcnative.version@-windows-x86_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-@tcnative.version@-linux-aarch_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-@tcnative.version@-linux-x86_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-@tcnative.version@-osx-aarch_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-@tcnative.version@-osx-x86_64.jar"
+
+[[platform.java11.dependency]]
 path = "./lib/protobuf-java-@protobuf.java.version@.jar"
 
 [[platform.java11.dependency]]
