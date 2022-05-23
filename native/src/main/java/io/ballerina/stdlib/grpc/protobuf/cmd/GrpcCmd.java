@@ -124,6 +124,13 @@ public class GrpcCmd implements BLauncherCmd {
             return;
         }
 
+        // check if the `--input` parameter is specified
+        if (protoPath == null) {
+            String errorMessage = "The `--input` parameter must be specified.";
+            outStream.println(errorMessage);
+            return;
+        }
+
         File input = new File(protoPath);
         if (input.isDirectory()) {
             // Multiple proto files
@@ -149,7 +156,7 @@ public class GrpcCmd implements BLauncherCmd {
             // Single proto file
             // check input protobuf file path
             Optional<String> pathExtension = getFileExtension(protoPath);
-            if (!PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
+            if (pathExtension.isEmpty() || !PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
                 String errorMessage = "Invalid proto file path. Please input valid proto file location.";
                 outStream.println(errorMessage);
                 return;
