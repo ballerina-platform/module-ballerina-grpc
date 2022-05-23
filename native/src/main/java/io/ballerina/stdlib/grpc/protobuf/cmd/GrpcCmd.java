@@ -70,7 +70,7 @@ public class GrpcCmd implements BLauncherCmd {
     private boolean helpFlag;
 
     @CommandLine.Option(names = {"--input"}, description = "Input .proto file or a directory containing " +
-            "multiple .proto files")
+            "multiple .proto files", required = true)
     private String protoPath;
 
     @CommandLine.Option(names = {"--mode"},
@@ -121,13 +121,6 @@ public class GrpcCmd implements BLauncherCmd {
         if (helpFlag) {
             String commandUsageInfo = BLauncherCmd.getCommandUsageInfo(getName());
             outStream.println(commandUsageInfo);
-            return;
-        }
-
-        // check if the `--input` parameter is specified
-        if (protoPath == null) {
-            String errorMessage = "The `--input` parameter must be specified.";
-            outStream.println(errorMessage);
             return;
         }
 
