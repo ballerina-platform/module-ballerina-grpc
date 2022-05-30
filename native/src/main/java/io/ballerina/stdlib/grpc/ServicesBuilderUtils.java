@@ -42,7 +42,9 @@ import io.ballerina.stdlib.grpc.listener.UnaryServerCallHandler;
 import io.ballerina.stdlib.protobuf.nativeimpl.ProtoTypesUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
@@ -243,25 +245,21 @@ public class ServicesBuilderUtils {
             throw new GrpcServerException("Error while reading the service proto descriptor. File proto descriptor is" +
                     " null.");
         }
-        Descriptors.FileDescriptor[] fileDescriptors = new Descriptors.FileDescriptor[descriptorProto
-                .getDependencyList().size()];
-        int i = 0;
+        List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             String dependencyKey = dependency.toStringUtf8();
             if (descMap.containsKey(StringUtils.fromString(dependencyKey))) {
-                fileDescriptors[i++] = getFileDescriptor(descMap.get(StringUtils.fromString(dependencyKey)), descMap);
+                fileDescriptors.add(getFileDescriptor(descMap.get(StringUtils.fromString(dependencyKey)), descMap));
             } else if (descMap.size() == 0) {
                 Descriptors.FileDescriptor dependentDescriptor = StandardDescriptorBuilder.getFileDescriptor
                         (dependencyKey);
                 if (dependentDescriptor != null) {
-                    fileDescriptors[i++] = dependentDescriptor;
+                    fileDescriptors.add(dependentDescriptor);
                 }
             }
         }
-        if (fileDescriptors.length > 0 && i == 0) {
-            return Descriptors.FileDescriptor.buildFrom(descriptorProto, new Descriptors.FileDescriptor[i], true);
-        }
-        return Descriptors.FileDescriptor.buildFrom(descriptorProto, fileDescriptors);
+        return Descriptors.FileDescriptor.buildFrom(descriptorProto,
+                fileDescriptors.toArray(Descriptors.FileDescriptor[]::new), true);
     }
 
     /**
