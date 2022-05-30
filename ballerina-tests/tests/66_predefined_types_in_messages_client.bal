@@ -23,9 +23,9 @@ function testPredefinedTypesInMessages() returns error? {
     PredefinedTypesInServiceClient cl = check new ("http://localhost:9166");
 
     AnyTypeMsgForAnyMessage anyMessage = {name: "Ballerina", code: 71};
-    AnyMessageRequest anyRequest = {name: "Ballerina", details: 'any:pack(anyMessage)};
+    AnyMessageRequest anyRequest = {name: "Ballerina", details: check 'any:pack(anyMessage)};
     AnyMessageResponse anyResponse = check cl->anyCall(anyRequest);
-    test:assertEquals(anyResponse, <AnyMessageResponse>{name: "Ballerina", details: 'any:pack(anyMessage)});
+    test:assertEquals(anyResponse, <AnyMessageResponse>{name: "Ballerina", details: check 'any:pack(anyMessage)});
 
     StructMessageRequest structRequest = {name: "Ballerina", details: {"key1": "Hello", "key2": 25.0, "key3": false}};
     StructMessageResponse structResponse = check cl->structCall(structRequest);

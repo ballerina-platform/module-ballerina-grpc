@@ -24,9 +24,9 @@ function testPredefinedTypesAsRepeatedValues() returns error? {
 
     AnyTypeMsg msg = {name: "Ballerina", code: 71};
     'any:Any[] anyDetails = [
-        'any:pack("Hello Ballerina"),
-        'any:pack(71),
-        'any:pack(msg)
+        check 'any:pack("Hello Ballerina"),
+        check 'any:pack(71),
+        check 'any:pack(msg)
     ];
     AnyArrayResponse anyResponse = check repeatedClient->anyCall({name: "Ballerina", details: anyDetails});
     test:assertEquals(anyResponse, <AnyArrayResponse>{name: "Ballerina", details: anyDetails});
