@@ -6,7 +6,7 @@ gRPC is an inter-process communication technology that allows you to connect, in
 
 When you develop a gRPC application, the first thing you do is define a service definition using Protocol Buffers.
 
-### Protocol Buffers
+### Protocol buffers
 This is a mechanism to serialize the structured data introduced by Google and used by the gRPC framework. Defining the service using Protocol Buffers includes defining remote methods in the service and defining message types that are sent across the network. A sample service definition is shown below.
 
 ```proto
@@ -28,9 +28,9 @@ message HelloResponse {
 gRPC allows client applications to directly call the server-side methods using the auto-generated stubs. Protocol
 Buffer compiler is used to generate the stubs for the specified language. In Ballerina, the stubs are generated using the built-in 'Protocol Buffers to Ballerina' tool.
 
-For information on how to generate Ballerina code for Protocol Buffers definition, see [gRPC](https://ballerina.io/learn/user-guide/network-communication/grpc/).
+For information on how to generate Ballerina code for Protocol Buffers definition, see [Write a gRPC service with Ballerina](https://ballerina.io/learn/write-a-grpc-service-with-ballerina/).
 
-### gRPC Communication Patterns
+### gRPC communication patterns
 The common communication pattern between a client and server is simple request-response style communication. However, with gRPC, you can leverage different inter-process communication patterns other than the simple request-response pattern.
 This package supports four fundamental communication patterns used in gRPC-based applications: simple RPC(unary RPC), server streaming RPC, client streaming RPC, and bidirectional streaming RPC.
 
@@ -43,7 +43,7 @@ service HelloWorld {
           returns (google.protobuf.StringValue);
 }
 ```
-##### Creating the Server
+##### Implement the gRPC server
 The code snippet given below contains a service that sends a response to each request.
 
 ```ballerina
@@ -56,7 +56,7 @@ service HelloWorld on new grpc:Listener(9090)  {
     }
 }
 ```
-##### Creating the Client
+##### Implement the gRPC client
 The code snippet given below calls the above service in a synchronized manner using an auto-generated Ballerina stub.
 
 ```ballerina
@@ -77,7 +77,7 @@ service HelloWorld {
           returns (stream google.protobuf.StringValue);
 }
 ```
-##### Creating the Server
+##### Implement the gRPC server
 The code snippet given below contains a service that sends a sequence of responses to each request.
 
 ```ballerina
@@ -91,7 +91,7 @@ service HelloWorld on new grpc:Listener(9090) {
 }
 ```
 
-##### Creating the Client
+##### Implement the gRPC server
 The code snippet given below calls the above service using the auto-generated Ballerina client stub and reads multiple server responses using a stream.
 Here, the message stream is ended with a `()` value.
 
@@ -114,7 +114,7 @@ service HelloWorld {
 }
 ```
 
-##### Creating the Server
+##### Implement the gRPC server
 The code snippet given below contains a service that receives a sequence of requests from the client and sends a single response in return.
 
 ```ballerina
@@ -135,7 +135,7 @@ service HelloWorld on new grpc:Listener(9090) {
 }
 ```
 
-##### Creating the Client
+##### Implement the gRPC server
 The code snippet given below calls the above service using the auto-generated Ballerina client stub and sends multiple request messages from the server.
 
 ```ballerina
@@ -160,7 +160,7 @@ The code snippet given below calls the above service using the auto-generated Ba
 ...
 ```
 
-#### Bidirectional Streaming RPC
+#### Bidirectional streaming RPC
 In bidirectional streaming RPC, the client is sending a request to the server as a stream of messages. The server also responds with a stream of messages.
 
 ```proto
@@ -169,7 +169,7 @@ service Chat {
           returns (stream google.protobuf.StringValue);
 }
 ```
-##### Creating the Server
+##### Implement the gRPC server
 The code snippet given below includes a service that handles bidirectional streaming.
 
 ```ballerina
@@ -191,7 +191,7 @@ service Chat on new grpc:Listener(9090) {
     }
 }
 ```
-##### Creating the Client
+##### Implement the gRPC server
 The code snippet given below calls the above service using the auto-generated Ballerina client stub and sends multiple request messages to the server and receives multiple responses from the server.
 
 ```ballerina
@@ -221,14 +221,14 @@ The code snippet given below calls the above service using the auto-generated Ba
     }
 ```
 
-### Advanced Use cases
+### Advanced use cases
 
-#### Using the TLS protocol
+#### Use the TLS protocol
 
 The Ballerina gRPC package allows the use of TLS in communication. This setting expects a secure socket to be
 set in the connection configuration as shown below.
 
-##### Configuring TLS in Server Side
+##### Configure TLS in server side
 
 ```ballerina
 // Server endpoint configuration with the SSL configurations.
@@ -247,7 +247,7 @@ service HelloWorld on ep {
 }
 ```
 
-##### Configuring TLS in Client Side
+##### Configure TLS in client side
 
 ```ballerina
     // Client endpoint configuration with SSL configurations.
@@ -258,7 +258,7 @@ service HelloWorld on ep {
     });
 ```
 
-#### Using Headers
+#### Use headers
 
 The Ballerina gRPC package allows to send/receive headers with the request and response using the context record type. The
 context record type consists of two fields called headers and content. E.g: For the string message, a type generated context record type will be as follows.
@@ -270,7 +270,7 @@ public type ContextString record {|
 |};
 ```
 
-##### Using Headers in the Client Side
+##### Use headers at the client side
 
 ```ballerina
     // Set the custom headers to the request.
@@ -285,7 +285,7 @@ public type ContextString record {|
                                                     "server_header_key");
 ```
 
-##### Using Headers in the Server Side
+##### Use headers at the server side
 
 ```ballerina
 service "HelloWorld" on new grpc:Listener(9090) {
@@ -304,13 +304,13 @@ service "HelloWorld" on new grpc:Listener(9090) {
 }
 ```
 
-#### Using Deadlines
+#### Use deadlines
 
 Deadlines allow gRPC clients to specify how long they are willing to wait for an RPC to complete before the RPC is
 terminated with the `DEADLINE_EXCEEDED` error. In Ballerina, a deadline value is set directly to the headers and it is sent
 via the request headers.
 
-##### Setting a Deadline in the Request Headers
+##### Set a deadline in the request headers
 
 ```ballerina
     time:Utc current = time:utcNow();
@@ -318,7 +318,7 @@ via the request headers.
     map<string|string[]> headers = grpc:setDeadline(deadline);
 ```
 
-##### Checking the Deadlines
+##### Check the deadlines
 
 ```ballerina
     boolean cancel = check grpc:isCancelled(request.headers);

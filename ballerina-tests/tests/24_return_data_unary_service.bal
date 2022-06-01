@@ -22,7 +22,7 @@ listener grpc:Listener ep24 = new (9114);
     descriptor: ROOT_DESCRIPTOR_24_RETURN_DATA_UNARY,
     descMap: getDescriptorMap24ReturnDataUnary()
 }
-service /HelloWorld24 on ep24 {
+service "HelloWorld24" on ep24 {
 
     remote isolated function testStringValueReturn(string value) returns string {
         return value;

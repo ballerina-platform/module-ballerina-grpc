@@ -70,7 +70,7 @@ public class GrpcCmd implements BLauncherCmd {
     private boolean helpFlag;
 
     @CommandLine.Option(names = {"--input"}, description = "Input .proto file or a directory containing " +
-            "multiple .proto files")
+            "multiple .proto files", required = true)
     private String protoPath;
 
     @CommandLine.Option(names = {"--mode"},
@@ -149,7 +149,7 @@ public class GrpcCmd implements BLauncherCmd {
             // Single proto file
             // check input protobuf file path
             Optional<String> pathExtension = getFileExtension(protoPath);
-            if (!PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
+            if (pathExtension.isEmpty() || !PROTO_EXTENSION.equalsIgnoreCase(pathExtension.get())) {
                 String errorMessage = "Invalid proto file path. Please input valid proto file location.";
                 outStream.println(errorMessage);
                 return;

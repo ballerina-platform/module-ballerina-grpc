@@ -17,7 +17,7 @@
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 
-service helloWorldServerStreaming {
+service HelloWorldServerStreaming {
 	rpc lotsOfReplies (HelloRequest)
 			returns (stream HelloResponse);
 }

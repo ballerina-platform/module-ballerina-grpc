@@ -1,4 +1,4 @@
-// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -13,18 +13,16 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/grpc;
-import ballerina/log;
 
-listener grpc:Listener ep53 = new (9153);
+listener grpc:Listener ep = new (9090);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_53_SERVER_STREAMING_NEGATIVE, descMap: getDescriptorMap53ServerStreamingNegative()}
-service "HelloWorld53" on ep53 {
+@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_HELLOWORLD, descMap: getDescriptorMapHelloworld()}
+service "helloWorld" on ep {
 
-    remote function hello53(string value) returns stream<string, error?> {
-        log:printInfo(value.toString());
-        string[] arr = ["a", "b", "c"];
-        return arr.toStream();
+    remote function sayHello(HelloWorldStringCaller caller, string value) returns error? {
+        check caller->sendString("WSO2");
+        check caller->complete();
     }
 }
+

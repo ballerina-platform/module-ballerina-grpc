@@ -6,9 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- [Incorrect stub generated for message with Any type field in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/2750)
+- [Incorrect stub generation for repeated values of any, struct, timestamp, and duration messages](https://github.com/ballerina-platform/ballerina-standard-library/issues/2732)
+- [Unable to pass protobuf predefined types as repeated values and values in messages](https://github.com/ballerina-platform/ballerina-standard-library/issues/2740)
+- [Fixes incorrect caller type name validation in gRPC compiler plugin](https://github.com/ballerina-platform/ballerina-standard-library/issues/2867) 
+
+### Added
+- [Improve imports generation logic in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/2762)
+
+## [1.2.1] - 2022-02-18
+### Fixed
 - [Fix issue in ordering of services with duplicate output types](https://github.com/ballerina-platform/ballerina-standard-library/issues/2637)
 - [Improve the enum creation logic to escape case sensitivity](https://github.com/ballerina-platform/ballerina-standard-library/issues/2678)
 - [Constraint the compiler plugin validations only for remote functions](https://github.com/ballerina-platform/ballerina-standard-library/issues/2695)
+- [Fix name conflict - similar user defined messages as predefined Google types](https://github.com/ballerina-platform/ballerina-standard-library/issues/2692)
 
 ## [1.2.0] - 2022-01-29
 ### Fixed

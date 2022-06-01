@@ -286,7 +286,6 @@ task stopGoServer() {
     }
 }
 
-build.finalizedBy stopGoServer
 build.dependsOn ":${packageName}-test-utils:build"
 ballerinaTest.finalizedBy stopLdapServer
 ballerinaTest.dependsOn startLdapServer

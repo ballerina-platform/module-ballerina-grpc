@@ -37,7 +37,7 @@ function testHello55JWTAuthBiDiWithCaller() returns error? {
         }
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     Hello55BiDiWithCallerStreamingClient strClient = check hClient->hello55BiDiWithCaller();
     check strClient->sendString("Hello");
     check strClient->complete();
@@ -53,7 +53,7 @@ function testHello55JWTAuthBiDiWithCallerUnauthenticated() returns error? {
         "authorization": "bearer "
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155");
+    HelloWorld55Client hClient = check new ("http://localhost:9155");
     Hello55BiDiWithCallerStreamingClient strClient = check hClient->hello55BiDiWithCaller();
     check strClient->sendContextString({
         content: "Hello",
@@ -84,7 +84,7 @@ function testHello55JWTAuthBiDiWithCallerInvalidPermission() returns error? {
         }
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     Hello55BiDiWithCallerStreamingClient strClient = check hClient->hello55BiDiWithCaller();
     check strClient->sendString("Hello");
     check strClient->complete();
@@ -115,7 +115,7 @@ function testHello55JWTAuthBiDiWithReturn() returns error? {
     map<string|string[]> requestHeaders = {};
     requestHeaders = check handler.enrich(requestHeaders);
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     Hello55BiDiWithReturnStreamingClient strClient = check hClient->hello55BiDiWithReturn();
     check strClient->sendString("Hello");
     check strClient->complete();
@@ -143,7 +143,7 @@ function testHello55JWTAuthUnary() returns grpc:Error? {
         }
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     string result = check hClient->hello55UnaryWithCaller("Hello");
     test:assertEquals(result, "Hello");
 }
@@ -158,7 +158,7 @@ function testHello55JWTAuthUnaryUnauthenticated() returns error? {
         content: "Hello"
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155");
+    HelloWorld55Client hClient = check new ("http://localhost:9155");
     string|grpc:Error result = hClient->hello55UnaryWithCaller(ctxString);
     test:assertTrue(result is grpc:Error);
     test:assertEquals((<grpc:Error>result).message(), "Failed to authenticate client");
@@ -183,7 +183,7 @@ function testHello55JWTAuthUnaryInvalidPermission() returns error? {
         }
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     string|grpc:Error result = hClient->hello55UnaryWithCaller("Hello");
     test:assertTrue(result is grpc:Error);
     test:assertEquals((<grpc:Error>result).message(), "Permission denied");
@@ -198,7 +198,7 @@ function testHello55LdapAuth() returns error? {
             password: "alice@123"
         };
 
-        helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+        HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
         string response = check hClient->hello55UnaryWithReturn("Hello");
         test:assertEquals(response, "Hello");
     }
@@ -211,7 +211,7 @@ function testHello55BasicAuth() returns grpc:Error? {
         password: "123"
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     string response = check hClient->hello55UnaryWithReturn("Hello");
     test:assertEquals(response, "Hello");
 }
@@ -233,7 +233,7 @@ function testHello55OAuth2Auth() returns grpc:Error? {
         }
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     string response = check hClient->hello55UnaryWithReturn("Hello");
     test:assertEquals(response, "Hello");
 }
@@ -256,7 +256,7 @@ function testHello55JWTAuthWithEmptyScope() returns error? {
         }
     };
 
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
+    HelloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
     string? result = check hClient->hello55EmptyScope("Hello");
     test:assertTrue(result is string);
     test:assertEquals(<string>result, "Hello");
@@ -269,7 +269,7 @@ function testHello55LdapAuthWithEmptyScope() returns error? {
             username: "alice",
             password: "alice@123"
         };
-        helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
+        HelloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
         string response = check hClient->hello55EmptyScope("Hello");
         test:assertEquals(response, "Hello");
     }
@@ -282,7 +282,7 @@ function testHello55BasicAuthWithEmptyScope() returns error? {
         password: "123"
     };
 
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
+    HelloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
     string response = check hClient->hello55EmptyScope("Hello");
     test:assertEquals(response, "Hello");
 }
@@ -303,7 +303,7 @@ function testHello55OAuth2AuthWithEmptyScope() returns error? {
         }
     };
 
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
+    HelloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255", {auth: config});
     string response = check hClient->hello55EmptyScope("Hello");
     test:assertEquals(response, "Hello");
 }
@@ -324,7 +324,7 @@ function testHello55ServerStreamingOAuth2Auth() returns error? {
         }
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     stream<string, error?> response = check hClient->hello55ServerStreaming("Hello");
     var value1 = check response.next();
     var value2 = check response.next();
@@ -350,7 +350,7 @@ function testHello55ClientStreamingOAuth2Auth() returns error? {
         }
     };
 
-    helloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
+    HelloWorld55Client hClient = check new ("http://localhost:9155", {auth: config});
     Hello55ClientStreamingStreamingClient sClient = check hClient->hello55ClientStreaming();
     check sClient->sendString("Hello");
     check sClient->sendString("World");
@@ -363,7 +363,7 @@ function testHello55ClientStreamingOAuth2Auth() returns error? {
 
 @test:Config {enable: true}
 function testHello55EmptyAuthHeader() returns error? {
-    helloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
+    HelloWorld55EmptyScopeClient hClient = check new ("http://localhost:9255");
     string|grpc:Error response = hClient->hello55EmptyScope("Hello");
     test:assertTrue(response is grpc:Error);
     test:assertEquals((<grpc:Error>response).message(), "Authorization header does not exist");

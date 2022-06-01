@@ -1,8 +1,8 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.2.3"
-distribution = "2201.0.1"
+version = "1.3.0"
+distribution = "2201.1.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -11,14 +11,14 @@ license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/grpc-native-1.2.3-SNAPSHOT.jar"
+path = "../native/build/libs/grpc-native-1.3.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.2.3-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.3.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2201.0.1.jar"
+path = "./lib/ballerina-cli-2201.1.0.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -26,34 +26,34 @@ path = "./lib/antlr4-runtime-4.5.1.wso2v1.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/http-native-2.2.1.jar"
+path = "./lib/http-native-2.3.0-20220527-155600-bb9a583.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-common-4.1.71.Final.jar"
+path = "./lib/netty-common-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-buffer-4.1.71.Final.jar"
+path = "./lib/netty-buffer-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-transport-4.1.71.Final.jar"
+path = "./lib/netty-transport-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-resolver-4.1.71.Final.jar"
+path = "./lib/netty-resolver-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-handler-4.1.71.Final.jar"
+path = "./lib/netty-handler-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-codec-http-4.1.71.Final.jar"
+path = "./lib/netty-codec-http-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-codec-4.1.71.Final.jar"
+path = "./lib/netty-codec-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-handler-proxy-4.1.71.Final.jar"
+path = "./lib/netty-handler-proxy-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-codec-http2-4.1.71.Final.jar"
+path = "./lib/netty-codec-http2-4.1.77.Final.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/commons-pool-1.5.6.wso2v1.jar"
@@ -65,19 +65,34 @@ path = "./lib/bcprov-jdk15on-1.69.jar"
 path = "./lib/bcpkix-jdk15on-1.69.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-tcnative-classes-2.0.46.Final.jar"
+path = "./lib/netty-tcnative-classes-2.0.52.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-2.0.46.Final.jar"
+path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/protobuf-java-3.19.2.jar"
+path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-windows-x86_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-linux-aarch_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-linux-x86_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-osx-aarch_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-osx-x86_64.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/protobuf-java-3.20.1.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/formatter-core-2201.0.1.jar"
+path = "./lib/formatter-core-2201.1.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-parser-2201.0.1.jar"
+path = "./lib/ballerina-parser-2201.1.0.jar"
