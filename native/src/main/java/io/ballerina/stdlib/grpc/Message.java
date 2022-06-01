@@ -1073,7 +1073,7 @@ public class Message {
     @SuppressWarnings("unchecked")
     public int getSerializedSize() throws InvalidProtocolBufferException {
 
-        if (GOOGLE_PROTOBUF_ANY.equals(descriptor.getFullName())) {
+        if (descriptor != null && GOOGLE_PROTOBUF_ANY.equals(descriptor.getFullName())) {
             BMap<BString, Object> anyTypedRecord = (BMap<BString, Object>) bMessage;
             String typeUrl = anyTypedRecord.getStringValue(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY)).getValue();
             byte[] anyTypedContentArray = ServicesBuilderUtils.hexStringToByteArray(
