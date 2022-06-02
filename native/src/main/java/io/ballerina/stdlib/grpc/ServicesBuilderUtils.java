@@ -27,9 +27,11 @@ import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.MethodType;
+import io.ballerina.runtime.api.types.Parameter;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
@@ -45,6 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
@@ -161,9 +164,10 @@ public class ServicesBuilderUtils {
                         .getFullName(), getBallerinaValueType(service.getType().getPackage(),
                         requestDescriptor.getName())));
             }
+
             MethodDescriptor.Marshaller resMarshaller = ProtoUtils.marshaller(
-                    new MessageParser(responseDescriptor.getFullName(),
-                            getBallerinaValueType(service.getType().getPackage(), responseDescriptor.getName())));
+                    new MessageParser(responseDescriptor.getFullName(), getBallerinaValueType(
+                    getOutputPackage(service, methodDescriptor.getName()), responseDescriptor.getName())));
             MethodDescriptor.Builder methodBuilder = MethodDescriptor.newBuilder();
             MethodDescriptor grpcMethodDescriptor = methodBuilder.setType(methodType)
                     .setFullMethodName(methodName)
@@ -280,6 +284,64 @@ public class ServicesBuilderUtils {
                     + Character.digit(sDescriptor.charAt(i + 1), 16));
         }
         return data;
+    }
+
+    /**
+     * Retrieve the module (or submodule) of the input type.
+     *
+     * @param service service definition
+     * @param remoteFunctionName name of the relevant remote function
+     * @return module of the input type
+     */
+    static Module getInputPackage(BObject service, String remoteFunctionName) {
+
+        Optional<MethodType> remoteCallType = Arrays.stream(service.getType().getMethods())
+                .filter(methodType -> methodType.getName().equals(remoteFunctionName)).findFirst();
+
+        if (remoteCallType.isPresent()) {
+            Parameter[] parameters = remoteCallType.get().getParameters();
+            int noOfParams = parameters.length;
+            if (noOfParams > 0) {
+                Type inputType = parameters[noOfParams - 1].type;
+                if (inputType instanceof StreamType) {
+                    return ((StreamType) inputType).getConstrainedType().getPackage();
+                } else {
+                    return inputType.getPackage();
+                }
+            }
+        }
+        return service.getType().getPackage();
+    }
+
+    /**
+     * Retrieve the module (or submodule) of the output type.
+     *
+     * @param service service definition
+     * @param remoteFunctionName name of the relevant remote function
+     * @return module of the output type
+     */
+    static Module getOutputPackage(BObject service, String remoteFunctionName) {
+
+        Optional<MethodType> remoteCallType = Arrays.stream(service.getType().getMethods())
+                .filter(methodType -> methodType.getName().equals(remoteFunctionName)).findFirst();
+
+        if (remoteCallType.isPresent()) {
+            Type returnType = remoteCallType.get().getType().getReturnType();
+            if (returnType instanceof UnionType) {
+                UnionType returnTypeAsUnion = (UnionType) returnType;
+                Optional<Type> returnDataType = returnTypeAsUnion.getOriginalMemberTypes().stream()
+                        .filter(type -> type instanceof RecordType).findFirst();
+                if (returnDataType.isPresent()) {
+                    Type outputType = returnDataType.get();
+                    if (outputType instanceof StreamType) {
+                        return ((StreamType) outputType).getConstrainedType().getPackage();
+                    } else {
+                        return outputType.getPackage();
+                    }
+                }
+            }
+        }
+        return service.getType().getPackage();
     }
 
     /**
