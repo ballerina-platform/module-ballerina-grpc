@@ -20,13 +20,9 @@ import "simple_response_with_annotation.proto";
 
 option go_package = "example.com/messages1";
 
-
 service SimpleServiceWithAnnotation {
   rpc unary(SimpleRequestWithAnnotation) returns (SimpleResponseWithAnnotation) {}
   rpc serverStreaming(SimpleRequestWithAnnotation) returns (stream SimpleResponseWithAnnotation) {}
   rpc clientStreaming(stream SimpleRequestWithAnnotation) returns (SimpleResponseWithAnnotation) {}
   rpc bidirectionalStreaming(stream SimpleRequestWithAnnotation) returns (stream SimpleResponseWithAnnotation) {}
 }
-
-
-
