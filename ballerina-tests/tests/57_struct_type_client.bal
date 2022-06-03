@@ -73,43 +73,43 @@ StructMsg sendingStructMsg = {
     struct: sendingStruct
 };
 
-@test:Config {}
+@test:Config {enable: true}
 function testGetStructType1() returns error? {
     map<anydata> res = check structClient->getStructType1("Hello");
     test:assertEquals(res, expectedStruct);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testGetStructType2() returns error? {
     StructMsg res = check structClient->getStructType2("Hello");
     test:assertEquals(res, expectedStructMsg);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testSendStructType1() returns error? {
     string res = check structClient->sendStructType1(sendingStruct);
     test:assertEquals(res, "OK");
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testSendStructType2() returns error? {
     string res = check structClient->sendStructType2(sendingStructMsg);
     test:assertEquals(res, "OK");
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testExchangeStructType1() returns error? {
     map<anydata> res = check structClient->exchangeStructType1(sendingStruct);
     test:assertEquals(res, expectedStruct);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testExchangeStructType2() returns error? {
     StructMsg res = check structClient->exchangeStructType2(sendingStructMsg);
     test:assertEquals(res, expectedStructMsg);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testServerStreamStructType1() returns error? {
     map<anydata>[] expectedStructArr = [
         {
@@ -139,7 +139,7 @@ function testServerStreamStructType1() returns error? {
     test:assertEquals(receivedData, expectedStructArr);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testServerStreamStructType2() returns error? {
     StructMsg exStructmsg1 = {
         name: "SM1",
@@ -178,7 +178,7 @@ function testServerStreamStructType2() returns error? {
     test:assertEquals(receivedData, exStructArr);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testClientStreamStructType1() returns error? {
     ClientStreamStructType1StreamingClient streamClient = check structClient->clientStreamStructType1();
     map<anydata>[] requests = [
@@ -213,7 +213,7 @@ function testClientStreamStructType1() returns error? {
     test:assertEquals(<map<anydata>>result, expectedNestedStruct);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testClientStreamStructType2() returns error? {
     ClientStreamStructType2StreamingClient streamClient = check structClient->clientStreamStructType2();
     StructMsg exStructmsg1 = {
@@ -259,7 +259,7 @@ function testClientStreamStructType2() returns error? {
     test:assertEquals(<StructMsg>result, expectedNestedStruct);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testBidirectionalStreamStructType1() returns error? {
     BidirectionalStreamStructType1StreamingClient streamClient = check structClient->bidirectionalStreamStructType1();
     map<anydata>[] requests = [
@@ -298,7 +298,7 @@ function testBidirectionalStreamStructType1() returns error? {
     test:assertEquals(receivedData, requests);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testBidirectionalStreamStructType2() returns error? {
     BidirectionalStreamStructType2StreamingClient streamClient = check structClient->bidirectionalStreamStructType2();
     StructMsg exStructmsg1 = {

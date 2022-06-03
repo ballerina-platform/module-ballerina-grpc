@@ -127,7 +127,7 @@ Product[] actualProducts = [
 
 ProductCatalogServiceClient prodCatalogClient = check new ("http://localhost:3550");
 
-@test:Config {}
+@test:Config {enable: true}
 function listProductsTest() returns error? {
     ListProductsResponse response = check prodCatalogClient->ListProducts({});
     Product[] productResults = [];
@@ -137,7 +137,7 @@ function listProductsTest() returns error? {
     test:assertEquals(productResults, actualProducts);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function getProductTest() returns error? {
     GetProductRequest request = {
         id: "OLJCESPC7Z"
@@ -146,7 +146,7 @@ function getProductTest() returns error? {
     test:assertEquals(product, actualProducts[0]);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function searchProductsTest() returns error? {
     SearchProductsRequest request = {
         query: "terrarium will looks"

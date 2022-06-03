@@ -38,6 +38,7 @@ import io.ballerina.stdlib.grpc.exception.GrpcClientException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -99,22 +100,16 @@ public final class ServiceDefinition {
             throw new GrpcClientException("Error while reading the service proto descriptor. File proto descriptor" +
                     " is null.");
         }
-        Descriptors.FileDescriptor[] fileDescriptors = new Descriptors.FileDescriptor[descriptorProto
-                .getDependencyList().size()];
-        int i = 0;
+        List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             if (descriptorMap.containsKey(StringUtils.fromString(dependency.toStringUtf8()))) {
                 BString bRootDescriptor = (BString) descriptorMap
                         .get(StringUtils.fromString(dependency.toString(StandardCharsets.UTF_8)));
-                fileDescriptors[i++] =
-                        getFileDescriptor(bRootDescriptor.getValue(), descriptorMap);
+                fileDescriptors.add(getFileDescriptor(bRootDescriptor.getValue(), descriptorMap));
             }
         }
-        if (fileDescriptors.length > 0 && i == 0) {
-            throw new GrpcClientException("Error while reading the service proto descriptor. Couldn't find any " +
-                    "dependent descriptors.");
-        }
-        return Descriptors.FileDescriptor.buildFrom(descriptorProto, fileDescriptors);
+        return Descriptors.FileDescriptor.buildFrom(descriptorProto, fileDescriptors.toArray(
+                Descriptors.FileDescriptor[]::new), true);
     }
 
     private Descriptors.ServiceDescriptor getServiceDescriptor(String clientTypeName) throws GrpcClientException {

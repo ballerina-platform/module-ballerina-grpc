@@ -17,7 +17,7 @@
 import ballerina/test;
 import integration_tests.api;
 
-@test:Config {}
+@test:Config {enable: true}
 function testServiceInputParamFromAnotherModuleUnary() returns error? {
 
     api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
@@ -31,7 +31,7 @@ function testServiceInputParamFromAnotherModuleUnary() returns error? {
 
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testServiceInputParamFromAnotherModuleServerStreaming() returns error? {
 
     api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
@@ -55,7 +55,7 @@ function testServiceInputParamFromAnotherModuleServerStreaming() returns error? 
 
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testServiceInputParamFromAnotherModuleClientStreaming() returns error? {
 
     api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
@@ -77,7 +77,7 @@ function testServiceInputParamFromAnotherModuleClientStreaming() returns error? 
     }
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testServiceInputParamFromAnotherModuleBidirectional1() returns error? {
 
     api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");
@@ -112,7 +112,7 @@ function testServiceInputParamFromAnotherModuleBidirectional1() returns error? {
     test:assertEquals(i, 3);
 }
 
-@test:Config {}
+@test:Config {enable: true}
 function testServiceInputParamFromAnotherModuleBidirectional2() returns error? {
 
     api:SeparateModuleServiceClient ep = check new ("http://localhost:9500");

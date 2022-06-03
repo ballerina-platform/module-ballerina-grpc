@@ -22,15 +22,15 @@ import ballerina/time;
 
 type NilType ();
 
-@test:Config {}
+@test:Config {enable: true}
 public function testProtbufAnyType() returns error? {
     AnyTypeServerClient ep = check new ("http://localhost:9161");
 
-    'any:Any uc1Value1 = check ep->unaryCall1('any:pack("string"));
-    'any:Any uc1Value2 = check ep->unaryCall1('any:pack("timestamp"));
-    'any:Any uc1Value3 = check ep->unaryCall1('any:pack("duration"));
-    'any:Any uc1Value4 = check ep->unaryCall1('any:pack("empty"));
-    'any:Any uc1Value5 = check ep->unaryCall1('any:pack("bytes"));
+    'any:Any uc1Value1 = check ep->unaryCall1(check 'any:pack("string"));
+    'any:Any uc1Value2 = check ep->unaryCall1(check 'any:pack("timestamp"));
+    'any:Any uc1Value3 = check ep->unaryCall1(check 'any:pack("duration"));
+    'any:Any uc1Value4 = check ep->unaryCall1(check 'any:pack("empty"));
+    'any:Any uc1Value5 = check ep->unaryCall1(check 'any:pack("bytes"));
 
     string unpackedUc1Value1 = check 'any:unpack(uc1Value1, string);
     time:Utc unpackedUc1Value2 = check 'any:unpack(uc1Value2, time:Utc);
@@ -44,19 +44,19 @@ public function testProtbufAnyType() returns error? {
     test:assertEquals(unpackedNil, ());
     test:assertEquals(unpackedStringUc1Value5, "string value");
 
-    'any:Any uc2Value = check ep->unaryCall2('any:pack(true));
+    'any:Any uc2Value = check ep->unaryCall2(check 'any:pack(true));
     int unpackedUc2Value = check 'any:unpack(uc2Value, int);
     test:assertEquals(unpackedUc2Value, 23);
 
-    'any:ContextAny uc3Value = check ep->unaryCall3Context('any:pack(true));
+    'any:ContextAny uc3Value = check ep->unaryCall3Context(check 'any:pack(true));
     string unpackedUc3Value = check 'any:unpack(uc3Value.content, string);
     test:assertEquals(unpackedUc3Value, "Ballerina");
     test:assertEquals(grpc:getHeader(uc3Value.headers, "anyheader"), "Any Header Value");
 
     'any:Any[] teachers = [
-        'any:pack(<Person1>{name: "John", code: 23}),
-        'any:pack(<Person1>{name: "Ann", code: 24}),
-        'any:pack(<Person2>{name: "Ann", code: 24, add: "additional data"})
+        check 'any:pack(<Person1>{name: "John", code: 23}),
+        check 'any:pack(<Person1>{name: "Ann", code: 24}),
+        check 'any:pack(<Person2>{name: "Ann", code: 24, add: "additional data"})
     ];
 
     Teacher[] expectedTeachers = [
@@ -65,7 +65,7 @@ public function testProtbufAnyType() returns error? {
         <Person2>{name: "Ann", code: 24, add: "additional data"}
     ];
 
-    stream<'any:Any, error?> serverStream = check ep->serverStreamingCall('any:pack(true));
+    stream<'any:Any, error?> serverStream = check ep->serverStreamingCall(check 'any:pack(true));
     'any:Any[] returnedTeachers = [];
     check serverStream.forEach(function('any:Any value) {
         returnedTeachers.push(value);
