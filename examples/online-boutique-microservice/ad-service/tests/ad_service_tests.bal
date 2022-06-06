@@ -16,7 +16,7 @@
 
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable: true}
 function listProductsTest() returns error? {
     AdServiceClient adClient = check new ("http://localhost:9555");
     AdRequest request = {

@@ -25,7 +25,7 @@ service "PredefinedTypesInService" on ep66 {
 
     remote function anyCall(AnyMessageRequest value) returns AnyMessageResponse|error {
         AnyTypeMsgForAnyMessage msg = {name: "Ballerina", code: 71};
-        return {name: "Ballerina", details: 'any:pack(msg)};
+        return {name: "Ballerina", details: check 'any:pack(msg)};
     }
     remote function structCall(StructMessageRequest value) returns StructMessageResponse|error {
         return {name: "Ballerina", details: {"key1": "Hello", "key2": 25, "key3": false}};

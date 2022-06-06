@@ -18,7 +18,7 @@ import ballerina/test;
 import ballerina/io;
 import ballerina/grpc;
 
-@test:Config {}
+@test:Config {enable: true}
 function serverTest() returns error? {
     RouteGuideClient ep = check new ("http://localhost:8980");
     // Simple RPC

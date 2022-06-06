@@ -18,6 +18,7 @@
 package io.ballerina.stdlib.grpc;
 
 import com.google.protobuf.CodedOutputStream;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -81,7 +82,7 @@ class ProtoInputStream extends InputStream implements Drainable, KnownLength {
     }
 
     @Override
-    public int available() {
+    public int available() throws InvalidProtocolBufferException {
         if (message != null) {
             return message.getSerializedSize();
         } else if (partial != null) {

@@ -22,12 +22,28 @@ import com.google.protobuf.Descriptors;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BOOL_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BYTES_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_DOUBLE_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_FLOAT_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_INT32_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_INT64_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_STRING_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_UINT32_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_UINT64_TYPE_NAME;
+
 /**
  * Provides protobuf descriptor for well known dependency.
  */
 public class StandardDescriptorBuilder {
 
-    private static Map<String, Descriptors.FileDescriptor> standardLibDescriptor;
+    private static final Map<String, Descriptors.FileDescriptor> standardLibDescriptorMapForPackageKey;
+    private static final Map<String, Descriptors.FileDescriptor> standardLibDescriptorMapForMessageName;
 
     public static final String EMPTY_PROTO_PACKAGE_KEY = "google/protobuf/empty.proto";
     public static final String ANY_PROTO_PACKAGE_KEY = "google/protobuf/any.proto";
@@ -43,27 +59,70 @@ public class StandardDescriptorBuilder {
     public static final String COMPILER_PLUGIN_PROTO_PACKAGE_KEY = "google/protobuf/compiler/plugin.proto";
 
     static {
-        standardLibDescriptor = new HashMap<>();
-        standardLibDescriptor.put(EMPTY_PROTO_PACKAGE_KEY, com.google.protobuf.EmptyProto.getDescriptor());
-        standardLibDescriptor.put(ANY_PROTO_PACKAGE_KEY, com.google.protobuf.AnyProto.getDescriptor());
-        standardLibDescriptor.put(API_PROTO_PACKAGE_KEY, com.google.protobuf.ApiProto.getDescriptor());
-        standardLibDescriptor.put(DESCRIPTOR_PROTO_PACKAGE_KEY, com.google.protobuf.DescriptorProtos
-                .getDescriptor());
-        standardLibDescriptor.put(DURATION_PROTO_PACKAGE_KEY, com.google.protobuf.DurationProto.getDescriptor());
-        standardLibDescriptor.put(FIELD_MASK_PROTO_PACKAGE_KEY, com.google.protobuf.FieldMaskProto
-                .getDescriptor());
-        standardLibDescriptor.put(SOURCE_CONTEXT_PROTO_PACKAGE_KEY, com.google.protobuf.SourceContextProto
-                .getDescriptor());
-        standardLibDescriptor.put(WRAPPERS_PROTO_PACKAGE_KEY, com.google.protobuf.WrappersProto.getDescriptor());
-        standardLibDescriptor.put(STRUCT_PROTO_PACKAGE_KEY, com.google.protobuf.StructProto.getDescriptor());
-        standardLibDescriptor.put(TIMESTAMP_PROTO_PACKAGE_KEY, com.google.protobuf.TimestampProto
-                .getDescriptor());
-        standardLibDescriptor.put(TYPE_PROTO_PACKAGE_KEY, com.google.protobuf.TypeProto.getDescriptor());
-        standardLibDescriptor.put(COMPILER_PLUGIN_PROTO_PACKAGE_KEY, com.google.protobuf.compiler.PluginProtos
-                .getDescriptor());
+        standardLibDescriptorMapForPackageKey = new HashMap<>();
+        standardLibDescriptorMapForPackageKey.put(EMPTY_PROTO_PACKAGE_KEY,
+                com.google.protobuf.EmptyProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(ANY_PROTO_PACKAGE_KEY,
+                com.google.protobuf.AnyProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(API_PROTO_PACKAGE_KEY,
+                com.google.protobuf.ApiProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(DESCRIPTOR_PROTO_PACKAGE_KEY,
+                com.google.protobuf.DescriptorProtos.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(DURATION_PROTO_PACKAGE_KEY,
+                com.google.protobuf.DurationProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(FIELD_MASK_PROTO_PACKAGE_KEY,
+                com.google.protobuf.FieldMaskProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(SOURCE_CONTEXT_PROTO_PACKAGE_KEY,
+                com.google.protobuf.SourceContextProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(WRAPPERS_PROTO_PACKAGE_KEY,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(STRUCT_PROTO_PACKAGE_KEY,
+                com.google.protobuf.StructProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(TIMESTAMP_PROTO_PACKAGE_KEY,
+                com.google.protobuf.TimestampProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(TYPE_PROTO_PACKAGE_KEY,
+                com.google.protobuf.TypeProto.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(COMPILER_PLUGIN_PROTO_PACKAGE_KEY,
+                com.google.protobuf.compiler.PluginProtos.getDescriptor());
+    }
+
+    static {
+        standardLibDescriptorMapForMessageName = new HashMap<>();
+        standardLibDescriptorMapForMessageName.put(ANY_TYPE_NAME,
+                com.google.protobuf.AnyProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(EMPTY_TYPE_NAME,
+                com.google.protobuf.EmptyProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(TIMESTAMP_TYPE_NAME,
+                com.google.protobuf.TimestampProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(DURATION_TYPE_NAME,
+                com.google.protobuf.DurationProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(STRUCT_TYPE_NAME,
+                com.google.protobuf.StructProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_DOUBLE_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_FLOAT_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_INT64_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_UINT64_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_INT32_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_UINT32_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_BOOL_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_STRING_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
+        standardLibDescriptorMapForMessageName.put(WRAPPER_BYTES_TYPE_NAME,
+                com.google.protobuf.WrappersProto.getDescriptor());
     }
 
     public static Descriptors.FileDescriptor getFileDescriptor(String libName) {
-        return standardLibDescriptor.get(libName);
+        return standardLibDescriptorMapForPackageKey.get(libName);
+    }
+
+    public static Descriptors.FileDescriptor getFileDescriptorFromMessageName(String messageName) {
+        return standardLibDescriptorMapForMessageName.get(messageName);
     }
 }

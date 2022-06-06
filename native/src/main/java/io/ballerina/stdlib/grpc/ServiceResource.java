@@ -28,6 +28,8 @@ import java.util.List;
 
 import static io.ballerina.stdlib.grpc.MessageUtils.headersRequired;
 import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getBallerinaValueType;
+import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getInputPackage;
+import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getOutputPackage;
 
 /**
  * gRPC service resource class containing metadata to dispatch service request.
@@ -53,9 +55,9 @@ public class ServiceResource {
         this.functionName = function.getName();
         this.paramTypes = function.getParameterTypes();
         this.returnType = function.getReturnType();
-        this.rpcOutputType = getBallerinaValueType(service.getType().getPackage(),
+        this.rpcOutputType = getBallerinaValueType(getOutputPackage(service, functionName),
                 methodDescriptor.getOutputType().getName());
-        this.rpcInputType = getBallerinaValueType(service.getType().getPackage(),
+        this.rpcInputType = getBallerinaValueType(getInputPackage(service, functionName),
                 methodDescriptor.getInputType().getName());
         this.headerRequired = headersRequired(function, rpcInputType);
         this.runtime = runtime;

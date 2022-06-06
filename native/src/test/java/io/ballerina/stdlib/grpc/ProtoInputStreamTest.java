@@ -18,6 +18,7 @@
 
 package io.ballerina.stdlib.grpc;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class ProtoInputStreamTest {
     }
 
     @Test()
-    public void testAvailableWithExceptionMessage() {
+    public void testAvailableWithExceptionMessage() throws InvalidProtocolBufferException {
         Message message = new Message(new IllegalStateException("Illegal test case"));
         ProtoInputStream pis = new ProtoInputStream(message);
         assertEquals(pis.available(), 0);

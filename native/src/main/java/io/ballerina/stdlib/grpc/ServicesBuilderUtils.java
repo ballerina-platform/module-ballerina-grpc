@@ -25,11 +25,13 @@ import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
-import io.ballerina.runtime.api.flags.TypeFlags;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.MethodType;
+import io.ballerina.runtime.api.types.Parameter;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
@@ -42,7 +44,10 @@ import io.ballerina.stdlib.grpc.listener.UnaryServerCallHandler;
 import io.ballerina.stdlib.protobuf.nativeimpl.ProtoTypesUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
@@ -159,9 +164,10 @@ public class ServicesBuilderUtils {
                         .getFullName(), getBallerinaValueType(service.getType().getPackage(),
                         requestDescriptor.getName())));
             }
+
             MethodDescriptor.Marshaller resMarshaller = ProtoUtils.marshaller(
-                    new MessageParser(responseDescriptor.getFullName(),
-                            getBallerinaValueType(service.getType().getPackage(), responseDescriptor.getName())));
+                    new MessageParser(responseDescriptor.getFullName(), getBallerinaValueType(
+                    getOutputPackage(service, methodDescriptor.getName()), responseDescriptor.getName())));
             MethodDescriptor.Builder methodBuilder = MethodDescriptor.newBuilder();
             MethodDescriptor grpcMethodDescriptor = methodBuilder.setType(methodType)
                     .setFullMethodName(methodName)
@@ -243,26 +249,21 @@ public class ServicesBuilderUtils {
             throw new GrpcServerException("Error while reading the service proto descriptor. File proto descriptor is" +
                     " null.");
         }
-        Descriptors.FileDescriptor[] fileDescriptors = new Descriptors.FileDescriptor[descriptorProto
-                .getDependencyList().size()];
-        int i = 0;
+        List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             String dependencyKey = dependency.toStringUtf8();
             if (descMap.containsKey(StringUtils.fromString(dependencyKey))) {
-                fileDescriptors[i++] = getFileDescriptor(descMap.get(StringUtils.fromString(dependencyKey)), descMap);
+                fileDescriptors.add(getFileDescriptor(descMap.get(StringUtils.fromString(dependencyKey)), descMap));
             } else if (descMap.size() == 0) {
                 Descriptors.FileDescriptor dependentDescriptor = StandardDescriptorBuilder.getFileDescriptor
                         (dependencyKey);
                 if (dependentDescriptor != null) {
-                    fileDescriptors[i++] = dependentDescriptor;
+                    fileDescriptors.add(dependentDescriptor);
                 }
             }
         }
-        if (fileDescriptors.length > 0 && i == 0) {
-            throw new GrpcServerException("Error while reading the service proto descriptor. Couldn't find any " +
-                    "dependent descriptors.");
-        }
-        return Descriptors.FileDescriptor.buildFrom(descriptorProto, fileDescriptors);
+        return Descriptors.FileDescriptor.buildFrom(descriptorProto,
+                fileDescriptors.toArray(Descriptors.FileDescriptor[]::new), true);
     }
 
     /**
@@ -283,6 +284,64 @@ public class ServicesBuilderUtils {
                     + Character.digit(sDescriptor.charAt(i + 1), 16));
         }
         return data;
+    }
+
+    /**
+     * Retrieve the module (or submodule) of the input type.
+     *
+     * @param service service definition
+     * @param remoteFunctionName name of the relevant remote function
+     * @return module of the input type
+     */
+    static Module getInputPackage(BObject service, String remoteFunctionName) {
+
+        Optional<MethodType> remoteCallType = Arrays.stream(service.getType().getMethods())
+                .filter(methodType -> methodType.getName().equals(remoteFunctionName)).findFirst();
+
+        if (remoteCallType.isPresent()) {
+            Parameter[] parameters = remoteCallType.get().getParameters();
+            int noOfParams = parameters.length;
+            if (noOfParams > 0) {
+                Type inputType = parameters[noOfParams - 1].type;
+                if (inputType instanceof StreamType) {
+                    return ((StreamType) inputType).getConstrainedType().getPackage();
+                } else {
+                    return inputType.getPackage();
+                }
+            }
+        }
+        return service.getType().getPackage();
+    }
+
+    /**
+     * Retrieve the module (or submodule) of the output type.
+     *
+     * @param service service definition
+     * @param remoteFunctionName name of the relevant remote function
+     * @return module of the output type
+     */
+    static Module getOutputPackage(BObject service, String remoteFunctionName) {
+
+        Optional<MethodType> remoteCallType = Arrays.stream(service.getType().getMethods())
+                .filter(methodType -> methodType.getName().equals(remoteFunctionName)).findFirst();
+
+        if (remoteCallType.isPresent()) {
+            Type returnType = remoteCallType.get().getType().getReturnType();
+            if (returnType instanceof UnionType) {
+                UnionType returnTypeAsUnion = (UnionType) returnType;
+                Optional<Type> returnDataType = returnTypeAsUnion.getOriginalMemberTypes().stream()
+                        .filter(type -> type instanceof RecordType).findFirst();
+                if (returnDataType.isPresent()) {
+                    Type outputType = returnDataType.get();
+                    if (outputType instanceof StreamType) {
+                        return ((StreamType) outputType).getConstrainedType().getPackage();
+                    } else {
+                        return outputType.getPackage();
+                    }
+                }
+            }
+        }
+        return service.getType().getPackage();
     }
 
     /**
@@ -318,11 +377,10 @@ public class ServicesBuilderUtils {
         } else if (protoType.equals(STRUCT_MESSAGE)) {
             return PredefinedTypes.TYPE_MAP;
         } else if (protoType.equals(ANY_MESSAGE)) {
-            return TypeCreator.createRecordType("Any", ProtoTypesUtils.getProtoTypesAnyModule(), 0, true,
-                    TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
+            return ValueCreator.createRecordValue(ProtoTypesUtils.getProtoTypesAnyModule(), "Any")
+            .getType();
         } else {
-            return TypeCreator.createRecordType(protoType, module, 0, true,
-                    TypeFlags.asMask(TypeFlags.ANYDATA, TypeFlags.PURETYPE));
+            return ValueCreator.createRecordValue(module, protoType).getType();
         }
     }
 

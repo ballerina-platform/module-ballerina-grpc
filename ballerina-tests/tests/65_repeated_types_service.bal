@@ -26,9 +26,9 @@ service "RepeatedTypesService" on ep65 {
     remote function anyCall(AnyArrayRequest value) returns AnyArrayResponse|error {
         AnyTypeMsg msg = {name: "Ballerina", code: 71};
         'any:Any[] details = [
-            'any:pack("Hello Ballerina"),
-            'any:pack(71),
-            'any:pack(msg)
+            check 'any:pack("Hello Ballerina"),
+            check 'any:pack(71),
+            check 'any:pack(msg)
         ];
         return {name: "Ballerina", details: details};
     }

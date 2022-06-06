@@ -51,7 +51,7 @@ service "AnyTypeServer" on ep61 {
     }
     remote function unaryCall3('any:Any value) returns 'any:ContextAny|error {
         map<string|string[]> headers = {anyHeader: "Any Header Value"};
-        return {content: 'any:pack("Ballerina"), headers: headers};
+        return {content: check 'any:pack("Ballerina"), headers: headers};
     }
     remote function clientStreamingCall(stream<'any:Any, grpc:Error?> clientStream) returns 'any:Any|error {
         Person1 p1 = {name: "John", code: 23};
@@ -62,9 +62,9 @@ service "AnyTypeServer" on ep61 {
     }
     remote function serverStreamingCall('any:Any value) returns stream<'any:Any, error?>|error {
         'any:Any[] teachers = [
-            'any:pack(<Person1>{name: "John", code: 23}),
-            'any:pack(<Person1>{name: "Ann", code: 24}),
-            'any:pack(<Person2>{name: "Ann", code: 24, add: "additional data"})
+            check 'any:pack(<Person1>{name: "John", code: 23}),
+            check 'any:pack(<Person1>{name: "Ann", code: 24}),
+            check 'any:pack(<Person2>{name: "Ann", code: 24, add: "additional data"})
         ];
         return teachers.toStream();
     }
@@ -72,5 +72,4 @@ service "AnyTypeServer" on ep61 {
         return clientStream;
     }
 }
-
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 //
 // WSO2 Inc. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -14,15 +14,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
+syntax = "proto3";
 
-@test:Config {enable: true}
-isolated function testBackwardCompatibility() returns error? {
-    ProductCatalogClient ep = check new ("http://localhost:9154");
-    Product product = check ep->getProduct("N001");
-    test:assertEquals(product, {name: "Noodles", id: 1009});
-
-    string customerName = check ep->sendCustomer({name: "John", id: 100, additional: ""});
-    test:assertEquals(customerName, "John");
-}
-
+message SimpleResponseWithAnnotation {
+    string name = 1;
+    int32 id = 2;
+};
