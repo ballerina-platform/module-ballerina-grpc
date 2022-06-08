@@ -1,6 +1,8 @@
 import ballerina/protobuf;
 import ballerina/time;
 
+const string TIME_DEPENDENT_DESC = "";
+
 @protobuf:Descriptor {value: MESSAGE_DESC}
 public type ByeResponse record {|
     string say = "";

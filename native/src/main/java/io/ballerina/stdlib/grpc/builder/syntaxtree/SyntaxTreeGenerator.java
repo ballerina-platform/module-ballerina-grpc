@@ -112,14 +112,12 @@ public class SyntaxTreeGenerator {
         }
 
         String descriptorName = stubFile.getFileName().toUpperCase() + ROOT_DESCRIPTOR;
-        if (stubFile.getRootDescriptor() != null) {
-            Constant descriptor = new Constant(
-                    "string",
-                    descriptorName,
-                    stubFile.getRootDescriptor()
-            );
-            moduleMembers = moduleMembers.add(descriptor.getConstantDeclarationNode());
-        }
+        Constant descriptor = new Constant(
+                "string",
+                descriptorName,
+                stubFile.getRootDescriptor() == null ? "" : stubFile.getRootDescriptor()
+        );
+        moduleMembers = moduleMembers.add(descriptor.getConstantDeclarationNode());
 
         if (stubFile.getMessageMap().size() > 0) {
             ballerinaImports.add("protobuf");
