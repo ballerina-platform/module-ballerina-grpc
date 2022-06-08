@@ -111,16 +111,15 @@ public class SyntaxTreeGenerator {
             ballerinaImports.add("grpc");
         }
         String descriptorName = stubFile.getFileName().toUpperCase() + ROOT_DESCRIPTOR;
+        Constant descriptor = new Constant(
+                "string",
+                descriptorName,
+                stubFile.getRootDescriptor()
+        );
+        moduleMembers = moduleMembers.add(descriptor.getConstantDeclarationNode());
 
         if (stubFile.getMessageMap().size() > 0) {
             ballerinaImports.add("protobuf");
-
-            Constant descriptor = new Constant(
-                    "string",
-                    descriptorName,
-                    stubFile.getRootDescriptor()
-            );
-            moduleMembers = moduleMembers.add(descriptor.getConstantDeclarationNode());
         }
 
         addImports(stubFile, ballerinaImports, protobufImports);
