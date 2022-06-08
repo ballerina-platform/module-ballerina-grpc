@@ -1,8 +1,6 @@
 import ballerina/protobuf;
 import ballerina/time;
 
-const string TIME_DEPENDENT_DESC = "null";
-
 @protobuf:Descriptor {value: TIME_DEPENDENT_DESC}
 public type Greeting record {|
     string name = "";
