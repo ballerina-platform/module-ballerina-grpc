@@ -22,7 +22,7 @@ import ballerina/log;
     descMap: getDescriptorMap38BidiStreamingWithCaller()
 }
 service "Chat38" on new grpc:Listener(9128) {
-    remote function chat38(Chat38StringCaller caller, stream<ChatMessage38, grpc:Error> clientStream)
+    remote function chat38(Chat38StringCaller caller, stream<ChatMessage38, grpc:Error?> clientStream)
                             returns error? {
         log:printInfo("Invoke the chat RPC");
         int i = 0;
