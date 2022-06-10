@@ -97,7 +97,6 @@ public class Message {
     private static final String GOOGLE_PROTOBUF_STRUCTVALUE_VALUES = "google.protobuf.StructValue.values";
     private static final String BALLERINA_ANY_VALUE_ENTRY = "value";
     private static final String BALLERINA_TYPE_URL_ENTRY = "typeUrl";
-    private static final String PROTOBUF_DESC_ANNOTATION = "ballerina/protobuf:1:Descriptor";
     private static final String PROTOBUF_DESC_ANNOTATION_VALUE = "value";
     private static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
 
@@ -720,8 +719,7 @@ public class Message {
 
         if (isDescriptorAnnotationAvailable(recordType)) {
             BMap<BString, Object> annotations = recordType.getAnnotations();
-            String annotation = annotations.getMapValue(StringUtils.fromString(PROTOBUF_DESC_ANNOTATION))
-                    .getStringValue(StringUtils.fromString(PROTOBUF_DESC_ANNOTATION_VALUE)).getValue();
+            String annotation = filterDescAnnotation(annotations);
             byte[] annotationAsBytes = ServicesBuilderUtils.hexStringToByteArray(annotation);
             DescriptorProtos.FileDescriptorProto file = DescriptorProtos.FileDescriptorProto
                     .parseFrom(annotationAsBytes);
@@ -739,9 +737,25 @@ public class Message {
         return MessageRegistry.getInstance().getMessageDescriptor(messageName);
     }
 
+    private String filterDescAnnotation(BMap<BString, Object> annotations) {
+
+        for (BString annotationName : annotations.getKeys()) {
+            if (isValidProtoAnnotation(annotationName.getValue())) {
+                return annotations.getMapValue(annotationName)
+                        .getStringValue(StringUtils.fromString(PROTOBUF_DESC_ANNOTATION_VALUE)).getValue();
+            }
+        }
+        return "";
+    }
+
     private boolean isDescriptorAnnotationAvailable(RecordType recordType) {
         return Arrays.stream(recordType.getAnnotations().getKeys()).anyMatch(
-                s -> PROTOBUF_DESC_ANNOTATION.equals(s.getValue()));
+                s -> isValidProtoAnnotation(s.getValue()));
+    }
+
+    private boolean isValidProtoAnnotation(String annotationName) {
+        return annotationName.contains("ballerina") && annotationName.contains("protobuf") &&
+                annotationName.contains("Descriptor");
     }
 
     @SuppressWarnings("unchecked")
