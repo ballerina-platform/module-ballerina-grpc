@@ -55,8 +55,8 @@ public isolated client class Client {
     # + descriptorMap - Proto descriptor map with all the dependent descriptors
     # + return - A `grpc:Error` if an error occurs while initializing the stub or else `()`
     public isolated function initStub(AbstractClientEndpoint clientEndpoint, string descriptorKey,
-                            map<any> descriptorMap) returns Error? {
-        return externInitStub(self, clientEndpoint, descriptorKey, descriptorMap);
+                            map<any> descriptorMap = {}) returns Error? {
+                                return externInitStub(self, clientEndpoint, descriptorKey, descriptorMap);
     }
 
     # Calls when executing a unary gRPC service.

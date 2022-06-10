@@ -27,7 +27,6 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
-import io.ballerina.stdlib.grpc.builder.stub.Descriptor;
 import io.ballerina.stdlib.grpc.builder.stub.EnumMessage;
 import io.ballerina.stdlib.grpc.builder.stub.Message;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
@@ -39,7 +38,6 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Constant;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Imports;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Listener;
-import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Map;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.ModuleVariable;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Service;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Type;
@@ -50,11 +48,9 @@ import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
@@ -64,13 +60,11 @@ import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependentVal
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.streamClassMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFunctionCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getImplicitNewExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Statement.getCallStatementNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getErrorTypeDescriptorNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getMapTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
@@ -79,7 +73,6 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.GET_DESCRIPTOR_MAP;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.ROOT_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
@@ -88,7 +81,6 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addI
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.toPascalCase;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.MessageUtils.getMessageNodes;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamClass;
@@ -117,6 +109,18 @@ public class SyntaxTreeGenerator {
         NodeList<ImportDeclarationNode> imports = NodeFactory.createEmptyNodeList();
         if (stubFile.getStubList().size() > 0) {
             ballerinaImports.add("grpc");
+        }
+
+        String descriptorName = stubFile.getFileName().toUpperCase() + ROOT_DESCRIPTOR;
+        Constant descriptor = new Constant(
+                "string",
+                descriptorName,
+                stubFile.getRootDescriptor() == null ? "" : stubFile.getRootDescriptor()
+        );
+        moduleMembers = moduleMembers.add(descriptor.getConstantDeclarationNode());
+
+        if (stubFile.getMessageMap().size() > 0) {
+            ballerinaImports.add("protobuf");
         }
 
         addImports(stubFile, ballerinaImports, protobufImports);
@@ -199,44 +203,19 @@ public class SyntaxTreeGenerator {
             moduleMembers = moduleMembers.add(callerClass.getValue().getClassDefinitionNode());
         }
         for (java.util.Map.Entry<String, Type> valueTypeStream : valueTypeStreams.entrySet()) {
-            moduleMembers = moduleMembers.add(valueTypeStream.getValue().getTypeDefinitionNode());
+            moduleMembers = moduleMembers.add(valueTypeStream.getValue().getTypeDefinitionNode(null));
         }
         for (java.util.Map.Entry<String, Type> valueType : valueTypes.entrySet()) {
-            moduleMembers = moduleMembers.add(valueType.getValue().getTypeDefinitionNode());
+            moduleMembers = moduleMembers.add(valueType.getValue().getTypeDefinitionNode(null));
         }
         for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
-            for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue())) {
+            for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue(), descriptorName)) {
                 moduleMembers = moduleMembers.add(messageNode);
             }
         }
 
         for (EnumMessage enumMessage : stubFile.getEnumList()) {
             moduleMembers = moduleMembers.add(getEnum(enumMessage).getEnumDeclarationNode());
-        }
-
-        // ROOT_DESCRIPTOR
-        if (stubFile.getRootDescriptor() != null) {
-            Constant rootDescriptor = new Constant(
-                    "string",
-                    ROOT_DESCRIPTOR + stubFile.getFileName().toUpperCase(),
-                    stubFile.getRootDescriptor()
-            );
-            moduleMembers = moduleMembers.add(rootDescriptor.getConstantDeclarationNode());
-        }
-
-        // getDescriptorMap function
-        if (stubFile.getDescriptors().size() > 0) {
-            Function getDescriptorMap = new Function(GET_DESCRIPTOR_MAP + toPascalCase(stubFile.getFileName()));
-            getDescriptorMap.addReturns(
-                    getMapTypeDescriptorNode(SYNTAX_TREE_VAR_STRING)
-            );
-            Map descriptorMap = new Map();
-            for (java.util.Map.Entry<String, String> descriptor : getSortedDescriptorMap(stubFile).entrySet()) {
-                descriptorMap.addStringField(descriptor.getKey(), descriptor.getValue());
-            }
-            getDescriptorMap.addReturnStatement(descriptorMap.getMappingConstructorExpressionNode());
-            getDescriptorMap.addQualifiers(new String[]{"public", "isolated"});
-            moduleMembers = moduleMembers.add(getDescriptorMap.getFunctionDefinitionNode());
         }
 
         Token eofToken = AbstractNodeFactory.createIdentifierToken("");
@@ -291,11 +270,7 @@ public class SyntaxTreeGenerator {
         Annotation grpcServiceDescriptor = new Annotation("grpc", "ServiceDescriptor");
         grpcServiceDescriptor.addField(
                 "descriptor",
-                ROOT_DESCRIPTOR + fileName.toUpperCase()
-        );
-        grpcServiceDescriptor.addField(
-                "descMap",
-                getFunctionCallExpressionNode(GET_DESCRIPTOR_MAP + toPascalCase(fileName), new String[]{})
+                fileName.toUpperCase() + ROOT_DESCRIPTOR
         );
         service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
 
@@ -402,23 +377,13 @@ public class SyntaxTreeGenerator {
                                         "initStub",
                                         new String[]{
                                                 "self",
-                                                ROOT_DESCRIPTOR + fileName.toUpperCase(),
-                                                GET_DESCRIPTOR_MAP + toPascalCase(fileName) + "()"}
+                                                fileName.toUpperCase() + ROOT_DESCRIPTOR}
                                 )
                         )
                 )
         );
         function.addQualifiers(new String[]{"public", "isolated"});
         return function;
-    }
-
-    private static java.util.Map<String, String> getSortedDescriptorMap(StubFile stubFile) {
-        java.util.Map<String, String> map = new HashMap<>();
-
-        for (Descriptor descriptor : stubFile.getDescriptors()) {
-            map.put(descriptor.getKey(), descriptor.getData());
-        }
-        return new TreeMap<>(map);
     }
 
     private static NodeList<ImportDeclarationNode> addBallerinaImportNodes(NodeList<ImportDeclarationNode> imports,

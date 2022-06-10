@@ -19,6 +19,7 @@
 package io.ballerina.stdlib.grpc.builder.syntaxtree.components;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
+import io.ballerina.compiler.syntax.tree.MetadataNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.Token;
@@ -44,9 +45,9 @@ public class Type {
         typeDescriptor = descriptor;
     }
 
-    public TypeDefinitionNode getTypeDefinitionNode() {
+    public TypeDefinitionNode getTypeDefinitionNode(MetadataNode metadataNode) {
         return NodeFactory.createTypeDefinitionNode(
-                null,
+                metadataNode,
                 visibilityQualifier,
                 SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_TYPE,
                 typeName,
