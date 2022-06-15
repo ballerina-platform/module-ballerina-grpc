@@ -46,7 +46,7 @@ function testFloatFieldValue() returns grpc:Error? {
 
 @test:Config {enable: true}
 function testInt64FieldValue() returns grpc:Error? {
-    ZZZ zzz = {one_c:-9223372036854775808};
+    ZZZ zzz = {one_c:int:MIN_VALUE};
     ZZZ result = check blockingEp->testOneofField(zzz);
     test:assertEquals(result?.one_c.toString(), "-9223372036854775808");
 }
