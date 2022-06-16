@@ -5,7 +5,6 @@ _Reviewers_: @shafreenAnfar @daneshk @dilanSachi
 _Created_: 2021/12/05   
 _Updated_: 2022/02/17  
 _Edition_: Swan Lake  
-_Issue_: [#2151](https://github.com/ballerina-platform/ballerina-standard-library/issues/2151)
 
 # Introduction
 This is the specification for the gRPC standard library of [Ballerina language](https://ballerina.io/), which provides APIs for gRPC client and server implementation.
