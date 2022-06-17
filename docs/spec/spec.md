@@ -6,7 +6,7 @@ _Created_: 2021/12/05
 _Updated_: 2022/02/17  
 _Edition_: Swan Lake  
 
-# Introduction
+## Introduction
 This is the specification for the gRPC standard library of [Ballerina language](https://ballerina.io/), which provides APIs for gRPC client and server implementation.
 
 The gRPC library specification has evolved and may continue to evolve in the future. The released versions of the specification can be found under the relevant GitHub tag.
@@ -15,7 +15,7 @@ If you have any feedback or suggestions about the library, start a discussion vi
 
 The conforming implementation of the specification is released and included in the distribution. Any deviation from the specification is considered a bug.
 
-# Contents
+## Contents
 1. [Overview](#1-overview)
 2. [gRPC command line interface (CLI)](#1-grpc-command-line-interface-cli)
 3. [Protocol buffers to Ballerina data mapping](#3-protocol-buffers-to-ballerina-data-mapping)
