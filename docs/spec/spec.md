@@ -6,7 +6,7 @@ _Created_: 2021/12/05
 _Updated_: 2022/02/17  
 _Edition_: Swan Lake  
 
-# Introduction
+## Introduction
 This is the specification for the gRPC standard library of [Ballerina language](https://ballerina.io/), which provides APIs for gRPC client and server implementation.
 
 The gRPC library specification has evolved and may continue to evolve in the future. The released versions of the specification can be found under the relevant GitHub tag.
@@ -15,7 +15,7 @@ If you have any feedback or suggestions about the library, start a discussion vi
 
 The conforming implementation of the specification is released and included in the distribution. Any deviation from the specification is considered a bug.
 
-# Contents
+## Contents
 1. [Overview](#1-overview)
 2. [gRPC command line interface (CLI)](#1-grpc-command-line-interface-cli)
 3. [Protocol buffers to Ballerina data mapping](#3-protocol-buffers-to-ballerina-data-mapping)
@@ -51,7 +51,7 @@ The conforming implementation of the specification is released and included in t
    * 6.4. [gRPC retry](#64-grpc-retry)
 
 
-# 1. Overview
+## 1. Overview
 Ballerina gRPC standard library has five primary aspects in handling values.
 1. gRPC CLI (command line interface)
 2. Protocol buffers to Ballerina data mapping
@@ -59,7 +59,7 @@ Ballerina gRPC standard library has five primary aspects in handling values.
 4. gRPC Security
 5. gRPC utility functions
 
-# 2. gRPC command line interface (CLI)
+## 2. gRPC command line interface (CLI)
 
 Ballerina language has a command-line interface that manages the lifecycle of a Ballerina program (such as build, test, and run). In addition, Ballerina CLI contains all the gRPC related stub and service skeleton generation capabilities. The gRPC command in Ballerina CLI is as follows.
 
@@ -69,7 +69,7 @@ bal grpc --input <proto-file-path> --output <output-directory> --mode client|ser
 
 The `--input` parameter is the only mandatory parameter for the Ballerina gRPC command, and it specifies the path of the protobuf file of a gRPC service. The optional `--output` parameter indicates the path that output will be written to. If the output path is not specified, the output will be written to a directory corresponding to the package in the Protocol Buffers definition. If the package is not specified, the output will be written to a `temp` directory in the current location. The optional `--mode` indicate what type of output files are needed. For example, if mode specifies as service, the gRPC command will generate the relevant stub file along with a service skeleton. If the mode is client, the gRPC command will generate a sample client code along with the stub. If nothing is specified, only the stub file is generated. The optional `--proto-path`parameter states the path to a directory, in which to look for .proto files when resolving import directives.
 
-# 3. Protocol buffers to Ballerina data mapping
+## 3. Protocol buffers to Ballerina data mapping
 
 The following table illustrates the data mapping of protocol buffers data types to relevant Ballerina types.
 
@@ -107,7 +107,7 @@ public isolated function pack(ValueType message) returns Any;
 public isolated function unpack(Any anyValue, ValueTypeDesc targetTypeOfAny = <>) returns targetTypeOfAny|Error;
 ```
 
-# 4. gRPC communication
+## 4. gRPC communication
 
 gRPC has 4 types of RPCs (Remote Procedure Calls), and Ballerina supports all of them.
 1. Simple
@@ -422,7 +422,7 @@ public function main() returns error? {
 }
 ```
 
-# 5. gRPC security
+## 5. gRPC security
 
 ## 5.1 Authentication and authorization
 
@@ -961,7 +961,7 @@ listener grpc:Listener securedEP = new(9090,
 );
 ```
 
-# 6. gRPC utility functions
+## 6. gRPC utility functions
 
 ## 6.1. gRPC deadline
 The following API sets a deadline for each request.
