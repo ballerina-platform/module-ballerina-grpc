@@ -330,7 +330,7 @@ public class ServicesBuilderUtils {
             if (returnType instanceof UnionType) {
                 UnionType returnTypeAsUnion = (UnionType) returnType;
                 Optional<Type> returnDataType = returnTypeAsUnion.getOriginalMemberTypes().stream()
-                        .filter(type -> type instanceof RecordType).findFirst();
+                        .filter(type -> type instanceof RecordType || type instanceof StreamType).findFirst();
                 if (returnDataType.isPresent()) {
                     Type outputType = returnDataType.get();
                     if (outputType instanceof StreamType) {
