@@ -31,6 +31,7 @@ module io.ballerina.stdlib.grpc {
     requires io.ballerina.formatter.core;
     requires info.picocli;
     requires io.ballerina.cli;
+    requires io.ballerina.toml;
     requires io.ballerina.stdlib.protobuf;
     requires com.google.protobuf;
     exports io.ballerina.stdlib.grpc;
