@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Set;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.UNARY;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentFilesMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
@@ -131,7 +135,7 @@ public class CommonUtils {
         }
     }
 
-    public static void addClientCallBody(Function function, String inputCap, Method method) {
+    public static void addClientCallBody(Function function, String inputCap, Method method, String filename) {
         String methodName = method.getMethodType().equals(UNARY) ? "executeSimpleRPC" : "executeServerStreaming";
         if (method.getInputType() == null) {
             Map empty = new Map();
@@ -162,7 +166,8 @@ public class CommonUtils {
             if (method.getInputType().equals("string")) {
                 messageType = getBuiltinSimpleNameReferenceNode("string");
             } else {
-                messageType = getSimpleNameReferenceNode(method.getInputType());
+                messageType = getSimpleNameReferenceNode(method.getInputPackagePrefix(filename) +
+                        method.getInputType());
             }
             VariableDeclaration message = new VariableDeclaration(
                     getTypedBindingPatternNode(
@@ -173,7 +178,9 @@ public class CommonUtils {
             function.addVariableStatement(message.getVariableDeclarationNode());
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+                contextParam = getProtobufType(method.getInputType()) + COLON + contextParam;
+            } else {
+                contextParam = getModulePrefix(contextParam, filename) + contextParam;
             }
             IfElse reqIsContext = new IfElse(
                     getTypeTestExpressionNode(
@@ -258,5 +265,15 @@ public class CommonUtils {
                     break;
             }
         }
+    }
+
+    public static String getModulePrefix(String contextParam, String filename) {
+        if (componentFilesMap.containsKey(contextParam) && dependencyMap.containsKey(filename)) {
+            if (!dependencyMap.get(filename).equals(componentFilesMap.get(contextParam))) {
+                return componentFilesMap.get(contextParam).substring(componentFilesMap
+                        .get(contextParam).lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON;
+            }
+        }
+        return "";
     }
 }

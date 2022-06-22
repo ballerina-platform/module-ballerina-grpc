@@ -28,6 +28,7 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Map;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaration;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getBuiltinSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getListBindingPatternNode;
@@ -43,6 +44,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getModulePrefix;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
@@ -57,7 +59,7 @@ public class UnaryUtils {
 
     }
 
-    public static Function getUnaryFunction(Method method) {
+    public static Function getUnaryFunction(Method method, String filename) {
         Function function = new Function(method.getMethodName());
         function.addQualifiers(new String[]{"isolated", "remote"});
         String inputCap = "Nil";
@@ -84,12 +86,14 @@ public class UnaryUtils {
             }
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+                contextParam = getProtobufType(method.getInputType()) + COLON + contextParam;
+            } else {
+                contextParam = getModulePrefix(contextParam, filename) + contextParam;
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(
-                                    method.getInputType()
+                                    method.getInputPackagePrefix(filename) + method.getInputType()
                             ),
                             getSimpleNameReferenceNode(contextParam)
                     ),
@@ -100,7 +104,7 @@ public class UnaryUtils {
             function.addReturns(
                     getUnionTypeDescriptorNode(
                             getSimpleNameReferenceNode(
-                                    method.getOutputType()
+                                    method.getOutputPackageType(filename) + method.getOutputType()
                             ),
                             SYNTAX_TREE_GRPC_ERROR
                     )
@@ -110,7 +114,7 @@ public class UnaryUtils {
                     SYNTAX_TREE_GRPC_ERROR_OPTIONAL
             );
         }
-        addClientCallBody(function, inputCap, method);
+        addClientCallBody(function, inputCap, method, filename);
         if (method.getOutputType() != null) {
             SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                     getBuiltinSimpleNameReferenceNode("anydata"),
@@ -129,12 +133,12 @@ public class UnaryUtils {
                     getSimpleNameReferenceNode("payload")
             );
             function.addVariableStatement(payload.getVariableDeclarationNode());
-            addUnaryFunctionReturnStatement(function, method);
+            addUnaryFunctionReturnStatement(function, method, filename);
         }
         return function;
     }
 
-    public static Function getUnaryContextFunction(Method method) {
+    public static Function getUnaryContextFunction(Method method, String filename) {
         Function function = new Function(method.getMethodName() + "Context");
         function.addQualifiers(new String[]{"isolated", "remote"});
         String inputCap = "Nil";
@@ -162,11 +166,13 @@ public class UnaryUtils {
             }
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+                contextParam = getProtobufType(method.getInputType()) + COLON + contextParam;
+            } else {
+                contextParam = getModulePrefix(contextParam, filename) + contextParam;
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode(method.getInputPackagePrefix(filename) + method.getInputType()),
                             getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
@@ -196,7 +202,9 @@ public class UnaryUtils {
             }
             contextParam = "Context" + outCap;
             if (isBallerinaProtobufType(method.getOutputType())) {
-                contextParam = getProtobufType(method.getOutputType()) + ":" + contextParam;
+                contextParam = getProtobufType(method.getOutputType()) + COLON + contextParam;
+            } else {
+                contextParam = getModulePrefix(contextParam, filename) + contextParam;
             }
         } else {
             contextParam = "empty:ContextNil";
@@ -207,7 +215,7 @@ public class UnaryUtils {
                         SYNTAX_TREE_GRPC_ERROR
                 )
         );
-        addClientCallBody(function, inputCap, method);
+        addClientCallBody(function, inputCap, method, filename);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getBuiltinSimpleNameReferenceNode("anydata"),
                 SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -234,11 +242,11 @@ public class UnaryUtils {
                 getSimpleNameReferenceNode("payload")
         );
         function.addVariableStatement(payload.getVariableDeclarationNode());
-        addUnaryContextFunctionReturnStatement(function, method);
+        addUnaryContextFunctionReturnStatement(function, method, filename);
         return function;
     }
 
-    private static void addUnaryFunctionReturnStatement(Function function, Method method) {
+    private static void addUnaryFunctionReturnStatement(Function function, Method method, String filename) {
         if (method.getOutputType().equals("string")) {
             function.addReturnStatement(
                     getMethodCallExpressionNode(
@@ -250,7 +258,7 @@ public class UnaryUtils {
         } else if (method.getOutputType().equals("time:Utc")) {
             function.addReturnStatement(
                     getTypeCastExpressionNode(
-                            method.getOutputType(),
+                            method.getOutputPackageType(filename) + method.getOutputType(),
                             getMethodCallExpressionNode(
                                     getSimpleNameReferenceNode("result"),
                                     "cloneReadOnly",
@@ -261,14 +269,14 @@ public class UnaryUtils {
         } else {
             function.addReturnStatement(
                     getTypeCastExpressionNode(
-                            method.getOutputType(),
+                            method.getOutputPackageType(filename) + method.getOutputType(),
                             getSimpleNameReferenceNode("result")
                     )
             );
         }
     }
 
-    private static void addUnaryContextFunctionReturnStatement(Function function, Method method) {
+    private static void addUnaryContextFunctionReturnStatement(Function function, Method method, String filename) {
         Map returnMap = new Map();
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("string")) {
@@ -291,7 +299,7 @@ public class UnaryUtils {
             } else {
                 returnMap.addTypeCastExpressionField(
                         "content",
-                        method.getOutputType(),
+                        method.getOutputPackageType(filename) + method.getOutputType(),
                         getSimpleNameReferenceNode("result"));
             }
         }

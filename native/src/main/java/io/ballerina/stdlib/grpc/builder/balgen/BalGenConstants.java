@@ -38,9 +38,13 @@ public class BalGenConstants {
 
     public static final String SAMPLE_SERVICE_FILE_PREFIX = "_service.bal";
 
+    public static final String BALLERINA_TOML_FILE_NAME = "Ballerina.toml";
+
     public static final String EMPTY_DATA_TYPE = "Empty";
 
     public static final String PACKAGE_SEPARATOR = ".";
+
+    public static final String COLON = ":";
 
     public static final String GRPC_CLIENT = "client";
 

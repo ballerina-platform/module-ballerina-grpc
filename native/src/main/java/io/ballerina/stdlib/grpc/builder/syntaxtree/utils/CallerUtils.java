@@ -23,6 +23,10 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyTypesMap;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
@@ -30,6 +34,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getModulePrefix;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
@@ -44,7 +49,7 @@ public class CallerUtils {
 
     }
 
-    public static Class getCallerClass(String key, String value) {
+    public static Class getCallerClass(String key, String value, String filename) {
         Class caller = new Class(key, true);
         caller.addQualifiers(new String[]{"client"});
 
@@ -102,6 +107,15 @@ public class CallerUtils {
                     valueCap = capitalize(value);
                     break;
             }
+            if (dependencyMap.containsKey(filename) && dependencyTypesMap.containsKey(value)) {
+                String tempVal = dependencyMap.get(filename).substring(dependencyMap.get(filename)
+                        .lastIndexOf(".") + 1);
+                if (!tempVal.equals(dependencyTypesMap.get(value).substring(dependencyTypesMap.get(value)
+                        .lastIndexOf(PACKAGE_SEPARATOR) + 1))) {
+                    value = dependencyTypesMap.get(value).substring(dependencyTypesMap.get(value)
+                            .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + value;
+                }
+            }
             Function send = new Function("send" + valueCap);
             send.addRequiredParameter(
                     getSimpleNameReferenceNode(value),
@@ -120,7 +134,9 @@ public class CallerUtils {
 
             String contextParam = "Context" + valueCap;
             if (isBallerinaProtobufType(value)) {
-                contextParam = getProtobufType(value) + ":" + contextParam;
+                contextParam = getProtobufType(value) + COLON + contextParam;
+            } else {
+                contextParam = getModulePrefix(contextParam, filename) + contextParam;
             }
             Function sendContext = new Function("sendContext" + valueCap);
             sendContext.addRequiredParameter(

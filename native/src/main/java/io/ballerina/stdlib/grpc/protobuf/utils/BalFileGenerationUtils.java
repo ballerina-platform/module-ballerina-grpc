@@ -51,18 +51,9 @@ public class BalFileGenerationUtils {
      */
     public static ArrayList<String> generateDescriptor(String command) throws CodeGeneratorException {
         ArrayList<String> output = new ArrayList<>();
-        boolean isWindows = System.getProperty("os.name")
-                .toLowerCase(Locale.ENGLISH).startsWith("windows");
-        ProcessBuilder builder = new ProcessBuilder();
-        if (isWindows) {
-            builder.command("cmd.exe", "/c", command);
-        } else {
-            builder.command("sh", "-c", command);
-        }
-        builder.directory(new File(System.getProperty("user.home")));
         Process process;
         try {
-            process = builder.start();
+            process = runProcess(command);
         } catch (IOException e) {
             throw new CodeGeneratorException("Error in executing protoc command '" + command + "'. " + e.getMessage(),
                     e);
@@ -89,8 +80,26 @@ public class BalFileGenerationUtils {
                     " running the protoc executor. " + e.getMessage(), e);
         }
         if (process.exitValue() != 0) {
-            try (BufferedReader bufferedReader = new BufferedReader(new
-                    InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
+            handleProcessExecutionErrors(process);
+        }
+        return output;
+    }
+
+    public static Process runProcess(String command) throws IOException {
+        ProcessBuilder builder = new ProcessBuilder();
+        if (isWindows()) {
+            builder.command("cmd.exe", "/c", command);
+        } else {
+            builder.command("sh", "-c", command);
+        }
+        builder.directory(new File(System.getProperty("user.home")));
+        return builder.start();
+    }
+
+    public static void handleProcessExecutionErrors(Process process) throws CodeGeneratorException {
+        if (process.exitValue() != 0) {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream(),
+                    StandardCharsets.UTF_8))) {
                 String err;
                 StringBuilder errMsg = new StringBuilder();
                 while ((err = bufferedReader.readLine()) != null) {
@@ -101,9 +110,8 @@ public class BalFileGenerationUtils {
                 throw new CodeGeneratorException("Invalid command syntax. " + e.getMessage(), e);
             }
         }
-        return output;
     }
-    
+
     /**
      * Resolve proto folder path from Proto file path.
      *

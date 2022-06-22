@@ -293,14 +293,14 @@ public class GrpcCmd implements BLauncherCmd {
         // generate ballerina stub based on descriptor values.
         BallerinaFileBuilder ballerinaFileBuilder;
         // If user provides output directory, generate service stub inside output directory.
-        if (balOutPath == null) {
-            ballerinaFileBuilder = new BallerinaFileBuilder(root, dependant);
-        } else {
-            ballerinaFileBuilder = new BallerinaFileBuilder(root, dependant, balOutPath);
-        }
         try {
+            if (balOutPath == null) {
+                ballerinaFileBuilder = new BallerinaFileBuilder(root, dependant);
+            } else {
+                ballerinaFileBuilder = new BallerinaFileBuilder(root, dependant, balOutPath);
+            }
             ballerinaFileBuilder.build(this.mode);
-        } catch (CodeBuilderException e) {
+        } catch (CodeBuilderException | CodeGeneratorException | IOException e) {
             LOG.error("Error generating the Ballerina file.", e);
             msg.append("Error generating the Ballerina file.").append(e.getMessage())
                     .append(BalGenerationConstants.NEW_LINE_CHARACTER);

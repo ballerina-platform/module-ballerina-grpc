@@ -30,6 +30,9 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Record;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaration;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentFilesMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getExplicitNewExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
@@ -49,6 +52,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getModulePrefix;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
@@ -63,7 +67,7 @@ public class ServerUtils {
 
     }
 
-    public static Function getServerStreamingFunction(Method method) {
+    public static Function getServerStreamingFunction(Method method, String filename) {
         Function function = new Function(method.getMethodName());
         String inputCap = "Nil";
         if (method.getInputType() != null) {
@@ -89,11 +93,13 @@ public class ServerUtils {
             }
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+                contextParam = getProtobufType(method.getInputType()) + COLON + contextParam;
+            } else {
+                contextParam = getModulePrefix(contextParam, filename) + contextParam;
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode(method.getInputPackagePrefix(filename) + method.getInputType()),
                             getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
@@ -123,17 +129,19 @@ public class ServerUtils {
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getOutputType()),
+                                getSimpleNameReferenceNode(method.getOutputPackageType(filename) +
+                                        method.getOutputType()),
                                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
                 )
         );
-        addServerBody(function, method, inputCap, outCap, "_");
+        addServerBody(function, method, inputCap, outCap, "_", filename);
         function.addReturnStatement(
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getOutputType()),
+                                getSimpleNameReferenceNode(method.getOutputPackageType(filename) +
+                                        method.getOutputType()),
                                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         new String[]{"outputStream"}
@@ -143,7 +151,7 @@ public class ServerUtils {
         return function;
     }
 
-    public static Function getServerStreamingContextFunction(Method method) {
+    public static Function getServerStreamingContextFunction(Method method, String filename) {
         Function function = new Function(method.getMethodName() + "Context");
         String inputCap = "Nil";
         if (method.getInputType() != null) {
@@ -169,11 +177,13 @@ public class ServerUtils {
             }
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
-                contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+                contextParam = getProtobufType(method.getInputType()) + COLON + contextParam;
+            } else {
+                contextParam = getModulePrefix(contextParam, filename) + contextParam;
             }
             function.addRequiredParameter(
                     getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(method.getInputType()),
+                            getSimpleNameReferenceNode(method.getInputPackagePrefix(filename) + method.getInputType()),
                             getSimpleNameReferenceNode(contextParam)
                     ),
                     "req"
@@ -202,7 +212,14 @@ public class ServerUtils {
         }
         String contextStreamParam = "Context" + outputCap + "Stream";
         if (isBallerinaProtobufType(method.getOutputType())) {
-            contextStreamParam = getProtobufType(method.getOutputType()) + ":" + contextStreamParam;
+            contextStreamParam = getProtobufType(method.getOutputType()) + COLON + contextStreamParam;
+        }
+        if (componentFilesMap.containsKey(contextStreamParam) && dependencyMap.containsKey(filename)) {
+            if (!dependencyMap.get(filename).equals(componentFilesMap.get(contextStreamParam))) {
+                contextStreamParam = componentFilesMap.get(contextStreamParam)
+                        .substring(componentFilesMap.get(contextStreamParam).lastIndexOf(".") + 1) +
+                        COLON + contextStreamParam;
+            }
         }
         function.addReturns(
                 getUnionTypeDescriptorNode(
@@ -210,13 +227,14 @@ public class ServerUtils {
                         SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR
                 )
         );
-        addServerBody(function, method, inputCap, outputCap, "respHeaders");
+        addServerBody(function, method, inputCap, outputCap, "respHeaders", filename);
         Map returnMap = new Map();
         returnMap.addField(
                 "content",
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
-                                getSimpleNameReferenceNode(method.getOutputType()),
+                                getSimpleNameReferenceNode(method.getOutputPackageType(filename) +
+                                        method.getOutputType()),
                                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
                         new String[]{"outputStream"}
@@ -228,7 +246,7 @@ public class ServerUtils {
         return function;
     }
 
-    public static Class getServerStreamClass(Method method) {
+    public static Class getServerStreamClass(Method method, String filename) {
         String outputCap;
         switch (method.getOutputType()) {
             case "byte[]":
@@ -251,7 +269,9 @@ public class ServerUtils {
                 break;
         }
         Class serverStream = new Class(outputCap + "Stream", true);
-
+        if (dependencyMap.containsKey(filename)) {
+            componentFilesMap.put(outputCap + "Stream", dependencyMap.get(filename));
+        }
         serverStream.addMember(
                 getObjectFieldNode(
                         "private",
@@ -261,7 +281,7 @@ public class ServerUtils {
 
         serverStream.addMember(getInitFunction().getFunctionDefinitionNode());
 
-        serverStream.addMember(getNextFunction(method).getFunctionDefinitionNode());
+        serverStream.addMember(getNextFunction(method, filename).getFunctionDefinitionNode());
 
         serverStream.addMember(getCloseFunction().getFunctionDefinitionNode());
 
@@ -282,10 +302,11 @@ public class ServerUtils {
         return function;
     }
 
-    private static Function getNextFunction(Method method) {
+    private static Function getNextFunction(Method method, String filename) {
         Function function = new Function("next");
         Record nextRecord = new Record();
-        nextRecord.addCustomField(method.getOutputType(), "value");
+        nextRecord.addCustomField(method.getOutputPackageType(filename) +
+                method.getOutputType(), "value");
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         nextRecord.getRecordTypeDescriptorNode(),
@@ -333,12 +354,13 @@ public class ServerUtils {
         );
 
         Record nextRecordRec = new Record();
-        nextRecordRec.addCustomField(method.getOutputType(), "value");
+        nextRecordRec.addCustomField(method.getOutputPackageType(filename) +
+                method.getOutputType(), "value");
         Map nextRecordMap = new Map();
         if (method.getOutputType().equals("time:Utc")) {
             nextRecordMap.addTypeCastExpressionField(
                     "value",
-                    method.getOutputType(),
+                    method.getOutputPackageType(filename) + method.getOutputType(),
                     getMethodCallExpressionNode(
                             getFieldAccessExpressionNode("streamValue", "value"),
                             "cloneReadOnly", new String[]{}
@@ -347,7 +369,7 @@ public class ServerUtils {
         } else {
             nextRecordMap.addTypeCastExpressionField(
                     "value",
-                    method.getOutputType(),
+                    method.getOutputPackageType(filename) + method.getOutputType(),
                     getFieldAccessExpressionNode("streamValue", "value")
             );
         }
@@ -388,9 +410,9 @@ public class ServerUtils {
     }
 
     private static void addServerBody(Function function, Method method, String inputCap, String outCap,
-                                      String headers) {
+                                      String headers, String filename) {
 
-        addClientCallBody(function, inputCap, method);
+        addClientCallBody(function, inputCap, method, filename);
         SeparatedNodeList<Node> payloadArgs = NodeFactory.createSeparatedNodeList(
                 getStreamTypeDescriptorNode(SyntaxTreeConstants.SYNTAX_TREE_VAR_ANYDATA,
                         SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL), SyntaxTreeConstants.SYNTAX_TREE_COMMA,
@@ -415,7 +437,14 @@ public class ServerUtils {
             if (inputCap.equals("Any")) {
                 streamParamPrefix = "sany";
             }
-            streamParam = streamParamPrefix + ":" + streamParam;
+            streamParam = streamParamPrefix + COLON + streamParam;
+        }
+        if (componentFilesMap.containsKey(streamParam) && dependencyMap.containsKey(filename)) {
+            if (!dependencyMap.get(filename).equals(componentFilesMap.get(streamParam))) {
+                streamParam = componentFilesMap.get(streamParam)
+                        .substring(componentFilesMap.get(streamParam).lastIndexOf(".") + 1) +
+                        COLON + streamParam;
+            }
         }
         VariableDeclaration stream = new VariableDeclaration(
                 getTypedBindingPatternNode(
