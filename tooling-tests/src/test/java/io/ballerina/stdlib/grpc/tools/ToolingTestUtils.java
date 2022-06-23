@@ -99,6 +99,7 @@ public class ToolingTestUtils {
                 readContent(actualClientFilePath));
         try {
             Files.deleteIfExists(actualStubFilePath);
+            Files.deleteIfExists(actualClientFilePath);
         } catch (IOException e) {
             Assert.fail("Failed to delete stub file", e);
         }
@@ -110,8 +111,7 @@ public class ToolingTestUtils {
         Assert.assertFalse(hasSyntacticDiagnostics(actualStubFilePath));
         Assert.assertFalse(hasSyntacticDiagnostics(actualServiceFilePath));
         Assert.assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
-        Assert.assertEquals(readContent(expectedServiceFilePath),
-                readContent(actualServiceFilePath));
+        Assert.assertEquals(readContent(expectedServiceFilePath), readContent(actualServiceFilePath));
 
         try {
             Files.deleteIfExists(actualServiceFilePath);
