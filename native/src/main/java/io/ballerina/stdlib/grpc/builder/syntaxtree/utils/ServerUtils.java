@@ -30,9 +30,10 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Record;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaration;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentFilesMap;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getExplicitNewExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
@@ -213,12 +214,11 @@ public class ServerUtils {
         String contextStreamParam = "Context" + outputCap + "Stream";
         if (isBallerinaProtobufType(method.getOutputType())) {
             contextStreamParam = getProtobufType(method.getOutputType()) + COLON + contextStreamParam;
-        }
-        if (componentFilesMap.containsKey(contextStreamParam) && dependencyMap.containsKey(filename)) {
-            if (!dependencyMap.get(filename).equals(componentFilesMap.get(contextStreamParam))) {
-                contextStreamParam = componentFilesMap.get(contextStreamParam)
-                        .substring(componentFilesMap.get(contextStreamParam).lastIndexOf(".") + 1) +
-                        COLON + contextStreamParam;
+        } else if (componentsModuleMap.containsKey(contextStreamParam) && protofileModuleMap.containsKey(filename)) {
+            String module = componentsModuleMap.get(contextStreamParam);
+            if (!protofileModuleMap.get(filename).equals(module)) {
+                contextStreamParam = module.substring(module.lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON
+                        + contextStreamParam;
             }
         }
         function.addReturns(
@@ -269,8 +269,8 @@ public class ServerUtils {
                 break;
         }
         Class serverStream = new Class(outputCap + "Stream", true);
-        if (dependencyMap.containsKey(filename)) {
-            componentFilesMap.put(outputCap + "Stream", dependencyMap.get(filename));
+        if (protofileModuleMap.containsKey(filename)) {
+            componentsModuleMap.put(outputCap + "Stream", protofileModuleMap.get(filename));
         }
         serverStream.addMember(
                 getObjectFieldNode(
@@ -439,11 +439,10 @@ public class ServerUtils {
             }
             streamParam = streamParamPrefix + COLON + streamParam;
         }
-        if (componentFilesMap.containsKey(streamParam) && dependencyMap.containsKey(filename)) {
-            if (!dependencyMap.get(filename).equals(componentFilesMap.get(streamParam))) {
-                streamParam = componentFilesMap.get(streamParam)
-                        .substring(componentFilesMap.get(streamParam).lastIndexOf(".") + 1) +
-                        COLON + streamParam;
+        if (componentsModuleMap.containsKey(streamParam) && protofileModuleMap.containsKey(filename)) {
+            String module = componentsModuleMap.get(streamParam);
+            if (!protofileModuleMap.get(filename).equals(module)) {
+                streamParam = module.substring(module.lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + streamParam;
             }
         }
         VariableDeclaration stream = new VariableDeclaration(

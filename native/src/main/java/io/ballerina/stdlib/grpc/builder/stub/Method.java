@@ -23,9 +23,10 @@ import io.ballerina.stdlib.grpc.MethodDescriptor;
 
 import java.util.Map;
 
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyTypesMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenerationUtils.getMappingBalType;
 
 /**
@@ -78,20 +79,19 @@ public class Method {
     }
 
     public String getInputPackagePrefix(String filename) {
-        if (!inputPackagePrefix.isEmpty() &&
-                dependencyMap.containsKey(filename)) {
-            if (!dependencyMap.get(filename).substring(dependencyMap.get(filename)
-                    .lastIndexOf(".") + 1).equals(inputPackagePrefix)) {
-                    return inputPackagePrefix + COLON;
+        if (!inputPackagePrefix.isEmpty() && protofileModuleMap.containsKey(filename)) {
+            if (!protofileModuleMap.get(filename).substring(protofileModuleMap.get(filename)
+                    .lastIndexOf(PACKAGE_SEPARATOR) + 1).equals(inputPackagePrefix)) {
+                return inputPackagePrefix + COLON;
             }
         }
         return "";
     }
 
     public String getOutputPackageType(String filename) {
-        if (!outputPackagePrefix.isEmpty() && dependencyMap.containsKey(filename)) {
-            if (!dependencyMap.get(filename).substring(dependencyMap.get(filename)
-                    .lastIndexOf(".") + 1).equals(outputPackagePrefix)) {
+        if (!outputPackagePrefix.isEmpty() && protofileModuleMap.containsKey(filename)) {
+            if (!protofileModuleMap.get(filename).substring(protofileModuleMap.get(filename)
+                    .lastIndexOf(PACKAGE_SEPARATOR) + 1).equals(outputPackagePrefix)) {
                 return outputPackagePrefix + COLON;
             }
         }
@@ -132,14 +132,14 @@ public class Method {
             String outputType = methodDescriptor.getOutputType();
             outputType = getMappingBalType(outputType);
             String inputPackageType = "";
-            if (dependencyTypesMap.containsKey(inputType)) {
-                inputPackageType = dependencyTypesMap.get(inputType).substring(dependencyTypesMap
-                        .get(inputType).lastIndexOf(".") + 1);
+            if (componentsModuleMap.containsKey(inputType)) {
+                inputPackageType = componentsModuleMap.get(inputType).substring(componentsModuleMap
+                        .get(inputType).lastIndexOf(PACKAGE_SEPARATOR) + 1);
             }
             String outputPackageType = "";
-            if (dependencyTypesMap.containsKey(outputType)) {
-                outputPackageType = dependencyTypesMap.get(outputType).substring(dependencyTypesMap
-                        .get(outputType).lastIndexOf(".") + 1);
+            if (componentsModuleMap.containsKey(outputType)) {
+                outputPackageType = componentsModuleMap.get(outputType).substring(componentsModuleMap
+                        .get(outputType).lastIndexOf(PACKAGE_SEPARATOR) + 1);
             }
             return new Method(methodName, methodId, inputType, outputType, methodType,
                     inputPackageType, outputPackageType);

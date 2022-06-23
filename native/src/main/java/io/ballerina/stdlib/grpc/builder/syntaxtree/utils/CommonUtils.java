@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Set;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.UNARY;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentFilesMap;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
@@ -268,10 +268,10 @@ public class CommonUtils {
     }
 
     public static String getModulePrefix(String contextParam, String filename) {
-        if (componentFilesMap.containsKey(contextParam) && dependencyMap.containsKey(filename)) {
-            if (!dependencyMap.get(filename).equals(componentFilesMap.get(contextParam))) {
-                return componentFilesMap.get(contextParam).substring(componentFilesMap
-                        .get(contextParam).lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON;
+        if (componentsModuleMap.containsKey(contextParam) && protofileModuleMap.containsKey(filename)) {
+            if (!protofileModuleMap.get(filename).equals(componentsModuleMap.get(contextParam))) {
+                return componentsModuleMap.get(contextParam).substring(componentsModuleMap.get(contextParam)
+                        .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON;
             }
         }
         return "";

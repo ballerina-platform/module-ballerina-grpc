@@ -22,9 +22,8 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Record;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Type;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentFilesMap;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyTypesMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
@@ -65,10 +64,10 @@ public class ValueTypeUtils {
                 break;
         }
         Record contextStream = new Record();
-        if (dependencyTypesMap.containsKey(key) && dependencyMap.containsKey(filename) &&
-                !dependencyTypesMap.get(key).equals(dependencyMap.get(filename))) {
-            contextStream.addStreamField(dependencyTypesMap.get(key).substring(
-                    dependencyTypesMap.get(key).lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, "content");
+        if (componentsModuleMap.containsKey(key) && protofileModuleMap.containsKey(filename) &&
+                !componentsModuleMap.get(key).equals(protofileModuleMap.get(filename))) {
+            contextStream.addStreamField(componentsModuleMap.get(key).substring(componentsModuleMap.get(key)
+                    .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, "content");
         } else {
             contextStream.addStreamField(key, "content");
         }
@@ -79,8 +78,8 @@ public class ValueTypeUtils {
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY
                 )
         );
-        if (dependencyMap.containsKey(filename)) {
-            componentFilesMap.put(typeName, dependencyMap.get(filename));
+        if (protofileModuleMap.containsKey(filename)) {
+            componentsModuleMap.put(typeName, protofileModuleMap.get(filename));
         }
         return new Type(
                 true,
@@ -117,9 +116,9 @@ public class ValueTypeUtils {
             }
             if (isBallerinaBasicType(key)) {
                 contextString.addBasicField(key, "content");
-            } else if (dependencyTypesMap.containsKey(key) && dependencyMap.containsKey(filename) &&
-                    !dependencyTypesMap.get(key).equals(dependencyMap.get(filename))) {
-                contextString.addCustomField(dependencyTypesMap.get(key).substring(dependencyTypesMap.get(key)
+            } else if (componentsModuleMap.containsKey(key) && protofileModuleMap.containsKey(filename) &&
+                    !componentsModuleMap.get(key).equals(protofileModuleMap.get(filename))) {
+                contextString.addCustomField(componentsModuleMap.get(key).substring(componentsModuleMap.get(key)
                         .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, "content");
             } else {
                 contextString.addCustomField(key, "content");
@@ -132,8 +131,8 @@ public class ValueTypeUtils {
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY
                 )
         );
-        if (dependencyMap.containsKey(filename)) {
-            componentFilesMap.put(typeName, dependencyMap.get(filename));
+        if (protofileModuleMap.containsKey(filename)) {
+            componentsModuleMap.put(typeName, protofileModuleMap.get(filename));
         }
         return new Type(
                 true,

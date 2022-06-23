@@ -58,9 +58,9 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyTypesMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependentValueTypeMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.streamClassMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
@@ -347,15 +347,15 @@ public class SyntaxTreeGenerator {
                                                                        NodeList<ImportDeclarationNode> imports) {
         HashSet<String> importedModules = new HashSet();
         for (Method method: methodList) {
-            if (dependencyTypesMap.containsKey(method.getInputType())) {
-                importedModules.add(dependencyTypesMap.get(method.getInputType()));
+            if (componentsModuleMap.containsKey(method.getInputType())) {
+                importedModules.add(componentsModuleMap.get(method.getInputType()));
             }
-            if (dependencyTypesMap.containsKey(method.getOutputType())) {
-                importedModules.add(dependencyTypesMap.get(method.getOutputType()));
+            if (componentsModuleMap.containsKey(method.getOutputType())) {
+                importedModules.add(componentsModuleMap.get(method.getOutputType()));
             }
         }
         for (String type: importedModules.toArray(new String[importedModules.size()])) {
-            if (dependencyMap.containsKey(filename) && !dependencyMap.get(filename).equals(type)) {
+            if (protofileModuleMap.containsKey(filename) && !protofileModuleMap.get(filename).equals(type)) {
                 imports = imports.add(Imports.getImportDeclarationNode(type));
             }
         }
@@ -430,9 +430,9 @@ public class SyntaxTreeGenerator {
                                                                            StubFile stubFile) {
         for (String moduleImport: stubFile.getImportList()) {
             moduleImport = moduleImport.substring(0, moduleImport.lastIndexOf(PROTO_SUFFIX));
-            if (dependencyMap.containsKey(moduleImport)) {
-                String importString = dependencyMap.get(moduleImport);
-                if (!importString.isEmpty() && !dependencyMap.get(stubFile.getFileName()).equals(importString)) {
+            if (protofileModuleMap.containsKey(moduleImport)) {
+                String importString = protofileModuleMap.get(moduleImport);
+                if (!importString.isEmpty() && !protofileModuleMap.get(stubFile.getFileName()).equals(importString)) {
                     imports = imports.add(Imports.getImportDeclarationNode(importString));
                 }
             }

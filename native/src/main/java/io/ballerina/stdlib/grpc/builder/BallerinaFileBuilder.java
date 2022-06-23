@@ -87,11 +87,9 @@ public class BallerinaFileBuilder {
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
     public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
     // Contains the filename and its related module name
-    public static Map<String, String> dependencyMap;
-    // Contains the related module names of all the messages and enums
-    public static Map<String, String> dependencyTypesMap;
-    // Contains ContextRecords, Stream classes with the relevant module where they are created
-    public static Map<String, String> componentFilesMap;
+    public static Map<String, String> protofileModuleMap;
+    // Contains the related module names of all the records, context records and enums
+    public static Map<String, String> componentsModuleMap;
     public static Map<String, Class> streamClassMap;
 
     public BallerinaFileBuilder(DescriptorMeta rootDescriptor, Set<DescriptorMeta> dependentDescriptors) {
@@ -99,9 +97,8 @@ public class BallerinaFileBuilder {
         this.dependentDescriptors = dependentDescriptors;
         streamClassMap = new HashMap<>();
         currentPackageName = Optional.empty();
-        dependencyMap = new HashMap<>();
-        dependencyTypesMap = new HashMap<>();
-        componentFilesMap = new HashMap<>();
+        protofileModuleMap = new HashMap<>();
+        componentsModuleMap = new HashMap<>();
     }
 
     public BallerinaFileBuilder(DescriptorMeta rootDescriptor, Set<DescriptorMeta> dependentDescriptors,
@@ -111,9 +108,8 @@ public class BallerinaFileBuilder {
         this.balOutPath = balOutPath;
         streamClassMap = new HashMap<>();
         currentPackageName = Optional.ofNullable(getExistingPackageName(this.balOutPath));
-        dependencyMap = new HashMap<>();
-        dependencyTypesMap = new HashMap<>();
-        componentFilesMap = new HashMap<>();
+        protofileModuleMap = new HashMap<>();
+        componentsModuleMap = new HashMap<>();
     }
 
     public void build(String mode) throws CodeBuilderException, CodeGeneratorException {
@@ -180,11 +176,11 @@ public class BallerinaFileBuilder {
                 }
                 if (!isRoot) {
                     fileDescriptorSet.getMessageTypeList().forEach(descriptorProto ->
-                            dependencyTypesMap.put(descriptorProto.getName(), moduleName));
+                            componentsModuleMap.put(descriptorProto.getName(), moduleName));
                     fileDescriptorSet.getEnumTypeList().forEach(descriptorProto ->
-                            dependencyTypesMap.put(descriptorProto.getName(), moduleName));
+                            componentsModuleMap.put(descriptorProto.getName(), moduleName));
                 }
-                dependencyMap.put(filename, moduleName);
+                protofileModuleMap.put(filename, moduleName);
             }
             String filePackage = fileDescriptorSet.getPackage();
             StubFile stubFileObject = new StubFile(filename);
@@ -291,9 +287,9 @@ public class BallerinaFileBuilder {
                 serviceIndex++;
             }
             String stubFilePath;
-            if (moduleName.contains(".")) {
+            if (moduleName.contains(PACKAGE_SEPARATOR)) {
                 stubFilePath = generateOutputFile(this.balOutPath,
-                        "modules/" + moduleName.substring(moduleName.indexOf(".") + 1) + "/" +
+                        "modules/" + moduleName.substring(moduleName.indexOf(PACKAGE_SEPARATOR) + 1) + "/" +
                                 filename + BalGenConstants.STUB_FILE_PREFIX);
             } else {
                 stubFilePath = generateOutputFile(this.balOutPath, filename + BalGenConstants.STUB_FILE_PREFIX);
@@ -306,7 +302,7 @@ public class BallerinaFileBuilder {
 
     private void validateDirectoryWithPackageName(String moduleName, String currentPackageName)
             throws CodeBuilderException {
-        if (!moduleName.equals(currentPackageName) && !moduleName.startsWith(currentPackageName + ".")) {
+        if (!moduleName.equals(currentPackageName) && !moduleName.startsWith(currentPackageName + PACKAGE_SEPARATOR)) {
             throw new CodeBuilderException("Ballerina package name does not match with the " +
                     "given package name in the proto file");
         }
