@@ -87,11 +87,11 @@ public class BallerinaFileBuilder {
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
     public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
     // Contains the filename and its related module name
-    public static Map<String, String> dependencyMap = new HashMap<>();
+    public static Map<String, String> dependencyMap;
     // Contains the related module names of all the messages and enums
-    public static Map<String, String> dependencyTypesMap = new HashMap<>();
+    public static Map<String, String> dependencyTypesMap;
     // Contains ContextRecords, Stream classes with the relevant module where they are created
-    public static Map<String, String> componentFilesMap = new HashMap<>();
+    public static Map<String, String> componentFilesMap;
     public static Map<String, Class> streamClassMap;
 
     public BallerinaFileBuilder(DescriptorMeta rootDescriptor, Set<DescriptorMeta> dependentDescriptors) {
@@ -99,6 +99,9 @@ public class BallerinaFileBuilder {
         this.dependentDescriptors = dependentDescriptors;
         streamClassMap = new HashMap<>();
         currentPackageName = Optional.empty();
+        dependencyMap = new HashMap<>();
+        dependencyTypesMap = new HashMap<>();
+        componentFilesMap = new HashMap<>();
     }
 
     public BallerinaFileBuilder(DescriptorMeta rootDescriptor, Set<DescriptorMeta> dependentDescriptors,
@@ -108,6 +111,9 @@ public class BallerinaFileBuilder {
         this.balOutPath = balOutPath;
         streamClassMap = new HashMap<>();
         currentPackageName = Optional.ofNullable(getExistingPackageName(this.balOutPath));
+        dependencyMap = new HashMap<>();
+        dependencyTypesMap = new HashMap<>();
+        componentFilesMap = new HashMap<>();
     }
 
     public void build(String mode) throws CodeBuilderException, CodeGeneratorException {
