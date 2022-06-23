@@ -18,6 +18,8 @@
 
 syntax = "proto3";
 
+package ballerina.protobuf;
+
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.FileOptions {
