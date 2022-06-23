@@ -55,4 +55,6 @@ public class BalGenConstants {
     public static final String GOOGLE_STANDARD_LIB = "google.protobuf";
 
     public static final String GOOGLE_API_LIB = "google.api";
+
+    public static final String BALLERINA_STANDARD_LIB = "ballerina.protobuf";
 }

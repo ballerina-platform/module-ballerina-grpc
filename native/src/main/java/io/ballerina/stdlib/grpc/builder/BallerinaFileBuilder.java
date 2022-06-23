@@ -60,9 +60,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.BALLERINA_STANDARD_LIB;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.BALLERINA_TOML_FILE_NAME;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.DEFAULT_PACKAGE;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.FILE_SEPARATOR;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.GOOGLE_API_LIB;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.GOOGLE_STANDARD_LIB;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils.delete;
 import static io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils.handleProcessExecutionErrors;
@@ -129,8 +132,9 @@ public class BallerinaFileBuilder {
             DescriptorProtos.FileDescriptorProto fileDescriptorSet = DescriptorProtos.FileDescriptorProto
                     .parseFrom(targetStream, extensionRegistry);
 
-            if (fileDescriptorSet.getPackage().contains(BalGenConstants.GOOGLE_STANDARD_LIB) ||
-                    fileDescriptorSet.getPackage().contains(BalGenConstants.GOOGLE_API_LIB)) {
+            if (fileDescriptorSet.getPackage().contains(GOOGLE_STANDARD_LIB) ||
+                    fileDescriptorSet.getPackage().contains(GOOGLE_API_LIB) ||
+                    fileDescriptorSet.getPackage().contains(BALLERINA_STANDARD_LIB)) {
                 return;
             }
             List<DescriptorProtos.ServiceDescriptorProto> serviceDescriptorList = fileDescriptorSet.getServiceList();
