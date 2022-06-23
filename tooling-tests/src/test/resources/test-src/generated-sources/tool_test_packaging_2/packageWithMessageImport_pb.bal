@@ -1,9 +1,9 @@
 import ballerina/grpc;
 import ballerina/protobuf;
 import ballerina/protobuf.types.wrappers;
-import tool_test_packaging_2.message1;
+import tool_test_packaging_2.message;
 
-const string PACKAGEWITHMESSAGEIMPORT_DESC = "0A1E7061636B616765576974684D657373616765496D706F72742E70726F746F12097061636B6167696E671A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A2362616C6C6572696E612F70726F746F6275662F64657363726970746F722E70726F746F1A0E6D657373616765312E70726F746F22490A0B526F6F744D65737361676512100A036D736718012001280952036D736712280A03656E3118022001280E32162E7061636B6167696E672E53696D706C65456E756D315203656E3132FD030A0A68656C6C6F576F726C6412430A0568656C6C6F121A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75651A1A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75652801300112380A0668656C6C6F3112162E7061636B6167696E672E5265714D657373616765311A162E7061636B6167696E672E5265734D65737361676531123A0A0668656C6C6F3212162E7061636B6167696E672E5265714D657373616765311A162E7061636B6167696E672E5265734D657373616765313001123A0A0668656C6C6F3312162E7061636B6167696E672E5265714D657373616765311A162E7061636B6167696E672E5265734D657373616765312801123C0A0668656C6C6F3412162E7061636B6167696E672E5265714D657373616765311A162E7061636B6167696E672E5265734D6573736167653128013001123C0A0668656C6C6F3512162E7061636B6167696E672E526F6F744D6573736167651A162E7061636B6167696E672E526F6F744D65737361676528013001123D0A0768656C6C6F313012162E7061636B6167696E672E526F6F744D6573736167651A162E7061636B6167696E672E5265734D6573736167653128013001123D0A0768656C6C6F313112162E7061636B6167696E672E5265714D657373616765311A162E7061636B6167696E672E526F6F744D657373616765280130014218E24715746F6F6C5F746573745F7061636B6167696E675F32620670726F746F33";
+const string PACKAGEWITHMESSAGEIMPORT_DESC = "0A1E7061636B616765576974684D657373616765496D706F72742E70726F746F12097061636B6167696E671A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F1A2362616C6C6572696E612F70726F746F6275662F64657363726970746F722E70726F746F1A0D6D6573736167652E70726F746F22480A0B526F6F744D65737361676512100A036D736718012001280952036D736712270A03656E3118022001280E32152E7061636B6167696E672E53696D706C65456E756D5203656E3132F3030A0A68656C6C6F576F726C6412430A0568656C6C6F121A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75651A1A2E676F6F676C652E70726F746F6275662E426F6F6C56616C75652801300112360A0668656C6C6F3112152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D65737361676512380A0668656C6C6F3212152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D657373616765300112380A0668656C6C6F3312152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D6573736167652801123A0A0668656C6C6F3412152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D65737361676528013001123C0A0668656C6C6F3512162E7061636B6167696E672E526F6F744D6573736167651A162E7061636B6167696E672E526F6F744D65737361676528013001123C0A0768656C6C6F313012162E7061636B6167696E672E526F6F744D6573736167651A152E7061636B6167696E672E5265734D65737361676528013001123C0A0768656C6C6F313112152E7061636B6167696E672E5265714D6573736167651A162E7061636B6167696E672E526F6F744D657373616765280130014218E24715746F6F6C5F746573745F7061636B6167696E675F32620670726F746F33";
 
 public isolated client class helloWorldClient {
     *grpc:AbstractClientEndpoint;
@@ -15,10 +15,10 @@ public isolated client class helloWorldClient {
         check self.grpcClient.initStub(self, PACKAGEWITHMESSAGEIMPORT_DESC);
     }
 
-    isolated remote function hello1(message1:ReqMessage1|message1:ContextReqMessage1 req) returns message1:ResMessage1|grpc:Error {
+    isolated remote function hello1(message:ReqMessage|ContextReqMessage req) returns message:ResMessage|grpc:Error {
         map<string|string[]> headers = {};
-        message1:ReqMessage1 message;
-        if req is message1:ContextReqMessage1 {
+        message:ReqMessage message;
+        if req is ContextReqMessage {
             message = req.content;
             headers = req.headers;
         } else {
@@ -26,13 +26,13 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld/hello1", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
-        return <message1:ResMessage1>result;
+        return <message:ResMessage>result;
     }
 
-    isolated remote function hello1Context(message1:ReqMessage1|message1:ContextReqMessage1 req) returns message1:ContextResMessage1|grpc:Error {
+    isolated remote function hello1Context(message:ReqMessage|ContextReqMessage req) returns ContextResMessage|grpc:Error {
         map<string|string[]> headers = {};
-        message1:ReqMessage1 message;
-        if req is message1:ContextReqMessage1 {
+        message:ReqMessage message;
+        if req is ContextReqMessage {
             message = req.content;
             headers = req.headers;
         } else {
@@ -40,7 +40,7 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld/hello1", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
-        return {content: <message1:ResMessage1>result, headers: respHeaders};
+        return {content: <message:ResMessage>result, headers: respHeaders};
     }
 
     isolated remote function hello3() returns Hello3StreamingClient|grpc:Error {
@@ -48,10 +48,10 @@ public isolated client class helloWorldClient {
         return new Hello3StreamingClient(sClient);
     }
 
-    isolated remote function hello2(message1:ReqMessage1|message1:ContextReqMessage1 req) returns stream<message1:ResMessage1, grpc:Error?>|grpc:Error {
+    isolated remote function hello2(message:ReqMessage|ContextReqMessage req) returns stream<message:ResMessage, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
-        message1:ReqMessage1 message;
-        if req is message1:ContextReqMessage1 {
+        message:ReqMessage message;
+        if req is ContextReqMessage {
             message = req.content;
             headers = req.headers;
         } else {
@@ -59,14 +59,14 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld/hello2", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
-        message1:ResMessage1Stream outputStream = new message1:ResMessage1Stream(result);
-        return new stream<message1:ResMessage1, grpc:Error?>(outputStream);
+        ResMessageStream outputStream = new ResMessageStream(result);
+        return new stream<message:ResMessage, grpc:Error?>(outputStream);
     }
 
-    isolated remote function hello2Context(message1:ReqMessage1|message1:ContextReqMessage1 req) returns message1:ContextResMessage1Stream|grpc:Error {
+    isolated remote function hello2Context(message:ReqMessage|ContextReqMessage req) returns ContextResMessageStream|grpc:Error {
         map<string|string[]> headers = {};
-        message1:ReqMessage1 message;
-        if req is message1:ContextReqMessage1 {
+        message:ReqMessage message;
+        if req is ContextReqMessage {
             message = req.content;
             headers = req.headers;
         } else {
@@ -74,8 +74,8 @@ public isolated client class helloWorldClient {
         }
         var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld/hello2", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
-        message1:ResMessage1Stream outputStream = new message1:ResMessage1Stream(result);
-        return {content: new stream<message1:ResMessage1, grpc:Error?>(outputStream), headers: respHeaders};
+        ResMessageStream outputStream = new ResMessageStream(result);
+        return {content: new stream<message:ResMessage, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
     isolated remote function hello() returns HelloStreamingClient|grpc:Error {
@@ -111,31 +111,31 @@ public client class Hello3StreamingClient {
         self.sClient = sClient;
     }
 
-    isolated remote function sendReqMessage1(message1:ReqMessage1 message) returns grpc:Error? {
+    isolated remote function sendReqMessage(message:ReqMessage message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextReqMessage1(message1:ContextReqMessage1 message) returns grpc:Error? {
+    isolated remote function sendContextReqMessage(ContextReqMessage message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
-    isolated remote function receiveResMessage1() returns message1:ResMessage1|grpc:Error? {
+    isolated remote function receiveResMessage() returns message:ResMessage|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
         } else {
             [anydata, map<string|string[]>] [payload, _] = response;
-            return <message1:ResMessage1>payload;
+            return <message:ResMessage>payload;
         }
     }
 
-    isolated remote function receiveContextResMessage1() returns message1:ContextResMessage1|grpc:Error? {
+    isolated remote function receiveContextResMessage() returns ContextResMessage|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
         } else {
             [anydata, map<string|string[]>] [payload, headers] = response;
-            return {content: <message1:ResMessage1>payload, headers: headers};
+            return {content: <message:ResMessage>payload, headers: headers};
         }
     }
 
@@ -145,6 +145,30 @@ public client class Hello3StreamingClient {
 
     isolated remote function complete() returns grpc:Error? {
         return self.sClient->complete();
+    }
+}
+
+public class ResMessageStream {
+    private stream<anydata, grpc:Error?> anydataStream;
+
+    public isolated function init(stream<anydata, grpc:Error?> anydataStream) {
+        self.anydataStream = anydataStream;
+    }
+
+    public isolated function next() returns record {|message:ResMessage value;|}|grpc:Error? {
+        var streamValue = self.anydataStream.next();
+        if (streamValue is ()) {
+            return streamValue;
+        } else if (streamValue is grpc:Error) {
+            return streamValue;
+        } else {
+            record {|message:ResMessage value;|} nextRecord = {value: <message:ResMessage>streamValue.value};
+            return nextRecord;
+        }
+    }
+
+    public isolated function close() returns grpc:Error? {
+        return self.anydataStream.close();
     }
 }
 
@@ -199,31 +223,31 @@ public client class Hello4StreamingClient {
         self.sClient = sClient;
     }
 
-    isolated remote function sendReqMessage1(message1:ReqMessage1 message) returns grpc:Error? {
+    isolated remote function sendReqMessage(message:ReqMessage message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextReqMessage1(message1:ContextReqMessage1 message) returns grpc:Error? {
+    isolated remote function sendContextReqMessage(ContextReqMessage message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
-    isolated remote function receiveResMessage1() returns message1:ResMessage1|grpc:Error? {
+    isolated remote function receiveResMessage() returns message:ResMessage|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
         } else {
             [anydata, map<string|string[]>] [payload, _] = response;
-            return <message1:ResMessage1>payload;
+            return <message:ResMessage>payload;
         }
     }
 
-    isolated remote function receiveContextResMessage1() returns message1:ContextResMessage1|grpc:Error? {
+    isolated remote function receiveContextResMessage() returns ContextResMessage|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
         } else {
             [anydata, map<string|string[]>] [payload, headers] = response;
-            return {content: <message1:ResMessage1>payload, headers: headers};
+            return {content: <message:ResMessage>payload, headers: headers};
         }
     }
 
@@ -295,23 +319,23 @@ public client class Hello10StreamingClient {
         return self.sClient->send(message);
     }
 
-    isolated remote function receiveResMessage1() returns message1:ResMessage1|grpc:Error? {
+    isolated remote function receiveResMessage() returns message:ResMessage|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
         } else {
             [anydata, map<string|string[]>] [payload, _] = response;
-            return <message1:ResMessage1>payload;
+            return <message:ResMessage>payload;
         }
     }
 
-    isolated remote function receiveContextResMessage1() returns message1:ContextResMessage1|grpc:Error? {
+    isolated remote function receiveContextResMessage() returns ContextResMessage|grpc:Error? {
         var response = check self.sClient->receive();
         if response is () {
             return response;
         } else {
             [anydata, map<string|string[]>] [payload, headers] = response;
-            return {content: <message1:ResMessage1>payload, headers: headers};
+            return {content: <message:ResMessage>payload, headers: headers};
         }
     }
 
@@ -331,11 +355,11 @@ public client class Hello11StreamingClient {
         self.sClient = sClient;
     }
 
-    isolated remote function sendReqMessage1(message1:ReqMessage1 message) returns grpc:Error? {
+    isolated remote function sendReqMessage(message:ReqMessage message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
-    isolated remote function sendContextReqMessage1(message1:ContextReqMessage1 message) returns grpc:Error? {
+    isolated remote function sendContextReqMessage(ContextReqMessage message) returns grpc:Error? {
         return self.sClient->send(message);
     }
 
@@ -368,38 +392,6 @@ public client class Hello11StreamingClient {
     }
 }
 
-public client class HelloWorldResMessage1Caller {
-    private grpc:Caller caller;
-
-    public isolated function init(grpc:Caller caller) {
-        self.caller = caller;
-    }
-
-    public isolated function getId() returns int {
-        return self.caller.getId();
-    }
-
-    isolated remote function sendResMessage1(message1:ResMessage1 response) returns grpc:Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendContextResMessage1(message1:ContextResMessage1 response) returns grpc:Error? {
-        return self.caller->send(response);
-    }
-
-    isolated remote function sendError(grpc:Error response) returns grpc:Error? {
-        return self.caller->sendError(response);
-    }
-
-    isolated remote function complete() returns grpc:Error? {
-        return self.caller->complete();
-    }
-
-    public isolated function isCancelled() returns boolean {
-        return self.caller.isCancelled();
-    }
-}
-
 public client class HelloWorldRootMessageCaller {
     private grpc:Caller caller;
 
@@ -416,6 +408,38 @@ public client class HelloWorldRootMessageCaller {
     }
 
     isolated remote function sendContextRootMessage(ContextRootMessage response) returns grpc:Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendError(grpc:Error response) returns grpc:Error? {
+        return self.caller->sendError(response);
+    }
+
+    isolated remote function complete() returns grpc:Error? {
+        return self.caller->complete();
+    }
+
+    public isolated function isCancelled() returns boolean {
+        return self.caller.isCancelled();
+    }
+}
+
+public client class HelloWorldResMessageCaller {
+    private grpc:Caller caller;
+
+    public isolated function init(grpc:Caller caller) {
+        self.caller = caller;
+    }
+
+    public isolated function getId() returns int {
+        return self.caller.getId();
+    }
+
+    isolated remote function sendResMessage(message:ResMessage response) returns grpc:Error? {
+        return self.caller->send(response);
+    }
+
+    isolated remote function sendContextResMessage(ContextResMessage response) returns grpc:Error? {
         return self.caller->send(response);
     }
 
@@ -469,14 +493,34 @@ public type ContextRootMessageStream record {|
     map<string|string[]> headers;
 |};
 
+public type ContextReqMessageStream record {|
+    stream<message:ReqMessage, error?> content;
+    map<string|string[]> headers;
+|};
+
+public type ContextResMessageStream record {|
+    stream<message:ResMessage, error?> content;
+    map<string|string[]> headers;
+|};
+
 public type ContextRootMessage record {|
     RootMessage content;
+    map<string|string[]> headers;
+|};
+
+public type ContextReqMessage record {|
+    message:ReqMessage content;
+    map<string|string[]> headers;
+|};
+
+public type ContextResMessage record {|
+    message:ResMessage content;
     map<string|string[]> headers;
 |};
 
 @protobuf:Descriptor {value: PACKAGEWITHMESSAGEIMPORT_DESC}
 public type RootMessage record {|
     string msg = "";
-    message1:SimpleEnum1 en1 = message1:x;
+    message:SimpleEnum en1 = message:x;
 |};
 
