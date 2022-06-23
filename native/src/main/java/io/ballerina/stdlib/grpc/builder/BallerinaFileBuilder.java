@@ -85,7 +85,7 @@ public class BallerinaFileBuilder {
     private static final String PROTO_FILE_EXTENSION = ".proto";
     private static final int EXTENSION = 1148;
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
-    public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
+    public static Map<String, Boolean> dependentValueTypeMap;
     // Contains the filename and its related module name
     public static Map<String, String> protofileModuleMap;
     // Contains the related module names of all the records, context records and enums
@@ -97,6 +97,7 @@ public class BallerinaFileBuilder {
         this.dependentDescriptors = dependentDescriptors;
         streamClassMap = new HashMap<>();
         currentPackageName = Optional.empty();
+        dependentValueTypeMap = new HashMap<>();
         protofileModuleMap = new HashMap<>();
         componentsModuleMap = new HashMap<>();
     }
@@ -108,6 +109,7 @@ public class BallerinaFileBuilder {
         this.balOutPath = balOutPath;
         streamClassMap = new HashMap<>();
         currentPackageName = Optional.ofNullable(getExistingPackageName(this.balOutPath));
+        dependentValueTypeMap = new HashMap<>();
         protofileModuleMap = new HashMap<>();
         componentsModuleMap = new HashMap<>();
     }
