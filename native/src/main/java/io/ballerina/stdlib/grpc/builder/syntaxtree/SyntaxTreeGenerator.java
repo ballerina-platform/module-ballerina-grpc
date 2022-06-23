@@ -48,6 +48,7 @@ import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +58,7 @@ import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMIN
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependencyTypesMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependentValueTypeMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.streamClassMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
@@ -265,6 +267,8 @@ public class SyntaxTreeGenerator {
             imports = imports.add(importForAny);
         }
 
+        imports = addSubModuleImports(methodList, fileName, imports);
+
         if (addListener) {
             Listener listener = new Listener(
                     "ep",
@@ -298,12 +302,12 @@ public class SyntaxTreeGenerator {
                 if (method.getMethodType().equals(CLIENT_STREAMING) ||
                         method.getMethodType().equals(BIDI_STREAMING)) {
                     inputParam = getStreamTypeDescriptorNode(
-                            getSimpleNameReferenceNode(input),
+                            getSimpleNameReferenceNode(method.getInputPackagePrefix(fileName) + input),
                             SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                     );
                     inputName = "clientStream";
                 } else {
-                    inputParam = getSimpleNameReferenceNode(input);
+                    inputParam = getSimpleNameReferenceNode(method.getInputPackagePrefix(fileName) + input);
                     inputName = "value";
                 }
                 function.addRequiredParameter(inputParam, inputName);
@@ -314,11 +318,11 @@ public class SyntaxTreeGenerator {
                 if (method.getMethodType().equals(SERVER_STREAMING) ||
                         method.getMethodType().equals(BIDI_STREAMING)) {
                     outputParam = getStreamTypeDescriptorNode(
-                            getSimpleNameReferenceNode(output),
+                            getSimpleNameReferenceNode(method.getOutputPackageType(fileName) + output),
                             getOptionalTypeDescriptorNode("", "error")
                     );
                 } else {
-                    outputParam = getSimpleNameReferenceNode(output);
+                    outputParam = getSimpleNameReferenceNode(method.getOutputPackageType(fileName) + output);
                 }
                 function.addReturns(
                         getUnionTypeDescriptorNode(
@@ -340,6 +344,25 @@ public class SyntaxTreeGenerator {
         TextDocument textDocument = TextDocuments.from("");
         SyntaxTree syntaxTree = SyntaxTree.from(textDocument);
         return syntaxTree.modifyWith(modulePartNode);
+    }
+
+    private static NodeList<ImportDeclarationNode> addSubModuleImports(List<Method> methodList, String filename,
+                                                                       NodeList<ImportDeclarationNode> imports) {
+        HashSet<String> importedModules = new HashSet();
+        for (Method method: methodList) {
+            if (dependencyTypesMap.containsKey(method.getInputType())) {
+                importedModules.add(dependencyTypesMap.get(method.getInputType()));
+            }
+            if (dependencyTypesMap.containsKey(method.getOutputType())) {
+                importedModules.add(dependencyTypesMap.get(method.getOutputType()));
+            }
+        }
+        for (String type: importedModules.toArray(new String[importedModules.size()])) {
+            if (dependencyMap.containsKey(filename) && !dependencyMap.get(filename).equals(type)) {
+                imports = imports.add(Imports.getImportDeclarationNode(type));
+            }
+        }
+        return imports;
     }
 
     public static SyntaxTree generateSyntaxTreeForClientSample(ServiceStub serviceStub) {

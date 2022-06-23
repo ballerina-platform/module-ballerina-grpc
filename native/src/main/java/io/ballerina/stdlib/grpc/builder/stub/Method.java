@@ -89,8 +89,7 @@ public class Method {
     }
 
     public String getOutputPackageType(String filename) {
-        if (!outputPackagePrefix.isEmpty() &&
-                dependencyMap.containsKey(filename)) {
+        if (!outputPackagePrefix.isEmpty() && dependencyMap.containsKey(filename)) {
             if (!dependencyMap.get(filename).substring(dependencyMap.get(filename)
                     .lastIndexOf(".") + 1).equals(outputPackagePrefix)) {
                 return outputPackagePrefix + COLON;

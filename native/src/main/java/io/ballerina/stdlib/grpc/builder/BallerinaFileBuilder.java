@@ -86,7 +86,9 @@ public class BallerinaFileBuilder {
     private static final int EXTENSION = 1148;
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
     public static Map<String, Boolean> dependentValueTypeMap = new HashMap<>();
+    // Contains the filename and its related module name
     public static Map<String, String> dependencyMap = new HashMap<>();
+    // Contains the related module names of all the messages and enums
     public static Map<String, String> dependencyTypesMap = new HashMap<>();
     // Contains ContextRecords, Stream classes with the relevant module where they are created
     public static Map<String, String> componentFilesMap = new HashMap<>();
@@ -168,7 +170,7 @@ public class BallerinaFileBuilder {
                 if (currentPackageName.isPresent()) {
                     validateDirectoryWithPackageName(moduleName, currentPackageName.get());
                 } else {
-                    createBallerinaPackage(moduleName);
+                    currentPackageName = Optional.of(createBallerinaPackage(moduleName));
                 }
                 if (!isRoot) {
                     fileDescriptorSet.getMessageTypeList().forEach(descriptorProto ->
@@ -321,15 +323,18 @@ public class BallerinaFileBuilder {
         return null;
     }
 
-    private void createBallerinaPackage(String packageName) throws CodeGeneratorException, IOException {
-        Files.createDirectories(Paths.get(balOutPath));
+    private String createBallerinaPackage(String packageName) throws CodeGeneratorException, IOException {
         if (packageName.contains(PACKAGE_SEPARATOR)) {
             packageName = packageName.substring(0, packageName.indexOf(PACKAGE_SEPARATOR));
         }
+        Files.createDirectories(Paths.get(balOutPath));
+        File ballerinaDir = new File(balOutPath + FILE_SEPARATOR + packageName);
+        if (!ballerinaDir.isDirectory()) {
+            runBalNewProcess(packageName);
+        }
         balOutPath = balOutPath + FILE_SEPARATOR + packageName;
-        runBalNewProcess(packageName);
         delete(new File(balOutPath + FILE_SEPARATOR + "main.bal"));
-        currentPackageName = Optional.of(packageName);
+        return packageName;
     }
 
     private void runBalNewProcess(String packageName) throws IOException, CodeGeneratorException {
