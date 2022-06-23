@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
@@ -254,16 +255,12 @@ public class SyntaxTreeGenerator {
 
         if (checkForImportsInServices(methodList, "time:Utc")
                 || checkForImportsInServices(methodList, "time:Seconds")) {
-            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
-                    "ballerina", "time"
-            );
+            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(ORG_NAME, "time");
             imports = imports.add(importForTime);
         }
 
         if (checkForImportsInServices(methodList, "'any:Any")) {
-            ImportDeclarationNode importForAny = Imports.getImportDeclarationNode(
-                    "ballerina", "protobuf.types.'any"
-            );
+            ImportDeclarationNode importForAny = Imports.getImportDeclarationNode(ORG_NAME, "protobuf.types.'any");
             imports = imports.add(importForAny);
         }
 
@@ -424,7 +421,7 @@ public class SyntaxTreeGenerator {
     private static NodeList<ImportDeclarationNode> addBallerinaImportNodes(NodeList<ImportDeclarationNode> imports,
                                                                            Set<String> ballerinaImports) {
         for (String ballerinaImport : ballerinaImports) {
-            imports = imports.add(Imports.getImportDeclarationNode("ballerina", ballerinaImport));
+            imports = imports.add(Imports.getImportDeclarationNode(ORG_NAME, ballerinaImport));
         }
         return imports;
     }
@@ -448,7 +445,7 @@ public class SyntaxTreeGenerator {
         for (String protobufImport : protobufImports) {
             imports = imports.add(
                     Imports.getImportDeclarationNode(
-                            "ballerina",
+                            ORG_NAME,
                             "protobuf",
                             new String[]{"types", protobufImport},
                             ""
@@ -467,7 +464,7 @@ public class SyntaxTreeGenerator {
             }
             imports = imports.add(
                     Imports.getImportDeclarationNode(
-                            "ballerina",
+                            ORG_NAME,
                             "grpc",
                             new String[]{"types", sImport},
                             "s" + prefix

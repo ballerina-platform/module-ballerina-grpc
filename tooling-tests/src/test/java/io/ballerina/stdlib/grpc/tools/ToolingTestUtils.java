@@ -65,6 +65,13 @@ public class ToolingTestUtils {
         Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, subDir, protoFile);
         Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir);
 
+        Path tempOutputDirPath;
+        if (outputDir.contains("tool_test_packaging")) {
+            tempOutputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY);
+        } else {
+            tempOutputDirPath = outputDirPath;
+        }
+
         Path expectedStubFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY, outputDir, stubFile);
         Path expectedServiceFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
                 outputDir, serviceFile);
@@ -75,7 +82,7 @@ public class ToolingTestUtils {
         Path actualServiceFilePath = outputDirPath.resolve(serviceFile);
         Path actualClientFilePath = outputDirPath.resolve(clientFile);
 
-        generateSourceCode(protoFilePath, outputDirPath, null, null);
+        generateSourceCode(protoFilePath, tempOutputDirPath, null, null);
         Assert.assertTrue(Files.exists(actualStubFilePath));
 
         Path destTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, BALLERINA_TOML_FILE);
@@ -90,7 +97,7 @@ public class ToolingTestUtils {
         }
         Assert.assertFalse(Files.exists(actualStubFilePath));
 
-        generateSourceCode(protoFilePath, outputDirPath, "client", null);
+        generateSourceCode(protoFilePath, tempOutputDirPath, "client", null);
         Assert.assertTrue(Files.exists(actualStubFilePath));
         Assert.assertTrue(Files.exists(actualClientFilePath));
         Assert.assertFalse(hasSemanticDiagnostics(outputDirPath, false));
@@ -105,7 +112,7 @@ public class ToolingTestUtils {
         }
         Assert.assertFalse(Files.exists(actualStubFilePath));
 
-        generateSourceCode(protoFilePath, outputDirPath, "service", null);
+        generateSourceCode(protoFilePath, tempOutputDirPath, "service", null);
         Assert.assertTrue(Files.exists(actualStubFilePath));
         Assert.assertTrue(Files.exists(actualServiceFilePath));
         Assert.assertFalse(hasSyntacticDiagnostics(actualStubFilePath));
