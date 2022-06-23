@@ -66,4 +66,16 @@ public class ToolingPackageTest {
                 "helloworld_service.bal", "helloworld_client.bal", "tool_test_packaging_3");
     }
 
+    @Test
+    public void testPackagingWithImportsContainingService() {
+        try {
+            Files.createDirectories(Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_packaging_4"));
+        } catch (IOException e) {
+            Assert.fail("Could not create target directories", e);
+        }
+        assertGeneratedSources("packaging", "packageWithImportContainingService.proto",
+                "packageWithImportContainingService_pb.bal", "helloworld_service.bal",
+                "helloworld_client.bal", "tool_test_packaging_4");
+    }
+
 }

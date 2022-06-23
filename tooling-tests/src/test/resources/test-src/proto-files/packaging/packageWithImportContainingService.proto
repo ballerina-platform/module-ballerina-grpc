@@ -21,30 +21,19 @@ syntax = "proto3";
 package packaging;
 
 import "ballerina/protobuf/descriptor.proto";
+import "messageWithService.proto";
 
-option (ballerina.protobuf.ballerina_module) = "tool_test_packaging_4.message";
+option (ballerina.protobuf.ballerina_module) = "tool_test_packaging_4";
 
-message ReqMessage {
-  int32 req = 1;
-  string value = 2;
-  SimpleEnum enu = 3;
+service helloWorld {
+  rpc hello1(ReqMessage) returns (ResMessage);
+  rpc hello2(ReqMessage) returns (stream ResMessage);
+  rpc hello3(stream ReqMessage) returns (ResMessage);
+  rpc hello4(stream ReqMessage) returns (stream ResMessage);
+  rpc hello5(stream RootMessage) returns (stream RootMessage);
 }
 
-message ResMessage {
-  int32 req = 1;
-  string value = 2;
-  SimpleEnum enu = 3;
-}
-
-service helloBallerina {
-  rpc hi(ReqMessage) returns (ResMessage);
-  rpc hey(ReqMessage) returns (stream ResMessage);
-  rpc hello(stream ReqMessage) returns (ResMessage);
-  rpc bye(stream ReqMessage) returns (stream ResMessage);
-}
-
-enum SimpleEnum {
-  x = 0;
-  y = 1;
-  z = 2;
+message RootMessage {
+  string msg = 1;
+  SimpleEnum enu = 2;
 }
