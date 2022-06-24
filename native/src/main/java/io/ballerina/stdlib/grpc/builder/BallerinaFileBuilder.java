@@ -96,10 +96,10 @@ public class BallerinaFileBuilder {
         this.rootDescriptor = rootDescriptor;
         this.dependentDescriptors = dependentDescriptors;
         streamClassMap = new HashMap<>();
-        currentPackageName = Optional.empty();
         dependentValueTypeMap = new HashMap<>();
         protofileModuleMap = new HashMap<>();
         componentsModuleMap = new HashMap<>();
+        currentPackageName = Optional.empty();
     }
 
     public BallerinaFileBuilder(DescriptorMeta rootDescriptor, Set<DescriptorMeta> dependentDescriptors,
@@ -108,10 +108,10 @@ public class BallerinaFileBuilder {
         this.dependentDescriptors = dependentDescriptors;
         this.balOutPath = balOutPath;
         streamClassMap = new HashMap<>();
-        currentPackageName = Optional.ofNullable(getExistingPackageName(this.balOutPath));
         dependentValueTypeMap = new HashMap<>();
         protofileModuleMap = new HashMap<>();
         componentsModuleMap = new HashMap<>();
+        currentPackageName = Optional.ofNullable(getExistingPackageName(this.balOutPath));
     }
 
     public void build(String mode) throws CodeBuilderException, CodeGeneratorException {
@@ -198,17 +198,15 @@ public class BallerinaFileBuilder {
                 }
             }
 
-            if (descriptor == rootDescriptor.getDescriptor() || serviceDescriptorList.size() > 0) {
-                // Add root descriptor.
-                Descriptor rootDesc = Descriptor.newBuilder(descriptor).build();
-                stubRootDescriptor = rootDesc.getData();
-                descriptors.add(rootDesc);
+            // Add root descriptor.
+            Descriptor rootDesc = Descriptor.newBuilder(descriptor).build();
+            stubRootDescriptor = rootDesc.getData();
+            descriptors.add(rootDesc);
 
-                // Add dependent descriptors.
-                for (byte[] descriptorData : getDependentDescriptorSet(dependentDescriptors)) {
-                    Descriptor dependentDescriptor = Descriptor.newBuilder(descriptorData).build();
-                    descriptors.add(dependentDescriptor);
-                }
+            // Add dependent descriptors.
+            for (byte[] descriptorData : getDependentDescriptorSet(dependentDescriptors)) {
+                Descriptor dependentDescriptor = Descriptor.newBuilder(descriptorData).build();
+                descriptors.add(dependentDescriptor);
             }
 
             // read enum types.
