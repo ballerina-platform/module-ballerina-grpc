@@ -17,9 +17,9 @@
 import ballerina/grpc;
 import ballerina/protobuf.types.wrappers;
 
-const string HELLOWORLDSTRING_DESC = "0A1668656C6C6F576F726C64537472696E672E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32530A0A68656C6C6F576F726C6412450A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75652801620670726F746F33";
+const string HELLOWORLDSTRING_DESC = "0A1668656C6C6F576F726C64537472696E672E70726F746F1A1E676F6F676C652F70726F746F6275662F77726170706572732E70726F746F32620A1968656C6C6F44657363726970746F72416E6E6F746174696F6E12450A0568656C6C6F121C2E676F6F676C652E70726F746F6275662E537472696E6756616C75651A1C2E676F6F676C652E70726F746F6275662E537472696E6756616C75652801620670726F746F33";
 
-public isolated client class helloWorldClient {
+public isolated client class helloDescriptorAnnotationClient {
     *grpc:AbstractClientEndpoint;
 
     private final grpc:Client grpcClient;
@@ -30,7 +30,7 @@ public isolated client class helloWorldClient {
     }
 
     isolated remote function hello() returns HelloStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("helloWorld/hello");
+        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("helloDescriptorAnnotation/hello");
         return new HelloStreamingClient(sClient);
     }
 }
@@ -79,7 +79,7 @@ public client class HelloStreamingClient {
     }
 }
 
-public client class HelloWorldStringCaller {
+public client class HelloDescriptorAnnotationStringCaller {
     private grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {

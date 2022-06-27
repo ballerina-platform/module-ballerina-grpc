@@ -18,7 +18,7 @@ import ballerina/test;
 
 @test:Config {}
 function main_test() returns error? {
-    helloWorldClient ep = check new ("http://localhost:9168");
+    helloDescriptorAnnotationClient ep = check new ("http://localhost:9168");
     HelloStreamingClient cc = check ep->hello();
     check cc->sendString("Hello service");
     string? response = check cc->receiveString();
