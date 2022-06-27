@@ -303,6 +303,15 @@ public class CompilerPluginTest {
                 d -> errMsg.equals(d.toString())));
     }
 
+    @Test
+    public void testCompilerPluginServiceWithDescriptorAnnotation() {
+
+        Package currentPackage = loadPackage("package_20");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Assert.assertEquals(diagnosticResult.errors().size(), 0);
+    }
+
     private Package loadPackage(String path) {
 
         Path projectDirPath = RESOURCE_DIRECTORY.resolve(path);
