@@ -267,9 +267,9 @@ public class SyntaxTreeGenerator {
                 new String[]{"\"" + serviceStub.getServiceName() + "\""},
                 new String[]{"ep"}
         );
-        Annotation grpcServiceDescriptor = new Annotation("grpc", "ServiceDescriptor");
+        Annotation grpcServiceDescriptor = new Annotation("grpc", "Descriptor");
         grpcServiceDescriptor.addField(
-                "descriptor",
+                "value",
                 fileName.toUpperCase() + ROOT_DESCRIPTOR
         );
         service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
