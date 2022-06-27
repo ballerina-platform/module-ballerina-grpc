@@ -106,7 +106,7 @@ public class CompilerPluginTest {
         Package currentPackage = loadPackage("package_05");
         PackageCompilation compilation = currentPackage.getCompilation();
         String errMsg = "ERROR [grpc_server_streaming_service.bal:(30:1,43:2)] undefined annotation: " +
-                "grpc:ServiceDescriptor";
+                "grpc:Descriptor";
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         Stream<Diagnostic> grpcErrorDiagnostic = diagnosticResult.errors().stream().filter(
                 diagnostic -> diagnostic.diagnosticInfo().code().equals(
