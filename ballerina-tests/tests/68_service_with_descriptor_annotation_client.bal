@@ -17,10 +17,11 @@
 import ballerina/test;
 
 @test:Config {}
-function main_test() returns error? {
+function testServiceDescriptorAnnotation() returns error? {
     helloDescriptorAnnotationClient ep = check new ("http://localhost:9168");
     HelloStreamingClient cc = check ep->hello();
     check cc->sendString("Hello service");
+    check cc->complete();
     string? response = check cc->receiveString();
     test:assertEquals(response, "hello client");
 }
