@@ -20,6 +20,7 @@ package io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint;
 
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
@@ -47,6 +48,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_DESCRIPTOR_FQN;
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_SERVICE_DESCRIPTOR_FQN;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONFIG;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getListenerConfig;
@@ -113,9 +116,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
                                 "initializing service register builder.")));
             } else {
                 servicesRegistryBuilder.addService(ServicesBuilderUtils.getServiceDefinition(
-                        Runtime.getCurrentRuntime(), service, servicePath,
-                        service.getType().getAnnotation(
-                                StringUtils.fromString(GrpcConstants.ANN_SERVICE_DESCRIPTOR_FQN))));
+                        Runtime.getCurrentRuntime(), service, servicePath, getDescriptorAnnotation(service.getType())));
                 return null;
             }
         } catch (GrpcServerException e) {
@@ -223,5 +224,12 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
         }
         messageQueue.clear();
         return returnError;
+    }
+
+    private static Object getDescriptorAnnotation(ObjectType type) {
+        if (type.getAnnotation(ANN_SERVICE_DESCRIPTOR_FQN) != null) {
+            return type.getAnnotation(ANN_SERVICE_DESCRIPTOR_FQN);
+        }
+        return type.getAnnotation(ANN_DESCRIPTOR_FQN);
     }
 }

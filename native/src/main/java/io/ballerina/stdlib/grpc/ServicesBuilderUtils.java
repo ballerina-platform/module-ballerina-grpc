@@ -201,7 +201,10 @@ public class ServicesBuilderUtils {
 
         try {
             BMap<BString, Object> annotationMap = (BMap) annotationData;
-            BString descriptorData = annotationMap.getStringValue(StringUtils.fromString("descriptor"));
+            BString descriptorData = annotationMap.getStringValue(StringUtils.fromString("value"));
+            if (descriptorData == null) {
+                descriptorData = annotationMap.getStringValue(StringUtils.fromString("descriptor"));
+            }
             BMap<BString, BString> descMap = (BMap<BString, BString>) annotationMap.getMapValue(
                     StringUtils.fromString("descMap"));
             return getFileDescriptor(descriptorData, descMap);
@@ -217,11 +220,12 @@ public class ServicesBuilderUtils {
             BString descriptorData = null;
             if (service.getType().getFields().containsKey("descriptor")) {
                 descriptorData = service.getStringValue(StringUtils.fromString("descriptor"));
+            } else if (service.getType().getFields().containsKey("value")) {
+                descriptorData = service.getStringValue(StringUtils.fromString("value"));
             }
             BMap<BString, BString> descMap = null;
             if (service.getType().getFields().containsKey("descMap")) {
-                descMap = (BMap<BString, BString>) service.getMapValue(
-                        StringUtils.fromString("descMap"));
+                descMap = (BMap<BString, BString>) service.getMapValue(StringUtils.fromString("descMap"));
             }
             if (descriptorData == null || descMap == null) {
                 return null;
@@ -252,14 +256,14 @@ public class ServicesBuilderUtils {
         List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             String dependencyKey = dependency.toStringUtf8();
-            if (descMap.containsKey(StringUtils.fromString(dependencyKey))) {
-                fileDescriptors.add(getFileDescriptor(descMap.get(StringUtils.fromString(dependencyKey)), descMap));
-            } else if (descMap.size() == 0) {
+            if (descMap == null || descMap.size() == 0) {
                 Descriptors.FileDescriptor dependentDescriptor = StandardDescriptorBuilder.getFileDescriptor
                         (dependencyKey);
                 if (dependentDescriptor != null) {
                     fileDescriptors.add(dependentDescriptor);
                 }
+            } else if (descMap.containsKey(StringUtils.fromString(dependencyKey))) {
+                fileDescriptors.add(getFileDescriptor(descMap.get(StringUtils.fromString(dependencyKey)), descMap));
             }
         }
         return Descriptors.FileDescriptor.buildFrom(descriptorProto,
