@@ -3,7 +3,7 @@ import ballerina/time;
 
 listener grpc:Listener ep = new (9090);
 
-@grpc:ServiceDescriptor {descriptor: HELLOWORLDTIMESTAMP_DESC}
+@grpc:Descriptor {value: HELLOWORLDTIMESTAMP_DESC}
 service "helloWorld" on ep {
 
     remote function getTime(string value) returns stream<time:Utc, error?>|error {
