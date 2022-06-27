@@ -202,8 +202,7 @@ public final class ServiceDefinition {
             streamParameterType = unionReturnType.getMemberTypes().get(1);
         }
 
-        if (methodDescriptor.isClientStreaming() && methodDescriptor.isServerStreaming()
-                && streamParameterType instanceof ObjectType) {
+        if (methodDescriptor.isClientStreaming() && streamParameterType instanceof ObjectType) {
             return getStreamDataTypeFromBidirectionalStream((ObjectType) streamParameterType);
         }
 
