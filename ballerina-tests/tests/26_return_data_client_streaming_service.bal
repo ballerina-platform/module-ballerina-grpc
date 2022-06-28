@@ -19,9 +19,8 @@ import ballerina/log;
 
 listener grpc:Listener ep26 = new (9116);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_26_RETURN_DATA_CLIENT_STREAMING,
-    descMap: getDescriptorMap26ReturnDataClientStreaming()
+@grpc:Descriptor {
+    value: RETURN_DATA_CLIENT_STREAMING_DESC
 }
 service "HelloWorld26" on ep26 {
 

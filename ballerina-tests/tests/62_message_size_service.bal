@@ -18,9 +18,8 @@ import ballerina/grpc;
 
 listener grpc:Listener msgSizeService = new (9162, maxInboundMessageSize = 1024);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_62_MESSAGE_SIZE,
-    descMap: getDescriptorMap62MessageSize()
+@grpc:Descriptor {
+    value: MESSAGE_SIZE_DESC
 }
 service "HelloWorld62" on msgSizeService {
 

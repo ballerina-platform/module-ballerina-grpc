@@ -22,9 +22,8 @@ listener grpc:Listener ep60 = new (9160);
 int clientStreamingErrorCount = 0;
 int bidiStreamingErrorCount = 0;
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_60_CLIENT_SEND_ERROR_IN_CLIENT_BIDI_STREAMING,
-    descMap: getDescriptorMap60ClientSendErrorInClientBidiStreaming()
+@grpc:Descriptor {
+    value: CLIENT_SEND_ERROR_IN_CLIENT_BIDI_STREAMING_DESC
 }
 service "ErrorSendService" on ep60 {
     remote function sendErrorClientStreaming(stream<string, error?> clientStream) returns int {

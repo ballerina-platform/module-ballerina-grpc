@@ -18,9 +18,8 @@ import ballerina/grpc;
 
 listener grpc:Listener  checkoutep = new (9108);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_18_GRPC_OPTIONAL_FIELD_SERVICE,
-    descMap: getDescriptorMap18GrpcOptionalFieldService()
+@grpc:Descriptor {
+    value: GRPC_OPTIONAL_FIELD_SERVICE_DESC
 }
 service "CheckoutService" on checkoutep {
 

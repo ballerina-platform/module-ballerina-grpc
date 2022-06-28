@@ -19,7 +19,7 @@ import ballerina/log;
 
 listener grpc:Listener ep42 = new (9142);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_42_REPEATED_DATA_TYPES_TEST, descMap: getDescriptorMap42RepeatedDataTypesTest()}
+@grpc:Descriptor {value: REPEATED_DATA_TYPES_TEST_DESC}
 service "DataTypesService" on ep42 {
 
     remote function helloWithInt32Array(string value) returns stream<Int32ArrMsg, error?>|error {

@@ -19,7 +19,7 @@ import ballerina/time;
 
 listener grpc:Listener ep47 = new (9147);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_47_UNARY_TIMESTAMP, descMap: getDescriptorMap47UnaryTimestamp()}
+@grpc:Descriptor {value: UNARY_TIMESTAMP_DESC}
 service "TimestampService" on ep47 {
 
     remote function getGreeting(TimestampServiceGreetingCaller caller, string value) returns error? {

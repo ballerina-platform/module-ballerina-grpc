@@ -19,7 +19,7 @@ import ballerina/io;
 
 listener grpc:Listener ep68 = new (9168);
 
-@grpc:Descriptor {value: HELLOWORLDSTRING_DESC}
+@grpc:Descriptor {value: SERVICE_WITH_DESCRIPTOR_ANNOTATION_DESC}
 service "helloDescriptorAnnotation" on ep68 {
 
     remote function hello(stream<string, grpc:Error?> clientStream) returns string|error {

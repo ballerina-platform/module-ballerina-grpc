@@ -20,7 +20,7 @@ import ballerina/protobuf.types.'any;
 
 listener grpc:Listener ep66 = new (9166);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_66_PREDEFINED_TYPES_IN_MESSAGES, descMap: getDescriptorMap66PredefinedTypesInMessages()}
+@grpc:Descriptor {value: PREDEFINED_TYPES_IN_MESSAGES_DESC}
 service "PredefinedTypesInService" on ep66 {
 
     remote function anyCall(AnyMessageRequest value) returns AnyMessageResponse|error {

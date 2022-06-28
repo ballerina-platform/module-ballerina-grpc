@@ -17,9 +17,8 @@
 import ballerina/grpc;
 import ballerina/log;
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_38_BIDI_STREAMING_WITH_CALLER,
-    descMap: getDescriptorMap38BidiStreamingWithCaller()
+@grpc:Descriptor {
+    value: BIDI_STREAMING_WITH_CALLER_DESC
 }
 service "Chat38" on new grpc:Listener(9128) {
     remote function chat38(Chat38StringCaller caller, stream<ChatMessage38, grpc:Error?> clientStream)

@@ -19,9 +19,8 @@ import ballerina/log;
 
 listener grpc:Listener helloWorldStreamingep = new (9113);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_23_SERVER_STREAMING_WITH_RECORD_SERVICE,
-    descMap: getDescriptorMap23ServerStreamingWithRecordService()
+@grpc:Descriptor {
+    value: SERVER_STREAMING_WITH_RECORD_SERVICE_DESC
 }
 service "HelloWorldServerStreaming" on helloWorldStreamingep {
 

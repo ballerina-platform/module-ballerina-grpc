@@ -20,7 +20,7 @@ import ballerina/time;
 
 listener grpc:Listener ep65 = new (9165);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_65_REPEATED_TYPES, descMap: getDescriptorMap65RepeatedTypes()}
+@grpc:Descriptor {value: REPEATED_TYPES_DESC}
 service "RepeatedTypesService" on ep65 {
 
     remote function anyCall(AnyArrayRequest value) returns AnyArrayResponse|error {

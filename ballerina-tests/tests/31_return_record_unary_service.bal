@@ -18,9 +18,8 @@ import ballerina/grpc;
 
 listener grpc:Listener ep31 = new (9121);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_31_RETURN_UNARY,
-    descMap: getDescriptorMap31ReturnUnary()
+@grpc:Descriptor {
+    value: RETURN_UNARY_DESC
 }
 service "HelloWorld31" on ep31 {
     remote isolated function sayHello(SampleMsg31 reqMsg) returns ContextSampleMsg31|error {

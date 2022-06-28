@@ -19,9 +19,8 @@ import ballerina/log;
 
 listener grpc:Listener ep5 = new (9095);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_05_INVALID_RESOURCE_SERVICE,
-    descMap: getDescriptorMap05InvalidResourceService()
+@grpc:Descriptor {
+    value: INVALID_RESOURCE_SERVICE_DESC
 }
 service "HelloWorld98" on ep5 {
     isolated remote function hello(HelloWorld98StringCaller caller, string name) {
