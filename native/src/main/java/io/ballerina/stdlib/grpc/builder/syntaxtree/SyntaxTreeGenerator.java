@@ -111,7 +111,7 @@ public class SyntaxTreeGenerator {
             ballerinaImports.add("grpc");
         }
 
-        String descriptorName = stubFile.getFileName().toUpperCase() + ROOT_DESCRIPTOR;
+        String descriptorName = generateDescriptorName(stubFile.getFileName().toUpperCase());
         Constant descriptor = new Constant(
                 "string",
                 descriptorName,
@@ -225,6 +225,13 @@ public class SyntaxTreeGenerator {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
+    private static String generateDescriptorName(String stubFilename) {
+        if (!Character.isAlphabetic(stubFilename.charAt(0))) {
+            return generateDescriptorName(stubFilename.substring(1));
+        }
+        return stubFilename.toUpperCase() + ROOT_DESCRIPTOR;
+    }
+
     public static SyntaxTree generateSyntaxTreeForServiceSample(ServiceStub serviceStub, boolean addListener,
                                                                 String fileName) {
         NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
@@ -270,7 +277,7 @@ public class SyntaxTreeGenerator {
         Annotation grpcServiceDescriptor = new Annotation("grpc", "Descriptor");
         grpcServiceDescriptor.addField(
                 "value",
-                fileName.toUpperCase() + ROOT_DESCRIPTOR
+                generateDescriptorName(fileName)
         );
         service.addAnnotation(grpcServiceDescriptor.getAnnotationNode());
 
@@ -377,7 +384,7 @@ public class SyntaxTreeGenerator {
                                         "initStub",
                                         new String[]{
                                                 "self",
-                                                fileName.toUpperCase() + ROOT_DESCRIPTOR}
+                                                generateDescriptorName(fileName)}
                                 )
                         )
                 )
