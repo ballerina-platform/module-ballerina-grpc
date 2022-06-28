@@ -30,7 +30,7 @@ public annotation ServiceDescriptorData ServiceDescriptor on service;
 #
 # + value - Descriptor, which should be set at the compile time
 public type DescriptorData record {|
-    string value = "";
+    string value;
 |};
 
 # Service descriptor annotation.
