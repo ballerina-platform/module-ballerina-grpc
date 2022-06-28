@@ -39,7 +39,7 @@ public isolated client class HelloWorld51Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld51/stringUnary", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld51/stringBiDi", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return result.toString();
     }
@@ -53,13 +53,13 @@ public isolated client class HelloWorld51Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld51/stringUnary", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("HelloWorld51/sendStringBiDi", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: result.toString(), headers: respHeaders};
     }
 
     isolated remote function stringClientStreaming() returns StringClientStreamingStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("HelloWorld51/stringClientStreaming");
+        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("HelloWorld51/InvalidRPCCall");
         return new StringClientStreamingStreamingClient(sClient);
     }
 
@@ -72,7 +72,7 @@ public isolated client class HelloWorld51Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("HelloWorld51/stringServerStreaming", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("HelloWorld51/InvalidRPCCall", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         swrappers:StringStream outputStream = new swrappers:StringStream(result);
         return new stream<string, grpc:Error?>(outputStream);
@@ -94,7 +94,7 @@ public isolated client class HelloWorld51Client {
     }
 
     isolated remote function stringBiDi() returns StringBiDiStreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("HelloWorld51/stringBiDi");
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("HelloWorld51/InvalidRPCCall");
         return new StringBiDiStreamingClient(sClient);
     }
 }
