@@ -18,7 +18,7 @@ import ballerina/grpc;
 
 listener grpc:Listener ep56 = new (9156);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_56_SERVICE_PANIC_AFTER_SEND_ERROR, descMap: getDescriptorMap56ServicePanicAfterSendError()}
+@grpc:Descriptor {value: SERVICE_PANIC_AFTER_SEND_ERROR_DESC}
 service "HelloWorld56" on ep56 {
 
     remote function hello56BiDi(HelloWorld56StringCaller caller,

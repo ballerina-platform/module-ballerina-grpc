@@ -20,9 +20,8 @@ listener grpc:Listener ep12 = new (9102, {
     host: "localhost"
 });
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_12_GRPC_ENUM_TEST_SERVICE,
-    descMap: getDescriptorMap12GrpcEnumTestService()
+@grpc:Descriptor {
+    value: GRPC_ENUM_TEST_SERVICE_DESC
 }
 service "TestEnumService" on ep12 {
     isolated remote function testEnum(TestEnumServiceStringCaller caller, OrderInfo orderReq) {

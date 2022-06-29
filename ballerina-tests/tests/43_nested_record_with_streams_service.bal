@@ -19,7 +19,7 @@ import ballerina/log;
 
 listener grpc:Listener ep43 = new (9143);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_43_NESTED_RECORD_WITH_STREAMS, descMap: getDescriptorMap43NestedRecordWithStreams()}
+@grpc:Descriptor {value: NESTED_RECORD_WITH_STREAMS_DESC}
 service "NestedMsgService" on ep43 {
 
     isolated remote function nestedMsgUnary(string value) returns error|NestedMsg {

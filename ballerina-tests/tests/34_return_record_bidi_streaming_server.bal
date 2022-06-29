@@ -19,9 +19,8 @@ import ballerina/io;
 
 listener grpc:Listener ep34 = new (9124);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_34_RETURN_RECORD_BIDI_STREAMING,
-    descMap: getDescriptorMap34ReturnRecordBidiStreaming()
+@grpc:Descriptor {
+    value: RETURN_RECORD_BIDI_STREAMING_DESC
 }
 service "HelloWorld34" on ep34 {
 

@@ -143,17 +143,15 @@ public class BallerinaFileBuilder {
                 }
             }
 
-            if (descriptor == rootDescriptor.getDescriptor() || serviceDescriptorList.size() > 0) {
-                // Add root descriptor.
-                Descriptor rootDesc = Descriptor.newBuilder(descriptor).build();
-                stubRootDescriptor = rootDesc.getData();
-                descriptors.add(rootDesc);
+            // Add root descriptor.
+            Descriptor rootDesc = Descriptor.newBuilder(descriptor).build();
+            stubRootDescriptor = rootDesc.getData();
+            descriptors.add(rootDesc);
 
-                // Add dependent descriptors.
-                for (byte[] descriptorData : getDependentDescriptorSet(dependentDescriptors)) {
-                    Descriptor dependentDescriptor = Descriptor.newBuilder(descriptorData).build();
-                    descriptors.add(dependentDescriptor);
-                }
+            // Add dependent descriptors.
+            for (byte[] descriptorData : getDependentDescriptorSet(dependentDescriptors)) {
+                Descriptor dependentDescriptor = Descriptor.newBuilder(descriptorData).build();
+                descriptors.add(dependentDescriptor);
             }
 
             // read enum types.

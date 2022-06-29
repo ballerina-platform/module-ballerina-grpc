@@ -18,9 +18,8 @@ import ballerina/grpc;
 
 listener grpc:Listener ep27 = new (9117);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_27_BIDIRECTIONAL_STREAMING_SERVICE,
-    descMap: getDescriptorMap27BidirectionalStreamingService()
+@grpc:Descriptor {
+    value: BIDIRECTIONAL_STREAMING_SERVICE_DESC
 }
 service "ChatFromReturn" on ep27 {
 

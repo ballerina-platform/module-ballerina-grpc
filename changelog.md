@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [Update gRPC ServiceDescriptor annotation to Descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/3005)
+
+## [1.2.3] - 2022-05-30
 ### Fixed
 - [Incorrect stub generated for message with Any type field in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/2750)
 - [Incorrect stub generation for repeated values of any, struct, timestamp, and duration messages](https://github.com/ballerina-platform/ballerina-standard-library/issues/2732)

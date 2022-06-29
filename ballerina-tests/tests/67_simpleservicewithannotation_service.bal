@@ -19,7 +19,7 @@ import ballerina/log;
 
 listener grpc:Listener ep67 = new (9167);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_SIMPLE_SERVICE_WITH_ANNOTATION, descMap: getDescriptorMapSimpleServiceWithAnnotation()}
+@grpc:Descriptor {value: SIMPLE_SERVICE_WITH_ANNOTATION_DESC}
 service "SimpleServiceWithAnnotation" on ep67 {
 
     remote function unaryCallWithAnnotatedData(SimpleRequestWithAnnotation value) returns SimpleResponseWithAnnotation|error {

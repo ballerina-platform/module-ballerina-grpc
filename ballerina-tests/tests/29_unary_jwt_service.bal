@@ -20,9 +20,8 @@ import ballerina/jwt;
 
 listener grpc:Listener ep29 = new (9119);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_29_UNARY_JWT,
-    descMap: getDescriptorMap29UnaryJwt()
+@grpc:Descriptor {
+    value: UNARY_JWT_DESC
 }
 service "HelloWorld29" on ep29 {
 

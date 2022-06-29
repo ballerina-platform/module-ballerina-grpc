@@ -114,7 +114,7 @@ grpc:FileUserStoreConfigWithScopes fileUserStoreConfig55EmptyScope = {
         ldapUserStoreconfig55WithScopes
     ]
 }
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
+@grpc:Descriptor {value: DECLARATIVE_AUTHENTICATION_DESC}
 service "HelloWorld55" on ep55WithScopes {
 
     remote function hello55BiDiWithCaller(HelloWorld55StringCaller caller,
@@ -165,7 +165,7 @@ service "HelloWorld55" on ep55WithScopes {
         ldapUserStoreconfig55EmptyScope
     ]
 }
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_55_DECLARATIVE_AUTHENTICATION, descMap: getDescriptorMap55DeclarativeAuthentication()}
+@grpc:Descriptor {value: DECLARATIVE_AUTHENTICATION_DESC}
 service "HelloWorld55EmptyScope" on ep55EmptyScope {
 
     remote function hello55EmptyScope(HelloWorld55EmptyScopeStringCaller caller, string value) {

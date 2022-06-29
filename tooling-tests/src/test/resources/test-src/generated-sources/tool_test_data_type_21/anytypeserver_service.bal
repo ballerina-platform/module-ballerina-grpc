@@ -3,7 +3,7 @@ import ballerina/protobuf.types.'any;
 
 listener grpc:Listener ep = new (9090);
 
-@grpc:ServiceDescriptor {descriptor: ANY_DESC}
+@grpc:Descriptor {value: ANY_DESC}
 service "AnyTypeServer" on ep {
 
     remote function unaryCall1('any:Any value) returns 'any:Any|error {

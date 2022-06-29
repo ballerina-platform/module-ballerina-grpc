@@ -18,7 +18,7 @@ import ballerina/grpc;
 
 listener grpc:Listener ep57 = new (9157);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_57_STRUCT_TYPE, descMap: getDescriptorMap57StructType()}
+@grpc:Descriptor {value: STRUCT_TYPE_DESC}
 service "StructService" on ep57 {
 
     remote function getStructType1(string value) returns map<anydata>|error {

@@ -18,7 +18,7 @@ import ballerina/grpc;
 
 listener grpc:Listener ep58 = new (9158);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_58_NESTED_MESSAGE_NESTED_ENUM, descMap: getDescriptorMap58NestedMessageNestedEnum()}
+@grpc:Descriptor {value: NESTED_MESSAGE_NESTED_ENUM_DESC}
 service "helloWorldWithNestedMessageNestedEnum" on ep58 {
 
     remote function hello(HelloRequest58 request) returns HelloResponse58|error {
