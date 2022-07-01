@@ -3,10 +3,10 @@ import ballerina/log;
 import grpc_tests.message1;
 import grpc_tests.message2;
 
-listener grpc:Listener ep68 = new (9168);
+listener grpc:Listener ep69 = new (9169);
 
 @grpc:ServiceDescriptor {descriptor: PACKAGEWITHMULTIPLEIMPORTS_DESC}
-service "packagingService" on ep68 {
+service "packagingService" on ep69 {
 
     remote function hello1(message1:ReqMessage1 value) returns message2:ResMessage2|error {
         log:printInfo("Received unary message " + value.toString());
