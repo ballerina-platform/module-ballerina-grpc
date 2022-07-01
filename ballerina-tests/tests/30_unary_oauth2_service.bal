@@ -20,9 +20,8 @@ import ballerina/oauth2;
 
 listener grpc:Listener ep30 = new (9120);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_30_UNARY_OAUTH2,
-    descMap: getDescriptorMap30UnaryOauth2()
+@grpc:Descriptor {
+    value: UNARY_OAUTH2_DESC
 }
 service "HelloWorld30" on ep30 {
 

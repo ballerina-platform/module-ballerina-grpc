@@ -16,9 +16,8 @@
 
 import ballerina/grpc;
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_15_GRPC_ONEOF_FIELD_SERVICE,
-    descMap: getDescriptorMap15GrpcOneofFieldService()
+@grpc:Descriptor {
+    value: GRPC_ONEOF_FIELD_SERVICE_DESC
 }
 service "OneofFieldService" on new grpc:Listener(9105) {
 

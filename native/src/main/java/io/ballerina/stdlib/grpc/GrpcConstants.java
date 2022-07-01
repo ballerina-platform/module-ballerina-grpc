@@ -64,7 +64,11 @@ public class GrpcConstants {
     // Service Descriptor Annotation
     public static final String ROOT_DESCRIPTOR = "ROOT_DESCRIPTOR";
     public static final String ANN_SERVICE_DESCRIPTOR = "ServiceDescriptor";
-    public static final String ANN_SERVICE_DESCRIPTOR_FQN = PROTOCOL_STRUCT_PACKAGE_GRPC + ":" + ANN_SERVICE_DESCRIPTOR;
+    public static final BString ANN_SERVICE_DESCRIPTOR_FQN = StringUtils.fromString(PROTOCOL_STRUCT_PACKAGE_GRPC +
+            ":" + ANN_SERVICE_DESCRIPTOR);
+    public static final String ANN_DESCRIPTOR = "Descriptor";
+    public static final BString ANN_DESCRIPTOR_FQN = StringUtils.fromString(PROTOCOL_STRUCT_PACKAGE_GRPC + ":" +
+            ANN_DESCRIPTOR);
 
     //client side endpoint constants
     public static final String CLIENT_ENDPOINT_RESPONSE_OBSERVER = "ResponseObserver";

@@ -19,7 +19,7 @@ import ballerina/log;
 
 listener grpc:Listener ep44 = new (9144);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_44_ROUTE_GUIDE, descMap: getDescriptorMap44RouteGuide()}
+@grpc:Descriptor {value: ROUTE_GUIDE_DESC}
 service "RouteGuide" on ep44 {
 
     isolated remote function GetFeature(Point point) returns Feature|error {

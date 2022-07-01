@@ -26,7 +26,8 @@ import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 public class GrpcCompilerPluginConstants {
 
     // Compiler plugin constants
-    public static final String GRPC_ANNOTATION_NAME = "ServiceDescriptor";
+    public static final String GRPC_SERVICE_DESCRIPTOR_ANNOTATION_NAME = "ServiceDescriptor";
+    public static final String GRPC_DESCRIPTOR_ANNOTATION_NAME = "Descriptor";
     public static final String BALLERINA_ORG_NAME = "ballerina";
     public static final String GRPC_PACKAGE_NAME = "grpc";
 

@@ -23,7 +23,7 @@ listener grpc:Listener ep61 = new (9161);
 
 type Teacher Person1|Person2;
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_61_ANY_TYPE, descMap: getDescriptorMap61AnyType()}
+@grpc:Descriptor {value: ANY_TYPE_DESC}
 service "AnyTypeServer" on ep61 {
 
     remote function unaryCall1('any:Any value) returns 'any:Any|error {

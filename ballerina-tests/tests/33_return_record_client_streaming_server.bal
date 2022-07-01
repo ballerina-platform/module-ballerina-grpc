@@ -19,9 +19,8 @@ import ballerina/io;
 
 listener grpc:Listener ep33 = new (9123);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_33_RETURN_RECORD_CLIENT_STREAMING,
-    descMap: getDescriptorMap33ReturnRecordClientStreaming()
+@grpc:Descriptor {
+    value: RETURN_RECORD_CLIENT_STREAMING_DESC
 }
 service "HelloWorld33" on ep33 {
     remote isolated function sayHello(stream<SampleMsg33, error?> clientStream) returns ContextSampleMsg33 {

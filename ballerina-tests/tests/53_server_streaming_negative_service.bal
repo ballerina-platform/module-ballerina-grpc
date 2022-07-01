@@ -19,7 +19,7 @@ import ballerina/log;
 
 listener grpc:Listener ep53 = new (9153);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_53_SERVER_STREAMING_NEGATIVE, descMap: getDescriptorMap53ServerStreamingNegative()}
+@grpc:Descriptor {value: SERVER_STREAMING_NEGATIVE_DESC}
 service "HelloWorld53" on ep53 {
 
     remote function hello53(string value) returns stream<string, error?> {

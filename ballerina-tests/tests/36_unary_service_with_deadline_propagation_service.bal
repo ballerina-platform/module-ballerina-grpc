@@ -21,9 +21,8 @@ import ballerina/protobuf.types.wrappers;
 listener grpc:Listener ep36 = new (9126);
 const string TEST_DEADLINE_HEADER = "testdeadline";
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_36_UNARY_SERVICE_WITH_DEADLINE_PROPAGATION,
-    descMap: getDescriptorMap36UnaryServiceWithDeadlinePropagation()
+@grpc:Descriptor {
+    value: UNARY_SERVICE_WITH_DEADLINE_PROPAGATION_DESC
 }
 service "HelloWorld36S1" on ep36 {
 
@@ -51,9 +50,8 @@ service "HelloWorld36S1" on ep36 {
     }
 }
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_36_UNARY_SERVICE_WITH_DEADLINE_PROPAGATION,
-    descMap: getDescriptorMap36UnaryServiceWithDeadlinePropagation()
+@grpc:Descriptor {
+    value: UNARY_SERVICE_WITH_DEADLINE_PROPAGATION_DESC
 }
 service "HelloWorld36S2" on ep36 {
     remote isolated function call2(ContextString request) returns wrappers:ContextString|error {

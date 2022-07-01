@@ -24,9 +24,8 @@ string clientName = "";
 
 listener grpc:Listener retryListener = new (9112);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_22_RETRY_SERVICE,
-    descMap: getDescriptorMap22RetryService()
+@grpc:Descriptor {
+    value: RETRY_SERVICE_DESC
 }
 service "RetryService" on retryListener {
     remote function getResult(string value) returns string|error {

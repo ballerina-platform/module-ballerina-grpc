@@ -17,9 +17,8 @@
 import ballerina/grpc;
 import ballerina/lang.runtime as runtime;
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_14_GRPC_CLIENT_SOCKET_TIMEOUT,
-    descMap: getDescriptorMap14GrpcClientSocketTimeout()
+@grpc:Descriptor {
+    value: GRPC_CLIENT_SOCKET_TIMEOUT_DESC
 }
 service "HelloWorld14" on new grpc:Listener(9104) {
 

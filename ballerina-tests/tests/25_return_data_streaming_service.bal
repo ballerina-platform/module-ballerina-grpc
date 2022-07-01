@@ -19,9 +19,8 @@ import ballerina/io;
 
 listener grpc:Listener ep25 = new (9115);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_25_RETURN_DATA_STREAMING,
-    descMap: getDescriptorMap25ReturnDataStreaming()
+@grpc:Descriptor {
+    value: RETURN_DATA_STREAMING_DESC
 }
 service "HelloWorld25" on ep25 {
 

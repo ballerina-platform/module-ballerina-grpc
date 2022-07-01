@@ -20,7 +20,7 @@ import ballerina/time;
 
 listener grpc:Listener ep49 = new (9149);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_49_DURATION, descMap: getDescriptorMap49Duration()}
+@grpc:Descriptor {value: DURATION_DESC}
 service "DurationHandler" on ep49 {
 
     remote function unaryCall1(string value) returns time:Seconds|error {

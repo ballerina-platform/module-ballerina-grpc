@@ -20,7 +20,7 @@ import ballerina/protobuf.types.wrappers;
 
 listener grpc:Listener ep41 = new (9141);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_41_SERVER_STREAMING_HEADERS_AND_NEGATIVE_TEST, descMap: getDescriptorMap41ServerStreamingHeadersAndNegativeTest()}
+@grpc:Descriptor {value: SERVER_STREAMING_HEADERS_AND_NEGATIVE_TEST_DESC}
 service "Chat41" on ep41 {
 
     remote function call1(ChatMessage41 value) returns wrappers:ContextStringStream|error {
