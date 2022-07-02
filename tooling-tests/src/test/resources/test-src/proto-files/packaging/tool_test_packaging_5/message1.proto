@@ -21,19 +21,17 @@ syntax = "proto3";
 package packaging;
 
 import "ballerina/protobuf/descriptor.proto";
-import "messageWithReapeatedSeparator.proto";
 
-option (ballerina.protobuf.ballerina_module) = "tool_test_packaging_5";
+option (ballerina.protobuf.ballerina_module) = "tool_test_packaging_5.messages.message1";
 
-service helloWorld {
-  rpc hello1(ReqMessage) returns (ResMessage);
-  rpc hello2(ReqMessage) returns (stream ResMessage);
-  rpc hello3(stream ReqMessage) returns (ResMessage);
-  rpc hello4(stream ReqMessage) returns (stream ResMessage);
-  rpc hello5(stream RootMessage) returns (stream RootMessage);
+message ReqMessage {
+  int32 req = 1;
+  string value = 2;
+  SimpleEnum1 enu = 3;
 }
 
-message RootMessage {
-  string msg = 1;
-  SimpleEnum enu = 2;
+enum SimpleEnum1 {
+  a = 0;
+  b = 1;
+  c = 2;
 }

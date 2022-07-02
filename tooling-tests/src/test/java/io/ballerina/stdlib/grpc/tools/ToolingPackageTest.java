@@ -41,7 +41,7 @@ public class ToolingPackageTest {
             Assert.fail("Could not create target directories", e);
         }
         assertGeneratedSources("packaging", "tool_test_packaging_1/simplePackage.proto",
-                "simplePackage_pb.bal","helloworld_service.bal", "helloworld_client.bal",
+                "simplePackage_pb.bal", "helloworld_service.bal", "helloworld_client.bal",
                 "tool_test_packaging_1");
     }
 
@@ -53,7 +53,7 @@ public class ToolingPackageTest {
             Assert.fail("Could not create target directories", e);
         }
         assertGeneratedSources("packaging", "tool_test_packaging_2/packageWithMessageImport.proto",
-                "packageWithMessageImport_pb.bal","helloworld_service.bal",
+                "packageWithMessageImport_pb.bal", "helloworld_service.bal",
                 "helloworld_client.bal", "tool_test_packaging_2");
     }
 
@@ -65,7 +65,7 @@ public class ToolingPackageTest {
             Assert.fail("Could not create target directories", e);
         }
         assertGeneratedSources("packaging", "tool_test_packaging_3/packageWithMultipleImports.proto",
-                "packageWithMultipleImports_pb.bal","helloworld_service.bal",
+                "packageWithMultipleImports_pb.bal", "helloworld_service.bal",
                 "helloworld_client.bal", "tool_test_packaging_3");
     }
 
@@ -82,14 +82,14 @@ public class ToolingPackageTest {
     }
 
     @Test
-    public void testPackagingWithRepeatedSeparatorInPackageName() {
+    public void testPackagingWithNestedSubmodules() {
         try {
             Files.createDirectories(Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_packaging_5"));
         } catch (IOException e) {
             Assert.fail("Could not create target directories", e);
         }
-        assertGeneratedSources("packaging", "tool_test_packaging_5/packageWithRepeatedSeparator.proto",
-                "packageWithRepeatedSeparator_pb.bal", "helloworld_service.bal",
+        assertGeneratedSources("packaging", "tool_test_packaging_5/packageWithNestedSubmodules.proto",
+                "packageWithNestedSubmodules_pb.bal", "helloworld_service.bal",
                 "helloworld_client.bal", "tool_test_packaging_5");
     }
 
