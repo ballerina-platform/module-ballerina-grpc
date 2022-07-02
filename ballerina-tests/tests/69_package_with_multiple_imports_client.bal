@@ -42,7 +42,6 @@ function testServerStreamingPackageWithMultipleImports() returns error? {
     packagingServiceClient 'client = check new ("http://localhost:9169");
     message1:ReqMessage1 m1 = {req: 1, value: "Hello Service"};
     stream<message2:ResMessage2, grpc:Error?> response = check 'client->hello2(m1);
-    message2:ResMessage2[] expected = [{req: 1, value: "Hello"}, {req: 2, value: "Hi"}];
     test:assertEquals(response.next(), {value: {req: 1, value: "Hello"}});
     test:assertEquals(response.next(), {value: {req: 2, value: "Hi"}});
 }
