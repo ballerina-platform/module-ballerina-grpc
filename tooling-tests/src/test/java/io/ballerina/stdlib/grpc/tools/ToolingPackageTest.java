@@ -40,8 +40,9 @@ public class ToolingPackageTest {
         } catch (IOException e) {
             Assert.fail("Could not create target directories", e);
         }
-        assertGeneratedSources("packaging", "simplePackage.proto", "simplePackage_pb.bal",
-                "helloworld_service.bal", "helloworld_client.bal", "tool_test_packaging_1");
+        assertGeneratedSources("packaging", "tool_test_packaging_1/simplePackage.proto",
+                "simplePackage_pb.bal","helloworld_service.bal", "helloworld_client.bal",
+                "tool_test_packaging_1");
     }
 
     @Test
@@ -51,8 +52,9 @@ public class ToolingPackageTest {
         } catch (IOException e) {
             Assert.fail("Could not create target directories", e);
         }
-        assertGeneratedSources("packaging", "packageWithMessageImport.proto", "packageWithMessageImport_pb.bal",
-                "helloworld_service.bal", "helloworld_client.bal", "tool_test_packaging_2");
+        assertGeneratedSources("packaging", "tool_test_packaging_2/packageWithMessageImport.proto",
+                "packageWithMessageImport_pb.bal","helloworld_service.bal",
+                "helloworld_client.bal", "tool_test_packaging_2");
     }
 
     @Test
@@ -62,8 +64,9 @@ public class ToolingPackageTest {
         } catch (IOException e) {
             Assert.fail("Could not create target directories", e);
         }
-        assertGeneratedSources("packaging", "packageWithMultipleImports.proto", "packageWithMultipleImports_pb.bal",
-                "helloworld_service.bal", "helloworld_client.bal", "tool_test_packaging_3");
+        assertGeneratedSources("packaging", "tool_test_packaging_3/packageWithMultipleImports.proto",
+                "packageWithMultipleImports_pb.bal","helloworld_service.bal",
+                "helloworld_client.bal", "tool_test_packaging_3");
     }
 
     @Test
@@ -73,9 +76,21 @@ public class ToolingPackageTest {
         } catch (IOException e) {
             Assert.fail("Could not create target directories", e);
         }
-        assertGeneratedSources("packaging", "packageWithImportContainingService.proto",
+        assertGeneratedSources("packaging", "tool_test_packaging_4/packageWithImportContainingService.proto",
                 "packageWithImportContainingService_pb.bal", "helloworld_service.bal",
                 "helloworld_client.bal", "tool_test_packaging_4");
+    }
+
+    @Test
+    public void testPackagingWithRepeatedSeparatorInPackageName() {
+        try {
+            Files.createDirectories(Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_packaging_5"));
+        } catch (IOException e) {
+            Assert.fail("Could not create target directories", e);
+        }
+        assertGeneratedSources("packaging", "tool_test_packaging_5/packageWithRepeatedSeparator.proto",
+                "packageWithRepeatedSeparator_pb.bal", "helloworld_service.bal",
+                "helloworld_client.bal", "tool_test_packaging_5");
     }
 
 }
