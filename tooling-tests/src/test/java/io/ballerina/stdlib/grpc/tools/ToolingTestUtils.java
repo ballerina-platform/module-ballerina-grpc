@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 
 /**
  * gRPC tool test Utils.
@@ -61,7 +62,7 @@ public class ToolingTestUtils {
     }
 
     public static void assertGeneratedSources(String subDir, String protoFile, String stubFile, String serviceFile,
-                                              String clientFile, String outputDir) {
+                                              String clientFile, String outputDir, String... subModulesFiles) {
         Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, subDir, protoFile);
         Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir);
 
@@ -124,6 +125,14 @@ public class ToolingTestUtils {
             Files.deleteIfExists(actualServiceFilePath);
         } catch (IOException e) {
             Assert.fail("Failed to delete stub file", e);
+        }
+        if (subModulesFiles.length > 0) {
+            for (String subModuleFile: subModulesFiles.clone()) {
+                expectedStubFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+                        outputDir, subModuleFile);
+                actualStubFilePath = outputDirPath.resolve(subModuleFile);
+                Assert.assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
+            }
         }
     }
 

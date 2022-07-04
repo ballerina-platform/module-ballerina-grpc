@@ -54,7 +54,7 @@ public class ToolingPackageTest {
         }
         assertGeneratedSources("packaging", "tool_test_packaging_2/packageWithMessageImport.proto",
                 "packageWithMessageImport_pb.bal", "helloworld_service.bal",
-                "helloworld_client.bal", "tool_test_packaging_2");
+                "helloworld_client.bal", "tool_test_packaging_2", "modules/message/message_pb.bal");
     }
 
     @Test
@@ -66,7 +66,8 @@ public class ToolingPackageTest {
         }
         assertGeneratedSources("packaging", "tool_test_packaging_3/packageWithMultipleImports.proto",
                 "packageWithMultipleImports_pb.bal", "helloworld_service.bal",
-                "helloworld_client.bal", "tool_test_packaging_3");
+                "helloworld_client.bal", "tool_test_packaging_3",
+                "modules/message1/message1_pb.bal", "modules/message2/message2_pb.bal");
     }
 
     @Test
@@ -78,7 +79,7 @@ public class ToolingPackageTest {
         }
         assertGeneratedSources("packaging", "tool_test_packaging_4/packageWithImportContainingService.proto",
                 "packageWithImportContainingService_pb.bal", "helloworld_service.bal",
-                "helloworld_client.bal", "tool_test_packaging_4");
+                "helloworld_client.bal", "tool_test_packaging_4", "modules/message/messageWithService_pb.bal");
     }
 
     @Test
@@ -90,7 +91,8 @@ public class ToolingPackageTest {
         }
         assertGeneratedSources("packaging", "tool_test_packaging_5/packageWithNestedSubmodules.proto",
                 "packageWithNestedSubmodules_pb.bal", "helloworld_service.bal",
-                "helloworld_client.bal", "tool_test_packaging_5");
+                "helloworld_client.bal", "tool_test_packaging_5",
+                "modules/messages.message1/message1_pb.bal", "modules/messages.message2/message2_pb.bal");
     }
 
 }
