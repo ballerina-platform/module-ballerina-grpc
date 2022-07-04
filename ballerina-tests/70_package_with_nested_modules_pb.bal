@@ -2,7 +2,7 @@ import ballerina/grpc;
 import grpc_tests.messages.message1;
 import grpc_tests.messages.message2;
 
-const string PACKAGE_WITH_NESTED_MODULES_DESC = "0A2437305F7061636B6167655F776974685F6E65737465645F6D6F64756C65732E70726F746F12097061636B6167696E671A2362616C6C6572696E612F70726F746F6275662F64657363726970746F722E70726F746F1A1137305F6D657373616765312E70726F746F1A1137305F6D657373616765322E70726F746F32F6010A0C68656C6C6F576F726C64373012360A0668656C6C6F3112152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D65737361676512380A0668656C6C6F3212152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D657373616765300112380A0668656C6C6F3312152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D6573736167652801123A0A0668656C6C6F3412152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D65737361676528013001420DE2470A677270635F7465737473620670726F746F33";
+const string PACKAGE_WITH_NESTED_MODULES_DESC = "0A2437305F7061636B6167655F776974685F6E65737465645F6D6F64756C65732E70726F746F12097061636B6167696E671A2362616C6C6572696E612F70726F746F6275662F64657363726970746F722E70726F746F1A1137305F6D657373616765312E70726F746F1A1137305F6D657373616765322E70726F746F32B5020A0C68656C6C6F576F726C64373012410A1168656C6C6F576F726C643730556E61727912152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D657373616765124A0A1868656C6C6F576F726C64373053657276657253747265616D12152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D6573736167653001124A0A1868656C6C6F576F726C643730436C69656E7453747265616D12152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D6573736167652801124A0A1668656C6C6F576F726C6437304269646953747265616D12152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D65737361676528013001420DE2470A677270635F7465737473620670726F746F33";
 
 public isolated client class helloWorld70Client {
     *grpc:AbstractClientEndpoint;
@@ -14,7 +14,7 @@ public isolated client class helloWorld70Client {
         check self.grpcClient.initStub(self, PACKAGE_WITH_NESTED_MODULES_DESC);
     }
 
-    isolated remote function hello1(message1:ReqMessage|ContextReqMessage req) returns message2:ResMessage|grpc:Error {
+    isolated remote function helloWorld70Unary(message1:ReqMessage|ContextReqMessage req) returns message2:ResMessage|grpc:Error {
         map<string|string[]> headers = {};
         message1:ReqMessage message;
         if req is ContextReqMessage {
@@ -23,12 +23,12 @@ public isolated client class helloWorld70Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld70/hello1", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld70/helloWorld70Unary", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <message2:ResMessage>result;
     }
 
-    isolated remote function hello1Context(message1:ReqMessage|ContextReqMessage req) returns ContextResMessage|grpc:Error {
+    isolated remote function helloWorld70UnaryContext(message1:ReqMessage|ContextReqMessage req) returns ContextResMessage|grpc:Error {
         map<string|string[]> headers = {};
         message1:ReqMessage message;
         if req is ContextReqMessage {
@@ -37,17 +37,17 @@ public isolated client class helloWorld70Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld70/hello1", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld70/helloWorld70Unary", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <message2:ResMessage>result, headers: respHeaders};
     }
 
-    isolated remote function hello3() returns Hello3StreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("packaging.helloWorld70/hello3");
-        return new Hello3StreamingClient(sClient);
+    isolated remote function helloWorld70ClientStream() returns HelloWorld70ClientStreamStreamingClient|grpc:Error {
+        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("packaging.helloWorld70/helloWorld70ClientStream");
+        return new HelloWorld70ClientStreamStreamingClient(sClient);
     }
 
-    isolated remote function hello2(message1:ReqMessage|ContextReqMessage req) returns stream<message2:ResMessage, grpc:Error?>|grpc:Error {
+    isolated remote function helloWorld70ServerStream(message1:ReqMessage|ContextReqMessage req) returns stream<message2:ResMessage, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         message1:ReqMessage message;
         if req is ContextReqMessage {
@@ -56,13 +56,13 @@ public isolated client class helloWorld70Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld70/hello2", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld70/helloWorld70ServerStream", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         ResMessageStream outputStream = new ResMessageStream(result);
         return new stream<message2:ResMessage, grpc:Error?>(outputStream);
     }
 
-    isolated remote function hello2Context(message1:ReqMessage|ContextReqMessage req) returns ContextResMessageStream|grpc:Error {
+    isolated remote function helloWorld70ServerStreamContext(message1:ReqMessage|ContextReqMessage req) returns ContextResMessageStream|grpc:Error {
         map<string|string[]> headers = {};
         message1:ReqMessage message;
         if req is ContextReqMessage {
@@ -71,19 +71,19 @@ public isolated client class helloWorld70Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld70/hello2", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld70/helloWorld70ServerStream", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         ResMessageStream outputStream = new ResMessageStream(result);
         return {content: new stream<message2:ResMessage, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function hello4() returns Hello4StreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("packaging.helloWorld70/hello4");
-        return new Hello4StreamingClient(sClient);
+    isolated remote function helloWorld70BidiStream() returns HelloWorld70BidiStreamStreamingClient|grpc:Error {
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("packaging.helloWorld70/helloWorld70BidiStream");
+        return new HelloWorld70BidiStreamStreamingClient(sClient);
     }
 }
 
-public client class Hello3StreamingClient {
+public client class HelloWorld70ClientStreamStreamingClient {
     private grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
@@ -151,7 +151,7 @@ public class ResMessageStream {
     }
 }
 
-public client class Hello4StreamingClient {
+public client class HelloWorld70BidiStreamStreamingClient {
     private grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {

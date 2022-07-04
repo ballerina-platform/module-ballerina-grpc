@@ -26,8 +26,8 @@ import "71_message.proto";
 option (ballerina.protobuf.ballerina_module) = "grpc_tests";
 
 service helloWorld71 {
-  rpc hello1(ReqMessage) returns (ResMessage);
-  rpc hello2(ReqMessage) returns (stream ResMessage);
-  rpc hello3(stream ReqMessage) returns (ResMessage);
-  rpc hello4(stream ReqMessage) returns (stream ResMessage);
+  rpc helloWorld71Unary(ReqMessage) returns (ResMessage);
+  rpc helloWorld71ServerStream(ReqMessage) returns (stream ResMessage);
+  rpc helloWorld71ClientStream(stream ReqMessage) returns (ResMessage);
+  rpc helloWorld71BidiStream(stream ReqMessage) returns (stream ResMessage);
 }

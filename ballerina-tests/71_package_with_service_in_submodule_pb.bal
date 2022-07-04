@@ -1,7 +1,7 @@
 import ballerina/grpc;
 import grpc_tests.messageWithService;
 
-const string PACKAGE_WITH_SERVICE_IN_SUBMODULE_DESC = "0A2A37315F7061636B6167655F776974685F736572766963655F696E5F7375626D6F64756C652E70726F746F12097061636B6167696E671A2362616C6C6572696E612F70726F746F6275662F64657363726970746F722E70726F746F1A1037315F6D6573736167652E70726F746F32F6010A0C68656C6C6F576F726C64373112360A0668656C6C6F3112152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D65737361676512380A0668656C6C6F3212152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D657373616765300112380A0668656C6C6F3312152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D6573736167652801123A0A0668656C6C6F3412152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D65737361676528013001420DE2470A677270635F7465737473620670726F746F33";
+const string PACKAGE_WITH_SERVICE_IN_SUBMODULE_DESC = "0A2A37315F7061636B6167655F776974685F736572766963655F696E5F7375626D6F64756C652E70726F746F12097061636B6167696E671A2362616C6C6572696E612F70726F746F6275662F64657363726970746F722E70726F746F1A1037315F6D6573736167652E70726F746F32B5020A0C68656C6C6F576F726C64373112410A1168656C6C6F576F726C643731556E61727912152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D657373616765124A0A1868656C6C6F576F726C64373153657276657253747265616D12152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D6573736167653001124A0A1868656C6C6F576F726C643731436C69656E7453747265616D12152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D6573736167652801124A0A1668656C6C6F576F726C6437314269646953747265616D12152E7061636B6167696E672E5265714D6573736167651A152E7061636B6167696E672E5265734D65737361676528013001420DE2470A677270635F7465737473620670726F746F33";
 
 public isolated client class helloWorld71Client {
     *grpc:AbstractClientEndpoint;
@@ -13,7 +13,7 @@ public isolated client class helloWorld71Client {
         check self.grpcClient.initStub(self, PACKAGE_WITH_SERVICE_IN_SUBMODULE_DESC);
     }
 
-    isolated remote function hello1(messageWithService:ReqMessage|messageWithService:ContextReqMessage req) returns messageWithService:ResMessage|grpc:Error {
+    isolated remote function helloWorld71Unary(messageWithService:ReqMessage|messageWithService:ContextReqMessage req) returns messageWithService:ResMessage|grpc:Error {
         map<string|string[]> headers = {};
         messageWithService:ReqMessage message;
         if req is messageWithService:ContextReqMessage {
@@ -22,12 +22,12 @@ public isolated client class helloWorld71Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld71/hello1", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld71/helloWorld71Unary", message, headers);
         [anydata, map<string|string[]>] [result, _] = payload;
         return <messageWithService:ResMessage>result;
     }
 
-    isolated remote function hello1Context(messageWithService:ReqMessage|messageWithService:ContextReqMessage req) returns messageWithService:ContextResMessage|grpc:Error {
+    isolated remote function helloWorld71UnaryContext(messageWithService:ReqMessage|messageWithService:ContextReqMessage req) returns messageWithService:ContextResMessage|grpc:Error {
         map<string|string[]> headers = {};
         messageWithService:ReqMessage message;
         if req is messageWithService:ContextReqMessage {
@@ -36,17 +36,17 @@ public isolated client class helloWorld71Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld71/hello1", message, headers);
+        var payload = check self.grpcClient->executeSimpleRPC("packaging.helloWorld71/helloWorld71Unary", message, headers);
         [anydata, map<string|string[]>] [result, respHeaders] = payload;
         return {content: <messageWithService:ResMessage>result, headers: respHeaders};
     }
 
-    isolated remote function hello3() returns Hello3StreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("packaging.helloWorld71/hello3");
-        return new Hello3StreamingClient(sClient);
+    isolated remote function helloWorld71ClientStream() returns HelloWorld71ClientStreamStreamingClient|grpc:Error {
+        grpc:StreamingClient sClient = check self.grpcClient->executeClientStreaming("packaging.helloWorld71/helloWorld71ClientStream");
+        return new HelloWorld71ClientStreamStreamingClient(sClient);
     }
 
-    isolated remote function hello2(messageWithService:ReqMessage|messageWithService:ContextReqMessage req) returns stream<messageWithService:ResMessage, grpc:Error?>|grpc:Error {
+    isolated remote function helloWorld71ServerStream(messageWithService:ReqMessage|messageWithService:ContextReqMessage req) returns stream<messageWithService:ResMessage, grpc:Error?>|grpc:Error {
         map<string|string[]> headers = {};
         messageWithService:ReqMessage message;
         if req is messageWithService:ContextReqMessage {
@@ -55,13 +55,13 @@ public isolated client class helloWorld71Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld71/hello2", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld71/helloWorld71ServerStream", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, _] = payload;
         messageWithService:ResMessageStream outputStream = new messageWithService:ResMessageStream(result);
         return new stream<messageWithService:ResMessage, grpc:Error?>(outputStream);
     }
 
-    isolated remote function hello2Context(messageWithService:ReqMessage|messageWithService:ContextReqMessage req) returns messageWithService:ContextResMessageStream|grpc:Error {
+    isolated remote function helloWorld71ServerStreamContext(messageWithService:ReqMessage|messageWithService:ContextReqMessage req) returns messageWithService:ContextResMessageStream|grpc:Error {
         map<string|string[]> headers = {};
         messageWithService:ReqMessage message;
         if req is messageWithService:ContextReqMessage {
@@ -70,19 +70,19 @@ public isolated client class helloWorld71Client {
         } else {
             message = req;
         }
-        var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld71/hello2", message, headers);
+        var payload = check self.grpcClient->executeServerStreaming("packaging.helloWorld71/helloWorld71ServerStream", message, headers);
         [stream<anydata, grpc:Error?>, map<string|string[]>] [result, respHeaders] = payload;
         messageWithService:ResMessageStream outputStream = new messageWithService:ResMessageStream(result);
         return {content: new stream<messageWithService:ResMessage, grpc:Error?>(outputStream), headers: respHeaders};
     }
 
-    isolated remote function hello4() returns Hello4StreamingClient|grpc:Error {
-        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("packaging.helloWorld71/hello4");
-        return new Hello4StreamingClient(sClient);
+    isolated remote function helloWorld71BidiStream() returns HelloWorld71BidiStreamStreamingClient|grpc:Error {
+        grpc:StreamingClient sClient = check self.grpcClient->executeBidirectionalStreaming("packaging.helloWorld71/helloWorld71BidiStream");
+        return new HelloWorld71BidiStreamStreamingClient(sClient);
     }
 }
 
-public client class Hello3StreamingClient {
+public client class HelloWorld71ClientStreamStreamingClient {
     private grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
@@ -126,7 +126,7 @@ public client class Hello3StreamingClient {
     }
 }
 
-public client class Hello4StreamingClient {
+public client class HelloWorld71BidiStreamStreamingClient {
     private grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
