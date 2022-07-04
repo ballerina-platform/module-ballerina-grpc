@@ -166,8 +166,7 @@ public class BallerinaFileBuilder {
 
             String moduleName = getModuleName(fileDescriptorSet);
             if (!moduleName.isEmpty() && Objects.isNull(balOutPath)) {
-                // todo: test this (probably not working)
-                balOutPath = moduleName;
+                balOutPath = Paths.get("").toAbsolutePath().toString();
                 currentPackageName = Optional.ofNullable(getExistingPackageName(balOutPath));
             }
             if (!moduleName.isEmpty()) {
@@ -340,7 +339,8 @@ public class BallerinaFileBuilder {
     }
 
     private void runBalNewProcess(String packageName) throws IOException, CodeGeneratorException {
-        Process balNewProcess = runProcess("cd " + balOutPath + " && bal new " + packageName);
+        Process balNewProcess = runProcess("cd " + Paths.get(balOutPath).toAbsolutePath().toString()
+                + " && bal new " + packageName);
         try {
             balNewProcess.waitFor();
         } catch (InterruptedException e) {
