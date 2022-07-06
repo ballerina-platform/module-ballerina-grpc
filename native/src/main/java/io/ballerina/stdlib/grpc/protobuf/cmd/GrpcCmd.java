@@ -49,6 +49,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.EMPTY_STRING;
+import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.PROTO_SUFFIX;
+
 /**
  * Class to implement "grpc" command for ballerina.
  * Ex: ballerina grpc  --input (proto-file-path)  --output (output-directory-path)
@@ -124,8 +127,7 @@ public class GrpcCmd implements BLauncherCmd {
             return;
         }
 
-        File input = new File(protoPath);
-        if (input.isDirectory() || protoPath.endsWith("**.proto")) {
+        if (protoPath.endsWith("**.proto") || new File(protoPath).isDirectory()) {
             // Multiple proto files
             List<String> protoFiles;
             try {
@@ -429,8 +431,8 @@ public class GrpcCmd implements BLauncherCmd {
     }
     
     private String getProtoFileName() {
-        File file = new File(protoPath);
-        return file.getName().replace(BalGenerationConstants.PROTO_SUFFIX, BalGenerationConstants.EMPTY_STRING);
+        File file = new File(protoPath.replace("**", EMPTY_STRING));
+        return file.getName().replace(PROTO_SUFFIX, EMPTY_STRING);
     }
     
     @Override
