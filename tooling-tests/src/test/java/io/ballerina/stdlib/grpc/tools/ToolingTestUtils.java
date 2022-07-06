@@ -157,6 +157,19 @@ public class ToolingTestUtils {
         }
     }
 
+    public static void assertGeneratedSourcesWithNestedDirectories(String subDir, String outputDir, String importDir) {
+        Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, subDir);
+        Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir);
+        Path importDirPath = null;
+        if (importDir != null) {
+            importDirPath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, importDir);
+        }
+        generateSourceCode(protoFilePath, outputDirPath, null, importDirPath);
+        Path destTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, BALLERINA_TOML_FILE);
+        copyBallerinaToml(destTomlFile);
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath, false));
+    }
+
     public static void assertGeneratedDataTypeSourcesNegative(String subDir, String protoFile,
                                                               String stubFile, String outputDir) {
         Path protoFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, subDir, protoFile);
