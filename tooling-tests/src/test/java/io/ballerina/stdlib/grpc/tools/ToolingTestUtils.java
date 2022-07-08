@@ -39,6 +39,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.FILE_SEPARATOR;
+
 /**
  * gRPC tool test Utils.
  */
@@ -155,6 +157,27 @@ public class ToolingTestUtils {
             Assert.assertFalse(hasSemanticDiagnostics(outputDirPath, false));
             Assert.assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
         }
+    }
+
+    public static void assertGeneratedSourcesWithNestedDirectories(String subDir, String outputDir, String importDir) {
+        Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir);
+        try {
+            Class<?> grpcCmdClass = Class.forName("io.ballerina.stdlib.grpc.protobuf.cmd.GrpcCmd");
+            GrpcCmd grpcCmd = (GrpcCmd) grpcCmdClass.getDeclaredConstructor().newInstance();
+            grpcCmd.setProtoPath(RESOURCE_DIRECTORY.toString() + FILE_SEPARATOR + PROTO_FILE_DIRECTORY + subDir);
+            grpcCmd.setBalOutPath(outputDirPath.toAbsolutePath().toString());
+            if (importDir != null) {
+                grpcCmd.setImportPath(Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, importDir)
+                        .toAbsolutePath().toString());
+            }
+            grpcCmd.execute();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException |
+                NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        Path destTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, BALLERINA_TOML_FILE);
+        copyBallerinaToml(destTomlFile);
+        Assert.assertFalse(hasSemanticDiagnostics(outputDirPath, false));
     }
 
     public static void assertGeneratedDataTypeSourcesNegative(String subDir, String protoFile,

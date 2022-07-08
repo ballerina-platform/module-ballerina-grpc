@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [Update gRPC ServiceDescriptor annotation to Descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/3005)
 
+### Fixed
+- [gRPC CLI unable to generate all files in nested directories](https://github.com/ballerina-platform/ballerina-standard-library/issues/2766)
+
 ## [1.2.3] - 2022-05-30
 ### Fixed
 - [Incorrect stub generated for message with Any type field in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/2750)
