@@ -38,6 +38,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeCastExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
@@ -281,14 +283,14 @@ public class UnaryUtils {
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("string")) {
                 returnMap.addMethodCallField(
-                        "content",
+                        CONTENT,
                         getSimpleNameReferenceNode("result"),
                         "toString",
                         new String[]{}
                 );
             } else if (method.getOutputType().equals("time:Utc")) {
                 returnMap.addTypeCastExpressionField(
-                        "content",
+                        CONTENT,
                         method.getOutputType(),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("result"),
@@ -298,12 +300,12 @@ public class UnaryUtils {
                 );
             } else {
                 returnMap.addTypeCastExpressionField(
-                        "content",
+                        CONTENT,
                         method.getOutputPackageType(filename) + method.getOutputType(),
                         getSimpleNameReferenceNode("result"));
             }
         }
-        returnMap.addSimpleNameReferenceField("headers", "respHeaders");
+        returnMap.addSimpleNameReferenceField(HEADERS, "respHeaders");
         function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
     }
 }

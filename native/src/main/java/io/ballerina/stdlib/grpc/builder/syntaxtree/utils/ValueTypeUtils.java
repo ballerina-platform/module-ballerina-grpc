@@ -27,6 +27,8 @@ import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileMod
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaBasicType;
 
@@ -67,12 +69,12 @@ public class ValueTypeUtils {
         if (componentsModuleMap.containsKey(key) && protofileModuleMap.containsKey(filename) &&
                 !componentsModuleMap.get(key).equals(protofileModuleMap.get(filename))) {
             contextStream.addStreamField(componentsModuleMap.get(key).substring(componentsModuleMap.get(key)
-                    .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, "content");
+                    .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, CONTENT);
         } else {
-            contextStream.addStreamField(key, "content");
+            contextStream.addStreamField(key, CONTENT);
         }
         contextStream.addMapField(
-                "headers",
+                HEADERS,
                 getUnionTypeDescriptorNode(
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING,
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY
@@ -115,17 +117,17 @@ public class ValueTypeUtils {
                     break;
             }
             if (isBallerinaBasicType(key)) {
-                contextString.addBasicField(key, "content");
+                contextString.addBasicField(key, CONTENT);
             } else if (componentsModuleMap.containsKey(key) && protofileModuleMap.containsKey(filename) &&
                     !componentsModuleMap.get(key).equals(protofileModuleMap.get(filename))) {
                 contextString.addCustomField(componentsModuleMap.get(key).substring(componentsModuleMap.get(key)
-                        .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, "content");
+                        .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, CONTENT);
             } else {
-                contextString.addCustomField(key, "content");
+                contextString.addCustomField(key, CONTENT);
             }
         }
         contextString.addMapField(
-                "headers",
+                HEADERS,
                 getUnionTypeDescriptorNode(
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING,
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY

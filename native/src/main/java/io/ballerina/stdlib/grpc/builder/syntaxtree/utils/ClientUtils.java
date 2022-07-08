@@ -54,6 +54,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getWildcardBindingPatternNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
@@ -402,12 +404,12 @@ public class ClientUtils {
         if (method.getOutputType() == null) {
             receiveArgsPattern = getTypedBindingPatternNode(
                     getTupleTypeDescriptorNode(receiveArgs),
-                    getListBindingPatternNode(new String[]{"_", "headers"})
+                    getListBindingPatternNode(new String[]{"_", HEADERS})
             );
         } else {
             receiveArgsPattern = getTypedBindingPatternNode(
                     getTupleTypeDescriptorNode(receiveArgs),
-                    getListBindingPatternNode(new String[]{"payload", "headers"})
+                    getListBindingPatternNode(new String[]{"payload", HEADERS})
             );
         }
         String contextParam = "Context" + outCap;
@@ -457,14 +459,14 @@ public class ClientUtils {
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("string")) {
                 returnMap.addMethodCallField(
-                        "content",
+                        CONTENT,
                         getSimpleNameReferenceNode("payload"),
                         "toString",
                         new String[]{}
                 );
             } else if (method.getOutputType().equals("time:Utc")) {
                 returnMap.addTypeCastExpressionField(
-                        "content",
+                        CONTENT,
                         method.getOutputType(),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("payload"),
@@ -474,13 +476,13 @@ public class ClientUtils {
                 );
             } else {
                 returnMap.addTypeCastExpressionField(
-                        "content",
+                        CONTENT,
                         method.getOutputPackageType(filename) + method.getOutputType(),
                         getSimpleNameReferenceNode("payload")
                 );
             }
         }
-        returnMap.addSimpleNameReferenceField("headers", "headers");
+        returnMap.addSimpleNameReferenceField(HEADERS, HEADERS);
         responseCheck.addElseStatement(
                 getReturnStatementNode(
                         returnMap.getMappingConstructorExpressionNode()

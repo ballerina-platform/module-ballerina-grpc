@@ -51,6 +51,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTupleTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getModulePrefix;
@@ -230,7 +232,7 @@ public class ServerUtils {
         addServerBody(function, method, inputCap, outputCap, "respHeaders", filename);
         Map returnMap = new Map();
         returnMap.addField(
-                "content",
+                CONTENT,
                 getExplicitNewExpressionNode(
                         getStreamTypeDescriptorNode(
                                 getSimpleNameReferenceNode(method.getOutputPackageType(filename) +
@@ -240,7 +242,7 @@ public class ServerUtils {
                         new String[]{"outputStream"}
                 )
         );
-        returnMap.addSimpleNameReferenceField("headers", "respHeaders");
+        returnMap.addSimpleNameReferenceField(HEADERS, "respHeaders");
         function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;

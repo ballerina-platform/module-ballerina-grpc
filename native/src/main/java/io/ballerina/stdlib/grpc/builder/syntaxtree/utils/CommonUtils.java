@@ -47,6 +47,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getWildcardBindingPatternNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 
@@ -156,7 +158,7 @@ public class CommonUtils {
                                         SYNTAX_TREE_VAR_STRING_ARRAY
                                 )
                         ),
-                        getCaptureBindingPatternNode("headers")),
+                        getCaptureBindingPatternNode(HEADERS)),
                 new Map().getMappingConstructorExpressionNode()
         );
         function.addVariableStatement(headers.getVariableDeclarationNode());
@@ -190,13 +192,13 @@ public class CommonUtils {
             reqIsContext.addIfStatement(
                     getAssignmentStatementNode(
                             "message",
-                            getFieldAccessExpressionNode("req", "content")
+                            getFieldAccessExpressionNode("req", CONTENT)
                     )
             );
             reqIsContext.addIfStatement(
                     getAssignmentStatementNode(
-                            "headers",
-                            getFieldAccessExpressionNode("req", "headers")
+                            HEADERS,
+                            getFieldAccessExpressionNode("req", HEADERS)
                     )
             );
             reqIsContext.addElseStatement(
@@ -211,7 +213,7 @@ public class CommonUtils {
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "grpcClient"),
                         methodName,
-                        new String[]{"\"" + method.getMethodId() + "\"", "message", "headers"}
+                        new String[]{"\"" + method.getMethodId() + "\"", "message", HEADERS}
                 )
         );
         if (method.getOutputType() == null && !function.getFunctionDefinitionNode()

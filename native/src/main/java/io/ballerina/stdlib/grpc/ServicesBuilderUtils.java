@@ -50,8 +50,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_MESSAGE;
@@ -403,14 +405,14 @@ public class ServicesBuilderUtils {
             return PredefinedTypes.TYPE_NULL;
         }
 
-        if (inputType != null && "Headers".equals(inputType.getName()) &&
+        if (inputType != null && HEADERS.equals(inputType.getName()) &&
                 inputType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
             return PredefinedTypes.TYPE_NULL;
         } else if (inputType instanceof StreamType) {
             return ((StreamType) inputType).getConstrainedType();
         } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
                 ((RecordType) inputType).getFields().size() == 2) {
-            Type contentType = ((RecordType) inputType).getFields().get("content").getFieldType();
+            Type contentType = ((RecordType) inputType).getFields().get(CONTENT_FIELD).getFieldType();
 
             if (contentType instanceof StreamType) {
                 return ((StreamType) contentType).getConstrainedType();
