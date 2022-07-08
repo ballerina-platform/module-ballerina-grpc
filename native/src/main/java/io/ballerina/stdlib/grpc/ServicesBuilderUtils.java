@@ -51,8 +51,10 @@ import java.util.Optional;
 
 import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_DATATYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.PROTOCOL_PACKAGE_GRPC;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_MESSAGE;
@@ -335,7 +337,7 @@ public class ServicesBuilderUtils {
             if (returnType instanceof UnionType) {
                 UnionType returnTypeAsUnion = (UnionType) returnType;
                 Optional<Type> returnDataType = returnTypeAsUnion.getOriginalMemberTypes().stream()
-                        .filter(type -> type instanceof RecordType).findFirst();
+                        .filter(type -> type instanceof RecordType || type instanceof StreamType).findFirst();
                 if (returnDataType.isPresent()) {
                     Type outputType = returnDataType.get();
                     if (outputType instanceof StreamType) {
@@ -404,15 +406,14 @@ public class ServicesBuilderUtils {
             return PredefinedTypes.TYPE_NULL;
         }
 
-        if (inputType != null && "Headers".equals(inputType.getName()) &&
+        if (inputType != null && HEADERS.equals(inputType.getName()) &&
                 inputType.getPackage() != null && PROTOCOL_PACKAGE_GRPC.equals(inputType.getPackage().getName())) {
             return PredefinedTypes.TYPE_NULL;
         } else if (inputType instanceof StreamType) {
             return ((StreamType) inputType).getConstrainedType();
         } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
                 ((RecordType) inputType).getFields().size() == 2) {
-            Type contentType = getReferredType(((RecordType) inputType).getFields().get("content").getFieldType());
-
+            Type contentType = getReferredType(((RecordType) inputType).getFields().get(CONTENT_FIELD).getFieldType());
             if (contentType instanceof StreamType) {
                 return ((StreamType) contentType).getConstrainedType();
             }

@@ -32,6 +32,7 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaratio
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getExplicitNewExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
@@ -53,10 +54,13 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getWildcardBindingPatternNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getModulePrefix;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 
@@ -101,7 +105,7 @@ public class ClientUtils {
         return function;
     }
 
-    public static Class getStreamingClientClass(Method method) {
+    public static Class getStreamingClientClass(Method method, String filename) {
         String name = method.getMethodName().substring(0, 1).toUpperCase() + method.getMethodName().substring(1) +
                 "StreamingClient";
         Class streamingClient = new Class(name, true);
@@ -116,13 +120,13 @@ public class ClientUtils {
 
         streamingClient.addMember(getInitFunction().getFunctionDefinitionNode());
 
-        streamingClient.addMember(getSendFunction(method).getFunctionDefinitionNode());
+        streamingClient.addMember(getSendFunction(method, filename).getFunctionDefinitionNode());
 
-        streamingClient.addMember(getSendContextFunction(method).getFunctionDefinitionNode());
+        streamingClient.addMember(getSendContextFunction(method, filename).getFunctionDefinitionNode());
 
-        streamingClient.addMember(getReceiveFunction(method).getFunctionDefinitionNode());
+        streamingClient.addMember(getReceiveFunction(method, filename).getFunctionDefinitionNode());
 
-        streamingClient.addMember(getReceiveContextFunction(method).getFunctionDefinitionNode());
+        streamingClient.addMember(getReceiveContextFunction(method, filename).getFunctionDefinitionNode());
 
         streamingClient.addMember(getSendErrorFunction().getFunctionDefinitionNode());
 
@@ -145,7 +149,7 @@ public class ClientUtils {
         return function;
     }
 
-    private static Function getSendFunction(Method method) {
+    private static Function getSendFunction(Method method, String filename) {
         String inputCap;
         switch (method.getInputType()) {
             case "byte[]":
@@ -169,7 +173,7 @@ public class ClientUtils {
         }
         Function function = new Function("send" + inputCap);
         function.addRequiredParameter(
-                getSimpleNameReferenceNode(method.getInputType()),
+                getSimpleNameReferenceNode(method.getInputPackagePrefix(filename) + method.getInputType()),
                 "message"
         );
         function.addReturns(SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL);
@@ -184,7 +188,7 @@ public class ClientUtils {
         return function;
     }
 
-    private static Function getSendContextFunction(Method method) {
+    private static Function getSendContextFunction(Method method, String filename) {
         String inputCap;
         switch (method.getInputType()) {
             case "byte[]":
@@ -209,7 +213,9 @@ public class ClientUtils {
         Function function = new Function("sendContext" + inputCap);
         String contextParam = "Context" + inputCap;
         if (isBallerinaProtobufType(method.getInputType())) {
-            contextParam = getProtobufType(method.getInputType()) + ":" + contextParam;
+            contextParam = getProtobufType(method.getInputType()) + COLON + contextParam;
+        } else {
+            contextParam = getModulePrefix(contextParam, filename) + contextParam;
         }
         function.addRequiredParameter(
                 getSimpleNameReferenceNode(contextParam),
@@ -227,7 +233,7 @@ public class ClientUtils {
         return function;
     }
 
-    private static Function getReceiveFunction(Method method) {
+    private static Function getReceiveFunction(Method method, String filename) {
         String functionName = "receive";
         if (method.getOutputType() != null) {
             String outCap;
@@ -267,7 +273,7 @@ public class ClientUtils {
         if (method.getOutputType() != null) {
             function.addReturns(
                     TypeDescriptor.getUnionTypeDescriptorNode(
-                            getSimpleNameReferenceNode(method.getOutputType()),
+                            getSimpleNameReferenceNode(method.getOutputPackageType(filename) + method.getOutputType()),
                             SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                     )
             );
@@ -347,7 +353,7 @@ public class ClientUtils {
                 responseCheck.addElseStatement(
                         getReturnStatementNode(
                                 getTypeCastExpressionNode(
-                                        method.getOutputType(),
+                                        method.getOutputPackageType(filename) + method.getOutputType(),
                                         getSimpleNameReferenceNode("payload")
                                 )
                         )
@@ -359,7 +365,7 @@ public class ClientUtils {
         return function;
     }
 
-    private static Function getReceiveContextFunction(Method method) {
+    private static Function getReceiveContextFunction(Method method, String filename) {
         String outCap = "Nil";
         if (method.getOutputType() != null) {
             switch (method.getOutputType()) {
@@ -398,17 +404,19 @@ public class ClientUtils {
         if (method.getOutputType() == null) {
             receiveArgsPattern = getTypedBindingPatternNode(
                     getTupleTypeDescriptorNode(receiveArgs),
-                    getListBindingPatternNode(new String[]{"_", "headers"})
+                    getListBindingPatternNode(new String[]{"_", HEADERS})
             );
         } else {
             receiveArgsPattern = getTypedBindingPatternNode(
                     getTupleTypeDescriptorNode(receiveArgs),
-                    getListBindingPatternNode(new String[]{"payload", "headers"})
+                    getListBindingPatternNode(new String[]{"payload", HEADERS})
             );
         }
         String contextParam = "Context" + outCap;
         if (isBallerinaProtobufType(method.getOutputType())) {
-            contextParam = getProtobufType(method.getOutputType()) + ":" + contextParam;
+            contextParam = getProtobufType(method.getOutputType()) + COLON + contextParam;
+        } else {
+            contextParam = getModulePrefix(contextParam, filename) + contextParam;
         }
         function.addReturns(
                 TypeDescriptor.getUnionTypeDescriptorNode(
@@ -451,14 +459,14 @@ public class ClientUtils {
         if (method.getOutputType() != null) {
             if (method.getOutputType().equals("string")) {
                 returnMap.addMethodCallField(
-                        "content",
+                        CONTENT,
                         getSimpleNameReferenceNode("payload"),
                         "toString",
                         new String[]{}
                 );
             } else if (method.getOutputType().equals("time:Utc")) {
                 returnMap.addTypeCastExpressionField(
-                        "content",
+                        CONTENT,
                         method.getOutputType(),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("payload"),
@@ -468,13 +476,13 @@ public class ClientUtils {
                 );
             } else {
                 returnMap.addTypeCastExpressionField(
-                        "content",
-                        method.getOutputType(),
+                        CONTENT,
+                        method.getOutputPackageType(filename) + method.getOutputType(),
                         getSimpleNameReferenceNode("payload")
                 );
             }
         }
-        returnMap.addSimpleNameReferenceField("headers", "headers");
+        returnMap.addSimpleNameReferenceField(HEADERS, HEADERS);
         responseCheck.addElseStatement(
                 getReturnStatementNode(
                         returnMap.getMappingConstructorExpressionNode()

@@ -38,6 +38,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.BALLERINA_STANDARD_LIB_PROTOBUF;
+import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.GOOGLE_STANDARD_LIB_API;
+import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.GOOGLE_STANDARD_LIB_PROTOBUF;
+
 /**
  * Class for generate file descriptors for proto files.
  */
@@ -83,8 +87,9 @@ class DescriptorsGenerator {
                 }
                 //Derive proto file path of the dependent library.
                 String protoPath;
-                if (!dependentFilePath.contains(BalGenerationConstants.GOOGLE_STANDARD_LIB_PROTOBUF) &&
-                        !dependentFilePath.contains(BalGenerationConstants.GOOGLE_STANDARD_LIB_API)) {
+                if (!dependentFilePath.contains(GOOGLE_STANDARD_LIB_PROTOBUF) &&
+                        !dependentFilePath.contains(GOOGLE_STANDARD_LIB_API) &&
+                        !dependentFilePath.contains(BALLERINA_STANDARD_LIB_PROTOBUF)) {
                     protoPath = new File(protoFolderPath, dependentFilePath).getAbsolutePath();
                 } else {
                     protoPath = new File(tempDir, dependentFilePath).getAbsolutePath();

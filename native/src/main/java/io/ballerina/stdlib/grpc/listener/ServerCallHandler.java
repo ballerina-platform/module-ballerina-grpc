@@ -48,6 +48,7 @@ import java.util.Map;
 
 import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getTypeName;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 import static java.util.Map.entry;
@@ -215,7 +216,7 @@ public abstract class ServerCallHandler {
             Map<String, Object> valueMap;
             if (requestParam != null) {
                 valueMap = Map.ofEntries(
-                        entry("content", requestParam),
+                        entry(CONTENT_FIELD, requestParam),
                         entry("headers", headerValues)
                 );
             } else {

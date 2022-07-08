@@ -64,6 +64,20 @@ public class Imports {
         );
     }
 
+    public static ImportDeclarationNode getImportDeclarationNode(String moduleName) {
+        Token moduleNameToken = AbstractNodeFactory.createIdentifierToken(moduleName);
+        SeparatedNodeList<IdentifierToken> moduleNodeList =
+                AbstractNodeFactory.createSeparatedNodeList(moduleNameToken);
+
+        return NodeFactory.createImportDeclarationNode(
+                SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_IMPORT,
+                null,
+                moduleNodeList,
+                null,
+                SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
+        );
+    }
+
     public static ImportDeclarationNode getImportDeclarationNode(String orgName, String moduleName,
                                                                  String[] submodules, String prefix) {
         Token orgNameToken = AbstractNodeFactory.createIdentifierToken(orgName);

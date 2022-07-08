@@ -46,6 +46,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.MessageUtils.isContextRecordByType;
 import static io.ballerina.stdlib.grpc.MessageUtils.setNestedMessages;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.generateFullMethodName;
@@ -203,8 +204,7 @@ public final class ServiceDefinition {
             streamParameterType = unionReturnType.getMemberTypes().get(1);
         }
 
-        if (methodDescriptor.isClientStreaming() && methodDescriptor.isServerStreaming()
-                && streamParameterType instanceof ObjectType) {
+        if (methodDescriptor.isClientStreaming() && streamParameterType instanceof ObjectType) {
             return getStreamDataTypeFromBidirectionalStream((ObjectType) streamParameterType);
         }
 
@@ -247,7 +247,7 @@ public final class ServiceDefinition {
             Type firstParamType = unionReturnType.getMemberTypes().get(0);
             if (isContextRecordByType(firstParamType)) {
                 RecordType recordParamType = (RecordType) firstParamType;
-                return getReferredType(recordParamType.getFields().get("content").getFieldType());
+                return getReferredType(recordParamType.getFields().get(CONTENT_FIELD).getFieldType());
             }
             return firstParamType;
         }

@@ -22,7 +22,13 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Record;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Type;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaBasicType;
 
@@ -37,7 +43,7 @@ public class ValueTypeUtils {
 
     }
 
-    public static Type getValueTypeStream(String key) {
+    public static Type getValueTypeStream(String key, String filename) {
         String typeName;
         switch (key) {
             case "byte[]":
@@ -60,14 +66,23 @@ public class ValueTypeUtils {
                 break;
         }
         Record contextStream = new Record();
-        contextStream.addStreamField(key, "content");
+        if (componentsModuleMap.containsKey(key) && protofileModuleMap.containsKey(filename) &&
+                !componentsModuleMap.get(key).equals(protofileModuleMap.get(filename))) {
+            contextStream.addStreamField(componentsModuleMap.get(key).substring(componentsModuleMap.get(key)
+                    .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, CONTENT);
+        } else {
+            contextStream.addStreamField(key, CONTENT);
+        }
         contextStream.addMapField(
-                "headers",
+                HEADERS,
                 getUnionTypeDescriptorNode(
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING,
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY
                 )
         );
+        if (protofileModuleMap.containsKey(filename)) {
+            componentsModuleMap.put(typeName, protofileModuleMap.get(filename));
+        }
         return new Type(
                 true,
                 typeName,
@@ -75,7 +90,7 @@ public class ValueTypeUtils {
         );
     }
 
-    public static Type getValueType(String key) {
+    public static Type getValueType(String key, String filename) {
         String typeName;
         Record contextString = new Record();
         if (key == null) {
@@ -102,18 +117,25 @@ public class ValueTypeUtils {
                     break;
             }
             if (isBallerinaBasicType(key)) {
-                contextString.addBasicField(key, "content");
+                contextString.addBasicField(key, CONTENT);
+            } else if (componentsModuleMap.containsKey(key) && protofileModuleMap.containsKey(filename) &&
+                    !componentsModuleMap.get(key).equals(protofileModuleMap.get(filename))) {
+                contextString.addCustomField(componentsModuleMap.get(key).substring(componentsModuleMap.get(key)
+                        .lastIndexOf(PACKAGE_SEPARATOR) + 1) + COLON + key, CONTENT);
             } else {
-                contextString.addCustomField(key, "content");
+                contextString.addCustomField(key, CONTENT);
             }
         }
         contextString.addMapField(
-                "headers",
+                HEADERS,
                 getUnionTypeDescriptorNode(
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING,
                         SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY
                 )
         );
+        if (protofileModuleMap.containsKey(filename)) {
+            componentsModuleMap.put(typeName, protofileModuleMap.get(filename));
+        }
         return new Type(
                 true,
                 typeName,

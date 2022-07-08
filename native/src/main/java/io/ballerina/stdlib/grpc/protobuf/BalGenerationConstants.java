@@ -35,11 +35,14 @@ public class BalGenerationConstants {
     public static final String TEMP_PROTOBUF_DIRECTORY = "protobuf";
     public static final String TEMP_COMPILER_DIRECTORY = "compiler";
     public static final String TEMP_API_DIRECTORY = "api";
+    public static final String TEMP_BALLERINA_DIRECTORY = "ballerina";
 
     public static final String META_DEPENDENCY_LOCATION = "desc_gen" + FILE_SEPARATOR + "dependencies";
     public static final String NEW_LINE_CHARACTER = System.getProperty("line.separator");
     public static final String GOOGLE_STANDARD_LIB_PROTOBUF = "google" + FILE_SEPARATOR + "protobuf";
     public static final String GOOGLE_STANDARD_LIB_API = "google" + FILE_SEPARATOR + "api";
+    public static final String BALLERINA_STANDARD_LIB_PROTOBUF = TEMP_BALLERINA_DIRECTORY + FILE_SEPARATOR +
+            TEMP_PROTOBUF_DIRECTORY;
     public static final String EMPTY_STRING = "";
 
     public static final String COMPONENT_IDENTIFIER = "grpc";

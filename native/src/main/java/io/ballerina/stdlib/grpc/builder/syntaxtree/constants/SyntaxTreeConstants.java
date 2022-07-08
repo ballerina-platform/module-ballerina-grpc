@@ -101,4 +101,6 @@ public class SyntaxTreeConstants {
             TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error");
 
     public static final String ROOT_DESCRIPTOR = "_DESC";
+    public static final String CONTENT = "content";
+    public static final String HEADERS = "headers";
 }

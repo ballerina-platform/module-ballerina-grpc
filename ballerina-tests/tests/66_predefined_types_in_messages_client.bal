@@ -18,7 +18,7 @@ import ballerina/test;
 import ballerina/time;
 import ballerina/protobuf.types.'any;
 
-@test:Config
+@test:Config {enable: true}
 function testPredefinedTypesInMessages() returns error? {
     PredefinedTypesInServiceClient cl = check new ("http://localhost:9166");
 
@@ -40,5 +40,4 @@ function testPredefinedTypesInMessages() returns error? {
     DurationMessageRequest durationRequest = {name: "Ballerina", details: d};
     DurationMessageResponse durationResponse = check cl->durationCall(durationRequest);
     test:assertEquals(durationResponse, <DurationMessageResponse>{name: "Ballerina", details: d});
-
 }

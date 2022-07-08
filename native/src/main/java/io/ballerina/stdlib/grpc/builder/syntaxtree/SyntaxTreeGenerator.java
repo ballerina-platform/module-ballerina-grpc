@@ -48,15 +48,19 @@ import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependentValueTypeMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.streamClassMap;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
@@ -88,6 +92,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ServerUtils.getS
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ServerUtils.getServerStreamingFunction;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ValueTypeUtils.getValueTypeStream;
+import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.PROTO_SUFFIX;
 
 /**
  * Syntax tree generation class.
@@ -143,19 +148,24 @@ public class SyntaxTreeGenerator {
             client.addMember(getInitFunction(stubFile.getFileName()).getFunctionDefinitionNode());
 
             for (Method method : service.getUnaryFunctions()) {
-                client.addMember(UnaryUtils.getUnaryFunction(method).getFunctionDefinitionNode());
-                client.addMember(UnaryUtils.getUnaryContextFunction(method).getFunctionDefinitionNode());
+                client.addMember(UnaryUtils.getUnaryFunction(method, stubFile.getFileName())
+                        .getFunctionDefinitionNode());
+                client.addMember(UnaryUtils.getUnaryContextFunction(method, stubFile.getFileName())
+                        .getFunctionDefinitionNode());
             }
             for (Method method : service.getClientStreamingFunctions()) {
                 client.addMember(ClientUtils.getStreamingClientFunction(method).getFunctionDefinitionNode());
-                clientStreamingClasses.put(method.getMethodName(), ClientUtils.getStreamingClientClass(method));
+                clientStreamingClasses.put(method.getMethodName(), ClientUtils.getStreamingClientClass(method,
+                        stubFile.getFileName()));
             }
             for (Method method : service.getServerStreamingFunctions()) {
-                client.addMember(getServerStreamingFunction(method).getFunctionDefinitionNode());
-                client.addMember(getServerStreamingContextFunction(method).getFunctionDefinitionNode());
+                client.addMember(getServerStreamingFunction(method, stubFile.getFileName())
+                        .getFunctionDefinitionNode());
+                client.addMember(getServerStreamingContextFunction(method, stubFile.getFileName())
+                        .getFunctionDefinitionNode());
                 if (!isBallerinaProtobufType(method.getOutputType())) {
                     if (!streamClassMap.containsKey(method.getOutputType())) {
-                        Class serverStreamClass = getServerStreamClass(method);
+                        Class serverStreamClass = getServerStreamClass(method, stubFile.getFileName());
                         serverStreamingClasses.put(method.getOutputType(), serverStreamClass);
                         streamClassMap.put(method.getOutputType(), serverStreamClass);
                     }
@@ -165,20 +175,23 @@ public class SyntaxTreeGenerator {
             }
             for (Method method : service.getBidiStreamingFunctions()) {
                 client.addMember(ClientUtils.getStreamingClientFunction(method).getFunctionDefinitionNode());
-                bidirectionalStreamingClasses.put(method.getMethodName(), ClientUtils.getStreamingClientClass(method));
+                bidirectionalStreamingClasses.put(method.getMethodName(), ClientUtils.getStreamingClientClass(method,
+                        stubFile.getFileName()));
             }
             moduleMembers = moduleMembers.add(client.getClassDefinitionNode());
 
             for (java.util.Map.Entry<String, String> caller : service.getCallerMap().entrySet()) {
-                callerClasses.put(caller.getKey(), getCallerClass(caller.getKey(), caller.getValue()));
+                callerClasses.put(caller.getKey(), getCallerClass(caller.getKey(), caller.getValue(),
+                        stubFile.getFileName()));
             }
             for (java.util.Map.Entry<String, Boolean> valueType : service.getValueTypeMap().entrySet()) {
                 if (!(isRoot && dependentValueTypeMap.containsKey(valueType.getKey()))) {
                     if (!isBallerinaProtobufType(valueType.getKey())) {
                         if (valueType.getValue()) {
-                            valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey()));
+                            valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey(),
+                                    stubFile.getFileName()));
                         }
-                        valueTypes.put(valueType.getKey(), getValueType(valueType.getKey()));
+                        valueTypes.put(valueType.getKey(), getValueType(valueType.getKey(), stubFile.getFileName()));
                     } else {
                         protobufImports.add(getProtobufType(valueType.getKey()));
                     }
@@ -189,6 +202,7 @@ public class SyntaxTreeGenerator {
         imports = addBallerinaImportNodes(imports, ballerinaImports);
         imports = addProtobufImportNodes(imports, protobufImports);
         imports = addGrpcStreamImportNodes(imports, grpcStreamImports);
+        imports = addSubModuleImportNodes(imports, stubFile);
 
         for (java.util.Map.Entry<String, Class> streamingClient : clientStreamingClasses.entrySet()) {
             moduleMembers = moduleMembers.add(streamingClient.getValue().getClassDefinitionNode());
@@ -209,7 +223,8 @@ public class SyntaxTreeGenerator {
             moduleMembers = moduleMembers.add(valueType.getValue().getTypeDefinitionNode(null));
         }
         for (java.util.Map.Entry<String, Message> message : stubFile.getMessageMap().entrySet()) {
-            for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue(), descriptorName)) {
+            for (ModuleMemberDeclarationNode messageNode : getMessageNodes(message.getValue(), descriptorName,
+                    stubFile.getFileName())) {
                 moduleMembers = moduleMembers.add(messageNode);
             }
         }
@@ -247,18 +262,16 @@ public class SyntaxTreeGenerator {
 
         if (checkForImportsInServices(methodList, "time:Utc")
                 || checkForImportsInServices(methodList, "time:Seconds")) {
-            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(
-                    "ballerina", "time"
-            );
+            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(ORG_NAME, "time");
             imports = imports.add(importForTime);
         }
 
         if (checkForImportsInServices(methodList, "'any:Any")) {
-            ImportDeclarationNode importForAny = Imports.getImportDeclarationNode(
-                    "ballerina", "protobuf.types.'any"
-            );
+            ImportDeclarationNode importForAny = Imports.getImportDeclarationNode(ORG_NAME, "protobuf.types.'any");
             imports = imports.add(importForAny);
         }
+
+        imports = addSubModuleImports(methodList, fileName, imports);
 
         if (addListener) {
             Listener listener = new Listener(
@@ -293,12 +306,12 @@ public class SyntaxTreeGenerator {
                 if (method.getMethodType().equals(CLIENT_STREAMING) ||
                         method.getMethodType().equals(BIDI_STREAMING)) {
                     inputParam = getStreamTypeDescriptorNode(
-                            getSimpleNameReferenceNode(input),
+                            getSimpleNameReferenceNode(method.getInputPackagePrefix(fileName) + input),
                             SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                     );
                     inputName = "clientStream";
                 } else {
-                    inputParam = getSimpleNameReferenceNode(input);
+                    inputParam = getSimpleNameReferenceNode(method.getInputPackagePrefix(fileName) + input);
                     inputName = "value";
                 }
                 function.addRequiredParameter(inputParam, inputName);
@@ -309,11 +322,11 @@ public class SyntaxTreeGenerator {
                 if (method.getMethodType().equals(SERVER_STREAMING) ||
                         method.getMethodType().equals(BIDI_STREAMING)) {
                     outputParam = getStreamTypeDescriptorNode(
-                            getSimpleNameReferenceNode(output),
+                            getSimpleNameReferenceNode(method.getOutputPackageType(fileName) + output),
                             getOptionalTypeDescriptorNode("", "error")
                     );
                 } else {
-                    outputParam = getSimpleNameReferenceNode(output);
+                    outputParam = getSimpleNameReferenceNode(method.getOutputPackageType(fileName) + output);
                 }
                 function.addReturns(
                         getUnionTypeDescriptorNode(
@@ -335,6 +348,25 @@ public class SyntaxTreeGenerator {
         TextDocument textDocument = TextDocuments.from("");
         SyntaxTree syntaxTree = SyntaxTree.from(textDocument);
         return syntaxTree.modifyWith(modulePartNode);
+    }
+
+    private static NodeList<ImportDeclarationNode> addSubModuleImports(List<Method> methodList, String filename,
+                                                                       NodeList<ImportDeclarationNode> imports) {
+        HashSet<String> importedModules = new HashSet();
+        for (Method method: methodList) {
+            if (componentsModuleMap.containsKey(method.getInputType())) {
+                importedModules.add(componentsModuleMap.get(method.getInputType()));
+            }
+            if (componentsModuleMap.containsKey(method.getOutputType())) {
+                importedModules.add(componentsModuleMap.get(method.getOutputType()));
+            }
+        }
+        for (String type: importedModules.toArray(new String[importedModules.size()])) {
+            if (protofileModuleMap.containsKey(filename) && !protofileModuleMap.get(filename).equals(type)) {
+                imports = imports.add(Imports.getImportDeclarationNode(type));
+            }
+        }
+        return imports;
     }
 
     public static SyntaxTree generateSyntaxTreeForClientSample(ServiceStub serviceStub) {
@@ -395,14 +427,22 @@ public class SyntaxTreeGenerator {
 
     private static NodeList<ImportDeclarationNode> addBallerinaImportNodes(NodeList<ImportDeclarationNode> imports,
                                                                            Set<String> ballerinaImports) {
-
         for (String ballerinaImport : ballerinaImports) {
-            imports = imports.add(
-                    Imports.getImportDeclarationNode(
-                            "ballerina",
-                            ballerinaImport
-                    )
-            );
+            imports = imports.add(Imports.getImportDeclarationNode(ORG_NAME, ballerinaImport));
+        }
+        return imports;
+    }
+
+    private static NodeList<ImportDeclarationNode> addSubModuleImportNodes(NodeList<ImportDeclarationNode> imports,
+                                                                           StubFile stubFile) {
+        for (String moduleImport: stubFile.getImportList()) {
+            moduleImport = moduleImport.substring(0, moduleImport.lastIndexOf(PROTO_SUFFIX));
+            if (protofileModuleMap.containsKey(moduleImport)) {
+                String importString = protofileModuleMap.get(moduleImport);
+                if (!importString.isEmpty() && !protofileModuleMap.get(stubFile.getFileName()).equals(importString)) {
+                    imports = imports.add(Imports.getImportDeclarationNode(importString));
+                }
+            }
         }
         return imports;
     }
@@ -412,7 +452,7 @@ public class SyntaxTreeGenerator {
         for (String protobufImport : protobufImports) {
             imports = imports.add(
                     Imports.getImportDeclarationNode(
-                            "ballerina",
+                            ORG_NAME,
                             "protobuf",
                             new String[]{"types", protobufImport},
                             ""
@@ -431,7 +471,7 @@ public class SyntaxTreeGenerator {
             }
             imports = imports.add(
                     Imports.getImportDeclarationNode(
-                            "ballerina",
+                            ORG_NAME,
                             "grpc",
                             new String[]{"types", sImport},
                             "s" + prefix

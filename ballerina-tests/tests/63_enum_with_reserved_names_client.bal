@@ -16,7 +16,7 @@
 
 import ballerina/test;
 
-@test:Config
+@test:Config {enable: true}
 function testEnumMessageWithReservedKeywordsInCapital() returns error? {
     MessageServiceClient messageClient = check new ("http://localhost:9163");
     MessageState state1 = check messageClient->UnaryCall({id: "new", 'new: "new"});

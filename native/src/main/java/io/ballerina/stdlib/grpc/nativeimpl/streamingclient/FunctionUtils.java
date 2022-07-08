@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
@@ -76,7 +77,7 @@ public class FunctionUtils {
                 Object content;
                 BMap headerValues = null;
                 if (MessageUtils.isContextRecordByValue(responseValue)) {
-                    content = ((BMap) responseValue).get(StringUtils.fromString("content"));
+                    content = ((BMap) responseValue).get(StringUtils.fromString(CONTENT));
                     headerValues = ((BMap) responseValue).getMapValue(StringUtils.fromString("headers"));
                 } else {
                     content = responseValue;

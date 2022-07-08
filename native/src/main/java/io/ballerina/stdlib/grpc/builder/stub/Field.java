@@ -25,7 +25,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.enumDefaultValueMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.stub.utils.StubUtils.RESERVED_LITERAL_NAMES;
 
 /**
@@ -38,12 +42,14 @@ public class Field {
     private final String fieldLabel;
     private final String fieldName;
     private final String defaultValue;
+    private final String moduleName;
 
-    private Field(String fieldName, String fieldType, String fieldLabel, String defaultValue) {
+    private Field(String fieldName, String fieldType, String fieldLabel, String defaultValue, String moduleName) {
         this.fieldName = fieldName;
         this.fieldType = fieldType;
         this.fieldLabel = fieldLabel;
         this.defaultValue = defaultValue;
+        this.moduleName = moduleName;
     }
 
     public static Field.Builder newBuilder(DescriptorProtos.FieldDescriptorProto fieldDescriptor) {
@@ -66,8 +72,24 @@ public class Field {
         return fieldName;
     }
 
-    public String getDefaultValue() {
+    public String getDefaultValue(String filename) {
+        if (isFieldInsideSubModule(filename)) {
+            return moduleName + COLON + defaultValue;
+        }
         return defaultValue;
+    }
+
+    public String getPackageName(String filename) {
+        if (isFieldInsideSubModule(filename)) {
+            return moduleName + COLON;
+        }
+        return "";
+    }
+
+    private boolean isFieldInsideSubModule(String filename) {
+        return !moduleName.isEmpty() && protofileModuleMap.containsKey(filename) &&
+                !protofileModuleMap.get(filename).substring(protofileModuleMap.get(filename)
+                        .lastIndexOf(PACKAGE_SEPARATOR) + 1).equals(moduleName);
     }
 
     /**
@@ -105,7 +127,12 @@ public class Field {
             if (fieldDescriptor.getType().equals(DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM)) {
                 fieldDefaultValue = enumDefaultValueMap.get(fieldType);
             }
-            return new Field(fieldName, fieldType, fieldLabel, fieldDefaultValue);
+            String moduleName = "";
+            if (fieldType.length() > 0 && componentsModuleMap.containsKey(fieldType)) {
+                moduleName = componentsModuleMap.get(fieldType).substring(componentsModuleMap.get(fieldType)
+                        .lastIndexOf(PACKAGE_SEPARATOR) + 1);
+            }
+            return new Field(fieldName, fieldType, fieldLabel, fieldDefaultValue, moduleName);
         }
 
         private Builder(DescriptorProtos.FieldDescriptorProto fieldDescriptor, String fieldType) {

@@ -23,6 +23,10 @@ import io.ballerina.stdlib.grpc.MethodDescriptor;
 
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
+import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.COLON;
+import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenerationUtils.getMappingBalType;
 
 /**
@@ -36,14 +40,18 @@ public class Method {
     private final String inputType;
     private final String outputType;
     private final MethodDescriptor.MethodType methodType;
+    private final String inputPackagePrefix;
+    private final String outputPackagePrefix;
 
     private Method(String methodName, String methodId, String inputType, String outputType,
-                   MethodDescriptor.MethodType methodType) {
+                   MethodDescriptor.MethodType methodType, String inputPackagePrefix, String outputPackagePrefix) {
         this.methodName = methodName;
         this.methodType = methodType;
         this.methodId = methodId;
         this.inputType = inputType;
         this.outputType = outputType;
+        this.inputPackagePrefix = inputPackagePrefix;
+        this.outputPackagePrefix = outputPackagePrefix;
     }
 
     public static Method.Builder newBuilder(String methodId) {
@@ -68,6 +76,26 @@ public class Method {
 
     public MethodDescriptor.MethodType getMethodType() {
         return methodType;
+    }
+
+    public String getInputPackagePrefix(String filename) {
+        if (!inputPackagePrefix.isEmpty() && protofileModuleMap.containsKey(filename)) {
+            if (!protofileModuleMap.get(filename).substring(protofileModuleMap.get(filename)
+                    .lastIndexOf(PACKAGE_SEPARATOR) + 1).equals(inputPackagePrefix)) {
+                return inputPackagePrefix + COLON;
+            }
+        }
+        return "";
+    }
+
+    public String getOutputPackageType(String filename) {
+        if (!outputPackagePrefix.isEmpty() && protofileModuleMap.containsKey(filename)) {
+            if (!protofileModuleMap.get(filename).substring(protofileModuleMap.get(filename)
+                    .lastIndexOf(PACKAGE_SEPARATOR) + 1).equals(outputPackagePrefix)) {
+                return outputPackagePrefix + COLON;
+            }
+        }
+        return "";
     }
 
     public boolean containsEmptyType() {
@@ -103,7 +131,18 @@ public class Method {
             inputType = getMappingBalType(inputType);
             String outputType = methodDescriptor.getOutputType();
             outputType = getMappingBalType(outputType);
-            return new Method(methodName, methodId, inputType, outputType, methodType);
+            String inputPackageType = "";
+            if (componentsModuleMap.containsKey(inputType)) {
+                inputPackageType = componentsModuleMap.get(inputType).substring(componentsModuleMap
+                        .get(inputType).lastIndexOf(PACKAGE_SEPARATOR) + 1);
+            }
+            String outputPackageType = "";
+            if (componentsModuleMap.containsKey(outputType)) {
+                outputPackageType = componentsModuleMap.get(outputType).substring(componentsModuleMap
+                        .get(outputType).lastIndexOf(PACKAGE_SEPARATOR) + 1);
+            }
+            return new Method(methodName, methodId, inputType, outputType, methodType,
+                    inputPackageType, outputPackageType);
         }
     }
 }

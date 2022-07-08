@@ -20,7 +20,7 @@ import ballerina/protobuf.types.'any;
 
 PredefinedRecordsClient cl = check new ("http://localhost:9164");
 
-@test:Config
+@test:Config {enable: true}
 function testCallsWithPredefinedMessageNames() returns error? {
 
     Any anyRec = check cl->CallAny(check 'any:pack("Any"));

@@ -53,6 +53,8 @@ import java.util.Locale;
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.runtime.api.utils.StringUtils.fromStringArray;
 import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
+import static io.ballerina.stdlib.grpc.GrpcConstants.HEADER_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getTypeName;
 import static io.ballerina.stdlib.grpc.Status.Code.UNKNOWN;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
@@ -491,7 +493,7 @@ public class MessageUtils {
     public static boolean isContextRecordByType(Type type) {
         return type instanceof RecordType && type.getName().startsWith("Context")
                 && ((RecordType) type).getFields().size() == 2 && ((RecordType) type).getFields().containsKey(
-                        "content") && ((RecordType) type).getFields().containsKey("headers");
+                CONTENT_FIELD) && ((RecordType) type).getFields().containsKey(HEADER_FIELD);
     }
 
     /**
