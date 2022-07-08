@@ -21,6 +21,7 @@ package io.ballerina.stdlib.grpc.tools;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -243,6 +244,28 @@ public class ToolingCommonTest {
                 readContent(actualPath.resolve("messages1_pb.bal")));
         Assert.assertEquals(readContent(expectedPath.resolve("messages2_pb.bal")),
                 readContent(actualPath.resolve("messages2_pb.bal")));
+    }
+
+    @Test(enabled = true)
+    public void testNestedDirectoryWithPackageOption() {
+        try {
+            Files.createDirectories(Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_packaging_nested_dirs"));
+        } catch (IOException e) {
+            Assert.fail("Could not create target directories", e);
+        }
+        assertGeneratedSourcesWithNestedDirectories("nested/package/**.proto", "tool_test_packaging_nested_dirs",
+                "nested/package/");
+        Path expectedPath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+                "tool_test_packaging_nested_dirs");
+        Path actualPath = Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_packaging_nested_dirs");
+        Assert.assertEquals(readContent(expectedPath.resolve("service1_pb.bal")),
+                readContent(actualPath.resolve("service1_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("service2_pb.bal")),
+                readContent(actualPath.resolve("service2_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("messages1_pb.bal")),
+                readContent(actualPath.resolve("modules/messages/messages1_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("messages2_pb.bal")),
+                readContent(actualPath.resolve("modules/messages/messages2_pb.bal")));
     }
 
     @Test

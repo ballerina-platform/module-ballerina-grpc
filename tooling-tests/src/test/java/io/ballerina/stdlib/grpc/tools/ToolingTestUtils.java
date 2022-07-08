@@ -176,11 +176,17 @@ public class ToolingTestUtils {
 
     public static void assertGeneratedSourcesWithNestedDirectories(String subDir, String outputDir, String importDir) {
         Path outputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir);
+        Path protocOutputDirPath;
+        if (outputDir.contains("tool_test_packaging")) {
+            protocOutputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY);
+        } else {
+            protocOutputDirPath = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir);
+        }
         try {
             Class<?> grpcCmdClass = Class.forName("io.ballerina.stdlib.grpc.protobuf.cmd.GrpcCmd");
             GrpcCmd grpcCmd = (GrpcCmd) grpcCmdClass.getDeclaredConstructor().newInstance();
             grpcCmd.setProtoPath(RESOURCE_DIRECTORY.toString() + FILE_SEPARATOR + PROTO_FILE_DIRECTORY + subDir);
-            grpcCmd.setBalOutPath(outputDirPath.toAbsolutePath().toString());
+            grpcCmd.setBalOutPath(protocOutputDirPath.toAbsolutePath().toString());
             if (importDir != null) {
                 grpcCmd.setImportPath(Paths.get(RESOURCE_DIRECTORY.toString(), PROTO_FILE_DIRECTORY, importDir)
                         .toAbsolutePath().toString());
@@ -190,7 +196,7 @@ public class ToolingTestUtils {
                 NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        Path destTomlFile = Paths.get(GENERATED_SOURCES_DIRECTORY, outputDir, BALLERINA_TOML_FILE);
+        Path destTomlFile = outputDirPath.resolve(BALLERINA_TOML_FILE);
         copyBallerinaToml(destTomlFile);
         Assert.assertFalse(hasSemanticDiagnostics(outputDirPath, false));
     }
