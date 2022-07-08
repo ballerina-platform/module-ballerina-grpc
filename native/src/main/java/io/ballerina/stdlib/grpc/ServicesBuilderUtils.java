@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
@@ -412,8 +413,7 @@ public class ServicesBuilderUtils {
             return ((StreamType) inputType).getConstrainedType();
         } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
                 ((RecordType) inputType).getFields().size() == 2) {
-            Type contentType = ((RecordType) inputType).getFields().get(CONTENT_FIELD).getFieldType();
-
+            Type contentType = getReferredType(((RecordType) inputType).getFields().get(CONTENT_FIELD).getFieldType());
             if (contentType instanceof StreamType) {
                 return ((StreamType) contentType).getConstrainedType();
             }

@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getTypeName;
@@ -153,7 +154,8 @@ public abstract class ServerCallHandler {
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_MESSAGE_DEFINITION, methodDescriptor.getOutputType());
         String serviceName = resource.getServiceName();
         Type returnType = resource.getRpcOutputType() instanceof ArrayType ?
-                ((ArrayType) resource.getRpcOutputType()).getElementType() : resource.getRpcOutputType();
+                getReferredType(((ArrayType) resource.getRpcOutputType()).getElementType()) :
+                resource.getRpcOutputType();
         String outputType = returnType != PredefinedTypes.TYPE_NULL ? getTypeName(returnType) : null;
         return ValueCreator.createObjectValue(resource.getService().getType().getPackage(),
                 MessageUtils.getCallerTypeName(serviceName, outputType), clientEndpoint);

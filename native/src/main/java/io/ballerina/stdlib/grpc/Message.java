@@ -55,6 +55,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_TYPE_NAME;
@@ -593,15 +594,17 @@ public class Message {
                             } else if (fieldDescriptor.isRepeated()) {
                                 BArray valueArray = bBMap.get(bFieldName) != null ?
                                         (BArray) bBMap.get(bFieldName) : null;
-                                Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                                Type fieldType = getReferredType(recordType.getFields()
+                                        .get(bFieldName.getValue()).getFieldType());
                                 if (valueArray == null || valueArray.size() == 0) {
                                     valueArray = ValueCreator.createArrayValue((ArrayType) fieldType);
                                     bBMap.put(bFieldName, valueArray);
                                 }
                                 valueArray.add(valueArray.size(), readMessage(fieldDescriptor,
-                                        ((ArrayType) fieldType).getElementType(), input).bMessage);
+                                        getReferredType(((ArrayType) fieldType).getElementType()), input).bMessage);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                                Type fieldType = getReferredType(recordType.getFields()
+                                        .get(bFieldName.getValue()).getFieldType());
                                 Object bValue = readMessage(fieldDescriptor, fieldType, input).bMessage;
                                 updateBBMap(bBMap, fieldDescriptor, bValue);
                             } else if (fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_STRUCT) &&
@@ -609,7 +612,8 @@ public class Message {
                                 Type fieldType = TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA);
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             } else {
-                                Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                                Type fieldType = getReferredType(recordType.getFields()
+                                        .get(bFieldName.getValue()).getFieldType());
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             }
                         } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_VALUE)) {
@@ -624,7 +628,8 @@ public class Message {
                             bMessage = readMessage(fieldDescriptor,
                                     TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA), input).bMessage;
                         } else {
-                            Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                            Type fieldType = getReferredType(recordType.getFields()
+                                    .get(bFieldName.getValue()).getFieldType());
                             bMessage = readMessage(fieldDescriptor, fieldType, input).bMessage;
                         }
                         break;
