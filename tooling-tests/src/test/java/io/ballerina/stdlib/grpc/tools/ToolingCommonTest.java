@@ -33,6 +33,7 @@ import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.RESOURCE_DIRECTORY
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.assertGeneratedDataTypeSources;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.assertGeneratedDataTypeSourcesNegative;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.assertGeneratedSources;
+import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.assertGeneratedSourcesWithNestedDirectories;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.copyBallerinaToml;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.generateSourceCode;
 import static io.ballerina.stdlib.grpc.tools.ToolingTestUtils.hasSemanticDiagnostics;
@@ -197,6 +198,51 @@ public class ToolingCommonTest {
     public void testDuplicateOutputType() {
         assertGeneratedDataTypeSources("data-types", "duplicate_output_type.proto",
                 "duplicate_output_type_pb.bal", "tool_test_data_type_22");
+    }
+
+    @Test
+    public void testBasicNestedDirectories() {
+        assertGeneratedSourcesWithNestedDirectories("nested/basic/**.proto",
+                "tool_test_nested_directories_01", null);
+        Path expectedPath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+                "tool_test_nested_directories_01");
+        Path actualPath = Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_nested_directories_01");
+        Assert.assertEquals(readContent(expectedPath.resolve("service_pb.bal")),
+                readContent(actualPath.resolve("service_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("messages_pb.bal")),
+                readContent(actualPath.resolve("messages_pb.bal")));
+    }
+
+    @Test
+    public void testNestedDirectoryWithImportPath() {
+        assertGeneratedSourcesWithNestedDirectories("nested/import_path/**.proto",
+                "tool_test_nested_directories_02", "nested/import_path/");
+        Path expectedPath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+                "tool_test_nested_directories_02");
+        Path actualPath = Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_nested_directories_02");
+        Assert.assertEquals(readContent(expectedPath.resolve("service_pb.bal")),
+                readContent(actualPath.resolve("service_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("messages1_pb.bal")),
+                readContent(actualPath.resolve("messages1_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("messages2_pb.bal")),
+                readContent(actualPath.resolve("messages2_pb.bal")));
+    }
+
+    @Test
+    public void testNestedDirectoryWithMultipleServices() {
+        assertGeneratedSourcesWithNestedDirectories("nested/multiple_service/**.proto",
+                "tool_test_nested_directories_03", "nested/multiple_service");
+        Path expectedPath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+                "tool_test_nested_directories_03");
+        Path actualPath = Paths.get(GENERATED_SOURCES_DIRECTORY, "tool_test_nested_directories_03");
+        Assert.assertEquals(readContent(expectedPath.resolve("service1_pb.bal")),
+                readContent(actualPath.resolve("service1_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("service2_pb.bal")),
+                readContent(actualPath.resolve("service2_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("messages1_pb.bal")),
+                readContent(actualPath.resolve("messages1_pb.bal")));
+        Assert.assertEquals(readContent(expectedPath.resolve("messages2_pb.bal")),
+                readContent(actualPath.resolve("messages2_pb.bal")));
     }
 
     @Test

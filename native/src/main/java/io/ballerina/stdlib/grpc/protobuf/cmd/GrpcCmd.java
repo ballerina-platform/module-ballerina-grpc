@@ -49,7 +49,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.EMPTY_STRING;
 import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.META_LOCATION;
+import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.PROTO_SUFFIX;
 import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.TEMP_API_DIRECTORY;
 import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.TEMP_BALLERINA_DIRECTORY;
 import static io.ballerina.stdlib.grpc.protobuf.BalGenerationConstants.TEMP_COMPILER_DIRECTORY;
@@ -131,12 +133,11 @@ public class GrpcCmd implements BLauncherCmd {
             return;
         }
 
-        File input = new File(protoPath);
-        if (input.isDirectory()) {
+        if (protoPath.endsWith("**.proto") || new File(protoPath).isDirectory()) {
             // Multiple proto files
             List<String> protoFiles;
             try {
-                protoFiles = getProtoFiles(Paths.get(input.getPath()));
+                protoFiles = getProtoFiles(protoPath);
             } catch (IOException e) {
                 String errorMessage = "Failed to find proto files in the directory. " +
                         "Please input a valid proto files directory.";
@@ -165,16 +166,22 @@ public class GrpcCmd implements BLauncherCmd {
         }
     }
 
-    private List<String> getProtoFiles(Path path) throws IOException {
-        List<String> result;
-        try (Stream<Path> walk = Files.walk(path, 1)) {
-            result = walk
-                    .filter(p -> !Files.isDirectory(p))
-                    .map(p -> p.toString())
-                    .filter(f -> f.endsWith(".proto"))
-                    .collect(Collectors.toList());
+    private List<String> getProtoFiles(String path) throws IOException {
+        if (path.endsWith("**.proto")) {
+            try (Stream<Path> walk = Files.walk(Paths.get(path.substring(0, path.length() - 8)))) {
+                return walkInsideProtoDirectory(walk);
+            }
         }
-        return result;
+        try (Stream<Path> walk = Files.walk(Paths.get(path), 1)) {
+            return walkInsideProtoDirectory(walk);
+        }
+    }
+
+    private List<String> walkInsideProtoDirectory(Stream<Path> walk) {
+        return walk.filter(p -> !Files.isDirectory(p))
+                .map(Path::toString)
+                .filter(f -> f.endsWith(".proto"))
+                .collect(Collectors.toList());
     }
 
     private void generateBalFile(String protoPath) {
@@ -429,8 +436,8 @@ public class GrpcCmd implements BLauncherCmd {
     }
     
     private String getProtoFileName() {
-        File file = new File(protoPath);
-        return file.getName().replace(BalGenerationConstants.PROTO_SUFFIX, BalGenerationConstants.EMPTY_STRING);
+        File file = new File(protoPath.replace("**", EMPTY_STRING));
+        return file.getName().replace(PROTO_SUFFIX, EMPTY_STRING);
     }
     
     @Override
