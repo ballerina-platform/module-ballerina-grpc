@@ -41,14 +41,7 @@ protoc --go_out=go2 --go-grpc_out=go2 proto/**.proto --proto_path=proto
 In Golang, we can input proto files as a wildcard, and then it generates all the necessary stubs [1].
 
 #### Proposed Solution
-There are two ways we can address this problem, one way to follow the Java approach and the other way is to follow the Go approach.
-##### Solution 01
-We keep the current CLI interface as it is. When someone inputs a proto directory as an input, we iterate through the nested directories and generate all the necessary stub files.
-```sh
-bal grpc –input proto/ –output ballerina-out
-```
-##### Solution 02
-Allow users to use wild cards as Go did.
+We have decided to follow the Go approach where we allow users to use wild cards as the proto command input.
 ```sh
 bal grpc –input proto/**.proto –output ballerina-out
 ```
@@ -109,7 +102,7 @@ Java Packages
 option java_package = "com.example.tutorial.protos";
 ```
 #### Proposed Solution 
-To introduce a new option, we have to contribute to the [3] file. This will be a time-consuming task.
+The details related to this can be found in (*Proposal: gRPC Packaging Support*)[https://github.com/ballerina-platform/ballerina-standard-library/issues/2948]
 
 ## Implementation
 The tasks related to each problem are as follows:
@@ -120,7 +113,6 @@ The tasks related to each problem are as follows:
     - This needs to make sure of backward compatibility.
 - Problem 03
     - Implementation needs to be done with the CLI and some changes to the runtime.
-    - We also have to contribute to [3], which will be a time-consuming task.
 
 ## Testing
 For each problem, we should make sure of the backward compatibility.
@@ -128,4 +120,3 @@ For each problem, we should make sure of the backward compatibility.
 ## References
 [1] https://github.com/golang/protobuf/issues/39
 [2] https://developers.google.com/protocol-buffers/docs/proto#customoptions
-[3] https://github.com/protocolbuffers/protobuf/blob/master/src/google/protobuf/descriptor.proto#L341 
