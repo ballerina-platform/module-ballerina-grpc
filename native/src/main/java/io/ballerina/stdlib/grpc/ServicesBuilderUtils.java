@@ -309,7 +309,7 @@ public class ServicesBuilderUtils {
             Parameter[] parameters = remoteCallType.get().getParameters();
             int noOfParams = parameters.length;
             if (noOfParams > 0) {
-                Type inputType = parameters[noOfParams - 1].type;
+                Type inputType = getReferredType(parameters[noOfParams - 1].type);
                 if (inputType instanceof StreamType) {
                     return ((StreamType) inputType).getConstrainedType().getPackage();
                 } else {
@@ -393,7 +393,7 @@ public class ServicesBuilderUtils {
 
     private static Type getRemoteInputParameterType(MethodType attachedFunction) {
 
-        Type[] inputParams = attachedFunction.getType().getParameterTypes();
+        Type[] inputParams = getParameterTypesFromParameters(attachedFunction.getType().getParameters());
         Type inputType;
 
         // length == 1 when remote function returns a value HelloWorld100ResponseCaller
@@ -423,4 +423,11 @@ public class ServicesBuilderUtils {
         }
     }
 
+    static Type[] getParameterTypesFromParameters(Parameter[] parameters) {
+        Type[] paramTypes = new Type[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            paramTypes[i] = getReferredType(parameters[i].type);
+        }
+        return paramTypes;
+    }
 }

@@ -56,6 +56,7 @@ import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcConstants.HEADER_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getTypeName;
+import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getParameterTypesFromParameters;
 import static io.ballerina.stdlib.grpc.Status.Code.UNKNOWN;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -82,11 +83,11 @@ public class MessageUtils {
                         TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING))));
 
     static boolean headersRequired(MethodType functionType, Type rpcInputType) {
-        if (functionType == null || functionType.getParameterTypes() == null) {
+        if (functionType == null || functionType.getParameters() == null) {
             throw new RuntimeException("Invalid resource input arguments");
         }
         boolean headersRequired = false;
-        for (Type paramType : functionType.getParameterTypes()) {
+        for (Type paramType : getParameterTypesFromParameters(functionType.getParameters())) {
             if (paramType != null && getContextTypeName(rpcInputType).equals(paramType.getName())) {
                 headersRequired = true;
                 break;
