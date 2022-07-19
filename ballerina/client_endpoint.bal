@@ -201,11 +201,8 @@ isolated function enrichHeaders(ClientAuthHandler clientAuthHandler, map<string|
         return clientAuthHandler.enrich(headers);
     } else if clientAuthHandler is ClientSelfSignedJwtAuthHandler {
         return clientAuthHandler.enrich(headers);
-    } else if clientAuthHandler is ClientOAuth2Handler {
-        return clientAuthHandler->enrich(headers);
     } else {
-        string errorMsg = "Invalid client auth-handler found. Expected one of grpc:ClientBasicAuthHandler|grpc:ClientBearerTokenAuthHandler|grpc:ClientSelfSignedJwtAuthHandler|grpc:ClientOAuth2Handler.";
-        panic error ClientAuthError(errorMsg);
+        return clientAuthHandler->enrich(headers);
     }
 }
 
