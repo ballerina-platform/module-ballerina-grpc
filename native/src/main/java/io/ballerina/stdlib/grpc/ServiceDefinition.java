@@ -51,6 +51,7 @@ import static io.ballerina.stdlib.grpc.MessageUtils.isContextRecordByType;
 import static io.ballerina.stdlib.grpc.MessageUtils.setNestedMessages;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.generateFullMethodName;
 import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getBallerinaValueType;
+import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getParameterTypesFromParameters;
 import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.hexStringToByteArray;
 
 /**
@@ -260,7 +261,7 @@ public final class ServiceDefinition {
             // For client streaming and bidirectional streaming, we can't derive the type from the function.
             return null;
         }
-        Type[] inputParams = attachedFunction.getParameterTypes();
+        Type[] inputParams = getParameterTypesFromParameters(attachedFunction.getParameters());
         if (inputParams.length > 0) {
             Type inputType = inputParams[0];
             if (inputType.getTag() == TypeTags.UNION_TAG) {
