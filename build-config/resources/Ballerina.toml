@@ -2,7 +2,7 @@
 org = "ballerina"
 name = "grpc"
 version = "@toml.version@"
-distribution = "2201.1.0"
+distribution = "2201.2.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -26,6 +26,9 @@ path = "./lib/antlr4-runtime-@antlr.version@.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
+groupId = "io.ballerina.stdlib"
+artifactId = "http-native"
+version = "@http.native.version@"
 path = "./lib/http-native-@http.native.version@.jar"
 
 [[platform.java11.dependency]]
@@ -92,7 +95,13 @@ path = "./lib/protobuf-java-@protobuf.java.version@.jar"
 path = "./lib/proto-google-common-protos-@proto.google.commons.version@.jar"
 
 [[platform.java11.dependency]]
+groupId = "org.ballerinalang"
+artifactId = "formatter-core"
+version = "@ballerinalang.version@"
 path = "./lib/formatter-core-@ballerinalang.version@.jar"
 
 [[platform.java11.dependency]]
+groupId = "org.ballerinalang"
+artifactId = "ballerina-parser"
+version = "@ballerinalang.version@"
 path = "./lib/ballerina-parser-@ballerinalang.version@.jar"
