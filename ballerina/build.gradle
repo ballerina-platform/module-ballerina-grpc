@@ -150,6 +150,7 @@ dependencies {
 
 task updateTomlFiles {
     doLast {
+        def stdlibHttpVersion = stripBallerinaExtensionVersion("${project.stdlibHttpVersion}")
         def newBallerinaToml = ballerinaTomlFilePlaceHolder.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
@@ -161,6 +162,7 @@ task updateTomlFiles {
         newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", project.nettyTcnativeVersion)
         newBallerinaToml = newBallerinaToml.replace("@commons.pool.version@", project.wso2CommonsPoolVersion)
         newBallerinaToml = newBallerinaToml.replace("@bouncy.castle.version@", project.bouncycastleVersion)
+        newBallerinaToml = newBallerinaToml.replace("@http.version@", stdlibHttpVersion)
         ballerinaTomlFile.text = newBallerinaToml
 
         def newCompilerPluginToml = compilerPluginTomlFilePlaceHolder.text.replace("@project.version@", project.version)
