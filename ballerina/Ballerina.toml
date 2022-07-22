@@ -95,13 +95,7 @@ path = "./lib/protobuf-java-3.20.1.jar"
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-groupId = "org.ballerinalang"
-artifactId = "formatter-core"
-version = "2201.2.0-rc1"
 path = "./lib/formatter-core-2201.2.0-rc1.jar"
 
 [[platform.java11.dependency]]
-groupId = "org.ballerinalang"
-artifactId = "ballerina-parser"
-version = "2201.2.0-rc1"
 path = "./lib/ballerina-parser-2201.2.0-rc1.jar"
