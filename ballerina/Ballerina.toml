@@ -11,6 +11,9 @@ license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 
 [[platform.java11.dependency]]
+groupId = "io.ballerina.stdlib"
+artifactId = "grpc-native"
+version = "1.4.0"
 path = "../native/build/libs/grpc-native-1.4.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
