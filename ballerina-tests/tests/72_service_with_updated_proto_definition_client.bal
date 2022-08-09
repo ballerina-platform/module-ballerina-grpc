@@ -21,36 +21,40 @@ import ballerina/test;
 // and the docker container can be found in https://hub.docker.com/r/dilansachi/grpc_ballerina_docker_service
 @test:Config {enable: true}
 function testServiceWithUpdatedProtoDefinition() returns error? {
-    UserServiceClient cc = check new("http://localhost:9172");
-    GetOrganizationResponse res = check cc->GetOrganization({organization_name: "Ballerina"});
-    io:println(res);
-    test:assertEquals(res, {
-        organization: {
-            id: 120,
-            uuid: "6c3239ef",
-            'handle: "ballerina",
-            name: "Ballerina User"
-        },
-        is_admin: true
-    });
+    if !isWindowsEnvironment() {
+        UserServiceClient cc = check new("http://localhost:9172");
+        GetOrganizationResponse res = check cc->GetOrganization({organization_name: "Ballerina"});
+        io:println(res);
+        test:assertEquals(res, {
+            organization: {
+                id: 120,
+                uuid: "6c3239ef",
+                'handle: "ballerina",
+                name: "Ballerina User"
+            },
+            is_admin: true
+        });
+    }
 }
 
 @test:Config {enable: true}
 function testServiceWithUpdatedProtoDefinitionWithStructAndOneOfField() returns error? {
-    UserServiceClient cc = check new("http://localhost:9172");
-    Group res = check cc->GetGroup();
-    io:println(res);
-    test:assertEquals(res, {
-        id: 120,
-        org_name: "Ballerina",
-        org_uuid: "bal_swan_lake",
-        description: "This is Ballerina gRPC",
-        default_group: true,
-        other_data: {
-            "version": "2.3.1",
-            "release_data": [12.0, 13.0],
-            "artifact_count": 100.0
-        },
-        name: "gRPC"
-    });
+    if !isWindowsEnvironment() {
+        UserServiceClient cc = check new("http://localhost:9172");
+        Group res = check cc->GetGroup();
+        io:println(res);
+        test:assertEquals(res, {
+            id: 120,
+            org_name: "Ballerina",
+            org_uuid: "bal_swan_lake",
+            description: "This is Ballerina gRPC",
+            default_group: true,
+            other_data: {
+                "version": "2.3.1",
+                "release_data": [12.0, 13.0],
+                "artifact_count": 100.0
+            },
+            name: "gRPC"
+        });
+    }
 }
