@@ -190,6 +190,29 @@ task startLdapServer() {
     }
 }
 
+task startBallerinaGRPCServer() {
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker ps --filter name=bal-grpc-server"
+                standardOutput = stdOut
+            }
+            if (!stdOut.toString().contains("bal-grpc-server")) {
+                println "Starting Ballerina gRPC server."
+                exec {
+                    commandLine 'sh', '-c', "docker run --rm -d --name bal-grpc-server -p 9172:9172 -d dilansachi/grpc_ballerina_docker_service:latest"
+                    standardOutput = stdOut
+                }
+                println stdOut.toString()
+                sleep(5 * 1000)
+            } else {
+                println "Ballerina gRPC server is already running."
+            }
+        }
+    }
+}
+
 task stopLdapServer() {
     doLast {
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -208,6 +231,29 @@ task stopLdapServer() {
                 sleep(5 * 1000)
             } else {
                 println "LDAP server is not started."
+            }
+        }
+    }
+}
+
+task stopBallerinaGRPCServer() {
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker ps --filter name=bal-grpc-server"
+                standardOutput = stdOut
+            }
+            if (stdOut.toString().contains("bal-grpc-server")) {
+                println "Stopping Ballerina gRPC server."
+                exec {
+                    commandLine 'sh', '-c', "docker stop bal-grpc-server"
+                    standardOutput = stdOut
+                }
+                println stdOut.toString()
+                sleep(5 * 1000)
+            } else {
+                println "Ballerina gRPC server is not started."
             }
         }
     }
@@ -240,7 +286,6 @@ task startGoServer() {
             }
             if (!stdOut.toString().contains(testContainerName)) {
                 println "Starting Golang gRPC server."
-                def standardOutput = new ByteArrayOutputStream()
                 exec {
                     commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d daneshk/go_grpc_simple_server:latest"
                 }
@@ -288,7 +333,9 @@ task stopGoServer() {
 
 build.dependsOn ":${packageName}-test-utils:build"
 ballerinaTest.finalizedBy stopLdapServer
+ballerinaTest.finalizedBy stopBallerinaGRPCServer
 ballerinaTest.dependsOn startLdapServer
+ballerinaTest.dependsOn startBallerinaGRPCServer
 ballerinaTest.finalizedBy stopGoServer
 ballerinaTest.dependsOn startGoServer
 ballerinaTest.dependsOn ":${packageName}-test-utils:build"
