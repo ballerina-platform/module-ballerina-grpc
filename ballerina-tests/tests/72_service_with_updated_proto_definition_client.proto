@@ -55,14 +55,3 @@ message Group {
     }
     google.protobuf.Struct other_data = 8;
 }
-
-message User {
-    int64 id = 1;
-    string idp_id = 2;
-    string picture_url = 3;
-    string email = 4;
-    string display_name = 5;
-    bool is_anonymous = 6;
-    google.protobuf.Timestamp created_at = 7;
-    google.protobuf.Timestamp expired_at = 8;
-}
