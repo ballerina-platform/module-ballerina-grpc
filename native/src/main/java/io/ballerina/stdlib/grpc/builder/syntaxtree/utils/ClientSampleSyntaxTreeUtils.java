@@ -20,10 +20,13 @@ package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.AnonymousFunctionExpressionNode;
+import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionStatementNode;
 import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
 import io.ballerina.compiler.syntax.tree.ImportDeclarationNode;
+import io.ballerina.compiler.syntax.tree.ListConstructorExpressionNode;
+import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MethodCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.ModuleMemberDeclarationNode;
 import io.ballerina.compiler.syntax.tree.ModulePartNode;
@@ -50,12 +53,14 @@ import io.ballerina.tools.text.TextDocuments;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.SyntaxTreeGenerator.addSubModuleImports;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getImplicitNewExpressionNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getListConstructorExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getRemoteMethodCallActionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Literal.createBasicLiteralNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Literal.getBooleanLiteralNode;
@@ -324,14 +329,14 @@ public class ClientSampleSyntaxTreeUtils {
             nodes.add(NodeFactory.createFieldMatchPatternNode(
                     AbstractNodeFactory.createIdentifierToken(
                             field.getFieldName() + " "), SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                    getFieldPatternNode(field, msgMap)));
+                    getFieldPatternNode(field, msgMap, false)));
             nodes.add(NodeFactory.createCaptureBindingPatternNode(SyntaxTreeConstants.SYNTAX_TREE_COMMA));
         }
         nodes.remove(nodes.size() - 1);
         return nodes;
     }
 
-    private static Node getFieldPatternNode(Field field, Map<String, Message> msgMap) {
+    private static Node getFieldPatternNode(Field field, Map<String, Message> msgMap, boolean isRepeated) {
         switch (field.getFieldType()) {
             case "int":
             case "float":
@@ -353,19 +358,35 @@ public class ClientSampleSyntaxTreeUtils {
                 return getCheckExpressionNode(getFunctionCallExpressionNode("'any", "pack", "\"Hello\""));
             default:
                 if (msgMap.containsKey(field.getFieldType())) {
-                    Message msg = msgMap.get(field.getFieldType());
-                    ArrayList<Node> subRecordNodes = getFieldNodes(msg, msgMap);
-                    return NodeFactory.createMappingConstructorExpressionNode(
-                            SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
-                            NodeFactory.createSeparatedNodeList(subRecordNodes),
-                            SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE);
+                    if (field.getFieldLabel() != null && field.getFieldLabel().equals("[]") && !isRepeated) {
+                        return handleRepeatedTypes(field, msgMap);
+                    }
+                    return handleMessageTypes(field, msgMap);
                 }
                 if (BallerinaFileBuilder.enumDefaultValueMap.containsKey(field.getFieldType())) {
-                    return getCaptureBindingPatternNode("\"" + BallerinaFileBuilder.enumDefaultValueMap
-                            .get(field.getFieldType()) + "\"");
+                    return handleEnumTypes(field);
                 }
-                return getCaptureBindingPatternNode("\"\"");
+                return getCaptureBindingPatternNode("{}");
         }
+    }
+
+    private static CaptureBindingPatternNode handleEnumTypes(Field field) {
+        return getCaptureBindingPatternNode("\"" + BallerinaFileBuilder.enumDefaultValueMap
+                .get(field.getFieldType()) + "\"");
+    }
+
+    private static MappingConstructorExpressionNode handleMessageTypes(Field field, Map<String, Message> msgMap) {
+        Message msg = msgMap.get(field.getFieldType());
+        ArrayList<Node> subRecordNodes = getFieldNodes(msg, msgMap);
+        return NodeFactory.createMappingConstructorExpressionNode(
+                SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
+                NodeFactory.createSeparatedNodeList(subRecordNodes),
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE);
+    }
+
+    private static ListConstructorExpressionNode handleRepeatedTypes(Field field, Map<String, Message> msgMap) {
+        List<Node> subRecordNodes = Collections.singletonList(getFieldPatternNode(field, msgMap, true));
+        return getListConstructorExpressionNode(subRecordNodes);
     }
 
     private static NodeList<ImportDeclarationNode> addImports(NodeList<ImportDeclarationNode> imports, Method method,
