@@ -67,6 +67,7 @@ import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.FILE_SEPAR
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.GOOGLE_API_LIB;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.GOOGLE_STANDARD_LIB;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ClientSampleSyntaxTreeUtils.generateSyntaxTreeForClientSample;
 import static io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils.delete;
 import static io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils.handleProcessExecutionErrors;
 import static io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils.runProcess;
@@ -281,7 +282,8 @@ public class BallerinaFileBuilder {
                     String clientFilePath = generateOutputFile(this.balOutPath,
                             serviceStub.getServiceName().toLowerCase() + BalGenConstants.SAMPLE_FILE_PREFIX
                     );
-                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTreeForClientSample(serviceStub), clientFilePath);
+                    writeOutputFile(generateSyntaxTreeForClientSample(serviceStub, filename,
+                            stubFileObject.getMessageMap()), clientFilePath);
                 }
                 serviceIndex++;
             }

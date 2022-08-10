@@ -18,17 +18,23 @@
 
 package io.ballerina.stdlib.grpc.builder.syntaxtree.components;
 
+import io.ballerina.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerina.compiler.syntax.tree.AssignmentStatementNode;
 import io.ballerina.compiler.syntax.tree.CompoundAssignmentStatementNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionStatementNode;
+import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
+import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeFactory;
 import io.ballerina.compiler.syntax.tree.ReturnStatementNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
 
+import java.util.ArrayList;
+
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Literal.getNumericLiteralNode;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getQualifiedNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 
 /**
@@ -76,5 +82,16 @@ public class Statement {
                 expression,
                 SyntaxTreeConstants.SYNTAX_TREE_SEMICOLON
         );
+    }
+
+    public static FunctionCallExpressionNode getFunctionCallExpressionNode(String modulePrefix, String identifier,
+                                                                           String... args) {
+        ArrayList<Node> argNodeList = new ArrayList<>();
+        for (String arg : args) {
+            argNodeList.add(NodeFactory.createPositionalArgumentNode(getSimpleNameReferenceNode(arg)));
+        }
+        return NodeFactory.createFunctionCallExpressionNode(
+                getQualifiedNameReferenceNode(modulePrefix, identifier), SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
+                AbstractNodeFactory.createSeparatedNodeList(argNodeList), SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN);
     }
 }
