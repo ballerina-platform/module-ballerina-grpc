@@ -81,7 +81,7 @@ public class Map {
         );
     }
 
-    public void addMethodCallField(String key, ExpressionNode expression, String methodName, String[] args) {
+    public void addMethodCallField(String key, ExpressionNode expression, String methodName, String... args) {
         if (fields.size() > 0) {
             fields.add(SyntaxTreeConstants.SYNTAX_TREE_COMMA);
         }

@@ -213,8 +213,7 @@ public class CommonUtils {
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "grpcClient"),
                         methodName,
-                        new String[]{"\"" + method.getMethodId() + "\"", "message", HEADERS}
-                )
+                        "\"" + method.getMethodId() + "\"", "message", HEADERS)
         );
         if (method.getOutputType() == null && !function.getFunctionDefinitionNode()
                 .functionName().toString().endsWith("Context")) {

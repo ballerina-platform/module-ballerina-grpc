@@ -75,7 +75,7 @@ public class Expression {
     }
 
     public static MethodCallExpressionNode getMethodCallExpressionNode(ExpressionNode expression, String methodName,
-                                                                       String[] args) {
+                                                                       String... args) {
         List<Node> argList = new ArrayList<>();
         for (String arg : args) {
             if (argList.size() > 0) {
@@ -95,7 +95,7 @@ public class Expression {
     }
 
     public static RemoteMethodCallActionNode getRemoteMethodCallActionNode(ExpressionNode expression, String methodName,
-                                                                           String[] args) {
+                                                                           String... args) {
         List<Node> argList = new ArrayList<>();
         for (String arg : args) {
             if (argList.size() > 0) {
@@ -114,7 +114,7 @@ public class Expression {
         );
     }
 
-    public static ImplicitNewExpressionNode getImplicitNewExpressionNode(String[] args) {
+    public static ImplicitNewExpressionNode getImplicitNewExpressionNode(String... args) {
         List<Node> arguments = new ArrayList<>();
         for (String arg : args) {
             if (arguments.size() > 0) {
@@ -151,7 +151,7 @@ public class Expression {
         );
     }
 
-    public static ExplicitNewExpressionNode getExplicitNewExpressionNode(TypeDescriptorNode type, String[] args) {
+    public static ExplicitNewExpressionNode getExplicitNewExpressionNode(TypeDescriptorNode type, String... args) {
         List<Node> arguments = new ArrayList<>();
         for (String arg : args) {
             if (arguments.size() > 0) {

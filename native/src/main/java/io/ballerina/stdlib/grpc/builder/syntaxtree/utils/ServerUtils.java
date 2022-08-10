@@ -147,8 +147,7 @@ public class ServerUtils {
                                         method.getOutputType()),
                                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
-                        new String[]{"outputStream"}
-                )
+                        "outputStream")
         );
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
@@ -239,8 +238,7 @@ public class ServerUtils {
                                         method.getOutputType()),
                                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
-                        new String[]{"outputStream"}
-                )
+                        "outputStream")
         );
         returnMap.addSimpleNameReferenceField(HEADERS, "respHeaders");
         function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
@@ -322,8 +320,7 @@ public class ServerUtils {
                 ),
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "anydataStream"),
-                        "next",
-                        new String[]{}
+                        "next"
                 )
         );
         function.addVariableStatement(streamValue.getVariableDeclarationNode());
@@ -365,7 +362,7 @@ public class ServerUtils {
                     method.getOutputPackageType(filename) + method.getOutputType(),
                     getMethodCallExpressionNode(
                             getFieldAccessExpressionNode("streamValue", "value"),
-                            "cloneReadOnly", new String[]{}
+                            "cloneReadOnly"
                     )
             );
         } else {
@@ -403,8 +400,7 @@ public class ServerUtils {
         function.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "anydataStream"),
-                        "close",
-                        new String[]{}
+                        "close"
                 )
         );
         function.addQualifiers(new String[]{"public", "isolated"});
