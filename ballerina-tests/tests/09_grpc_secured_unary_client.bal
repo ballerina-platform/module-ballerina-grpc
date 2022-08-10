@@ -16,6 +16,7 @@
 
 import ballerina/grpc;
 import ballerina/test;
+import ballerina/io;
 
 @test:Config {enable: true}
 isolated function testUnarySecuredBlocking() returns grpc:Error? {
@@ -37,5 +38,15 @@ isolated function testUnarySecuredBlocking() returns grpc:Error? {
     });
 
     string response = check helloWorld9BlockingEp->hello("WSO2");
+    test:assertEquals(response, "Hello WSO2");
+}
+
+@test:Config {enable: true}
+isolated function testUnarySecuredBlockingWithDefaultCerts() returns grpc:Error? {
+    HelloWorld85Client helloWorld9BlockingEp = check new ("https://www.google.com");
+    io:println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Client created &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    string response = check helloWorld9BlockingEp->hello("WSO2");
+    io:println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Request sent &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    io:println(response);
     test:assertEquals(response, "Hello WSO2");
 }
