@@ -202,6 +202,13 @@ public class ToolingCommonTest {
     }
 
     @Test
+    public void testServiceWithNestedMessage() {
+        assertGeneratedSources("data-types", "service_with_nested_messages.proto",
+                "service_with_nested_messages_pb.bal", "servicewithnestedmessage_service.bal",
+                "servicewithnestedmessage_client.bal", "tool_test_data_type_25");
+    }
+
+    @Test
     public void testBasicNestedDirectories() {
         assertGeneratedSourcesWithNestedDirectories("nested/basic/**.proto",
                 "tool_test_nested_directories_01", null);
