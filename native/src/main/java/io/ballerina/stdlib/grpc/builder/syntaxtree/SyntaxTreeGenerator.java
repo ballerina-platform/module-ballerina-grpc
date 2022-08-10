@@ -346,7 +346,7 @@ public class SyntaxTreeGenerator {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
-    private static NodeList<ImportDeclarationNode> addSubModuleImports(List<Method> methodList, String filename,
+    public static NodeList<ImportDeclarationNode> addSubModuleImports(List<Method> methodList, String filename,
                                                                        NodeList<ImportDeclarationNode> imports) {
         HashSet<String> importedModules = new HashSet();
         for (Method method: methodList) {
@@ -364,8 +364,6 @@ public class SyntaxTreeGenerator {
         }
         return imports;
     }
-
-
 
     public static Function getInitFunction(String fileName) {
         Function function = new Function("init");

@@ -56,10 +56,31 @@ public class Literal {
         );
     }
 
+    public static BasicLiteralNode getDecimalLiteralNode(String value) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.DECIMAL_FLOATING_POINT_LITERAL_TOKEN,
+                AbstractNodeFactory.createIdentifierToken(value)
+        );
+    }
+
     public static BasicLiteralNode getStringLiteralNode(String value) {
         return NodeFactory.createBasicLiteralNode(
                 SyntaxKind.STRING_LITERAL,
                 AbstractNodeFactory.createIdentifierToken("\"" + value + "\"")
+        );
+    }
+
+    public static BasicLiteralNode getByteArrayLiteralNode(String bytes) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.BYTE_ARRAY_LITERAL,
+                AbstractNodeFactory.createIdentifierToken(bytes)
+        );
+    }
+
+    public static BasicLiteralNode getTupleLiteralNode(String tuple) {
+        return NodeFactory.createBasicLiteralNode(
+                SyntaxKind.ARRAY_TYPE_DESC,
+                AbstractNodeFactory.createIdentifierToken(tuple)
         );
     }
 
@@ -83,5 +104,9 @@ public class Literal {
                     )
             );
         }
+    }
+
+    public static BasicLiteralNode createBasicLiteralNode(SyntaxKind syntaxKind, String value) {
+        return NodeFactory.createBasicLiteralNode(syntaxKind, AbstractNodeFactory.createIdentifierToken(value));
     }
 }

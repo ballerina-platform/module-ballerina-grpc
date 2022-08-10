@@ -137,6 +137,26 @@ public class CommonUtils {
         }
     }
 
+    public static String getMethodType(String methodType) {
+        if (methodType == null) {
+            return "";
+        }
+        switch (methodType) {
+            case "byte[]":
+                return "Bytes";
+            case "time:Utc":
+                return "Timestamp";
+            case "time:Seconds":
+                return "Duration";
+            case "map<anydata>":
+                return "Struct";
+            case "'any:Any":
+                return "Any";
+            default:
+                return capitalize(methodType);
+        }
+    }
+
     public static void addClientCallBody(Function function, String inputCap, Method method, String filename) {
         String methodName = method.getMethodType().equals(UNARY) ? "executeSimpleRPC" : "executeServerStreaming";
         if (method.getInputType() == null) {
