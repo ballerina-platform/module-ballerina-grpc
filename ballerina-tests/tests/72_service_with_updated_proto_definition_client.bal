@@ -22,17 +22,17 @@ import ballerina/test;
 @test:Config {enable: true}
 function testServiceWithUpdatedProtoDefinition() returns error? {
     if !isWindowsEnvironment() {
-        UserServiceClient cc = check new("http://localhost:9172");
-        GetOrganizationResponse res = check cc->GetOrganization({organization_name: "Ballerina"});
+        UpdatedServiceClient cc = check new("http://localhost:9172");
+        GetClassResponse res = check cc->GetClass({class_name: "13-A"});
         io:println(res);
         test:assertEquals(res, {
-            organization: {
-                id: 120,
-                uuid: "6c3239ef",
-                'handle: "ballerina",
-                name: "Ballerina User"
+            class_data: {
+                number: 120,
+                location: "galle",
+                leader: "Charlie",
+                name: "13-A"
             },
-            is_admin: true
+            has_teacher: true
         });
     }
 }
@@ -40,21 +40,21 @@ function testServiceWithUpdatedProtoDefinition() returns error? {
 @test:Config {enable: true}
 function testServiceWithUpdatedProtoDefinitionWithStructAndOneOfField() returns error? {
     if !isWindowsEnvironment() {
-        UserServiceClient cc = check new("http://localhost:9172");
+        UpdatedServiceClient cc = check new("http://localhost:9172");
         Group res = check cc->GetGroup();
         io:println(res);
         test:assertEquals(res, {
-            id: 120,
-            org_name: "Ballerina",
-            org_uuid: "bal_swan_lake",
-            description: "This is Ballerina gRPC",
-            default_group: true,
+            g_number: 120,
+            g_name: "ABC",
+            g_id: "g_abc",
+            description: "This is ABC Group",
+            first_group: true,
+            name: "ABC",
             other_data: {
-                "version": "2.3.1",
-                "release_data": [12.0, 13.0],
-                "artifact_count": 100.0
-            },
-            name: "gRPC"
+                "count": "5",
+                "names": ["A", "B", "C", "D"],
+                "marks": 100.0
+            }
         });
     }
 }
