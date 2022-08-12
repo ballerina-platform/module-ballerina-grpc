@@ -19,14 +19,18 @@
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.CheckExpressionNode;
+import io.ballerina.compiler.syntax.tree.ImportDeclarationNode;
+import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
 import io.ballerina.stdlib.grpc.builder.stub.StubFile;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.IfElse;
+import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Imports;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Map;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaration;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -296,5 +300,24 @@ public class CommonUtils {
             }
         }
         return "";
+    }
+
+    public static NodeList<ImportDeclarationNode> addSubModuleImports(List<Method> methodList, String filename,
+                                                                      NodeList<ImportDeclarationNode> imports) {
+        HashSet<String> importedModules = new HashSet();
+        for (Method method: methodList) {
+            if (componentsModuleMap.containsKey(method.getInputType())) {
+                importedModules.add(componentsModuleMap.get(method.getInputType()));
+            }
+            if (componentsModuleMap.containsKey(method.getOutputType())) {
+                importedModules.add(componentsModuleMap.get(method.getOutputType()));
+            }
+        }
+        for (String type: importedModules.toArray(new String[importedModules.size()])) {
+            if (protofileModuleMap.containsKey(filename) && !protofileModuleMap.get(filename).equals(type)) {
+                imports = imports.add(Imports.getImportDeclarationNode(type));
+            }
+        }
+        return imports;
     }
 }

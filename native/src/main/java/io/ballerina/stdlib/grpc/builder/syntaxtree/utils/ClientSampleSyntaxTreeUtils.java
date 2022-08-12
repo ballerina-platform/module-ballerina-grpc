@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.SyntaxTreeGenerator.addSubModuleImports;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getCheckExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getImplicitNewExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getListConstructorExpressionNode;
@@ -77,6 +76,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.STREAMING_CLIENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addSubModuleImports;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getMethodType;
@@ -117,10 +117,12 @@ public class ClientSampleSyntaxTreeUtils {
             addServerStreamingCallMethodBody(main, serviceStub.getServerStreamingFunctions().get(0), filename, msgMap);
         } else if (serviceStub.getClientStreamingFunctions().size() > 0) {
             imports = addImports(imports, serviceStub.getClientStreamingFunctions().get(0), filename);
-            addStreamingCallMethodBody(main, serviceStub.getClientStreamingFunctions().get(0), filename, msgMap);
+            addClientBidiStreamingCallMethodBody(main,
+                    serviceStub.getClientStreamingFunctions().get(0), filename, msgMap);
         } else if (serviceStub.getBidiStreamingFunctions().size() > 0) {
             imports = addImports(imports, serviceStub.getBidiStreamingFunctions().get(0), filename);
-            addStreamingCallMethodBody(main, serviceStub.getBidiStreamingFunctions().get(0), filename, msgMap);
+            addClientBidiStreamingCallMethodBody(main,
+                    serviceStub.getBidiStreamingFunctions().get(0), filename, msgMap);
         }
 
         moduleMembers = moduleMembers.add(clientEp.getModuleVariableDeclarationNode());
@@ -155,8 +157,8 @@ public class ClientSampleSyntaxTreeUtils {
         main.addExpressionStatement(getForEachExpressionNode(method, filename));
     }
 
-    private static void addStreamingCallMethodBody(Function main, Method method, String filename,
-                                                   Map<String, Message> msgMap) {
+    private static void addClientBidiStreamingCallMethodBody(Function main, Method method, String filename,
+                                                             Map<String, Message> msgMap) {
         if (method.getInputType() != null) {
             main.addVariableStatement(getInputDeclarationStatement(method, filename, msgMap));
         }

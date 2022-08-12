@@ -47,7 +47,6 @@ import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +56,6 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependentValueTypeMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.streamClassMap;
@@ -79,6 +77,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addImports;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addSubModuleImports;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
@@ -344,25 +343,6 @@ public class SyntaxTreeGenerator {
         TextDocument textDocument = TextDocuments.from("");
         SyntaxTree syntaxTree = SyntaxTree.from(textDocument);
         return syntaxTree.modifyWith(modulePartNode);
-    }
-
-    public static NodeList<ImportDeclarationNode> addSubModuleImports(List<Method> methodList, String filename,
-                                                                       NodeList<ImportDeclarationNode> imports) {
-        HashSet<String> importedModules = new HashSet();
-        for (Method method: methodList) {
-            if (componentsModuleMap.containsKey(method.getInputType())) {
-                importedModules.add(componentsModuleMap.get(method.getInputType()));
-            }
-            if (componentsModuleMap.containsKey(method.getOutputType())) {
-                importedModules.add(componentsModuleMap.get(method.getOutputType()));
-            }
-        }
-        for (String type: importedModules.toArray(new String[importedModules.size()])) {
-            if (protofileModuleMap.containsKey(filename) && !protofileModuleMap.get(filename).equals(type)) {
-                imports = imports.add(Imports.getImportDeclarationNode(type));
-            }
-        }
-        return imports;
     }
 
     public static Function getInitFunction(String fileName) {
