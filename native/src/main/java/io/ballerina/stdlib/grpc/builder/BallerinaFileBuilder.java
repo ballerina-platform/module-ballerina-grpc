@@ -293,7 +293,7 @@ public class BallerinaFileBuilder {
             } else {
                 stubFilePath = generateOutputFile(this.balOutPath, filename + BalGenConstants.STUB_FILE_PREFIX);
             }
-            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(stubFileObject, isRoot), stubFilePath);
+            writeOutputFile(SyntaxTreeGenerator.generateSyntaxTree(stubFileObject, isRoot, mode), stubFilePath);
         } catch (IOException e) {
             throw new CodeBuilderException("IO Error while reading proto file descriptor. " + e.getMessage(), e);
         }
