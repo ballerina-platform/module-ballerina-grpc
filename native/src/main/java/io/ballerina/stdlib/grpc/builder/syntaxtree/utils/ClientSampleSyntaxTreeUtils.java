@@ -299,7 +299,7 @@ public class ClientSampleSyntaxTreeUtils {
                 node = createBasicLiteralNode(SyntaxKind.MAP_TYPE_DESC, "{message: \"Hello Ballerina\"}");
                 break;
             case "'any:Any":
-                node = getCheckExpressionNode(getFunctionCallExpressionNode("'any", "pack", "\"Hello\""));
+                node = getCheckExpressionNode(getFunctionCallExpressionNode("'any", "pack", "\"ballerina\""));
                 break;
             default:
                 if (msgMap.containsKey(method.getInputType())) {
