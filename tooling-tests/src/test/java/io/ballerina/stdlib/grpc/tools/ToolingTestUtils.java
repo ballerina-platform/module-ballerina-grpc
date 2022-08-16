@@ -75,6 +75,8 @@ public class ToolingTestUtils {
         }
 
         Path expectedStubFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY, outputDir, stubFile);
+        Path expectedClientStubFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
+                outputDir, stubFile.replace(".bal", "_client.bal"));
         Path expectedServiceFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
                 outputDir, serviceFile);
         Path expectedClientFilePath = Paths.get(RESOURCE_DIRECTORY.toString(), BAL_FILE_DIRECTORY,
@@ -103,9 +105,8 @@ public class ToolingTestUtils {
         Assert.assertTrue(Files.exists(actualStubFilePath));
         Assert.assertTrue(Files.exists(actualClientFilePath));
         Assert.assertFalse(hasSemanticDiagnostics(outputDirPath, false));
-        Assert.assertEquals(readContent(expectedStubFilePath), readContent(actualStubFilePath));
-        Assert.assertEquals(readContent(expectedClientFilePath),
-                readContent(actualClientFilePath));
+        Assert.assertEquals(readContent(expectedClientStubFilePath), readContent(actualStubFilePath));
+        Assert.assertEquals(readContent(expectedClientFilePath), readContent(actualClientFilePath));
         try {
             Files.deleteIfExists(actualStubFilePath);
             Files.deleteIfExists(actualClientFilePath);
