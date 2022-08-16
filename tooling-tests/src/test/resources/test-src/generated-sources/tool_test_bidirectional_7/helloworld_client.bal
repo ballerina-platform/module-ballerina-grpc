@@ -4,7 +4,7 @@ import ballerina/time;
 helloWorldClient ep = check new ("http://localhost:9090");
 
 public function main() returns error? {
-    string request = "Hello";
+    string request = "ballerina";
     GetTimeStreamingClient streamingClient = check ep->getTime();
     check streamingClient->sendString(request);
     check streamingClient->complete();

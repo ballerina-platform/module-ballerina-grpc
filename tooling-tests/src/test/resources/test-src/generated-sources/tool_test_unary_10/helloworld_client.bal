@@ -4,7 +4,7 @@ import ballerina/time;
 helloWorldClient ep = check new ("http://localhost:9090");
 
 public function main() returns error? {
-    string request = "Hello";
+    string request = "ballerina";
     time:Utc response = check ep->getTime(request);
     io:println(response);
 }
