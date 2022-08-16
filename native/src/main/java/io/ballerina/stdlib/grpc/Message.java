@@ -639,6 +639,8 @@ public class Message {
                                 "Field type is not supported : " + fieldDescriptor.getType()).asRuntimeException();
                     }
                 }
+            } else {
+                input.skipField(tag);
             }
         }
 

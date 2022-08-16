@@ -429,6 +429,8 @@ public class ToolingCommonTest {
         generateSourceCode(outputDirPath.resolve("67_simple_service_with_annotation.proto"), outputDirPath, null, null);
         generateSourceCode(outputDirPath.resolve("68_service_with_descriptor_annotation.proto"),
                 outputDirPath, null, null);
+        generateSourceCode(outputDirPath.resolve("72_service_with_updated_proto_definition_client.proto"),
+                outputDirPath, null, null);
         outputDirPath = Paths.get("../ballerina-tests/");
         generateSourceCode(outputDirPath.resolve("69_package_with_multiple_imports.proto"), outputDirPath, null, null);
         generateSourceCode(outputDirPath.resolve("70_package_with_nested_modules.proto"), outputDirPath, null, null);

@@ -27,6 +27,7 @@ import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
 import io.ballerina.compiler.syntax.tree.Token;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
+import io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants;
 import io.ballerina.stdlib.grpc.builder.stub.EnumMessage;
 import io.ballerina.stdlib.grpc.builder.stub.Message;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
@@ -101,7 +102,7 @@ public class SyntaxTreeGenerator {
 
     }
 
-    public static SyntaxTree generateSyntaxTree(StubFile stubFile, boolean isRoot) {
+    public static SyntaxTree generateSyntaxTree(StubFile stubFile, boolean isRoot, String mode) {
         Set<String> ballerinaImports = new TreeSet<>();
         Set<String> protobufImports = new TreeSet<>();
         Set<String> grpcStreamImports = new TreeSet<>();
@@ -176,9 +177,11 @@ public class SyntaxTreeGenerator {
             }
             moduleMembers = moduleMembers.add(client.getClassDefinitionNode());
 
-            for (java.util.Map.Entry<String, String> caller : service.getCallerMap().entrySet()) {
-                callerClasses.put(caller.getKey(), getCallerClass(caller.getKey(), caller.getValue(),
-                        stubFile.getFileName()));
+            if (!BalGenConstants.GRPC_CLIENT.equals(mode)) {
+                for (java.util.Map.Entry<String, String> caller : service.getCallerMap().entrySet()) {
+                    callerClasses.put(caller.getKey(), getCallerClass(caller.getKey(), caller.getValue(),
+                            stubFile.getFileName()));
+                }
             }
             for (java.util.Map.Entry<String, Boolean> valueType : service.getValueTypeMap().entrySet()) {
                 if (!(isRoot && dependentValueTypeMap.containsKey(valueType.getKey()))) {
