@@ -78,6 +78,7 @@ public class SyntaxTreeConstants {
     public static final Token SYNTAX_TREE_KEYWORD_SERVICE = AbstractNodeFactory.createIdentifierToken("service ");
     public static final Token SYNTAX_TREE_KEYWORD_ON = AbstractNodeFactory.createIdentifierToken("on ");
     public static final Token SYNTAX_TREE_KEYWORD_AS = AbstractNodeFactory.createIdentifierToken(" as ");
+    public static final Token SYNTAX_TREE_KEYWORD_FUNCTION = AbstractNodeFactory.createIdentifierToken("function");
 
     public static final Token SYNTAX_TREE_OPERATOR_OR = AbstractNodeFactory.createToken(SyntaxKind.LOGICAL_OR_TOKEN);
     public static final Token SYNTAX_TREE_OPERATOR_UNARY =
@@ -99,8 +100,11 @@ public class SyntaxTreeConstants {
             TypeDescriptor.getQualifiedNameReferenceNode("grpc", "Error");
     public static final OptionalTypeDescriptorNode SYNTAX_TREE_GRPC_ERROR_OPTIONAL =
             TypeDescriptor.getOptionalTypeDescriptorNode("grpc", "Error");
+    public static final OptionalTypeDescriptorNode SYNTAX_TREE_ERROR_OPTIONAL =
+            TypeDescriptor.getOptionalTypeDescriptorNode("", "error");
 
     public static final String ROOT_DESCRIPTOR = "_DESC";
     public static final String CONTENT = "content";
     public static final String HEADERS = "headers";
+    public static final String STREAMING_CLIENT = "StreamingClient";
 }

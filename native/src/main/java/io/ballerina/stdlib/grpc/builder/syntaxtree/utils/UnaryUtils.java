@@ -253,8 +253,7 @@ public class UnaryUtils {
             function.addReturnStatement(
                     getMethodCallExpressionNode(
                             getSimpleNameReferenceNode("result"),
-                            "toString",
-                            new String[]{}
+                            "toString"
                     )
             );
         } else if (method.getOutputType().equals("time:Utc")) {
@@ -263,8 +262,7 @@ public class UnaryUtils {
                             method.getOutputPackageType(filename) + method.getOutputType(),
                             getMethodCallExpressionNode(
                                     getSimpleNameReferenceNode("result"),
-                                    "cloneReadOnly",
-                                    new String[]{}
+                                    "cloneReadOnly"
                             )
                     )
             );
@@ -285,8 +283,7 @@ public class UnaryUtils {
                 returnMap.addMethodCallField(
                         CONTENT,
                         getSimpleNameReferenceNode("result"),
-                        "toString",
-                        new String[]{}
+                        "toString"
                 );
             } else if (method.getOutputType().equals("time:Utc")) {
                 returnMap.addTypeCastExpressionField(
@@ -294,8 +291,7 @@ public class UnaryUtils {
                         method.getOutputType(),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("result"),
-                                "cloneReadOnly",
-                                new String[]{}
+                                "cloneReadOnly"
                         )
                 );
             } else {

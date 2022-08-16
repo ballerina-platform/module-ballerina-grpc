@@ -39,7 +39,6 @@ import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Constant;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Imports;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Listener;
-import io.ballerina.stdlib.grpc.builder.syntaxtree.components.ModuleVariable;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Service;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Type;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants;
@@ -49,7 +48,6 @@ import io.ballerina.tools.text.TextDocument;
 import io.ballerina.tools.text.TextDocuments;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +57,6 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.BIDI_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.SERVER_STREAMING;
-import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.dependentValueTypeMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.streamClassMap;
@@ -68,7 +65,6 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getImplicitNewExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getMethodCallExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Statement.getCallStatementNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getCaptureBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getErrorTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getObjectFieldNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getOptionalTypeDescriptorNode;
@@ -76,13 +72,13 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getSimpleNameReferenceNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypeReferenceNode;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getUnionTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.ROOT_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addImports;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addSubModuleImports;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
@@ -306,8 +302,7 @@ public class SyntaxTreeGenerator {
             if (method.getInputType() != null) {
                 TypeDescriptorNode inputParam;
                 String inputName;
-                if (method.getMethodType().equals(CLIENT_STREAMING) ||
-                        method.getMethodType().equals(BIDI_STREAMING)) {
+                if (method.getMethodType().equals(CLIENT_STREAMING) || method.getMethodType().equals(BIDI_STREAMING)) {
                     inputParam = getStreamTypeDescriptorNode(
                             getSimpleNameReferenceNode(method.getInputPackagePrefix(fileName) + input),
                             SYNTAX_TREE_GRPC_ERROR_OPTIONAL
@@ -353,50 +348,6 @@ public class SyntaxTreeGenerator {
         return syntaxTree.modifyWith(modulePartNode);
     }
 
-    private static NodeList<ImportDeclarationNode> addSubModuleImports(List<Method> methodList, String filename,
-                                                                       NodeList<ImportDeclarationNode> imports) {
-        HashSet<String> importedModules = new HashSet();
-        for (Method method: methodList) {
-            if (componentsModuleMap.containsKey(method.getInputType())) {
-                importedModules.add(componentsModuleMap.get(method.getInputType()));
-            }
-            if (componentsModuleMap.containsKey(method.getOutputType())) {
-                importedModules.add(componentsModuleMap.get(method.getOutputType()));
-            }
-        }
-        for (String type: importedModules.toArray(new String[importedModules.size()])) {
-            if (protofileModuleMap.containsKey(filename) && !protofileModuleMap.get(filename).equals(type)) {
-                imports = imports.add(Imports.getImportDeclarationNode(type));
-            }
-        }
-        return imports;
-    }
-
-    public static SyntaxTree generateSyntaxTreeForClientSample(ServiceStub serviceStub) {
-        NodeList<ModuleMemberDeclarationNode> moduleMembers = AbstractNodeFactory.createEmptyNodeList();
-        NodeList<ImportDeclarationNode> imports = AbstractNodeFactory.createEmptyNodeList();
-
-        Function main = new Function("main");
-        main.addQualifiers(new String[]{"public"});
-        ModuleVariable clientEp = new ModuleVariable(
-                getTypedBindingPatternNode(
-                        getSimpleNameReferenceNode(serviceStub.getServiceName() + "Client"),
-                        getCaptureBindingPatternNode("ep")
-                ),
-                getCheckExpressionNode(
-                        getImplicitNewExpressionNode(new String[]{"\"http://localhost:9090\""})
-                )
-        );
-        moduleMembers = moduleMembers.add(clientEp.getModuleVariableDeclarationNode());
-        moduleMembers = moduleMembers.add(main.getFunctionDefinitionNode());
-
-        Token eofToken = AbstractNodeFactory.createIdentifierToken("");
-        ModulePartNode modulePartNode = NodeFactory.createModulePartNode(imports, moduleMembers, eofToken);
-        TextDocument textDocument = TextDocuments.from("");
-        SyntaxTree syntaxTree = SyntaxTree.from(textDocument);
-        return syntaxTree.modifyWith(modulePartNode);
-    }
-
     public static Function getInitFunction(String fileName) {
         Function function = new Function("init");
         function.addRequiredParameter(SYNTAX_TREE_VAR_STRING, "url");
@@ -408,7 +359,7 @@ public class SyntaxTreeGenerator {
         function.addAssignmentStatement(
                 getFieldAccessExpressionNode("self", "grpcClient"),
                 getCheckExpressionNode(
-                        getImplicitNewExpressionNode(new String[]{"url", "config"})
+                        getImplicitNewExpressionNode("url", "config")
                 )
         );
         function.addExpressionStatement(
@@ -417,10 +368,8 @@ public class SyntaxTreeGenerator {
                                 getMethodCallExpressionNode(
                                         getFieldAccessExpressionNode("self", "grpcClient"),
                                         "initStub",
-                                        new String[]{
-                                                "self",
-                                                generateDescriptorName(fileName)}
-                                )
+                                        "self",
+                                        generateDescriptorName(fileName))
                         )
                 )
         );

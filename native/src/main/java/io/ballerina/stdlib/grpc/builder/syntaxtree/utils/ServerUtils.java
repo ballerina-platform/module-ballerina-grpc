@@ -54,7 +54,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addClientCallBody;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getMethodType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getModulePrefix;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
@@ -74,26 +74,7 @@ public class ServerUtils {
         Function function = new Function(method.getMethodName());
         String inputCap = "Nil";
         if (method.getInputType() != null) {
-            switch (method.getInputType()) {
-                case "byte[]":
-                    inputCap = "Bytes";
-                    break;
-                case "time:Utc":
-                    inputCap = "Timestamp";
-                    break;
-                case "time:Seconds":
-                    inputCap = "Duration";
-                    break;
-                case "map<anydata>":
-                    inputCap = "Struct";
-                    break;
-                case "'any:Any":
-                    inputCap = "Any";
-                    break;
-                default:
-                    inputCap = capitalize(method.getInputType());
-                    break;
-            }
+            inputCap = getMethodType(method.getInputType());
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
                 contextParam = getProtobufType(method.getInputType()) + COLON + contextParam;
@@ -108,27 +89,7 @@ public class ServerUtils {
                     "req"
             );
         }
-        String outCap;
-        switch (method.getOutputType()) {
-            case "byte[]":
-                outCap = "Bytes";
-                break;
-            case "time:Utc":
-                outCap = "Timestamp";
-                break;
-            case "time:Seconds":
-                outCap = "Duration";
-                break;
-            case "map<anydata>":
-                outCap = "Struct";
-                break;
-            case "'any:Any":
-                outCap = "Any";
-                break;
-            default:
-                outCap = capitalize(method.getOutputType());
-                break;
-        }
+        String outCap = getMethodType(method.getOutputType());
         function.addReturns(
                 getUnionTypeDescriptorNode(
                         getStreamTypeDescriptorNode(
@@ -147,8 +108,7 @@ public class ServerUtils {
                                         method.getOutputType()),
                                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
-                        new String[]{"outputStream"}
-                )
+                        "outputStream")
         );
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
@@ -158,26 +118,7 @@ public class ServerUtils {
         Function function = new Function(method.getMethodName() + "Context");
         String inputCap = "Nil";
         if (method.getInputType() != null) {
-            switch (method.getInputType()) {
-                case "byte[]":
-                    inputCap = "Bytes";
-                    break;
-                case "time:Utc":
-                    inputCap = "Timestamp";
-                    break;
-                case "time:Seconds":
-                    inputCap = "Duration";
-                    break;
-                case "map<anydata>":
-                    inputCap = "Struct";
-                    break;
-                case "'any:Any":
-                    inputCap = "Any";
-                    break;
-                default:
-                    inputCap = capitalize(method.getInputType());
-                    break;
-            }
+            inputCap = getMethodType(method.getInputType());
             String contextParam = "Context" + inputCap;
             if (isBallerinaProtobufType(method.getInputType())) {
                 contextParam = getProtobufType(method.getInputType()) + COLON + contextParam;
@@ -192,27 +133,7 @@ public class ServerUtils {
                     "req"
             );
         }
-        String outputCap;
-        switch (method.getOutputType()) {
-            case "byte[]":
-                outputCap = "Bytes";
-                break;
-            case "time:Utc":
-                outputCap = "Timestamp";
-                break;
-            case "time:Seconds":
-                outputCap = "Duration";
-                break;
-            case "map<anydata>":
-                outputCap = "Struct";
-                break;
-            case "'any:Any":
-                outputCap = "Any";
-                break;
-            default:
-                outputCap = capitalize(method.getOutputType());
-                break;
-        }
+        String outputCap = getMethodType(method.getOutputType());
         String contextStreamParam = "Context" + outputCap + "Stream";
         if (isBallerinaProtobufType(method.getOutputType())) {
             contextStreamParam = getProtobufType(method.getOutputType()) + COLON + contextStreamParam;
@@ -239,8 +160,7 @@ public class ServerUtils {
                                         method.getOutputType()),
                                 SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL
                         ),
-                        new String[]{"outputStream"}
-                )
+                        "outputStream")
         );
         returnMap.addSimpleNameReferenceField(HEADERS, "respHeaders");
         function.addReturnStatement(returnMap.getMappingConstructorExpressionNode());
@@ -249,27 +169,7 @@ public class ServerUtils {
     }
 
     public static Class getServerStreamClass(Method method, String filename) {
-        String outputCap;
-        switch (method.getOutputType()) {
-            case "byte[]":
-                outputCap = "Bytes";
-                break;
-            case "time:Utc":
-                outputCap = "Timestamp";
-                break;
-            case "time:Seconds":
-                outputCap = "Duration";
-                break;
-            case "map<anydata>":
-                outputCap = "Struct";
-                break;
-            case "'any:Any":
-                outputCap = "Any";
-                break;
-            default:
-                outputCap = capitalize(method.getOutputType());
-                break;
-        }
+        String outputCap = getMethodType(method.getOutputType());
         Class serverStream = new Class(outputCap + "Stream", true);
         if (protofileModuleMap.containsKey(filename)) {
             componentsModuleMap.put(outputCap + "Stream", protofileModuleMap.get(filename));
@@ -322,8 +222,7 @@ public class ServerUtils {
                 ),
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "anydataStream"),
-                        "next",
-                        new String[]{}
+                        "next"
                 )
         );
         function.addVariableStatement(streamValue.getVariableDeclarationNode());
@@ -365,7 +264,7 @@ public class ServerUtils {
                     method.getOutputPackageType(filename) + method.getOutputType(),
                     getMethodCallExpressionNode(
                             getFieldAccessExpressionNode("streamValue", "value"),
-                            "cloneReadOnly", new String[]{}
+                            "cloneReadOnly"
                     )
             );
         } else {
@@ -403,8 +302,7 @@ public class ServerUtils {
         function.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "anydataStream"),
-                        "close",
-                        new String[]{}
+                        "close"
                 )
         );
         function.addQualifiers(new String[]{"public", "isolated"});

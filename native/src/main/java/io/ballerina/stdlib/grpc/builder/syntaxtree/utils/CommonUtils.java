@@ -19,14 +19,18 @@
 package io.ballerina.stdlib.grpc.builder.syntaxtree.utils;
 
 import io.ballerina.compiler.syntax.tree.CheckExpressionNode;
+import io.ballerina.compiler.syntax.tree.ImportDeclarationNode;
+import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.TypeDescriptorNode;
 import io.ballerina.stdlib.grpc.builder.stub.Method;
 import io.ballerina.stdlib.grpc.builder.stub.StubFile;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Function;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.IfElse;
+import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Imports;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.Map;
 import io.ballerina.stdlib.grpc.builder.syntaxtree.components.VariableDeclaration;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -137,6 +141,26 @@ public class CommonUtils {
         }
     }
 
+    public static String getMethodType(String methodType) {
+        if (methodType == null) {
+            return "";
+        }
+        switch (methodType) {
+            case "byte[]":
+                return "Bytes";
+            case "time:Utc":
+                return "Timestamp";
+            case "time:Seconds":
+                return "Duration";
+            case "map<anydata>":
+                return "Struct";
+            case "'any:Any":
+                return "Any";
+            default:
+                return capitalize(methodType);
+        }
+    }
+
     public static void addClientCallBody(Function function, String inputCap, Method method, String filename) {
         String methodName = method.getMethodType().equals(UNARY) ? "executeSimpleRPC" : "executeServerStreaming";
         if (method.getInputType() == null) {
@@ -213,8 +237,7 @@ public class CommonUtils {
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "grpcClient"),
                         methodName,
-                        new String[]{"\"" + method.getMethodId() + "\"", "message", HEADERS}
-                )
+                        "\"" + method.getMethodId() + "\"", "message", HEADERS)
         );
         if (method.getOutputType() == null && !function.getFunctionDefinitionNode()
                 .functionName().toString().endsWith("Context")) {
@@ -277,5 +300,24 @@ public class CommonUtils {
             }
         }
         return "";
+    }
+
+    public static NodeList<ImportDeclarationNode> addSubModuleImports(List<Method> methodList, String filename,
+                                                                      NodeList<ImportDeclarationNode> imports) {
+        HashSet<String> importedModules = new HashSet();
+        for (Method method: methodList) {
+            if (componentsModuleMap.containsKey(method.getInputType())) {
+                importedModules.add(componentsModuleMap.get(method.getInputType()));
+            }
+            if (componentsModuleMap.containsKey(method.getOutputType())) {
+                importedModules.add(componentsModuleMap.get(method.getOutputType()));
+            }
+        }
+        for (String type: importedModules.toArray(new String[importedModules.size()])) {
+            if (protofileModuleMap.containsKey(filename) && !protofileModuleMap.get(filename).equals(type)) {
+                imports = imports.add(Imports.getImportDeclarationNode(type));
+            }
+        }
+        return imports;
     }
 }

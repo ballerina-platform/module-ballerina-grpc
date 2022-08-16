@@ -78,8 +78,7 @@ public class CallerUtils {
         getId.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "caller"),
-                        "getId",
-                        new String[]{}
+                        "getId"
                 )
         );
         getId.addQualifiers(new String[]{"public", "isolated"});
@@ -124,8 +123,7 @@ public class CallerUtils {
                     getRemoteMethodCallActionNode(
                             getFieldAccessExpressionNode("self", "caller"),
                             "send",
-                            new String[]{"response"}
-                    )
+                            "response")
             );
             send.addQualifiers(new String[]{"isolated", "remote"});
             caller.addMember(send.getFunctionDefinitionNode());
@@ -146,8 +144,7 @@ public class CallerUtils {
                     getRemoteMethodCallActionNode(
                             getFieldAccessExpressionNode("self", "caller"),
                             "send",
-                            new String[]{"response"}
-                    )
+                            "response")
             );
             sendContext.addQualifiers(new String[]{"isolated", "remote"});
             caller.addMember(sendContext.getFunctionDefinitionNode());
@@ -160,8 +157,7 @@ public class CallerUtils {
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "caller"),
                         "sendError",
-                        new String[]{"response"}
-                )
+                        "response")
         );
         sendError.addQualifiers(new String[]{"isolated", "remote"});
         caller.addMember(sendError.getFunctionDefinitionNode());
@@ -171,8 +167,7 @@ public class CallerUtils {
         complete.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "caller"),
-                        "complete",
-                        new String[]{}
+                        "complete"
                 )
         );
         complete.addQualifiers(new String[]{"isolated", "remote"});
@@ -183,8 +178,7 @@ public class CallerUtils {
         isCancelled.addReturnStatement(
                 getMethodCallExpressionNode(
                         getFieldAccessExpressionNode("self", "caller"),
-                        "isCancelled",
-                        new String[]{}
+                        "isCancelled"
                 )
         );
         isCancelled.addQualifiers(new String[]{"public", "isolated"});

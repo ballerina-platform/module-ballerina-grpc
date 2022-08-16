@@ -56,6 +56,7 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getWildcardBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.HEADERS;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.STREAMING_CLIENT;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING_ARRAY;
@@ -78,7 +79,7 @@ public class ClientUtils {
     public static Function getStreamingClientFunction(Method method) {
         String methodName = method.getMethodType().equals(BIDI_STREAMING) ? "executeBidirectionalStreaming" :
                 "executeClientStreaming";
-        String clientName = capitalize(method.getMethodName()) + "StreamingClient";
+        String clientName = capitalize(method.getMethodName()) + STREAMING_CLIENT;
         Function function = new Function(method.getMethodName());
         function.addReturns(
                 getUnionTypeDescriptorNode(
@@ -88,15 +89,14 @@ public class ClientUtils {
         );
         VariableDeclaration sClient = new VariableDeclaration(
                 getTypedBindingPatternNode(
-                        getQualifiedNameReferenceNode("grpc", "StreamingClient"),
+                        getQualifiedNameReferenceNode("grpc", STREAMING_CLIENT),
                         getCaptureBindingPatternNode("sClient")
                 ),
                 getCheckExpressionNode(
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "grpcClient"),
                                 methodName,
-                                new String[]{"\"" + method.getMethodId() + "\""}
-                        )
+                                "\"" + method.getMethodId() + "\"")
                 )
         );
         function.addVariableStatement(sClient.getVariableDeclarationNode());
@@ -107,7 +107,7 @@ public class ClientUtils {
 
     public static Class getStreamingClientClass(Method method, String filename) {
         String name = method.getMethodName().substring(0, 1).toUpperCase() + method.getMethodName().substring(1) +
-                "StreamingClient";
+                STREAMING_CLIENT;
         Class streamingClient = new Class(name, true);
         streamingClient.addQualifiers(new String[]{"client"});
 
@@ -115,7 +115,7 @@ public class ClientUtils {
                 getObjectFieldNode(
                         "private",
                         new String[]{},
-                        getQualifiedNameReferenceNode("grpc", "StreamingClient"),
+                        getQualifiedNameReferenceNode("grpc", STREAMING_CLIENT),
                         "sClient"));
 
         streamingClient.addMember(getInitFunction().getFunctionDefinitionNode());
@@ -138,7 +138,7 @@ public class ClientUtils {
     private static Function getInitFunction() {
         Function function = new Function("init");
         function.addRequiredParameter(
-                TypeDescriptor.getQualifiedNameReferenceNode("grpc", "StreamingClient"),
+                TypeDescriptor.getQualifiedNameReferenceNode("grpc", STREAMING_CLIENT),
                 "sClient"
         );
         function.addAssignmentStatement(
@@ -181,8 +181,7 @@ public class ClientUtils {
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
                         "send",
-                        new String[]{"message"}
-                )
+                        "message")
         );
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
@@ -226,8 +225,7 @@ public class ClientUtils {
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
                         "send",
-                        new String[]{"message"}
-                )
+                        "message")
         );
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
@@ -288,8 +286,7 @@ public class ClientUtils {
                 getCheckExpressionNode(
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "sClient"),
-                                "receive",
-                                new String[]{}
+                                "receive"
                         )
                 )
         );
@@ -331,8 +328,7 @@ public class ClientUtils {
                         getReturnStatementNode(
                                 getMethodCallExpressionNode(
                                         getSimpleNameReferenceNode("payload"),
-                                        "toString",
-                                        new String[]{}
+                                        "toString"
                                 )
                         )
                 );
@@ -343,8 +339,7 @@ public class ClientUtils {
                                         method.getOutputType(),
                                         getMethodCallExpressionNode(
                                                 getSimpleNameReferenceNode("payload"),
-                                                "cloneReadOnly",
-                                                new String[]{}
+                                                "cloneReadOnly"
                                         )
                                 )
                         )
@@ -432,8 +427,7 @@ public class ClientUtils {
                 getCheckExpressionNode(
                         getRemoteMethodCallActionNode(
                                 getFieldAccessExpressionNode("self", "sClient"),
-                                "receive",
-                                new String[]{}
+                                "receive"
                         )
                 )
         );
@@ -461,8 +455,7 @@ public class ClientUtils {
                 returnMap.addMethodCallField(
                         CONTENT,
                         getSimpleNameReferenceNode("payload"),
-                        "toString",
-                        new String[]{}
+                        "toString"
                 );
             } else if (method.getOutputType().equals("time:Utc")) {
                 returnMap.addTypeCastExpressionField(
@@ -470,8 +463,7 @@ public class ClientUtils {
                         method.getOutputType(),
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("payload"),
-                                "cloneReadOnly",
-                                new String[]{}
+                                "cloneReadOnly"
                         )
                 );
             } else {
@@ -501,8 +493,7 @@ public class ClientUtils {
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
                         "sendError",
-                        new String[]{"response"}
-                )
+                        "response")
         );
         function.addQualifiers(new String[]{"isolated", "remote"});
         return function;
@@ -514,8 +505,7 @@ public class ClientUtils {
         function.addReturnStatement(
                 getRemoteMethodCallActionNode(
                         getFieldAccessExpressionNode("self", "sClient"),
-                        "complete",
-                        new String[]{}
+                        "complete"
                 )
         );
         function.addQualifiers(new String[]{"isolated", "remote"});

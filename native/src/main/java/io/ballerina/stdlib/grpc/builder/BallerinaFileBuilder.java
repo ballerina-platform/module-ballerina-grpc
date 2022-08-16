@@ -67,6 +67,7 @@ import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.FILE_SEPAR
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.GOOGLE_API_LIB;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.GOOGLE_STANDARD_LIB;
 import static io.ballerina.stdlib.grpc.builder.balgen.BalGenConstants.PACKAGE_SEPARATOR;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.ClientSampleSyntaxTreeUtils.generateSyntaxTreeForClientSample;
 import static io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils.delete;
 import static io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils.handleProcessExecutionErrors;
 import static io.ballerina.stdlib.grpc.protobuf.utils.BalFileGenerationUtils.runProcess;
@@ -91,6 +92,8 @@ public class BallerinaFileBuilder {
     // Contains the related module names of all the records, context records and enums
     public static Map<String, String> componentsModuleMap;
     public static Map<String, Class> streamClassMap;
+    // Contains the message definitions which will be used in the client sample generation
+    public static Map<String, Message> messageMap;
 
     public BallerinaFileBuilder(DescriptorMeta rootDescriptor, Set<DescriptorMeta> dependentDescriptors) {
         this.rootDescriptor = rootDescriptor;
@@ -99,6 +102,7 @@ public class BallerinaFileBuilder {
         dependentValueTypeMap = new HashMap<>();
         protofileModuleMap = new HashMap<>();
         componentsModuleMap = new HashMap<>();
+        messageMap = new HashMap<>();
         currentPackageName = Optional.empty();
     }
 
@@ -111,6 +115,7 @@ public class BallerinaFileBuilder {
         dependentValueTypeMap = new HashMap<>();
         protofileModuleMap = new HashMap<>();
         componentsModuleMap = new HashMap<>();
+        messageMap = new HashMap<>();
         currentPackageName = Optional.ofNullable(getExistingPackageName(this.balOutPath));
     }
 
@@ -218,6 +223,7 @@ public class BallerinaFileBuilder {
             for (DescriptorProtos.DescriptorProto descriptorProto : messageTypeList) {
                 Message message = Message.newBuilder(descriptorProto, filePackage).build();
                 messageList.add(message);
+                messageMap.put(message.getMessageName(), message);
             }
 
             // write definition objects to ballerina files.
@@ -281,7 +287,8 @@ public class BallerinaFileBuilder {
                     String clientFilePath = generateOutputFile(this.balOutPath,
                             serviceStub.getServiceName().toLowerCase() + BalGenConstants.SAMPLE_FILE_PREFIX
                     );
-                    writeOutputFile(SyntaxTreeGenerator.generateSyntaxTreeForClientSample(serviceStub), clientFilePath);
+                    writeOutputFile(generateSyntaxTreeForClientSample(serviceStub, filename, messageMap),
+                            clientFilePath);
                 }
                 serviceIndex++;
             }

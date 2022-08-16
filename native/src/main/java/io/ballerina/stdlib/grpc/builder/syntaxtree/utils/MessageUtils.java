@@ -327,8 +327,7 @@ public class MessageUtils {
                         getMethodCallExpressionNode(
                                 getSimpleNameReferenceNode("r"),
                                 "removeIfHasKey",
-                                new String[]{"\"" + oneOfField.getFieldName().replaceAll("'", "") + "\""}
-                        )
+                                "\"" + oneOfField.getFieldName().replaceAll("'", "") + "\"")
                 );
             }
         }
