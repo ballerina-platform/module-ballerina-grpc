@@ -23,7 +23,6 @@ import io.ballerina.compiler.syntax.tree.AnonymousFunctionExpressionNode;
 import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionStatementNode;
-import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
 import io.ballerina.compiler.syntax.tree.ImportDeclarationNode;
 import io.ballerina.compiler.syntax.tree.ListConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
@@ -209,29 +208,19 @@ public class ClientSampleSyntaxTreeUtils {
     }
 
     private static ExpressionStatementNode getForEachExpressionNode(Method method, String filename) {
-        FunctionSignatureNode functionSignatureNode = getFunctionSignatureNode(method, filename);
-        AnonymousFunctionExpressionNode expressionNode = getAnonymousFunctionExpressionNode(functionSignatureNode);
-        MethodCallExpressionNode methodCallExpressionNode = getForEachMethodCall(expressionNode);
+        AnonymousFunctionExpressionNode functionExpressionNode = getAnonymousFunctionExpressionNode(method, filename);
+        MethodCallExpressionNode methodCallExpressionNode = getForEachMethodCall(functionExpressionNode);
         return getCallStatementNode(getCheckExpressionNode(methodCallExpressionNode));
     }
 
-    private static FunctionSignatureNode getFunctionSignatureNode(Method method, String filename) {
-        return NodeFactory.createFunctionSignatureNode(SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
-                AbstractNodeFactory.createSeparatedNodeList(getTypedBindingPatternNode(
-                        NodeFactory.createSimpleNameReferenceNode(AbstractNodeFactory.createIdentifierToken(
-                                method.getOutputPackageType(filename) + method.getOutputType() + " ")),
-                        getCaptureBindingPatternNode("value"))),
-                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_PAREN, null);
-    }
-
-    private static AnonymousFunctionExpressionNode getAnonymousFunctionExpressionNode(FunctionSignatureNode
-                                                                                              functionSignatureNode) {
+    private static AnonymousFunctionExpressionNode getAnonymousFunctionExpressionNode(Method method, String filename) {
+        Function function = new Function();
+        function.addRequiredParameter(getSimpleNameReferenceNode(method.getOutputPackageType(filename) +
+                method.getOutputType() + " "), "value");
+        function.addExpressionStatement(getPrintlnStatement("value"));
         return NodeFactory.createExplicitAnonymousFunctionExpressionNode(AbstractNodeFactory.createEmptyNodeList(),
                 AbstractNodeFactory.createEmptyNodeList(), SyntaxTreeConstants.SYNTAX_TREE_KEYWORD_FUNCTION,
-                functionSignatureNode, NodeFactory.createFunctionBodyBlockNode(
-                        SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
-                        null, AbstractNodeFactory.createNodeList(getPrintlnStatement("value")),
-                        SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE));
+                function.getFunctionSignature(), function.getFunctionBody());
     }
 
     private static MethodCallExpressionNode getForEachMethodCall(AnonymousFunctionExpressionNode expressionNode) {
@@ -295,7 +284,7 @@ public class ClientSampleSyntaxTreeUtils {
                 node = getBooleanLiteralNode(true);
                 break;
             case "string":
-                node = getStringLiteralNode("Hello");
+                node = getStringLiteralNode("ballerina");
                 break;
             case "byte[]":
                 node = getByteArrayLiteralNode("[72,101,108,108,111]");
@@ -355,9 +344,9 @@ public class ClientSampleSyntaxTreeUtils {
             case "Struct":
                 return getCaptureBindingPatternNode("{message: \"Hello Ballerina\"}");
             case "string":
-                return getCaptureBindingPatternNode("\"Hello\"");
+                return getCaptureBindingPatternNode("\"ballerina\"");
             case "'any:Any":
-                return getCheckExpressionNode(getFunctionCallExpressionNode("'any", "pack", "\"Hello\""));
+                return getCheckExpressionNode(getFunctionCallExpressionNode("'any", "pack", "\"ballerina\""));
             default:
                 if (msgMap.containsKey(field.getFieldType())) {
                     if (field.getFieldLabel() != null && field.getFieldLabel().equals("[]") && !isRepeated) {
