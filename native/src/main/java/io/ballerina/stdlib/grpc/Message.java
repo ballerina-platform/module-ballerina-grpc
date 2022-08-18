@@ -745,6 +745,7 @@ public class Message {
             if (desc != null) {
                 return desc;
             }
+            // If an exception occurs, we get the descriptor from the registry
         } catch (Descriptors.DescriptorValidationException e) { }
         return getMessageDescriptorFromMessageRegistry(messageName);
     }
@@ -1488,6 +1489,7 @@ public class Message {
                     ValueCreator.createRecordValue(recordType.getPackage(), messageName).getType())) {
                 try {
                     return getDescriptorFromRecord(recordType, messageName);
+                    // If an exception occurs, we get the descriptor from the registry
                 } catch (InvalidProtocolBufferException e) { }
             }
         }
