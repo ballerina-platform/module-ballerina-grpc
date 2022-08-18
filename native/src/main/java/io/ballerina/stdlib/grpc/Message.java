@@ -104,6 +104,7 @@ public class Message {
     private static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
 
     private String messageName;
+    private String messageFullName;
     private int memoizedSize = -1;
     private HttpHeaders headers;
     private Object bMessage = null;
@@ -129,6 +130,7 @@ public class Message {
         this.descriptor = descriptor;
         this.bMessage = bMessage;
         this.messageName = descriptor.getName();
+        this.messageFullName = descriptor.getFullName();
     }
 
     private Message(String messageName) {
@@ -776,12 +778,7 @@ public class Message {
         if (messageDescriptorMap.containsKey(messageName)) {
             return messageDescriptorMap.get(messageName);
         }
-        for (String key : messageDescriptorMap.keySet().toArray(new String[]{})) { // for messages with a package name
-            if (key.endsWith("." + messageName)) {
-                return messageDescriptorMap.get(key);
-            }
-        }
-        return null;
+        return messageDescriptorMap.get(messageFullName);
     }
 
     @SuppressWarnings("unchecked")
