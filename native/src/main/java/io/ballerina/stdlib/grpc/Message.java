@@ -56,9 +56,11 @@ import java.util.List;
 import java.util.Map;
 
 import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BOOL_TYPE_NAME;
@@ -102,6 +104,7 @@ public class Message {
     private static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
 
     private String messageName;
+    private String messageFullName;
     private int memoizedSize = -1;
     private HttpHeaders headers;
     private Object bMessage = null;
@@ -120,13 +123,14 @@ public class Message {
     public Message(String messageName, Object bMessage) {
         this.messageName = messageName;
         this.bMessage = bMessage;
-        this.descriptor = MessageRegistry.getInstance().getMessageDescriptor(messageName);
+        this.descriptor = getMessageDescriptorFromMessageRegistry(messageName);
     }
 
     public Message(Descriptors.Descriptor descriptor, Object bMessage) {
         this.descriptor = descriptor;
         this.bMessage = bMessage;
         this.messageName = descriptor.getName();
+        this.messageFullName = descriptor.getFullName();
     }
 
     private Message(String messageName) {
@@ -667,28 +671,26 @@ public class Message {
         return byteArray;
     }
 
-    private void updateBBMap(BMap<BString, Object> bBMap,
-                                 Descriptors.FieldDescriptor fieldDescriptor, Object bValue) {
+    private void updateBBMap(BMap<BString, Object> bBMap, Descriptors.FieldDescriptor fieldDescriptor, Object bValue) {
         bBMap.put(StringUtils.fromString(fieldDescriptor.getName()), bValue);
     }
 
     private com.google.protobuf.Descriptors.Descriptor getDescriptor() throws InvalidProtocolBufferException {
 
         if (descriptor == null || this.descriptor.getFile().getFullName().endsWith(".placeholder.proto")) {
-            BMap<BString, Object> bMap = null;
             if (descriptor != null && this.descriptor.getFile().getFullName().startsWith("google.protobuf")) {
                 String messageName = this.descriptor.getFile().getFullName()
                         .replace(".placeholder.proto", "");
                 return getDescriptorForPredefinedTypes(messageName);
             } else if (bMessage != null && bMessage instanceof BMap) {
-                bMap = (BMap<BString, Object>) bMessage;
+                BMap<BString, Object> bMap = (BMap<BString, Object>) bMessage;
                 RecordType recordType = (RecordType) bMap.getType();
                 return getDescriptorFromRecord(recordType);
             }
         } else if (descriptor != null) {
             return descriptor;
         }
-        return MessageRegistry.getInstance().getMessageDescriptor(messageName);
+        return getMessageDescriptorFromMessageRegistry(messageName);
     }
 
     private com.google.protobuf.Descriptors.Descriptor getDescriptor(RecordType recordType)
@@ -714,34 +716,40 @@ public class Message {
         return messageEntries[messageEntries.length - 1];
     }
 
-    private com.google.protobuf.Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType)
+    private Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType)
             throws InvalidProtocolBufferException {
-
         return getDescriptorFromRecord(recordType, messageName);
     }
 
-    private com.google.protobuf.Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType,
-                                                                               String messageName)
+    private Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType, String messageName)
             throws InvalidProtocolBufferException {
-
         if (isDescriptorAnnotationAvailable(recordType)) {
-            BMap<BString, Object> annotations = recordType.getAnnotations();
-            String annotation = filterDescAnnotation(annotations);
-            byte[] annotationAsBytes = ServicesBuilderUtils.hexStringToByteArray(annotation);
-            DescriptorProtos.FileDescriptorProto file = DescriptorProtos.FileDescriptorProto
-                    .parseFrom(annotationAsBytes);
-            Descriptors.FileDescriptor fileDescriptor;
-            try {
-                fileDescriptor = Descriptors.FileDescriptor.buildFrom(file, new Descriptors.FileDescriptor[]{}, true);
-                Descriptors.Descriptor desc = fileDescriptor.findMessageTypeByName(recordType.getName());
-                if (desc != null) {
-                    return desc;
-                }
-            } catch (Descriptors.DescriptorValidationException e) {
-                return MessageRegistry.getInstance().getMessageDescriptor(messageName);
-            }
+            return extractDescriptorFromAnnotation(recordType.getAnnotations(), recordType.getName());
         }
-        return MessageRegistry.getInstance().getMessageDescriptor(messageName);
+        // When the user returns an anonymous record as a stream, annotation values are not included in the record type
+        RecordType createdRecordType = (RecordType) ValueCreator.createRecordValue(recordType.getPackage(),
+                messageName).getType();
+        if (isDescriptorAnnotationAvailable(createdRecordType)) {
+            return extractDescriptorFromAnnotation(createdRecordType.getAnnotations(), this.messageName);
+        }
+        return getMessageDescriptorFromMessageRegistry(messageName);
+    }
+
+    private Descriptors.Descriptor extractDescriptorFromAnnotation(BMap<BString, Object> annotations, String msgName)
+            throws InvalidProtocolBufferException {
+        String annotation = filterDescAnnotation(annotations);
+        byte[] annotationAsBytes = ServicesBuilderUtils.hexStringToByteArray(annotation);
+        DescriptorProtos.FileDescriptorProto file = DescriptorProtos.FileDescriptorProto.parseFrom(annotationAsBytes);
+        try {
+            Descriptors.FileDescriptor fileDescriptor = Descriptors.FileDescriptor
+                    .buildFrom(file, new Descriptors.FileDescriptor[]{}, true);
+            Descriptors.Descriptor desc = fileDescriptor.findMessageTypeByName(msgName);
+            if (desc != null) {
+                return desc;
+            }
+            // If an exception occurs, we get the descriptor from the registry
+        } catch (Descriptors.DescriptorValidationException e) { }
+        return getMessageDescriptorFromMessageRegistry(messageName);
     }
 
     private String filterDescAnnotation(BMap<BString, Object> annotations) {
@@ -756,13 +764,21 @@ public class Message {
     }
 
     private boolean isDescriptorAnnotationAvailable(RecordType recordType) {
-        return Arrays.stream(recordType.getAnnotations().getKeys()).anyMatch(
-                s -> isValidProtoAnnotation(s.getValue()));
+        return Arrays.stream(recordType.getAnnotations().getKeys()).anyMatch(s -> isValidProtoAnnotation(s.getValue()));
     }
 
     private boolean isValidProtoAnnotation(String annotationName) {
-        return annotationName.contains("ballerina") && annotationName.contains("protobuf") &&
-                annotationName.contains("Descriptor");
+        return annotationName.contains(ORG_NAME) && annotationName.contains("protobuf") &&
+                annotationName.contains(ANN_DESCRIPTOR);
+    }
+
+    private Descriptors.Descriptor getMessageDescriptorFromMessageRegistry(String messageName) {
+        Map<String, Descriptors.Descriptor> messageDescriptorMap = MessageRegistry.getInstance()
+                .getMessageDescriptorMap();
+        if (messageDescriptorMap.containsKey(messageName)) {
+            return messageDescriptorMap.get(messageName);
+        }
+        return messageDescriptorMap.get(messageFullName);
     }
 
     @SuppressWarnings("unchecked")
@@ -1459,15 +1475,6 @@ public class Message {
         return types[types.length - 1].trim();
     }
 
-    private Descriptors.Descriptor findFieldDescriptorFromTypeUrl(String typeName) {
-
-        if (typeName.startsWith("google.protobuf")) {
-            return findGoogleDescriptorFromName(typeName);
-        } else {
-            return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(typeName);
-        }
-    }
-
     private Descriptors.Descriptor findFieldDescriptorFromTypeUrl(String messageName, Object value) {
 
         if (messageName.startsWith("google.protobuf")) {
@@ -1475,26 +1482,12 @@ public class Message {
         } else if (value instanceof BMap) {
             BMap<BString, Object> bMap = (BMap<BString, Object>) value;
             RecordType recordType = (RecordType) bMap.getType();
-            if (isDescriptorAnnotationAvailable(recordType)) {
+            if (isDescriptorAnnotationAvailable(recordType) || isDescriptorAnnotationAvailable((RecordType)
+                    ValueCreator.createRecordValue(recordType.getPackage(), messageName).getType())) {
                 try {
                     return getDescriptorFromRecord(recordType, messageName);
-                } catch (InvalidProtocolBufferException e) {
-                    return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(messageName);
-                }
-            }
-        }
-        return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(messageName);
-    }
-
-    private Descriptors.Descriptor findFieldDescriptorFromTypeUrl(String messageName, RecordType recordType) {
-
-        if (messageName.startsWith("google.protobuf")) {
-            return findGoogleDescriptorFromName(messageName);
-        } else if (isDescriptorAnnotationAvailable(recordType)) {
-            try {
-                return getDescriptorFromRecord(recordType, messageName);
-            } catch (InvalidProtocolBufferException e) {
-                return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(messageName);
+                    // If an exception occurs, we get the descriptor from the registry
+                } catch (InvalidProtocolBufferException e) { }
             }
         }
         return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(messageName);
@@ -1558,7 +1551,6 @@ public class Message {
                     " (should never happen).", e);
         }
     }
-
 
     private Message readMessage(final Descriptors.FieldDescriptor fieldDescriptor, final Type type,
                                 final CodedInputStream in) throws IOException {

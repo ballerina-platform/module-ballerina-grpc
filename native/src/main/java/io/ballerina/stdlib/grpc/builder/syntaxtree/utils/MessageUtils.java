@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getBinaryExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getBracedExpressionNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.Expression.getFieldAccessExpressionNode;
@@ -75,7 +76,7 @@ public class MessageUtils {
         NodeList<ModuleMemberDeclarationNode> messageMembers = AbstractNodeFactory.createEmptyNodeList();
         NodeList<AnnotationNode> annotationNodes = AbstractNodeFactory.createEmptyNodeList();
 
-        Annotation protobufDescriptor = new Annotation("protobuf", "Descriptor");
+        Annotation protobufDescriptor = new Annotation("protobuf", ANN_DESCRIPTOR);
         protobufDescriptor.addField(
                 "value",
                 descriptorName
