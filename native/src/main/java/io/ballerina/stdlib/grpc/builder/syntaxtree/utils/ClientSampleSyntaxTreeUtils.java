@@ -108,20 +108,22 @@ public class ClientSampleSyntaxTreeUtils {
                 )
         );
 
-        if (serviceStub.getUnaryFunctions().size() > 0) {
-            imports = addImports(imports, serviceStub.getUnaryFunctions().get(0), filename);
-            addUnaryCallMethodBody(main, serviceStub.getUnaryFunctions().get(0), filename, msgMap);
-        } else if (serviceStub.getServerStreamingFunctions().size() > 0) {
-            imports = addImports(imports, serviceStub.getServerStreamingFunctions().get(0), filename);
-            addServerStreamingCallMethodBody(main, serviceStub.getServerStreamingFunctions().get(0), filename, msgMap);
-        } else if (serviceStub.getClientStreamingFunctions().size() > 0) {
-            imports = addImports(imports, serviceStub.getClientStreamingFunctions().get(0), filename);
-            addClientBidiStreamingCallMethodBody(main,
-                    serviceStub.getClientStreamingFunctions().get(0), filename, msgMap);
-        } else if (serviceStub.getBidiStreamingFunctions().size() > 0) {
-            imports = addImports(imports, serviceStub.getBidiStreamingFunctions().get(0), filename);
-            addClientBidiStreamingCallMethodBody(main,
-                    serviceStub.getBidiStreamingFunctions().get(0), filename, msgMap);
+        for (Method method : serviceStub.getUnaryFunctions()) {
+            imports = addImports(imports, method, filename);
+            addUnaryCallMethodBody(main, method, filename, msgMap);
+//            main.addExpressionStatement(getBuiltinSimpleNameReferenceNode(""));
+        }
+        for (Method method : serviceStub.getServerStreamingFunctions()) {
+            imports = addImports(imports, method, filename);
+            addServerStreamingCallMethodBody(main, method, filename, msgMap);
+        }
+        for (Method method : serviceStub.getClientStreamingFunctions()) {
+            imports = addImports(imports, method, filename);
+            addClientBidiStreamingCallMethodBody(main, method, filename, msgMap);
+        }
+        for (Method method : serviceStub.getBidiStreamingFunctions()) {
+            imports = addImports(imports, method, filename);
+            addClientBidiStreamingCallMethodBody(main, method, filename, msgMap);
         }
 
         moduleMembers = moduleMembers.add(clientEp.getModuleVariableDeclarationNode());
@@ -270,8 +272,7 @@ public class ClientSampleSyntaxTreeUtils {
     private static VariableDeclarationNode getInputDeclarationStatement(Method method, String filename,
                                                                         Map<String, Message> msgMap) {
         TypedBindingPatternNode bindingPatternNode = getTypedBindingPatternNode(
-                NodeFactory.createSimpleNameReferenceNode(AbstractNodeFactory.createIdentifierToken(
-                        method.getInputPackagePrefix(filename) + method.getInputType() + " ")),
+                getSimpleNameReferenceNode(method.getInputPackagePrefix(filename) + method.getInputType() + " "),
                 getCaptureBindingPatternNode(CONST_REQUEST));
         ExpressionNode node = null;
         switch (method.getInputType()) {
