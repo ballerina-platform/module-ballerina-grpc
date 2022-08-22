@@ -82,4 +82,11 @@ public class ToolingServerTest {
                 "helloWorldTimestamp_pb.bal", "helloworld_service.bal",
                 "helloworld_client.bal", "tool_test_server_8");
     }
+
+    @Test
+    public void testServerServiceWithDependingMessageInAnotherService() {
+        assertGeneratedSources("server", "dependingService.proto",
+                "dependingService_pb.bal", "helloworld_service.bal",
+                "helloworld_client.bal", "tool_test_server_9");
+    }
 }
