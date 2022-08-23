@@ -75,20 +75,21 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescrip
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getStreamTypeDescriptorNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.components.TypeDescriptor.getTypedBindingPatternNode;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.STREAMING_CLIENT;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addAnyImportIfExists;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addSubModuleImports;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addTimeImportsIfExists;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.capitalize;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getMethodType;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.toCamelCase;
 
 /**
  * Syntax tree generation class for the client sample.
  */
 public class ClientSampleSyntaxTreeUtils {
     
-    private static final String CONST_RESPONSE = "response";
-    private static final String CONST_REQUEST = "request";
     private static final String CONST_ENDPOINT = "ep";
-    private static final String CONST_STREAMING_CLIENT = "streamingClient";
+
+    private static boolean firstLine;
 
     public static SyntaxTree generateSyntaxTreeForClientSample(ServiceStub serviceStub, String filename,
                                                                Map<String, Message> msgMap) {
@@ -108,22 +109,24 @@ public class ClientSampleSyntaxTreeUtils {
                 )
         );
 
+        imports = addImports(imports, serviceStub, filename);
+
+        firstLine = false;
         for (Method method : serviceStub.getUnaryFunctions()) {
-            imports = addImports(imports, method, filename);
             addUnaryCallMethodBody(main, method, filename, msgMap);
-//            main.addExpressionStatement(getBuiltinSimpleNameReferenceNode(""));
+            firstLine = true;
         }
         for (Method method : serviceStub.getServerStreamingFunctions()) {
-            imports = addImports(imports, method, filename);
             addServerStreamingCallMethodBody(main, method, filename, msgMap);
+            firstLine = true;
         }
         for (Method method : serviceStub.getClientStreamingFunctions()) {
-            imports = addImports(imports, method, filename);
             addClientBidiStreamingCallMethodBody(main, method, filename, msgMap);
+            firstLine = true;
         }
         for (Method method : serviceStub.getBidiStreamingFunctions()) {
-            imports = addImports(imports, method, filename);
             addClientBidiStreamingCallMethodBody(main, method, filename, msgMap);
+            firstLine = true;
         }
 
         moduleMembers = moduleMembers.add(clientEp.getModuleVariableDeclarationNode());
@@ -143,7 +146,7 @@ public class ClientSampleSyntaxTreeUtils {
         }
         if (method.getOutputType() != null) {
             main.addVariableStatement(getUnaryCallDeclarationNode(method, filename));
-            main.addExpressionStatement(getPrintlnStatement(CONST_RESPONSE));
+            main.addExpressionStatement(getPrintlnStatement(getResponseName(method.getMethodName())));
         } else {
             main.addExpressionStatement(getUnaryCallExpressionStatement(method));
         }
@@ -165,10 +168,10 @@ public class ClientSampleSyntaxTreeUtils {
         }
         main.addVariableStatement(getClientStreamingCallDeclarationNode(method));
         main.addExpressionStatement(getStreamSendValueStatementNode(method));
-        main.addExpressionStatement(getStreamCompleteStatementNode());
+        main.addExpressionStatement(getStreamCompleteStatementNode(method));
         if (method.getOutputType() != null) {
             main.addVariableStatement(getStreamReceiveValueDeclarationNode(method, filename));
-            main.addExpressionStatement(getPrintlnStatement(CONST_RESPONSE));
+            main.addExpressionStatement(getPrintlnStatement(getResponseName(method.getMethodName())));
         } else {
             main.addExpressionStatement(getStreamReceiveValueExpressionStatement(method));
         }
@@ -176,33 +179,35 @@ public class ClientSampleSyntaxTreeUtils {
 
     private static ExpressionStatementNode getStreamReceiveValueExpressionStatement(Method method) {
         ExpressionNode checkExpressionNode = getCheckExpressionNode(getRemoteMethodCallActionNode(
-                getSimpleNameReferenceNode(CONST_STREAMING_CLIENT), "receive" + getMethodType(method.getOutputType())));
+                getSimpleNameReferenceNode(getStreamingClientName(method.getMethodName())),
+                "receive" + getMethodType(method.getOutputType())));
         return getCallStatementNode(checkExpressionNode);
     }
 
     private static VariableDeclarationNode getUnaryCallDeclarationNode(Method method, String filename) {
         TypedBindingPatternNode bindingPatternNode = getTypedBindingPatternNode(
-                getBuiltinSimpleNameReferenceNode(method.getOutputPackageType(filename) + method.getOutputType() + " "),
-                getCaptureBindingPatternNode(CONST_RESPONSE));
+                getBuiltinSimpleNameReferenceNode(getNameWithNewLine(
+                        method.getOutputPackageType(filename) + method.getOutputType() + " ")),
+                getCaptureBindingPatternNode(getResponseName(method.getMethodName())));
         ExpressionNode node = getCheckExpressionNode(getRemoteMethodCallActionNode(
                 getBuiltinSimpleNameReferenceNode(CONST_ENDPOINT), method.getMethodName(),
-                method.getInputType() != null ? CONST_REQUEST : ""));
+                method.getInputType() != null ? getRequestName(method.getMethodName()) : ""));
         VariableDeclaration unaryCallVariable = new VariableDeclaration(bindingPatternNode, node);
         return unaryCallVariable.getVariableDeclarationNode();
     }
 
     private static ExpressionStatementNode getUnaryCallExpressionStatement(Method method) {
         ExpressionNode node = getCheckExpressionNode(getRemoteMethodCallActionNode(
-                getBuiltinSimpleNameReferenceNode(CONST_ENDPOINT), method.getMethodName(),
-                method.getInputType() != null ? CONST_REQUEST : ""));
+                getBuiltinSimpleNameReferenceNode(getNameWithNewLine(CONST_ENDPOINT)), method.getMethodName(),
+                method.getInputType() != null ? getRequestName(method.getMethodName()) : ""));
         return getCallStatementNode(node);
     }
 
     private static VariableDeclarationNode getClientStreamingCallDeclarationNode(Method method) {
         TypedBindingPatternNode bindingPatternNode = getTypedBindingPatternNode(
                 getBuiltinSimpleNameReferenceNode(
-                        capitalize(method.getMethodName()) + STREAMING_CLIENT + " "),
-                getCaptureBindingPatternNode(CONST_STREAMING_CLIENT));
+                        getNameWithNewLine(capitalize(method.getMethodName()) + STREAMING_CLIENT + " ")),
+                getCaptureBindingPatternNode(getStreamingClientName(method.getMethodName())));
         ExpressionNode node = getCheckExpressionNode(getRemoteMethodCallActionNode(
                 getBuiltinSimpleNameReferenceNode(CONST_ENDPOINT), method.getMethodName()));
         VariableDeclaration streamingCallVariable = new VariableDeclaration(bindingPatternNode, node);
@@ -211,7 +216,7 @@ public class ClientSampleSyntaxTreeUtils {
 
     private static ExpressionStatementNode getForEachExpressionNode(Method method, String filename) {
         AnonymousFunctionExpressionNode functionExpressionNode = getAnonymousFunctionExpressionNode(method, filename);
-        MethodCallExpressionNode methodCallExpressionNode = getForEachMethodCall(functionExpressionNode);
+        MethodCallExpressionNode methodCallExpressionNode = getForEachMethodCall(method, functionExpressionNode);
         return getCallStatementNode(getCheckExpressionNode(methodCallExpressionNode));
     }
 
@@ -225,8 +230,10 @@ public class ClientSampleSyntaxTreeUtils {
                 function.getFunctionSignature(), function.getFunctionBody());
     }
 
-    private static MethodCallExpressionNode getForEachMethodCall(AnonymousFunctionExpressionNode expressionNode) {
-        return NodeFactory.createMethodCallExpressionNode(getSimpleNameReferenceNode(CONST_RESPONSE),
+    private static MethodCallExpressionNode getForEachMethodCall(Method method,
+                                                                 AnonymousFunctionExpressionNode expressionNode) {
+        return NodeFactory.createMethodCallExpressionNode(getSimpleNameReferenceNode(
+                getResponseName(method.getMethodName())),
                 SyntaxTreeConstants.SYNTAX_TREE_DOT, getSimpleNameReferenceNode("forEach"),
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_PAREN,
                 AbstractNodeFactory.createSeparatedNodeList(NodeFactory.createPositionalArgumentNode(expressionNode)),
@@ -235,36 +242,39 @@ public class ClientSampleSyntaxTreeUtils {
 
     private static VariableDeclarationNode getServerStreamingCallDeclarationNode(Method method, String filename) {
         TypedBindingPatternNode bindingPatternNode = getTypedBindingPatternNode(
-                getStreamTypeDescriptorNode(getSimpleNameReferenceNode(method.getOutputPackageType(filename) +
-                        method.getOutputType()), SyntaxTreeConstants.SYNTAX_TREE_ERROR_OPTIONAL),
-                getCaptureBindingPatternNode(CONST_RESPONSE));
+                getStreamTypeDescriptorNode(getSimpleNameReferenceNode(getNameWithNewLine(
+                        method.getOutputPackageType(filename) + method.getOutputType())),
+                        SyntaxTreeConstants.SYNTAX_TREE_ERROR_OPTIONAL),
+                getCaptureBindingPatternNode(getResponseName(method.getMethodName())));
         ExpressionNode node = getCheckExpressionNode(getRemoteMethodCallActionNode(
                 getBuiltinSimpleNameReferenceNode(CONST_ENDPOINT), method.getMethodName(),
-                method.getInputType() != null ? CONST_REQUEST : ""));
+                method.getInputType() != null ? getRequestName(method.getMethodName()) : ""));
         VariableDeclaration streamingCallVariable = new VariableDeclaration(bindingPatternNode, node);
         return streamingCallVariable.getVariableDeclarationNode();
     }
 
     private static ExpressionStatementNode getStreamSendValueStatementNode(Method method) {
         ExpressionNode node = getCheckExpressionNode(getRemoteMethodCallActionNode(
-                getBuiltinSimpleNameReferenceNode(CONST_STREAMING_CLIENT),
+                getBuiltinSimpleNameReferenceNode(getStreamingClientName(method.getMethodName())),
                 "send" + getMethodType(method.getInputType()),
-                method.getInputType() != null ? CONST_REQUEST : ""));
+                method.getInputType() != null ? getRequestName(method.getMethodName()) : ""));
         return getCallStatementNode(node);
     }
 
-    private static ExpressionStatementNode getStreamCompleteStatementNode() {
+    private static ExpressionStatementNode getStreamCompleteStatementNode(Method method) {
         ExpressionNode node = getCheckExpressionNode(getRemoteMethodCallActionNode(
-                getBuiltinSimpleNameReferenceNode(CONST_STREAMING_CLIENT), "complete"));
+                getBuiltinSimpleNameReferenceNode(getStreamingClientName(method.getMethodName())),
+                "complete"));
         return getCallStatementNode(node);
     }
 
     private static VariableDeclarationNode getStreamReceiveValueDeclarationNode(Method method, String filename) {
         TypedBindingPatternNode bindingPatternNode = getTypedBindingPatternNode(
                 getSimpleNameReferenceNode(method.getOutputPackageType(filename) + method.getOutputType() + "? "),
-                getCaptureBindingPatternNode(CONST_RESPONSE));
+                getCaptureBindingPatternNode(getResponseName(method.getMethodName())));
         ExpressionNode checkExpressionNode = getCheckExpressionNode(getRemoteMethodCallActionNode(
-                getSimpleNameReferenceNode(CONST_STREAMING_CLIENT), "receive" + getMethodType(method.getOutputType())));
+                getSimpleNameReferenceNode(getStreamingClientName(method.getMethodName())),
+                "receive" + getMethodType(method.getOutputType())));
         VariableDeclaration streamingCallVariable = new VariableDeclaration(bindingPatternNode, checkExpressionNode);
         return streamingCallVariable.getVariableDeclarationNode();
     }
@@ -272,8 +282,9 @@ public class ClientSampleSyntaxTreeUtils {
     private static VariableDeclarationNode getInputDeclarationStatement(Method method, String filename,
                                                                         Map<String, Message> msgMap) {
         TypedBindingPatternNode bindingPatternNode = getTypedBindingPatternNode(
-                getSimpleNameReferenceNode(method.getInputPackagePrefix(filename) + method.getInputType() + " "),
-                getCaptureBindingPatternNode(CONST_REQUEST));
+                getSimpleNameReferenceNode(getNameWithNewLine(method.getInputPackagePrefix(filename) +
+                        method.getInputType() + " ")),
+                getCaptureBindingPatternNode(getRequestName(method.getMethodName())));
         ExpressionNode node = null;
         switch (method.getInputType()) {
             case "int":
@@ -381,40 +392,50 @@ public class ClientSampleSyntaxTreeUtils {
         return getListConstructorExpressionNode(subRecordNodes);
     }
 
-    private static NodeList<ImportDeclarationNode> addImports(NodeList<ImportDeclarationNode> imports, Method method,
+    private static NodeList<ImportDeclarationNode> addImports(NodeList<ImportDeclarationNode> imports, ServiceStub stub,
                                                               String filename) {
-        imports = addIoImport(method, imports);
-        imports = addSubModuleImports(Collections.singletonList(method), filename, imports);
-        imports = addAnyImportIfExists(method, imports);
-        return getTimeImportsIfExists(imports, method);
+        List<Method> methods = new ArrayList<>();
+        methods.addAll(stub.getUnaryFunctions());
+        methods.addAll(stub.getClientStreamingFunctions());
+        methods.addAll(stub.getServerStreamingFunctions());
+        methods.addAll(stub.getBidiStreamingFunctions());
+        imports = addIoImport(methods, imports);
+        imports = addSubModuleImports(methods, filename, imports);
+        imports = addAnyImportIfExists(methods, imports);
+        return addTimeImportsIfExists(methods, imports);
     }
 
-    private static NodeList<ImportDeclarationNode> addIoImport(Method method, NodeList<ImportDeclarationNode> imports) {
-        if (method.getOutputType() != null) {
-            return imports.add(Imports.getImportDeclarationNode(ORG_NAME, "io"));
-        }
-        return imports;
-    }
-
-    private static NodeList<ImportDeclarationNode> addAnyImportIfExists(Method method,
-                                                                        NodeList<ImportDeclarationNode> imports) {
-        if ((method.getInputType() != null && method.getInputType().equals("'any:Any")) ||
-                (method.getOutputType() != null && method.getOutputType().equals("'any:Any"))) {
-            return imports.add(Imports.getImportDeclarationNode(ORG_NAME, "protobuf.types.'any"));
-        }
-        return imports;
-    }
-
-    private static NodeList<ImportDeclarationNode> getTimeImportsIfExists(NodeList<ImportDeclarationNode> imports,
-                                                                          Method method) {
-        if (checkForImportsInServices(Collections.singletonList(method), "time:Utc") ||
-                checkForImportsInServices(Collections.singletonList(method), "time:Seconds")) {
-            return imports.add(Imports.getImportDeclarationNode(ORG_NAME, "time"));
+    private static NodeList<ImportDeclarationNode> addIoImport(List<Method> methods,
+                                                               NodeList<ImportDeclarationNode> imports) {
+        for (Method method : methods) {
+            if (method.getOutputType() != null) {
+                return imports.add(Imports.getImportDeclarationNode(ORG_NAME, "io"));
+            }
         }
         return imports;
     }
 
     private static ExpressionStatementNode getPrintlnStatement(String input) {
         return getCallStatementNode(getFunctionCallExpressionNode("io", "println", input));
+    }
+
+    private static String getNameWithNewLine(String filename) {
+        if (firstLine) {
+            firstLine = false;
+            return "\n\n" + filename;
+        }
+        return filename;
+    }
+
+    private static String getResponseName(String methodName) {
+        return toCamelCase(methodName) + "Response";
+    }
+
+    private static String getRequestName(String methodName) {
+        return toCamelCase(methodName) + "Request";
+    }
+
+    private static String getStreamingClientName(String methodName) {
+        return toCamelCase(methodName) + "StreamingClient";
     }
 }
