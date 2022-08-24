@@ -185,16 +185,18 @@ public class SyntaxTreeGenerator {
                 }
             }
             for (java.util.Map.Entry<String, Boolean> valueType : service.getValueTypeMap().entrySet()) {
-                if (!(isRoot && dependentValueTypeMap.containsKey(valueType.getKey()))) {
-                    if (!isBallerinaProtobufType(valueType.getKey())) {
-                        if (valueType.getValue()) {
-                            valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey(),
-                                    stubFile.getFileName()));
-                        }
+                if (!isBallerinaProtobufType(valueType.getKey())) {
+                    if (!dependentValueTypeMap.contains(valueType.getKey())) {
                         valueTypes.put(valueType.getKey(), getValueType(valueType.getKey(), stubFile.getFileName()));
-                    } else {
-                        protobufImports.add(getProtobufType(valueType.getKey()));
+                        dependentValueTypeMap.add(valueType.getKey());
                     }
+                    if (valueType.getValue() && !dependentValueTypeMap.contains(valueType.getKey() + "Stream")) {
+                        valueTypeStreams.put(valueType.getKey(), getValueTypeStream(valueType.getKey(),
+                                stubFile.getFileName()));
+                        dependentValueTypeMap.add(valueType.getKey() + "Stream");
+                    }
+                } else {
+                    protobufImports.add(getProtobufType(valueType.getKey()));
                 }
             }
         }
