@@ -1,10 +1,10 @@
 helloWorldClient ep = check new ("http://localhost:9090");
 
 public function main() returns error? {
-    HelloRequest request = {name: "ballerina"};
-    TestInputStructNoOutputStreamingClient streamingClient = check ep->testInputStructNoOutput();
-    check streamingClient->sendHelloRequest(request);
-    check streamingClient->complete();
-    check streamingClient->receive();
+    HelloRequest testInputStructNoOutputRequest = {name: "ballerina"};
+    TestInputStructNoOutputStreamingClient testInputStructNoOutputStreamingClient = check ep->testInputStructNoOutput();
+    check testInputStructNoOutputStreamingClient->sendHelloRequest(testInputStructNoOutputRequest);
+    check testInputStructNoOutputStreamingClient->complete();
+    check testInputStructNoOutputStreamingClient->receive();
 }
 

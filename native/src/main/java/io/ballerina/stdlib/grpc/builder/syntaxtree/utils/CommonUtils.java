@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.MethodType.UNARY;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.componentsModuleMap;
 import static io.ballerina.stdlib.grpc.builder.BallerinaFileBuilder.protofileModuleMap;
@@ -73,6 +74,10 @@ public class CommonUtils {
 
     public static String capitalizeFirstLetter(String name) {
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+    }
+
+    public static String toCamelCase(String value) {
+        return value.substring(0, 1).toLowerCase() + value.substring(1);
     }
 
     public static String toPascalCase(String str) {
@@ -317,6 +322,22 @@ public class CommonUtils {
             if (protofileModuleMap.containsKey(filename) && !protofileModuleMap.get(filename).equals(type)) {
                 imports = imports.add(Imports.getImportDeclarationNode(type));
             }
+        }
+        return imports;
+    }
+
+    public static NodeList<ImportDeclarationNode> addAnyImportIfExists(List<Method> methods,
+                                                                        NodeList<ImportDeclarationNode> imports) {
+        if (checkForImportsInServices(methods, "'any:Any")) {
+            return imports.add(Imports.getImportDeclarationNode(ORG_NAME, "protobuf.types.'any"));
+        }
+        return imports;
+    }
+
+    public static NodeList<ImportDeclarationNode> addTimeImportsIfExists(List<Method> methods,
+                                                                          NodeList<ImportDeclarationNode> imports) {
+        if (checkForImportsInServices(methods, "time:Utc") || checkForImportsInServices(methods, "time:Seconds")) {
+            return imports.add(Imports.getImportDeclarationNode(ORG_NAME, "time"));
         }
         return imports;
     }

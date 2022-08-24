@@ -77,9 +77,10 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_GRPC_ERROR_OPTIONAL;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.SYNTAX_TREE_VAR_STRING;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CallerUtils.getCallerClass;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addAnyImportIfExists;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addImports;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addSubModuleImports;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.checkForImportsInServices;
+import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.addTimeImportsIfExists;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.getProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.CommonUtils.isBallerinaProtobufType;
 import static io.ballerina.stdlib.grpc.builder.syntaxtree.utils.EnumUtils.getEnum;
@@ -259,17 +260,8 @@ public class SyntaxTreeGenerator {
         methodList.addAll(serviceStub.getServerStreamingFunctions());
         methodList.addAll(serviceStub.getBidiStreamingFunctions());
 
-        if (checkForImportsInServices(methodList, "time:Utc")
-                || checkForImportsInServices(methodList, "time:Seconds")) {
-            ImportDeclarationNode importForTime = Imports.getImportDeclarationNode(ORG_NAME, "time");
-            imports = imports.add(importForTime);
-        }
-
-        if (checkForImportsInServices(methodList, "'any:Any")) {
-            ImportDeclarationNode importForAny = Imports.getImportDeclarationNode(ORG_NAME, "protobuf.types.'any");
-            imports = imports.add(importForAny);
-        }
-
+        imports = addAnyImportIfExists(methodList, imports);
+        imports = addTimeImportsIfExists(methodList, imports);
         imports = addSubModuleImports(methodList, fileName, imports);
 
         if (addListener) {
