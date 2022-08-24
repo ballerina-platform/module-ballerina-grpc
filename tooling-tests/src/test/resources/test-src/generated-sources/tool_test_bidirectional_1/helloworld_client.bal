@@ -3,11 +3,11 @@ import ballerina/io;
 helloWorldClient ep = check new ("http://localhost:9090");
 
 public function main() returns error? {
-    string request = "ballerina";
-    HelloStreamingClient streamingClient = check ep->hello();
-    check streamingClient->sendString(request);
-    check streamingClient->complete();
-    string? response = check streamingClient->receiveString();
-    io:println(response);
+    string helloRequest = "ballerina";
+    HelloStreamingClient helloStreamingClient = check ep->hello();
+    check helloStreamingClient->sendString(helloRequest);
+    check helloStreamingClient->complete();
+    string? helloResponse = check helloStreamingClient->receiveString();
+    io:println(helloResponse);
 }
 
