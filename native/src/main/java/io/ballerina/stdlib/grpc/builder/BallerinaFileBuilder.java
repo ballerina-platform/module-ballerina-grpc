@@ -86,7 +86,7 @@ public class BallerinaFileBuilder {
     private static final String PROTO_FILE_EXTENSION = ".proto";
     private static final int EXTENSION = 1148;
     public static Map<String, String> enumDefaultValueMap = new HashMap<>();
-    public static Map<String, Boolean> dependentValueTypeMap;
+    public static HashSet<String> dependentValueTypeMap;
     // Contains the filename and its related module name
     public static Map<String, String> protofileModuleMap;
     // Contains the related module names of all the records, context records and enums
@@ -99,7 +99,7 @@ public class BallerinaFileBuilder {
         this.rootDescriptor = rootDescriptor;
         this.dependentDescriptors = dependentDescriptors;
         streamClassMap = new HashMap<>();
-        dependentValueTypeMap = new HashMap<>();
+        dependentValueTypeMap = new HashSet<>();
         protofileModuleMap = new HashMap<>();
         componentsModuleMap = new HashMap<>();
         messageMap = new HashMap<>();
@@ -112,7 +112,7 @@ public class BallerinaFileBuilder {
         this.dependentDescriptors = dependentDescriptors;
         this.balOutPath = balOutPath;
         streamClassMap = new HashMap<>();
-        dependentValueTypeMap = new HashMap<>();
+        dependentValueTypeMap = new HashSet<>();
         protofileModuleMap = new HashMap<>();
         componentsModuleMap = new HashMap<>();
         messageMap = new HashMap<>();
@@ -257,9 +257,6 @@ public class BallerinaFileBuilder {
                 }
                 ServiceStub serviceStub = serviceStubBuilder.build();
                 stubFileObject.addServiceStub(serviceStub);
-                if (!isRoot) {
-                    dependentValueTypeMap.putAll(serviceStub.getValueTypeMap());
-                }
             }
             // update enum message types in stub file object
             stubFileObject.setEnumList(enumList);
