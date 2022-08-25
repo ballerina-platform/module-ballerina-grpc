@@ -120,11 +120,12 @@ public class FunctionUtils {
                         .withDescription(errorValue.getErrorMessage().getValue()))));
                 streamingConnection.addNativeData(GrpcConstants.IS_STREAM_CANCELLED, true);
                 // Add message content to observer context.
-                ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
-                observerContext.addTag(GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE,
-                        MessageUtils.getMappingHttpStatusCode(statusCode) + " : " +
-                                errorValue.getErrorMessage().getValue());
-
+                if (ObserveUtils.isObservabilityEnabled()) {
+                    ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
+                    observerContext.addTag(GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE,
+                            MessageUtils.getMappingHttpStatusCode(statusCode) + " : " +
+                                    errorValue.getErrorMessage().getValue());
+                }
             } catch (Exception e) {
                 LOG.error("Error while sending error to server.", e);
                 return MessageUtils.getConnectorError(e);
