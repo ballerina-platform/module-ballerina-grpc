@@ -18,24 +18,32 @@
 
 package io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint;
 
+import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
 import io.ballerina.stdlib.grpc.MessageUtils;
+import io.ballerina.stdlib.grpc.MethodDescriptor;
 import io.ballerina.stdlib.grpc.ServerConnectorListener;
 import io.ballerina.stdlib.grpc.ServerConnectorPortBindingListener;
+import io.ballerina.stdlib.grpc.ServerServiceDefinition;
 import io.ballerina.stdlib.grpc.ServicesBuilderUtils;
 import io.ballerina.stdlib.grpc.ServicesRegistry;
 import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.grpc.exception.GrpcServerException;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.nativeimpl.AbstractGrpcNativeFunction;
+import io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils;
 import io.ballerina.stdlib.http.api.HttpConnectionManager;
 import io.ballerina.stdlib.http.api.HttpConstants;
 import io.ballerina.stdlib.http.transport.contract.ServerConnector;
@@ -44,14 +52,20 @@ import io.ballerina.stdlib.http.transport.contract.config.ListenerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_DESCRIPTOR_FQN;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_SERVICE_DESCRIPTOR_FQN;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONFIG;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.SERVICE_REGISTRY_BUILDER;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getListenerConfig;
 import static io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils.externComplete;
 import static io.ballerina.stdlib.http.api.HttpConstants.ENDPOINT_CONFIG_PORT;
@@ -87,7 +101,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
                     HttpConnectionManager.getInstance().createHttpServerConnector(configuration);
             ServicesRegistry.Builder servicesRegistryBuilder = new ServicesRegistry.Builder();
             listenerObject.addNativeData(GrpcConstants.SERVER_CONNECTOR, httpServerConnector);
-            listenerObject.addNativeData(GrpcConstants.SERVICE_REGISTRY_BUILDER, servicesRegistryBuilder);
+            listenerObject.addNativeData(SERVICE_REGISTRY_BUILDER, servicesRegistryBuilder);
             return null;
         } catch (BError ex) {
             return ex;
@@ -224,6 +238,78 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
         }
         messageQueue.clear();
         return returnError;
+    }
+
+    /**
+     * Extern function to start gRPC server instance.
+     *
+     * @param listener service listener instance.
+     * @return Error if there is an error while starting the server, else returns nil.
+     */
+    public static Object externGetServices(BObject listener) {
+        BMap<BString, Object> listServiceResponse = ValueCreator
+                .createRecordValue(ModuleUtils.getModule(), "ListServiceResponse");
+        BArray bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(TypeCreator
+                .createRecordType("ServiceResponse", ModuleUtils.getModule(), 0,
+                        false, 0)));
+        ServicesRegistry.Builder servicesRegistryBuilder = (ServicesRegistry.Builder) listener
+                .getNativeData(SERVICE_REGISTRY_BUILDER);
+        HashMap<String, ServerServiceDefinition> services = servicesRegistryBuilder.getServices();
+        int i = 0;
+        for (ServerServiceDefinition serviceDefinition: services.values()) {
+            BMap<BString, Object> serviceResponse = ValueCreator
+                    .createRecordValue(ModuleUtils.getModule(), "ServiceResponse");
+            serviceResponse.put(StringUtils.fromString("name"),
+                    StringUtils.fromString(serviceDefinition.getServiceDescriptor().getName()));
+            bArray.add(i, serviceResponse);
+            i += 1;
+        }
+        listServiceResponse.put(StringUtils.fromString("service"), bArray);
+        return listServiceResponse;
+    }
+
+    /**
+     * Extern function to start gRPC server instance.
+     *
+     * @param listener service listener instance.
+     * @return Error if there is an error while starting the server, else returns nil.
+     */
+    public static Object externGetFileDescResponse(BObject listener, BString symbol) {
+        BArray bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(
+                TypeCreator.createRecordType("FileDescriptorResponse", ModuleUtils.getModule(), 0, false, 0)));
+        int i = 0;
+
+        Descriptors.FileDescriptor fd = ((MethodDescriptor) (((ServicesRegistry.Builder) listener
+                .getNativeData(SERVICE_REGISTRY_BUILDER)).getServices().get(symbol.getValue()))
+                .getServiceDescriptor().getMethods().toArray()[0]).getSchemaDescriptor().getFile();
+        Set<String> seenFiles = new HashSet();
+        Queue<Descriptors.FileDescriptor> frontier = new ArrayDeque();
+        seenFiles.add(fd.getName());
+        frontier.add(fd);
+
+        while (!frontier.isEmpty()) {
+            Descriptors.FileDescriptor nextFd = (Descriptors.FileDescriptor) frontier.remove();
+
+            BMap<BString, Object> fileDescriptorResponse2 = ValueCreator
+                    .createRecordValue(ModuleUtils.getModule(), "FileDescriptorResponse");
+            fileDescriptorResponse2.put(StringUtils.fromString("file_descriptor_proto"),
+                    ValueCreator.createArrayValue(nextFd.toProto().toByteArray()));
+            bArray.add(i, fileDescriptorResponse2);
+
+            i += 1;
+
+            Iterator var7 = nextFd.getDependencies().iterator();
+
+            while (var7.hasNext()) {
+                Descriptors.FileDescriptor dependencyFd = (Descriptors.FileDescriptor) var7.next();
+                if (!seenFiles.contains(dependencyFd.getName())) {
+                    seenFiles.add(dependencyFd.getName());
+                    frontier.add(dependencyFd);
+                }
+            }
+        }
+
+        return bArray;
     }
 
     private static Object getDescriptorAnnotation(ObjectType type) {

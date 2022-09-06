@@ -31,6 +31,11 @@ public isolated class Listener {
     #
     # + return - An `error` if an error occurs while starting the server or else `()`
     public isolated function 'start() returns error? {
+        lock {
+            if self.config.reflectionEnabled {
+                check self.attach(getReflectionService(self), "ServerReflection");
+            }
+        }
         return externStart(self);
     }
 
@@ -89,6 +94,35 @@ public isolated class Listener {
         self.port = port;
         return externInitEndpoint(self);
     }
+}
+
+isolated function getReflectionService(Listener listenerObj) returns Service {
+    Service reflectionService = @Descriptor {value: REFLECTION_DESC} isolated service object {
+        remote function ServerReflectionInfo(ServerReflectionServerReflectionResponseCaller caller,
+                    stream<ServerReflectionRequest, Error?> clientStream) returns error? {
+            record {|ServerReflectionRequest value;|}? req = check clientStream.next();
+            while req != () {
+                if req.value.list_services !is () {
+                    checkpanic caller->sendServerReflectionResponse({
+                        valid_host: req.value.host,
+                        original_request: req.value,
+                        list_services_response: check externGetServices(listenerObj)
+                    });
+                } else if req.value.file_containing_symbol !is () {
+                    FileDescriptorResponse[] sss = check externGetFileDescResponse(listenerObj, <string>req.value.file_containing_symbol);
+                    sss.forEach(function(FileDescriptorResponse fdr) {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: (<ServerReflectionRequest>(<record {|ServerReflectionRequest value;|}>req).value).host,
+                            original_request: <ServerReflectionRequest>(<record {|ServerReflectionRequest value;|}>req).value,
+                            file_descriptor_response: fdr
+                        });
+                    });
+                }
+                req = check clientStream.next();
+            }
+        }
+    };
+    return reflectionService;
 }
 
 # The gRPC service type.
@@ -159,6 +193,16 @@ isolated function closeStream(StreamIterator iterator) returns error? =
     'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
+isolated function externGetServices(Listener listenerObject) returns ListServiceResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
+isolated function externGetFileDescResponse(Listener listenerObject, string symbol) returns FileDescriptorResponse[]|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
 # Maximum number of requests that can be processed at a given time on a single connection.
 const int MAX_PIPELINED_REQUESTS = 10;
 
@@ -172,11 +216,13 @@ const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 # + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
 # disable the timeout
 # + maxInboundMessageSize - The maximum message size to be permitted for inbound messages. Default value is 4 MB
+# + reflectionEnabled - Support reflection
 public type ListenerConfiguration record {|
     string host = "0.0.0.0";
     ListenerSecureSocket? secureSocket = ();
     decimal timeout = DEFAULT_LISTENER_TIMEOUT;
     int maxInboundMessageSize = 4194304;
+    boolean reflectionEnabled = false;
 |};
 
 # Configurations for facilitating secure communication for the gRPC server endpoint.
