@@ -17,8 +17,14 @@
  */
 package io.ballerina.stdlib.grpc;
 
+import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,18 +51,19 @@ public class StandardDescriptorBuilder {
     private static final Map<String, Descriptors.FileDescriptor> standardLibDescriptorMapForPackageKey;
     private static final Map<String, Descriptors.FileDescriptor> standardLibDescriptorMapForMessageName;
 
-    public static final String EMPTY_PROTO_PACKAGE_KEY = "google/protobuf/empty.proto";
-    public static final String ANY_PROTO_PACKAGE_KEY = "google/protobuf/any.proto";
-    public static final String API_PROTO_PACKAGE_KEY = "google/protobuf/api.proto";
-    public static final String DESCRIPTOR_PROTO_PACKAGE_KEY = "google/protobuf/descriptor.proto";
-    public static final String DURATION_PROTO_PACKAGE_KEY = "google/protobuf/duration.proto";
-    public static final String FIELD_MASK_PROTO_PACKAGE_KEY = "google/protobuf/field_mask.proto";
-    public static final String SOURCE_CONTEXT_PROTO_PACKAGE_KEY = "google/protobuf/source_context.proto";
-    public static final String WRAPPERS_PROTO_PACKAGE_KEY = "google/protobuf/wrappers.proto";
-    public static final String STRUCT_PROTO_PACKAGE_KEY = "google/protobuf/struct.proto";
-    public static final String TIMESTAMP_PROTO_PACKAGE_KEY = "google/protobuf/timestamp.proto";
-    public static final String TYPE_PROTO_PACKAGE_KEY = "google/protobuf/type.proto";
-    public static final String COMPILER_PLUGIN_PROTO_PACKAGE_KEY = "google/protobuf/compiler/plugin.proto";
+    private static final String EMPTY_PROTO_PACKAGE_KEY = "google/protobuf/empty.proto";
+    private static final String ANY_PROTO_PACKAGE_KEY = "google/protobuf/any.proto";
+    private static final String API_PROTO_PACKAGE_KEY = "google/protobuf/api.proto";
+    private static final String DESCRIPTOR_PROTO_PACKAGE_KEY = "google/protobuf/descriptor.proto";
+    private static final String BALLERINA_DESCRIPTOR_PROTO_PACKAGE_KEY = "ballerina/protobuf/descriptor.proto";
+    private static final String DURATION_PROTO_PACKAGE_KEY = "google/protobuf/duration.proto";
+    private static final String FIELD_MASK_PROTO_PACKAGE_KEY = "google/protobuf/field_mask.proto";
+    private static final String SOURCE_CONTEXT_PROTO_PACKAGE_KEY = "google/protobuf/source_context.proto";
+    private static final String WRAPPERS_PROTO_PACKAGE_KEY = "google/protobuf/wrappers.proto";
+    private static final String STRUCT_PROTO_PACKAGE_KEY = "google/protobuf/struct.proto";
+    private static final String TIMESTAMP_PROTO_PACKAGE_KEY = "google/protobuf/timestamp.proto";
+    private static final String TYPE_PROTO_PACKAGE_KEY = "google/protobuf/type.proto";
+    private static final String COMPILER_PLUGIN_PROTO_PACKAGE_KEY = "google/protobuf/compiler/plugin.proto";
 
     static {
         standardLibDescriptorMapForPackageKey = new HashMap<>();
@@ -68,6 +75,8 @@ public class StandardDescriptorBuilder {
                 com.google.protobuf.ApiProto.getDescriptor());
         standardLibDescriptorMapForPackageKey.put(DESCRIPTOR_PROTO_PACKAGE_KEY,
                 com.google.protobuf.DescriptorProtos.getDescriptor());
+        standardLibDescriptorMapForPackageKey.put(BALLERINA_DESCRIPTOR_PROTO_PACKAGE_KEY,
+                getBallerinaProtobufFileDescriptor());
         standardLibDescriptorMapForPackageKey.put(DURATION_PROTO_PACKAGE_KEY,
                 com.google.protobuf.DurationProto.getDescriptor());
         standardLibDescriptorMapForPackageKey.put(FIELD_MASK_PROTO_PACKAGE_KEY,
@@ -84,6 +93,23 @@ public class StandardDescriptorBuilder {
                 com.google.protobuf.TypeProto.getDescriptor());
         standardLibDescriptorMapForPackageKey.put(COMPILER_PLUGIN_PROTO_PACKAGE_KEY,
                 com.google.protobuf.compiler.PluginProtos.getDescriptor());
+    }
+
+    private static Descriptors.FileDescriptor getBallerinaProtobufFileDescriptor() {
+        File initialFile = new File("/home/dilan/Private/WSO2/pcm-stdLib/module-ballerina-grpc/nati" +
+                "ve/src/main/resources/ballerina/protobuf/descriptor.desc");
+        try (InputStream targetStream = new FileInputStream(initialFile)) {
+            DescriptorProtos.FileDescriptorSet set = DescriptorProtos.FileDescriptorSet.parseFrom(targetStream);
+            if (set.getFileList().size() > 0) {
+                return Descriptors.FileDescriptor.buildFrom(set.getFile(0),
+                        new Descriptors.FileDescriptor[]{standardLibDescriptorMapForPackageKey
+                                .get(DESCRIPTOR_PROTO_PACKAGE_KEY)}); //.getFile(0);
+            }
+        } catch (IOException | Descriptors.DescriptorValidationException e) {
+            PrintStream pp = System.out;
+            pp.println(e.getMessage());
+        }
+        return null;
     }
 
     static {
@@ -124,5 +150,9 @@ public class StandardDescriptorBuilder {
 
     public static Descriptors.FileDescriptor getFileDescriptorFromMessageName(String messageName) {
         return standardLibDescriptorMapForMessageName.get(messageName);
+    }
+
+    public static Map<String, Descriptors.FileDescriptor> getDescriptorMapForPackageKey() {
+        return standardLibDescriptorMapForPackageKey;
     }
 }

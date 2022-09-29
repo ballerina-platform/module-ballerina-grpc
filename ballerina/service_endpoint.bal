@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/crypto;
+import ballerina/io;
 import ballerina/jballerina.java;
 
 # The server listener of which one or more services can be registered so that the Ballerina program can offer
@@ -100,25 +101,57 @@ isolated function getReflectionService(Listener listenerObj) returns Service {
     Service reflectionService = @Descriptor {value: REFLECTION_DESC} isolated service object {
         remote function ServerReflectionInfo(ServerReflectionServerReflectionResponseCaller caller,
                     stream<ServerReflectionRequest, Error?> clientStream) returns error? {
-            record {|ServerReflectionRequest value;|}? req = check clientStream.next();
-            while req != () {
-                if req.value.list_services !is () {
+            record {|ServerReflectionRequest value;|}? request = check clientStream.next();
+            while request != () {
+                if request.value.list_services !is () {
                     checkpanic caller->sendServerReflectionResponse({
-                        valid_host: req.value.host,
-                        original_request: req.value,
+                        valid_host: request.value.host,
+                        original_request: request.value,
                         list_services_response: check externGetServices(listenerObj)
                     });
-                } else if req.value.file_containing_symbol !is () {
-                    FileDescriptorResponse[] sss = check externGetFileDescResponse(listenerObj, <string>req.value.file_containing_symbol);
-                    sss.forEach(function(FileDescriptorResponse fdr) {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: (<ServerReflectionRequest>(<record {|ServerReflectionRequest value;|}>req).value).host,
-                            original_request: <ServerReflectionRequest>(<record {|ServerReflectionRequest value;|}>req).value,
-                            file_descriptor_response: fdr
-                        });
+                } else if request.value.file_containing_symbol !is () {
+                    io:println("File by symbol " + request.value.toString());
+                    FileDescriptorResponse fdResponse = check externGetFileDescBySymbol(listenerObj, <string>request.value.file_containing_symbol);
+                    checkpanic caller->sendServerReflectionResponse({
+                        valid_host: request.value.host,
+                        original_request: request.value,
+                        file_descriptor_response: fdResponse
+                    });
+                } else if request.value.file_by_filename !is () {
+                    io:println("File by filename " + request.value.toString());
+                    FileDescriptorResponse fdResponse = check externGetFileDescByFilename(<string>request.value.file_by_filename);
+                    checkpanic caller->sendServerReflectionResponse({
+                        valid_host: request.value.host,
+                        original_request: request.value,
+                        file_descriptor_response: fdResponse
+                    });
+                } else if request.value.file_containing_extension !is () {
+                    io:println("File containing extension " + request.value.toString());
+                    FileDescriptorResponse fdResponse = check externGetFileContainingExtension(<string>request.value.file_containing_extension?.containing_type, <int>request.value.file_containing_extension?.extension_number);
+                    checkpanic caller->sendServerReflectionResponse({
+                        valid_host: request.value.host,
+                        original_request: request.value,
+                        file_descriptor_response: fdResponse
+                    });
+                } else if request.value.all_extension_numbers_of_type !is () {
+                    io:println("All extension numbers of type " + request.value.toString());
+                    ExtensionNumberResponse extNumResponse = check externGetAllExtensionNumbersOfType(<string>request.value.all_extension_numbers_of_type);
+                    checkpanic caller->sendServerReflectionResponse({
+                        valid_host: request.value.host,
+                        original_request: request.value,
+                        all_extension_numbers_response: extNumResponse
+                    });
+                } else {
+                    checkpanic caller->sendServerReflectionResponse({
+                        valid_host: request.value.host,
+                        original_request: request.value,
+                        error_response: {
+                            error_code: INVALID_ARGUMENT,
+                            error_message: "No valid arguments found"
+                        }
                     });
                 }
-                req = check clientStream.next();
+                request = check clientStream.next();
             }
         }
     };
@@ -198,7 +231,22 @@ isolated function externGetServices(Listener listenerObject) returns ListService
     'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
-isolated function externGetFileDescResponse(Listener listenerObject, string symbol) returns FileDescriptorResponse[]|error =
+isolated function externGetFileDescBySymbol(Listener listenerObject, string symbol) returns FileDescriptorResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
+isolated function externGetFileDescByFilename(string filename) returns FileDescriptorResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
+isolated function externGetFileContainingExtension(string containingType, int extensionNumber) returns FileDescriptorResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
+isolated function externGetAllExtensionNumbersOfType(string messageType) returns ExtensionNumberResponse|error =
 @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;

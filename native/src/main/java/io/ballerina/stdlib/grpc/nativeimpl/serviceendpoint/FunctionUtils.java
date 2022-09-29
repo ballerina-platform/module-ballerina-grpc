@@ -20,6 +20,7 @@ package io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -39,6 +40,7 @@ import io.ballerina.stdlib.grpc.ServerConnectorPortBindingListener;
 import io.ballerina.stdlib.grpc.ServerServiceDefinition;
 import io.ballerina.stdlib.grpc.ServicesBuilderUtils;
 import io.ballerina.stdlib.grpc.ServicesRegistry;
+import io.ballerina.stdlib.grpc.StandardDescriptorBuilder;
 import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.grpc.exception.GrpcServerException;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
@@ -52,13 +54,8 @@ import io.ballerina.stdlib.http.transport.contract.config.ListenerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_DESCRIPTOR_FQN;
@@ -67,6 +64,7 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.CONFIG;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.SERVICE_REGISTRY_BUILDER;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getListenerConfig;
+import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.fileDescriptorHashMapByFilename;
 import static io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils.externComplete;
 import static io.ballerina.stdlib.http.api.HttpConstants.ENDPOINT_CONFIG_PORT;
 
@@ -241,10 +239,10 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
     }
 
     /**
-     * Extern function to start gRPC server instance.
+     * Extern function to get the services registered to a listener via reflection.
      *
      * @param listener service listener instance.
-     * @return Error if there is an error while starting the server, else returns nil.
+     * @return An array of service names.
      */
     public static Object externGetServices(BObject listener) {
         BMap<BString, Object> listServiceResponse = ValueCreator
@@ -269,47 +267,123 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
     }
 
     /**
-     * Extern function to start gRPC server instance.
+     * Extern function to get the FileDescriptor of a given fully-qualified symbol name.
      *
      * @param listener service listener instance.
-     * @return Error if there is an error while starting the server, else returns nil.
+     * @param symbol fully qualified symbol name
+     * @return FileDescriptorResponse containing the file descriptor of the symbol.
      */
-    public static Object externGetFileDescResponse(BObject listener, BString symbol) {
-        BArray bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(
-                TypeCreator.createRecordType("FileDescriptorResponse", ModuleUtils.getModule(), 0, false, 0)));
-        int i = 0;
-
-        Descriptors.FileDescriptor fd = ((MethodDescriptor) (((ServicesRegistry.Builder) listener
+    public static Object externGetFileDescBySymbol(BObject listener, BString symbol) {
+       Descriptors.FileDescriptor fd = ((MethodDescriptor) (((ServicesRegistry.Builder) listener
                 .getNativeData(SERVICE_REGISTRY_BUILDER)).getServices().get(symbol.getValue()))
                 .getServiceDescriptor().getMethods().toArray()[0]).getSchemaDescriptor().getFile();
-        Set<String> seenFiles = new HashSet();
-        Queue<Descriptors.FileDescriptor> frontier = new ArrayDeque();
-        seenFiles.add(fd.getName());
-        frontier.add(fd);
 
-        while (!frontier.isEmpty()) {
-            Descriptors.FileDescriptor nextFd = (Descriptors.FileDescriptor) frontier.remove();
+        BMap<BString, Object> fileDescriptorResponse2 = ValueCreator
+                    .createRecordValue(ModuleUtils.getModule(), "FileDescriptorResponse");
+        fileDescriptorResponse2.put(StringUtils.fromString("file_descriptor_proto"),
+                ValueCreator.createArrayValue(fd.toProto().toByteArray()));
+        return fileDescriptorResponse2;
+    }
 
-            BMap<BString, Object> fileDescriptorResponse2 = ValueCreator
+    /**
+     * Extern function to get the FileDescriptor by a filename.
+     *
+     * @param filename filename of the required FileDescriptor.
+     * @return FileDescriptor of the respective file.
+     */
+    public static Object externGetFileDescByFilename(BString filename) {
+        Descriptors.FileDescriptor fd;
+        if (StandardDescriptorBuilder.getFileDescriptor(filename.getValue()) != null) {
+            fd = StandardDescriptorBuilder.getFileDescriptor(filename.getValue());
+        } else if (fileDescriptorHashMapByFilename.containsKey(filename.getValue())) {
+            fd = fileDescriptorHashMapByFilename.get(filename.getValue());
+        } else {
+            throw MessageUtils.getConnectorError(new StatusRuntimeException(Status.fromCode(
+                    Status.Code.NOT_FOUND.toStatus().getCode()).withDescription("Not found " + filename.getValue())));
+        }
+        BMap<BString, Object> fileDescriptorResponse2 = ValueCreator
                     .createRecordValue(ModuleUtils.getModule(), "FileDescriptorResponse");
             fileDescriptorResponse2.put(StringUtils.fromString("file_descriptor_proto"),
-                    ValueCreator.createArrayValue(nextFd.toProto().toByteArray()));
-            bArray.add(i, fileDescriptorResponse2);
+                    ValueCreator.createArrayValue(fd.toProto().toByteArray()));
+        return fileDescriptorResponse2;
+    }
 
-            i += 1;
-
-            Iterator var7 = nextFd.getDependencies().iterator();
-
-            while (var7.hasNext()) {
-                Descriptors.FileDescriptor dependencyFd = (Descriptors.FileDescriptor) var7.next();
-                if (!seenFiles.contains(dependencyFd.getName())) {
-                    seenFiles.add(dependencyFd.getName());
-                    frontier.add(dependencyFd);
+    /**
+     * Extern function to get the FileDescriptor of the file containing the given extension.
+     *
+     * @param containingType fully qualified typename.
+     * @param extensionNumber related extension number.
+     * @return FileDescriptor of the file containing the given type and the extension number.
+     */
+    public static Object externGetFileContainingExtension(BString containingType, int extensionNumber) {
+        Descriptors.FileDescriptor fd = null;
+        Descriptors.FileDescriptor[] stdDescriptors = StandardDescriptorBuilder.getDescriptorMapForPackageKey()
+                .values().toArray(new Descriptors.FileDescriptor[StandardDescriptorBuilder
+                        .getDescriptorMapForPackageKey().size()]);
+        for (Descriptors.FileDescriptor fileDescriptor: stdDescriptors) {
+            for (Descriptors.FieldDescriptor fieldDescriptor: fileDescriptor.getExtensions()) {
+                if (fieldDescriptor.getContainingType().getFullName().equals(containingType.getValue()) &&
+                        fieldDescriptor.getNumber() == extensionNumber) {
+                    fd = fileDescriptor;
+                    break;
                 }
             }
         }
 
-        return bArray;
+        for (Descriptors.FileDescriptor fileDescriptor: fileDescriptorHashMapByFilename.values()
+                .toArray(new Descriptors.FileDescriptor[fileDescriptorHashMapByFilename.size()])) {
+            for (Descriptors.FieldDescriptor fieldDescriptor: fileDescriptor.getExtensions()) {
+                if (fieldDescriptor.getContainingType().getFullName().equals(containingType.getValue()) &&
+                        fieldDescriptor.getNumber() == extensionNumber) {
+                    fd = fileDescriptor;
+                    break;
+                }
+            }
+        }
+        if (fd == null) {
+            return MessageUtils.getConnectorError(new StatusRuntimeException(Status.fromCode(
+                    Status.Code.NOT_FOUND.toStatus().getCode()).withDescription("File descriptor not found")));
+        }
+        BMap<BString, Object> fileDescriptorResponse = ValueCreator
+                .createRecordValue(ModuleUtils.getModule(), "FileDescriptorResponse");
+        fileDescriptorResponse.put(StringUtils.fromString("file_descriptor_proto"),
+                ValueCreator.createArrayValue(fd.toProto().toByteArray()));
+        return fileDescriptorResponse;
+    }
+
+    /**
+     * Extern function to get all the extension numbers of a given type.
+     *
+     * @param messageType fully qualified message type name.
+     * @return An unordered array of extension numbers of a given type.
+     */
+    public static Object externGetAllExtensionNumbersOfType(BString messageType) {
+        Descriptors.FileDescriptor[] stdDescriptors = StandardDescriptorBuilder.getDescriptorMapForPackageKey()
+                .values().toArray(new Descriptors.FileDescriptor[StandardDescriptorBuilder
+                        .getDescriptorMapForPackageKey().size()]);
+        BArray extensionArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(PredefinedTypes.TYPE_INT));
+        int i = 0;
+        for (Descriptors.FileDescriptor fileDescriptor: stdDescriptors) {
+            for (Descriptors.FieldDescriptor fieldDescriptor: fileDescriptor.getExtensions()) {
+                extensionArray.add(i, fieldDescriptor.getNumber());
+            }
+        }
+
+        for (Descriptors.FileDescriptor fileDescriptor: fileDescriptorHashMapByFilename.values()
+                .toArray(new Descriptors.FileDescriptor[fileDescriptorHashMapByFilename.size()])) {
+            for (Descriptors.FieldDescriptor fieldDescriptor: fileDescriptor.getExtensions()) {
+                extensionArray.add(i, fieldDescriptor.getNumber());
+            }
+        }
+        if (extensionArray.size() == 0) {
+            return MessageUtils.getConnectorError(new StatusRuntimeException(Status.fromCode(
+                    Status.Code.NOT_FOUND.toStatus().getCode()).withDescription("File descriptor not found")));
+        }
+        BMap<BString, Object> fileDescriptorResponse = ValueCreator
+                .createRecordValue(ModuleUtils.getModule(), "ExtensionNumberResponse");
+        fileDescriptorResponse.put(StringUtils.fromString("base_type_name"), messageType);
+        fileDescriptorResponse.put(StringUtils.fromString("extension_number"), extensionArray);
+        return fileDescriptorResponse;
     }
 
     private static Object getDescriptorAnnotation(ObjectType type) {

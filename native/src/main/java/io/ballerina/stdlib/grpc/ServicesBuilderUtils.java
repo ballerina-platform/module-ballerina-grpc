@@ -46,10 +46,12 @@ import io.ballerina.stdlib.protobuf.nativeimpl.ProtoTypesUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_PROTOBUF_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
@@ -69,6 +71,9 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_FLOAT_MESSAGE;
  * @since 0.980.0
  */
 public class ServicesBuilderUtils {
+
+    public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapByPackage = new HashMap<>();
+    public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapByFilename = new HashMap<>();
 
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
                                                                Object annotationData) throws GrpcServerException {
@@ -139,6 +144,16 @@ public class ServicesBuilderUtils {
             for (MethodType function : service.getType().getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
                     Type inputParameterType = getRemoteInputParameterType(function);
+                    if (inputParameterType instanceof RecordType) {
+                        Object annotation = ((RecordType)
+                                inputParameterType).getAnnotation(ANN_PROTOBUF_DESCRIPTOR);
+                        if (annotation != null) {
+                            fileDescriptorHashMapByPackage.put(requestDescriptor.getFullName(),
+                                    getDescriptor(annotation));
+                            fileDescriptorHashMapByFilename.put(getDescriptor(annotation).getFullName(),
+                                    getDescriptor(annotation));
+                        }
+                    }
                     mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
                             methodDescriptor);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getFullName(),
@@ -171,6 +186,18 @@ public class ServicesBuilderUtils {
             MethodDescriptor.Marshaller resMarshaller = ProtoUtils.marshaller(
                     new MessageParser(responseDescriptor.getFullName(), getBallerinaValueType(
                     getOutputPackage(service, methodDescriptor.getName()), responseDescriptor.getName())));
+            if (getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
+                    responseDescriptor.getName()) instanceof RecordType) {
+                fileDescriptorHashMapByPackage.put(responseDescriptor.getFullName(), getDescriptor(((RecordType)
+                        getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
+                                responseDescriptor.getName())).getAnnotation(ANN_PROTOBUF_DESCRIPTOR)));
+                fileDescriptorHashMapByFilename.put(getDescriptor(((RecordType)
+                        (getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
+                                        responseDescriptor.getName()))).getAnnotation(ANN_PROTOBUF_DESCRIPTOR))
+                        .getFullName(), getDescriptor(((RecordType)
+                        (getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
+                                        responseDescriptor.getName()))).getAnnotation(ANN_PROTOBUF_DESCRIPTOR)));
+            }
             MethodDescriptor.Builder methodBuilder = MethodDescriptor.newBuilder();
             MethodDescriptor grpcMethodDescriptor = methodBuilder.setType(methodType)
                     .setFullMethodName(methodName)
