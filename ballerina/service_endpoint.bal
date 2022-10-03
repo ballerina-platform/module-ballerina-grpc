@@ -111,14 +111,7 @@ isolated function getReflectionService(Listener listenerObj) returns Service {
                             list_services_response: response
                         });
                     } else {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            error_response: {
-                                error_code: UNKNOWN,
-                                error_message: response.message()
-                            }
-                        });
+                        self.sendErrorResponse(caller, request.value, UNKNOWN, response.message());
                     }
                 } else if request.value.file_containing_symbol !is () {
                     FileDescriptorResponse|error fdResponse = externGetFileDescBySymbol(listenerObj, <string>request.value.file_containing_symbol);
@@ -129,14 +122,7 @@ isolated function getReflectionService(Listener listenerObj) returns Service {
                             file_descriptor_response: fdResponse
                         });
                     } else {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            error_response: {
-                                error_code: NOT_FOUND,
-                                error_message: fdResponse.message()
-                            }
-                        });
+                        self.sendErrorResponse(caller, request.value, NOT_FOUND, fdResponse.message());
                     }
                 } else if request.value.file_by_filename !is () {
                     FileDescriptorResponse|error fdResponse = externGetFileDescByFilename(<string>request.value.file_by_filename);
@@ -147,14 +133,7 @@ isolated function getReflectionService(Listener listenerObj) returns Service {
                             file_descriptor_response: fdResponse
                         });
                     } else {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            error_response: {
-                                error_code: NOT_FOUND,
-                                error_message: fdResponse.message()
-                            }
-                        });
+                        self.sendErrorResponse(caller, request.value, NOT_FOUND, fdResponse.message());
                     }
                 } else if request.value.file_containing_extension !is () {
                     FileDescriptorResponse|error fdResponse = externGetFileContainingExtension(<string>request.value.file_containing_extension?.containing_type, <int>request.value.file_containing_extension?.extension_number);
@@ -165,14 +144,7 @@ isolated function getReflectionService(Listener listenerObj) returns Service {
                             file_descriptor_response: fdResponse
                         });
                     } else {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            error_response: {
-                                error_code: NOT_FOUND,
-                                error_message: fdResponse.message()
-                            }
-                        });
+                        self.sendErrorResponse(caller, request.value, NOT_FOUND, fdResponse.message());
                     }
                 } else if request.value.all_extension_numbers_of_type !is () {
                     ExtensionNumberResponse|error extNumResponse = externGetAllExtensionNumbersOfType(<string>request.value.all_extension_numbers_of_type);
@@ -183,27 +155,24 @@ isolated function getReflectionService(Listener listenerObj) returns Service {
                             all_extension_numbers_response: extNumResponse
                         });
                     } else {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            error_response: {
-                                error_code: NOT_FOUND,
-                                error_message: extNumResponse.message()
-                            }
-                        });
+                        self.sendErrorResponse(caller, request.value, NOT_FOUND, extNumResponse.message());
                     }
                 } else {
-                    checkpanic caller->sendServerReflectionResponse({
-                        valid_host: request.value.host,
-                        original_request: request.value,
-                        error_response: {
-                            error_code: INVALID_ARGUMENT,
-                            error_message: "No valid arguments found"
-                        }
-                    });
+                    self.sendErrorResponse(caller, request.value, INVALID_ARGUMENT, "No valid arguments found");
                 }
                 request = check clientStream.next();
             }
+        }
+
+        function sendErrorResponse(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request, int error_code, string error_message) {
+            checkpanic caller->sendServerReflectionResponse({
+                valid_host: request.host,
+                original_request: request,
+                error_response: {
+                    error_code: error_code,
+                    error_message: error_message
+                }
+            });
         }
     };
     return reflectionService;

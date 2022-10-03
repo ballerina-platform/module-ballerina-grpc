@@ -294,6 +294,29 @@ function testPackagingAllExtensionNumbersOfTypeReflection() returns error? {
 }
 
 @test:Config {enable: true}
+function testPackagingAllExtensionNumbersOfNonExistingTypeReflection() returns error? {
+    ServerReflectionClient reflectionClient = check new ("http://localhost:9171");
+    ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
+    check streamingClient->sendServerReflectionRequest({
+        host: "http://localhost:9171",
+        all_extension_numbers_of_type: "ballerina.protobuf.UnknownOption"
+    });
+    ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
+    test:assertEquals(response, {
+        "valid_host": "http://localhost:9171",
+        "original_request": {
+            "host": "http://localhost:9171",
+            "all_extension_numbers_of_type": "ballerina.protobuf.UnknownOption"
+        },
+        "error_response": {
+            "error_code": 5,
+            "error_message": "Message type ballerina.protobuf.UnknownOption not found"
+        }
+    });
+}
+
+@test:Config {enable: true}
 function testPackagingNoArgumentsReflection() returns error? {
     ServerReflectionClient reflectionClient = check new ("http://localhost:9171");
     ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();

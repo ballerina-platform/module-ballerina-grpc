@@ -246,7 +246,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
     public static Object externGetServices(BObject listener) {
         BMap<BString, Object> listServiceResponse = ValueCreator
                 .createRecordValue(ModuleUtils.getModule(), "ListServiceResponse");
-        BArray bArray = ValueCreator.createArrayValue(TypeCreator.createArrayType(TypeCreator
+        BArray serviceResponses = ValueCreator.createArrayValue(TypeCreator.createArrayType(TypeCreator
                 .createRecordType("ServiceResponse", ModuleUtils.getModule(), 0,
                         false, 0)));
         ServicesRegistry.Builder servicesRegistryBuilder = (ServicesRegistry.Builder) listener
@@ -258,10 +258,10 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
                     .createRecordValue(ModuleUtils.getModule(), "ServiceResponse");
             serviceResponse.put(StringUtils.fromString("name"),
                     StringUtils.fromString(serviceDefinition.getServiceDescriptor().getName()));
-            bArray.add(i, serviceResponse);
+            serviceResponses.add(i, serviceResponse);
             i += 1;
         }
-        listServiceResponse.put(StringUtils.fromString("service"), bArray);
+        listServiceResponse.put(StringUtils.fromString("service"), serviceResponses);
         return listServiceResponse;
     }
 
@@ -344,16 +344,27 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
         int i = 0;
         for (Descriptors.FileDescriptor fileDescriptor: StandardDescriptorBuilder.getDescriptorMapForPackageKey()
                 .values()) {
-            for (Descriptors.FieldDescriptor fieldDescriptor: fileDescriptor.getExtensions()) {
-                extensionArray.add(i, fieldDescriptor.getNumber());
-                i += 1;
+            Descriptors.Descriptor message = fileDescriptor.findMessageTypeByName(messageType.getValue());
+            if (message != null) {
+                for (Descriptors.FieldDescriptor fieldDescriptor : message.getExtensions()) {
+                    extensionArray.add(i, fieldDescriptor.getNumber());
+                    i += 1;
+                }
             }
         }
         for (Descriptors.FileDescriptor fileDescriptor: fileDescriptorHashMapByFilename.values()) {
-            for (Descriptors.FieldDescriptor fieldDescriptor: fileDescriptor.getExtensions()) {
-                extensionArray.add(i, fieldDescriptor.getNumber());
-                i += 1;
+            Descriptors.Descriptor message = fileDescriptor.findMessageTypeByName(messageType.getValue());
+            if (message != null) {
+                for (Descriptors.FieldDescriptor fieldDescriptor : message.getExtensions()) {
+                    extensionArray.add(i, fieldDescriptor.getNumber());
+                    i += 1;
+                }
             }
+        }
+        if (extensionArray.size() == 0) {
+            return MessageUtils.getConnectorError(new StatusRuntimeException(Status.fromCode(
+                    Status.Code.NOT_FOUND.toStatus().getCode()).withDescription("Message type " +
+                    messageType.getValue() + " not found")));
         }
         BMap<BString, Object> fileDescriptorResponse = ValueCreator.createRecordValue(ModuleUtils.getModule(),
                 "ExtensionNumberResponse");
