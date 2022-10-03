@@ -185,15 +185,40 @@ public abstract class ServerCallHandler {
 
         String functionName = resource.getFunctionName();
         ObjectType serviceObjectType = resource.getService().getType();
-        if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
-            resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
-                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                    resource.getReturnType(), requestParams);
+
+        boolean isEmpty = isEmpty(requestParams);
+        if (isEmpty) {
+            if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
+                resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
+                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                        resource.getReturnType());
+            } else {
+                resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
+                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                        resource.getReturnType());
+            }
         } else {
-            resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
-                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                    resource.getReturnType(), requestParams);
+            if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
+                resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
+                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                        resource.getReturnType(), requestParams);
+            } else {
+                resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
+                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                        resource.getReturnType(), requestParams);
+            }
         }
+    }
+
+    Boolean isEmpty(Object[] requestParams) {
+        boolean isEmpty = true;
+        for (Object param : requestParams) {
+            if (param != null) {
+                isEmpty = false;
+                break;
+            }
+        }
+        return isEmpty;
     }
 
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,
