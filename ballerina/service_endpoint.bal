@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/crypto;
-import ballerina/io;
 import ballerina/jballerina.java;
 
 # The server listener of which one or more services can be registered so that the Ballerina program can offer
@@ -104,43 +103,95 @@ isolated function getReflectionService(Listener listenerObj) returns Service {
             record {|ServerReflectionRequest value;|}? request = check clientStream.next();
             while request != () {
                 if request.value.list_services !is () {
-                    checkpanic caller->sendServerReflectionResponse({
-                        valid_host: request.value.host,
-                        original_request: request.value,
-                        list_services_response: check externGetServices(listenerObj)
-                    });
+                    ListServiceResponse|error response = externGetServices(listenerObj);
+                    if response is ListServiceResponse {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            list_services_response: response
+                        });
+                    } else {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            error_response: {
+                                error_code: UNKNOWN,
+                                error_message: response.message()
+                            }
+                        });
+                    }
                 } else if request.value.file_containing_symbol !is () {
-                    io:println("File by symbol " + request.value.toString());
-                    FileDescriptorResponse fdResponse = check externGetFileDescBySymbol(listenerObj, <string>request.value.file_containing_symbol);
-                    checkpanic caller->sendServerReflectionResponse({
-                        valid_host: request.value.host,
-                        original_request: request.value,
-                        file_descriptor_response: fdResponse
-                    });
+                    FileDescriptorResponse|error fdResponse = externGetFileDescBySymbol(listenerObj, <string>request.value.file_containing_symbol);
+                    if fdResponse is FileDescriptorResponse {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            file_descriptor_response: fdResponse
+                        });
+                    } else {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            error_response: {
+                                error_code: NOT_FOUND,
+                                error_message: fdResponse.message()
+                            }
+                        });
+                    }
                 } else if request.value.file_by_filename !is () {
-                    io:println("File by filename " + request.value.toString());
-                    FileDescriptorResponse fdResponse = check externGetFileDescByFilename(<string>request.value.file_by_filename);
-                    checkpanic caller->sendServerReflectionResponse({
-                        valid_host: request.value.host,
-                        original_request: request.value,
-                        file_descriptor_response: fdResponse
-                    });
+                    FileDescriptorResponse|error fdResponse = externGetFileDescByFilename(<string>request.value.file_by_filename);
+                    if fdResponse is FileDescriptorResponse {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            file_descriptor_response: fdResponse
+                        });
+                    } else {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            error_response: {
+                                error_code: NOT_FOUND,
+                                error_message: fdResponse.message()
+                            }
+                        });
+                    }
                 } else if request.value.file_containing_extension !is () {
-                    io:println("File containing extension " + request.value.toString());
-                    FileDescriptorResponse fdResponse = check externGetFileContainingExtension(<string>request.value.file_containing_extension?.containing_type, <int>request.value.file_containing_extension?.extension_number);
-                    checkpanic caller->sendServerReflectionResponse({
-                        valid_host: request.value.host,
-                        original_request: request.value,
-                        file_descriptor_response: fdResponse
-                    });
+                    FileDescriptorResponse|error fdResponse = externGetFileContainingExtension(<string>request.value.file_containing_extension?.containing_type, <int>request.value.file_containing_extension?.extension_number);
+                    if fdResponse is FileDescriptorResponse {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            file_descriptor_response: fdResponse
+                        });
+                    } else {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            error_response: {
+                                error_code: NOT_FOUND,
+                                error_message: fdResponse.message()
+                            }
+                        });
+                    }
                 } else if request.value.all_extension_numbers_of_type !is () {
-                    io:println("All extension numbers of type " + request.value.toString());
-                    ExtensionNumberResponse extNumResponse = check externGetAllExtensionNumbersOfType(<string>request.value.all_extension_numbers_of_type);
-                    checkpanic caller->sendServerReflectionResponse({
-                        valid_host: request.value.host,
-                        original_request: request.value,
-                        all_extension_numbers_response: extNumResponse
-                    });
+                    ExtensionNumberResponse|error extNumResponse = externGetAllExtensionNumbersOfType(<string>request.value.all_extension_numbers_of_type);
+                    if extNumResponse is ExtensionNumberResponse {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            all_extension_numbers_response: extNumResponse
+                        });
+                    } else {
+                        checkpanic caller->sendServerReflectionResponse({
+                            valid_host: request.value.host,
+                            original_request: request.value,
+                            error_response: {
+                                error_code: NOT_FOUND,
+                                error_message: extNumResponse.message()
+                            }
+                        });
+                    }
                 } else {
                     checkpanic caller->sendServerReflectionResponse({
                         valid_host: request.value.host,
