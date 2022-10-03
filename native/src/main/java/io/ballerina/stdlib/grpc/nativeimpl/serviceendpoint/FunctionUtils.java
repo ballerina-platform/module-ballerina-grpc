@@ -344,18 +344,16 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
         int i = 0;
         for (Descriptors.FileDescriptor fileDescriptor: StandardDescriptorBuilder.getDescriptorMapForPackageKey()
                 .values()) {
-            Descriptors.Descriptor message = fileDescriptor.findMessageTypeByName(messageType.getValue());
-            if (message != null) {
-                for (Descriptors.FieldDescriptor fieldDescriptor : message.getExtensions()) {
+            for (Descriptors.FieldDescriptor fieldDescriptor : fileDescriptor.getExtensions()) {
+                if (fieldDescriptor.getContainingType().getFullName().equals(messageType.getValue())) {
                     extensionArray.add(i, fieldDescriptor.getNumber());
                     i += 1;
                 }
             }
         }
         for (Descriptors.FileDescriptor fileDescriptor: fileDescriptorHashMapByFilename.values()) {
-            Descriptors.Descriptor message = fileDescriptor.findMessageTypeByName(messageType.getValue());
-            if (message != null) {
-                for (Descriptors.FieldDescriptor fieldDescriptor : message.getExtensions()) {
+            for (Descriptors.FieldDescriptor fieldDescriptor : fileDescriptor.getExtensions()) {
+                if (fieldDescriptor.getContainingType().getFullName().equals(messageType.getValue())) {
                     extensionArray.add(i, fieldDescriptor.getNumber());
                     i += 1;
                 }
