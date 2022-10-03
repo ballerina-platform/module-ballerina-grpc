@@ -125,6 +125,7 @@ public class ServicesBuilderUtils {
         ServerServiceDefinition.Builder serviceDefBuilder = ServerServiceDefinition.builder(serviceName);
 
         for (Descriptors.MethodDescriptor methodDescriptor : serviceDescriptor.getMethods()) {
+            fileDescriptorHashMapBySymbol.put(methodDescriptor.getFullName(), serviceDescriptor.getFile());
             final String methodName = serviceName + "/" + methodDescriptor.getName();
             Descriptors.Descriptor requestDescriptor = methodDescriptor.getInputType();
             Descriptors.Descriptor responseDescriptor = methodDescriptor.getOutputType();
@@ -148,8 +149,10 @@ public class ServicesBuilderUtils {
                     if (inputParameterType instanceof RecordType) {
                         Object annotation = ((RecordType) inputParameterType).getAnnotation(ANN_PROTOBUF_DESCRIPTOR);
                         if (annotation != null) {
-                            fileDescriptorHashMapByFilename.put(getDescriptor(annotation).getFullName(),
-                                    getDescriptor(annotation));
+                            Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotation);
+                            fileDescriptorHashMapByFilename.put(fileDescriptor.getFullName(), fileDescriptor);
+                            fileDescriptorHashMapBySymbol.put(fileDescriptor.findMessageTypeByName(inputParameterType
+                                    .getName()).getFullName(), fileDescriptor);
                         }
                     }
                     mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
@@ -191,6 +194,8 @@ public class ServicesBuilderUtils {
                 if (annotation != null) {
                     Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotation);
                     fileDescriptorHashMapByFilename.put(fileDescriptor.getFullName(), fileDescriptor);
+                    fileDescriptorHashMapBySymbol.put(fileDescriptor.findMessageTypeByName(valueType.getName())
+                            .getFullName(), fileDescriptor);
                 }
             }
             MethodDescriptor.Builder methodBuilder = MethodDescriptor.newBuilder();

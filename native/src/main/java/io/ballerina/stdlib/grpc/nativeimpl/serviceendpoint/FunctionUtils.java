@@ -329,7 +329,8 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
             }
         }
         return MessageUtils.getConnectorError(new StatusRuntimeException(Status.fromCode(
-                Status.Code.NOT_FOUND.toStatus().getCode()).withDescription("File descriptor not found")));
+                Status.Code.NOT_FOUND.toStatus().getCode()).withDescription("File descriptor containing type " +
+                containingType.getValue() + " and extension " + extensionNumber + " not found")));
     }
 
     /**
