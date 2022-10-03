@@ -72,7 +72,7 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_FLOAT_MESSAGE;
  */
 public class ServicesBuilderUtils {
 
-    public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapByPackage = new HashMap<>();
+    public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapBySymbol = new HashMap<>();
     public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapByFilename = new HashMap<>();
 
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
@@ -120,6 +120,7 @@ public class ServicesBuilderUtils {
             throws GrpcServerException {
         // Get full service name for the service definition. <package>.<service>
         final String serviceName = serviceDescriptor.getFullName();
+        fileDescriptorHashMapBySymbol.put(serviceName, serviceDescriptor.getFile());
         // Server Definition Builder for the service.
         ServerServiceDefinition.Builder serviceDefBuilder = ServerServiceDefinition.builder(serviceName);
 
@@ -145,11 +146,8 @@ public class ServicesBuilderUtils {
                 if (methodDescriptor.getName().equals(function.getName())) {
                     Type inputParameterType = getRemoteInputParameterType(function);
                     if (inputParameterType instanceof RecordType) {
-                        Object annotation = ((RecordType)
-                                inputParameterType).getAnnotation(ANN_PROTOBUF_DESCRIPTOR);
+                        Object annotation = ((RecordType) inputParameterType).getAnnotation(ANN_PROTOBUF_DESCRIPTOR);
                         if (annotation != null) {
-                            fileDescriptorHashMapByPackage.put(requestDescriptor.getFullName(),
-                                    getDescriptor(annotation));
                             fileDescriptorHashMapByFilename.put(getDescriptor(annotation).getFullName(),
                                     getDescriptor(annotation));
                         }
@@ -186,17 +184,14 @@ public class ServicesBuilderUtils {
             MethodDescriptor.Marshaller resMarshaller = ProtoUtils.marshaller(
                     new MessageParser(responseDescriptor.getFullName(), getBallerinaValueType(
                     getOutputPackage(service, methodDescriptor.getName()), responseDescriptor.getName())));
-            if (getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
-                    responseDescriptor.getName()) instanceof RecordType) {
-                fileDescriptorHashMapByPackage.put(responseDescriptor.getFullName(), getDescriptor(((RecordType)
-                        getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
-                                responseDescriptor.getName())).getAnnotation(ANN_PROTOBUF_DESCRIPTOR)));
-                fileDescriptorHashMapByFilename.put(getDescriptor(((RecordType)
-                        (getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
-                                        responseDescriptor.getName()))).getAnnotation(ANN_PROTOBUF_DESCRIPTOR))
-                        .getFullName(), getDescriptor(((RecordType)
-                        (getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
-                                        responseDescriptor.getName()))).getAnnotation(ANN_PROTOBUF_DESCRIPTOR)));
+            Type valueType = getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
+                    responseDescriptor.getName());
+            if (valueType instanceof RecordType) {
+                Object annotation = ((RecordType) valueType).getAnnotation(ANN_PROTOBUF_DESCRIPTOR);
+                if (annotation != null) {
+                    Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotation);
+                    fileDescriptorHashMapByFilename.put(fileDescriptor.getFullName(), fileDescriptor);
+                }
             }
             MethodDescriptor.Builder methodBuilder = MethodDescriptor.newBuilder();
             MethodDescriptor grpcMethodDescriptor = methodBuilder.setType(methodType)

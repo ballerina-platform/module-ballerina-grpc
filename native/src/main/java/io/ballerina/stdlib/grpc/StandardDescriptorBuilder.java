@@ -19,12 +19,8 @@ package io.ballerina.stdlib.grpc;
 
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.InvalidProtocolBufferException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +61,17 @@ public class StandardDescriptorBuilder {
     private static final String TYPE_PROTO_PACKAGE_KEY = "google/protobuf/type.proto";
     private static final String COMPILER_PLUGIN_PROTO_PACKAGE_KEY = "google/protobuf/compiler/plugin.proto";
 
+    // This is the proto descriptor of ballerina/protobuf/descriptor.proto. This needs to be regenerated if the proto
+    // file changes.
+    private static final byte[] BALLERINA_PROTOBUF_DESC_BYTES = {10, 35, 98, 97, 108, 108, 101, 114, 105, 110, 97,
+            47, 112, 114, 111, 116, 111, 98, 117, 102, 47, 100, 101, 115, 99, 114, 105, 112, 116, 111, 114, 46, 112,
+            114, 111, 116, 111, 18, 18, 98, 97, 108, 108, 101, 114, 105, 110, 97, 46, 112, 114, 111, 116, 111, 98, 117,
+            102, 26, 32, 103, 111, 111, 103, 108, 101, 47, 112, 114, 111, 116, 111, 98, 117, 102, 47, 100, 101, 115, 99,
+            114, 105, 112, 116, 111, 114, 46, 112, 114, 111, 116, 111, 58, 72, 10, 16, 98, 97, 108, 108, 101, 114, 105,
+            110, 97, 95, 109, 111, 100, 117, 108, 101, 18, 28, 46, 103, 111, 111, 103, 108, 101, 46, 112, 114, 111, 116,
+            111, 98, 117, 102, 46, 70, 105, 108, 101, 79, 112, 116, 105, 111, 110, 115, 24, -4, 8, 32, 1, 40, 9, 82, 15,
+            98, 97, 108, 108, 101, 114, 105, 110, 97, 77, 111, 100, 117, 108, 101, 98, 6, 112, 114, 111, 116, 111, 51};
+
     static {
         standardLibDescriptorMapForPackageKey = new HashMap<>();
         standardLibDescriptorMapForPackageKey.put(EMPTY_PROTO_PACKAGE_KEY,
@@ -93,23 +100,6 @@ public class StandardDescriptorBuilder {
                 com.google.protobuf.TypeProto.getDescriptor());
         standardLibDescriptorMapForPackageKey.put(COMPILER_PLUGIN_PROTO_PACKAGE_KEY,
                 com.google.protobuf.compiler.PluginProtos.getDescriptor());
-    }
-
-    private static Descriptors.FileDescriptor getBallerinaProtobufFileDescriptor() {
-        File initialFile = new File("/home/dilan/Private/WSO2/pcm-stdLib/module-ballerina-grpc/nati" +
-                "ve/src/main/resources/ballerina/protobuf/descriptor.desc");
-        try (InputStream targetStream = new FileInputStream(initialFile)) {
-            DescriptorProtos.FileDescriptorSet set = DescriptorProtos.FileDescriptorSet.parseFrom(targetStream);
-            if (set.getFileList().size() > 0) {
-                return Descriptors.FileDescriptor.buildFrom(set.getFile(0),
-                        new Descriptors.FileDescriptor[]{standardLibDescriptorMapForPackageKey
-                                .get(DESCRIPTOR_PROTO_PACKAGE_KEY)}); //.getFile(0);
-            }
-        } catch (IOException | Descriptors.DescriptorValidationException e) {
-            PrintStream pp = System.out;
-            pp.println(e.getMessage());
-        }
-        return null;
     }
 
     static {
@@ -142,6 +132,16 @@ public class StandardDescriptorBuilder {
                 com.google.protobuf.WrappersProto.getDescriptor());
         standardLibDescriptorMapForMessageName.put(WRAPPER_BYTES_TYPE_NAME,
                 com.google.protobuf.WrappersProto.getDescriptor());
+    }
+
+    private static Descriptors.FileDescriptor getBallerinaProtobufFileDescriptor() {
+        try {
+            return Descriptors.FileDescriptor.buildFrom(DescriptorProtos.FileDescriptorProto
+                    .parseFrom(BALLERINA_PROTOBUF_DESC_BYTES), new Descriptors.FileDescriptor[]{
+                    standardLibDescriptorMapForPackageKey.get(DESCRIPTOR_PROTO_PACKAGE_KEY)});
+        } catch (InvalidProtocolBufferException | Descriptors.DescriptorValidationException e) {
+            return null;
+        }
     }
 
     public static Descriptors.FileDescriptor getFileDescriptor(String libName) {
