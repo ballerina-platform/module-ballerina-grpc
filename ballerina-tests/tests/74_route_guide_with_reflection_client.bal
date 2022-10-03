@@ -130,7 +130,7 @@ function testRouteGuideFileContainingUnknownSymbolReflection() returns error? {
             "file_containing_symbol": "package.UnknownPackage"
         },
         "error_response": {
-            "error_code": 1,
+            "error_code": 5,
             "error_message": "package.UnknownPackage symbol not found"
         }
     });

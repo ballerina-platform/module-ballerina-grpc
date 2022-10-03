@@ -22,6 +22,7 @@ function testPackagingListServicesReflection() returns error? {
     ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
     check streamingClient->sendServerReflectionRequest({host: "http://localhost:9171", list_services: ""});
     ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
     test:assertEquals(response, {
         "valid_host":"http://localhost:9171",
         "original_request": {
@@ -32,7 +33,6 @@ function testPackagingListServicesReflection() returns error? {
             "service": [{"name":"packaging.helloWorld71"}, {"name":"grpc.reflection.v1alpha.ServerReflection"}]
         }
     });
-    check streamingClient->complete();
 }
 
 @test:Config {enable: true}
@@ -41,6 +41,7 @@ function testPackagingFileByFilenameReflection() returns error? {
     ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
     check streamingClient->sendServerReflectionRequest({host: "http://localhost:9171", file_by_filename: "google/protobuf/wrappers.proto"});
     ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
     test:assertEquals(response, {
         "valid_host": "http://localhost:9171",
         "original_request": {
@@ -66,7 +67,6 @@ function testPackagingFileByFilenameReflection() returns error? {
                 114,111,116,111,51]
         }
     });
-    check streamingClient->complete();
 }
 
 @test:Config {enable: true}
@@ -75,6 +75,7 @@ function testPackagingFileContainingSymbolReflection() returns error? {
     ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
     check streamingClient->sendServerReflectionRequest({host: "http://localhost:9171", file_containing_symbol: "packaging.helloWorld71"});
     ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
     test:assertEquals(response, {
         "valid_host": "http://localhost:9171",
         "original_request": {
@@ -100,7 +101,74 @@ function testPackagingFileContainingSymbolReflection() returns error? {
             112,114,111,116,111,51]
         }
     });
+}
+
+@test:Config {enable: true}
+function testPackagingFileContainingMethodSymbolReflection() returns error? {
+    ServerReflectionClient reflectionClient = check new ("http://localhost:9171");
+    ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
+    check streamingClient->sendServerReflectionRequest({host: "http://localhost:9171", file_containing_symbol: "packaging.helloWorld71.helloWorld71Unary"});
+    ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
     check streamingClient->complete();
+    test:assertEquals(response, {
+        "valid_host": "http://localhost:9171",
+        "original_request": {
+            "host": "http://localhost:9171",
+            "file_containing_symbol": "packaging.helloWorld71.helloWorld71Unary"
+        },
+        "file_descriptor_response": {
+            "file_descriptor_proto": [10,42,55,49,95,112,97,99,107,97,103,101,95,119,105,116,104,95,115,101,114,118,
+            105,99,101,95,105,110,95,115,117,98,109,111,100,117,108,101,46,112,114,111,116,111,18,9,112,97,99,107,97,
+            103,105,110,103,26,35,98,97,108,108,101,114,105,110,97,47,112,114,111,116,111,98,117,102,47,100,101,115,99,
+            114,105,112,116,111,114,46,112,114,111,116,111,26,16,55,49,95,109,101,115,115,97,103,101,46,112,114,111,116,
+            111,50,181,2,10,12,104,101,108,108,111,87,111,114,108,100,55,49,18,65,10,17,104,101,108,108,111,87,111,114,
+            108,100,55,49,85,110,97,114,121,18,21,46,112,97,99,107,97,103,105,110,103,46,82,101,113,77,101,115,115,97,
+            103,101,26,21,46,112,97,99,107,97,103,105,110,103,46,82,101,115,77,101,115,115,97,103,101,18,74,10,24,104,
+            101,108,108,111,87,111,114,108,100,55,49,83,101,114,118,101,114,83,116,114,101,97,109,18,21,46,112,97,99,
+            107,97,103,105,110,103,46,82,101,113,77,101,115,115,97,103,101,26,21,46,112,97,99,107,97,103,105,110,103,46,
+            82,101,115,77,101,115,115,97,103,101,48,1,18,74,10,24,104,101,108,108,111,87,111,114,108,100,55,49,67,108,
+            105,101,110,116,83,116,114,101,97,109,18,21,46,112,97,99,107,97,103,105,110,103,46,82,101,113,77,101,115,
+            115,97,103,101,26,21,46,112,97,99,107,97,103,105,110,103,46,82,101,115,77,101,115,115,97,103,101,40,1,18,74,
+            10,22,104,101,108,108,111,87,111,114,108,100,55,49,66,105,100,105,83,116,114,101,97,109,18,21,46,112,97,99,
+            107,97,103,105,110,103,46,82,101,113,77,101,115,115,97,103,101,26,21,46,112,97,99,107,97,103,105,110,103,46,
+            82,101,115,77,101,115,115,97,103,101,40,1,48,1,66,13,226,71,10,103,114,112,99,95,116,101,115,116,115,98,6,
+            112,114,111,116,111,51]
+        }
+    });
+}
+
+@test:Config {enable: true}
+function testPackagingFileContainingMessageSymbolReflection() returns error? {
+    ServerReflectionClient reflectionClient = check new ("http://localhost:9171");
+    ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
+    check streamingClient->sendServerReflectionRequest({host: "http://localhost:9171", file_containing_symbol: "packaging.ResMessage"});
+    ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
+    test:assertEquals(response, {
+        "valid_host": "http://localhost:9171",
+        "original_request": {
+            "host": "http://localhost:9171",
+            "file_containing_symbol": "packaging.ResMessage"
+        },
+        "file_descriptor_response": {
+            "file_descriptor_proto": [10,16,55,49,95,109,101,115,115,97,103,101,46,112,114,111,116,111,18,9,112,97,99,
+            107,97,103,105,110,103,26,35,98,97,108,108,101,114,105,110,97,47,112,114,111,116,111,98,117,102,47,100,101,
+            115,99,114,105,112,116,111,114,46,112,114,111,116,111,34,52,10,10,82,101,113,77,101,115,115,97,103,101,18,
+            16,10,3,114,101,113,24,1,32,1,40,5,82,3,114,101,113,18,20,10,5,118,97,108,117,101,24,2,32,1,40,9,82,5,118,
+            97,108,117,101,34,52,10,10,82,101,115,77,101,115,115,97,103,101,18,16,10,3,114,101,113,24,1,32,1,40,5,82,3,
+            114,101,113,18,20,10,5,118,97,108,117,101,24,2,32,1,40,9,82,5,118,97,108,117,101,50,239,1,10,16,104,101,
+            108,108,111,66,97,108,108,101,114,105,110,97,55,49,18,50,10,2,104,105,18,21,46,112,97,99,107,97,103,105,
+            110,103,46,82,101,113,77,101,115,115,97,103,101,26,21,46,112,97,99,107,97,103,105,110,103,46,82,101,115,77,
+            101,115,115,97,103,101,18,53,10,3,104,101,121,18,21,46,112,97,99,107,97,103,105,110,103,46,82,101,113,77,
+            101,115,115,97,103,101,26,21,46,112,97,99,107,97,103,105,110,103,46,82,101,115,77,101,115,115,97,103,101,48,
+            1,18,55,10,5,104,101,108,108,111,18,21,46,112,97,99,107,97,103,105,110,103,46,82,101,113,77,101,115,115,97,
+            103,101,26,21,46,112,97,99,107,97,103,105,110,103,46,82,101,115,77,101,115,115,97,103,101,40,1,18,55,10,3,
+            98,121,101,18,21,46,112,97,99,107,97,103,105,110,103,46,82,101,113,77,101,115,115,97,103,101,26,21,46,112,
+            97,99,107,97,103,105,110,103,46,82,101,115,77,101,115,115,97,103,101,40,1,48,1,66,32,226,71,29,103,114,112,
+            99,95,116,101,115,116,115,46,109,101,115,115,97,103,101,87,105,116,104,83,101,114,118,105,99,101,98,6,112,
+            114,111,116,111,51]
+        }
+    });
 }
 
 @test:Config {enable: true}
@@ -109,6 +177,7 @@ function testPackagingFileContainingUnknownSymbolReflection() returns error? {
     ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
     check streamingClient->sendServerReflectionRequest({host: "http://localhost:9171", file_containing_symbol: "package.UnknownPackage"});
     ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
     test:assertEquals(response, {
         "valid_host": "http://localhost:9171",
         "original_request": {
@@ -116,11 +185,10 @@ function testPackagingFileContainingUnknownSymbolReflection() returns error? {
             "file_containing_symbol": "package.UnknownPackage"
         },
         "error_response": {
-            "error_code": 1,
+            "error_code": 5,
             "error_message": "package.UnknownPackage symbol not found"
         }
     });
-    check streamingClient->complete();
 }
 
 @test:Config {enable: true}
@@ -129,6 +197,7 @@ function testPackagingUnknownFilenameReflection() returns error? {
     ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
     check streamingClient->sendServerReflectionRequest({host: "http://localhost:9171", file_by_filename: "unknown_file.proto"});
     ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
     test:assertEquals(response, {
         "valid_host": "http://localhost:9171",
         "original_request": {
@@ -136,11 +205,10 @@ function testPackagingUnknownFilenameReflection() returns error? {
             "file_by_filename": "unknown_file.proto"
         },
         "error_response": {
-            "error_code": 1,
+            "error_code": 5,
             "error_message": "unknown_file.proto not found"
         }
     });
-    check streamingClient->complete();
 }
 
 @test:Config {enable: true}
@@ -154,27 +222,53 @@ function testPackagingFileContainingExtensionReflection() returns error? {
         }
     });
     ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
     test:assertEquals(response, {
         "valid_host": "http://localhost:9171",
         "original_request": {
             "host": "http://localhost:9171",
             "file_containing_extension": {
-                containing_type: "google.protobuf.FileOptions", extension_number: 1148
+                "containing_type": "google.protobuf.FileOptions", "extension_number": 1148
             }
         },
         "file_descriptor_response": {
             "file_descriptor_proto": [10,35,98,97,108,108,101,114,105,110,97,47,112,114,111,116,111,98,117,102,47,100,
-            101,115,99,114,105,112,116,111,114,46,112,114,111,116,111,18,18,98,97,108,108,101,114,105,110,97,46,112,114,
-            111,116,111,98,117,102,26,32,103,111,111,103,108,101,47,112,114,111,116,111,98,117,102,47,100,101,115,99,
-            114,105,112,116,111,114,46,112,114,111,116,111,58,72,10,16,98,97,108,108,101,114,105,110,97,95,109,111,100,
-            117,108,101,18,28,46,103,111,111,103,108,101,46,112,114,111,116,111,98,117,102,46,70,105,108,101,79,112,116,
-            105,111,110,115,24,252,8,32,1,40,9,82,15,98,97,108,108,101,114,105,110,97,77,111,100,117,108,101,98,6,112,
-            114,111,116,111,51]
+                101,115,99,114,105,112,116,111,114,46,112,114,111,116,111,18,18,98,97,108,108,101,114,105,110,97,46,112,114,
+                111,116,111,98,117,102,26,32,103,111,111,103,108,101,47,112,114,111,116,111,98,117,102,47,100,101,115,99,
+                114,105,112,116,111,114,46,112,114,111,116,111,58,72,10,16,98,97,108,108,101,114,105,110,97,95,109,111,100,
+                117,108,101,18,28,46,103,111,111,103,108,101,46,112,114,111,116,111,98,117,102,46,70,105,108,101,79,112,116,
+                105,111,110,115,24,252,8,32,1,40,9,82,15,98,97,108,108,101,114,105,110,97,77,111,100,117,108,101,98,6,112,
+                114,111,116,111,51]
         }
     });
-    check streamingClient->complete();
 }
 
+@test:Config {enable: true}
+function testPackagingFileContainingUnknownExtensionReflection() returns error? {
+    ServerReflectionClient reflectionClient = check new ("http://localhost:9171");
+    ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
+    check streamingClient->sendServerReflectionRequest({
+        host: "http://localhost:9171",
+        file_containing_extension: {
+            containing_type: "ballerina.protobuf.UnknownOption", extension_number: 11
+        }
+    });
+    ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
+    test:assertEquals(response, {
+        "valid_host": "http://localhost:9171",
+        "original_request": {
+            "host": "http://localhost:9171",
+            "file_containing_extension": {
+                "containing_type": "ballerina.protobuf.UnknownOption", "extension_number": 11
+            }
+        },
+        "error_response": {
+            "error_code": 5,
+            "error_message": "File descriptor containing type ballerina.protobuf.UnknownOption and extension 11 not found"
+        }
+    });
+}
 
 @test:Config {enable: true}
 function testPackagingAllExtensionNumbersOfTypeReflection() returns error? {
@@ -185,6 +279,7 @@ function testPackagingAllExtensionNumbersOfTypeReflection() returns error? {
         all_extension_numbers_of_type: "google.protobuf.FileOptions"
     });
     ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
+    check streamingClient->complete();
     test:assertEquals(response, {
         "valid_host": "http://localhost:9171",
         "original_request": {
@@ -196,5 +291,25 @@ function testPackagingAllExtensionNumbersOfTypeReflection() returns error? {
             "extension_number": [1148]
         }
     });
+}
+
+@test:Config {enable: true}
+function testPackagingNoArgumentsReflection() returns error? {
+    ServerReflectionClient reflectionClient = check new ("http://localhost:9171");
+    ServerReflectionInfoStreamingClient streamingClient = check reflectionClient->ServerReflectionInfo();
+    check streamingClient->sendServerReflectionRequest({
+        host: "http://localhost:9171"
+    });
+    ServerReflectionResponse? response = check streamingClient->receiveServerReflectionResponse();
     check streamingClient->complete();
+    test:assertEquals(response, {
+        "valid_host": "http://localhost:9171",
+        "original_request": {
+            "host": "http://localhost:9171"
+        },
+        "error_response": {
+            "error_code": 3,
+            "error_message": "No valid arguments found"
+        }
+    });
 }
