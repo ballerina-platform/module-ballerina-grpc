@@ -6,7 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- [Added server reflection support for gRPC services](https://github.com/ballerina-platform/ballerina-standard-library/issues/399)
+
+## [1.4.0] - 2022-09-08
+### Added
 - [Update gRPC ServiceDescriptor annotation to Descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/3005)
+- [Introduced message-level annotations for the proto descriptor instead of a centralized proto descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/2796)
+- [Introduced packaging support](https://github.com/ballerina-platform/ballerina-standard-library/issues/2798)
+- [Removed caller client object when generating code in client mode](https://github.com/ballerina-platform/ballerina-standard-library/issues/3159)
+- [Added sample client calls with dummy values to generated client files](https://github.com/ballerina-platform/ballerina-standard-library/issues/3131)
 
 ### Fixed
 - [gRPC CLI unable to generate all files in nested directories](https://github.com/ballerina-platform/ballerina-standard-library/issues/2766)
