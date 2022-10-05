@@ -16,7 +16,7 @@
 
 import ballerina/test;
 
-@test:Config {}
+@test:Config {enable: true}
 function testServiceDescriptorAnnotation() returns error? {
     helloDescriptorAnnotationClient ep = check new ("http://localhost:9168");
     HelloStreamingClient cc = check ep->hello();
