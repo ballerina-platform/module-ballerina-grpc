@@ -57,7 +57,8 @@ public class Enum {
                 AbstractNodeFactory.createIdentifierToken(name),
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
                 NodeFactory.createSeparatedNodeList(enumMemberList),
-                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE,
+                null
         );
     }
 
