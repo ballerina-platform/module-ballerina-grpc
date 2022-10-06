@@ -92,7 +92,7 @@ path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-osx-aarch_64.jar"
 path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-osx-x86_64.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/protobuf-java-3.20.1.jar"
+path = "./lib/protobuf-java-3.20.3.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/proto-google-common-protos-1.17.0.jar"
