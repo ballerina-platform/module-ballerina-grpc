@@ -143,7 +143,8 @@ public class Function {
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
                 null,
                 statements,
-                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE,
+                null
         );
     }
 
