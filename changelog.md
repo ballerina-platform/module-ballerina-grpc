@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [Added server reflection support for gRPC services](https://github.com/ballerina-platform/ballerina-standard-library/issues/399)
 
+### Changed
+- [Updated Protocol Buffers version to 3.21.7](https://github.com/ballerina-platform/ballerina-standard-library/issues/3478)
+
 ## [1.4.0] - 2022-09-08
 ### Added
 - [Update gRPC ServiceDescriptor annotation to Descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/3005)
