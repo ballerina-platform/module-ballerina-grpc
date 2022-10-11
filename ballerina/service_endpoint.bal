@@ -98,65 +98,20 @@ public isolated class Listener {
 
 isolated function getReflectionService(Listener listenerObj) returns Service {
     Service reflectionService = @Descriptor {value: REFLECTION_DESC} isolated service object {
-        remote function ServerReflectionInfo(ServerReflectionServerReflectionResponseCaller caller,
+        remote isolated function ServerReflectionInfo(ServerReflectionServerReflectionResponseCaller caller,
                     stream<ServerReflectionRequest, Error?> clientStream) returns error? {
             record {|ServerReflectionRequest value;|}? request = check clientStream.next();
             while request != () {
                 if request.value.list_services !is () {
-                    ListServiceResponse|error response = externGetServices(listenerObj);
-                    if response is ListServiceResponse {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            list_services_response: response
-                        });
-                    } else {
-                        self.sendErrorResponse(caller, request.value, UNKNOWN, response.message());
-                    }
+                    self.handleAllServicesRequest(caller, request.value);
                 } else if request.value.file_containing_symbol !is () {
-                    FileDescriptorResponse|error fdResponse = externGetFileDescBySymbol(listenerObj, <string>request.value.file_containing_symbol);
-                    if fdResponse is FileDescriptorResponse {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            file_descriptor_response: fdResponse
-                        });
-                    } else {
-                        self.sendErrorResponse(caller, request.value, NOT_FOUND, fdResponse.message());
-                    }
+                    self.handleFileContainingSymbolRequest(caller, request.value);
                 } else if request.value.file_by_filename !is () {
-                    FileDescriptorResponse|error fdResponse = externGetFileDescByFilename(<string>request.value.file_by_filename);
-                    if fdResponse is FileDescriptorResponse {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            file_descriptor_response: fdResponse
-                        });
-                    } else {
-                        self.sendErrorResponse(caller, request.value, NOT_FOUND, fdResponse.message());
-                    }
+                    self.handleFileByFilenameRequest(caller, request.value);
                 } else if request.value.file_containing_extension !is () {
-                    FileDescriptorResponse|error fdResponse = externGetFileContainingExtension(<string>request.value.file_containing_extension?.containing_type, <int>request.value.file_containing_extension?.extension_number);
-                    if fdResponse is FileDescriptorResponse {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            file_descriptor_response: fdResponse
-                        });
-                    } else {
-                        self.sendErrorResponse(caller, request.value, NOT_FOUND, fdResponse.message());
-                    }
+                    self.handleFileContainingExtensionRequest(caller, request.value);
                 } else if request.value.all_extension_numbers_of_type !is () {
-                    ExtensionNumberResponse|error extNumResponse = externGetAllExtensionNumbersOfType(<string>request.value.all_extension_numbers_of_type);
-                    if extNumResponse is ExtensionNumberResponse {
-                        checkpanic caller->sendServerReflectionResponse({
-                            valid_host: request.value.host,
-                            original_request: request.value,
-                            all_extension_numbers_response: extNumResponse
-                        });
-                    } else {
-                        self.sendErrorResponse(caller, request.value, NOT_FOUND, extNumResponse.message());
-                    }
+                    self.handleAllExtensionNumbersOfTypeRequest(caller, request.value);
                 } else {
                     self.sendErrorResponse(caller, request.value, INVALID_ARGUMENT, "No valid arguments found");
                 }
@@ -164,7 +119,72 @@ isolated function getReflectionService(Listener listenerObj) returns Service {
             }
         }
 
-        function sendErrorResponse(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request, int error_code, string error_message) {
+        isolated function handleAllServicesRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            ListServiceResponse|error response = externGetServices(listenerObj);
+            if response is ListServiceResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    list_services_response: response
+                });
+            } else {
+                self.sendErrorResponse(caller, request, UNKNOWN, response.message());
+            }
+        }
+
+        isolated function handleFileByFilenameRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            FileDescriptorResponse|error fdResponse = externGetFileDescByFilename(<string>request.file_by_filename);
+            if fdResponse is FileDescriptorResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    file_descriptor_response: fdResponse
+                });
+            } else {
+                self.sendErrorResponse(caller, request, NOT_FOUND, fdResponse.message());
+            }
+        }
+
+        isolated function handleFileContainingSymbolRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            FileDescriptorResponse|error fdResponse = externGetFileDescBySymbol(listenerObj, <string>request.file_containing_symbol);
+            if fdResponse is FileDescriptorResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    file_descriptor_response: fdResponse
+                });
+            } else {
+                self.sendErrorResponse(caller, request, NOT_FOUND, fdResponse.message());
+            }
+        }
+
+        isolated function handleFileContainingExtensionRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            FileDescriptorResponse|error fdResponse = externGetFileContainingExtension(<string>request.file_containing_extension?.containing_type, <int>request.file_containing_extension?.extension_number);
+            if fdResponse is FileDescriptorResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    file_descriptor_response: fdResponse
+                });
+            } else {
+                self.sendErrorResponse(caller, request, NOT_FOUND, fdResponse.message());
+            }
+        }
+
+        isolated function handleAllExtensionNumbersOfTypeRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            ExtensionNumberResponse|error extNumResponse = externGetAllExtensionNumbersOfType(<string>request.all_extension_numbers_of_type);
+            if extNumResponse is ExtensionNumberResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    all_extension_numbers_response: extNumResponse
+                });
+            } else {
+                self.sendErrorResponse(caller, request, NOT_FOUND, extNumResponse.message());
+            }
+        }
+
+        isolated function sendErrorResponse(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request, int error_code, string error_message) {
             checkpanic caller->sendServerReflectionResponse({
                 valid_host: request.host,
                 original_request: request,
