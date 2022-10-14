@@ -3,7 +3,7 @@
 _Owners_: @shafreenAnfar @daneshk @MadhukaHarith92 @dilanSachi  
 _Reviewers_: @shafreenAnfar @daneshk  
 _Created_: 2022/09/01  
-_Updated_: 2022/09/01  
+_Updated_: 2022/10/14  
 _Issues_: [#399](https://github.com/ballerina-platform/ballerina-standard-library/issues/399) [#3306](https://github.com/ballerina-platform/ballerina-standard-library/issues/3306)
 
 ## Summary
@@ -99,7 +99,7 @@ public type ListenerConfiguration record {|
     boolean reflectionEnabled = false;
 |};
 ```
-If enabled, all the services attached to the listener will be reflected to external clients. In the runtime, a `ServerReflection` will be created dynamically which will handle the reflection requests and respond with the required metadata. 
+If enabled, all the services attached to the listener will be reflected to external clients. In the runtime, a `ServerReflection` service will be created dynamically which will handle the reflection requests and respond with the required metadata.
 
 ## Testing
 Since what reflection does is basically expose a gRPC service which communicates service metadata, we can test this using a simple Ballerina gRPC client. If it is needed, we can use the gRPC CLI [1] to test the implementation too.
@@ -113,5 +113,6 @@ Since all the services attached to a listener are exposed via reflection, intern
 [3] https://github.com/grpc/grpc-java/blob/master/documentation/server-reflection-tutorial.md#enable-server-reflection
 [4] https://github.com/grpc/grpc-go/blob/master/Documentation/server-reflection-tutorial.md#enable-server-reflection
 [5] https://grpc.github.io/grpc/cpp/md_doc_server_reflection_tutorial.html
-[6] https://github.com/grpc/grpc/blob/master/doc/server_reflection_tutorial.md
+[6] https://github.com/grpc/grpc/blob/master/doc/server-reflection.md
 [7] https://github.com/grpc/grpc/blob/master/src/proto/grpc/reflection/v1alpha/reflection.proto
+
