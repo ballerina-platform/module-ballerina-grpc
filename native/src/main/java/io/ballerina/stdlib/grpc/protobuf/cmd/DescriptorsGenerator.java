@@ -162,8 +162,8 @@ class DescriptorsGenerator {
     private static List<String> getUnusedImports(ArrayList<String> protocOutput) {
         List<String> unusedImportList = new ArrayList<>();
         for (String line : protocOutput) {
-            if (line.contains("warning: Import ") && line.contains(" but not used.")) {
-                unusedImportList.add((line.split("warning: Import ")[1]).split(" but not used.")[0]);
+            if (line.contains("warning: Import ") && line.contains(" is unused.")) {
+                unusedImportList.add((line.split("warning: Import ")[1]).split(" is unused.")[0]);
                 outStream.println(line);
             }
         }

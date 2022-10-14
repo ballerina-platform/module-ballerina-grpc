@@ -46,10 +46,12 @@ import io.ballerina.stdlib.protobuf.nativeimpl.ProtoTypesUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_PROTOBUF_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_MESSAGE;
@@ -69,6 +71,9 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_FLOAT_MESSAGE;
  * @since 0.980.0
  */
 public class ServicesBuilderUtils {
+
+    public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapBySymbol = new HashMap<>();
+    public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapByFilename = new HashMap<>();
 
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
                                                                Object annotationData) throws GrpcServerException {
@@ -115,10 +120,12 @@ public class ServicesBuilderUtils {
             throws GrpcServerException {
         // Get full service name for the service definition. <package>.<service>
         final String serviceName = serviceDescriptor.getFullName();
+        fileDescriptorHashMapBySymbol.put(serviceName, serviceDescriptor.getFile());
         // Server Definition Builder for the service.
         ServerServiceDefinition.Builder serviceDefBuilder = ServerServiceDefinition.builder(serviceName);
 
         for (Descriptors.MethodDescriptor methodDescriptor : serviceDescriptor.getMethods()) {
+            fileDescriptorHashMapBySymbol.put(methodDescriptor.getFullName(), serviceDescriptor.getFile());
             final String methodName = serviceName + "/" + methodDescriptor.getName();
             Descriptors.Descriptor requestDescriptor = methodDescriptor.getInputType();
             Descriptors.Descriptor responseDescriptor = methodDescriptor.getOutputType();
@@ -139,6 +146,15 @@ public class ServicesBuilderUtils {
             for (MethodType function : service.getType().getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
                     Type inputParameterType = getRemoteInputParameterType(function);
+                    if (inputParameterType instanceof RecordType) {
+                        Object annotation = ((RecordType) inputParameterType).getAnnotation(ANN_PROTOBUF_DESCRIPTOR);
+                        if (annotation != null) {
+                            Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotation);
+                            fileDescriptorHashMapByFilename.put(fileDescriptor.getFullName(), fileDescriptor);
+                            fileDescriptorHashMapBySymbol.put(fileDescriptor.findMessageTypeByName(inputParameterType
+                                    .getName()).getFullName(), fileDescriptor);
+                        }
+                    }
                     mappedResource = new ServiceResource(runtime, service, serviceDescriptor.getName(), function,
                             methodDescriptor);
                     reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor.getFullName(),
@@ -171,6 +187,17 @@ public class ServicesBuilderUtils {
             MethodDescriptor.Marshaller resMarshaller = ProtoUtils.marshaller(
                     new MessageParser(responseDescriptor.getFullName(), getBallerinaValueType(
                     getOutputPackage(service, methodDescriptor.getName()), responseDescriptor.getName())));
+            Type valueType = getBallerinaValueType(getOutputPackage(service, methodDescriptor.getName()),
+                    responseDescriptor.getName());
+            if (valueType instanceof RecordType) {
+                Object annotation = ((RecordType) valueType).getAnnotation(ANN_PROTOBUF_DESCRIPTOR);
+                if (annotation != null) {
+                    Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotation);
+                    fileDescriptorHashMapByFilename.put(fileDescriptor.getFullName(), fileDescriptor);
+                    fileDescriptorHashMapBySymbol.put(fileDescriptor.findMessageTypeByName(valueType.getName())
+                            .getFullName(), fileDescriptor);
+                }
+            }
             MethodDescriptor.Builder methodBuilder = MethodDescriptor.newBuilder();
             MethodDescriptor grpcMethodDescriptor = methodBuilder.setType(methodType)
                     .setFullMethodName(methodName)

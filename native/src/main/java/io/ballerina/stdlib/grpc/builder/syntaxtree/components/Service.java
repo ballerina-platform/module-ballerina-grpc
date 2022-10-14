@@ -91,7 +91,8 @@ public class Service {
                 expressions,
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
                 members,
-                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE
+                SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE,
+                null
         );
     }
 

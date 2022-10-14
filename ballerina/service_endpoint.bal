@@ -31,6 +31,11 @@ public isolated class Listener {
     #
     # + return - An `error` if an error occurs while starting the server or else `()`
     public isolated function 'start() returns error? {
+        lock {
+            if self.config.reflectionEnabled {
+                check self.attach(getReflectionService(self), "ServerReflection");
+            }
+        }
         return externStart(self);
     }
 
@@ -89,6 +94,108 @@ public isolated class Listener {
         self.port = port;
         return externInitEndpoint(self);
     }
+}
+
+isolated function getReflectionService(Listener listenerObj) returns Service {
+    Service reflectionService = @Descriptor {value: REFLECTION_DESC} isolated service object {
+        remote isolated function ServerReflectionInfo(ServerReflectionServerReflectionResponseCaller caller,
+                    stream<ServerReflectionRequest, Error?> clientStream) returns error? {
+            record {|ServerReflectionRequest value;|}? request = check clientStream.next();
+            while request != () {
+                if request.value.list_services !is () {
+                    self.handleAllServicesRequest(caller, request.value);
+                } else if request.value.file_containing_symbol !is () {
+                    self.handleFileContainingSymbolRequest(caller, request.value);
+                } else if request.value.file_by_filename !is () {
+                    self.handleFileByFilenameRequest(caller, request.value);
+                } else if request.value.file_containing_extension !is () {
+                    self.handleFileContainingExtensionRequest(caller, request.value);
+                } else if request.value.all_extension_numbers_of_type !is () {
+                    self.handleAllExtensionNumbersOfTypeRequest(caller, request.value);
+                } else {
+                    self.sendErrorResponse(caller, request.value, INVALID_ARGUMENT, "No valid arguments found");
+                }
+                request = check clientStream.next();
+            }
+        }
+
+        isolated function handleAllServicesRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            ListServiceResponse|error response = externGetServices(listenerObj);
+            if response is ListServiceResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    list_services_response: response
+                });
+            } else {
+                self.sendErrorResponse(caller, request, UNKNOWN, response.message());
+            }
+        }
+
+        isolated function handleFileByFilenameRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            FileDescriptorResponse|error fdResponse = externGetFileDescByFilename(<string>request.file_by_filename);
+            if fdResponse is FileDescriptorResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    file_descriptor_response: fdResponse
+                });
+            } else {
+                self.sendErrorResponse(caller, request, NOT_FOUND, fdResponse.message());
+            }
+        }
+
+        isolated function handleFileContainingSymbolRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            FileDescriptorResponse|error fdResponse = externGetFileDescBySymbol(listenerObj, <string>request.file_containing_symbol);
+            if fdResponse is FileDescriptorResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    file_descriptor_response: fdResponse
+                });
+            } else {
+                self.sendErrorResponse(caller, request, NOT_FOUND, fdResponse.message());
+            }
+        }
+
+        isolated function handleFileContainingExtensionRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            FileDescriptorResponse|error fdResponse = externGetFileContainingExtension(<string>request.file_containing_extension?.containing_type, <int>request.file_containing_extension?.extension_number);
+            if fdResponse is FileDescriptorResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    file_descriptor_response: fdResponse
+                });
+            } else {
+                self.sendErrorResponse(caller, request, NOT_FOUND, fdResponse.message());
+            }
+        }
+
+        isolated function handleAllExtensionNumbersOfTypeRequest(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request) {
+            ExtensionNumberResponse|error extNumResponse = externGetAllExtensionNumbersOfType(<string>request.all_extension_numbers_of_type);
+            if extNumResponse is ExtensionNumberResponse {
+                checkpanic caller->sendServerReflectionResponse({
+                    valid_host: request.host,
+                    original_request: request,
+                    all_extension_numbers_response: extNumResponse
+                });
+            } else {
+                self.sendErrorResponse(caller, request, NOT_FOUND, extNumResponse.message());
+            }
+        }
+
+        isolated function sendErrorResponse(ServerReflectionServerReflectionResponseCaller caller, ServerReflectionRequest request, int error_code, string error_message) {
+            checkpanic caller->sendServerReflectionResponse({
+                valid_host: request.host,
+                original_request: request,
+                error_response: {
+                    error_code: error_code,
+                    error_message: error_message
+                }
+            });
+        }
+    };
+    return reflectionService;
 }
 
 # The gRPC service type.
@@ -159,6 +266,31 @@ isolated function closeStream(StreamIterator iterator) returns error? =
     'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
 
+isolated function externGetServices(Listener listenerObject) returns ListServiceResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
+isolated function externGetFileDescBySymbol(Listener listenerObject, string symbol) returns FileDescriptorResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
+isolated function externGetFileDescByFilename(string filename) returns FileDescriptorResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
+isolated function externGetFileContainingExtension(string containingType, int extensionNumber) returns FileDescriptorResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
+isolated function externGetAllExtensionNumbersOfType(string messageType) returns ExtensionNumberResponse|error =
+@java:Method {
+    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+} external;
+
 # Maximum number of requests that can be processed at a given time on a single connection.
 const int MAX_PIPELINED_REQUESTS = 10;
 
@@ -172,11 +304,13 @@ const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 # + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
 # disable the timeout
 # + maxInboundMessageSize - The maximum message size to be permitted for inbound messages. Default value is 4 MB
+# + reflectionEnabled - Support reflection
 public type ListenerConfiguration record {|
     string host = "0.0.0.0";
     ListenerSecureSocket? secureSocket = ();
     decimal timeout = DEFAULT_LISTENER_TIMEOUT;
     int maxInboundMessageSize = 4194304;
+    boolean reflectionEnabled = false;
 |};
 
 # Configurations for facilitating secure communication for the gRPC server endpoint.

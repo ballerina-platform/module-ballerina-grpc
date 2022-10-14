@@ -1,8 +1,8 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.4.0"
-distribution = "2201.2.0"
+version = "1.5.0"
+distribution = "2201.3.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -13,15 +13,15 @@ export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timest
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.4.0"
-path = "../native/build/libs/grpc-native-1.4.0-SNAPSHOT.jar"
+version = "1.5.0"
+path = "../native/build/libs/grpc-native-1.5.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.4.0-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.5.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2201.2.0-rc2-20220823-140000-ecac0c88.jar"
+path = "./lib/ballerina-cli-2201.3.0-20221004-103700-89b78c16.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -31,8 +31,8 @@ scope = "testOnly"
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.4.0"
-path = "./lib/http-native-2.4.0-20220824-161000-7b31193.jar"
+version = "2.4.1"
+path = "./lib/http-native-2.4.1-20220928-131100-d539a2e.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.77.Final.jar"
@@ -92,13 +92,13 @@ path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-osx-aarch_64.jar"
 path = "./lib/netty-tcnative-boringssl-static-2.0.52.Final-osx-x86_64.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/protobuf-java-3.20.1.jar"
+path = "./lib/protobuf-java-3.20.3.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/formatter-core-2201.2.0-rc2-20220823-140000-ecac0c88.jar"
+path = "./lib/formatter-core-2201.3.0-20221004-103700-89b78c16.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-parser-2201.2.0-rc2-20220823-140000-ecac0c88.jar"
+path = "./lib/ballerina-parser-2201.3.0-20221004-103700-89b78c16.jar"
