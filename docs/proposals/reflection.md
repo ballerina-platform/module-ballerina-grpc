@@ -7,7 +7,7 @@ _Updated_: 2022/10/14
 _Issues_: [#399](https://github.com/ballerina-platform/ballerina-standard-library/issues/399) [#3306](https://github.com/ballerina-platform/ballerina-standard-library/issues/3306)
 
 ## Summary
-Server reflection is an optional gRPC feature for servers to assist clients in runtime construction of requests without having stub information precompiled into the client. With the user defined service, a predefined standard service is started to provide service information to the clients. This proposal discusses how to implement gRPC server reflection to the existing Ballerina gRPC implementation.
+Server reflection is a gRPC feature for servers to assist clients in runtime construction of requests without having stub information precompiled into the client. With the user defined service, a predefined standard service is started to provide service information to the clients. This proposal discusses how to implement gRPC server reflection to the existing Ballerina gRPC implementation.
 
 ## Goals
 To add gRPC server reflection feature into the current Ballerina gRPC implementation.
