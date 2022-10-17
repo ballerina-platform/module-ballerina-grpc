@@ -1032,7 +1032,7 @@ public type RetryConfiguration record {|
 ```
 
 ## 7. gRPC Server Reflection
-Server reflection is an optional gRPC feature for servers to assist clients in runtime construction of requests without having stub information precompiled into the client. With the user defined service, a predefined standard service is started to provide service information to the clients.
+Server reflection is a gRPC feature for servers to assist clients in runtime construction of requests without having stub information precompiled into the client. With the user defined service, a predefined standard service is started to provide service information to the clients.
 This can be enabled by enabling the `reflectionEnabled` flag in the `grpc:ListenerConfiguration`.
 ```ballerina
 # Configurations for managing the gRPC server endpoint.
