@@ -45,9 +45,10 @@ public isolated class Listener {
     # ```
     #
     # + return - An `error` if an error occurred during the listener stopping process or else `()`
-    public isolated function gracefulStop() returns error? {
-        return;
-    }
+    public isolated function gracefulStop() returns error? =
+    @java:Method {
+        'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    } external;
 
     # Stops the registered service.
     # ```ballerina
@@ -55,9 +56,10 @@ public isolated class Listener {
     # ```
     #
     # + return - An `error` if an error occurs while stopping the server or else `()`
-    public isolated function immediateStop() returns error? {
-        return externStop(self);
-    }
+    public isolated function immediateStop() returns error? =
+    @java:Method {
+        'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
+    } external;
 
     # Gets called every time a service attaches itself to this endpoint - also happens at module init time.
     # ```ballerina
@@ -247,11 +249,6 @@ isolated function externRegister(Listener listenerObject, service object {} serv
 } external;
 
 isolated function externStart(Listener listenerObject) returns error? =
-@java:Method {
-    'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
-} external;
-
-isolated function externStop(Listener listenerObject) returns error? =
 @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils"
 } external;
