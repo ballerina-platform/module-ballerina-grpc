@@ -184,14 +184,26 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
     }
 
     /**
-     * Extern function to stop gRPC server instance.
+     * Extern function to gracefully stop gRPC server instance.
      *
      * @param serverEndpoint service listener instance.
-     * @return Error if there is an error while starting the server, else returns nil.
+     * @return Error if there is an error while stopping the server, else returns nil.
      */
-    public static Object externStop(BObject serverEndpoint) {
+    public static Object externGracefulStop(BObject serverEndpoint) {
 
         getServerConnector(serverEndpoint).stop();
+        serverEndpoint.addNativeData(HttpConstants.CONNECTOR_STARTED, false);
+        return null;
+    }
+
+    /**
+     * Extern function to immediately stop gRPC server instance.
+     *
+     * @param serverEndpoint service listener instance.
+     * @return Error if there is an error while stopping the server, else returns nil.
+     */
+    public static Object externImmediateStop(BObject serverEndpoint) {
+        getServerConnector(serverEndpoint).immediateStop();
         serverEndpoint.addNativeData(HttpConstants.CONNECTOR_STARTED, false);
         return null;
     }
