@@ -189,7 +189,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
      * @param serverEndpoint service listener instance.
      * @return Error if there is an error while stopping the server, else returns nil.
      */
-    public static Object externGracefulStop(BObject serverEndpoint) {
+    public static Object gracefulStop(BObject serverEndpoint) {
 
         getServerConnector(serverEndpoint).stop();
         serverEndpoint.addNativeData(HttpConstants.CONNECTOR_STARTED, false);
@@ -202,7 +202,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
      * @param serverEndpoint service listener instance.
      * @return Error if there is an error while stopping the server, else returns nil.
      */
-    public static Object externImmediateStop(BObject serverEndpoint) {
+    public static Object immediateStop(BObject serverEndpoint) {
         getServerConnector(serverEndpoint).immediateStop();
         serverEndpoint.addNativeData(HttpConstants.CONNECTOR_STARTED, false);
         return null;
