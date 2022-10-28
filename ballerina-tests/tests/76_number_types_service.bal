@@ -23,17 +23,6 @@ listener grpc:Listener ep76 = new (9176);
 service "TypesService" on ep76 {
     remote function getTypes(TypesMessage request) returns TypesMessage|error {
         log:printInfo(request.toString());
-        return {
-            int32Value: 2147483647,
-            int64Value: 9223372036854775807,
-            uint32Value: 0,
-            uint64Value: 0,
-            sint32Value: 0,
-            sint64Value: 0,
-            fixed32Value: 0,
-            fixed64Value: 0,
-            sfixed32Value: 0,
-            sfixed64Value: 0
-        };
+        return request;
     }
 }
