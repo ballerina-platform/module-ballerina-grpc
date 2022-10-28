@@ -267,10 +267,15 @@ public class Message {
                             break;
                         }
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64_VALUE:
-                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT64_VALUE:
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT64_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT32_VALUE:
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED64_VALUE:
-                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE: {
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT64_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT32_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED64_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED32_VALUE: {
                             bMessage = (long) 0;
                             break;
                         }
@@ -429,7 +434,7 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray intArray = ValueCreator.createArrayValue(intArrayType);
+                                BArray intArray = ValueCreator.createArrayValue(int32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
                                     intArray = (BArray) bBMap.get(bFieldName);
                                 } else {
@@ -483,6 +488,86 @@ public class Message {
                             }
                         } else {
                             bMessage = input.readFixed32();
+                        }
+                        break;
+                    }
+                    case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT64_VALUE: {
+                        if (bBMap != null) {
+                            if (fieldDescriptor.isRepeated()) {
+                                BArray sInt64Array = ValueCreator.createArrayValue(intArrayType);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    sInt64Array = (BArray) bBMap.get(bFieldName);
+                                } else {
+                                    bBMap.put(bFieldName, sInt64Array);
+                                }
+                                sInt64Array.add(sInt64Array.size(), input.readSInt64());
+                            } else if (fieldDescriptor.getContainingOneof() != null) {
+                                updateBBMap(bBMap, fieldDescriptor, input.readSInt64());
+                            } else {
+                                bBMap.put(bFieldName, input.readSInt64());
+                            }
+                        } else {
+                            bMessage = input.readSInt64();
+                        }
+                        break;
+                    }
+                    case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT32_VALUE: {
+                        if (bBMap != null) {
+                            if (fieldDescriptor.isRepeated()) {
+                                BArray sInt32Array = ValueCreator.createArrayValue(sint32ArrayType);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    sInt32Array = (BArray) bBMap.get(bFieldName);
+                                } else {
+                                    bBMap.put(bFieldName, sInt32Array);
+                                }
+                                sInt32Array.add(sInt32Array.size(), input.readSInt32());
+                            } else if (fieldDescriptor.getContainingOneof() != null) {
+                                updateBBMap(bBMap, fieldDescriptor, input.readSInt32());
+                            } else {
+                                bBMap.put(bFieldName, input.readSInt32());
+                            }
+                        } else {
+                            bMessage = input.readSInt32();
+                        }
+                        break;
+                    }
+                    case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED64_VALUE: {
+                        if (bBMap != null) {
+                            if (fieldDescriptor.isRepeated()) {
+                                BArray sFixed64Array = ValueCreator.createArrayValue(intArrayType);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    sFixed64Array = (BArray) bBMap.get(bFieldName);
+                                } else {
+                                    bBMap.put(bFieldName, sFixed64Array);
+                                }
+                                sFixed64Array.add(sFixed64Array.size(), input.readSFixed64());
+                            } else if (fieldDescriptor.getContainingOneof() != null) {
+                                updateBBMap(bBMap, fieldDescriptor, input.readSFixed64());
+                            } else {
+                                bBMap.put(bFieldName, input.readSFixed64());
+                            }
+                        } else {
+                            bMessage = input.readSFixed64();
+                        }
+                        break;
+                    }
+                    case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED32_VALUE: {
+                        if (bBMap != null) {
+                            if (fieldDescriptor.isRepeated()) {
+                                BArray sFixed32Array = ValueCreator.createArrayValue(sint32ArrayType);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    sFixed32Array = (BArray) bBMap.get(bFieldName);
+                                } else {
+                                    bBMap.put(bFieldName, sFixed32Array);
+                                }
+                                sFixed32Array.add(sFixed32Array.size(), input.readSFixed32());
+                            } else if (fieldDescriptor.getContainingOneof() != null) {
+                                updateBBMap(bBMap, fieldDescriptor, input.readSFixed32());
+                            } else {
+                                bBMap.put(bFieldName, input.readSFixed32());
+                            }
+                        } else {
+                            bMessage = input.readSFixed32();
                         }
                         break;
                     }
@@ -928,13 +1013,13 @@ public class Message {
                         if (bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                output.writeUInt32(fieldDescriptor.getNumber(), (int) valueArray.getInt(i));
+                                output.writeUInt32(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
                             }
                         } else {
-                            output.writeUInt32(fieldDescriptor.getNumber(), (int) bValue);
+                            output.writeUInt32(fieldDescriptor.getNumber(), getIntValue(bValue));
                         }
                     } else if (bMessage instanceof Long) {
-                        output.writeUInt32(fieldDescriptor.getNumber(), (int) bMessage);
+                        output.writeUInt32(fieldDescriptor.getNumber(), getIntValue(bMessage));
                     }
                     break;
                 }
@@ -960,14 +1045,77 @@ public class Message {
                         if (bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                output.writeFixed32(fieldDescriptor.getNumber(),
-                                                    getIntValue(valueArray.getInt(i)));
+                                output.writeFixed32(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
                             }
                         } else {
                             output.writeFixed32(fieldDescriptor.getNumber(), getIntValue(bValue));
                         }
                     } else if (bMessage instanceof Long) {
                         output.writeFixed32(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT64_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                output.writeSInt64(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            output.writeSInt64(fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        output.writeSInt64(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT32_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                output.writeSInt32(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            output.writeSInt32(fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        output.writeSInt32(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED64_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                output.writeSFixed64(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            output.writeSFixed64(fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        output.writeSFixed64(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED32_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                output.writeSFixed32(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            output.writeSFixed32(fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        output.writeSFixed32(fieldDescriptor.getNumber(), getIntValue(bMessage));
                     }
                     break;
                 }
@@ -1276,15 +1424,15 @@ public class Message {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
                                 size += com.google.protobuf.CodedOutputStream.computeUInt32Size(
-                                        fieldDescriptor.getNumber(), (int) valueArray.getInt(i));
+                                        fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
                             }
                         } else {
                             size += com.google.protobuf.CodedOutputStream.computeUInt32Size(
-                                    fieldDescriptor.getNumber(), (int) bValue);
+                                    fieldDescriptor.getNumber(), getIntValue(bValue));
                         }
                     } else if (bMessage instanceof Long) {
                         size += com.google.protobuf.CodedOutputStream.computeUInt32Size(fieldDescriptor
-                                .getNumber(), (int) bMessage);
+                                .getNumber(), getIntValue(bMessage));
                     }
                     break;
                 }
@@ -1322,6 +1470,82 @@ public class Message {
                         }
                     } else if (bMessage instanceof Long) {
                         size += com.google.protobuf.CodedOutputStream.computeFixed32Size(fieldDescriptor
+                                .getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT64_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                size += com.google.protobuf.CodedOutputStream.computeSInt64Size(
+                                        fieldDescriptor.getNumber(), valueArray.getInt(i));
+                            }
+                        } else {
+                            size += com.google.protobuf.CodedOutputStream.computeSInt64Size(
+                                    fieldDescriptor.getNumber(), (long) bValue);
+                        }
+                    } else if (bMessage instanceof Long) {
+                        size += com.google.protobuf.CodedOutputStream.computeSInt64Size(fieldDescriptor
+                                .getNumber(), (long) bMessage);
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT32_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                size += com.google.protobuf.CodedOutputStream.computeSInt32Size(
+                                        fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            size += com.google.protobuf.CodedOutputStream.computeSInt32Size(
+                                    fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        size += com.google.protobuf.CodedOutputStream.computeSInt32Size(fieldDescriptor
+                                .getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED64_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                size += com.google.protobuf.CodedOutputStream.computeSFixed64Size(
+                                        fieldDescriptor.getNumber(), valueArray.getInt(i));
+                            }
+                        } else {
+                            size += com.google.protobuf.CodedOutputStream.computeSFixed64Size(
+                                    fieldDescriptor.getNumber(), (long) bValue);
+                        }
+                    } else if (bMessage instanceof Long) {
+                        size += com.google.protobuf.CodedOutputStream.computeSFixed64Size(fieldDescriptor
+                                .getNumber(), (long) bMessage);
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED32_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                size += com.google.protobuf.CodedOutputStream.computeSFixed32Size(
+                                        fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            size += com.google.protobuf.CodedOutputStream.computeSFixed32Size(
+                                    fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        size += com.google.protobuf.CodedOutputStream.computeSFixed32Size(fieldDescriptor
                                 .getNumber(), getIntValue(bMessage));
                     }
                     break;
