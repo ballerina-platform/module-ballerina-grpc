@@ -113,7 +113,7 @@ public class Message {
     private static final ArrayType stringArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
     private static final ArrayType booleanArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
     private static final ArrayType intArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
-    private static final ArrayType int32ArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT_UNSIGNED_32);
+    private static final ArrayType uInt32ArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT_UNSIGNED_32);
     private static final ArrayType sint32ArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT_SIGNED_32);
     private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
 
@@ -403,7 +403,7 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray int32Array = ValueCreator.createArrayValue(int32ArrayType);
+                                BArray int32Array = ValueCreator.createArrayValue(sint32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
                                     int32Array = (BArray) bBMap.get(bFieldName);
                                 } else {
@@ -434,20 +434,20 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray intArray = ValueCreator.createArrayValue(int32ArrayType);
+                                BArray intArray = ValueCreator.createArrayValue(uInt32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
                                     intArray = (BArray) bBMap.get(bFieldName);
                                 } else {
                                     bBMap.put(bFieldName, intArray);
                                 }
-                                intArray.add(intArray.size(), input.readUInt32());
+                                intArray.add(intArray.size(), Integer.toUnsignedLong(input.readUInt32()));
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBBMap(bBMap, fieldDescriptor, input.readUInt32());
+                                updateBBMap(bBMap, fieldDescriptor, Integer.toUnsignedLong(input.readUInt32()));
                             } else {
-                                bBMap.put(bFieldName, input.readUInt32());
+                                bBMap.put(bFieldName, Integer.toUnsignedLong(input.readUInt32()));
                             }
                         } else {
-                            bMessage = input.readUInt32();
+                            bMessage = Integer.toUnsignedLong(input.readUInt32());
                         }
                         break;
                     }
@@ -474,7 +474,7 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray int32Array = ValueCreator.createArrayValue(int32ArrayType);
+                                BArray int32Array = ValueCreator.createArrayValue(sint32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
                                     int32Array = (BArray) bBMap.get(bFieldName);
                                 } else {
@@ -1013,13 +1013,16 @@ public class Message {
                         if (bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                output.writeUInt32(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                                output.writeUInt32(fieldDescriptor.getNumber(),
+                                        Integer.parseUnsignedInt(String.valueOf(valueArray.getInt(i))));
                             }
                         } else {
-                            output.writeUInt32(fieldDescriptor.getNumber(), getIntValue(bValue));
+                            output.writeUInt32(fieldDescriptor.getNumber(),
+                                    Integer.parseUnsignedInt(String.valueOf(bValue)));
                         }
                     } else if (bMessage instanceof Long) {
-                        output.writeUInt32(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                        output.writeUInt32(fieldDescriptor.getNumber(),
+                                Integer.parseUnsignedInt(String.valueOf(bMessage)));
                     }
                     break;
                 }
@@ -1061,13 +1064,13 @@ public class Message {
                         if (bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                output.writeSInt64(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                                output.writeSInt64(fieldDescriptor.getNumber(), valueArray.getInt(i));
                             }
                         } else {
-                            output.writeSInt64(fieldDescriptor.getNumber(), getIntValue(bValue));
+                            output.writeSInt64(fieldDescriptor.getNumber(), (long) bValue);
                         }
                     } else if (bMessage instanceof Long) {
-                        output.writeSInt64(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                        output.writeSInt64(fieldDescriptor.getNumber(), (long) bMessage);
                     }
                     break;
                 }
@@ -1093,13 +1096,13 @@ public class Message {
                         if (bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                output.writeSFixed64(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                                output.writeSFixed64(fieldDescriptor.getNumber(), valueArray.getInt(i));
                             }
                         } else {
-                            output.writeSFixed64(fieldDescriptor.getNumber(), getIntValue(bValue));
+                            output.writeSFixed64(fieldDescriptor.getNumber(), (long) bValue);
                         }
                     } else if (bMessage instanceof Long) {
-                        output.writeSFixed64(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                        output.writeSFixed64(fieldDescriptor.getNumber(), (long) bMessage);
                     }
                     break;
                 }
@@ -1424,15 +1427,16 @@ public class Message {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
                                 size += com.google.protobuf.CodedOutputStream.computeUInt32Size(
-                                        fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                                        fieldDescriptor.getNumber(),
+                                        Integer.parseUnsignedInt(String.valueOf(valueArray.getInt(i))));
                             }
                         } else {
                             size += com.google.protobuf.CodedOutputStream.computeUInt32Size(
-                                    fieldDescriptor.getNumber(), getIntValue(bValue));
+                                    fieldDescriptor.getNumber(), Integer.parseUnsignedInt(String.valueOf(bValue)));
                         }
                     } else if (bMessage instanceof Long) {
                         size += com.google.protobuf.CodedOutputStream.computeUInt32Size(fieldDescriptor
-                                .getNumber(), getIntValue(bMessage));
+                                .getNumber(), Integer.parseUnsignedInt(String.valueOf(bMessage)));
                     }
                     break;
                 }
