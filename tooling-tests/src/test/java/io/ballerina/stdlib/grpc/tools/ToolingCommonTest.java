@@ -433,6 +433,7 @@ public class ToolingCommonTest {
                 outputDirPath, null, null);
         generateSourceCode(outputDirPath.resolve("73_streaming_with_depending_message.proto"),
                 outputDirPath, null, null);
+        generateSourceCode(outputDirPath.resolve("76_number_types.proto"), outputDirPath, null, null);
         outputDirPath = Paths.get("../ballerina-tests/");
         generateSourceCode(outputDirPath.resolve("69_package_with_multiple_imports.proto"), outputDirPath, null, null);
         generateSourceCode(outputDirPath.resolve("70_package_with_nested_modules.proto"), outputDirPath, null, null);
