@@ -25,9 +25,6 @@ service TypesService {
   rpc getInt64Type(google.protobuf.Int64Value) returns (google.protobuf.Int64Value) {}
   rpc getUInt32Type(google.protobuf.UInt32Value) returns (google.protobuf.UInt32Value) {}
   rpc getUInt64Type(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value) {}
-//  rpc getSInt32Type(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
-//  rpc getSInt64Type(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
-//  rpc getFixed32Type(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
 }
 
 message TypesMessage {
