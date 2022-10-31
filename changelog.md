@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Updated Protocol Buffers version to 3.21.7](https://github.com/ballerina-platform/ballerina-standard-library/issues/3478)
 - [API Docs Updated](https://github.com/ballerina-platform/ballerina-standard-library/issues/3463)
 
+### Fixed
+- [Missing support for different int types](https://github.com/ballerina-platform/ballerina-standard-library/issues/3558)
+
 ### [1.4.1] - 2022-10-06
 ### Fixed
 - [Update protobuf-java version to fix protobuf vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/3493)
