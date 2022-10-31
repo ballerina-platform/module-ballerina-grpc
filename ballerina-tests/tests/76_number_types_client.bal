@@ -22,7 +22,7 @@ function testNumberTypesMaxValues() returns error? {
     TypesMessage request = {
         int32Value: int:SIGNED32_MAX_VALUE,
         int64Value: int:MAX_VALUE,
-        uint32Value: 4294967295,
+        uint32Value: int:UNSIGNED32_MAX_VALUE,
         uint64Value: int:MAX_VALUE,
         sint32Value: int:SIGNED32_MAX_VALUE,
         sint64Value: int:MAX_VALUE,
@@ -71,4 +71,67 @@ function testNumberTypesRegularValues() returns error? {
     };
     TypesMessage response = check 'client->getTypes(request);
     test:assertEquals(response, request);
+}
+
+@test:Config {enable: true}
+function testRepeatedNumberTypes() returns error? {
+    TypesServiceClient 'client = check new ("http://localhost:9176");
+    RepeatedTypesMessage request = {
+        int32Values: [int:SIGNED32_MIN_VALUE, 122004, int:SIGNED32_MAX_VALUE],
+        int64Values: [int:MIN_VALUE, 2453783783, int:MAX_VALUE],
+        uint32Values: [0, 452783738, int:UNSIGNED32_MAX_VALUE],
+        uint64Values: [0, 14253783783, int:MAX_VALUE],
+        sint32Values: [int:SIGNED32_MIN_VALUE, 427378378, int:SIGNED32_MAX_VALUE],
+        sint64Values: [int:MIN_VALUE, 738787, int:MAX_VALUE],
+        fixed32Values: [int:SIGNED32_MIN_VALUE, 676453784, int:SIGNED32_MAX_VALUE],
+        fixed64Values: [int:MIN_VALUE, 4538367837, int:MAX_VALUE],
+        sfixed32Values: [int:SIGNED32_MIN_VALUE, 2045374834, int:SIGNED32_MAX_VALUE],
+        sfixed64Values: [int:MIN_VALUE, 537837893, int:MAX_VALUE]
+    };
+    RepeatedTypesMessage response = check 'client->getRepeatedTypes(request);
+    test:assertEquals(response, request);
+}
+
+@test:Config {enable: true}
+function testInt32Type() returns error? {
+    TypesServiceClient 'client = check new ("http://localhost:9176");
+    int response = check 'client->getInt32Type(int:SIGNED32_MIN_VALUE);
+    test:assertEquals(response, int:SIGNED32_MIN_VALUE);
+    response = check 'client->getInt32Type(122004);
+    test:assertEquals(response, 122004);
+    response = check 'client->getInt32Type(int:SIGNED32_MAX_VALUE);
+    test:assertEquals(response, int:SIGNED32_MAX_VALUE);
+}
+
+@test:Config {enable: true}
+function testInt64Type() returns error? {
+    TypesServiceClient 'client = check new ("http://localhost:9176");
+    int response = check 'client->getInt64Type(int:MIN_VALUE);
+    test:assertEquals(response, int:MIN_VALUE);
+    response = check 'client->getInt64Type(2453783783);
+    test:assertEquals(response, 2453783783);
+    response = check 'client->getInt64Type(int:MAX_VALUE);
+    test:assertEquals(response, int:MAX_VALUE);
+}
+
+@test:Config {enable: true}
+function testUInt32Type() returns error? {
+    TypesServiceClient 'client = check new ("http://localhost:9176");
+    int response = check 'client->getUInt32Type(0);
+    test:assertEquals(response, 0);
+    response = check 'client->getUInt32Type(452783738);
+    test:assertEquals(response, 452783738);
+    response = check 'client->getUInt32Type(int:UNSIGNED32_MAX_VALUE);
+    test:assertEquals(response, int:UNSIGNED32_MAX_VALUE);
+}
+
+@test:Config {enable: true}
+function testUInt64Type() returns error? {
+    TypesServiceClient 'client = check new ("http://localhost:9176");
+    int response = check 'client->getUInt64Type(0);
+    test:assertEquals(response, 0);
+    response = check 'client->getUInt64Type(14253783783);
+    test:assertEquals(response, 14253783783);
+    response = check 'client->getUInt64Type(int:MAX_VALUE);
+    test:assertEquals(response, int:MAX_VALUE);
 }

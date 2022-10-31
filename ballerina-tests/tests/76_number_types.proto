@@ -16,8 +16,18 @@
 
 syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 service TypesService {
   rpc getTypes(TypesMessage) returns (TypesMessage) {}
+  rpc getRepeatedTypes(RepeatedTypesMessage) returns (RepeatedTypesMessage) {}
+  rpc getInt32Type(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
+  rpc getInt64Type(google.protobuf.Int64Value) returns (google.protobuf.Int64Value) {}
+  rpc getUInt32Type(google.protobuf.UInt32Value) returns (google.protobuf.UInt32Value) {}
+  rpc getUInt64Type(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value) {}
+//  rpc getSInt32Type(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
+//  rpc getSInt64Type(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
+//  rpc getFixed32Type(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
 }
 
 message TypesMessage {
@@ -31,4 +41,17 @@ message TypesMessage {
   fixed64 fixed64Value = 8;
   sfixed32 sfixed32Value = 9;
   sfixed64 sfixed64Value = 10;
+}
+
+message RepeatedTypesMessage {
+  repeated int32 int32Values = 1;
+  repeated int64 int64Values = 2;
+  repeated uint32 uint32Values = 3;
+  repeated uint64 uint64Values = 4;
+  repeated sint32 sint32Values = 5;
+  repeated sint64 sint64Values = 6;
+  repeated fixed32 fixed32Values = 7;
+  repeated fixed64 fixed64Values = 8;
+  repeated sfixed32 sfixed32Values = 9;
+  repeated sfixed64 sfixed64Values = 10;
 }

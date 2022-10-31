@@ -25,4 +25,29 @@ service "TypesService" on ep76 {
         log:printInfo(request.toString());
         return request;
     }
+
+    remote function getRepeatedTypes(RepeatedTypesMessage request) returns RepeatedTypesMessage|error {
+        log:printInfo(request.toString());
+        return request;
+    }
+
+    remote function getInt32Type(int request) returns int|error {
+        log:printInfo(request.toString());
+        return request;
+    }
+
+    remote function getInt64Type(int request) returns int|error {
+        log:printInfo(request.toString());
+        return request;
+    }
+
+    remote function getUInt32Type(int request) returns int|error {
+        log:printInfo(request.toString());
+        return request;
+    }
+
+    remote function getUInt64Type(int request) returns int|error {
+        log:printInfo(request.toString());
+        return request;
+    }
 }
