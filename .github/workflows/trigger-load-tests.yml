@@ -12,7 +12,7 @@ on:
         default: 'grpc-perf-cluster-test'
         required: false
   schedule:
-    - cron: '30 6 * * *'
+    - cron: '30 17 * * *'
 
 jobs:
   invokeLoadTests:
