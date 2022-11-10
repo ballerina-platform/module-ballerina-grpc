@@ -117,6 +117,7 @@ def disableGroups = ""
 def debugParams = ""
 def balJavaDebugParam = ""
 def testParams = ""
+def nativeFlag = ""
 
 task initializeVariables {
     if (project.hasProperty("groups")) {
@@ -131,10 +132,15 @@ task initializeVariables {
     if (project.hasProperty("balJavaDebug")) {
         balJavaDebugParam = "BAL_JAVA_DEBUG=${project.findProperty("balJavaDebug")}"
     }
+    if (project.hasProperty('balNativeTest')) {
+        nativeFlag = '--native'
+    }
 
     gradle.taskGraph.whenReady { graph ->
         if (graph.hasTask(":${packageName}-ballerina:test")) {
-            testParams = "${testCoverageParam}"
+            if (!project.hasProperty('balNativeTest')) {
+                testParams = "${testCoverageParam}"
+            }
         }
     }
 }
@@ -157,11 +163,11 @@ task ballerinaTest {
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                 commandLine 'cmd', '/c', "${balJavaDebugParam} ${distributionBinPath}/bal.bat test --offline " +
-                        "${testParams} ${groupParams} ${disableGroups} ${debugParams} && " +
+                        "${nativeFlag} ${testParams} ${groupParams} ${disableGroups} ${debugParams} && " +
                         "exit %%ERRORLEVEL%%"
             } else {
                 commandLine 'sh', '-c', "${balJavaDebugParam} ${distributionBinPath}/bal test --offline " +
-                        "${testParams} ${groupParams} ${disableGroups} ${debugParams}"
+                        "${nativeFlag} ${testParams} ${groupParams} ${disableGroups} ${debugParams}"
             }
         }
     }
