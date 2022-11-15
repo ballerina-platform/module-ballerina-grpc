@@ -27,6 +27,7 @@ import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.MethodType;
+import io.ballerina.runtime.api.types.NullType;
 import io.ballerina.runtime.api.types.Parameter;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;
@@ -373,6 +374,8 @@ public class ServicesBuilderUtils {
                         return outputType.getPackage();
                     }
                 }
+            } else if (returnType != null && !(returnType instanceof NullType) && returnType.getPackage() != null) {
+                return returnType.getPackage();
             }
         }
         return service.getType().getPackage();
