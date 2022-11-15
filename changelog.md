@@ -5,8 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [Fix no such record error when having the generated stub file in a separate module](https://github.com/ballerina-platform/module-ballerina-grpc/pull/1083)
+
+### [1.4.1] - 2022-10-06
+### Fixed
+- [Update protobuf-java version to fix protobuf vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/3493)
+
+## [1.4.0] - 2022-09-08
 ### Added
 - [Update gRPC ServiceDescriptor annotation to Descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/3005)
+- [Introduced message-level annotations for the proto descriptor instead of a centralized proto descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/2796)
+- [Introduced packaging support](https://github.com/ballerina-platform/ballerina-standard-library/issues/2798)
+- [Removed caller client object when generating code in client mode](https://github.com/ballerina-platform/ballerina-standard-library/issues/3159)
+- [Added sample client calls with dummy values to generated client files](https://github.com/ballerina-platform/ballerina-standard-library/issues/3131)
 
 ### Fixed
 - [gRPC CLI unable to generate all files in nested directories](https://github.com/ballerina-platform/ballerina-standard-library/issues/2766)
@@ -16,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Incorrect stub generated for message with Any type field in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/2750)
 - [Incorrect stub generation for repeated values of any, struct, timestamp, and duration messages](https://github.com/ballerina-platform/ballerina-standard-library/issues/2732)
 - [Unable to pass protobuf predefined types as repeated values and values in messages](https://github.com/ballerina-platform/ballerina-standard-library/issues/2740)
-- [Fixes incorrect caller type name validation in gRPC compiler plugin](https://github.com/ballerina-platform/ballerina-standard-library/issues/2867) 
+- [Fixes incorrect caller type name validation in gRPC compiler plugin](https://github.com/ballerina-platform/ballerina-standard-library/issues/2867)
 
 ### Added
 - [Improve imports generation logic in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/2762)
@@ -59,7 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Change the group ID and rename the sub modules](https://github.com/ballerina-platform/ballerina-standard-library/issues/1623)
 
-### Fixed 
+### Fixed
 - [Fix invalid string value for cert validation type in GrpcConstants.java](https://github.com/ballerina-platform/ballerina-standard-library/issues/1631)
 - [Fix invalid int value conversion in GrpcUtil.java for cert validation](https://github.com/ballerina-platform/ballerina-standard-library/issues/1632)
 - [Fix the gRPC backward incompatibility issue when adding a new field](https://github.com/ballerina-platform/ballerina-standard-library/issues/1572)
@@ -83,7 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [File joinPath API fails for a path with space in Windows](https://github.com/ballerina-platform/ballerina-standard-library/issues/1267)
 
 ## [0.8.0-beta.1.1] - 2021-06-07
-### Fixed 
+### Fixed
 - [Remove unnecessary Snake YAML JAR](https://github.com/ballerina-platform/ballerina-standard-library/issues/1432)
 
 ## [0.8.0-beta.1] - 2021-06-02
