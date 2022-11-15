@@ -47,7 +47,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "grpc"
-version = "1.4.1"
+version = "1.4.2"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "crypto"},
@@ -180,7 +180,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "oauth2"
-version = "2.4.0"
+version = "2.4.1"
 dependencies = [
 	{org = "ballerina", name = "cache"},
 	{org = "ballerina", name = "crypto"},
