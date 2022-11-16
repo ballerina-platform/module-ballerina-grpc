@@ -40,8 +40,10 @@ public class Constant {
     private final TypeDescriptorNode typeDescriptor;
     private final Token variableName;
     private final BasicLiteralNode initializer;
+    private final Token visibility;
 
-    public Constant(String type, String name, String value) {
+    public Constant(String visibilty, String type, String name, String value) {
+        visibility = AbstractNodeFactory.createIdentifierToken(visibilty);
         typeDescriptor = getBuiltinSimpleNameReferenceNode(type);
         variableName = AbstractNodeFactory.createIdentifierToken(name);
         initializer = getStringLiteralNode(value);
@@ -50,7 +52,7 @@ public class Constant {
     public ConstantDeclarationNode getConstantDeclarationNode() {
         return NodeFactory.createConstantDeclarationNode(
                 null,
-                null,
+                visibility,
                 constKeyWord,
                 typeDescriptor,
                 variableName,

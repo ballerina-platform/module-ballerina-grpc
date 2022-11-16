@@ -116,6 +116,7 @@ public class SyntaxTreeGenerator {
 
         String descriptorName = generateDescriptorName(stubFile.getFileName().toUpperCase());
         Constant descriptor = new Constant(
+                "public ",
                 "string",
                 descriptorName,
                 stubFile.getRootDescriptor() == null ? "" : stubFile.getRootDescriptor()
