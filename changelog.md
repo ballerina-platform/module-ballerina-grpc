@@ -15,10 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - [Missing support for different int types](https://github.com/ballerina-platform/ballerina-standard-library/issues/3558)
+- [Make descriptor const public in the generated stub file](https://github.com/ballerina-platform/ballerina-standard-library/issues/3653)
 
 ### [1.4.1] - 2022-10-06
 ### Fixed
 - [Update protobuf-java version to fix protobuf vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/3493)
+- [Fix no such record error when having the generated stub file in a separate module] (https://github.com/ballerina-platform/ballerina-standard-library/issues/3655)
 
 ## [1.4.0] - 2022-09-08
 ### Added
