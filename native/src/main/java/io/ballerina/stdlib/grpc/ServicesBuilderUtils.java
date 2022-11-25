@@ -53,7 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_PROTOBUF_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
@@ -342,7 +341,7 @@ public class ServicesBuilderUtils {
             Parameter[] parameters = remoteCallType.get().getParameters();
             int noOfParams = parameters.length;
             if (noOfParams > 0) {
-                Type inputType = getReferredType(parameters[noOfParams - 1].type);
+                Type inputType = TypeUtils.getReferredType(parameters[noOfParams - 1].type);
                 if (inputType instanceof StreamType) {
                     return ((StreamType) inputType).getConstrainedType().getPackage();
                 } else {
@@ -371,9 +370,9 @@ public class ServicesBuilderUtils {
             if (returnType instanceof UnionType) {
                 UnionType returnTypeAsUnion = (UnionType) returnType;
                 Optional<Type> returnDataType = returnTypeAsUnion.getOriginalMemberTypes().stream()
-                        .filter(type -> type instanceof RecordType || type instanceof StreamType).findFirst();
+                        .filter(type -> isStreamOrRecordType(type)).findFirst();
                 if (returnDataType.isPresent()) {
-                    Type outputType = returnDataType.get();
+                    Type outputType = TypeUtils.getReferredType(returnDataType.get());
                     if (outputType instanceof StreamType) {
                         return ((StreamType) outputType).getConstrainedType().getPackage();
                     } else {
@@ -385,6 +384,11 @@ public class ServicesBuilderUtils {
             }
         }
         return serviceType.getPackage();
+    }
+
+    private static boolean isStreamOrRecordType(Type type) {
+        Type referredType = TypeUtils.getReferredType(type);
+        return referredType instanceof RecordType || referredType instanceof StreamType;
     }
 
     /**
@@ -449,7 +453,8 @@ public class ServicesBuilderUtils {
             return ((StreamType) inputType).getConstrainedType();
         } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
                 ((RecordType) inputType).getFields().size() == 2) {
-            Type contentType = getReferredType(((RecordType) inputType).getFields().get(CONTENT_FIELD).getFieldType());
+            Type contentType =
+                    TypeUtils.getReferredType(((RecordType) inputType).getFields().get(CONTENT_FIELD).getFieldType());
             if (contentType instanceof StreamType) {
                 return ((StreamType) contentType).getConstrainedType();
             }
@@ -462,7 +467,7 @@ public class ServicesBuilderUtils {
     static Type[] getParameterTypesFromParameters(Parameter[] parameters) {
         Type[] paramTypes = new Type[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
-            paramTypes[i] = getReferredType(parameters[i].type);
+            paramTypes[i] = TypeUtils.getReferredType(parameters[i].type);
         }
         return paramTypes;
     }
