@@ -40,6 +40,7 @@ import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
@@ -172,6 +173,7 @@ public class Message {
         boolean isAnyTypedMessage = false;
         boolean isTimestampMessage = false;
         String typeUrl = "";
+        type = TypeUtils.getReferredType(type);
 
         if (fieldDescriptors.size() == 0) {
             if (messageName.startsWith("google.protobuf")) {
