@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.observability.ObservabilityConstants;
@@ -184,7 +185,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
                 responseObserver, isEmptyResponse(), this.methodDescriptor.getOutputType(), context);
 
         String functionName = resource.getFunctionName();
-        ObjectType serviceObjectType = resource.getService().getType();
+        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(resource.getService().getType());
         if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
             resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), resource.getFunctionName(), null,
                     GrpcConstants.ON_MESSAGE_METADATA, callback, properties,

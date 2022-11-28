@@ -20,7 +20,9 @@ package io.ballerina.stdlib.grpc.nativeimpl.client;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -169,8 +171,8 @@ public class FunctionUtils extends AbstractExecute {
         try {
             ServiceDefinition serviceDefinition = new ServiceDefinition(rootDescriptor.getValue(), descriptorMap);
             MessageRegistry.getInstance().setFileDescriptor(serviceDefinition.getDescriptor());
-            Map<String, MethodDescriptor> methodDescriptorMap =
-                    serviceDefinition.getMethodDescriptors(clientEndpoint.getType());
+            ObjectType objectType = (ObjectType) TypeUtils.getReferredType(clientEndpoint.getType());
+            Map<String, MethodDescriptor> methodDescriptorMap = serviceDefinition.getMethodDescriptors(objectType);
 
             genericEndpoint.addNativeData(METHOD_DESCRIPTORS, methodDescriptorMap);
             Stub stub = new Stub(clientConnector, urlString);
