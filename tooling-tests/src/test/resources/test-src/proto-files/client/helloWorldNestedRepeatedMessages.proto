@@ -1,0 +1,65 @@
+/*
+ *  Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
+
+syntax = "proto3";
+
+service helloWorld {
+  rpc hello(ReqMessage) returns (ResMessage);
+  rpc helloWorld(stream ReqMessage) returns (ResMessage);
+  rpc helloBallerina(ReqMessage) returns (stream ResMessage);
+  rpc helloGrpc(stream ReqMessage) returns (stream ResMessage);
+}
+
+message ReqMessage {
+  string reqVal1 = 1;
+  int32 reqVal2 = 2;
+  repeated string reqVal3 = 3;
+  repeated ReqConfig reqVal4 = 4;
+  MessageConfig reqVal5 = 5;
+}
+
+message MessageConfig {
+  bool configurationEnabled = 1;
+  repeated string config2 = 2;
+  repeated string config3 = 3;
+}
+
+message ReqConfig {
+  string reqConfig1 = 1;
+  repeated ReqConfig2 reqConfig2 = 2;
+  EmptyConfig reqConfig3 = 3;
+  repeated ReqConfig4 reqConfig4 = 4;
+  repeated string reqConfig5 = 5;
+}
+
+message EmptyConfig {}
+
+message ReqConfig4 {
+  string config1 = 1;
+  string config2 = 2;
+}
+
+message ReqConfig2 {
+  string config1 = 1;
+  string config2 = 2;
+  repeated string config3 = 3;
+}
+
+message ResMessage {
+  bool result = 1;
+}
