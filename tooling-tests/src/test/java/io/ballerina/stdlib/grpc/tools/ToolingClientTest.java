@@ -82,4 +82,11 @@ public class ToolingClientTest {
                 "helloWorldTimestamp_pb.bal", "helloworld_service.bal",
                 "helloworld_client.bal", "tool_test_client_8");
     }
+
+    @Test
+    public void testClientHelloWorldNestedRepeatedMessages() {
+        assertGeneratedSources("client", "helloWorldNestedRepeatedMessages.proto",
+                "helloWorldNestedRepeatedMessages_pb.bal", "helloworld_service.bal",
+                "helloworld_client.bal", "tool_test_client_9");
+    }
 }
