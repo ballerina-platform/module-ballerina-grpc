@@ -14,14 +14,14 @@ export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timest
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
 version = "1.5.0"
-path = "../native/build/libs/grpc-native-1.5.0-SNAPSHOT.jar"
+path = "../native/build/libs/grpc-native-1.5.0.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.5.0-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.5.0.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2201.3.0-rc3.jar"
+path = "./lib/ballerina-cli-2201.3.0.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -32,7 +32,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.5.0"
-path = "./lib/http-native-2.5.0-20221124-190600-9b5df31.jar"
+path = "./lib/http-native-2.5.0.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.77.Final.jar"
@@ -98,7 +98,7 @@ path = "./lib/protobuf-java-3.20.3.jar"
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/formatter-core-2201.3.0-rc3.jar"
+path = "./lib/formatter-core-2201.3.0.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-parser-2201.3.0-rc3.jar"
+path = "./lib/ballerina-parser-2201.3.0.jar"
