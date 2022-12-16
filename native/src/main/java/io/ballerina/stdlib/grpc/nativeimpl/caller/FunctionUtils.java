@@ -44,7 +44,6 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.getKeyByValue;
 import static io.ballerina.stdlib.grpc.MessageUtils.convertToHttpHeaders;
 import static io.ballerina.stdlib.grpc.MessageUtils.getMappingHttpStatusCode;
 import static io.ballerina.stdlib.grpc.MessageUtils.isContextRecordByValue;
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
 
 /**
  * Utility methods represents actions for the caller.
@@ -53,6 +52,8 @@ import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeCo
  */
 public class FunctionUtils {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionUtils.class);
+
+    private static final String CONTENT = "content";
 
     private FunctionUtils() {
     }

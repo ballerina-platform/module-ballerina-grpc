@@ -36,7 +36,6 @@ module io.ballerina.stdlib.grpc {
     requires com.google.protobuf;
     exports io.ballerina.stdlib.grpc;
     exports io.ballerina.stdlib.grpc.exception;
-    exports io.ballerina.stdlib.grpc.protobuf.cmd;
     exports io.ballerina.stdlib.grpc.nativeimpl;
     exports io.ballerina.stdlib.grpc.nativeimpl.caller;
     exports io.ballerina.stdlib.grpc.nativeimpl.client;
