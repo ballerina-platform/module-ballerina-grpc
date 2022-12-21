@@ -6,7 +6,7 @@ version = "@toml.version@"
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "@toml.version@"
+version = "@project.version@"
 path = "../native/build/libs/grpc-native-@project.version@.jar"
 
 [[platform.java11.dependency]]
