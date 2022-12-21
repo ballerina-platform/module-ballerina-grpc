@@ -24,7 +24,6 @@ import io.ballerina.compiler.syntax.tree.CaptureBindingPatternNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.ExpressionStatementNode;
 import io.ballerina.compiler.syntax.tree.ImportDeclarationNode;
-import io.ballerina.compiler.syntax.tree.ListConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MethodCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.ModuleMemberDeclarationNode;
@@ -328,49 +327,65 @@ public class ClientSampleSyntaxTreeUtils {
 
     private static ArrayList<Node> getFieldNodes(Message message, Map<String, Message> msgMap) {
         ArrayList<Node> nodes = new ArrayList<>();
+        if (message.getFieldList().size() == 0) {
+            return nodes;
+        }
         for (Field field : message.getFieldList()) {
             nodes.add(NodeFactory.createFieldMatchPatternNode(
                     AbstractNodeFactory.createIdentifierToken(
                             field.getFieldName() + " "), SyntaxTreeConstants.SYNTAX_TREE_COLON,
-                    getFieldPatternNode(field, msgMap, false)));
+                    getFieldPatternNode(field, msgMap)));
             nodes.add(NodeFactory.createCaptureBindingPatternNode(SyntaxTreeConstants.SYNTAX_TREE_COMMA));
         }
         nodes.remove(nodes.size() - 1);
         return nodes;
     }
 
-    private static Node getFieldPatternNode(Field field, Map<String, Message> msgMap, boolean isRepeated) {
+    private static Node getFieldPatternNode(Field field, Map<String, Message> msgMap) {
+        Node node;
         switch (field.getFieldType()) {
             case "int":
             case "float":
             case "decimal":
-                return getCaptureBindingPatternNode("1");
+                node = getCaptureBindingPatternNode("1");
+                break;
             case "boolean":
-                return getCaptureBindingPatternNode("true");
+                node = getCaptureBindingPatternNode("true");
+                break;
             case "byte[]":
-                return getCaptureBindingPatternNode("[72,101,108,108,111]");
+                node = getCaptureBindingPatternNode("[72,101,108,108,111]");
+                break;
             case "Timestamp":
-                return getCaptureBindingPatternNode("[1659688553,0.310073000d]");
+                node = getCaptureBindingPatternNode("[1659688553,0.310073000d]");
+                break;
             case "Duration":
-                return getCaptureBindingPatternNode("0.310073000d");
+                node = getCaptureBindingPatternNode("0.310073000d");
+                break;
             case "Struct":
-                return getCaptureBindingPatternNode("{message: \"Hello Ballerina\"}");
+                node = getCaptureBindingPatternNode("{message: \"Hello Ballerina\"}");
+                break;
             case "string":
-                return getCaptureBindingPatternNode("\"ballerina\"");
+                node = getCaptureBindingPatternNode("\"ballerina\"");
+                break;
             case "'any:Any":
-                return getCheckExpressionNode(getFunctionCallExpressionNode("'any", "pack", "\"ballerina\""));
+                node = getCheckExpressionNode(getFunctionCallExpressionNode("'any", "pack", "\"ballerina\""));
+                break;
             default:
                 if (msgMap.containsKey(field.getFieldType())) {
-                    if (field.getFieldLabel() != null && field.getFieldLabel().equals("[]") && !isRepeated) {
-                        return handleRepeatedTypes(field, msgMap);
-                    }
-                    return handleMessageTypes(field, msgMap);
+                    node = handleMessageTypes(field, msgMap);
+                    break;
                 }
                 if (BallerinaFileBuilder.enumDefaultValueMap.containsKey(field.getFieldType())) {
-                    return handleEnumTypes(field);
+                    node = handleEnumTypes(field);
+                    break;
                 }
-                return getCaptureBindingPatternNode("{}");
+                node = getCaptureBindingPatternNode("{}");
         }
+        if (field.getFieldLabel() != null && field.getFieldLabel().equals("[]")) {
+            List<Node> subRecordNodes = Collections.singletonList(node);
+            return getListConstructorExpressionNode(subRecordNodes);
+        }
+        return node;
     }
 
     private static CaptureBindingPatternNode handleEnumTypes(Field field) {
@@ -385,11 +400,6 @@ public class ClientSampleSyntaxTreeUtils {
                 SyntaxTreeConstants.SYNTAX_TREE_OPEN_BRACE,
                 NodeFactory.createSeparatedNodeList(subRecordNodes),
                 SyntaxTreeConstants.SYNTAX_TREE_CLOSE_BRACE);
-    }
-
-    private static ListConstructorExpressionNode handleRepeatedTypes(Field field, Map<String, Message> msgMap) {
-        List<Node> subRecordNodes = Collections.singletonList(getFieldPatternNode(field, msgMap, true));
-        return getListConstructorExpressionNode(subRecordNodes);
     }
 
     private static NodeList<ImportDeclarationNode> addImports(NodeList<ImportDeclarationNode> imports, ServiceStub stub,
