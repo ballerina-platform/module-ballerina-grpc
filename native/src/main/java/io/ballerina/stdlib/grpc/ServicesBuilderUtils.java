@@ -28,12 +28,14 @@ import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.MethodType;
 import io.ballerina.runtime.api.types.NullType;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Parameter;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -51,7 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_PROTOBUF_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_MESSAGE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
@@ -143,8 +144,9 @@ public class ServicesBuilderUtils {
             MethodDescriptor.Marshaller reqMarshaller = null;
             ServiceResource mappedResource = null;
             Module inputParameterPackage = service.getType().getPackage();
+            ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(service.getType());
 
-            for (MethodType function : service.getType().getMethods()) {
+            for (MethodType function : serviceType.getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
                     Type inputParameterType = getRemoteInputParameterType(function);
                     if (inputParameterType instanceof RecordType) {
@@ -249,13 +251,14 @@ public class ServicesBuilderUtils {
             throws GrpcServerException {
         try {
             BString descriptorData = null;
-            if (service.getType().getFields().containsKey("descriptor")) {
+            ObjectType type = (ObjectType) TypeUtils.getReferredType(service.getType());
+            if (type.getFields().containsKey("descriptor")) {
                 descriptorData = service.getStringValue(StringUtils.fromString("descriptor"));
-            } else if (service.getType().getFields().containsKey("value")) {
+            } else if (type.getFields().containsKey("value")) {
                 descriptorData = service.getStringValue(StringUtils.fromString("value"));
             }
             BMap<BString, BString> descMap = null;
-            if (service.getType().getFields().containsKey("descMap")) {
+            if (type.getFields().containsKey("descMap")) {
                 descMap = (BMap<BString, BString>) service.getMapValue(StringUtils.fromString("descMap"));
             }
             if (descriptorData == null || descMap == null) {
@@ -330,14 +333,15 @@ public class ServicesBuilderUtils {
      */
     static Module getInputPackage(BObject service, String remoteFunctionName) {
 
-        Optional<MethodType> remoteCallType = Arrays.stream(service.getType().getMethods())
+        ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(service.getType());
+        Optional<MethodType> remoteCallType = Arrays.stream(serviceType.getMethods())
                 .filter(methodType -> methodType.getName().equals(remoteFunctionName)).findFirst();
 
         if (remoteCallType.isPresent()) {
             Parameter[] parameters = remoteCallType.get().getParameters();
             int noOfParams = parameters.length;
             if (noOfParams > 0) {
-                Type inputType = getReferredType(parameters[noOfParams - 1].type);
+                Type inputType = TypeUtils.getReferredType(parameters[noOfParams - 1].type);
                 if (inputType instanceof StreamType) {
                     return ((StreamType) inputType).getConstrainedType().getPackage();
                 } else {
@@ -345,7 +349,7 @@ public class ServicesBuilderUtils {
                 }
             }
         }
-        return service.getType().getPackage();
+        return serviceType.getPackage();
     }
 
     /**
@@ -357,7 +361,8 @@ public class ServicesBuilderUtils {
      */
     static Module getOutputPackage(BObject service, String remoteFunctionName) {
 
-        Optional<MethodType> remoteCallType = Arrays.stream(service.getType().getMethods())
+        ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(service.getType());
+        Optional<MethodType> remoteCallType = Arrays.stream(serviceType.getMethods())
                 .filter(methodType -> methodType.getName().equals(remoteFunctionName)).findFirst();
 
         if (remoteCallType.isPresent()) {
@@ -365,9 +370,9 @@ public class ServicesBuilderUtils {
             if (returnType instanceof UnionType) {
                 UnionType returnTypeAsUnion = (UnionType) returnType;
                 Optional<Type> returnDataType = returnTypeAsUnion.getOriginalMemberTypes().stream()
-                        .filter(type -> type instanceof RecordType || type instanceof StreamType).findFirst();
+                        .filter(type -> isStreamOrRecordType(type)).findFirst();
                 if (returnDataType.isPresent()) {
-                    Type outputType = returnDataType.get();
+                    Type outputType = TypeUtils.getReferredType(returnDataType.get());
                     if (outputType instanceof StreamType) {
                         return ((StreamType) outputType).getConstrainedType().getPackage();
                     } else {
@@ -378,7 +383,12 @@ public class ServicesBuilderUtils {
                 return returnType.getPackage();
             }
         }
-        return service.getType().getPackage();
+        return serviceType.getPackage();
+    }
+
+    private static boolean isStreamOrRecordType(Type type) {
+        Type referredType = TypeUtils.getReferredType(type);
+        return referredType instanceof RecordType || referredType instanceof StreamType;
     }
 
     /**
@@ -443,7 +453,8 @@ public class ServicesBuilderUtils {
             return ((StreamType) inputType).getConstrainedType();
         } else if (inputType instanceof RecordType && inputType.getName().startsWith("Context") &&
                 ((RecordType) inputType).getFields().size() == 2) {
-            Type contentType = getReferredType(((RecordType) inputType).getFields().get(CONTENT_FIELD).getFieldType());
+            Type contentType =
+                    TypeUtils.getReferredType(((RecordType) inputType).getFields().get(CONTENT_FIELD).getFieldType());
             if (contentType instanceof StreamType) {
                 return ((StreamType) contentType).getConstrainedType();
             }
@@ -456,7 +467,7 @@ public class ServicesBuilderUtils {
     static Type[] getParameterTypesFromParameters(Parameter[] parameters) {
         Type[] paramTypes = new Type[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
-            paramTypes[i] = getReferredType(parameters[i].type);
+            paramTypes[i] = TypeUtils.getReferredType(parameters[i].type);
         }
         return paramTypes;
     }

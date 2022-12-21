@@ -1,8 +1,8 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.5.1"
-distribution = "2201.3.0"
+version = "1.6.0"
+distribution = "2201.4.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -13,15 +13,15 @@ export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timest
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.5.1"
-path = "../native/build/libs/grpc-native-1.5.1-SNAPSHOT.jar"
+version = "1.6.0"
+path = "../native/build/libs/grpc-native-1.6.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.5.1-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.6.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2201.3.0.jar"
+path = "./lib/ballerina-cli-2201.4.0-20221116-082400-3eca35ee.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -31,8 +31,8 @@ scope = "testOnly"
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.5.2"
-path = "./lib/http-native-2.5.2-20221216-160600-e2f9aa0.jar"
+version = "2.6.0"
+path = "./lib/http-native-2.6.0-20221124-124400-2b86399.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.netty"
@@ -161,13 +161,7 @@ version = "1.17.0"
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
-groupId = "org.ballerinalang"
-artifactId = "formatter-core"
-version = "2201.3.0"
-path = "./lib/formatter-core-2201.3.0.jar"
+path = "./lib/formatter-core-2201.4.0-20221208-193400-e9fb14ee.jar"
 
 [[platform.java11.dependency]]
-groupId = "org.ballerinalang"
-artifactId = "ballerina-parser"
-version = "2201.3.0"
-path = "./lib/ballerina-parser-2201.3.0.jar"
+path = "./lib/ballerina-parser-2201.4.0-20221208-193400-e9fb14ee.jar"

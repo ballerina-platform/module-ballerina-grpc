@@ -25,6 +25,7 @@ import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObservabilityConstants;
@@ -184,7 +185,7 @@ public abstract class ServerCallHandler {
         properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
 
         String functionName = resource.getFunctionName();
-        ObjectType serviceObjectType = resource.getService().getType();
+        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(resource.getService().getType());
 
         boolean isEmpty = isEmpty(requestParams);
         if (isEmpty) {
