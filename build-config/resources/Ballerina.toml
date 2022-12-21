@@ -37,7 +37,7 @@ path = "./lib/http-native-@http.native.version@.jar"
 [[platform.java11.dependency]]
 groupId = "io.netty"
 artifactId = "netty-common"
-version = "@netty-version@"
+version = "@netty.version@"
 path = "./lib/netty-common-@netty.version@.jar"
 
 [[platform.java11.dependency]]
