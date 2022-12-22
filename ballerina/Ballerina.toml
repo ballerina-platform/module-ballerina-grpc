@@ -32,7 +32,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.5.2"
-path = "./lib/http-native-2.5.2-20221216-160600-e2f9aa0.jar"
+path = "./lib/http-native-2.5.2.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-common-4.1.86.Final.jar"
