@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 
-import static io.ballerina.stdlib.grpc.builder.syntaxtree.constants.SyntaxTreeConstants.CONTENT;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
@@ -52,6 +51,7 @@ import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 public class FunctionUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionUtils.class);
+    private static final String CONTENT = "content";
 
     private FunctionUtils() {
     }

@@ -37,10 +37,6 @@ public class GrpcThreadFactory implements ThreadFactory {
         this.namePrefix = namePrefix + "-";
     }
 
-    public GrpcThreadFactory(String namePrefix) {
-        this(Thread.currentThread().getThreadGroup(), namePrefix);
-    }
-
     @Override
     public Thread newThread(Runnable r) {
         Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);

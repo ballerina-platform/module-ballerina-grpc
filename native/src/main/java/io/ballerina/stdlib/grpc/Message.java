@@ -45,7 +45,6 @@ import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.stdlib.grpc.builder.balgen.BalGenerationUtils;
 import io.netty.handler.codec.http.HttpHeaders;
 
 import java.io.IOException;
@@ -82,13 +81,10 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_UINT64_TYPE_NAME;
 public class Message {
 
     private static final String GOOGLE_PROTOBUF_ANY = "google.protobuf.Any";
-    private static final String GOOGLE_PROTOBUF_ANY_VALUE = "google.protobuf.Any.value";
     private static final String GOOGLE_PROTOBUF_ANY_TYPE_URL = "google.protobuf.Any.type_url";
     private static final String GOOGLE_PROTOBUF_ANY_MESSAGE_NAME = "Any";
-    private static final String GOOGLE_PROTOBUF_TIMESTAMP = "google.protobuf.Timestamp";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_SECONDS = "google.protobuf.Timestamp.seconds";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_NANOS = "google.protobuf.Timestamp.nanos";
-    private static final String GOOGLE_PROTOBUF_DURATION = "google.protobuf.Duration";
     private static final String GOOGLE_PROTOBUF_DURATION_SECONDS = "google.protobuf.Duration.seconds";
     private static final String GOOGLE_PROTOBUF_DURATION_NANOS = "google.protobuf.Duration.nanos";
     private static final String GOOGLE_PROTOBUF_STRUCT = "google.protobuf.Struct";
@@ -233,7 +229,7 @@ public class Message {
             if (typeUrlTag == DescriptorProtos.FieldDescriptorProto.Type.TYPE_GROUP_VALUE) {
                 typeUrl = input.readStringRequireUtf8();
                 skipUnnecessaryAnyTypeTags(input);
-                String s = BalGenerationUtils.bytesToHex(codeInputStreamAnyTypeByteArray(input));
+                String s = bytesToHex(codeInputStreamAnyTypeByteArray(input));
                 bMessage = StringUtils.fromString(s);
                 BMap<BString, Object> anyMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
                 anyMap.put(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY), StringUtils.fromString(typeUrl));
@@ -1807,5 +1803,22 @@ public class Message {
             payload.append("null");
         }
         return payload.toString();
+    }
+
+    /**
+     * Convert byte array to readable byte string.
+     *
+     * @param data byte array of proto file
+     * @return readable string of byte array
+     */
+    private static String bytesToHex(byte[] data) {
+
+        char[] hexChars = new char[data.length * 2];
+        for (int j = 0; j < data.length; j++) {
+            int v = data[j] & 0xFF;
+            hexChars[j * 2] = "0123456789ABCDEF".toCharArray()[v >>> 4];
+            hexChars[j * 2 + 1] = "0123456789ABCDEF".toCharArray()[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
