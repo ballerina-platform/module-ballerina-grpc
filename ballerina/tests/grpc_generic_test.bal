@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/test;
+import ballerina/time;
 
 @test:Config {enable: true}
 isolated function testCheckErrorForRetry() {
@@ -187,4 +188,18 @@ function testGetHeadersError() returns Error? {
     map<string|string[]> headerMap = {"testHeader": "ABC"};
     string[] result = check getHeaders(headerMap, "testHeader");
     test:assertEquals(result, ["ABC"]);
+}
+
+@test:Config {enable: true}
+function testGetEmptyDeadline() returns error? {
+    map<string|string[]> headerMap = {};
+    time:Utc? result = check getDeadline(headerMap);
+    test:assertEquals(result, ());
+}
+
+@test:Config {enable: true}
+function testIsCancelledWithSameTime() returns error? {
+    map<string|string[]> headerMap = {"deadline": time:utcToString(time:utcNow())};
+    boolean result = check isCancelled(headerMap);
+    test:assertTrue(result);
 }
