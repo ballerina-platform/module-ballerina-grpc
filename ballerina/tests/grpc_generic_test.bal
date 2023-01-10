@@ -162,9 +162,13 @@ isolated function testMatchScopes() returns Error? {
 }
 
 @test:Config {enable: true}
-function testClientOAuth2HandlerEnrichError() returns Error? {
+function testConvertToArrayNegativeError() returns Error? {
     string[] result = convertToArray("");
     test:assertEquals(result, []);
+}
+
+@test:Config {enable: true}
+function testClientOAuth2HandlerEnrichError() returns Error? {
     // ClientOAuth2Handler handler = new ({
     //     tokenUrl: "",
     //     username: "",
@@ -176,4 +180,11 @@ function testClientOAuth2HandlerEnrichError() returns Error? {
     // } else {
     //     test:assertFail("Expected an error");
     // }
+}
+
+@test:Config {enable: true}
+function testGetHeadersError() returns Error? {
+    map<string|string[]> headerMap = {"testHeader": "ABC"};
+    string[] result = check getHeaders(headerMap, "testHeader");
+    test:assertEquals(result, ["ABC"]);
 }
