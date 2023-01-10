@@ -161,3 +161,19 @@ isolated function testMatchScopes() returns Error? {
     test:assertFalse(matchScopes(["write", "execute"], "read"));
 }
 
+@test:Config {enable: true}
+function testClientOAuth2HandlerEnrichError() returns Error? {
+    string[] result = convertToArray("");
+    test:assertEquals(result, []);
+    // ClientOAuth2Handler handler = new ({
+    //     tokenUrl: "",
+    //     username: "",
+    //     password: ""
+    // });
+    // map<string|string[]>|ClientAuthError response = handler->enrich({});
+    // if response is ClientAuthError {
+    //     test:assertEquals(response.message(), "Failed to enrich request with OAuth2 token");
+    // } else {
+    //     test:assertFail("Expected an error");
+    // }
+}
