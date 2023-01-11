@@ -339,3 +339,30 @@ function testAuthDesugarLdapStorePermissionDenied() returns error? {
         test:assertFail("Expected an error");
     }
 }
+
+@test:Config {enable: true}
+function testAuthDesugarOAuth2IntrospectionNegative() returns error? {
+    OAuth2IntrospectionConfigWithScopes config = {
+        oauth2IntrospectionConfig: {
+            url: "https://localhost:9401/oauth2/token/introspect",
+            tokenTypeHint: "access_token",
+            scopeKey: "scp",
+            clientConfig: {
+                secureSocket: {
+                    cert: {
+                        path: "tests/resources/ballerinaTruststore.p12",
+                        password: "ballerina"
+                    }
+                }
+            }
+        },
+        scopes: "read"
+    };
+
+    error? result = authenticateWithOAuth2IntrospectionConfig(config, {"authorization": ""});
+    if result is error {
+        test:assertEquals(result.message(), "Empty authentication header.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
