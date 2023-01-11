@@ -169,21 +169,6 @@ function testConvertToArrayNegativeError() returns Error? {
 }
 
 @test:Config {enable: true}
-function testClientOAuth2HandlerEnrichError() returns Error? {
-    // ClientOAuth2Handler handler = new ({
-    //     tokenUrl: "",
-    //     username: "",
-    //     password: ""
-    // });
-    // map<string|string[]>|ClientAuthError response = handler->enrich({});
-    // if response is ClientAuthError {
-    //     test:assertEquals(response.message(), "Failed to enrich request with OAuth2 token");
-    // } else {
-    //     test:assertFail("Expected an error");
-    // }
-}
-
-@test:Config {enable: true}
 function testGetHeadersError() returns Error? {
     map<string|string[]> headerMap = {"testHeader": "ABC"};
     string[] result = check getHeaders(headerMap, "testHeader");
@@ -202,4 +187,27 @@ function testIsCancelledWithSameTime() returns error? {
     map<string|string[]> headerMap = {"deadline": time:utcToString(time:utcNow())};
     boolean result = check isCancelled(headerMap);
     test:assertTrue(result);
+}
+
+@test:Config {enable: true}
+function testHello55BearerTokenInit() returns error? {
+    string JWT1 = "eyJhbGciOiJSUzI1NiIsICJ0e";
+    BearerTokenConfig btConfig = {
+        token: JWT1
+    };
+
+    ClientAuthHandler authHandler = initClientAuthHandler(btConfig);
+    test:assertTrue(authHandler is ClientBearerTokenAuthHandler);
+}
+
+@test:Config {enable: true}
+function testHello55BearerTokenEnrich() returns error? {
+    string jwt = "eyJhbGciOiJSUzI1NiIsICJ0e";
+    BearerTokenConfig btConfig = {
+        token: jwt
+    };
+
+    ClientAuthHandler authHandler = initClientAuthHandler(btConfig);
+    map<string|string[]> result = check enrichHeaders(authHandler, {});
+    test:assertEquals(result, {"authorization": ["Bearer " + jwt]});
 }
