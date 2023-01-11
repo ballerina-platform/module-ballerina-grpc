@@ -20,23 +20,23 @@ import ballerina/time;
 @test:Config {enable: true}
 isolated function testCheckErrorForRetry() {
     ErrorType[] errorTypes = [
-        CancelledError, 
-        UnKnownError, 
-        InvalidArgumentError, 
-        DeadlineExceededError, 
-        NotFoundError, 
-        AlreadyExistsError, 
-        PermissionDeniedError, 
-        UnauthenticatedError, 
-        ResourceExhaustedError, 
-        FailedPreconditionError, 
-        AbortedError, 
-        OutOfRangeError, 
-        UnimplementedError, 
-        InternalError, 
-        DataLossError, 
-        UnavailableError, 
-        ResiliencyError, 
+        CancelledError,
+        UnKnownError,
+        InvalidArgumentError,
+        DeadlineExceededError,
+        NotFoundError,
+        AlreadyExistsError,
+        PermissionDeniedError,
+        UnauthenticatedError,
+        ResourceExhaustedError,
+        FailedPreconditionError,
+        AbortedError,
+        OutOfRangeError,
+        UnimplementedError,
+        InternalError,
+        DataLossError,
+        UnavailableError,
+        ResiliencyError,
         AllRetryAttemptsFailed
 
     ];
@@ -210,4 +210,132 @@ function testHello55BearerTokenEnrich() returns error? {
     ClientAuthHandler authHandler = initClientAuthHandler(btConfig);
     map<string|string[]> result = check enrichHeaders(authHandler, {});
     test:assertEquals(result, {"authorization": ["Bearer " + jwt]});
+}
+
+@test:Config {enable: true}
+function testAuthDesugarNoHeader() returns error? {
+    Service authService = @ServiceConfig {auth: []}
+    @Descriptor {value: "TEST"}
+    service object {
+    };
+
+    error? result = trap authenticateResource(authService);
+    if result is error {
+        test:assertEquals(result.message(), "Authorization header does not exist");
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable: true}
+function testAuthDesugarFileStoreNegative() returns error? {
+    FileUserStoreConfigWithScopes config = {
+        fileUserStoreConfig: {},
+        scopes: ""
+    };
+    error? result = authenticateWithFileUserStoreConfig(config, {"authorization": ""});
+    if result is error {
+        test:assertEquals(result.message(), "Empty authentication header.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable: true}
+function testAuthDesugarFileStorePermissionDenied() returns error? {
+    CredentialsConfig cConfig = {
+        username: "admin",
+        password: "123"
+    };
+
+    ClientAuthHandler authHandler = initClientAuthHandler(cConfig);
+    map<string|string[]> headers = check enrichHeaders(authHandler, {});
+
+    FileUserStoreConfigWithScopes config = {
+        fileUserStoreConfig: {},
+        scopes: "edit"
+    };
+    error? result = authenticateWithFileUserStoreConfig(config, headers);
+    if result is error {
+        test:assertEquals(result.message(), "Permission denied");
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable: true}
+function testAuthDesugarLdapStoreNegative() returns error? {
+    LdapUserStoreConfigWithScopes config = {
+        ldapUserStoreConfig: {
+            domainName: "avix.lk",
+            connectionUrl: "ldap://localhost:389",
+            connectionName: "cn=admin,dc=avix,dc=lk",
+            connectionPassword: "avix123",
+            userSearchBase: "ou=Users,dc=avix,dc=lk",
+            userEntryObjectClass: "inetOrgPerson",
+            userNameAttribute: "uid",
+            userNameSearchFilter: "(&(objectClass=inetOrgPerson)(uid=?))",
+            userNameListFilter: "(objectClass=inetOrgPerson)",
+            groupSearchBase: ["ou=Groups,dc=avix,dc=lk"],
+            groupEntryObjectClass: "groupOfNames",
+            groupNameAttribute: "cn",
+            groupNameSearchFilter: "(&(objectClass=groupOfNames)(cn=?))",
+            groupNameListFilter: "(objectClass=groupOfNames)",
+            membershipAttribute: "member",
+            userRolesCacheEnabled: true,
+            connectionPoolingEnabled: false,
+            connectionTimeout: 5,
+            readTimeout: 60
+        },
+        scopes: "read"
+    };
+
+    error? result = authenticateWithLdapUserStoreConfig(config, {"authorization": ""});
+    if result is error {
+        test:assertEquals(result.message(), "Empty authentication header.");
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
+
+@test:Config {enable: true}
+function testAuthDesugarLdapStorePermissionDenied() returns error? {
+    CredentialsConfig cConfig = {
+        username: "alice",
+        password: "alice@123"
+    };
+
+    ClientAuthHandler authHandler = initClientAuthHandler(cConfig);
+    map<string|string[]> headers = check enrichHeaders(authHandler, {});
+
+    LdapUserStoreConfigWithScopes config = {
+        ldapUserStoreConfig: {
+            domainName: "avix.lk",
+            connectionUrl: "ldap://localhost:389",
+            connectionName: "cn=admin,dc=avix,dc=lk",
+            connectionPassword: "avix123",
+            userSearchBase: "ou=Users,dc=avix,dc=lk",
+            userEntryObjectClass: "inetOrgPerson",
+            userNameAttribute: "uid",
+            userNameSearchFilter: "(&(objectClass=inetOrgPerson)(uid=?))",
+            userNameListFilter: "(objectClass=inetOrgPerson)",
+            groupSearchBase: ["ou=Groups,dc=avix,dc=lk"],
+            groupEntryObjectClass: "groupOfNames",
+            groupNameAttribute: "cn",
+            groupNameSearchFilter: "(&(objectClass=groupOfNames)(cn=?))",
+            groupNameListFilter: "(objectClass=groupOfNames)",
+            membershipAttribute: "member",
+            userRolesCacheEnabled: true,
+            connectionPoolingEnabled: false,
+            connectionTimeout: 5,
+            readTimeout: 60
+        },
+        scopes: "edit"
+    };
+    error? result = authenticateWithLdapUserStoreConfig(config, headers);
+    if result is error {
+        test:assertEquals(result.message(), "Permission denied");
+    } else {
+        test:assertFail("Expected an error");
+    }
 }

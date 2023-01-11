@@ -1,0 +1,8 @@
+[ballerina.observe]
+enabled=true
+provider="noop"
+
+[[auth.users]]
+username="admin"
+password="123"
+scopes=["write", "update"]
