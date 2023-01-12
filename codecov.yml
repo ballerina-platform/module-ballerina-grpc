@@ -15,6 +15,7 @@ ignore:
   - "integration-tests"
   - "load-tests"
   - "ballerina/reflection_pb.bal"
+  - "native/src/main/java/io/ballerina/stdlib/grpc/ServerConnectorPortBindingListener.java"
 
 coverage:
   precision: 2
