@@ -13,6 +13,7 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.MessageUtils;
 import io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils;
+import io.ballerina.stdlib.http.api.HttpConstants;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.testng.Assert;
@@ -27,13 +28,45 @@ import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.fileDescriptorHashMa
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.closeStream;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externGetAllExtensionNumbersOfType;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externGetFileContainingExtension;
+import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externInitEndpoint;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externRegister;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.nextResult;
+import static io.ballerina.stdlib.http.api.HttpConstants.ENDPOINT_CONFIG_PORT;
 
 /**
  * A test class to test FunctionUtils class functions.
  */
 public class FunctionUtilsTest {
+
+    @Test()
+    public void testExternInitEndpointBErrorCase() {
+        BMap serviceEndpointConfig = Mockito.mock(BMap.class);
+        BObject listenerObject = Mockito.mock(BObject.class);
+        Mockito.when(serviceEndpointConfig.getStringValue(HttpConstants.ENDPOINT_CONFIG_HOST))
+                .thenThrow(MessageUtils.getConnectorError(new Exception("This is a test BError")));
+        Mockito.when(listenerObject.getMapValue(StringUtils.fromString(HttpConstants.SERVICE_ENDPOINT_CONFIG)))
+                .thenReturn(serviceEndpointConfig);
+        Mockito.when(listenerObject.getIntValue(ENDPOINT_CONFIG_PORT)).thenReturn(9090L);
+
+        Object result = externInitEndpoint(listenerObject);
+        Assert.assertTrue(result instanceof BError);
+        Assert.assertEquals(((BError) result).getMessage(), "This is a test BError");
+    }
+
+    @Test()
+    public void testExternInitEndpointExceptionCase() {
+        BMap serviceEndpointConfig = Mockito.mock(BMap.class);
+        BObject listenerObject = Mockito.mock(BObject.class);
+        Mockito.when(serviceEndpointConfig.getStringValue(HttpConstants.ENDPOINT_CONFIG_HOST))
+                .thenThrow(new RuntimeException("This is a test exception"));
+        Mockito.when(listenerObject.getMapValue(StringUtils.fromString(HttpConstants.SERVICE_ENDPOINT_CONFIG)))
+                .thenReturn(serviceEndpointConfig);
+        Mockito.when(listenerObject.getIntValue(ENDPOINT_CONFIG_PORT)).thenReturn(9090L);
+
+        Object result = externInitEndpoint(listenerObject);
+        Assert.assertTrue(result instanceof BError);
+        Assert.assertEquals(((BError) result).getMessage(), "This is a test exception");
+    }
 
     @Test()
     public void testExternRegisterErrorCase() {
@@ -52,6 +85,7 @@ public class FunctionUtilsTest {
         BlockingQueue<?> messageQueue = Mockito.mock(BlockingQueue.class);
         Mockito.when(streamIterator.getNativeData(GrpcConstants.MESSAGE_QUEUE)).thenReturn(messageQueue);
         Mockito.when(messageQueue.take()).thenThrow(new InterruptedException());
+
         try {
             nextResult(streamIterator);
         } catch (Exception e) {
@@ -69,6 +103,7 @@ public class FunctionUtilsTest {
         Mockito.when(streamIterator.getNativeData(GrpcConstants.CLIENT_ENDPOINT_RESPONSE_OBSERVER))
                 .thenReturn(clientEndpoint);
         Mockito.when(streamIterator.getNativeData(GrpcConstants.ERROR_MESSAGE)).thenReturn(errorVal);
+
         Object result = closeStream(null, streamIterator);
         Assert.assertTrue(result instanceof BError);
         Assert.assertEquals(((BError) result).getMessage(), "This is a test error");
@@ -84,6 +119,7 @@ public class FunctionUtilsTest {
         Mockito.when(streamIterator.getNativeData(GrpcConstants.CLIENT_ENDPOINT_RESPONSE_OBSERVER))
                 .thenReturn(clientEndpoint);
         Mockito.when(streamIterator.getNativeData(GrpcConstants.ERROR_MESSAGE)).thenReturn(errorVal);
+
         Object result = closeStream(null, streamIterator);
         Assert.assertNull(result);
     }
@@ -109,6 +145,7 @@ public class FunctionUtilsTest {
                     "FileDescriptorResponse")).thenReturn(bMap);
             mockedStatic.when(() -> ValueCreator.createArrayValue(fileDescriptor.toProto().toByteArray()))
                     .thenReturn(null);
+
             Object result = externGetFileContainingExtension(StringUtils.fromString("TestMessage"), 12);
             Assert.assertTrue(result instanceof BMap);
         }
@@ -133,6 +170,7 @@ public class FunctionUtilsTest {
                     "ExtensionNumberResponse")).thenReturn(bMap);
             mockedStatic.when(() -> ValueCreator.createArrayValue(TypeCreator
                     .createArrayType(PredefinedTypes.TYPE_INT))).thenReturn(extensionArray);
+
             Object result = externGetAllExtensionNumbersOfType(StringUtils.fromString("TestMessage"));
             Assert.assertTrue(result instanceof BMap);
         }
