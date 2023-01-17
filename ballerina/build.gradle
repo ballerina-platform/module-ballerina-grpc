@@ -219,6 +219,29 @@ publishing {
     }
 }
 
+task startLdapServer() {
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
+                standardOutput = stdOut
+            }
+            if (!stdOut.toString().contains("openldap-server")) {
+                println "Starting LDAP server."
+                exec {
+                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml up -d"
+                    standardOutput = stdOut
+                }
+                println stdOut.toString()
+                sleep(5 * 1000)
+            } else {
+                println "LDAP server is already running."
+            }
+        }
+    }
+}
+
 build.outputs.dir artifactLibParent // To pack Ballerina gRPC CLI
 
 updateTomlFiles.dependsOn copyStdlibs
@@ -232,6 +255,7 @@ test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-native:test"
 test.dependsOn ":${packageName}-test-utils:build"
 test.dependsOn ":${packageName}-compiler-plugin:build"
+test.dependsOn startLdapServer
 build.finalizedBy ":${packageName}-ballerina-tests:build"
 
 publishToMavenLocal.dependsOn copyExternalJars

@@ -4,6 +4,7 @@ fixes:
   - "ballerina/modules/types.struct/*::../ballerina/"
   - "ballerina/modules/types.timestamp/*::../ballerina/"
   - "ballerina/modules/types.wrappers/*::../ballerina/"
+  - "ballerina/modules/types.any/*::../ballerina/"
 
 ignore:
   - "grpc-test-utils"
@@ -14,6 +15,7 @@ ignore:
   - "integration-tests"
   - "load-tests"
   - "ballerina/reflection_pb.bal"
+  - "native/src/main/java/io/ballerina/stdlib/grpc/ServerConnectorPortBindingListener.java"
 
 coverage:
   precision: 2
