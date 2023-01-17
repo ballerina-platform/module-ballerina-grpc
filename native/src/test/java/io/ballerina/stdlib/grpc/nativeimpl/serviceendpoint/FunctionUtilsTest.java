@@ -12,8 +12,12 @@ import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.MessageUtils;
+import io.ballerina.stdlib.grpc.ServerServiceDefinition;
+import io.ballerina.stdlib.grpc.ServicesRegistry;
 import io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils;
 import io.ballerina.stdlib.http.api.HttpConstants;
+import io.ballerina.stdlib.http.transport.contract.ServerConnector;
+import io.ballerina.stdlib.http.transport.contract.ServerConnectorFuture;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.testng.Assert;
@@ -21,15 +25,19 @@ import org.testng.annotations.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONFIG;
+import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.fileDescriptorHashMapByFilename;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.closeStream;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externGetAllExtensionNumbersOfType;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externGetFileContainingExtension;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externInitEndpoint;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externRegister;
+import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externStart;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.nextResult;
 import static io.ballerina.stdlib.http.api.HttpConstants.ENDPOINT_CONFIG_PORT;
 
@@ -77,6 +85,33 @@ public class FunctionUtilsTest {
         Assert.assertTrue(result instanceof BError);
         Assert.assertEquals(((BError) result).getMessage(), "Error when " +
                 "initializing service register builder.");
+    }
+
+    @Test()
+    public void testStartServerConnectorErrorCase() throws InterruptedException {
+        BMap config = Mockito.mock(BMap.class);
+        BObject listener = Mockito.mock(BObject.class);
+        ServerConnectorFuture serverConnectorFuture = Mockito.mock(ServerConnectorFuture.class);
+        ServicesRegistry.Builder serviceRegistryBuilder = Mockito.mock(ServicesRegistry.Builder.class);
+        HashMap<String, ServerServiceDefinition> serviceDefinitionHashMap = new HashMap<>();
+        serviceDefinitionHashMap.put("TestDefinition", null);
+        ServicesRegistry servicesRegistry = Mockito.mock(ServicesRegistry.class);
+        ServerConnector serverConnector = Mockito.mock(ServerConnector.class);
+        Mockito.when(config.get(StringUtils.fromString((MAX_INBOUND_MESSAGE_SIZE)))).thenReturn(1L);
+        Mockito.when(listener.getMapValue(CONFIG)).thenReturn(config);
+        Mockito.when(listener.getNativeData(GrpcConstants.SERVER_CONNECTOR)).thenReturn(serverConnector);
+        Mockito.when(serverConnector.start()).thenReturn(serverConnectorFuture);
+        Mockito.when(serverConnector.getConnectorID()).thenReturn("10");
+        Mockito.when(listener.getNativeData(GrpcConstants.SERVICE_REGISTRY_BUILDER)).thenReturn(serviceRegistryBuilder);
+        Mockito.when(listener.getNativeData(GrpcConstants.CONNECTOR_STARTED)).thenReturn(false);
+        Mockito.when(serviceRegistryBuilder.getServices()).thenReturn(serviceDefinitionHashMap);
+        Mockito.when(serviceRegistryBuilder.build()).thenReturn(servicesRegistry);
+        Mockito.doThrow(new InterruptedException("Interrupted by test")).when(serverConnectorFuture).sync();
+
+        Object result = externStart(listener);
+        Assert.assertTrue(result instanceof BError);
+        Assert.assertEquals(((BError) result).getMessage(),
+                "Failed to start server connector '10'. Interrupted by test");
     }
 
     @Test()
