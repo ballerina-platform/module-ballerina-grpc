@@ -64,7 +64,7 @@ public client class StreamingClient {
         if externIsBidirectional(self) {
             if self.serverStream is stream<anydata, Error?> {
                 var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
-                var headerMap = externGetHeaderMap(self, true);
+                map<string|string[]>? headerMap = externGetHeaderMap(self, true);
                 if headerMap is map<string|string[]> {
                     headers = headerMap;
                 }
@@ -74,7 +74,7 @@ public client class StreamingClient {
                     return nextRecord;
                 }
             } else {
-                var result = externReceive(self);
+                anydata|stream<anydata, Error?> result = check externReceive(self);
                 if result is stream<anydata, Error?> {
                     self.serverStream = result;
                     var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
@@ -87,25 +87,19 @@ public client class StreamingClient {
                     } else {
                         return nextRecord;
                     }
-                } else if result is anydata {
-                    return error DataMismatchError("Expected a stream but found an anydata type.");
-                } else {
-                    return result;
                 }
+                return error DataMismatchError("Expected a stream but found an anydata type.");
             }
         } else {
-            var result = externReceive(self);
-            var headerMap = externGetHeaderMap(self, false);
+            anydata|stream<anydata, Error?> result = check externReceive(self);
+            map<string|string[]>? headerMap = externGetHeaderMap(self, false);
             if headerMap is map<string|string[]> {
                 headers = headerMap;
             }
             if result is anydata {
                 return [result, headers];
-            } else if result is stream<anydata, Error?> {
-                return error DataMismatchError("Expected an anydata type but found a stream.");
-            } else {
-                return result;
             }
+            return error DataMismatchError("Expected an anydata type but found a stream.");
         }
     }
 }

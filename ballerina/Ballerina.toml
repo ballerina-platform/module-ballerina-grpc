@@ -21,7 +21,7 @@ path = "../test-utils/build/libs/grpc-test-utils-1.6.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2201.4.0-20221116-082400-3eca35ee.jar"
+path = "./lib/ballerina-cli-2201.4.0-20221208-193400-e9fb14ee.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -61,8 +61,8 @@ path = "./lib/netty-resolver-4.1.86.Final.jar"
 [[platform.java11.dependency]]
 groupId = "io.netty"
 artifactId = "netty-handler"
-version = "4.1.77.Final"
-path = "./lib/netty-handler-4.1.77.Final.jar"
+version = "4.1.86.Final"
+path = "./lib/netty-handler-4.1.86.Final.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.netty"
@@ -161,7 +161,13 @@ version = "1.17.0"
 path = "./lib/proto-google-common-protos-1.17.0.jar"
 
 [[platform.java11.dependency]]
+groupId = "org.ballerinalang"
+artifactId = "formatter-core"
+version = "2201.4.0-20221208-193400-e9fb14ee"
 path = "./lib/formatter-core-2201.4.0-20221208-193400-e9fb14ee.jar"
 
 [[platform.java11.dependency]]
+groupId = "org.ballerinalang"
+artifactId = "ballerina-parser"
+version = "2201.4.0-20221208-193400-e9fb14ee"
 path = "./lib/ballerina-parser-2201.4.0-20221208-193400-e9fb14ee.jar"

@@ -173,29 +173,6 @@ task ballerinaTest {
     }
 }
 
-task startLdapServer() {
-    doLast {
-        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-            def stdOut = new ByteArrayOutputStream()
-            exec {
-                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
-                standardOutput = stdOut
-            }
-            if (!stdOut.toString().contains("openldap-server")) {
-                println "Starting LDAP server."
-                exec {
-                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml up -d"
-                    standardOutput = stdOut
-                }
-                println stdOut.toString()
-                sleep(5 * 1000)
-            } else {
-                println "LDAP server is already running."
-            }
-        }
-    }
-}
-
 task startBallerinaGRPCServer() {
     doLast {
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -340,12 +317,10 @@ task stopGoServer() {
 build.dependsOn ":${packageName}-test-utils:build"
 ballerinaTest.finalizedBy stopLdapServer
 ballerinaTest.finalizedBy stopBallerinaGRPCServer
-ballerinaTest.dependsOn startLdapServer
 ballerinaTest.dependsOn startBallerinaGRPCServer
 ballerinaTest.finalizedBy stopGoServer
 ballerinaTest.dependsOn startGoServer
 ballerinaTest.dependsOn ":${packageName}-test-utils:build"
-ballerinaTest.dependsOn ":${packageName}-tooling-tests:build"
 ballerinaTest.dependsOn copyExternalJars
 test.dependsOn ballerinaTest
 build.dependsOn test

@@ -45,6 +45,8 @@ dependencies {
     implementation group: 'io.ballerina.stdlib', name: 'protobuf-native', version: "${stdlibProtobufVersion}"
 
     testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+    testImplementation group: 'org.mockito', name:'mockito-inline', version: "${mockitoVersion}"
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: "${mockitoVersion}"
 }
 
 test {

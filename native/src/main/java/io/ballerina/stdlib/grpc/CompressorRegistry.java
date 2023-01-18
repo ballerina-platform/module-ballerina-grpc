@@ -58,17 +58,4 @@ public final class CompressorRegistry {
   public Compressor lookupCompressor(String compressorName) {
     return compressors.get(compressorName);
   }
-
-  /**
-   * Registers a compressor for both decompression and message encoding negotiation.
-   *
-   * @param c The compressor to register
-   */
-  public void register(Compressor c) {
-    String encoding = c.getMessageEncoding();
-    if (encoding.contains(",")) {
-      throw new IllegalArgumentException("Comma is currently not allowed in message encoding");
-    }
-    compressors.put(encoding, c);
-  }
 }
