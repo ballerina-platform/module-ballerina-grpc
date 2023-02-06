@@ -202,6 +202,8 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
         @Override
         public void notifyFailure(BError error) {
             super.notifyFailure(error);
+            error.printStackTrace();
+            System.exit(1);
         }
     }
 }

@@ -81,6 +81,7 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             }
         }
         if (response instanceof BError) {
+            ((BError) response).printStackTrace();
             handleFailure(requestSender, (BError) response);
             if (observerContext != null) {
                 observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE,
@@ -159,6 +160,8 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
         super.notifyFailure(error);
+        error.printStackTrace();
+        System.exit(1);
     }
 
     /**
