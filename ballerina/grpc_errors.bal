@@ -80,5 +80,11 @@ public type DataMismatchError distinct Error;
 # Represents an error when client authentication error occured.
 public type ClientAuthError distinct Error;
 
+# Defined for internal use to specifically identify when panicking from the auth_desugar
+type InternalUnauthenticatedError distinct UnauthenticatedError;
+
+# Defined for internal use to specifically identify when panicking from the auth_desugar
+type InternalPermissionDeniedError distinct PermissionDeniedError;
+
 # Represents gRPC related error types.
 public type ErrorType typedesc<Error>;
