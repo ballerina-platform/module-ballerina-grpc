@@ -20,6 +20,7 @@ package io.ballerina.stdlib.grpc.callback;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.utils.TypeUtils;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STREAMING_NEXT_FUNCTION;
+import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
  * Call back class registered for streaming gRPC service in B7a executor.
@@ -141,6 +143,17 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
                 return;
             }
         }
+        error.printStackTrace();
+        boolean isPanic = false;
+        if (error.getType().getName().equals("InternalUnauthenticatedError")) {
+            error = ErrorCreator.createError(getModule(), "UnauthenticatedError", error.getErrorMessage(),
+                    error.getCause(), null);
+        } else if (error.getType().getName().equals("InternalPermissionDeniedError")) {
+            error = ErrorCreator.createError(getModule(), "PermissionDeniedError", error.getErrorMessage(),
+                    error.getCause(), null);
+        } else {
+            isPanic = true;
+        }
         if (responseSender != null) {
             handleFailure(responseSender, error);
         }
@@ -148,6 +161,9 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
         super.notifyFailure(error);
+        if (isPanic) {
+            System.exit(1);
+        }
     }
 
     /**
@@ -202,8 +218,6 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
         @Override
         public void notifyFailure(BError error) {
             super.notifyFailure(error);
-            error.printStackTrace();
-            System.exit(1);
         }
     }
 }
