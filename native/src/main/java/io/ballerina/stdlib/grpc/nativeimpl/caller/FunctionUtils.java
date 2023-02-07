@@ -157,28 +157,29 @@ public class FunctionUtils {
     }
 
     /**
-     * Extern function to send server error the caller.
+     * Extern function to send server error to the caller.
      *
      * @param endpointClient caller instance.
-     * @param errorValue gRPC error instance.
+     * @param bError gRPC error instance.
      * @return Error if there is an error while responding the caller, else returns nil
      */
-    public static Object externSendError(Environment env, BObject endpointClient, BError errorValue) {
+    public static Object externSendError(Environment env, BObject endpointClient, BError bError) {
         StreamObserver responseObserver = MessageUtils.getResponseObserver(endpointClient);
         ObserverContext observerContext =
                 ObserveUtils.getObserverContextOfCurrentFrame(env);
+        bError.printStackTrace();
         if (responseObserver == null) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while sending the " +
                             "error. Response observer not found.")));
         } else {
             try {
-                Integer statusCode = getKeyByValue(STATUS_ERROR_MAP, errorValue.getType().getName());
+                Integer statusCode = getKeyByValue(STATUS_ERROR_MAP, bError.getType().getName());
                 if (statusCode == null) {
                     statusCode = Status.Code.INTERNAL.value();
                 }
                 Message errorMessage = new Message(new StatusRuntimeException(Status.fromCodeValue(statusCode)
-                        .withDescription(errorValue.getErrorMessage().getValue())));
+                        .withDescription(bError.getErrorMessage().getValue())));
 
                 int mappedStatusCode = getMappingHttpStatusCode(statusCode);
                 if (observerContext != null) {
