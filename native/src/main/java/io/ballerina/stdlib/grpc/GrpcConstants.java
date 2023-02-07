@@ -204,6 +204,8 @@ public class GrpcConstants {
     public static final String UNAVAILABLE_ERROR = "UnavailableError";
     public static final String DATA_LOSS_ERROR = "DataLossError";
     public static final String UNAUTHENTICATED_ERROR = "UnauthenticatedError";
+    public static final String INTERNAL_UNAUTHENTICATED_ERROR = "InternalUnauthenticatedError";
+    public static final String INTERNAL_PERMISSION_DENIED_ERROR = "InternalPermissionDeniedError";
 
     public static final Map<Integer, String> STATUS_ERROR_MAP;
 

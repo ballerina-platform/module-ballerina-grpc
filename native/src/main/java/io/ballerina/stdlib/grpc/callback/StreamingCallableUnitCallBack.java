@@ -40,7 +40,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.INTERNAL_PERMISSION_DENIED_ERROR;
+import static io.ballerina.stdlib.grpc.GrpcConstants.INTERNAL_UNAUTHENTICATED_ERROR;
+import static io.ballerina.stdlib.grpc.GrpcConstants.PERMISSION_DENIED_ERROR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STREAMING_NEXT_FUNCTION;
+import static io.ballerina.stdlib.grpc.GrpcConstants.UNAUTHENTICATED_ERROR;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
@@ -146,11 +150,11 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
         }
         error.printStackTrace();
         boolean isPanic = false;
-        if (error.getType().getName().equals("InternalUnauthenticatedError")) {
-            error = ErrorCreator.createError(getModule(), "UnauthenticatedError", error.getErrorMessage(),
+        if (error.getType().getName().equals(INTERNAL_UNAUTHENTICATED_ERROR)) {
+            error = ErrorCreator.createError(getModule(), UNAUTHENTICATED_ERROR, error.getErrorMessage(),
                     error.getCause(), null);
-        } else if (error.getType().getName().equals("InternalPermissionDeniedError")) {
-            error = ErrorCreator.createError(getModule(), "PermissionDeniedError", error.getErrorMessage(),
+        } else if (error.getType().getName().equals(INTERNAL_PERMISSION_DENIED_ERROR)) {
+            error = ErrorCreator.createError(getModule(), PERMISSION_DENIED_ERROR, error.getErrorMessage(),
                     error.getCause(), null);
         } else {
             isPanic = true;
