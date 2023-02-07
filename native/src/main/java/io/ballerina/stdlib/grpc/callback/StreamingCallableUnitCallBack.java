@@ -83,6 +83,7 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             }
         }
         if (response instanceof BError) {
+            ((BError) response).printStackTrace();
             handleFailure(responseSender, (BError) response);
             if (observerContext != null) {
                 observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE,
