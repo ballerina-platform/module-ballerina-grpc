@@ -26,6 +26,6 @@ service "HelloWorld56" on ep56 {
     }
 
     remote function hello56Unary(HelloWorld56StringCaller caller, string value) returns error? {
-        checkpanic caller->sendError(error grpc:Error("Test error from service"));
+        check caller->sendError(error grpc:Error("Test error from service"));
     }
 }
