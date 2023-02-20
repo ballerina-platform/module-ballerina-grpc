@@ -42,11 +42,13 @@ public isolated function authenticateResource(Service serviceRef) {
             authorization: authHeader
         };
         UnauthenticatedError|PermissionDeniedError? result = tryAuthenticate(<ListenerAuthConfig[]>authConfig, headers);
-        if result is UnauthenticatedError || result is PermissionDeniedError {
-            sendError(result);
+        if result is UnauthenticatedError {
+            panic error InternalUnauthenticatedError(result.message());
+        } else if result is PermissionDeniedError {
+            panic error InternalPermissionDeniedError(result.message());
         }
     } else {
-        sendError(authHeader);
+        panic error InternalUnauthenticatedError(authHeader.message());
     }
 }
 
@@ -188,10 +190,6 @@ isolated function getServiceAuthConfig(Service serviceRef) returns ListenerAuthC
     }
     GrpcServiceConfig serviceConfig = <GrpcServiceConfig>serviceAnnotation;
     return serviceConfig?.auth;
-}
-
-isolated function sendError(Error authError) {
-    panic authError;
 }
 
 isolated function externGetAuthorizationHeader() returns string|Error = @java:Method {

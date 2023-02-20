@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [Exit the application when panicking inside a service](https://github.com/ballerina-platform/ballerina-standard-library/issues/3604)
+- [Log the errors returning from the service](https://github.com/ballerina-platform/ballerina-standard-library/issues/4047)
+
 ### Fixed
 - [Java dependencies have not been included with group id & artifact id](https://github.com/ballerina-platform/ballerina-standard-library/issues/3789)
 
