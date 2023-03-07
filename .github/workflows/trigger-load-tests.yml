@@ -9,7 +9,7 @@ on:
                 required: false
             clusterName:
                 description: 'Cluster name'
-                default: 'ftp-perf-cluster-test'
+                default: 'grpc-perf-cluster-test'
                 required: false
             branch:
                 description: 'Branch of the given repository'
@@ -24,9 +24,9 @@ jobs:
         if: ${{ github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository_owner == 'ballerina-platform') }}
         uses: ballerina-platform/ballerina-standard-library/.github/workflows/trigger-load-tests-template.yml@main
         with:
-            repo_name: 'module-ballerina-ftp'
-            runtime_artifacts_url: 'https://api.github.com/repos/ballerina-platform/module-ballerina-ftp/actions/artifacts'
-            dispatch_type: 'ftp-load-test'
+            repo_name: 'module-ballerina-grpc'
+            runtime_artifacts_url: 'https://api.github.com/repos/ballerina-platform/module-ballerina-grpc/actions/artifacts'
+            dispatch_type: 'grpc-load-test'
             cluster_name: ${{ inputs.clusterName }}
             tests: ${{ inputs.tests }}
             branch: ${{ inputs.branch }}
