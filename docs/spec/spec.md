@@ -966,11 +966,6 @@ The following API sets a deadline for each request.
 
 ```ballerina
 # Enables the deadline by adding the `deadline` header to the given headers.
-# ```ballerina
-# time:Utc current = time:utcNow();
-# time:Utc deadline = time:utcAddSeconds(current, 300);
-# map<string|string[]> headers = grpc:setDeadline(deadline);
-# ```
 #
 # + deadline - The deadline time value (this should be a specific time and not a duration)
 # + headerMap - Optional header map (if this is not specified, it creates a new header set)
@@ -984,9 +979,6 @@ If a particular RPC exceeds the specified deadline, the response will be a `grpc
 The following API enables compression for gRPC calls. Currently, Gzip compression is supported by the Ballerina gRPC library.
 ```ballerina
 # Enables the compression support by adding the `grpc-encoding` header to the given headers.
-# ```ballerina
-# map<string|string[]> headers = grpc:setCompression(grpc:GZIP);
-# ```
 #
 # + compressionType - The compression type.
 # + headerMap - Optional header map (if this is not specified, it creates a new header set)
