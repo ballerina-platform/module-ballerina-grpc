@@ -1,7 +1,7 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.6.0"
+version = "1.6.1"
 distribution = "2201.4.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
@@ -13,11 +13,11 @@ export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timest
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.6.0"
-path = "../native/build/libs/grpc-native-1.6.0.jar"
+version = "1.6.1"
+path = "../native/build/libs/grpc-native-1.6.1-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.6.0.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.6.1-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -31,8 +31,8 @@ scope = "testOnly"
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.6.0"
-path = "./lib/http-native-2.6.0.jar"
+version = "2.6.1"
+path = "./lib/http-native-2.6.1-20230227-085900-a7e6659.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.netty"
@@ -54,7 +54,7 @@ path = "./lib/netty-transport-4.1.86.Final.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.netty"
-artifactId = "grpc-native"
+artifactId = "netty-resolver"
 version = "4.1.86.Final"
 path = "./lib/netty-resolver-4.1.86.Final.jar"
 
@@ -89,7 +89,7 @@ version = "4.1.86.Final"
 path = "./lib/netty-codec-http2-4.1.86.Final.jar"
 
 [[platform.java11.dependency]]
-groupId = "commons.pool"
+groupId = "commons.pool.wso2"
 artifactId = "commons-pool"
 version = "1.5.6.wso2v1"
 path = "./lib/commons-pool-1.5.6.wso2v1.jar"
@@ -119,33 +119,18 @@ version = "2.0.54.Final"
 path = "./lib/netty-tcnative-boringssl-static-2.0.54.Final.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "2.0.54.Final"
 path = "./lib/netty-tcnative-boringssl-static-2.0.54.Final-windows-x86_64.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "2.0.54.Final"
 path = "./lib/netty-tcnative-boringssl-static-2.0.54.Final-linux-aarch_64.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "2.0.54.Final"
 path = "./lib/netty-tcnative-boringssl-static-2.0.54.Final-linux-x86_64.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "2.0.54.Final"
 path = "./lib/netty-tcnative-boringssl-static-2.0.54.Final-osx-aarch_64.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "2.0.54.Final"
 path = "./lib/netty-tcnative-boringssl-static-2.0.54.Final-osx-x86_64.jar"
 
 [[platform.java11.dependency]]
