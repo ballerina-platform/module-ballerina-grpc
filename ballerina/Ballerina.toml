@@ -161,7 +161,7 @@ version = "2.0.54.Final"
 path = "./lib/netty-tcnative-2.0.54.Final.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/netty-tcnative-2.0.54.Final-linux-fedora.jar"
+path = "./lib/netty-tcnative-2.0.54.Final-linux-x86_64-fedora.jar"
 
 [[platform.java11.dependency]]
 path = "./lib/netty-tcnative-2.0.54.Final-linux-x86_64.jar"
