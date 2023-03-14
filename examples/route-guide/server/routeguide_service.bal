@@ -17,7 +17,19 @@
 import ballerina/grpc;
 import ballerina/time;
 
-listener grpc:Listener ep = new (8980);
+listener grpc:Listener ep = new (8980,
+    secureSocket = {
+        key: {
+            certFile: "./resources/public.crt",
+            keyFile: "./resources/private.key"
+        },
+        // Enables mutual SSL.
+        mutualSsl: {
+            verifyClient: grpc:REQUIRE,
+            cert: "./resources/public.crt"
+        }
+    }
+);
 
 @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR, descMap: getDescriptorMap()}
 service "RouteGuide" on ep {
