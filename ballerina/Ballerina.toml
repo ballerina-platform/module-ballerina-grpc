@@ -54,7 +54,7 @@ path = "./lib/netty-transport-4.1.86.Final.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.netty"
-artifactId = "grpc-native"
+artifactId = "netty-resolver"
 version = "4.1.86.Final"
 path = "./lib/netty-resolver-4.1.86.Final.jar"
 
@@ -95,7 +95,7 @@ version = "4.1.86.Final"
 path = "./lib/netty-transport-native-unix-common-4.1.86.Final.jar"
 
 [[platform.java11.dependency]]
-groupId = "commons.pool"
+groupId = "commons.pool.wso2"
 artifactId = "commons-pool"
 version = "1.5.6.wso2v1"
 path = "./lib/commons-pool-1.5.6.wso2v1.jar"
