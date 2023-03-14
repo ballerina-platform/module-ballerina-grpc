@@ -192,3 +192,21 @@ groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
 version = "2201.4.0"
 path = "./lib/ballerina-parser-2201.4.0.jar"
+
+[[platform.java11.dependency]]
+groupId = "io.netty"
+artifactId = "netty-codec-socks"
+version = "4.1.86.Final"
+path = "./lib/netty-codec-socks-4.1.86.Final.jar"
+
+[[platform.java11.dependency]]
+groupId = "org.jboss.marshalling"
+artifactId = "jboss-marshalling"
+version = "2.0.5.Final"
+path = "./lib/jboss-marshalling-2.0.5.Final.jar"
+
+[[platform.java11.dependency]]
+groupId = "net.jpountz.lz4"
+artifactId = "lz4"
+version = "1.3.0"
+path = "./lib/lz4-1.3.0.jar"
