@@ -54,7 +54,7 @@ path = "./lib/netty-transport-@netty.version@.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.netty"
-artifactId = "grpc-native"
+artifactId = "netty-resolver"
 version = "@netty.version@"
 path = "./lib/netty-resolver-@netty.version@.jar"
 
@@ -89,7 +89,13 @@ version = "@netty.version@"
 path = "./lib/netty-codec-http2-@netty.version@.jar"
 
 [[platform.java11.dependency]]
-groupId = "commons.pool"
+groupId = "io.netty"
+artifactId = "netty-transport-native-unix-common"
+version = "@netty.version@"
+path = "./lib/netty-transport-native-unix-common-@netty.version@.jar"
+
+[[platform.java11.dependency]]
+groupId = "commons.pool.wso2"
 artifactId = "commons-pool"
 version = "@commons.pool.version@"
 path = "./lib/commons-pool-@commons.pool.version@.jar"
@@ -119,33 +125,18 @@ version = "@nettytcnative.version@"
 path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "@nettytcnative.version@"
 path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@-windows-x86_64.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "@nettytcnative.version@"
 path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@-linux-aarch_64.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "@nettytcnative.version@"
 path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@-linux-x86_64.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "@nettytcnative.version@"
 path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@-osx-aarch_64.jar"
 
 [[platform.java11.dependency]]
-groupId = "io.netty"
-artifactId = "netty-tcnative-boringssl-static"
-version = "@nettytcnative.version@"
 path = "./lib/netty-tcnative-boringssl-static-@nettytcnative.version@-osx-x86_64.jar"
 
 [[platform.java11.dependency]]
