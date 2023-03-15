@@ -5,6 +5,7 @@ fixes:
   - "ballerina/modules/types.timestamp/**::../ballerina/"
   - "ballerina/modules/types.wrappers/**::../ballerina/"
   - "ballerina/modules/types.any/**::../ballerina/"
+  - "io/ballerina/stdlib/grpc/compiler/::./compiler-plugin/src/main/java/io/ballerina/stdlib/grpc/plugin/"
 
 ignore:
   - "grpc-test-utils"
