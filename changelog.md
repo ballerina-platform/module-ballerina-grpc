@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.2] - 2023-03-15
 ### Fixed
 - [Fixed simple SSL connection failure in runtime](https://github.com/ballerina-platform/ballerina-standard-library/issues/4197)
 
