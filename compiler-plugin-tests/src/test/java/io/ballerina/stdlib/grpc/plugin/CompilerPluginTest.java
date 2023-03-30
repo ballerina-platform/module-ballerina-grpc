@@ -313,10 +313,10 @@ public class CompilerPluginTest {
     }
 
     @Test
-    public void testCompilerPluginServiceWithRecordTypeCaller() {
+    public void testCompilerPluginServiceWithDefaultableTypeCaller() {
 
-        String errMsg = "ERROR [helloworld_service.bal:(17:5,19:6)] when there are two parameters to a " +
-                "remote function, the first one must be a caller type";
+        String errMsg = "ERROR [helloworld_service.bal:(24:5,26:6)] when there are two parameters to a remote " +
+                "function, the first one must be a caller type";
         Package currentPackage = loadPackage("package_21");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
@@ -331,8 +331,8 @@ public class CompilerPluginTest {
     @Test
     public void testCompilerPluginServiceWithInvalidParameterCount() {
 
-        String errMsg = "ERROR [helloworld_service.bal:(17:5,19:6)] when there are two parameters to a " +
-                "remote function, the first one must be a caller type";
+        String errMsg = "ERROR [helloworld_service.bal:(24:5,26:6)] the maximum number of parameters " +
+                "to a remote function is 2";
         Package currentPackage = loadPackage("package_22");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
@@ -347,8 +347,8 @@ public class CompilerPluginTest {
     @Test
     public void testCompilerPluginServiceWithInvalidReturnType() {
 
-        String errMsg = "ERROR [helloworld_service.bal:(8:5,10:6)] only `error?` return type is " +
-                "allowed with the caller";
+        String errMsg = "ERROR [helloworld_service.bal:(24:5,26:6)] only `error?` return " +
+                "type is allowed with the caller";
         Package currentPackage = loadPackage("package_23");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
