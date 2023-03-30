@@ -315,10 +315,33 @@ public class CompilerPluginTest {
     @Test
     public void testCompilerPluginServiceWithRecordTypeCaller() {
 
+        String errMsg = "ERROR [helloworld_service.bal:(17:5,19:6)] when there are two parameters to a remote function," +
+                " the first one must be a caller type";
         Package currentPackage = loadPackage("package_21");
         PackageCompilation compilation = currentPackage.getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
-        Assert.assertEquals(diagnosticResult.errors().size(), 0);
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
+                d -> errMsg.equals(d.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginServiceWithInvalidParameterCount() {
+
+        String errMsg = "ERROR [helloworld_service.bal:(17:5,19:6)] when there are two parameters to a remote function," +
+                " the first one must be a caller type";
+        Package currentPackage = loadPackage("package_22");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getErrorCode());
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
+                d -> errMsg.equals(d.toString())));
     }
 
     private Package loadPackage(String path) {
