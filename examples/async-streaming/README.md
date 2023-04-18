@@ -1,3 +1,10 @@
+[![Star on Github](https://img.shields.io/badge/-Star%20on%20Github-blue?style=social&logo=github)](https://github.com/ballerina-platform/module-ballerina-grpc)
+
+_Authors_: @BuddhiWathsala  
+_Reviewers_: @shafreenAnfar @daneshK  
+_Created_: 2022/02/14  
+_Updated_: 2023/04/18
+
 # Asynchronous Streaming
 
 ## Overview
