@@ -1,5 +1,12 @@
 # Route Guide
 
+[![Star on Github](https://img.shields.io/badge/-Star%20on%20Github-blue?style=social&logo=github)](https://github.com/ballerina-platform/module-ballerina-grpc)
+
+_Authors_: @BuddhiWathsala  
+_Reviewers_: @shafreenAnfar @daneshK  
+_Created_: 2021/07/02  
+_Updated_: 2023/04/18
+
 ## Overview
 
 Route guide is the standard example that has been used in the gRPC documentation to explain the overall gRPC usage. It contains all four RPCs (Remote Procedure Calls); simple, server streaming, client streaming, and bidirectional streaming. To understand gRPC concepts in detail, refer to the [gRPC core concepts documentation](https://grpc.io/docs/what-is-grpc/core-concepts/).

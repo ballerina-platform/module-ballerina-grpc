@@ -1,5 +1,12 @@
 # Asynchronous Streaming
 
+[![Star on Github](https://img.shields.io/badge/-Star%20on%20Github-blue?style=social&logo=github)](https://github.com/ballerina-platform/module-ballerina-grpc)
+
+_Authors_: @BuddhiWathsala  
+_Reviewers_: @shafreenAnfar @daneshK  
+_Created_: 2022/02/14  
+_Updated_: 2023/04/18
+
 ## Overview
 The primary goal of this example is to demonstrate how to implement an asynchronous gRPC call in Ballerina. Here, the RPC call happens in one strand (i.e., a lightweight thread in Ballerina) while the other phone call processing happens in another strand simultaneously. This is the Ballerina implementation of [this asynchronous streaming Python example](https://github.com/grpc/grpc/blob/v1.43.2/examples/python/async_streaming/phone.proto).
 
