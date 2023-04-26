@@ -158,7 +158,7 @@ public abstract class ServerCallHandler {
                 getReferredType(((ArrayType) resource.getRpcOutputType()).getElementType()) :
                 resource.getRpcOutputType();
         String outputType = returnType != PredefinedTypes.TYPE_NULL ? getTypeName(returnType) : null;
-        return ValueCreator.createObjectValue(resource.getService().getType().getPackage(),
+        return ValueCreator.createObjectValue(TypeUtils.getType(resource.getService()).getPackage(),
                 MessageUtils.getCallerTypeName(serviceName, outputType), clientEndpoint);
     }
 
@@ -185,7 +185,7 @@ public abstract class ServerCallHandler {
         properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
 
         String functionName = resource.getFunctionName();
-        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(resource.getService().getType());
+        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(resource.getService()));
 
         boolean isEmpty = isEmpty(requestParams);
         if (isEmpty) {
