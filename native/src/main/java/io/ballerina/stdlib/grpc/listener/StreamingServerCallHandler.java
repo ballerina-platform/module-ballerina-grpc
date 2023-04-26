@@ -185,7 +185,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
                 responseObserver, isEmptyResponse(), this.methodDescriptor.getOutputType(), context);
 
         String functionName = resource.getFunctionName();
-        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(resource.getService().getType());
+        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(resource.getService()));
         if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
             resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), resource.getFunctionName(), null,
                     GrpcConstants.ON_MESSAGE_METADATA, callback, properties,

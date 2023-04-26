@@ -40,6 +40,7 @@ import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BValue;
 import io.ballerina.stdlib.grpc.exception.GrpcServerException;
 import io.ballerina.stdlib.grpc.listener.ServerCallHandler;
 import io.ballerina.stdlib.grpc.listener.StreamingServerCallHandler;
@@ -143,8 +144,8 @@ public class ServicesBuilderUtils {
             ServerCallHandler serverCallHandler;
             MethodDescriptor.Marshaller reqMarshaller = null;
             ServiceResource mappedResource = null;
-            Module inputParameterPackage = service.getType().getPackage();
-            ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(service.getType());
+            Module inputParameterPackage = TypeUtils.getType(service).getPackage();
+            ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(service));
 
             for (MethodType function : serviceType.getMethods()) {
                 if (methodDescriptor.getName().equals(function.getName())) {
@@ -183,7 +184,7 @@ public class ServicesBuilderUtils {
             }
             if (reqMarshaller == null) {
                 reqMarshaller = ProtoUtils.marshaller(new MessageParser(requestDescriptor
-                        .getFullName(), getBallerinaValueType(service.getType().getPackage(),
+                        .getFullName(), getBallerinaValueType(TypeUtils.getType(service).getPackage(),
                         requestDescriptor.getName())));
             }
 
@@ -251,7 +252,7 @@ public class ServicesBuilderUtils {
             throws GrpcServerException {
         try {
             BString descriptorData = null;
-            ObjectType type = (ObjectType) TypeUtils.getReferredType(service.getType());
+            ObjectType type = (ObjectType) TypeUtils.getReferredType(((BValue) service).getType());
             if (type.getFields().containsKey("descriptor")) {
                 descriptorData = service.getStringValue(StringUtils.fromString("descriptor"));
             } else if (type.getFields().containsKey("value")) {
@@ -333,7 +334,7 @@ public class ServicesBuilderUtils {
      */
     static Module getInputPackage(BObject service, String remoteFunctionName) {
 
-        ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(service.getType());
+        ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(service));
         Optional<MethodType> remoteCallType = Arrays.stream(serviceType.getMethods())
                 .filter(methodType -> methodType.getName().equals(remoteFunctionName)).findFirst();
 
@@ -361,7 +362,7 @@ public class ServicesBuilderUtils {
      */
     static Module getOutputPackage(BObject service, String remoteFunctionName) {
 
-        ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(service.getType());
+        ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(service));
         Optional<MethodType> remoteCallType = Arrays.stream(serviceType.getMethods())
                 .filter(methodType -> methodType.getName().equals(remoteFunctionName)).findFirst();
 

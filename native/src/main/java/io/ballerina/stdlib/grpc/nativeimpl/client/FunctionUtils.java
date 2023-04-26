@@ -171,7 +171,7 @@ public class FunctionUtils extends AbstractExecute {
         try {
             ServiceDefinition serviceDefinition = new ServiceDefinition(rootDescriptor.getValue(), descriptorMap);
             MessageRegistry.getInstance().setFileDescriptor(serviceDefinition.getDescriptor());
-            ObjectType objectType = (ObjectType) TypeUtils.getReferredType(clientEndpoint.getType());
+            ObjectType objectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(clientEndpoint));
             Map<String, MethodDescriptor> methodDescriptorMap = serviceDefinition.getMethodDescriptors(objectType);
 
             genericEndpoint.addNativeData(METHOD_DESCRIPTORS, methodDescriptorMap);

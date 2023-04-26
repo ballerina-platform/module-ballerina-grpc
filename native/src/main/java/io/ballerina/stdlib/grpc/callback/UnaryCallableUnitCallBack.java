@@ -119,7 +119,7 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                 BObject bObject = ((BStream) content).getIteratorObj();
                 ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                         runtime, requestSender, outputType, bObject, headers);
-                ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(bObject.getType());
+                ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(bObject));
                 if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
                     runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null, null,
                             returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
@@ -217,7 +217,7 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                     headers = null;
                 }
                 requestSender.onNext(msg);
-                ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(bObject.getType());
+                ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(bObject));
                 if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
                     runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null, null,
                             this, null, PredefinedTypes.TYPE_NULL);

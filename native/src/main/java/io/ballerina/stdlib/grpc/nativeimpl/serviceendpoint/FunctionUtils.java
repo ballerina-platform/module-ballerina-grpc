@@ -127,7 +127,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
                         .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error when " +
                                 "initializing service register builder.")));
             } else {
-                ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(service.getType());
+                ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(service));
                 servicesRegistryBuilder.addService(ServicesBuilderUtils.getServiceDefinition(
                         Runtime.getCurrentRuntime(), service, servicePath, getDescriptorAnnotation(serviceType)));
                 return null;
