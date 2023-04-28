@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/log;
-import ballerina/regex;
 
 // Logs and prepares the `error` as an `http:ClientAuthError`.
 isolated function prepareClientAuthError(string message, error? err = ()) returns ClientAuthError {
@@ -29,7 +28,7 @@ isolated function prepareClientAuthError(string message, error? err = ()) return
 // Extract the credential from `map<string|string[]>`
 isolated function extractCredential(map<string|string[]> headers) returns string|Error {
     string authHeader = check getHeader(headers, AUTH_HEADER);
-    string[] splittedHeader = regex:split(<string>authHeader, " ");
+    string[] splittedHeader = re`\s`.split(authHeader);
     if splittedHeader.length() > 1 {
         return splittedHeader[1];
     } else {
@@ -40,7 +39,7 @@ isolated function extractCredential(map<string|string[]> headers) returns string
 // Extract the scheme from `map<string|string[]>`
 isolated function extractScheme(map<string|string[]> headers) returns string|Error {
     string authHeader = check getHeader(headers, AUTH_HEADER);
-    string[] splittedHeader = regex:split(<string>authHeader, " ");
+    string[] splittedHeader = re`\s`.split(authHeader);
     return splittedHeader[0];
 }
 
@@ -83,5 +82,5 @@ isolated function convertToArray(string spaceSeperatedString) returns string[] {
     if spaceSeperatedString.length() == 0 {
         return [];
     }
-    return regex:split(spaceSeperatedString, " ");
+    return re`\s`.split(spaceSeperatedString);
 }
