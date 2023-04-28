@@ -19,7 +19,6 @@ import ballerina/time;
 import ballerina/jballerina.java;
 import ballerina/http;
 import ballerina/lang.runtime;
-import ballerina/regex;
 
 const int oauth2AuthorizationServerPort = 9401;
 const string ACCESS_TOKEN = "2YotnFZFEjr1zCsicMWpAA";
@@ -475,10 +474,10 @@ http:Service oauth2Service = service object {
         string|http:ClientError payload = request.getTextPayload();
         json response = ();
         if payload is string {
-            string[] parts = regex:split(payload, "&");
+            string[] parts = re`&`.split(payload);
             foreach string part in parts {
                 if part.indexOf("token=") is int {
-                    string token = regex:split(part, "=")[1];
+                    string token = re`=`.split(part)[1];
                     if token == ACCESS_TOKEN {
                         response = {"active": true, "exp": 2, "scp": "read write"};
                     } else {
