@@ -29,8 +29,9 @@ isolated function prepareClientAuthError(string message, error? err = ()) return
 isolated function extractCredential(map<string|string[]> headers) returns string|Error {
     string authHeader = check getHeader(headers, AUTH_HEADER);
     string[] splittedHeader = re`\s`.split(authHeader);
-    if splittedHeader.length() > 1 {
-        return splittedHeader[1];
+    string[] formattedHeader = from string headerVal in splittedHeader where headerVal != "" select headerVal;
+    if formattedHeader.length() > 1 {
+        return formattedHeader[1];
     } else {
         return error UnauthenticatedError("Empty authentication header.");
     }
