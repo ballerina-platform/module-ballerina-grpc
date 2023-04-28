@@ -317,6 +317,7 @@ modules = [
 org = "ballerina"
 name = "regex"
 version = "1.4.2"
+scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.string"}
