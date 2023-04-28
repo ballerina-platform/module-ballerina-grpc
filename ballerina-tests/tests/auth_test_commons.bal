@@ -17,7 +17,6 @@
 // NOTE: All the tokens/credentials used in this test are dummy tokens/credentials and used only for testing purposes.
 
 import ballerina/http;
-import ballerina/io;
 
 const int oauth2AuthorizationServerPort = 9401;
 const string ACCESS_TOKEN = "2YotnFZFEjr1zCsicMWpAA";
@@ -74,16 +73,11 @@ service /oauth2 on oauth2Listener {
     resource isolated function post token/introspect(http:Caller caller, http:Request request) {
         string|http:ClientError payload = request.getTextPayload();
         json response = ();
-        io:println("inside =-----------------------------------------------------------");
         if payload is string {
-            io:println(payload);
             string[] parts = re`&`.split(payload);
-            io:println(parts);
             foreach string part in parts {
                 if part.indexOf("token=") is int {
-                    io:println(part);
                     string token = re`=`.split(part)[1];
-                    io:println(token);
                     if token == ACCESS_TOKEN {
                         response = {"active": true, "exp": 3600, "scp": "read write"};
                     } else {
