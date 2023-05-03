@@ -18,6 +18,7 @@
 
 package io.ballerina.stdlib.grpc.nativeimpl;
 
+import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Module;
 
 /**
@@ -37,6 +38,10 @@ public class ModuleUtils {
 
     public static void setModule(Module module) {
         grpcModule = module;
+    }
+
+    public static void setModule(Environment env) {
+        grpcModule = env.getCurrentModule();
     }
 
     public static Module getModule() {
