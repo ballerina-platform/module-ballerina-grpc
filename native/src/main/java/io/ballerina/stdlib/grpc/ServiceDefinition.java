@@ -155,7 +155,7 @@ public final class ServiceDefinition {
         MethodType[] attachedFunctions = clientEndpointType.getMethods();
         for (MethodType attachedFunction : attachedFunctions) {
             String methodName = attachedFunction.getName();
-            if (methodName.endsWith("Context")) {
+            if (methodName.endsWith("Context") || methodName.equals("init")) {
                 continue;
             }
             Descriptors.MethodDescriptor methodDescriptor = serviceDescriptor.findMethodByName(methodName);
