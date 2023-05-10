@@ -25,16 +25,13 @@ import io.ballerina.compiler.api.symbols.TypeDescKind;
 import io.ballerina.compiler.api.symbols.TypeReferenceTypeSymbol;
 import io.ballerina.compiler.api.symbols.TypeSymbol;
 import io.ballerina.compiler.api.symbols.UnionTypeSymbol;
-import io.ballerina.compiler.syntax.tree.DefaultableParameterNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
-import io.ballerina.compiler.syntax.tree.IncludedRecordParameterNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterNode;
 import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
-import io.ballerina.compiler.syntax.tree.RestParameterNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.ServiceDeclarationNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
@@ -297,15 +294,6 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         if (parameterNode instanceof RequiredParameterNode) {
             RequiredParameterNode requiredParameterNode = (RequiredParameterNode) parameterNode;
             return requiredParameterNode.typeName().toString().strip();
-        } else if (parameterNode instanceof DefaultableParameterNode) {
-            DefaultableParameterNode defaultableParameterNode = (DefaultableParameterNode) parameterNode;
-            return defaultableParameterNode.typeName().toString().strip();
-        } else if (parameterNode instanceof IncludedRecordParameterNode) {
-            IncludedRecordParameterNode includedParameterNode = (IncludedRecordParameterNode) parameterNode;
-            return includedParameterNode.typeName().toString().strip();
-        } else if (parameterNode instanceof RestParameterNode) {
-            RestParameterNode restParameterNode = (RestParameterNode) parameterNode;
-            return restParameterNode.typeName().toString().strip();
         }
         return "";
     }

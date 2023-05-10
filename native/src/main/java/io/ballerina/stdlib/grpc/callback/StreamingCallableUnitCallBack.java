@@ -20,8 +20,10 @@ package io.ballerina.stdlib.grpc.callback;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -38,7 +40,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static io.ballerina.stdlib.grpc.GrpcConstants.INTERNAL_PERMISSION_DENIED_ERROR;
+import static io.ballerina.stdlib.grpc.GrpcConstants.INTERNAL_UNAUTHENTICATED_ERROR;
+import static io.ballerina.stdlib.grpc.GrpcConstants.PERMISSION_DENIED_ERROR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STREAMING_NEXT_FUNCTION;
+import static io.ballerina.stdlib.grpc.GrpcConstants.UNAUTHENTICATED_ERROR;
+import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
 /**
  * Call back class registered for streaming gRPC service in B7a executor.
@@ -80,6 +87,7 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             }
         }
         if (response instanceof BError) {
+            ((BError) response).printStackTrace();
             handleFailure(responseSender, (BError) response);
             if (observerContext != null) {
                 observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE,
@@ -103,7 +111,7 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             BObject bObject = ((BStream) content).getIteratorObj();
             ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                     runtime, responseSender, outputType, bObject, headers);
-            ObjectType serviceObjectType = bObject.getType();
+            ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(bObject));
             if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
                 runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null, null,
                         returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
@@ -140,6 +148,17 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
                 return;
             }
         }
+        error.printStackTrace();
+        boolean isPanic = false;
+        if (error.getType().getName().equals(INTERNAL_UNAUTHENTICATED_ERROR)) {
+            error = ErrorCreator.createError(getModule(), UNAUTHENTICATED_ERROR, error.getErrorMessage(),
+                    error.getCause(), null);
+        } else if (error.getType().getName().equals(INTERNAL_PERMISSION_DENIED_ERROR)) {
+            error = ErrorCreator.createError(getModule(), PERMISSION_DENIED_ERROR, error.getErrorMessage(),
+                    error.getCause(), null);
+        } else {
+            isPanic = true;
+        }
         if (responseSender != null) {
             handleFailure(responseSender, error);
         }
@@ -147,6 +166,9 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
         super.notifyFailure(error);
+        if (isPanic) {
+            System.exit(1);
+        }
     }
 
     /**
@@ -184,7 +206,7 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
                     headers = null;
                 }
                 requestSender.onNext(msg);
-                ObjectType serviceObjectType = bObject.getType();
+                ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(bObject));
                 if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
                     runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null,
                             null, this, null, PredefinedTypes.TYPE_NULL);

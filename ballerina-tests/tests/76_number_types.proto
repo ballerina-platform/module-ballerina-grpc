@@ -1,0 +1,54 @@
+// Copyright (c) 2022 WSO2 LLC. (http://www.wso2.com) All Rights Reserved.
+//
+// WSO2 LLC. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+service TypesService {
+  rpc getTypes(TypesMessage) returns (TypesMessage) {}
+  rpc getRepeatedTypes(RepeatedTypesMessage) returns (RepeatedTypesMessage) {}
+  rpc getInt32Type(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
+  rpc getInt64Type(google.protobuf.Int64Value) returns (google.protobuf.Int64Value) {}
+  rpc getUInt32Type(google.protobuf.UInt32Value) returns (google.protobuf.UInt32Value) {}
+  rpc getUInt64Type(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value) {}
+}
+
+message TypesMessage {
+  int32 int32Value = 1;
+  int64 int64Value = 2;
+  uint32 uint32Value = 3;
+  uint64 uint64Value = 4;
+  sint32 sint32Value = 5;
+  sint64 sint64Value = 6;
+  fixed32 fixed32Value = 7;
+  fixed64 fixed64Value = 8;
+  sfixed32 sfixed32Value = 9;
+  sfixed64 sfixed64Value = 10;
+}
+
+message RepeatedTypesMessage {
+  repeated int32 int32Values = 1;
+  repeated int64 int64Values = 2;
+  repeated uint32 uint32Values = 3;
+  repeated uint64 uint64Values = 4;
+  repeated sint32 sint32Values = 5;
+  repeated sint64 sint64Values = 6;
+  repeated fixed32 fixed32Values = 7;
+  repeated fixed64 fixed64Values = 8;
+  repeated sfixed32 sfixed32Values = 9;
+  repeated sfixed64 sfixed64Values = 10;
+}

@@ -41,6 +41,8 @@ public class GrpcConstants {
     public static final String ORG_NAME = "ballerina";
     public static final String PROTOCOL_STRUCT_PACKAGE_GRPC = ORG_NAME + ORG_NAME_SEPARATOR +
             "grpc:" + PROTOCOL_PACKAGE_VERSION_GRPC;
+    public static final String PROTOCOL_STRUCT_PACKAGE_PROTOBUF = ORG_NAME + ORG_NAME_SEPARATOR +
+            "protobuf:" + PROTOCOL_PACKAGE_VERSION_GRPC;
 
     public static final String HTTPS_ENDPOINT_STARTED = "[ballerina/grpc] started HTTPS/WSS listener ";
     public static final String HTTP_ENDPOINT_STARTED = "[ballerina/grpc] started HTTP/WS listener ";
@@ -69,6 +71,8 @@ public class GrpcConstants {
     public static final String ANN_DESCRIPTOR = "Descriptor";
     public static final BString ANN_DESCRIPTOR_FQN = StringUtils.fromString(PROTOCOL_STRUCT_PACKAGE_GRPC + ":" +
             ANN_DESCRIPTOR);
+    public static final BString ANN_PROTOBUF_DESCRIPTOR = StringUtils.fromString(PROTOCOL_STRUCT_PACKAGE_PROTOBUF +
+            ":" + ANN_DESCRIPTOR);
 
     //client side endpoint constants
     public static final String CLIENT_ENDPOINT_RESPONSE_OBSERVER = "ResponseObserver";
@@ -200,6 +204,8 @@ public class GrpcConstants {
     public static final String UNAVAILABLE_ERROR = "UnavailableError";
     public static final String DATA_LOSS_ERROR = "DataLossError";
     public static final String UNAUTHENTICATED_ERROR = "UnauthenticatedError";
+    public static final String INTERNAL_UNAUTHENTICATED_ERROR = "InternalUnauthenticatedError";
+    public static final String INTERNAL_PERMISSION_DENIED_ERROR = "InternalPermissionDeniedError";
 
     public static final Map<Integer, String> STATUS_ERROR_MAP;
 

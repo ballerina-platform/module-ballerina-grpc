@@ -52,7 +52,11 @@ import java.util.Locale;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.runtime.api.utils.StringUtils.fromStringArray;
+import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
+import static io.ballerina.stdlib.grpc.GrpcConstants.HEADER_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getTypeName;
+import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getParameterTypesFromParameters;
 import static io.ballerina.stdlib.grpc.Status.Code.UNKNOWN;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -79,11 +83,11 @@ public class MessageUtils {
                         TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING))));
 
     static boolean headersRequired(MethodType functionType, Type rpcInputType) {
-        if (functionType == null || functionType.getParameterTypes() == null) {
+        if (functionType == null || functionType.getParameters() == null) {
             throw new RuntimeException("Invalid resource input arguments");
         }
         boolean headersRequired = false;
-        for (Type paramType : functionType.getParameterTypes()) {
+        for (Type paramType : getParameterTypesFromParameters(functionType.getParameters())) {
             if (paramType != null && getContextTypeName(rpcInputType).equals(paramType.getName())) {
                 headersRequired = true;
                 break;
@@ -455,7 +459,7 @@ public class MessageUtils {
 
     public static String getContextTypeName(Type inputType) {
         inputType = inputType instanceof ArrayType ?
-                ((ArrayType) inputType).getElementType() : inputType;
+                getReferredType(((ArrayType) inputType).getElementType()) : inputType;
         String sInputType = inputType != PredefinedTypes.TYPE_NULL ? getTypeName(inputType) : null;
         if (sInputType != null) {
             sInputType = sInputType.replaceAll("[^a-zA-Z0-9]", "");
@@ -467,7 +471,7 @@ public class MessageUtils {
 
     public static String getContextStreamTypeName(Type inputType) {
         inputType = inputType instanceof ArrayType ?
-                ((ArrayType) inputType).getElementType() : inputType;
+                getReferredType(((ArrayType) inputType).getElementType()) : inputType;
         String sInputType = inputType != PredefinedTypes.TYPE_NULL ? getTypeName(inputType) : null;
         if (sInputType != null) {
             sInputType = sInputType.replaceAll("[^a-zA-Z0-9]", "");
@@ -490,7 +494,7 @@ public class MessageUtils {
     public static boolean isContextRecordByType(Type type) {
         return type instanceof RecordType && type.getName().startsWith("Context")
                 && ((RecordType) type).getFields().size() == 2 && ((RecordType) type).getFields().containsKey(
-                        "content") && ((RecordType) type).getFields().containsKey("headers");
+                CONTENT_FIELD) && ((RecordType) type).getFields().containsKey(HEADER_FIELD);
     }
 
     /**

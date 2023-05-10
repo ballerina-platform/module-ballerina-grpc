@@ -17,7 +17,6 @@
  */
 package io.ballerina.stdlib.grpc.client;
 
-import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Module;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
@@ -40,19 +39,16 @@ import static io.ballerina.stdlib.grpc.util.TestUtils.getValueCreatorWithErrorVa
 import static org.testng.Assert.assertEquals;
 
 /**
- * A test class to test FuntionUtils class functions.
+ * A test class to test FunctionUtils class functions.
  */
 public class FunctionUtilsTest {
     
-    private Module module;
-    ValueCreator valueCreator;
-    
     @BeforeTest()
     public void setupEnvironment() {
-        module = new Module("testOrg", "test", "1");
-        valueCreator = getValueCreatorWithErrorValue();
+        Module module = new Module("testOrg", "test", "1");
+        ValueCreator valueCreator = getValueCreatorWithErrorValue();
         ValueCreator.addValueCreator("testOrg", "test", "1", false, valueCreator);
-        ModuleUtils.setModule(new Environment(null, module));
+        ModuleUtils.setModule(module);
     }
 
     @Test()

@@ -105,6 +105,9 @@ dependencies {
     externalJars(group: 'io.netty', name: 'netty-codec-http2', version: "${nettyVersion}") {
         transitive = false
     }
+    externalJars(group: 'io.netty', name: 'netty-transport-native-unix-common', version: "${nettyVersion}") {
+        transitive = false
+    }
     externalJars(group: 'commons-pool.wso2', name: 'commons-pool', version: "${wso2CommonsPoolVersion}") {
         transitive = false
     }
@@ -150,6 +153,7 @@ dependencies {
 
 task updateTomlFiles {
     doLast {
+        def stdlibHttpVersion = stripBallerinaExtensionVersion("${project.stdlibHttpVersion}")
         def newBallerinaToml = ballerinaTomlFilePlaceHolder.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
         newBallerinaToml = newBallerinaToml.replace("@http.native.version@", project.stdlibHttpVersion)
@@ -161,6 +165,7 @@ task updateTomlFiles {
         newBallerinaToml = newBallerinaToml.replace("@nettytcnative.version@", project.nettyTcnativeVersion)
         newBallerinaToml = newBallerinaToml.replace("@commons.pool.version@", project.wso2CommonsPoolVersion)
         newBallerinaToml = newBallerinaToml.replace("@bouncy.castle.version@", project.bouncycastleVersion)
+        newBallerinaToml = newBallerinaToml.replace("@http.version@", stdlibHttpVersion)
         ballerinaTomlFile.text = newBallerinaToml
 
         def newCompilerPluginToml = compilerPluginTomlFilePlaceHolder.text.replace("@project.version@", project.version)
@@ -217,7 +222,28 @@ publishing {
     }
 }
 
-build.outputs.dir artifactLibParent // To pack Ballerina gRPC CLI
+task startLdapServer() {
+    doLast {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def stdOut = new ByteArrayOutputStream()
+            exec {
+                commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
+                standardOutput = stdOut
+            }
+            if (!stdOut.toString().contains("openldap-server")) {
+                println "Starting LDAP server."
+                exec {
+                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/docker-compose.yml up -d"
+                    standardOutput = stdOut
+                }
+                println stdOut.toString()
+                sleep(5 * 1000)
+            } else {
+                println "LDAP server is already running."
+            }
+        }
+    }
+}
 
 updateTomlFiles.dependsOn copyStdlibs
 
@@ -230,8 +256,8 @@ test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-native:test"
 test.dependsOn ":${packageName}-test-utils:build"
 test.dependsOn ":${packageName}-compiler-plugin:build"
+test.dependsOn startLdapServer
 build.finalizedBy ":${packageName}-ballerina-tests:build"
-build.finalizedBy ":${packageName}-tooling-tests:build"
 
 publishToMavenLocal.dependsOn copyExternalJars
 publish.dependsOn copyExternalJars

@@ -120,9 +120,7 @@ public class GrpcUtil {
 
         if (scheme.equals(HttpConstants.PROTOCOL_HTTPS)) {
             if (secureSocket == null) {
-                throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
-                        .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("The secureSocket " +
-                                "configuration should be provided to establish an HTTPS connection")));
+                senderConfiguration.useJavaDefaults();
             } else {
                 populateSSLConfiguration(senderConfiguration, secureSocket);
             }
@@ -153,11 +151,17 @@ public class GrpcUtil {
         }
         Object cert = secureSocket.get(SECURESOCKET_CONFIG_CERT);
         if (cert == null) {
-            throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
+            BMap<BString, Object> key = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_KEY);
+            if (key != null) {
+                senderConfiguration.useJavaDefaults();
+            } else {
+                throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Need to configure " +
                             "cert with client SSL certificates file")));
+            }
+        } else {
+            evaluateCertField(cert, senderConfiguration);
         }
-        evaluateCertField(cert, senderConfiguration);
         BMap<BString, Object> key = getBMapValueIfPresent(secureSocket, GrpcConstants.SECURESOCKET_CONFIG_KEY);
         if (key != null) {
             evaluateKeyField(key, senderConfiguration);
@@ -230,6 +234,7 @@ public class GrpcUtil {
         }
 
         listenerConfiguration.setPipeliningEnabled(true); //Pipelining is enabled all the time
+        listenerConfiguration.setSocketReuse(true);
         return listenerConfiguration;
     }
 

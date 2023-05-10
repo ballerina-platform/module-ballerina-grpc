@@ -1,0 +1,11 @@
+[
+  {
+    "name": "com.google.protobuf.ExtensionRegistry",
+    "methods": [
+      {
+        "name": "getEmptyRegistry",
+        "parameterTypes": []
+      }
+    ]
+  }
+]

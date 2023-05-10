@@ -143,7 +143,7 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
     error? cause = ();
 
     while currentRetryCount <= retryCount {
-        var result = externExecuteSimpleRPC(grpcClient, methodID, payload, headers);
+        [anydata, map<string|string[]>]|Error result = externExecuteSimpleRPC(grpcClient, methodID, payload, headers);
         if result is [anydata, map<string|string[]>] {
             return result;
         } else {
@@ -221,7 +221,7 @@ isolated function externInitStub(Client genericEndpoint, AbstractClientEndpoint 
 } external;
 
 isolated function externExecuteSimpleRPC(Client clientEndpoint, string methodID, anydata payload, map<string|string[]> headers)
-                returns ([anydata, map<string|string[]>]|Error) = @java:Method {
+                returns [anydata, map<string|string[]>]|Error = @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils"
 } external;
 

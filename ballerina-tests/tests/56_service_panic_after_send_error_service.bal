@@ -21,14 +21,11 @@ listener grpc:Listener ep56 = new (9156);
 @grpc:Descriptor {value: SERVICE_PANIC_AFTER_SEND_ERROR_DESC}
 service "HelloWorld56" on ep56 {
 
-    remote function hello56BiDi(HelloWorld56StringCaller caller,
-    stream<string, error?> clientStream) {
-        checkpanic caller->sendError(error grpc:Error("Test error from service"));
-        panic error grpc:Error("Panic in service");
+    remote function hello56BiDi(HelloWorld56StringCaller caller, stream<string, error?> clientStream) returns error? {
+        check caller->sendError(error grpc:Error("Test error from service"));
     }
 
-    remote function hello56Unary(HelloWorld56StringCaller caller, string value) {
-        checkpanic caller->sendError(error grpc:Error("Test error from service"));
-        panic error grpc:Error("Panic in service");
+    remote function hello56Unary(HelloWorld56StringCaller caller, string value) returns error? {
+        check caller->sendError(error grpc:Error("Test error from service"));
     }
 }

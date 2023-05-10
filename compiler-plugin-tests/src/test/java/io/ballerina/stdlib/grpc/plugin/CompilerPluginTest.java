@@ -312,6 +312,54 @@ public class CompilerPluginTest {
         Assert.assertEquals(diagnosticResult.errors().size(), 0);
     }
 
+    @Test
+    public void testCompilerPluginServiceWithDefaultableTypeCaller() {
+
+        String errMsg = "ERROR [helloworld_service.bal:(24:5,26:6)] when there are two parameters to a remote " +
+                "function, the first one must be a caller type";
+        Package currentPackage = loadPackage("package_21");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
+                d -> errMsg.equals(d.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginServiceWithInvalidParameterCount() {
+
+        String errMsg = "ERROR [helloworld_service.bal:(24:5,26:6)] the maximum number of parameters " +
+                "to a remote function is 2";
+        Package currentPackage = loadPackage("package_22");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.MAX_PARAM_COUNT.getErrorCode());
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
+                d -> errMsg.equals(d.toString())));
+    }
+
+    @Test
+    public void testCompilerPluginServiceWithInvalidReturnType() {
+
+        String errMsg = "ERROR [helloworld_service.bal:(24:5,26:6)] only `error?` return " +
+                "type is allowed with the caller";
+        Package currentPackage = loadPackage("package_23");
+        PackageCompilation compilation = currentPackage.getCompilation();
+        DiagnosticResult diagnosticResult = compilation.diagnosticResult();
+        Diagnostic diagnostic = (Diagnostic) diagnosticResult.errors().toArray()[0];
+        Assert.assertEquals(diagnosticResult.errors().size(), 1);
+        Assert.assertEquals(diagnostic.diagnosticInfo().code(),
+                GrpcCompilerPluginConstants.CompilationErrors.RETURN_WITH_CALLER.getErrorCode());
+        Assert.assertTrue(diagnosticResult.errors().stream().anyMatch(
+                d -> errMsg.equals(d.toString())));
+    }
+
     private Package loadPackage(String path) {
 
         Path projectDirPath = RESOURCE_DIRECTORY.resolve(path);

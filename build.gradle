@@ -72,6 +72,7 @@ subprojects {
     dependencies {
 
         /* Standard libraries */
+        ballerinaStdLibs "io.ballerina.stdlib:constraint-ballerina:${stdlibConstraintVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${stdlibIoVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:crypto-ballerina:${stdlibCryptoVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:time-ballerina:${stdlibTimeVersion}"
@@ -86,7 +87,6 @@ subprojects {
         ballerinaStdLibs "io.ballerina.stdlib:jwt-ballerina:${stdlibJwtVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:uuid-ballerina:${stdlibUuidVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:oauth2-ballerina:${stdlibOAuth2Version}"
-        ballerinaStdLibs "io.ballerina.stdlib:regex-ballerina:${stdlibRegexVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:url-ballerina:${stdlibUrlVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:protobuf-ballerina:${stdlibProtobufVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:random-ballerina:${stdlibRandomVersion}"

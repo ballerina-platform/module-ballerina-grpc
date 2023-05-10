@@ -38,6 +38,7 @@ public abstract class AbstractGrpcNativeFunction {
     }
 
     protected static boolean isConnectorStarted(BObject serviceEndpoint) {
-        return serviceEndpoint.getNativeData(GrpcConstants.CONNECTOR_STARTED) != null;
+        return serviceEndpoint.getNativeData(GrpcConstants.CONNECTOR_STARTED) != null
+                && (Boolean) serviceEndpoint.getNativeData(GrpcConstants.CONNECTOR_STARTED);
     }
 }

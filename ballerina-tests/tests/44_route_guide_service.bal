@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/log;
 
-listener grpc:Listener ep44 = new (9144);
+listener grpc:Listener ep44 = new (9144, {reflectionEnabled: true});
 
 @grpc:Descriptor {value: ROUTE_GUIDE_DESC}
 service "RouteGuide" on ep44 {
