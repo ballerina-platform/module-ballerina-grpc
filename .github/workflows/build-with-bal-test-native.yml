@@ -36,5 +36,5 @@ jobs:
             lang_version: ${{ inputs.lang_version }}
             native_image_options: ${{ inputs.native_image_options }}
             additional_ubuntu_build_flags: '-x :grpc-native:test -x :grpc-compiler-plugin-tests:test'
-            additional_windows_build_flags: '-x :grpc-native:test -x :grpc-compiler-plugin-tests:test -x :grpc-tooling-tests:test'
+            additional_windows_build_flags: '-x :grpc-native:test -x :grpc-compiler-plugin-tests:test
             java_tool_options: '-Dfile.encoding=UTF8'
