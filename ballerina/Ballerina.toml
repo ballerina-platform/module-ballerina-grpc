@@ -1,8 +1,8 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.8.0"
-distribution = "2201.5.0"
+version = "1.9.0"
+distribution = "2201.7.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -10,18 +10,21 @@ icon = "icon.png"
 license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 
+[platform.java11]
+graalvmCompatible = true
+
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.8.0"
-path = "../native/build/libs/grpc-native-1.8.0.jar"
+version = "1.9.0"
+path = "../native/build/libs/grpc-native-1.9.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.8.0.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.9.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2201.5.0.jar"
+path = "./lib/ballerina-cli-2201.6.0-20230614-102000-d1aade7d.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -31,8 +34,8 @@ scope = "testOnly"
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.8.0"
-path = "./lib/http-native-2.8.0.jar"
+version = "2.9.0"
+path = "./lib/http-native-2.9.0-20230615-133700-5613017.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.netty"
@@ -154,11 +157,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java11.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.5.0"
-path = "./lib/formatter-core-2201.5.0.jar"
+version = "2201.6.0-20230614-102000-d1aade7d"
+path = "./lib/formatter-core-2201.6.0-20230614-102000-d1aade7d.jar"
 
 [[platform.java11.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.5.0"
-path = "./lib/ballerina-parser-2201.5.0.jar"
+version = "2201.6.0-20230614-102000-d1aade7d"
+path = "./lib/ballerina-parser-2201.6.0-20230614-102000-d1aade7d.jar"
