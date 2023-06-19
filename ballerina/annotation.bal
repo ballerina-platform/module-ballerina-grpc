@@ -29,8 +29,10 @@ public annotation ServiceDescriptorData ServiceDescriptor on service;
 # Service descriptor data generated at the compile time.
 #
 # + value - Descriptor, which should be set at the compile time
+# + descMap - Service-dependent descriptor map, which should be set at the compile time
 public type DescriptorData record {|
     string value;
+    map<string> descMap?;
 |};
 
 # Service descriptor annotation.
