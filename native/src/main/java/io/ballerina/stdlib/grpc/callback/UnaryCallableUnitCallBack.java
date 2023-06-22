@@ -21,6 +21,7 @@ import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.ErrorCreator;
+import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.utils.TypeUtils;
@@ -164,11 +165,11 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         error.printStackTrace();
         boolean isPanic = false;
         if (error.getType().getName().equals(INTERNAL_UNAUTHENTICATED_ERROR)) {
-            error = ErrorCreator.createError(getModule(), UNAUTHENTICATED_ERROR, error.getErrorMessage(),
-                    error.getCause(), null);
+            error = ErrorCreator.createError(TypeCreator.createErrorType(UNAUTHENTICATED_ERROR, getModule()),
+                    error.getErrorMessage(), error.getCause(), null);
         } else if (error.getType().getName().equals(INTERNAL_PERMISSION_DENIED_ERROR)) {
-            error = ErrorCreator.createError(getModule(), PERMISSION_DENIED_ERROR, error.getErrorMessage(),
-                    error.getCause(), null);
+            error = ErrorCreator.createError(TypeCreator.createErrorType(PERMISSION_DENIED_ERROR, getModule()),
+                    error.getErrorMessage(), error.getCause(), null);
         } else {
             isPanic = true;
         }

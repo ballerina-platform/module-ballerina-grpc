@@ -22,7 +22,6 @@ import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.internal.values.ValueCreator;
 import io.ballerina.stdlib.grpc.MethodDescriptor;
 import io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils;
 import io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils;
@@ -35,7 +34,6 @@ import java.util.HashMap;
 import static io.ballerina.stdlib.grpc.GrpcConstants.METHOD_DESCRIPTORS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.SERVICE_STUB;
 import static io.ballerina.stdlib.grpc.util.TestUtils.getBObject;
-import static io.ballerina.stdlib.grpc.util.TestUtils.getValueCreatorWithErrorValue;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -46,8 +44,6 @@ public class FunctionUtilsTest {
     @BeforeTest()
     public void setupEnvironment() {
         Module module = new Module("testOrg", "test", "1");
-        ValueCreator valueCreator = getValueCreatorWithErrorValue();
-        ValueCreator.addValueCreator("testOrg", "test", "1", false, valueCreator);
         ModuleUtils.setModule(module);
     }
 
