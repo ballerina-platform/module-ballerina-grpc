@@ -117,7 +117,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
      * @param servicePath    service path.
      * @return Error if there is an error while registering the service, else returns nil.
      */
-    public static Object externRegister(BObject listenerObject, BObject service,
+    public static Object externRegister(Environment env, BObject listenerObject, BObject service,
                                         Object servicePath) {
 
         ServicesRegistry.Builder servicesRegistryBuilder = getServiceRegistryBuilder(listenerObject);
@@ -129,7 +129,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
             } else {
                 ObjectType serviceType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(service));
                 servicesRegistryBuilder.addService(ServicesBuilderUtils.getServiceDefinition(
-                        Runtime.getCurrentRuntime(), service, servicePath, getDescriptorAnnotation(serviceType)));
+                        env.getRuntime(), service, servicePath, getDescriptorAnnotation(serviceType)));
                 return null;
             }
         } catch (GrpcServerException e) {
