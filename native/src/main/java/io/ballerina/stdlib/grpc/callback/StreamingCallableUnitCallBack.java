@@ -40,7 +40,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.INTERNAL_PERMISSION_DENIED_ERROR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.INTERNAL_UNAUTHENTICATED_ERROR;
