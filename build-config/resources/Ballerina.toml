@@ -2,13 +2,16 @@
 org = "ballerina"
 name = "grpc"
 version = "@toml.version@"
-distribution = "2201.5.0"
+distribution = "2201.7.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
 icon = "icon.png"
 license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
+
+[platform.java11]
+graalvmCompatible = true
 
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
