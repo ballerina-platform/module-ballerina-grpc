@@ -157,8 +157,7 @@ public class MessageUtils {
                 message = error.getMessage();
             }
         }
-        return ErrorCreator.createError(TypeCreator.createErrorType(errorIdName, getModule()),
-                fromString(message), null, null);
+        return ErrorCreator.createError(getModule(), errorIdName, fromString(message), null, null);
     }
     
     /**
