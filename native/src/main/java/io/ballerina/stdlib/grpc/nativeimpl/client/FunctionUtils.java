@@ -165,7 +165,7 @@ public class FunctionUtils extends AbstractExecute {
         if (rootDescriptor == null || descriptorMap == null) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while initializing " +
-                            "connector. message descriptor keys not exist. Please check the generated sub file")));
+                            "connector. message descriptor keys not exist. Please check the generated stub file")));
         }
 
         try {

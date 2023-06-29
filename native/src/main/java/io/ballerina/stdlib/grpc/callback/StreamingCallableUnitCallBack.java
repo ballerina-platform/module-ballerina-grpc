@@ -152,11 +152,11 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
         error.printStackTrace();
         boolean isPanic = false;
         if (error.getType().getName().equals(INTERNAL_UNAUTHENTICATED_ERROR)) {
-            error = ErrorCreator.createError(TypeCreator.createErrorType(UNAUTHENTICATED_ERROR, getModule()),
-                    error.getErrorMessage(), error.getCause(), null);
+            error = ErrorCreator.createError(getModule(), UNAUTHENTICATED_ERROR, error.getErrorMessage(),
+                    error.getCause(), null);
         } else if (error.getType().getName().equals(INTERNAL_PERMISSION_DENIED_ERROR)) {
-            error = ErrorCreator.createError(TypeCreator.createErrorType(PERMISSION_DENIED_ERROR, getModule()),
-                    error.getErrorMessage(), error.getCause(), null);
+            error = ErrorCreator.createError(getModule(), PERMISSION_DENIED_ERROR, error.getErrorMessage(),
+                    error.getCause(), null);
         } else {
             isPanic = true;
         }
