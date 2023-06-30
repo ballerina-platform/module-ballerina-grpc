@@ -512,12 +512,4 @@ isolated function externInvokeStreamSendErrorErrorCase(TestBObject streamConnect
     'class: "io.ballerina.stdlib.grpc.testutils.NativeTestUtils"
 } external;
 
-isolated function externGetServiceEndpointConfig() returns grpc:ListenerConfiguration|error =
-@java:Method {
-    'class: "io.ballerina.stdlib.grpc.testutils.NativeTestUtils"
-} external;
-
-
-
-
 class TestBObject {}

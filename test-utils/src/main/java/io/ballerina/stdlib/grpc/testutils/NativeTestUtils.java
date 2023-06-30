@@ -19,16 +19,9 @@
 package io.ballerina.stdlib.grpc.testutils;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
-import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
-import io.ballerina.runtime.api.values.BIterator;
-import io.ballerina.runtime.api.values.BLink;
-import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.MessageUtils;
 import io.ballerina.stdlib.grpc.MethodDescriptor;
@@ -39,8 +32,6 @@ import io.ballerina.stdlib.grpc.nativeimpl.client.FunctionUtils;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +40,6 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.METHOD_DESCRIPTORS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.SERVICE_STUB;
 import static io.ballerina.stdlib.grpc.MessageUtils.getConnectorError;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.closeStream;
-import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externInitEndpoint;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.externRegister;
 import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.nextResult;
 
@@ -208,17 +198,6 @@ public class NativeTestUtils {
         return io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils.externSendError(env, clientEndpoint, null);
     }
 
-    public static Object externInvokeInitEndpointBErrorCase(BObject listenerEndpoint, BMap endpointConfig) {
-        endpointConfig.put(StringUtils.fromString("host"),
-                MessageUtils.getConnectorError(new Exception("This is a test BError")));
-        return externInitEndpoint(listenerEndpoint);
-    }
-
-    public static Object externInvokeInitEndpointExceptionCase(BObject listenerEndpoint) {
-        listenerEndpoint.set(StringUtils.fromString("config"), externGetServiceEndpointConfig());
-        return externInitEndpoint(listenerEndpoint);
-    }
-
     public static Object externInvokeRegisterErrorCase(BObject serviceEndpoint) {
         return externRegister(null, serviceEndpoint, null, null);
     }
@@ -342,132 +321,5 @@ public class NativeTestUtils {
     public static Object externInvokeStreamSendErrorErrorCase(BObject streamConnection) {
         return io.ballerina.stdlib.grpc.nativeimpl.streamingclient
                 .FunctionUtils.streamSendError(null, streamConnection, null);
-    }
-
-    public static Object externGetServiceEndpointConfig() {
-        return new BMap<BString, BObject>() {
-            @Override
-            public BObject get(Object o) {
-                return null;
-            }
-            @Override
-            public BObject put(BString bString, BObject bObject) {
-                return null;
-            }
-            @Override
-            public BObject remove(Object o) {
-                return null;
-            }
-            @Override
-            public boolean containsKey(Object o) {
-                return false;
-            }
-            @Override
-            public Set<Map.Entry<BString, BObject>> entrySet() {
-                return null;
-            }
-            @Override
-            public Collection values() {
-                return null;
-            }
-            @Override
-            public void clear() {}
-            @Override
-            public BObject getOrThrow(Object o) {
-                return null;
-            }
-            @Override
-            public BObject fillAndGet(Object o) {
-                return null;
-            }
-            @Override
-            public BString[] getKeys() {
-                return new BString[0];
-            }
-            @Override
-            public int size() {
-                return 0;
-            }
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-            @Override
-            public void addNativeData(String s, Object o) {}
-            @Override
-            public Object getNativeData(String s) {
-                return null;
-            }
-            @Override
-            public Long getIntValue(BString bString) {
-                return null;
-            }
-            @Override
-            public Double getFloatValue(BString bString) {
-                return null;
-            }
-            @Override
-            public BString getStringValue(BString bString) {
-                throw new RuntimeException("This is a test exception");
-            }
-            @Override
-            public Boolean getBooleanValue(BString bString) {
-                return null;
-            }
-            @Override
-            public BMap<?, ?> getMapValue(BString bString) {
-                return null;
-            }
-            @Override
-            public BObject getObjectValue(BString bString) {
-                return null;
-            }
-            @Override
-            public BArray getArrayValue(BString bString) {
-                return null;
-            }
-            @Override
-            public Type getIteratorNextReturnType() {
-                return null;
-            }
-            @Override
-            public long getDefaultableIntValue(BString bString) {
-                return 0;
-            }
-            @Override
-            public Object merge(BMap bMap, boolean b) {
-                return null;
-            }
-            @Override
-            public void populateInitialValue(BString bString, BObject bObject) {}
-            @Override
-            public BIterator<?> getIterator() {
-                return null;
-            }
-            @Override
-            public Object copy(Map<Object, Object> map) {
-                return null;
-            }
-            @Override
-            public Object frozenCopy(Map<Object, Object> map) {
-                return null;
-            }
-            @Override
-            public BTypedesc getTypedesc() {
-                return null;
-            }
-            @Override
-            public String stringValue(BLink bLink) {
-                return null;
-            }
-            @Override
-            public String expressionStringValue(BLink bLink) {
-                return null;
-            }
-            @Override
-            public Type getType() {
-                return null;
-            }
-        };
     }
 }
