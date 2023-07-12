@@ -43,7 +43,7 @@ public isolated client class Client {
             self.clientAuthHandler = ();
         }
         lock {
-            check externInit(self, self.url, self.config, globalGrpcClientConnPool, config.toString());
+            return externInit(self, self.url, self.config, globalGrpcClientConnPool, config.toString());
         }
     }
 
