@@ -27,6 +27,7 @@ repositories {
 
 dependencies {
     implementation project(":grpc-native")
+    implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
 }
 
 compileJava {

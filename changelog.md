@@ -4,9 +4,17 @@ This file contains all the notable changes done to the Ballerina gRPC package th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.9.0] - 2023-06-30
 ### Fixed
 - [Add descriptor map to `grpc:Descriptor` and stub initialization](https://github.com/ballerina-platform/ballerina-standard-library/issues/4555)
+- [Address CVE-2023-34462 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4602)
+
+## [1.8.1] - 2023-06-27
+### Fixed
+- [Address CVE-2023-34462 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4602)
+
+## [1.7.1] - 2023-06-30
+### Fixed
 - [Address CVE-2023-34462 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4602)
 
 ## [1.6.1] - 2023-03-15
