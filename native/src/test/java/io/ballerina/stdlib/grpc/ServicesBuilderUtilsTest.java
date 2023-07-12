@@ -18,14 +18,14 @@
 
 package io.ballerina.stdlib.grpc;
 
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.Field;
+import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.runtime.internal.types.BField;
-import io.ballerina.runtime.internal.values.ArrayValueImpl;
-import io.ballerina.runtime.internal.values.MapValueImpl;
+import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.grpc.exception.GrpcServerException;
 import org.testng.annotations.Test;
 
@@ -88,7 +88,7 @@ public class ServicesBuilderUtilsTest {
 
         service = getBObject(fieldMap);
         service.addNativeData("descriptor", StringUtils.fromString(""));
-        BMap map = new MapValueImpl<String, String>();
+        BMap map = ValueCreator.createMapValue();
         service.addNativeData("descMap", map);
         try {
             getServiceDefinition(null, service, null, null);
@@ -100,7 +100,7 @@ public class ServicesBuilderUtilsTest {
 
         service = getBObject(fieldMap);
         service.addNativeData("descriptor", StringUtils.fromString("Invalid descriptor"));
-        map = new MapValueImpl<String, String>();
+        map = ValueCreator.createMapValue();
         service.addNativeData("descMap", map);
         try {
             getServiceDefinition(null, service, null, null);
@@ -112,9 +112,10 @@ public class ServicesBuilderUtilsTest {
 
         service = getBObject(fieldMap);
         service.addNativeData("descriptor", StringUtils.fromString(descriptor));
-        map = new MapValueImpl<String, String>();
+        map = ValueCreator.createMapValue();
         service.addNativeData("descMap", map);
-        BArray servicePath = new ArrayValueImpl(new String[]{"path1", "path2"}, false);
+        BArray servicePath = ValueCreator.createArrayValue(new BString[]{StringUtils.fromString("path1"),
+                StringUtils.fromString("path2")});
         try {
             getServiceDefinition(null, service, servicePath, null);
             fail();
@@ -124,7 +125,7 @@ public class ServicesBuilderUtilsTest {
 
         service = getBObject(fieldMap);
         service.addNativeData("descriptor", StringUtils.fromString(descriptor));
-        map = new MapValueImpl<String, String>();
+        map = ValueCreator.createMapValue();
         service.addNativeData("descMap", map);
         try {
             getServiceDefinition(null, service, "testRPC", null);
@@ -135,13 +136,41 @@ public class ServicesBuilderUtilsTest {
 
         service = getBObject(fieldMap);
         service.addNativeData("descriptor", StringUtils.fromString(descriptor));
-        map = new MapValueImpl<String, String>();
+        map = ValueCreator.createMapValue();
         service.addNativeData("descMap", map);
         try {
             getServiceDefinition(null, service, StringUtils.fromString("testRPC"), null);
             fail();
         } catch (GrpcServerException e) {
             assertEquals(e.getMessage(), "Couldn't find the service descriptor for the service: testRPC");
+        }
+    }
+
+    private static class BField implements Field {
+
+        private final Type type;
+        private final String name;
+        private final long flags;
+
+        public BField(Type fieldType, String fieldName, long flags) {
+            this.type = fieldType;
+            this.name = fieldName;
+            this.flags = flags;
+        }
+
+        @Override
+        public long getFlags() {
+            return flags;
+        }
+
+        @Override
+        public Type getFieldType() {
+            return type;
+        }
+
+        @Override
+        public String getFieldName() {
+            return name;
         }
     }
 }
