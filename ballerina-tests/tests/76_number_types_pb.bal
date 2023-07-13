@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/grpc;
-import ballerina/lang.'int;
 import ballerina/protobuf;
 import ballerina/protobuf.types.wrappers;
 
