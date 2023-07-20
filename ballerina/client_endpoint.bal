@@ -42,7 +42,9 @@ public isolated client class Client {
         } else {
             self.clientAuthHandler = ();
         }
-        return externInit(self, self.url, self.config, globalGrpcClientConnPool, config.toString());
+        lock {
+            return externInit(self, self.url, self.config, globalGrpcClientConnPool, config.toString());
+        }
     }
 
     # Calls when initializing the client endpoint with the service descriptor data extracted from the proto file.
