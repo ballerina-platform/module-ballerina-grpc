@@ -45,7 +45,7 @@ dependencies {
     implementation group: 'io.ballerina.stdlib', name: 'protobuf-native', version: "${stdlibProtobufVersion}"
 
     testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
-    testImplementation group: 'org.mockito', name:'mockito-inline', version: "${mockitoVersion}"
+    testImplementation group: 'org.mockito', name:'mockito-core', version: "${mockitoVersion}"
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: "${mockitoVersion}"
 }
 
@@ -75,7 +75,7 @@ jacoco {
 jacocoTestReport {
     dependsOn test
     reports {
-        xml.enabled true
+        xml.required = true
     }
 }
 
@@ -86,6 +86,7 @@ checkstyle {
 }
 
 checkstyleMain.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
+checkstyleTest.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
 
 def excludePattern = '**/module-info.java'
 tasks.withType(Checkstyle) {
