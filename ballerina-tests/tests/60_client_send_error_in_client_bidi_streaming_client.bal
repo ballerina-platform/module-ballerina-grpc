@@ -18,7 +18,7 @@ import ballerina/grpc;
 import ballerina/test;
 import ballerina/lang.runtime;
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testClientStreamingSendErrorToService() returns grpc:Error? {
     ErrorSendServiceClient errorClient = check new ("http://localhost:9160");
     SendErrorClientStreamingStreamingClient streamingClient = check errorClient->sendErrorClientStreaming();
@@ -36,7 +36,7 @@ isolated function testClientStreamingSendErrorToService() returns grpc:Error? {
 }
 
 @test:Config {
-    enable:true,
+    enable: true,
     dependsOn: [testClientStreamingSendErrorToService]
 }
 isolated function testClientStreamingSendErrorAsFirstMessageToService() returns grpc:Error? {
@@ -54,7 +54,7 @@ isolated function testClientStreamingSendErrorAsFirstMessageToService() returns 
     test:assertEquals(<int>errorCount, 2);
 }
 
-@test:Config {enable:true}
+@test:Config {enable: true}
 isolated function testBidiStreamingSendErrorToService() returns grpc:Error? {
     ErrorSendServiceClient errorClient = check new ("http://localhost:9160");
     SendErrorBidiStreamingStreamingClient streamingClient = check errorClient->sendErrorBidiStreaming();
@@ -72,7 +72,7 @@ isolated function testBidiStreamingSendErrorToService() returns grpc:Error? {
 }
 
 @test:Config {
-    enable:true,
+    enable: true,
     dependsOn: [testBidiStreamingSendErrorToService]
 }
 isolated function testBidiStreamingSendErrorAsFirstMessageToService() returns grpc:Error? {

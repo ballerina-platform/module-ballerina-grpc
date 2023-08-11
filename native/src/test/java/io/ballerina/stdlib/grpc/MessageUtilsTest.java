@@ -18,8 +18,6 @@
 
 package io.ballerina.stdlib.grpc;
 
-import io.ballerina.runtime.api.values.BError;
-import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -42,7 +40,6 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_MESSAGE_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_STATUS_KEY;
 import static io.ballerina.stdlib.grpc.MessageUtils.copy;
 import static io.ballerina.stdlib.grpc.MessageUtils.createHttpCarbonMessage;
-import static io.ballerina.stdlib.grpc.MessageUtils.getConnectorError;
 import static io.ballerina.stdlib.grpc.MessageUtils.getFieldWireType;
 import static io.ballerina.stdlib.grpc.MessageUtils.getMappingHttpStatusCode;
 import static io.ballerina.stdlib.grpc.MessageUtils.getResponseObserver;
@@ -109,25 +106,6 @@ public class MessageUtilsTest {
     public void testGetResponseObserverNegative() {
         StreamObserver result = getResponseObserver(getBObject(null));
         assertEquals(result, null);
-    }
-
-    @Test()
-    public void testGetConnectorError() {
-        Throwable throwable = new RuntimeException();
-        BError error = getConnectorError(throwable);
-        assertEquals(error.getMessage(), "Unknown error occurred");
-
-        Status status = Status.fromCode(Status.Code.INVALID_ARGUMENT);
-        throwable = new StatusRuntimeException(status);
-        StatusRuntimeException sre = (StatusRuntimeException) throwable;
-        error = getConnectorError(sre);
-        assertEquals(error.getMessage(), "Unknown error occurred");
-
-        status = status.withCause(new RuntimeException("Test runtime exception"));
-        throwable = new StatusRuntimeException(status);
-        sre = (StatusRuntimeException) throwable;
-        error = getConnectorError(sre);
-        assertEquals(error.getMessage(), status.getCause().getMessage());
     }
 
     @Test()

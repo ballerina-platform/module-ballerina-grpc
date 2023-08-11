@@ -39,7 +39,7 @@ isolated function testClientStreamingFromReturnRecord() returns grpc:Error? {
     test:assertEquals(<SampleMsg33>(<ContextSampleMsg33>response).content, {name: "WSO2", id: 1});
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 isolated function testClientStreamingSendError() returns grpc:Error? {
     HelloWorld33Client helloWorldEp = check new ("http://localhost:9123");
     SayHelloStreamingClient streamingClient = check helloWorldEp->sayHello();

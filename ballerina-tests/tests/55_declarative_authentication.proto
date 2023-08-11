@@ -17,7 +17,7 @@
 syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 
-service helloWorld55 {
+service HelloWorld55 {
   rpc hello55UnaryWithCaller (google.protobuf.StringValue) returns (google.protobuf.StringValue);
   rpc hello55UnaryWithReturn (google.protobuf.StringValue) returns (google.protobuf.StringValue);
   rpc hello55BiDiWithCaller (stream google.protobuf.StringValue) returns (stream google.protobuf.StringValue);
@@ -26,6 +26,6 @@ service helloWorld55 {
   rpc hello55ClientStreaming (stream google.protobuf.StringValue) returns (google.protobuf.StringValue);
 }
 
-service helloWorld55EmptyScope {
+service HelloWorld55EmptyScope {
   rpc hello55EmptyScope (google.protobuf.StringValue) returns (google.protobuf.StringValue);
 }

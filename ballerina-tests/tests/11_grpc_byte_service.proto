@@ -19,7 +19,7 @@ import "google/protobuf/wrappers.proto";
 
 package grpcservices;
 
-service byteService {
+service ByteService {
 	rpc checkBytes (google.protobuf.BytesValue)
 			returns (google.protobuf.BytesValue);
 }

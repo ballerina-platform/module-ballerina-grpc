@@ -29,6 +29,7 @@ dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
+    implementation group: 'org.ballerinalang', name: 'toml-parser', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'formatter-core', version: "${ballerinaLangVersion}"
     implementation (group: 'org.ballerinalang', name: 'ballerina-cli', version: "${ballerinaLangVersion}") {
         exclude group: 'org.ballerinalang', module: 'maven-resolver'
@@ -44,6 +45,8 @@ dependencies {
     implementation group: 'io.ballerina.stdlib', name: 'protobuf-native', version: "${stdlibProtobufVersion}"
 
     testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+    testImplementation group: 'org.mockito', name:'mockito-core', version: "${mockitoVersion}"
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: "${mockitoVersion}"
 }
 
 test {
@@ -72,7 +75,7 @@ jacoco {
 jacocoTestReport {
     dependsOn test
     reports {
-        xml.enabled true
+        xml.required = true
     }
 }
 
@@ -83,6 +86,7 @@ checkstyle {
 }
 
 checkstyleMain.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
+checkstyleTest.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
 
 def excludePattern = '**/module-info.java'
 tasks.withType(Checkstyle) {

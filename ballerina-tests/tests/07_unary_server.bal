@@ -19,9 +19,8 @@ import ballerina/log;
 
 listener grpc:Listener ep7 = new (9097);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_07_UNARY_SERVER,
-    descMap: getDescriptorMap07UnaryServer()
+@grpc:Descriptor {
+    value: UNARY_SERVER_DESC
 }
 service "HelloWorld100" on ep7 {
     isolated remote function hello(HelloWorld100StringCaller caller, string name) {

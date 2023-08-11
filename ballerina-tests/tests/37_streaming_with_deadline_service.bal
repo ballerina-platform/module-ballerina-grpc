@@ -20,9 +20,8 @@ import ballerina/protobuf.types.wrappers;
 
 listener grpc:Listener ep37 = new (9127);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_37_STREAMING_WITH_DEADLINE,
-    descMap: getDescriptorMap37StreamingWithDeadline()
+@grpc:Descriptor {
+    value: STREAMING_WITH_DEADLINE_DESC
 }
 service "HelloWorld37" on ep37 {
 

@@ -1,0 +1,42 @@
+name: GraalVM Check
+
+on:
+    workflow_dispatch:
+        inputs:
+            lang_tag:
+                description: Branch/Release Tag of the Ballerina Lang
+                required: true
+                default: master
+            lang_version:
+                description: Ballerina Lang Version (If given ballerina lang buid will be skipped)
+                required: false
+                default: ''
+            native_image_options:
+                description: Default native-image options
+                required: false
+                default: ''
+    schedule:
+        -   cron: '30 18 * * *'
+    pull_request:
+        branches: 
+            - master
+        types: [opened, synchronize, reopened, labeled, unlabeled]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: true
+
+jobs:
+    call_stdlib_workflow:
+        name: Run StdLib Workflow
+        if: ${{ github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository_owner == 'ballerina-platform') }}
+        uses: ballerina-platform/ballerina-standard-library/.github/workflows/build-with-bal-test-graalvm-template.yml@main
+        with:
+            lang_tag: ${{ inputs.lang_tag }}
+            lang_version: ${{ inputs.lang_version }}
+            native_image_options: '-J-Xmx7G ${{ inputs.native_image_options }}'
+            additional_ubuntu_build_flags: '-x :grpc-native:test -x :grpc-compiler-plugin-tests:test'
+            # additional_windows_build_flags: '-x :grpc-native:test -x :grpc-compiler-plugin-tests:test -x :grpc-tooling-tests:test'
+            # TODO : Enable after fixing this issue : https://github.com/ballerina-platform/ballerina-lang/issues/38882
+            additional_windows_build_flags: '-x test'
+            java_tool_options: '-Dfile.encoding=UTF8'

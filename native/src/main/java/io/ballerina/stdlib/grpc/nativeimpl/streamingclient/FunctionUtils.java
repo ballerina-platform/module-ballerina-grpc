@@ -51,6 +51,7 @@ import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 public class FunctionUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionUtils.class);
+    private static final String CONTENT = "content";
 
     private FunctionUtils() {
     }
@@ -76,7 +77,7 @@ public class FunctionUtils {
                 Object content;
                 BMap headerValues = null;
                 if (MessageUtils.isContextRecordByValue(responseValue)) {
-                    content = ((BMap) responseValue).get(StringUtils.fromString("content"));
+                    content = ((BMap) responseValue).get(StringUtils.fromString(CONTENT));
                     headerValues = ((BMap) responseValue).getMapValue(StringUtils.fromString("headers"));
                 } else {
                     content = responseValue;
@@ -119,11 +120,12 @@ public class FunctionUtils {
                         .withDescription(errorValue.getErrorMessage().getValue()))));
                 streamingConnection.addNativeData(GrpcConstants.IS_STREAM_CANCELLED, true);
                 // Add message content to observer context.
-                ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
-                observerContext.addTag(GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE,
-                        MessageUtils.getMappingHttpStatusCode(statusCode) + " : " +
-                                errorValue.getErrorMessage().getValue());
-
+                if (ObserveUtils.isObservabilityEnabled()) {
+                    ObserverContext observerContext = ObserveUtils.getObserverContextOfCurrentFrame(env);
+                    observerContext.addTag(GrpcConstants.TAG_KEY_GRPC_ERROR_MESSAGE,
+                            MessageUtils.getMappingHttpStatusCode(statusCode) + " : " +
+                                    errorValue.getErrorMessage().getValue());
+                }
             } catch (Exception e) {
                 LOG.error("Error while sending error to server.", e);
                 return MessageUtils.getConnectorError(e);

@@ -19,7 +19,7 @@ import ballerina/time;
 
 listener grpc:Listener ep48 = new (9148);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_48_BIDI_TIMESTAMP, descMap: getDescriptorMap48BidiTimestamp()}
+@grpc:Descriptor {value: BIDI_TIMESTAMP_DESC}
 service "BidiStreamingTimestampService" on ep48 {
 
     remote function bidiStreamingGreetServer(BidiStreamingTimestampServiceBiDiGreetingCaller caller,

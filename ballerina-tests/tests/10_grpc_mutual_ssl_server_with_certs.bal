@@ -38,11 +38,10 @@ listener grpc:Listener ep10 = new (9100,
     ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
 });
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_10_GRPC_SSL_SERVER,
-    descMap: getDescriptorMap10GrpcSslServer()
+@grpc:Descriptor {
+    value: GRPC_SSL_SERVER_DESC
 }
-service "grpcMutualSslService" on ep10 {
+service "GrpcMutualSslService" on ep10 {
     isolated remote function hello(GrpcMutualSslServiceStringCaller caller, string name) {
         string message = "Hello " + name;
         runtime:sleep(2);

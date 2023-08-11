@@ -18,11 +18,10 @@ import ballerina/grpc;
 
 listener grpc:Listener ep24 = new (9114);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_24_RETURN_DATA_UNARY,
-    descMap: getDescriptorMap24ReturnDataUnary()
+@grpc:Descriptor {
+    value: RETURN_DATA_UNARY_DESC
 }
-service /HelloWorld24 on ep24 {
+service "HelloWorld24" on ep24 {
 
     remote isolated function testStringValueReturn(string value) returns string {
         return value;

@@ -20,11 +20,10 @@ listener grpc:Listener ep11 = new (9101, {
     host: "localhost"
 });
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_11_GRPC_BYTE_SERVICE,
-    descMap: getDescriptorMap11GrpcByteService()
+@grpc:Descriptor {
+    value: GRPC_BYTE_SERVICE_DESC
 }
-service "byteService" on ep11 {
+service "ByteService" on ep11 {
     isolated remote function checkBytes(ByteServiceByteCaller caller, byte[] value) {
         checkpanic caller->sendBytes(value);
         checkpanic caller->complete();

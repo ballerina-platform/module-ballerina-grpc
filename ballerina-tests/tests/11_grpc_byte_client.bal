@@ -22,7 +22,7 @@ type ByteArrayTypedesc typedesc<byte[]>;
 
 @test:Config {enable: true}
 isolated function testByteArray() returns grpc:Error? {
-    byteServiceClient blockingEp = check new ("http://localhost:9101");
+    ByteServiceClient blockingEp = check new ("http://localhost:9101");
     string statement = "Lion in Town.";
     byte[] bytes = statement.toBytes();
 
@@ -33,7 +33,7 @@ isolated function testByteArray() returns grpc:Error? {
 @test:Config {enable: true}
 isolated function testLargeByteArray() returns error? {
     string filePath = "tests/resources/sample_bytes.txt";
-    byteServiceClient blockingEp = check new ("http://localhost:9101");
+    ByteServiceClient blockingEp = check new ("http://localhost:9101");
     io:ReadableByteChannel rch = check io:openReadableFile(filePath);
 
     byte[] resultBytes = check rch.read(10000);

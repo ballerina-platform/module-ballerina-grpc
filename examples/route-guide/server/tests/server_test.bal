@@ -18,9 +18,17 @@ import ballerina/test;
 import ballerina/io;
 import ballerina/grpc;
 
-@test:Config {}
+@test:Config {enable: true}
 function serverTest() returns error? {
-    RouteGuideClient ep = check new ("http://localhost:8980");
+    RouteGuideClient ep = check new ("https://localhost:8980",
+        secureSocket = {
+            key: {
+                certFile: "./resources/public.crt",
+                keyFile: "./resources/private.key"
+            },
+            cert: "./resources/public.crt"
+        }
+    );
     // Simple RPC
     Feature feature = check ep->GetFeature({latitude: 406109563, longitude: -742186778});
     Feature expectedFeature = {name: "4001 Tremley Point Road, Linden, NJ 07036, USA", location: {latitude: 406109563, longitude: -742186778}};

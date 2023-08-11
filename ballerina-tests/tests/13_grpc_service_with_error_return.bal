@@ -16,9 +16,8 @@
 
 import ballerina/grpc;
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_13_GRPC_SERVICE_WITH_ERROR_RETURN,
-    descMap: getDescriptorMap13GrpcServiceWithErrorReturn()
+@grpc:Descriptor {
+    value: GRPC_SERVICE_WITH_ERROR_RETURN_DESC
 }
 service "HelloWorld13" on new grpc:Listener(9103) {
 

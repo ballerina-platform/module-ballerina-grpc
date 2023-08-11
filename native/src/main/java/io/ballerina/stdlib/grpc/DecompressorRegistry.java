@@ -66,20 +66,6 @@ public final class DecompressorRegistry {
         return decompressors.get(compressorName);
     }
 
-    /**
-     * Registers a compressor for both decompression and message encoding negotiation.
-     *
-     * @param decompressor The compressor to register
-     */
-    public void register(Decompressor decompressor) {
-        String encoding = decompressor.getMessageEncoding();
-        if (encoding.contains(",")) {
-            throw new IllegalArgumentException("Comma is currently not allowed in message encoding");
-        }
-        decompressors.put(encoding, decompressor);
-        advertisedDecompressors.add(encoding);
-    }
-
     public Set<String> getAdvertisedMessageEncodings() {
         return advertisedDecompressors;
     }

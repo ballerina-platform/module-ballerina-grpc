@@ -38,16 +38,20 @@ import io.ballerina.stdlib.grpc.exception.GrpcClientException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.MessageUtils.isContextRecordByType;
 import static io.ballerina.stdlib.grpc.MessageUtils.setNestedMessages;
 import static io.ballerina.stdlib.grpc.MethodDescriptor.generateFullMethodName;
 import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getBallerinaValueType;
+import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.getParameterTypesFromParameters;
 import static io.ballerina.stdlib.grpc.ServicesBuilderUtils.hexStringToByteArray;
 
 /**
@@ -99,22 +103,16 @@ public final class ServiceDefinition {
             throw new GrpcClientException("Error while reading the service proto descriptor. File proto descriptor" +
                     " is null.");
         }
-        Descriptors.FileDescriptor[] fileDescriptors = new Descriptors.FileDescriptor[descriptorProto
-                .getDependencyList().size()];
-        int i = 0;
+        List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             if (descriptorMap.containsKey(StringUtils.fromString(dependency.toStringUtf8()))) {
                 BString bRootDescriptor = (BString) descriptorMap
                         .get(StringUtils.fromString(dependency.toString(StandardCharsets.UTF_8)));
-                fileDescriptors[i++] =
-                        getFileDescriptor(bRootDescriptor.getValue(), descriptorMap);
+                fileDescriptors.add(getFileDescriptor(bRootDescriptor.getValue(), descriptorMap));
             }
         }
-        if (fileDescriptors.length > 0 && i == 0) {
-            throw new GrpcClientException("Error while reading the service proto descriptor. Couldn't find any " +
-                    "dependent descriptors.");
-        }
-        return Descriptors.FileDescriptor.buildFrom(descriptorProto, fileDescriptors);
+        return Descriptors.FileDescriptor.buildFrom(descriptorProto, fileDescriptors.toArray(
+                Descriptors.FileDescriptor[]::new), true);
     }
 
     private Descriptors.ServiceDescriptor getServiceDescriptor(String clientTypeName) throws GrpcClientException {
@@ -207,8 +205,7 @@ public final class ServiceDefinition {
             streamParameterType = unionReturnType.getMemberTypes().get(1);
         }
 
-        if (methodDescriptor.isClientStreaming() && methodDescriptor.isServerStreaming()
-                && streamParameterType instanceof ObjectType) {
+        if (methodDescriptor.isClientStreaming() && streamParameterType instanceof ObjectType) {
             return getStreamDataTypeFromBidirectionalStream((ObjectType) streamParameterType);
         }
 
@@ -251,7 +248,7 @@ public final class ServiceDefinition {
             Type firstParamType = unionReturnType.getMemberTypes().get(0);
             if (isContextRecordByType(firstParamType)) {
                 RecordType recordParamType = (RecordType) firstParamType;
-                return recordParamType.getFields().get("content").getFieldType();
+                return getReferredType(recordParamType.getFields().get(CONTENT_FIELD).getFieldType());
             }
             return firstParamType;
         }
@@ -264,7 +261,7 @@ public final class ServiceDefinition {
             // For client streaming and bidirectional streaming, we can't derive the type from the function.
             return null;
         }
-        Type[] inputParams = attachedFunction.getParameterTypes();
+        Type[] inputParams = getParameterTypesFromParameters(attachedFunction.getParameters());
         if (inputParams.length > 0) {
             Type inputType = inputParams[0];
             if (inputType.getTag() == TypeTags.UNION_TAG) {

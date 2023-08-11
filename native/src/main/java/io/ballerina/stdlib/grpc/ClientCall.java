@@ -21,7 +21,6 @@ import io.ballerina.runtime.observability.ObserveUtils;
 import io.ballerina.runtime.observability.ObserverContext;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.grpc.stubs.AbstractStub;
-import io.ballerina.stdlib.http.api.HttpConstants;
 import io.ballerina.stdlib.http.transport.contract.Constants;
 import io.ballerina.stdlib.http.transport.contract.HttpClientConnector;
 import io.ballerina.stdlib.http.transport.contract.HttpResponseFuture;
@@ -34,16 +33,11 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 
-import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
-import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_HTTP_METHOD;
-import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_HTTP_URL;
-import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_PEER_ADDRESS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_TYPE_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MESSAGE_ACCEPT_ENCODING;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MESSAGE_ENCODING;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TE_KEY;
-import static io.ballerina.stdlib.http.api.HttpConstants.HTTP_VERSION;
 
 /**
  * This class handles a call to a remote method.
@@ -99,34 +93,6 @@ public final class ClientCall {
         outboundMessage.setHttpVersion("2.0");
         outboundMessage.setHeader(CONTENT_TYPE_KEY, GrpcConstants.CONTENT_TYPE_GRPC);
         outboundMessage.setHeader(TE_KEY, GrpcConstants.TE_TRAILERS);
-    }
-
-    public void checkAndObserveHttpRequest() {
-        ObserverContext observerContext =
-                ObserveUtils.getObserverContextOfCurrentFrame(context.getEnvironment());
-        if (observerContext != null) {
-            injectHeaders(outboundMessage, ObserveUtils.getContextProperties(observerContext));
-            observerContext.addTag(TAG_KEY_HTTP_METHOD, GrpcConstants.HTTP_METHOD);
-            observerContext.addTag(TAG_KEY_HTTP_URL, String.valueOf(outboundMessage.getProperty(HttpConstants.TO)));
-            observerContext.addTag(TAG_KEY_PEER_ADDRESS,
-                    outboundMessage.getProperty(Constants.HTTP_HOST) + ":"
-                            + outboundMessage.getProperty(Constants.HTTP_PORT));
-            observerContext.addTag(TE_KEY, GrpcConstants.TE_TRAILERS);
-            observerContext.addTag(CONTENT_TYPE_KEY, GrpcConstants.CONTENT_TYPE_GRPC);
-            observerContext.addTag(HTTP_VERSION, "2.0");
-            // Add HTTP Status Code tag. The HTTP status code will be set using the response message.
-            // Sometimes the HTTP status code will not be set due to errors etc. Therefore, it's very important to set
-            // some value to HTTP Status Code to make sure that tags will not change depending on various
-            // circumstances.
-            // HTTP Status code must be a number.
-            observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, 0);
-        }
-    }
-
-    private void injectHeaders(OutboundMessage msg, Map<String, String> headers) {
-        if (headers != null) {
-            headers.forEach((key, value) -> msg.setHeader(key, String.valueOf(value)));
-        }
     }
 
     public void injectHeaders(HttpHeaders headers) {

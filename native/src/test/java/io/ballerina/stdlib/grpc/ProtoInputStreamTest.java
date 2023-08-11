@@ -18,9 +18,12 @@
 
 package io.ballerina.stdlib.grpc;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
@@ -63,7 +66,44 @@ public class ProtoInputStreamTest {
     }
 
     @Test()
-    public void testAvailableWithExceptionMessage() {
+    public void testMessageReadNullCase() {
+        ProtoInputStream pis = new ProtoInputStream(null);
+        int result = pis.read();
+        assertEquals(result, -1);
+    }
+
+    @Test()
+    public void testMessageReadSpecificLocationNullCase() {
+        ProtoInputStream pis = new ProtoInputStream(null);
+        byte[] b = {};
+        int result = 0;
+        try {
+            result = pis.read(b, 0, 2);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        assertEquals(result, -1);
+    }
+
+    @Test(enabled = false)
+    public void testMessageReadSpecificLocationReadPartialCase() throws InvalidProtocolBufferException {
+        Message m = Mockito.mock(Message.class);
+        ProtoInputStream pis = new ProtoInputStream(m);
+
+        Mockito.when(m.getSerializedSize()).thenReturn(4);
+
+        byte[] b = {};
+        int result = 0;
+        try {
+            result = pis.read("Test".getBytes(StandardCharsets.UTF_8), 0, 6);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        assertEquals(result, -1);
+    }
+
+    @Test()
+    public void testAvailableWithExceptionMessage() throws InvalidProtocolBufferException {
         Message message = new Message(new IllegalStateException("Illegal test case"));
         ProtoInputStream pis = new ProtoInputStream(message);
         assertEquals(pis.available(), 0);

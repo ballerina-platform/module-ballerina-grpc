@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
+import static io.ballerina.stdlib.grpc.GrpcConstants.HEADER_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STATUS_ERROR_MAP;
 import static io.ballerina.stdlib.grpc.GrpcConstants.getKeyByValue;
 import static io.ballerina.stdlib.grpc.MessageUtils.convertToHttpHeaders;
@@ -51,6 +52,8 @@ import static io.ballerina.stdlib.grpc.MessageUtils.isContextRecordByValue;
  */
 public class FunctionUtils {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionUtils.class);
+
+    private static final String CONTENT = "content";
 
     private FunctionUtils() {
     }
@@ -129,8 +132,8 @@ public class FunctionUtils {
                     Object content;
                     BMap headerValues = null;
                     if (isContextRecordByValue(responseValue)) {
-                        content = ((BMap) responseValue).get(StringUtils.fromString("content"));
-                        headerValues = ((BMap) responseValue).getMapValue(StringUtils.fromString("headers"));
+                        content = ((BMap) responseValue).get(StringUtils.fromString(CONTENT));
+                        headerValues = ((BMap) responseValue).getMapValue(StringUtils.fromString(HEADER_FIELD));
                     } else {
                         content = responseValue;
                     }

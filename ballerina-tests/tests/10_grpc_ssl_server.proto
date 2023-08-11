@@ -19,7 +19,7 @@ import "google/protobuf/wrappers.proto";
 
 package grpcservices;
 
-service grpcMutualSslService {
+service GrpcMutualSslService {
 	rpc hello (google.protobuf.StringValue)
 			returns (google.protobuf.StringValue);
 }

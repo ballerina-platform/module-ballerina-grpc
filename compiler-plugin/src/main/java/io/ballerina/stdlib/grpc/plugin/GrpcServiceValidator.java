@@ -25,16 +25,13 @@ import io.ballerina.compiler.api.symbols.TypeDescKind;
 import io.ballerina.compiler.api.symbols.TypeReferenceTypeSymbol;
 import io.ballerina.compiler.api.symbols.TypeSymbol;
 import io.ballerina.compiler.api.symbols.UnionTypeSymbol;
-import io.ballerina.compiler.syntax.tree.DefaultableParameterNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.FunctionSignatureNode;
-import io.ballerina.compiler.syntax.tree.IncludedRecordParameterNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.OptionalTypeDescriptorNode;
 import io.ballerina.compiler.syntax.tree.ParameterNode;
 import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
-import io.ballerina.compiler.syntax.tree.RestParameterNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.ServiceDeclarationNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
@@ -49,6 +46,10 @@ import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
+import static io.ballerina.stdlib.grpc.plugin.GrpcCompilerPluginConstants.GRPC_DESCRIPTOR_ANNOTATION_NAME;
+import static io.ballerina.stdlib.grpc.plugin.GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME;
+import static io.ballerina.stdlib.grpc.plugin.GrpcCompilerPluginConstants.GRPC_SERVICE_DESCRIPTOR_ANNOTATION_NAME;
 
 /**
  * gRPC service validator for compiler API.
@@ -112,7 +113,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                     if (typeSymbol.getModule().isPresent() && typeSymbol.getModule().get().id().orgName()
                             .equals(GrpcCompilerPluginConstants.BALLERINA_ORG_NAME) && typeSymbol.getModule()
                             .flatMap(Symbol::getName).orElse("")
-                            .equals(GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME)) {
+                            .equals(GRPC_PACKAGE_NAME)) {
 
                         return true;
                     }
@@ -122,7 +123,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                     && listenerType.getModule().get().id().orgName()
                     .equals(GrpcCompilerPluginConstants.BALLERINA_ORG_NAME)
                     && ((TypeReferenceTypeSymbol) listenerType).typeDescriptor().getModule()
-                    .flatMap(Symbol::getName).orElse("").equals(GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME)) {
+                    .flatMap(Symbol::getName).orElse("").equals(GRPC_PACKAGE_NAME)) {
 
                 return true;
             }
@@ -159,10 +160,11 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         List<AnnotationSymbol> annotationSymbols = serviceDeclarationSymbol.annotations();
         for (AnnotationSymbol annotationSymbol : annotationSymbols) {
             if (annotationSymbol.getModule().isPresent()
-                    && GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME.equals(
+                    && GRPC_PACKAGE_NAME.equals(
                     annotationSymbol.getModule().get().id().moduleName())
                     && annotationSymbol.getName().isPresent()
-                    && GrpcCompilerPluginConstants.GRPC_ANNOTATION_NAME.equals(annotationSymbol.getName().get())) {
+                    && (GRPC_SERVICE_DESCRIPTOR_ANNOTATION_NAME.equals(annotationSymbol.getName().get()) ||
+                    GRPC_DESCRIPTOR_ANNOTATION_NAME.equals(annotationSymbol.getName().get()))) {
 
                 isServiceDescAnnotationPresents = true;
                 break;
@@ -171,8 +173,8 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         if (!isServiceDescAnnotationPresents) {
             reportErrorDiagnostic(serviceDeclarationNode, syntaxNodeAnalysisContext,
                     (GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getError() +
-                            GrpcCompilerPluginConstants.GRPC_PACKAGE_NAME + ":" +
-                            GrpcCompilerPluginConstants.GRPC_ANNOTATION_NAME),
+                            GRPC_PACKAGE_NAME + ":" +
+                            GRPC_DESCRIPTOR_ANNOTATION_NAME),
                     GrpcCompilerPluginConstants.CompilationErrors.UNDEFINED_ANNOTATION.getErrorCode());
         }
     }
@@ -201,8 +203,9 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
                 reportErrorDiagnostic(functionDefinitionNode, syntaxNodeAnalysisContext,
                         GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getError(),
                         GrpcCompilerPluginConstants.CompilationErrors.TWO_PARAMS_WITHOUT_CALLER.getErrorCode());
-            } else if (!(firstParameter.startsWith(serviceName) && firstParameter.endsWith(GRPC_EXACT_CALLER))) {
-                String expectedCaller = serviceName + GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
+            } else if (!isValidCallerParameter(firstParameter, serviceName)) {
+                String expectedCaller = serviceName.substring(0, 1).toUpperCase(Locale.ENGLISH) +
+                        serviceName.substring(1) + GRPC_RETURN_TYPE + GRPC_EXACT_CALLER;
                 String diagnosticMessage = GrpcCompilerPluginConstants.CompilationErrors
                         .INVALID_CALLER_TYPE.getError() +
                         expectedCaller + "\" but found \"" + firstParameter + "\"";
@@ -251,6 +254,12 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         }
     }
 
+    private boolean isValidCallerParameter(String callerTypeName, String serviceName) {
+
+        return callerTypeName.startsWith(serviceName.substring(0, 1).toUpperCase(Locale.ENGLISH) +
+                serviceName.substring(1)) && callerTypeName.endsWith(GRPC_EXACT_CALLER);
+    }
+
     private void reportErrorDiagnostic(Node node, SyntaxNodeAnalysisContext syntaxNodeAnalysisContext, String message,
                                        String diagnosticId) {
 
@@ -285,15 +294,6 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
         if (parameterNode instanceof RequiredParameterNode) {
             RequiredParameterNode requiredParameterNode = (RequiredParameterNode) parameterNode;
             return requiredParameterNode.typeName().toString().strip();
-        } else if (parameterNode instanceof DefaultableParameterNode) {
-            DefaultableParameterNode defaultableParameterNode = (DefaultableParameterNode) parameterNode;
-            return defaultableParameterNode.typeName().toString().strip();
-        } else if (parameterNode instanceof IncludedRecordParameterNode) {
-            IncludedRecordParameterNode includedParameterNode = (IncludedRecordParameterNode) parameterNode;
-            return includedParameterNode.typeName().toString().strip();
-        } else if (parameterNode instanceof RestParameterNode) {
-            RestParameterNode restParameterNode = (RestParameterNode) parameterNode;
-            return restParameterNode.typeName().toString().strip();
         }
         return "";
     }

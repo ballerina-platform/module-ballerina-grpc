@@ -18,7 +18,7 @@ import ballerina/grpc;
 
 listener grpc:Listener ep20 = new (9110);
 
-grpc:Service AnonService1 = @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20_UNARY_CLIENT_FOR_ANONYMOUS_SERVICE, descMap: getDescriptorMap20UnaryClientForAnonymousService()}
+grpc:Service AnonService1 = @grpc:Descriptor {value: UNARY_CLIENT_FOR_ANONYMOUS_SERVICE_DESC}
 service object {
     remote isolated function hello1(string value) returns string|error {
         return "Hello Ballerina";
@@ -28,14 +28,14 @@ service object {
     }
 };
 
-grpc:Service IncompleteService = @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20_UNARY_CLIENT_FOR_ANONYMOUS_SERVICE, descMap: getDescriptorMap20UnaryClientForAnonymousService()}
+grpc:Service IncompleteService = @grpc:Descriptor {value: UNARY_CLIENT_FOR_ANONYMOUS_SERVICE_DESC}
 service object {
     remote isolated function hello1(string value) returns string|error {
         return "Hello Ballerina";
     }
 };
 
-grpc:Service unregisteredService = @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_20_UNARY_CLIENT_FOR_ANONYMOUS_SERVICE, descMap: getDescriptorMap20UnaryClientForAnonymousService()}
+grpc:Service unregisteredService = @grpc:Descriptor {value: UNARY_CLIENT_FOR_ANONYMOUS_SERVICE_DESC}
 service object {
     remote isolated function hello1(string value) returns string|error {
         return "Hello Ballerina";

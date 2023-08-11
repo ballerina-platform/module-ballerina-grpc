@@ -18,9 +18,8 @@ import ballerina/grpc;
 
 listener grpc:Listener ep32_2 = new (9222);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_32_RETURN_RECORD_SERVER_STREAMING,
-    descMap: getDescriptorMap32ReturnRecordServerStreaming()
+@grpc:Descriptor {
+    value: RETURN_RECORD_SERVER_STREAMING_DESC
 }
 service "HelloWorld32" on ep32_2 {
 

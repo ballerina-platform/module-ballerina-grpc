@@ -19,7 +19,7 @@ import "google/protobuf/wrappers.proto";
 
 package grpcservices;
 
-service testEnumService {
+service TestEnumService {
 	rpc testEnum (OrderInfo)
 			returns (google.protobuf.StringValue);
 }
