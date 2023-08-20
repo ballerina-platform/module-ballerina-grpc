@@ -31,7 +31,7 @@ project(':grpc-ballerina-tests').projectDir = file('ballerina-tests')
 project(':grpc-compiler-plugin').projectDir = file('compiler-plugin')
 project(':grpc-compiler-plugin-tests').projectDir = file('compiler-plugin-tests')
 project(':grpc-integration-tests').projectDir = file('integration-tests')
-// project(':grpc-examples').projectDir = file('examples')
+project(':grpc-examples').projectDir = file('examples')
 
 gradleEnterprise {
     buildScan {
