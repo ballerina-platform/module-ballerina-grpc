@@ -3,7 +3,7 @@
 _Owners_: @shafreenAnfar @daneshk @BuddhiWathsala @MadhukaHarith92 @dilanSachi  
 _Reviewers_: @shafreenAnfar @daneshk @dilanSachi  
 _Created_: 2021/12/05   
-_Updated_: 2022/02/17  
+_Updated_: 2022/10/14  
 _Edition_: Swan Lake  
 
 ## Introduction
@@ -11,7 +11,7 @@ This is the specification for the gRPC standard library of [Ballerina language](
 
 The gRPC library specification has evolved and may continue to evolve in the future. The released versions of the specification can be found under the relevant GitHub tag.
 
-If you have any feedback or suggestions about the library, start a discussion via a GitHub issue or in the [Slack channel](https://ballerina.io/community/). Based on the outcome of the discussion, the specification and implementation can be updated. Community feedback is always welcome. Any accepted proposal which affects the specification is stored under `/docs/proposals`. Proposals under discussion can be found with the label `type/proposal` in GitHub.
+If you have any feedback or suggestions about the library, start a discussion via a GitHub issue or in the [Discord server](https://discord.gg/ballerinalang). Based on the outcome of the discussion, the specification and implementation can be updated. Community feedback is always welcome. Any accepted proposal which affects the specification is stored under `/docs/proposals`. Proposals under discussion can be found with the label `type/proposal` in GitHub.
 
 The conforming implementation of the specification is released and included in the distribution. Any deviation from the specification is considered a bug.
 
@@ -49,6 +49,7 @@ The conforming implementation of the specification is released and included in t
    * 6.2. [gRPC compression](#62-grpc-compression)
    * 6.3. [gRPC access and trace logs](#63-grpc-access-and-trace-logs)
    * 6.4. [gRPC retry](#64-grpc-retry)
+7. [gRPC Server Reflection](#7-grpc-server-reflection)
 
 
 ## 1. Overview
@@ -132,6 +133,8 @@ The Ballerina service implementation of a gRPC can be done in two ways.
 2. Using a caller
 
 Directly returning the response is the most convenient implementation. However, for asynchronous RPC calls, directly returning is not suitable, and for such use cases, using a caller is the ideal approach. In addition, each RPC call (simple, server streaming, client streaming, and bidirectional streaming) can be implemented in both ways.
+
+It's important to note that, when a `panic` occurs inside a `grpc:Service`, immediate application termination is performed since `panic` is considered as a catastrophic error and non-recoverable.
 
 **RPC using direct return**
 
@@ -449,9 +452,9 @@ Ballerina gRPC services enable authentication and authorization using a file use
         }
     ]
 }
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_GRPC_SERVICE,
-    descMap: getDescriptorMapGrpcService()
+@grpc:Descriptor {
+    value: ROOT_DESCRIPTOR_GRPC_SERVICE,
+    descMap: ROOT_DESCRIPTOR_MAP
 }
 service "HelloWorld" on new grpc:Listener(9090) {
     remote function hello() returns string {
@@ -511,9 +514,9 @@ Ballerina gRPC services enable authentication and authorization using an LDAP us
         }
     ]
 }
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_GRPC_SERVICE,
-    descMap: getDescriptorMapGrpcService()
+@grpc:Descriptor {
+    value: ROOT_DESCRIPTOR_GRPC_SERVICE,
+    descMap: ROOT_DESCRIPTOR_MAP
 }
 service "HelloWorld" on new grpc:Listener(9090) {
     remote function hello() returns string {
@@ -542,9 +545,9 @@ Ballerina gRPC services enable authentication and authorization using JWTs by se
         }
     ]
 }
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_GRPC_SERVICE,
-    descMap: getDescriptorMapGrpcService()
+@grpc:Descriptor {
+    value: ROOT_DESCRIPTOR_GRPC_SERVICE,
+    descMap: ROOT_DESCRIPTOR_MAP
 }
 service "HelloWorld" on new grpc:Listener(9090) {
     remote function hello() returns string {
@@ -576,9 +579,9 @@ Ballerina gRPC services enable authentication and authorization using OAuth2 by 
         }
     ]
 }
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_GRPC_SERVICE,
-    descMap: getDescriptorMapGrpcService()
+@grpc:Descriptor {
+    value: ROOT_DESCRIPTOR_GRPC_SERVICE,
+    descMap: ROOT_DESCRIPTOR_MAP
 }
 service "HelloWorld" on securedEP {
     remote function hello() returns string {
@@ -918,9 +921,9 @@ listener grpc:Listener securedEp = new(9090,
     }
 );
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_GRPC_SERVICE,
-    descMap: getDescriptorMapGrpcService()
+@grpc:Descriptor {
+    value: ROOT_DESCRIPTOR_GRPC_SERVICE,
+    descMap: ROOT_DESCRIPTOR_MAP
 }
 service "HelloWorld" on securedEp {
     remote function hello() returns string {
@@ -968,11 +971,6 @@ The following API sets a deadline for each request.
 
 ```ballerina
 # Enables the deadline by adding the `deadline` header to the given headers.
-# ```ballerina
-# time:Utc current = time:utcNow();
-# time:Utc deadline = time:utcAddSeconds(current, 300);
-# map<string|string[]> headers = grpc:setDeadline(deadline);
-# ```
 #
 # + deadline - The deadline time value (this should be a specific time and not a duration)
 # + headerMap - Optional header map (if this is not specified, it creates a new header set)
@@ -986,9 +984,6 @@ If a particular RPC exceeds the specified deadline, the response will be a `grpc
 The following API enables compression for gRPC calls. Currently, Gzip compression is supported by the Ballerina gRPC library.
 ```ballerina
 # Enables the compression support by adding the `grpc-encoding` header to the given headers.
-# ```ballerina
-# map<string|string[]> headers = grpc:setCompression(grpc:GZIP);
-# ```
 #
 # + compressionType - The compression type.
 # + headerMap - Optional header map (if this is not specified, it creates a new header set)
@@ -1034,3 +1029,18 @@ public type RetryConfiguration record {|
    ErrorType[] errorTypes = defaultErrorTypes;
 |};
 ```
+
+## 7. gRPC Server Reflection
+Server reflection is a gRPC feature for servers to assist clients in runtime construction of requests without having stub information precompiled into the client. With the user defined service, a predefined standard service is started to provide service information to the clients.
+This can be enabled by enabling the `reflectionEnabled` flag in the `grpc:ListenerConfiguration`.
+```ballerina
+# Configurations for managing the gRPC server endpoint.
+
+# + reflectionEnabled - Support reflection
+public type ListenerConfiguration record {|
+    ...
+    boolean reflectionEnabled = false;
+|};
+```
+The dynamic service `ServerReflection` will handle all the reflection requests. The related proto definition can be found [here](https://github.com/grpc/grpc/blob/master/src/proto/grpc/reflection/v1alpha/reflection.proto).
+This service contains a bidirectional function `ServerReflectionInfo` which accepts `ServerReflectionRequest`s and responds with `ServerReflectionResponse`s.

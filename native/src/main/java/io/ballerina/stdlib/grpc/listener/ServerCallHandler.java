@@ -25,6 +25,7 @@ import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObservabilityConstants;
@@ -46,7 +47,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
 import static io.ballerina.stdlib.grpc.GrpcConstants.AUTHORIZATION;
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_FIELD;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getTypeName;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 import static java.util.Map.entry;
@@ -152,9 +155,10 @@ public abstract class ServerCallHandler {
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_MESSAGE_DEFINITION, methodDescriptor.getOutputType());
         String serviceName = resource.getServiceName();
         Type returnType = resource.getRpcOutputType() instanceof ArrayType ?
-                ((ArrayType) resource.getRpcOutputType()).getElementType() : resource.getRpcOutputType();
+                getReferredType(((ArrayType) resource.getRpcOutputType()).getElementType()) :
+                resource.getRpcOutputType();
         String outputType = returnType != PredefinedTypes.TYPE_NULL ? getTypeName(returnType) : null;
-        return ValueCreator.createObjectValue(resource.getService().getType().getPackage(),
+        return ValueCreator.createObjectValue(TypeUtils.getType(resource.getService()).getPackage(),
                 MessageUtils.getCallerTypeName(serviceName, outputType), clientEndpoint);
     }
 
@@ -181,16 +185,41 @@ public abstract class ServerCallHandler {
         properties.put(AUTHORIZATION, headers.get(AUTHORIZATION));
 
         String functionName = resource.getFunctionName();
-        ObjectType serviceObjectType = resource.getService().getType();
-        if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
-            resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
-                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                    resource.getReturnType(), requestParams);
+        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(resource.getService()));
+
+        boolean isEmpty = isEmpty(requestParams);
+        if (isEmpty) {
+            if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
+                resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
+                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                        resource.getReturnType());
+            } else {
+                resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
+                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                        resource.getReturnType());
+            }
         } else {
-            resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
-                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                    resource.getReturnType(), requestParams);
+            if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
+                resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
+                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                        resource.getReturnType(), requestParams);
+            } else {
+                resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
+                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
+                        resource.getReturnType(), requestParams);
+            }
         }
+    }
+
+    Boolean isEmpty(Object[] requestParams) {
+        boolean isEmpty = true;
+        for (Object param : requestParams) {
+            if (param != null) {
+                isEmpty = false;
+                break;
+            }
+        }
+        return isEmpty;
     }
 
     Object[] computeResourceParams(ServiceResource resource, Object requestParam, HttpHeaders headers,
@@ -213,7 +242,7 @@ public abstract class ServerCallHandler {
             Map<String, Object> valueMap;
             if (requestParam != null) {
                 valueMap = Map.ofEntries(
-                        entry("content", requestParam),
+                        entry(CONTENT_FIELD, requestParam),
                         entry("headers", headerValues)
                 );
             } else {

@@ -1,3 +1,2 @@
 [build-options]
 observabilityIncluded = true
-cloud = "k8s"

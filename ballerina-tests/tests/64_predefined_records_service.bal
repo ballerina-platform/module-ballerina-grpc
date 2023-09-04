@@ -20,7 +20,7 @@ import ballerina/protobuf.types.'any;
 
 listener grpc:Listener ep64 = new (9164);
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_64_PREDEFINED_RECORDS, descMap: getDescriptorMap64PredefinedRecords()}
+@grpc:Descriptor {value: PREDEFINED_RECORDS_DESC}
 service "PredefinedRecords" on ep64 {
 
     remote function CallAny('any:Any value) returns Any|error {

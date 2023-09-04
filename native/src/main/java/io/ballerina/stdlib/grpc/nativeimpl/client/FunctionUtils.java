@@ -20,7 +20,9 @@ package io.ballerina.stdlib.grpc.nativeimpl.client;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -163,14 +165,14 @@ public class FunctionUtils extends AbstractExecute {
         if (rootDescriptor == null || descriptorMap == null) {
             return MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription("Error while initializing " +
-                            "connector. message descriptor keys not exist. Please check the generated sub file")));
+                            "connector. message descriptor keys not exist. Please check the generated stub file")));
         }
 
         try {
             ServiceDefinition serviceDefinition = new ServiceDefinition(rootDescriptor.getValue(), descriptorMap);
             MessageRegistry.getInstance().setFileDescriptor(serviceDefinition.getDescriptor());
-            Map<String, MethodDescriptor> methodDescriptorMap =
-                    serviceDefinition.getMethodDescriptors(clientEndpoint.getType());
+            ObjectType objectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(clientEndpoint));
+            Map<String, MethodDescriptor> methodDescriptorMap = serviceDefinition.getMethodDescriptors(objectType);
 
             genericEndpoint.addNativeData(METHOD_DESCRIPTORS, methodDescriptorMap);
             Stub stub = new Stub(clientConnector, urlString);

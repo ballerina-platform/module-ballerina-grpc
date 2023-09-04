@@ -19,9 +19,8 @@ import ballerina/grpc;
 
 listener grpc:Listener ep28 = new (9118);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_28_UNARY_BASIC_AUTH,
-    descMap: getDescriptorMap28UnaryBasicAuth()
+@grpc:Descriptor {
+    value: UNARY_BASIC_AUTH_DESC
 }
 service "HelloWorld28" on ep28 {
 

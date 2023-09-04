@@ -36,9 +36,8 @@ listener grpc:Listener ep9 = new (9099, {
     }
 });
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_09_GRPC_SECURED_UNARY_SERVICE,
-    descMap: getDescriptorMap09GrpcSecuredUnaryService()
+@grpc:Descriptor {
+    value: GRPC_SECURED_UNARY_SERVICE_DESC
 }
 service "HelloWorld85" on ep9 {
     isolated remote function hello(HelloWorld85StringCaller caller, string name) {

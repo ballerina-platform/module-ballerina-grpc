@@ -19,9 +19,8 @@ import ballerina/log;
 
 listener grpc:Listener negotiatorep = new (9109);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_19_GRPC_MAP_SERVICE,
-    descMap: getDescriptorMap19GrpcMapService()
+@grpc:Descriptor {
+    value: GRPC_MAP_SERVICE_DESC
 }
 service "Negotiator" on negotiatorep {
 

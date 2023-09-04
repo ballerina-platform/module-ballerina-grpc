@@ -18,14 +18,18 @@
 
 package io.ballerina.stdlib.grpc;
 
+import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 import io.ballerina.stdlib.http.transport.message.HttpCarbonMessage;
+import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import static io.ballerina.stdlib.grpc.MessageUtils.createHttpCarbonMessage;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 /**
@@ -47,6 +51,38 @@ public class MessageFramerTest {
             assertEquals(stream.available(), 0);
         } catch (Exception e) {
             fail(e.getMessage());
+        }
+    }
+
+    @Test()
+    public void testWritePayloadStatusRuntimeException() throws IOException {
+        HttpCarbonMessage carbonMessage = createHttpCarbonMessage(false);
+        MessageFramer framer = new MessageFramer(carbonMessage);
+        framer.setMessageCompression(false);
+        InputStream stream = Mockito.mock(ByteArrayInputStream.class);
+        Mockito.when(stream.available()).thenThrow(new StatusRuntimeException(Status.fromCode(Status.Code.ABORTED)));
+        try {
+            framer.writePayload(stream);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof StatusRuntimeException);
+            assertEquals(e.getMessage(), "ABORTED");
+        }
+    }
+
+    @Test()
+    public void testWritePayloadRuntimeException() throws IOException {
+        HttpCarbonMessage carbonMessage = createHttpCarbonMessage(false);
+        MessageFramer framer = new MessageFramer(carbonMessage);
+        framer.setMessageCompression(false);
+        InputStream stream = Mockito.mock(ByteArrayInputStream.class);
+        Mockito.when(stream.available()).thenThrow(new RuntimeException("Test runtime exception"));
+        try {
+            framer.writePayload(stream);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof RuntimeException);
+            assertEquals(e.getMessage(), "INTERNAL: Failed to frame message: Test runtime exception");
         }
     }
 

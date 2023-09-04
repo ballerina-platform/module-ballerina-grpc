@@ -122,23 +122,6 @@ public class OutboundMessage {
     }
 
     /**
-     * Get a property of the CarbonMessage.
-     *
-     * @param key Property key
-     * @return property value
-     */
-    public Object getProperty(String key) {
-        return responseMessage.getProperty(key);
-    }
-
-    /**
-     * @return map of properties in the CarbonMessage.
-     */
-    public Map<String, Object> getProperties() {
-        return responseMessage.getProperties();
-    }
-
-    /**
      * Set a property in the underlining CarbonMessage object.
      *
      * @param key   property key
@@ -171,15 +154,6 @@ public class OutboundMessage {
     public OutboundMessage setStatus(int statusCode) {
         this.statusCode = statusCode;
         return this;
-    }
-
-    /**
-     * Get the status code of the HTTP response.
-     *
-     * @return status code value
-     */
-    public int getStatusCode() {
-        return statusCode;
     }
 
     /**
@@ -264,10 +238,6 @@ public class OutboundMessage {
         if (!framer().isClosed()) {
             framer().flush();
         }
-    }
-
-    public String getHttpVersion() {
-        return responseMessage.getHttpVersion();
     }
 
     public void setHttpVersion(String httpVersion) {

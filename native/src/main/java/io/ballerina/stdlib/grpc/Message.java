@@ -40,11 +40,11 @@ import io.ballerina.runtime.api.types.TupleType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.types.UnionType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.stdlib.grpc.builder.balgen.BalGenerationUtils;
 import io.netty.handler.codec.http.HttpHeaders;
 
 import java.io.IOException;
@@ -55,9 +55,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static io.ballerina.runtime.api.utils.TypeUtils.getReferredType;
+import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_DESCRIPTOR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANY_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.DURATION_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.EMPTY_TYPE_NAME;
+import static io.ballerina.stdlib.grpc.GrpcConstants.ORG_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.STRUCT_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.TIMESTAMP_TYPE_NAME;
 import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_BOOL_TYPE_NAME;
@@ -78,13 +81,10 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_UINT64_TYPE_NAME;
 public class Message {
 
     private static final String GOOGLE_PROTOBUF_ANY = "google.protobuf.Any";
-    private static final String GOOGLE_PROTOBUF_ANY_VALUE = "google.protobuf.Any.value";
     private static final String GOOGLE_PROTOBUF_ANY_TYPE_URL = "google.protobuf.Any.type_url";
     private static final String GOOGLE_PROTOBUF_ANY_MESSAGE_NAME = "Any";
-    private static final String GOOGLE_PROTOBUF_TIMESTAMP = "google.protobuf.Timestamp";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_SECONDS = "google.protobuf.Timestamp.seconds";
     private static final String GOOGLE_PROTOBUF_TIMESTAMP_NANOS = "google.protobuf.Timestamp.nanos";
-    private static final String GOOGLE_PROTOBUF_DURATION = "google.protobuf.Duration";
     private static final String GOOGLE_PROTOBUF_DURATION_SECONDS = "google.protobuf.Duration.seconds";
     private static final String GOOGLE_PROTOBUF_DURATION_NANOS = "google.protobuf.Duration.nanos";
     private static final String GOOGLE_PROTOBUF_STRUCT = "google.protobuf.Struct";
@@ -101,6 +101,7 @@ public class Message {
     private static final BigDecimal ANALOG_GIGA = new BigDecimal(1000000000);
 
     private String messageName;
+    private String messageFullName;
     private int memoizedSize = -1;
     private HttpHeaders headers;
     private Object bMessage = null;
@@ -109,7 +110,7 @@ public class Message {
     private static final ArrayType stringArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_STRING);
     private static final ArrayType booleanArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_BOOLEAN);
     private static final ArrayType intArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT);
-    private static final ArrayType int32ArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT_UNSIGNED_32);
+    private static final ArrayType uInt32ArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT_UNSIGNED_32);
     private static final ArrayType sint32ArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_INT_SIGNED_32);
     private static final ArrayType floatArrayType = TypeCreator.createArrayType(PredefinedTypes.TYPE_FLOAT);
 
@@ -119,13 +120,14 @@ public class Message {
     public Message(String messageName, Object bMessage) {
         this.messageName = messageName;
         this.bMessage = bMessage;
-        this.descriptor = MessageRegistry.getInstance().getMessageDescriptor(messageName);
+        this.descriptor = getMessageDescriptorFromMessageRegistry(messageName);
     }
 
     public Message(Descriptors.Descriptor descriptor, Object bMessage) {
         this.descriptor = descriptor;
         this.bMessage = bMessage;
         this.messageName = descriptor.getName();
+        this.messageFullName = descriptor.getFullName();
     }
 
     private Message(String messageName) {
@@ -167,6 +169,7 @@ public class Message {
         boolean isAnyTypedMessage = false;
         boolean isTimestampMessage = false;
         String typeUrl = "";
+        type = TypeUtils.getReferredType(type);
 
         if (fieldDescriptors.size() == 0) {
             if (messageName.startsWith("google.protobuf")) {
@@ -226,7 +229,7 @@ public class Message {
             if (typeUrlTag == DescriptorProtos.FieldDescriptorProto.Type.TYPE_GROUP_VALUE) {
                 typeUrl = input.readStringRequireUtf8();
                 skipUnnecessaryAnyTypeTags(input);
-                String s = BalGenerationUtils.bytesToHex(codeInputStreamAnyTypeByteArray(input));
+                String s = bytesToHex(codeInputStreamAnyTypeByteArray(input));
                 bMessage = StringUtils.fromString(s);
                 BMap<BString, Object> anyMap = ValueCreator.createRecordValue(type.getPackage(), type.getName());
                 anyMap.put(StringUtils.fromString(BALLERINA_TYPE_URL_ENTRY), StringUtils.fromString(typeUrl));
@@ -262,10 +265,15 @@ public class Message {
                             break;
                         }
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT64_VALUE:
-                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT64_VALUE:
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT64_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT32_VALUE:
                         case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED64_VALUE:
-                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE: {
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT64_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT32_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED64_VALUE:
+                        case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED32_VALUE: {
                             bMessage = (long) 0;
                             break;
                         }
@@ -393,7 +401,7 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray int32Array = ValueCreator.createArrayValue(int32ArrayType);
+                                BArray int32Array = ValueCreator.createArrayValue(sint32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
                                     int32Array = (BArray) bBMap.get(bFieldName);
                                 } else {
@@ -424,20 +432,20 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_UINT32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray intArray = ValueCreator.createArrayValue(intArrayType);
+                                BArray intArray = ValueCreator.createArrayValue(uInt32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
                                     intArray = (BArray) bBMap.get(bFieldName);
                                 } else {
                                     bBMap.put(bFieldName, intArray);
                                 }
-                                intArray.add(intArray.size(), input.readUInt32());
+                                intArray.add(intArray.size(), Integer.toUnsignedLong(input.readUInt32()));
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                updateBBMap(bBMap, fieldDescriptor, input.readUInt32());
+                                updateBBMap(bBMap, fieldDescriptor, Integer.toUnsignedLong(input.readUInt32()));
                             } else {
-                                bBMap.put(bFieldName, input.readUInt32());
+                                bBMap.put(bFieldName, Integer.toUnsignedLong(input.readUInt32()));
                             }
                         } else {
-                            bMessage = input.readUInt32();
+                            bMessage = Integer.toUnsignedLong(input.readUInt32());
                         }
                         break;
                     }
@@ -464,7 +472,7 @@ public class Message {
                     case DescriptorProtos.FieldDescriptorProto.Type.TYPE_FIXED32_VALUE: {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
-                                BArray int32Array = ValueCreator.createArrayValue(int32ArrayType);
+                                BArray int32Array = ValueCreator.createArrayValue(sint32ArrayType);
                                 if (bBMap.containsKey(bFieldName)) {
                                     int32Array = (BArray) bBMap.get(bFieldName);
                                 } else {
@@ -478,6 +486,86 @@ public class Message {
                             }
                         } else {
                             bMessage = input.readFixed32();
+                        }
+                        break;
+                    }
+                    case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT64_VALUE: {
+                        if (bBMap != null) {
+                            if (fieldDescriptor.isRepeated()) {
+                                BArray sInt64Array = ValueCreator.createArrayValue(intArrayType);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    sInt64Array = (BArray) bBMap.get(bFieldName);
+                                } else {
+                                    bBMap.put(bFieldName, sInt64Array);
+                                }
+                                sInt64Array.add(sInt64Array.size(), input.readSInt64());
+                            } else if (fieldDescriptor.getContainingOneof() != null) {
+                                updateBBMap(bBMap, fieldDescriptor, input.readSInt64());
+                            } else {
+                                bBMap.put(bFieldName, input.readSInt64());
+                            }
+                        } else {
+                            bMessage = input.readSInt64();
+                        }
+                        break;
+                    }
+                    case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT32_VALUE: {
+                        if (bBMap != null) {
+                            if (fieldDescriptor.isRepeated()) {
+                                BArray sInt32Array = ValueCreator.createArrayValue(sint32ArrayType);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    sInt32Array = (BArray) bBMap.get(bFieldName);
+                                } else {
+                                    bBMap.put(bFieldName, sInt32Array);
+                                }
+                                sInt32Array.add(sInt32Array.size(), input.readSInt32());
+                            } else if (fieldDescriptor.getContainingOneof() != null) {
+                                updateBBMap(bBMap, fieldDescriptor, input.readSInt32());
+                            } else {
+                                bBMap.put(bFieldName, input.readSInt32());
+                            }
+                        } else {
+                            bMessage = input.readSInt32();
+                        }
+                        break;
+                    }
+                    case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED64_VALUE: {
+                        if (bBMap != null) {
+                            if (fieldDescriptor.isRepeated()) {
+                                BArray sFixed64Array = ValueCreator.createArrayValue(intArrayType);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    sFixed64Array = (BArray) bBMap.get(bFieldName);
+                                } else {
+                                    bBMap.put(bFieldName, sFixed64Array);
+                                }
+                                sFixed64Array.add(sFixed64Array.size(), input.readSFixed64());
+                            } else if (fieldDescriptor.getContainingOneof() != null) {
+                                updateBBMap(bBMap, fieldDescriptor, input.readSFixed64());
+                            } else {
+                                bBMap.put(bFieldName, input.readSFixed64());
+                            }
+                        } else {
+                            bMessage = input.readSFixed64();
+                        }
+                        break;
+                    }
+                    case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED32_VALUE: {
+                        if (bBMap != null) {
+                            if (fieldDescriptor.isRepeated()) {
+                                BArray sFixed32Array = ValueCreator.createArrayValue(sint32ArrayType);
+                                if (bBMap.containsKey(bFieldName)) {
+                                    sFixed32Array = (BArray) bBMap.get(bFieldName);
+                                } else {
+                                    bBMap.put(bFieldName, sFixed32Array);
+                                }
+                                sFixed32Array.add(sFixed32Array.size(), input.readSFixed32());
+                            } else if (fieldDescriptor.getContainingOneof() != null) {
+                                updateBBMap(bBMap, fieldDescriptor, input.readSFixed32());
+                            } else {
+                                bBMap.put(bFieldName, input.readSFixed32());
+                            }
+                        } else {
+                            bMessage = input.readSFixed32();
                         }
                         break;
                     }
@@ -593,15 +681,17 @@ public class Message {
                             } else if (fieldDescriptor.isRepeated()) {
                                 BArray valueArray = bBMap.get(bFieldName) != null ?
                                         (BArray) bBMap.get(bFieldName) : null;
-                                Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                                Type fieldType = getReferredType(recordType.getFields()
+                                        .get(bFieldName.getValue()).getFieldType());
                                 if (valueArray == null || valueArray.size() == 0) {
                                     valueArray = ValueCreator.createArrayValue((ArrayType) fieldType);
                                     bBMap.put(bFieldName, valueArray);
                                 }
                                 valueArray.add(valueArray.size(), readMessage(fieldDescriptor,
-                                        ((ArrayType) fieldType).getElementType(), input).bMessage);
+                                        getReferredType(((ArrayType) fieldType).getElementType()), input).bMessage);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                                Type fieldType = getReferredType(recordType.getFields()
+                                        .get(bFieldName.getValue()).getFieldType());
                                 Object bValue = readMessage(fieldDescriptor, fieldType, input).bMessage;
                                 updateBBMap(bBMap, fieldDescriptor, bValue);
                             } else if (fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_STRUCT) &&
@@ -609,7 +699,8 @@ public class Message {
                                 Type fieldType = TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA);
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             } else {
-                                Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                                Type fieldType = getReferredType(recordType.getFields()
+                                        .get(bFieldName.getValue()).getFieldType());
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             }
                         } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_VALUE)) {
@@ -624,7 +715,8 @@ public class Message {
                             bMessage = readMessage(fieldDescriptor,
                                     TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA), input).bMessage;
                         } else {
-                            Type fieldType = recordType.getFields().get(bFieldName.getValue()).getFieldType();
+                            Type fieldType = getReferredType(recordType.getFields()
+                                    .get(bFieldName.getValue()).getFieldType());
                             bMessage = readMessage(fieldDescriptor, fieldType, input).bMessage;
                         }
                         break;
@@ -634,6 +726,8 @@ public class Message {
                                 "Field type is not supported : " + fieldDescriptor.getType()).asRuntimeException();
                     }
                 }
+            } else {
+                input.skipField(tag);
             }
         }
 
@@ -660,28 +754,26 @@ public class Message {
         return byteArray;
     }
 
-    private void updateBBMap(BMap<BString, Object> bBMap,
-                                 Descriptors.FieldDescriptor fieldDescriptor, Object bValue) {
+    private void updateBBMap(BMap<BString, Object> bBMap, Descriptors.FieldDescriptor fieldDescriptor, Object bValue) {
         bBMap.put(StringUtils.fromString(fieldDescriptor.getName()), bValue);
     }
 
     private com.google.protobuf.Descriptors.Descriptor getDescriptor() throws InvalidProtocolBufferException {
 
         if (descriptor == null || this.descriptor.getFile().getFullName().endsWith(".placeholder.proto")) {
-            BMap<BString, Object> bMap = null;
             if (descriptor != null && this.descriptor.getFile().getFullName().startsWith("google.protobuf")) {
                 String messageName = this.descriptor.getFile().getFullName()
                         .replace(".placeholder.proto", "");
                 return getDescriptorForPredefinedTypes(messageName);
             } else if (bMessage != null && bMessage instanceof BMap) {
-                bMap = (BMap<BString, Object>) bMessage;
+                BMap<BString, Object> bMap = (BMap<BString, Object>) bMessage;
                 RecordType recordType = (RecordType) bMap.getType();
                 return getDescriptorFromRecord(recordType);
             }
         } else if (descriptor != null) {
             return descriptor;
         }
-        return MessageRegistry.getInstance().getMessageDescriptor(messageName);
+        return getMessageDescriptorFromMessageRegistry(messageName);
     }
 
     private com.google.protobuf.Descriptors.Descriptor getDescriptor(RecordType recordType)
@@ -707,34 +799,40 @@ public class Message {
         return messageEntries[messageEntries.length - 1];
     }
 
-    private com.google.protobuf.Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType)
+    private Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType)
             throws InvalidProtocolBufferException {
-
         return getDescriptorFromRecord(recordType, messageName);
     }
 
-    private com.google.protobuf.Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType,
-                                                                               String messageName)
+    private Descriptors.Descriptor getDescriptorFromRecord(RecordType recordType, String messageName)
             throws InvalidProtocolBufferException {
-
         if (isDescriptorAnnotationAvailable(recordType)) {
-            BMap<BString, Object> annotations = recordType.getAnnotations();
-            String annotation = filterDescAnnotation(annotations);
-            byte[] annotationAsBytes = ServicesBuilderUtils.hexStringToByteArray(annotation);
-            DescriptorProtos.FileDescriptorProto file = DescriptorProtos.FileDescriptorProto
-                    .parseFrom(annotationAsBytes);
-            Descriptors.FileDescriptor fileDescriptor;
-            try {
-                fileDescriptor = Descriptors.FileDescriptor.buildFrom(file, new Descriptors.FileDescriptor[]{}, true);
-                Descriptors.Descriptor desc = fileDescriptor.findMessageTypeByName(recordType.getName());
-                if (desc != null) {
-                    return desc;
-                }
-            } catch (Descriptors.DescriptorValidationException e) {
-                return MessageRegistry.getInstance().getMessageDescriptor(messageName);
-            }
+            return extractDescriptorFromAnnotation(recordType.getAnnotations(), recordType.getName());
         }
-        return MessageRegistry.getInstance().getMessageDescriptor(messageName);
+        // When the user returns an anonymous record as a stream, annotation values are not included in the record type
+        RecordType createdRecordType = (RecordType) ValueCreator.createRecordValue(recordType.getPackage(),
+                messageName).getType();
+        if (isDescriptorAnnotationAvailable(createdRecordType)) {
+            return extractDescriptorFromAnnotation(createdRecordType.getAnnotations(), this.messageName);
+        }
+        return getMessageDescriptorFromMessageRegistry(messageName);
+    }
+
+    private Descriptors.Descriptor extractDescriptorFromAnnotation(BMap<BString, Object> annotations, String msgName)
+            throws InvalidProtocolBufferException {
+        String annotation = filterDescAnnotation(annotations);
+        byte[] annotationAsBytes = ServicesBuilderUtils.hexStringToByteArray(annotation);
+        DescriptorProtos.FileDescriptorProto file = DescriptorProtos.FileDescriptorProto.parseFrom(annotationAsBytes);
+        try {
+            Descriptors.FileDescriptor fileDescriptor = Descriptors.FileDescriptor
+                    .buildFrom(file, new Descriptors.FileDescriptor[]{}, true);
+            Descriptors.Descriptor desc = fileDescriptor.findMessageTypeByName(msgName);
+            if (desc != null) {
+                return desc;
+            }
+            // If an exception occurs, we get the descriptor from the registry
+        } catch (Descriptors.DescriptorValidationException e) { }
+        return getMessageDescriptorFromMessageRegistry(messageName);
     }
 
     private String filterDescAnnotation(BMap<BString, Object> annotations) {
@@ -749,13 +847,21 @@ public class Message {
     }
 
     private boolean isDescriptorAnnotationAvailable(RecordType recordType) {
-        return Arrays.stream(recordType.getAnnotations().getKeys()).anyMatch(
-                s -> isValidProtoAnnotation(s.getValue()));
+        return Arrays.stream(recordType.getAnnotations().getKeys()).anyMatch(s -> isValidProtoAnnotation(s.getValue()));
     }
 
     private boolean isValidProtoAnnotation(String annotationName) {
-        return annotationName.contains("ballerina") && annotationName.contains("protobuf") &&
-                annotationName.contains("Descriptor");
+        return annotationName.contains(ORG_NAME) && annotationName.contains("protobuf") &&
+                annotationName.contains(ANN_DESCRIPTOR);
+    }
+
+    private Descriptors.Descriptor getMessageDescriptorFromMessageRegistry(String messageName) {
+        Map<String, Descriptors.Descriptor> messageDescriptorMap = MessageRegistry.getInstance()
+                .getMessageDescriptorMap();
+        if (messageDescriptorMap.containsKey(messageName)) {
+            return messageDescriptorMap.get(messageName);
+        }
+        return messageDescriptorMap.get(messageFullName);
     }
 
     @SuppressWarnings("unchecked")
@@ -905,13 +1011,16 @@ public class Message {
                         if (bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                output.writeUInt32(fieldDescriptor.getNumber(), (int) valueArray.getInt(i));
+                                output.writeUInt32(fieldDescriptor.getNumber(),
+                                        Integer.parseUnsignedInt(String.valueOf(valueArray.getInt(i))));
                             }
                         } else {
-                            output.writeUInt32(fieldDescriptor.getNumber(), (int) bValue);
+                            output.writeUInt32(fieldDescriptor.getNumber(),
+                                    Integer.parseUnsignedInt(String.valueOf(bValue)));
                         }
                     } else if (bMessage instanceof Long) {
-                        output.writeUInt32(fieldDescriptor.getNumber(), (int) bMessage);
+                        output.writeUInt32(fieldDescriptor.getNumber(),
+                                Integer.parseUnsignedInt(String.valueOf(bMessage)));
                     }
                     break;
                 }
@@ -937,14 +1046,77 @@ public class Message {
                         if (bValue instanceof BArray) {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
-                                output.writeFixed32(fieldDescriptor.getNumber(),
-                                                    getIntValue(valueArray.getInt(i)));
+                                output.writeFixed32(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
                             }
                         } else {
                             output.writeFixed32(fieldDescriptor.getNumber(), getIntValue(bValue));
                         }
                     } else if (bMessage instanceof Long) {
                         output.writeFixed32(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT64_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                output.writeSInt64(fieldDescriptor.getNumber(), valueArray.getInt(i));
+                            }
+                        } else {
+                            output.writeSInt64(fieldDescriptor.getNumber(), (long) bValue);
+                        }
+                    } else if (bMessage instanceof Long) {
+                        output.writeSInt64(fieldDescriptor.getNumber(), (long) bMessage);
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT32_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                output.writeSInt32(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            output.writeSInt32(fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        output.writeSInt32(fieldDescriptor.getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED64_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                output.writeSFixed64(fieldDescriptor.getNumber(), valueArray.getInt(i));
+                            }
+                        } else {
+                            output.writeSFixed64(fieldDescriptor.getNumber(), (long) bValue);
+                        }
+                    } else if (bMessage instanceof Long) {
+                        output.writeSFixed64(fieldDescriptor.getNumber(), (long) bMessage);
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED32_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                output.writeSFixed32(fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            output.writeSFixed32(fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        output.writeSFixed32(fieldDescriptor.getNumber(), getIntValue(bMessage));
                     }
                     break;
                 }
@@ -1253,15 +1425,16 @@ public class Message {
                             BArray valueArray = (BArray) bValue;
                             for (int i = 0; i < valueArray.size(); i++) {
                                 size += com.google.protobuf.CodedOutputStream.computeUInt32Size(
-                                        fieldDescriptor.getNumber(), (int) valueArray.getInt(i));
+                                        fieldDescriptor.getNumber(),
+                                        Integer.parseUnsignedInt(String.valueOf(valueArray.getInt(i))));
                             }
                         } else {
                             size += com.google.protobuf.CodedOutputStream.computeUInt32Size(
-                                    fieldDescriptor.getNumber(), (int) bValue);
+                                    fieldDescriptor.getNumber(), Integer.parseUnsignedInt(String.valueOf(bValue)));
                         }
                     } else if (bMessage instanceof Long) {
                         size += com.google.protobuf.CodedOutputStream.computeUInt32Size(fieldDescriptor
-                                .getNumber(), (int) bMessage);
+                                .getNumber(), Integer.parseUnsignedInt(String.valueOf(bMessage)));
                     }
                     break;
                 }
@@ -1299,6 +1472,82 @@ public class Message {
                         }
                     } else if (bMessage instanceof Long) {
                         size += com.google.protobuf.CodedOutputStream.computeFixed32Size(fieldDescriptor
+                                .getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT64_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                size += com.google.protobuf.CodedOutputStream.computeSInt64Size(
+                                        fieldDescriptor.getNumber(), valueArray.getInt(i));
+                            }
+                        } else {
+                            size += com.google.protobuf.CodedOutputStream.computeSInt64Size(
+                                    fieldDescriptor.getNumber(), (long) bValue);
+                        }
+                    } else if (bMessage instanceof Long) {
+                        size += com.google.protobuf.CodedOutputStream.computeSInt64Size(fieldDescriptor
+                                .getNumber(), (long) bMessage);
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SINT32_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                size += com.google.protobuf.CodedOutputStream.computeSInt32Size(
+                                        fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            size += com.google.protobuf.CodedOutputStream.computeSInt32Size(
+                                    fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        size += com.google.protobuf.CodedOutputStream.computeSInt32Size(fieldDescriptor
+                                .getNumber(), getIntValue(bMessage));
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED64_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                size += com.google.protobuf.CodedOutputStream.computeSFixed64Size(
+                                        fieldDescriptor.getNumber(), valueArray.getInt(i));
+                            }
+                        } else {
+                            size += com.google.protobuf.CodedOutputStream.computeSFixed64Size(
+                                    fieldDescriptor.getNumber(), (long) bValue);
+                        }
+                    } else if (bMessage instanceof Long) {
+                        size += com.google.protobuf.CodedOutputStream.computeSFixed64Size(fieldDescriptor
+                                .getNumber(), (long) bMessage);
+                    }
+                    break;
+                }
+                case DescriptorProtos.FieldDescriptorProto.Type.TYPE_SFIXED32_VALUE: {
+                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                        Object bValue = bBMap.get(bFieldName);
+                        if (bValue instanceof BArray) {
+                            BArray valueArray = (BArray) bValue;
+                            for (int i = 0; i < valueArray.size(); i++) {
+                                size += com.google.protobuf.CodedOutputStream.computeSFixed32Size(
+                                        fieldDescriptor.getNumber(), getIntValue(valueArray.getInt(i)));
+                            }
+                        } else {
+                            size += com.google.protobuf.CodedOutputStream.computeSFixed32Size(
+                                    fieldDescriptor.getNumber(), getIntValue(bValue));
+                        }
+                    } else if (bMessage instanceof Long) {
+                        size += com.google.protobuf.CodedOutputStream.computeSFixed32Size(fieldDescriptor
                                 .getNumber(), getIntValue(bMessage));
                     }
                     break;
@@ -1452,15 +1701,6 @@ public class Message {
         return types[types.length - 1].trim();
     }
 
-    private Descriptors.Descriptor findFieldDescriptorFromTypeUrl(String typeName) {
-
-        if (typeName.startsWith("google.protobuf")) {
-            return findGoogleDescriptorFromName(typeName);
-        } else {
-            return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(typeName);
-        }
-    }
-
     private Descriptors.Descriptor findFieldDescriptorFromTypeUrl(String messageName, Object value) {
 
         if (messageName.startsWith("google.protobuf")) {
@@ -1468,26 +1708,12 @@ public class Message {
         } else if (value instanceof BMap) {
             BMap<BString, Object> bMap = (BMap<BString, Object>) value;
             RecordType recordType = (RecordType) bMap.getType();
-            if (isDescriptorAnnotationAvailable(recordType)) {
+            if (isDescriptorAnnotationAvailable(recordType) || isDescriptorAnnotationAvailable((RecordType)
+                    ValueCreator.createRecordValue(recordType.getPackage(), messageName).getType())) {
                 try {
                     return getDescriptorFromRecord(recordType, messageName);
-                } catch (InvalidProtocolBufferException e) {
-                    return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(messageName);
-                }
-            }
-        }
-        return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(messageName);
-    }
-
-    private Descriptors.Descriptor findFieldDescriptorFromTypeUrl(String messageName, RecordType recordType) {
-
-        if (messageName.startsWith("google.protobuf")) {
-            return findGoogleDescriptorFromName(messageName);
-        } else if (isDescriptorAnnotationAvailable(recordType)) {
-            try {
-                return getDescriptorFromRecord(recordType, messageName);
-            } catch (InvalidProtocolBufferException e) {
-                return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(messageName);
+                    // If an exception occurs, we get the descriptor from the registry
+                } catch (InvalidProtocolBufferException e) { }
             }
         }
         return MessageRegistry.getInstance().getFileDescriptor().findMessageTypeByName(messageName);
@@ -1552,7 +1778,6 @@ public class Message {
         }
     }
 
-
     private Message readMessage(final Descriptors.FieldDescriptor fieldDescriptor, final Type type,
                                 final CodedInputStream in) throws IOException {
         int length = in.readRawVarint32();
@@ -1578,5 +1803,22 @@ public class Message {
             payload.append("null");
         }
         return payload.toString();
+    }
+
+    /**
+     * Convert byte array to readable byte string.
+     *
+     * @param data byte array of proto file
+     * @return readable string of byte array
+     */
+    private static String bytesToHex(byte[] data) {
+
+        char[] hexChars = new char[data.length * 2];
+        for (int j = 0; j < data.length; j++) {
+            int v = data[j] & 0xFF;
+            hexChars[j * 2] = "0123456789ABCDEF".toCharArray()[v >>> 4];
+            hexChars[j * 2 + 1] = "0123456789ABCDEF".toCharArray()[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }

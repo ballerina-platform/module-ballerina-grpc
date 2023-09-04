@@ -21,9 +21,8 @@ listener grpc:Listener ep2 = new (9092, {
     host:"localhost"
 });
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_02_ARRAY_FIELD_TYPE_SERVICE,
-    descMap: getDescriptorMap02ArrayFieldTypeService()
+@grpc:Descriptor {
+    value: ARRAY_FIELD_TYPE_SERVICE_DESC
 }
 service "HelloWorld3" on ep2 {
 

@@ -20,9 +20,8 @@ import ballerina/lang.runtime;
 
 listener grpc:Listener ep35 = new (9125);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_35_UNARY_SERVICE_WITH_DEADLINE,
-    descMap: getDescriptorMap35UnaryServiceWithDeadline()
+@grpc:Descriptor {
+    value: UNARY_SERVICE_WITH_DEADLINE_DESC
 }
 service "HelloWorld35" on ep35 {
 

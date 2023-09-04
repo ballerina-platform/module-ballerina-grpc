@@ -15,14 +15,14 @@
 // under the License.
 
 syntax = "proto3";
-import "simple_request_with_annotation.proto";
-import "simple_response_with_annotation.proto";
+import "67_simple_request_with_annotation.proto";
+import "67_simple_response_with_annotation.proto";
 
 option go_package = "example.com/messages1";
 
 service SimpleServiceWithAnnotation {
-  rpc unary(SimpleRequestWithAnnotation) returns (SimpleResponseWithAnnotation) {}
-  rpc serverStreaming(SimpleRequestWithAnnotation) returns (stream SimpleResponseWithAnnotation) {}
-  rpc clientStreaming(stream SimpleRequestWithAnnotation) returns (SimpleResponseWithAnnotation) {}
-  rpc bidirectionalStreaming(stream SimpleRequestWithAnnotation) returns (stream SimpleResponseWithAnnotation) {}
+  rpc unaryCallWithAnnotatedData(SimpleRequestWithAnnotation) returns (SimpleResponseWithAnnotation) {}
+  rpc serverStreamingWithAnnotatedData(SimpleRequestWithAnnotation) returns (stream SimpleResponseWithAnnotation) {}
+  rpc clientStreamingWithAnnotatedData(stream SimpleRequestWithAnnotation) returns (SimpleResponseWithAnnotation) {}
+  rpc bidirectionalStreamingWithAnnotatedData(stream SimpleRequestWithAnnotation) returns (stream SimpleResponseWithAnnotation) {}
 }

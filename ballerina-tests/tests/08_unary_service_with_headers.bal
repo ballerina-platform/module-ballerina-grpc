@@ -22,9 +22,8 @@ listener grpc:Listener ep8 = new (9098, {
     host: "localhost"
 });
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_08_UNARY_SERVICE_WITH_HEADERS,
-    descMap: getDescriptorMap08UnaryServiceWithHeaders()
+@grpc:Descriptor {
+    value: UNARY_SERVICE_WITH_HEADERS_DESC
 }
 service "HelloWorld101" on ep8 {
     isolated remote function hello(HelloWorld101StringCaller caller, ContextString request) returns error? {

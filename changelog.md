@@ -1,10 +1,68 @@
 # Change Log
-This file contains all the notable changes done to the Ballerina time package through the releases.
+This file contains all the notable changes done to the Ballerina gRPC package through the releases.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.9.0] - 2023-06-30
+### Fixed
+- [Add descriptor map to `grpc:Descriptor` and stub initialization](https://github.com/ballerina-platform/ballerina-standard-library/issues/4555)
+- [Address CVE-2023-34462 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4602)
+
+## [1.8.1] - 2023-06-27
+### Fixed
+- [Address CVE-2023-34462 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4602)
+
+## [1.7.1] - 2023-06-30
+### Fixed
+- [Address CVE-2023-34462 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4602)
+
+## [1.6.1] - 2023-03-15
+### Fixed
+- [Fix SSL connection failure due to missing dependencies](https://github.com/ballerina-platform/ballerina-standard-library/issues/4197)
+
+## [1.6.0] - 2023-02-20
+### Added
+- [Exit the application when panicking inside a service](https://github.com/ballerina-platform/ballerina-standard-library/issues/3604)
+- [Log the errors returning from the service](https://github.com/ballerina-platform/ballerina-standard-library/issues/4047)
+
+### Fixed
+- [Java dependencies have not been included with group id & artifact id](https://github.com/ballerina-platform/ballerina-standard-library/issues/3789)
+
+## [1.5.1] - 2022-12-22
+### Fixed
+- [Address CVE-2022-41915 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/3856)
+
+## [1.5.0] - 2022-11-29
+### Added
+- [Added server reflection support for gRPC services](https://github.com/ballerina-platform/ballerina-standard-library/issues/399)
+- [Added `gracefulStop` implementation for the `grpc:Listener`](https://github.com/ballerina-platform/ballerina-standard-library/issues/3527)
+
+### Changed
+- [Updated Protocol Buffers version to 3.21.7](https://github.com/ballerina-platform/ballerina-standard-library/issues/3478)
+- [API Docs Updated](https://github.com/ballerina-platform/ballerina-standard-library/issues/3463)
+
+### Fixed
+- [Missing support for different int types](https://github.com/ballerina-platform/ballerina-standard-library/issues/3558)
+- [Make descriptor const public in the generated stub file](https://github.com/ballerina-platform/ballerina-standard-library/issues/3653)
+
+## [1.4.1] - 2022-10-06
+### Fixed
+- [Update protobuf-java version to fix protobuf vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/3493)
+- [Fix no such record error when having the generated stub file in a separate module](https://github.com/ballerina-platform/ballerina-standard-library/issues/3655)
+
+## [1.4.0] - 2022-09-08
+### Added
+- [Update gRPC ServiceDescriptor annotation to Descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/3005)
+- [Introduced message-level annotations for the proto descriptor instead of a centralized proto descriptor](https://github.com/ballerina-platform/ballerina-standard-library/issues/2796)
+- [Introduced packaging support](https://github.com/ballerina-platform/ballerina-standard-library/issues/2798)
+- [Removed caller client object when generating code in client mode](https://github.com/ballerina-platform/ballerina-standard-library/issues/3159)
+- [Added sample client calls with dummy values to generated client files](https://github.com/ballerina-platform/ballerina-standard-library/issues/3131)
+
+### Fixed
+- [gRPC CLI unable to generate all files in nested directories](https://github.com/ballerina-platform/ballerina-standard-library/issues/2766)
+
+## [1.2.3] - 2022-05-30
 ### Fixed
 - [Incorrect stub generated for message with Any type field in gRPC tool](https://github.com/ballerina-platform/ballerina-standard-library/issues/2750)
 - [Incorrect stub generation for repeated values of any, struct, timestamp, and duration messages](https://github.com/ballerina-platform/ballerina-standard-library/issues/2732)

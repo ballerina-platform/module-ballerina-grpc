@@ -141,25 +141,6 @@ isolated function testBidiStreamingInvalidSecureSocketConfigs() returns grpc:Err
 }
 
 @test:Config {enable: true}
-isolated function testBidiStreamingNullCertField() returns grpc:Error? {
-    ChatClient|grpc:Error result = new ("https://localhost:9093", {
-        secureSocket: {
-            key: {
-                path: KEYSTORE_PATH,
-                password: "ballerina"
-            },
-            protocol:{
-                name: grpc:TLS,
-                versions: ["TLSv1.2", "TLSv1.1"]
-            },
-            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
-        }
-    });
-    test:assertTrue(result is grpc:Error);
-    test:assertEquals((<grpc:Error>result).message(), "Need to configure cert with client SSL certificates file");
-}
-
-@test:Config {enable: true}
 isolated function testBidiStreamingWithPublicCertPrivateKey() returns grpc:Error? {
     ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {

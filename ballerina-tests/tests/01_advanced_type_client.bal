@@ -28,13 +28,6 @@ type StockQuotesTypedesc typedesc<StockQuotes>;
 type StockNamesTypedesc typedesc<StockNames>;
 
 @test:Config {enable: true}
-function testHttpsClientInitWithoutSecureSocketConfig() {
-    HelloWorldClient|grpc:Error errorClient = new ("https://localhost:9091");
-    test:assertTrue(errorClient is grpc:Error);
-    test:assertEquals((<grpc:Error>errorClient).message(), "The secureSocket configuration should be provided to establish an HTTPS connection");
-}
-
-@test:Config {enable: true}
 function testSendNestedStruct() returns grpc:Error? {
     Person p = {name: "Sam", address: {postalCode: 10300, state: "Western", country: "Sri Lanka"}};
     string response = check helloWorldClient->testInputNestedStruct(p);

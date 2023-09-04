@@ -387,8 +387,8 @@ public type ContextStockNames record {|
     map<string|string[]> headers;
 |};
 
-public type Empty record {|
-|};
+//public type Empty record {|
+//|};
 
 public type Address record {|
     int postalCode = 0;

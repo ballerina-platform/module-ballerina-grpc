@@ -19,9 +19,8 @@ import ballerina/log;
 
 listener grpc:Listener ep40 = new (9140);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_40_BIDIRECTIONAL_STREAMING_NEGATIVE_TEST,
-    descMap: getDescriptorMap40BidirectionalStreamingNegativeTest()
+@grpc:Descriptor {
+    value: BIDIRECTIONAL_STREAMING_NEGATIVE_TEST_DESC
 }
 service "ChatWithCaller" on ep40 {
 

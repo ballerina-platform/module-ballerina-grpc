@@ -2,10 +2,11 @@ Ballerina gRPC Library
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-grpc/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-grpc/actions/workflows/build-timestamped-master.yml)
+  [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-grpc/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-grpc)
   [![Trivy](https://github.com/ballerina-platform/module-ballerina-grpc/actions/workflows/trivy-scan.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-grpc/actions/workflows/trivy-scan.yml)
+  [![GraalVM Check](https://github.com/ballerina-platform/module-ballerina-grpc/actions/workflows/build-with-bal-test-graalvm.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-grpc/actions/workflows/build-with-bal-test-graalvm.yml)
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-grpc.svg)](https://github.com/ballerina-platform/module-ballerina-grpc/commits/master)
   [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/grpc.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fgrpc)
-  [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-grpc/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-grpc) 
 
 This library provides APIs for connecting and interacting with gRPC endpoints.
 
@@ -344,9 +345,9 @@ This repository only contains the source code for the module.
 
 ### Set Up the prerequisites
 
-* Download and install Java SE Development Kit (JDK) version 11 (from one of the following locations).
+* Download and install Java SE Development Kit (JDK) version 17 (from one of the following locations).
 
-   * [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
+   * [Oracle](https://www.oracle.com/java/technologies/downloads/)
 
    * [OpenJDK](https://adoptium.net/)
 
@@ -401,7 +402,7 @@ All contributors are encouraged to read the [Ballerina Code of Conduct](https://
 
 ## Useful links
 
-* Chat live with us via our [Slack channel](https://ballerina.io/community/slack/).
+* Chat live with us via our [Discord server](https://discord.gg/ballerinalang).
 * Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.
 * View the [Ballerina performance test results](https://github.com/ballerina-platform/ballerina-lang/blob/master/performance/benchmarks/summary.md).
 * For more information go to [the gRPC Package](https://lib.ballerina.io/ballerina/grpc/latest).

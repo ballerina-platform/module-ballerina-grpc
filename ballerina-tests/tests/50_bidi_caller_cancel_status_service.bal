@@ -19,7 +19,7 @@ import ballerina/grpc;
 listener grpc:Listener ep50 = new (9150);
 boolean cancelled = false;
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_50_BIDI_CALLER_CANCEL_STATUS, descMap: getDescriptorMap50BidiCallerCancelStatus()}
+@grpc:Descriptor {value: BIDI_CALLER_CANCEL_STATUS_DESC}
 service "HelloWorld50" on ep50 {
 
     remote function sendString(HelloWorld50StringCaller caller,

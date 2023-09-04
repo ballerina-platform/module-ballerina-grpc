@@ -19,9 +19,8 @@ import ballerina/auth;
 
 listener grpc:Listener ep52 = new (9152);
 
-@grpc:ServiceDescriptor {
-    descriptor: ROOT_DESCRIPTOR_52_UNARY_LDAP_AUTH,
-    descMap: getDescriptorMap52UnaryLdapAuth()
+@grpc:Descriptor {
+    value: UNARY_LDAP_AUTH_DESC
 }
 service "HelloWorld52" on ep52 {
 
