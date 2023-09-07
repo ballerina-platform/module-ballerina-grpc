@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- [Address CVE-2023-33201 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4776)
+
+## [1.7.1] - 2023-06-30
+### Fixed
 - [Address CVE-2023-34462 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4602)
+
+## [1.6.1] - 2023-03-15
+### Fixed
+- [Fix SSL connection failure due to missing dependencies](https://github.com/ballerina-platform/ballerina-standard-library/issues/4197)
 
 ## [1.6.0] - 2023-02-20
 ### Added
