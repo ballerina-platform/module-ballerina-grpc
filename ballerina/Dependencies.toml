@@ -56,7 +56,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "file"
-version = "1.8.0"
+version = "1.8.1"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "io"},
@@ -68,7 +68,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "grpc"
-version = "1.9.0"
+version = "1.9.1"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "crypto"},
@@ -94,7 +94,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.9.0"
+version = "2.9.2"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "auth"},
@@ -248,7 +248,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "log"
-version = "2.8.0"
+version = "2.8.1"
 dependencies = [
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "jballerina.java"},
