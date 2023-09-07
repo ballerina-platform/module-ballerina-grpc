@@ -24,7 +24,7 @@ path = "../test-utils/build/libs/grpc-test-utils-1.10.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
-path = "./lib/ballerina-cli-2201.8.0-20230726-145300-b2bdf796.jar"
+path = "./lib/ballerina-cli-2201.8.0-20230830-220400-8a7556d8.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
@@ -35,7 +35,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.10.0"
-path = "./lib/http-native-2.10.0-20230811-144100-cac5d57.jar"
+path = "./lib/http-native-2.10.0-20230831-195300-180df44.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.netty"
@@ -105,15 +105,15 @@ path = "./lib/commons-pool-1.5.6.wso2v1.jar"
 
 [[platform.java17.dependency]]
 groupId = "org.bouncycastle"
-artifactId = "bcprov-jdk15on"
-version = "1.69"
-path = "./lib/bcprov-jdk15on-1.69.jar"
+artifactId = "bcprov-jdk18on"
+version = "1.74"
+path = "./lib/bcprov-jdk18on-1.74.jar"
 
 [[platform.java17.dependency]]
 groupId = "org.bouncycastle"
-artifactId = "bcpkix-jdk15on"
-version = "1.69"
-path = "./lib/bcpkix-jdk15on-1.69.jar"
+artifactId = "bcpkix-jdk18on"
+version = "1.74"
+path = "./lib/bcpkix-jdk18on-1.74.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.netty"
@@ -157,11 +157,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java17.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.8.0-20230726-145300-b2bdf796"
-path = "./lib/formatter-core-2201.8.0-20230726-145300-b2bdf796.jar"
+version = "2201.8.0-20230830-220400-8a7556d8"
+path = "./lib/formatter-core-2201.8.0-20230830-220400-8a7556d8.jar"
 
 [[platform.java17.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.8.0-20230726-145300-b2bdf796"
-path = "./lib/ballerina-parser-2201.8.0-20230726-145300-b2bdf796.jar"
+version = "2201.8.0-20230830-220400-8a7556d8"
+path = "./lib/ballerina-parser-2201.8.0-20230830-220400-8a7556d8.jar"
