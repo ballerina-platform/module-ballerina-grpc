@@ -193,7 +193,7 @@ public class GrpcConstants {
     public static final String INVALID_ARGUMENT_ERROR = "InvalidArgumentError";
     public static final String DEADLINE_EXCEEDED_ERROR = "DeadlineExceededError";
     public static final String NOT_FOUND_ERROR = "NotFoundError";
-    public static final String ALREADY_EXISTS_ERROR = "AleadyExistsError";
+    public static final String ALREADY_EXISTS_ERROR = "AlreadyExistsError";
     public static final String PERMISSION_DENIED_ERROR = "PermissionDeniedError";
     public static final String RESOURCE_EXHAUSTED_ERROR = "ResourceExhaustedError";
     public static final String FAILED_PRECONDITION_ERROR = "FailedPreconditionError";
