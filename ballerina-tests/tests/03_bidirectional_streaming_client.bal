@@ -148,12 +148,7 @@ isolated function testBidiStreamingWithPublicCertPrivateKey() returns grpc:Error
                 certFile: PUBLIC_CRT_PATH,
                 keyFile: PRIVATE_KEY_PATH
             },
-            cert: PUBLIC_CRT_PATH,
-            protocol:{
-                name: grpc:TLS,
-                versions: ["TLSv1.2", "TLSv1.1"]
-            },
-            ciphers: ["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+            cert: PUBLIC_CRT_PATH
         }
     });
     ChatStreamingClient ep = check chatEp->chat();
