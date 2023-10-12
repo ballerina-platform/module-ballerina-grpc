@@ -32,12 +32,7 @@ listener grpc:Listener ep3 = new (9093, {
                 path: TRUSTSTORE_PATH,
                 password: "ballerina"
             }
-        },
-        protocol: {
-            name: grpc:TLS,
-            versions: ["TLSv1.2","TLSv1.1"]
-        },
-        ciphers:["TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"]
+        }
     }
 });
 
