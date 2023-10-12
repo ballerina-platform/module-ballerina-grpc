@@ -23,12 +23,15 @@ listener grpc:Listener ep3 = new (9093, {
     host: "localhost",
     secureSocket: {
         key: {
-            certFile: PUBLIC_CRT_PATH,
-            keyFile: PRIVATE_KEY_PATH
+            path: KEYSTORE_PATH,
+            password: "ballerina"
         },
         mutualSsl: {
             verifyClient: grpc:REQUIRE,
-            cert: PUBLIC_CRT_PATH
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            }
         }
     }
 });
