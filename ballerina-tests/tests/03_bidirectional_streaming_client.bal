@@ -18,7 +18,7 @@ import ballerina/grpc;
 import ballerina/lang.runtime as runtime;
 import ballerina/test;
 
-@test:Config {enable: false}
+@test:Config {enable: true}
 isolated function testBidiStreaming() returns grpc:Error? {
     ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {
