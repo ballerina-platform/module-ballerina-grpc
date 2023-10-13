@@ -1,36 +1,36 @@
 [package]
 org = "ballerina"
 name = "grpc_tests"
-version = "1.7.3"
+version = "@toml.version@"
 
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.7.3-SNAPSHOT"
-path = "../native/build/libs/grpc-native-1.7.3-SNAPSHOT.jar"
+version = "@project.version@"
+path = "../native/build/libs/grpc-native-@project.version@.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.7.3-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-@project.version@.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
-path = "./lib/ballerina-cli-2201.5.0.jar"
+path = "./lib/ballerina-cli-@ballerinalang.version@.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
 groupId = "com.google.protobuf"
 artifactId = "protobuf-java"
-version = "3.20.3"
-path = "./lib/protobuf-java-3.20.3.jar"
+version = "@protobuf.java.version@"
+path = "./lib/protobuf-java-@protobuf.java.version@.jar"
 
 [[platform.java11.dependency]]
 groupId = "com.google.api.grpc"
 artifactId = "proto-google-common-protos"
-version = "1.17.0"
-path = "./lib/proto-google-common-protos-1.17.0.jar"
+version = "@proto.google.commons.version@"
+path = "./lib/proto-google-common-protos-@proto.google.commons.version@.jar"
 
 [[platform.java11.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.5.0"
-path = "./lib/formatter-core-2201.5.0.jar"
+version = "@ballerinalang.version@"
+path = "./lib/formatter-core-@ballerinalang.version@.jar"
