@@ -14,10 +14,10 @@ export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timest
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
 version = "1.8.3"
-path = "../native/build/libs/grpc-native-1.8.3-SNAPSHOT.jar"
+path = "../native/build/libs/grpc-native-1.8.3.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.8.3-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.8.3.jar"
 scope = "testOnly"
 
 [[platform.java11.dependency]]
@@ -32,7 +32,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.8.3"
-path = "./lib/http-native-2.8.3-20231012-153400-b73fc00.jar"
+path = "./lib/http-native-2.8.3.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.netty"
