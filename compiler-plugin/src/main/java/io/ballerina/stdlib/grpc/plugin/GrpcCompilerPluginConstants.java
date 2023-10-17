@@ -23,7 +23,9 @@ import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 /**
  * gRPC compiler plugin constants.
  */
-public class GrpcCompilerPluginConstants {
+public final class GrpcCompilerPluginConstants {
+
+    private GrpcCompilerPluginConstants() {}
 
     // Compiler plugin constants
     public static final String GRPC_SERVICE_DESCRIPTOR_ANNOTATION_NAME = "ServiceDescriptor";

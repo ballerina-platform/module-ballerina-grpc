@@ -24,7 +24,9 @@ import java.util.Locale;
  * This class holds test utility APIs related to check the running OS.
  *
  */
-public class EnvironmentTestUtils {
+public final class EnvironmentTestUtils {
+
+    private EnvironmentTestUtils() {}
 
     public static boolean isWindowsEnvironment() {
         return System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");

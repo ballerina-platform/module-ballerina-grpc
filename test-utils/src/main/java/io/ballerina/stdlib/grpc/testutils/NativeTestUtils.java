@@ -47,7 +47,9 @@ import static io.ballerina.stdlib.grpc.nativeimpl.serviceendpoint.FunctionUtils.
  * Utility methods to test the native functions of client endpoint.
  *
  */
-public class NativeTestUtils {
+public final class NativeTestUtils {
+
+    private NativeTestUtils() {}
 
     public static Object externInvokeInitStubNullRootDescriptor(BObject clientEndpoint) {
         return FunctionUtils.externInitStub(clientEndpoint, null, null, null);
