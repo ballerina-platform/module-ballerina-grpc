@@ -42,7 +42,9 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_UINT64_TYPE_NAME;
 /**
  * Provides protobuf descriptor for well known dependency.
  */
-public class StandardDescriptorBuilder {
+public final class StandardDescriptorBuilder {
+
+    private StandardDescriptorBuilder() {}
 
     private static final Map<String, Descriptors.FileDescriptor> standardLibDescriptorMapForPackageKey;
     private static final Map<String, Descriptors.FileDescriptor> standardLibDescriptorMapForMessageName;

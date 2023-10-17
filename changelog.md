@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Fixed error response from backend not getting properly propegated to the client](https://github.com/ballerina-platform/ballerina-standard-library/issues/4833)
 
+### Changed
+- [Make some of the Java classes proper utility classes](https://github.com/ballerina-platform/ballerina-standard-library/issues/4930)
+
 ## [1.9.1] - 2023-09-11
 ### Fixed
 - [Address CVE-2023-33201 bouncy castle vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4776)
