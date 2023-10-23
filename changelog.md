@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixes
+- [Address CVE-2023-4586 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4908)
+
+## [1.4.2] - 2022-11-16
 ### Fixed
 - [Fix no such record error when having the generated stub file in a separate module](https://github.com/ballerina-platform/module-ballerina-grpc/pull/1083)
 
-### [1.4.1] - 2022-10-06
+## [1.4.1] - 2022-10-06
 ### Fixed
 - [Update protobuf-java version to fix protobuf vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/3493)
 
