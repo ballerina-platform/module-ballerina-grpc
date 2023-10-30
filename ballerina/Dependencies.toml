@@ -47,7 +47,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "grpc"
-version = "1.4.2"
+version = "1.4.3"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "crypto"},
@@ -73,7 +73,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "io"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.value"}
@@ -195,7 +195,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "observe"
-version = "1.0.5"
+version = "1.0.6"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
@@ -203,7 +203,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "protobuf"
-version = "1.3.1"
+version = "1.3.2"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "time"}
@@ -221,7 +221,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "regex"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.string"}
@@ -254,7 +254,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "time"
-version = "2.2.2"
+version = "2.2.5"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
