@@ -145,7 +145,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
                             "Failed to start server connector '" + serverConnector.getConnectorID()
                                     + "'. " + ex.getMessage())));
         }
-        listener.addNativeData(HttpConstants.CONNECTOR_STARTED, true);
+        listener.addNativeData(GrpcConstants.CONNECTOR_STARTED, true);
         return null;
     }
 
@@ -181,7 +181,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
     public static Object externStop(BObject serverEndpoint) {
 
         getServerConnector(serverEndpoint).stop();
-        serverEndpoint.addNativeData(HttpConstants.CONNECTOR_STARTED, false);
+        serverEndpoint.addNativeData(GrpcConstants.CONNECTOR_STARTED, false);
         return null;
     }
 
