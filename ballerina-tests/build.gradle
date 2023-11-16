@@ -270,7 +270,7 @@ task startGoServer() {
             if (!stdOut.toString().contains(testContainerName)) {
                 println "Starting Golang gRPC server."
                 exec {
-                    commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d daneshk/go_grpc_simple_server:latest"
+                    commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d daneshk/go_grpc_simple_server:v2"
                 }
                 def healthCheck = 1;
                 def counter = 0;

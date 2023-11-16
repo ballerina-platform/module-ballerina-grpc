@@ -49,6 +49,7 @@ import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 
 import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.runtime.api.utils.StringUtils.fromStringArray;
@@ -176,13 +177,9 @@ public class MessageUtils {
             return INVALID_WIRE_TYPE;
         }
         Integer wireType = GrpcConstants.WIRE_TYPE_MAP.get(fieldType.toProto());
-        if (wireType != null) {
-            return wireType;
-        } else {
-            // Returns embedded messages, packed repeated fields message type, if field type doesn't map with the
-            // predefined proto types.
-            return MESSAGE_WIRE_TYPE;
-        }
+        // Returns embedded messages, packed repeated fields message type, if field type doesn't map with the
+        // predefined proto types.
+        return Objects.requireNonNullElse(wireType, MESSAGE_WIRE_TYPE);
     }
 
     static void setNestedMessages(Descriptors.Descriptor resMessage, MessageRegistry messageRegistry) {
