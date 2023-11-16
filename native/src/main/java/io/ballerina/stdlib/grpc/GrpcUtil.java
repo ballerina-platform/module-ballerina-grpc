@@ -235,6 +235,7 @@ public class GrpcUtil {
 
         listenerConfiguration.setPipeliningEnabled(true); //Pipelining is enabled all the time
         listenerConfiguration.setSocketReuse(true);
+        listenerConfiguration.setTcpNoDelay(true);
         return listenerConfiguration;
     }
 

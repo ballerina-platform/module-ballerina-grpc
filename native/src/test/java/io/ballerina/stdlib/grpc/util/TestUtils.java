@@ -32,7 +32,9 @@ import java.util.Map;
 /**
  * A util class to be used for native tests.
  */
-public class TestUtils {
+public final class TestUtils {
+
+    private TestUtils() {}
 
     public static BObject getBObject(Map<String, Field> fieldMap) {
         BObject bObject = Mockito.mock(BObject.class);

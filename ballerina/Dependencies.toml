@@ -5,7 +5,7 @@
 
 [ballerina]
 dependencies-toml-version = "2"
-distribution-version = "2201.8.0-20230830-220400-8a7556d8"
+distribution-version = "2201.8.0"
 
 [[package]]
 org = "ballerina"
@@ -68,7 +68,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "grpc"
-version = "1.10.0"
+version = "1.10.2"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "crypto"},
