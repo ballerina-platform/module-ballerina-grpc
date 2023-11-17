@@ -94,7 +94,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.10.3"
+version = "2.10.4"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "auth"},
