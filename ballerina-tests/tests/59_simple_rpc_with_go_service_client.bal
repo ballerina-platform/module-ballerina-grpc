@@ -41,7 +41,6 @@ public function testServerErrorWithGoService() returns error? {
 
 @test:Config {enable: true}
 function testRepeatedNumberTypesWithGoService() returns error? {
-    
     if !isWindowsEnvironment() {
         ProductInfoClient productClient = check new ("http://localhost:50051");
         RepeatedTypes request = {
@@ -54,9 +53,12 @@ function testRepeatedNumberTypesWithGoService() returns error? {
             fixed32Values: [int:SIGNED32_MIN_VALUE, 676453784, int:SIGNED32_MAX_VALUE],
             fixed64Values: [int:MIN_VALUE, 4538367837, int:MAX_VALUE],
             sfixed32Values: [int:SIGNED32_MIN_VALUE, 2045374834, int:SIGNED32_MAX_VALUE],
-            sfixed64Values: [int:MIN_VALUE, 537837893, int:MAX_VALUE]
+            sfixed64Values: [int:MIN_VALUE, 537837893, int:MAX_VALUE],
+            floatValues: [float:max(), 3.140000104904175, float:min()],
+            doubleValues: [float:max(), 3.14, float:min()],
+            boolValues: [true, false, true]
         };
-        RepeatedTypesMessage response = check productClient->getRepeatedTypes(request);
+        RepeatedTypes response = check productClient->getRepeatedTypes(request);
         test:assertEquals(response, request);
     }
 }

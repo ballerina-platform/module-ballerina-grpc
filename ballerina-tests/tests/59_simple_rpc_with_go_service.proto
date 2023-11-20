@@ -48,4 +48,7 @@ message RepeatedTypes {
   repeated fixed64 fixed64Values = 8;
   repeated sfixed32 sfixed32Values = 9;
   repeated sfixed64 sfixed64Values = 10;
+  repeated float floatValues = 11;
+  repeated double doubleValues = 12;
+  repeated bool boolValues = 13;
 }
