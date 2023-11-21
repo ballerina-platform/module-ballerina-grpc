@@ -38,3 +38,27 @@ public function testServerErrorWithGoService() returns error? {
         test:assertEquals((<grpc:Error>productId).message(), "product Id is empty");
     }
 }
+
+@test:Config {enable: true}
+function testRepeatedNumberTypesWithGoService() returns error? {
+    if !isWindowsEnvironment() {
+        ProductInfoClient productClient = check new ("http://localhost:50051");
+        RepeatedTypes request = {
+            int32Values: [int:SIGNED32_MIN_VALUE, 122004, int:SIGNED32_MAX_VALUE],
+            int64Values: [int:MIN_VALUE, 2453783783, int:MAX_VALUE],
+            uint32Values: [0, 452783738, int:UNSIGNED32_MAX_VALUE],
+            uint64Values: [0, 14253783783, int:MAX_VALUE],
+            sint32Values: [int:SIGNED32_MIN_VALUE, 427378378, int:SIGNED32_MAX_VALUE],
+            sint64Values: [int:MIN_VALUE, 738787, int:MAX_VALUE],
+            fixed32Values: [int:SIGNED32_MIN_VALUE, 676453784, int:SIGNED32_MAX_VALUE],
+            fixed64Values: [int:MIN_VALUE, 4538367837, int:MAX_VALUE],
+            sfixed32Values: [int:SIGNED32_MIN_VALUE, 2045374834, int:SIGNED32_MAX_VALUE],
+            sfixed64Values: [int:MIN_VALUE, 537837893, int:MAX_VALUE],
+            floatValues: [float:max(), 3.140000104904175, float:min()],
+            doubleValues: [float:max(), 3.14, float:min()],
+            boolValues: [true, false, true]
+        };
+        RepeatedTypes response = check productClient->getRepeatedTypes(request);
+        test:assertEquals(response, request);
+    }
+}

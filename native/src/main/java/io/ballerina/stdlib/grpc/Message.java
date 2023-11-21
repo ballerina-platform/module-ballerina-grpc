@@ -314,12 +314,22 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray floatArray = ValueCreator.createArrayValue(floatArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    floatArray = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int length = input.readRawVarint32();
+                                    int limit = input.pushLimit(length);
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        floatArray.add(floatArray.size(), input.readDouble());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, floatArray);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        floatArray = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, floatArray);
+                                    }
+                                    floatArray.add(floatArray.size(), input.readDouble());
                                 }
-                                floatArray.add(floatArray.size(), input.readDouble());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readDouble());
                             } else {
@@ -334,13 +344,22 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray floatArray = ValueCreator.createArrayValue(floatArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    floatArray = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        floatArray.add(floatArray.size(), input.readFloat());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, floatArray);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        floatArray = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, floatArray);
+                                    }
+                                    floatArray.add(floatArray.size(),
+                                            Double.parseDouble(String.valueOf(input.readFloat())));
                                 }
-                                floatArray.add(floatArray.size(),
-                                        Double.parseDouble(String.valueOf(input.readFloat())));
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 double bValue = Double.parseDouble(String.valueOf(input.readFloat()));
                                 updateBBMap(bBMap, fieldDescriptor, bValue);
@@ -356,12 +375,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray intArray = ValueCreator.createArrayValue(intArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    intArray = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        intArray.add(intArray.size(), input.readInt64());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, intArray);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        intArray = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, intArray);
+                                    }
+                                    intArray.add(intArray.size(), input.readInt64());
                                 }
-                                intArray.add(intArray.size(), input.readInt64());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readInt64());
                             } else {
@@ -382,12 +410,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray intArray = ValueCreator.createArrayValue(intArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    intArray = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        intArray.add(intArray.size(), input.readUInt64());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, intArray);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        intArray = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, intArray);
+                                    }
+                                    intArray.add(intArray.size(), input.readUInt64());
                                 }
-                                intArray.add(intArray.size(), input.readUInt64());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readUInt64());
                             } else {
@@ -402,12 +439,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray int32Array = ValueCreator.createArrayValue(sint32ArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    int32Array = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        int32Array.add(int32Array.size(), input.readInt32());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, int32Array);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        int32Array = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, int32Array);
+                                    }
+                                    int32Array.add(int32Array.size(), input.readInt32());
                                 }
-                                int32Array.add(int32Array.size(), input.readInt32());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readInt32());
                             } else {
@@ -433,12 +479,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray intArray = ValueCreator.createArrayValue(uInt32ArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    intArray = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        intArray.add(intArray.size(), Integer.toUnsignedLong(input.readUInt32()));
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, intArray);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        intArray = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, intArray);
+                                    }
+                                    intArray.add(intArray.size(), Integer.toUnsignedLong(input.readUInt32()));
                                 }
-                                intArray.add(intArray.size(), Integer.toUnsignedLong(input.readUInt32()));
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, Integer.toUnsignedLong(input.readUInt32()));
                             } else {
@@ -453,12 +508,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray intArray = ValueCreator.createArrayValue(intArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    intArray = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        intArray.add(intArray.size(), input.readFixed64());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, intArray);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        intArray = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, intArray);
+                                    }
+                                    intArray.add(intArray.size(), input.readFixed64());
                                 }
-                                intArray.add(intArray.size(), input.readFixed64());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readFixed64());
                             } else {
@@ -473,12 +537,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray int32Array = ValueCreator.createArrayValue(sint32ArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    int32Array = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        int32Array.add(int32Array.size(), input.readFixed32());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, int32Array);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        int32Array = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, int32Array);
+                                    }
+                                    int32Array.add(int32Array.size(), input.readFixed32());
                                 }
-                                int32Array.add(int32Array.size(), input.readFixed32());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readFixed32());
                             } else {
@@ -493,12 +566,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray sInt64Array = ValueCreator.createArrayValue(intArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    sInt64Array = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        sInt64Array.add(sInt64Array.size(), input.readSInt64());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, sInt64Array);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        sInt64Array = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, sInt64Array);
+                                    }
+                                    sInt64Array.add(sInt64Array.size(), input.readSInt64());
                                 }
-                                sInt64Array.add(sInt64Array.size(), input.readSInt64());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readSInt64());
                             } else {
@@ -513,12 +595,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray sInt32Array = ValueCreator.createArrayValue(sint32ArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    sInt32Array = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        sInt32Array.add(sInt32Array.size(), input.readSInt32());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, sInt32Array);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        sInt32Array = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, sInt32Array);
+                                    }
+                                    sInt32Array.add(sInt32Array.size(), input.readSInt32());
                                 }
-                                sInt32Array.add(sInt32Array.size(), input.readSInt32());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readSInt32());
                             } else {
@@ -533,12 +624,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray sFixed64Array = ValueCreator.createArrayValue(intArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    sFixed64Array = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        sFixed64Array.add(sFixed64Array.size(), input.readSFixed64());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, sFixed64Array);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        sFixed64Array = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, sFixed64Array);
+                                    }
+                                    sFixed64Array.add(sFixed64Array.size(), input.readSFixed64());
                                 }
-                                sFixed64Array.add(sFixed64Array.size(), input.readSFixed64());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readSFixed64());
                             } else {
@@ -553,12 +653,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray sFixed32Array = ValueCreator.createArrayValue(sint32ArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    sFixed32Array = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        sFixed32Array.add(sFixed32Array.size(), input.readSFixed32());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, sFixed32Array);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        sFixed32Array = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, sFixed32Array);
+                                    }
+                                    sFixed32Array.add(sFixed32Array.size(), input.readSFixed32());
                                 }
-                                sFixed32Array.add(sFixed32Array.size(), input.readSFixed32());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readSFixed32());
                             } else {
@@ -573,12 +682,21 @@ public class Message {
                         if (bBMap != null) {
                             if (fieldDescriptor.isRepeated()) {
                                 BArray booleanArray = ValueCreator.createArrayValue(booleanArrayType);
-                                if (bBMap.containsKey(bFieldName)) {
-                                    booleanArray = (BArray) bBMap.get(bFieldName);
-                                } else {
+                                if (tag == getPackedTagValue(fieldDescriptor.getNumber())) {
+                                    int limit = input.pushLimit(input.readRawVarint32());
+                                    while (input.getBytesUntilLimit() > 0) {
+                                        booleanArray.add(booleanArray.size(), input.readBool());
+                                    }
+                                    input.popLimit(limit);
                                     bBMap.put(bFieldName, booleanArray);
+                                } else {
+                                    if (bBMap.containsKey(bFieldName)) {
+                                        booleanArray = (BArray) bBMap.get(bFieldName);
+                                    } else {
+                                        bBMap.put(bFieldName, booleanArray);
+                                    }
+                                    booleanArray.add(booleanArray.size(), input.readBool());
                                 }
-                                booleanArray.add(booleanArray.size(), input.readBool());
                             } else if (fieldDescriptor.getContainingOneof() != null) {
                                 updateBBMap(bBMap, fieldDescriptor, input.readBool());
                             } else {
@@ -740,6 +858,10 @@ public class Message {
         if (isTimestampMessage && bMessage instanceof BArray) {
             ((BArray) bMessage).freezeDirect();
         }
+    }
+
+    private int getPackedTagValue(int number) {
+        return (number << 3) + 2;
     }
 
     private byte[] codeInputStreamAnyTypeByteArray(com.google.protobuf.CodedInputStream input) throws IOException {

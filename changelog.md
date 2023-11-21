@@ -6,10 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
-- [Fixed error response from backend not getting properly propegated to the client](https://github.com/ballerina-platform/ballerina-standard-library/issues/4833)
+- [Fixed serializing issue in repeated packed fields](https://github.com/ballerina-platform/ballerina-library/issues/5080)
 
 ### Changed
 - [Make some of the Java classes proper utility classes](https://github.com/ballerina-platform/ballerina-standard-library/issues/4930)
+
+## [1.10.2] - 2023-10-12
+### Fixed
+- [Address CVE-2023-4586 netty Vulnerability](https://github.com/ballerina-platform/ballerina-standard-library/issues/4908)
+
+## [1.10.1] - 2023-10-02
+### Fixed
+- [Fixed error response from backend not getting properly propegated to the client](https://github.com/ballerina-platform/ballerina-standard-library/issues/4833)
 
 ## [1.9.1] - 2023-09-11
 ### Fixed

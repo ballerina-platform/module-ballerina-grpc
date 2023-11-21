@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.MessageUtils.getFieldWireType;
+
 /**
  * Proto Message Parser.
  *
@@ -81,8 +83,12 @@ public class MessageParser {
         for (Descriptors.FieldDescriptor fieldDescriptor : messageDescriptor.getFields()) {
             Descriptors.FieldDescriptor.Type fieldType = fieldDescriptor.getType();
             int number = fieldDescriptor.getNumber();
-            int byteCode = ((number << 3) + MessageUtils.getFieldWireType(fieldType));
+            int byteCode = ((number << 3) + getFieldWireType(fieldType));
             fieldDescriptors.put(byteCode, fieldDescriptor);
+            if (fieldDescriptor.isRepeated()) {
+                byteCode = ((number << 3) + 2);
+                fieldDescriptors.put(byteCode, fieldDescriptor);
+            }
         }
         return fieldDescriptors;
     }
