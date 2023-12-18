@@ -14,32 +14,32 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/grpc;
+// import ballerina/grpc;
 
-listener grpc:Listener multiConfigListener1 = new (9165, secureSocket = {
-    key: {
-        certFile: "tests/resources/public.crt",
-        keyFile: "tests/resources/private.key"
-    }
-});
+// listener grpc:Listener multiConfigListener1 = new (9165, secureSocket = {
+//     key: {
+//         certFile: "tests/resources/public.crt",
+//         keyFile: "tests/resources/private.key"
+//     }
+// });
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_65_MULTIPLE_CLIENT_CONFIGURATIONS, descMap: getDescriptorMap65MultipleClientConfigurations()}
-service "MultipleClientConfigsService1" on multiConfigListener1 {
+// @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_65_MULTIPLE_CLIENT_CONFIGURATIONS, descMap: getDescriptorMap65MultipleClientConfigurations()}
+// service "MultipleClientConfigsService1" on multiConfigListener1 {
 
-    remote function call1() returns error? {
-    }
-}
+//     remote function call1() returns error? {
+//     }
+// }
 
-listener grpc:Listener multiConfigListener2 = new (9265, secureSocket = {
-    key: {
-        certFile: "tests/resources/public2.crt",
-        keyFile: "tests/resources/private2.key"
-    }
-});
+// listener grpc:Listener multiConfigListener2 = new (9265, secureSocket = {
+//     key: {
+//         certFile: "tests/resources/public2.crt",
+//         keyFile: "tests/resources/private2.key"
+//     }
+// });
 
-@grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_65_MULTIPLE_CLIENT_CONFIGURATIONS, descMap: getDescriptorMap65MultipleClientConfigurations()}
-service "MultipleClientConfigsService2" on multiConfigListener2 {
+// @grpc:ServiceDescriptor {descriptor: ROOT_DESCRIPTOR_65_MULTIPLE_CLIENT_CONFIGURATIONS, descMap: getDescriptorMap65MultipleClientConfigurations()}
+// service "MultipleClientConfigsService2" on multiConfigListener2 {
 
-    remote function call1() returns error? {
-    }
-}
+//     remote function call1() returns error? {
+//     }
+// }
