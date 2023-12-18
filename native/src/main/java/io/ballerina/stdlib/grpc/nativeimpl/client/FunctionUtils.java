@@ -115,8 +115,8 @@ public class FunctionUtils extends AbstractExecute {
         Map<String, Object> properties =
                 HttpConnectorUtil.getTransportProperties(connectionManager.getTransportConfig());
         properties.put(HttpConstants.CLIENT_CONFIG_HASH_CODE, optionsString.hashCode());
-        SenderConfiguration senderConfiguration = new SenderConfiguration();
-        senderConfiguration.setScheme(scheme);
+        SenderConfiguration senderConfiguration = 
+            HttpConnectorUtil.getSenderConfiguration(connectionManager.getTransportConfig(), scheme);
 
         if (connectionManager.isHTTPTraceLoggerEnabled()) {
             senderConfiguration.setHttpTraceLogEnabled(true);
