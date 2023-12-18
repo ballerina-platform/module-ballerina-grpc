@@ -164,10 +164,13 @@ isolated function testBidiStreamingWithPublicCertPrivateKey() returns grpc:Error
     ChatClient chatEp = check new ("https://localhost:9093", {
         secureSocket: {
             key: {
-                certFile: PUBLIC_CRT_PATH,
-                keyFile: PRIVATE_KEY_PATH
+                path: KEYSTORE_PATH,
+                password: "ballerina"
             },
-            cert: PUBLIC_CRT_PATH,
+            cert: {
+                path: TRUSTSTORE_PATH,
+                password: "ballerina"
+            },
             protocol:{
                 name: grpc:TLS,
                 versions: ["TLSv1.2", "TLSv1.1"]
