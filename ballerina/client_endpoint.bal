@@ -138,8 +138,8 @@ isolated function retryBlockingExecute(Client grpcClient, string methodID, anyda
 headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>]|Error) {
     int currentRetryCount = 0;
     int retryCount = retryConfig.retryCount;
-    decimal interval = retryConfig.interval * 1000;
-    decimal maxInterval = retryConfig.maxInterval * 1000;
+    decimal interval = retryConfig.interval;
+    decimal maxInterval = retryConfig.maxInterval;
     decimal backoffFactor = retryConfig.backoffFactor;
     ErrorType[] errorTypes = retryConfig.errorTypes;
     error? cause = ();
@@ -155,7 +155,9 @@ headers, RetryConfiguration retryConfig) returns ([anydata, map<string|string[]>
                 cause = result;
             }
         }
-        runtime:sleep(interval);
+        if currentRetryCount < retryCount {
+            runtime:sleep(interval);
+        }
         decimal newInterval = interval * backoffFactor;
         interval = (newInterval > maxInterval) ? maxInterval : newInterval;
         currentRetryCount += 1;
