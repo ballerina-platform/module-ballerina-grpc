@@ -19,16 +19,16 @@ import ballerina/test;
 
 grpc:RetryConfiguration retryConfig = {
     retryCount: 3,
-    interval: 0.002,
-    maxInterval: 0.01,
+    interval: 2,
+    maxInterval: 10,
     backoffFactor: 2,
     errorTypes: [grpc:UnavailableError, grpc:InternalError]
 };
 
 grpc:RetryConfiguration failingRetryConfig = {
     retryCount: 2,
-    interval: 0.002,
-    maxInterval: 0.01,
+    interval: 2,
+    maxInterval: 10,
     backoffFactor: 2,
     errorTypes: [grpc:UnavailableError, grpc:InternalError]
 };
