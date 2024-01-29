@@ -60,6 +60,7 @@ import static io.ballerina.stdlib.http.api.HttpConstants.ANN_CONFIG_ATTR_SSL_ENA
 import static io.ballerina.stdlib.http.api.HttpConstants.CONNECTION_MANAGER;
 import static io.ballerina.stdlib.http.api.HttpConstants.CONNECTION_POOLING_MAX_ACTIVE_STREAMS_PER_CONNECTION;
 import static io.ballerina.stdlib.http.api.HttpConstants.LISTENER_CONFIGURATION;
+import static io.ballerina.stdlib.http.api.HttpConstants.MAX_HEADER_SIZE;
 import static io.ballerina.stdlib.http.api.HttpConstants.PKCS_STORE_TYPE;
 import static io.ballerina.stdlib.http.api.HttpConstants.PROTOCOL_HTTPS;
 import static io.ballerina.stdlib.http.api.HttpConstants.SERVER_NAME;
@@ -232,6 +233,9 @@ public class GrpcUtil {
         if (sslConfig != null) {
             return setSslConfig(sslConfig, listenerConfiguration);
         }
+
+        listenerConfiguration.getMsgSizeValidationConfig().setMaxHeaderSize(endpointConfig.getIntValue(MAX_HEADER_SIZE)
+                .intValue());
 
         listenerConfiguration.setPipeliningEnabled(true); //Pipelining is enabled all the time
         listenerConfiguration.setSocketReuse(true);

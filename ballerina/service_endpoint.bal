@@ -301,12 +301,14 @@ const decimal DEFAULT_LISTENER_TIMEOUT = 120; //2 mins
 # + timeout - Period of time in seconds that a connection waits for a read/write operation. Use value 0 to
 # disable the timeout
 # + maxInboundMessageSize - The maximum message size to be permitted for inbound messages. Default value is 4 MB
+# + maxHeaderSize - The maximum size of the headers to be permitted for inbound messages. Default value is 8 KB
 # + reflectionEnabled - Support reflection
 public type ListenerConfiguration record {|
     string host = "0.0.0.0";
     ListenerSecureSocket? secureSocket = ();
     decimal timeout = DEFAULT_LISTENER_TIMEOUT;
     int maxInboundMessageSize = 4194304;
+    int maxHeaderSize = 8192;
     boolean reflectionEnabled = false;
 |};
 

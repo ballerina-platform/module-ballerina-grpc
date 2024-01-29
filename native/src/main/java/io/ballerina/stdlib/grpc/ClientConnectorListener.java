@@ -30,6 +30,7 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_ENCODING;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_MESSAGE_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_STATUS_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.MESSAGE_ENCODING;
+import static io.ballerina.stdlib.grpc.MessageUtils.httpStatusToGrpcCode;
 import static io.ballerina.stdlib.grpc.MessageUtils.readAsString;
 
 /**
@@ -161,9 +162,13 @@ public class ClientConnectorListener implements HttpClientConnectorListener {
                 // Ignore the headers. See RFC 7540 §8.1
                 // 1xx (Informational): The request was received, continuing process
                 return false;
+            } else if (httpStatus == 431) {
+                transportError = httpStatusToGrpcCode(httpStatus).toStatus()
+                        .withDescription("Exceeded the maximum header size allowed");
+            } else {
+                transportError = validateInitialMetadata(inboundMessage);
             }
             headersReceived = true;
-            transportError = validateInitialMetadata(inboundMessage);
             return transportError == null;
         } finally {
             if (transportError != null) {

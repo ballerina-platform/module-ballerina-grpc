@@ -43,3 +43,14 @@ function testHeadersInBlockingClient() returns grpc:Error? {
     map<string|string[]> resHeaders = response.headers;
     test:assertEquals(check grpc:getHeaders(resHeaders, "x-id"), ["0987654321", "1234567890", "2233445677"]);
 }
+
+@test:Config {enable: true}
+function testLargeHeaderSize() returns grpc:Error? {
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: {"large-header": "09876543210987654321098765432109876543210987654321098765432109876543210987654321098765432109876543210987654321098765432109876543210987654321098765432109876543210987654321"}};
+    wrappers:ContextString|grpc:Error response = helloWorld8BlockingEp->helloContext(requestMessage);
+    if response is grpc:Error {
+        test:assertTrue(response.message().startsWith("Exceeded the maximum header size allowed"));
+    } else {
+        test:assertFail("Expected an error");
+    }
+}
