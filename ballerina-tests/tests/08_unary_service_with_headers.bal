@@ -20,7 +20,7 @@ import ballerina/protobuf.types.wrappers;
 // Server endpoint configuration
 listener grpc:Listener ep8 = new (9098, {
     host: "localhost",
-    maxHeaderSize: 300
+    maxHeaderSize: 1000
 });
 
 @grpc:Descriptor {
