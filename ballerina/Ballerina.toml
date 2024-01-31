@@ -34,8 +34,8 @@ scope = "testOnly"
 [[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.10.3"
-path = "./lib/http-native-2.10.3.jar"
+version = "2.10.6"
+path = "./lib/http-native-2.10.6-SNAPSHOT.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.netty"
