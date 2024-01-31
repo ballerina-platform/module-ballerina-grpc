@@ -49,7 +49,7 @@ function testLargeHeaderSize() returns grpc:Error? {
     wrappers:ContextString requestMessage = {content: "WSO2", headers: {"large-header": "09876543210987654321098765432109876543210987654321098765432109876543210987654321098765432109876543210987654321098765432109876543210987654321098765432109876543210987654321"}};
     wrappers:ContextString|grpc:Error response = helloWorld8BlockingEp->helloContext(requestMessage);
     if response is grpc:Error {
-        test:assertTrue(response.message().startsWith("Exceeded the maximum header size allowed"));
+        test:assertEquals(response.message(), "Header size exceeded max allowed size (600)");
     } else {
         test:assertFail("Expected an error");
     }
