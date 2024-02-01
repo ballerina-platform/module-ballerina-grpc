@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/test;
-import ballerina/lang.runtime;
 
 @test:Config {enable: true}
 function testAnonymousService() returns error? {
@@ -31,7 +30,6 @@ function testAnonymousService() returns error? {
 @test:Config {dependsOn: [testAnonymousService], enable: true}
 function testAnonymousServiceMultipleTimes() returns error? {
     check ep20.attach(AnonService1, "AnonService1");
-    runtime:sleep(5);
     check ep20.'start();
     check ep20.'start();
 
