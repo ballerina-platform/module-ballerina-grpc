@@ -282,7 +282,7 @@ public class MessageUtils {
                 .withDescription("HTTP status code " + httpStatusCode);
     }
 
-    private static Status.Code httpStatusToGrpcCode(int httpStatusCode) {
+    static Status.Code httpStatusToGrpcCode(int httpStatusCode) {
         if (httpStatusCode >= 100 && httpStatusCode < 200) {
             // 1xx. These headers should have been ignored.
             return Status.Code.INTERNAL;
