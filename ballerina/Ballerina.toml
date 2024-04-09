@@ -1,8 +1,8 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.10.7"
-distribution = "2201.8.0"
+version = "1.11.0"
+distribution = "2201.9.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -16,15 +16,15 @@ graalvmCompatible = true
 [[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.10.7"
-path = "../native/build/libs/grpc-native-1.10.7-SNAPSHOT.jar"
+version = "1.11.0"
+path = "../native/build/libs/grpc-native-1.11.0-SNAPSHOT.jar"
 
 [[platform.java17.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.10.7-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.11.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
-path = "./lib/ballerina-cli-2201.8.0.jar"
+path = "./lib/ballerina-cli-2201.9.0-20240405-165800-4b163f78.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
@@ -34,8 +34,8 @@ scope = "testOnly"
 [[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.10.13"
-path = "./lib/http-native-2.10.13-20240327-141300-ecd1355.jar"
+version = "2.11.0"
+path = "./lib/http-native-2.11.0-20240409-155700-86d3a0d.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.netty"
@@ -157,11 +157,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java17.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.8.0"
-path = "./lib/formatter-core-2201.8.0.jar"
+version = "2201.9.0-20240405-165800-4b163f78"
+path = "./lib/formatter-core-2201.9.0-20240405-165800-4b163f78.jar"
 
 [[platform.java17.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.8.0"
-path = "./lib/ballerina-parser-2201.8.0.jar"
+version = "2201.9.0-20240405-165800-4b163f78"
+path = "./lib/ballerina-parser-2201.9.0-20240405-165800-4b163f78.jar"
