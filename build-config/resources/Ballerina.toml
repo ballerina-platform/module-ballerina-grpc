@@ -116,6 +116,12 @@ version = "@bouncy.castle.version@"
 path = "./lib/bcpkix-jdk18on-@bouncy.castle.version@.jar"
 
 [[platform.java17.dependency]]
+groupId = "org.bouncycastle"
+artifactId = "bcutil-jdk18on"
+version = "@bouncy.castle.version@"
+path = "./lib/bcutil-jdk18on-@bouncy.castle.version@.jar"
+
+[[platform.java17.dependency]]
 groupId = "io.netty"
 artifactId = "netty-tcnative-classes"
 version = "@nettytcnative.version@"
