@@ -117,6 +117,9 @@ dependencies {
     externalJars(group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: "${bouncycastleVersion}") {
         transitive = false
     }
+    externalJars(group: 'org.bouncycastle', name: 'bcutil-jdk18on', version: "${bouncycastleVersion}") {
+        transitive = false
+    }
     externalJars(group: 'io.netty', name: 'netty-tcnative-classes', version: "${nettyTcnativeVersion}") {
         transitive = false
     }
