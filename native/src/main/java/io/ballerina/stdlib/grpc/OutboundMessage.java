@@ -32,8 +32,11 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import static io.ballerina.stdlib.grpc.GrpcConstants.CONTENT_TYPE_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_MESSAGE_KEY;
 import static io.ballerina.stdlib.grpc.GrpcConstants.GRPC_STATUS_KEY;
+import static io.ballerina.stdlib.grpc.GrpcConstants.SCHEME_HEADER;
+import static io.ballerina.stdlib.grpc.GrpcConstants.TE_KEY;
 
 /**
  * Class that represents an GRPC outbound message.
@@ -54,7 +57,18 @@ public class OutboundMessage {
     }
 
     OutboundMessage(InboundMessage inboundMessage) {
-        this(inboundMessage.getHttpCarbonMessage().cloneCarbonMessageWithOutData());
+        HttpCarbonMessage responseMessage = inboundMessage.getHttpCarbonMessage().cloneCarbonMessageWithOutData();
+        HttpHeaders headers = responseMessage.getHeaders();
+        headers.forEach(entry -> {
+            if (entry.getKey().equals(SCHEME_HEADER)) {
+                return;
+            }
+            responseMessage.removeHeader(entry.getKey());
+        });
+        responseMessage.setHeader(CONTENT_TYPE_KEY, GrpcConstants.CONTENT_TYPE_GRPC);
+        responseMessage.setHeader(TE_KEY, GrpcConstants.TE_TRAILERS);
+        this.responseMessage = responseMessage;
+        this.framer = ThreadLocal.withInitial(() -> new MessageFramer(responseMessage));
     }
 
     /**
