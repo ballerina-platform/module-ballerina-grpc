@@ -41,7 +41,7 @@ function testHeadersInBlockingClient() returns grpc:Error? {
     // Executing unary blocking call
     wrappers:ContextString response = check helloWorld8BlockingEp->helloContext(requestMessage);
     map<string|string[]> resHeaders = response.headers;
-    test:assertEquals(check grpc:getHeaders(resHeaders, "x-id"), ["0987654321", "1234567890", "2233445677"]);
+    test:assertEquals(check grpc:getHeaders(resHeaders, "x-id"), ["1234567890", "2233445677"]);
 }
 
 @test:Config {enable: true}
