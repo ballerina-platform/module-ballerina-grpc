@@ -1,7 +1,7 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.10.6"
+version = "1.10.7"
 distribution = "2201.8.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
@@ -16,11 +16,11 @@ graalvmCompatible = true
 [[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.10.6"
-path = "../native/build/libs/grpc-native-1.10.6.jar"
+version = "1.10.7"
+path = "../native/build/libs/grpc-native-1.10.7-SNAPSHOT.jar"
 
 [[platform.java17.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.10.6.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.10.7-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
@@ -34,8 +34,8 @@ scope = "testOnly"
 [[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.10.6"
-path = "./lib/http-native-2.10.6.jar"
+version = "2.10.12"
+path = "./lib/http-native-2.10.12.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.netty"
