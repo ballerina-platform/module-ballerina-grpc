@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - [Address CVE-2024-29025 netty's vulnerability](https://github.com/ballerina-platform/ballerina-library/issues/6242)
+- [Fixed client headers getting forwarded back to client by the server](https://github.com/ballerina-platform/ballerina-library/issues/6334)
 
 ## [1.10.6] - 2024-02-01
 ### Added
