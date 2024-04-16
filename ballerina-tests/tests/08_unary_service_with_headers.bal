@@ -32,11 +32,25 @@ service "HelloWorld101" on ep8 {
         map<string|string[]> responseHeaders = {};
 
         if !request.headers.hasKey("x-id") {
-            checkpanic caller->sendError(error grpc:AbortedError("x-id header is missing"));
+            check caller->sendError(error grpc:AbortedError("x-id header is missing"));
         } else {
             responseHeaders["x-id"] = ["1234567890", "2233445677"];
         }
         wrappers:ContextString responseMessage = {content: message, headers: responseHeaders};
-        checkpanic caller->sendContextString(responseMessage);
+        check caller->sendContextString(responseMessage);
+    }
+}
+
+listener grpc:Listener largeHeaderListener = new (9198, {
+    host: "localhost",
+    maxHeaderSize: 600000
+});
+
+@grpc:Descriptor {
+    value: UNARY_SERVICE_WITH_HEADERS_DESC
+}
+service "HelloWorld101" on largeHeaderListener {
+    isolated remote function hello(HelloWorld101StringCaller caller, ContextString request) returns error? {
+        check caller->sendString("Hello client");
     }
 }
