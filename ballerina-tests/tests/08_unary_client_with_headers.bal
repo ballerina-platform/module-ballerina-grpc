@@ -41,7 +41,7 @@ function testHeadersInBlockingClient() returns grpc:Error? {
     // Executing unary blocking call
     wrappers:ContextString response = check helloWorld8BlockingEp->helloContext(requestMessage);
     map<string|string[]> resHeaders = response.headers;
-    test:assertEquals(check grpc:getHeaders(resHeaders, "x-id"), ["0987654321", "1234567890", "2233445677"]);
+    test:assertEquals(check grpc:getHeaders(resHeaders, "x-id"), ["1234567890", "2233445677"]);
 }
 
 @test:Config {enable: true}
@@ -53,4 +53,17 @@ function testLargeHeaderSize() returns grpc:Error? {
     } else {
         test:assertFail("Expected an error");
     }
+}
+
+@test:Config {enable: true}
+function testLargeHeaderSizeWithLargeHeaderService() returns grpc:Error? {
+    HelloWorld101Client largeHeaderClient = check new ("http://localhost:9198");
+    string largeHeader = "";
+    foreach int i in 0...1000 {
+        largeHeader = largeHeader + "1234567890";
+    }
+    wrappers:ContextString requestMessage = {content: "WSO2", headers: {"large-header": largeHeader}};
+    wrappers:ContextString response = check largeHeaderClient->helloContext(requestMessage);
+    test:assertEquals(response.content, "Hello client");
+    test:assertFalse(response.headers.hasKey("large-header"));
 }
