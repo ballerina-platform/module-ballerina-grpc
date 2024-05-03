@@ -24,7 +24,7 @@ path = "../test-utils/build/libs/grpc-test-utils-1.11.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
-path = "./lib/ballerina-cli-2201.9.0-20240410-095500-2653a74d.jar"
+path = "./lib/ballerina-cli-2201.9.0-20240502-141200-0a49fa42.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
@@ -35,7 +35,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.11.0"
-path = "./lib/http-native-2.11.0-20240410-161700-e275cb8.jar"
+path = "./lib/http-native-2.11.0-20240502-194500-bb0bced.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.netty"
@@ -163,11 +163,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java17.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.9.0-20240410-095500-2653a74d"
-path = "./lib/formatter-core-2201.9.0-20240410-095500-2653a74d.jar"
+version = "2201.9.0-20240502-141200-0a49fa42"
+path = "./lib/formatter-core-2201.9.0-20240502-141200-0a49fa42.jar"
 
 [[platform.java17.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.9.0-20240410-095500-2653a74d"
-path = "./lib/ballerina-parser-2201.9.0-20240410-095500-2653a74d.jar"
+version = "2201.9.0-20240502-141200-0a49fa42"
+path = "./lib/ballerina-parser-2201.9.0-20240502-141200-0a49fa42.jar"
