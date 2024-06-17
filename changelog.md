@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- [Address netty vulnerability: CVE-2024-29025](https://github.com/ballerina-platform/ballerina-library/issues/6242)
+- [Address bouncy castle vulnerability: CVE-2024-29857](https://github.com/ballerina-platform/ballerina-library/issues/6635)
+
+## [1.10.7] - 2024-04-16
+### Fixed
+- [Fix client headers getting forwarded back to the client](https://github.com/ballerina-platform/ballerina-library/issues/6334)
+
+## [1.10.6] - 2024-02-01
 ### Added
 - [Added `maxHeaderSize` in `grpc:ListenerConfiguration`](https://github.com/ballerina-platform/ballerina-library/issues/5969)
 
