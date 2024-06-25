@@ -58,8 +58,8 @@ public isolated client class RetryServiceClient {
     }
 }
 
-public client class RetryServiceStringCaller {
-    private grpc:Caller caller;
+public isolated client class RetryServiceStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

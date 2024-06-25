@@ -48,8 +48,8 @@ public isolated client class BidiStreamingTimestampServiceClient {
     }
 }
 
-public client class BidiStreamingGreetServerStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidiStreamingGreetServerStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -92,8 +92,8 @@ public client class BidiStreamingGreetServerStreamingClient {
     }
 }
 
-public client class BidiStreamingGreetBothStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidiStreamingGreetBothStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -136,8 +136,8 @@ public client class BidiStreamingGreetBothStreamingClient {
     }
 }
 
-public client class BidiStreamingExchangeTimeStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidiStreamingExchangeTimeStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -180,8 +180,8 @@ public client class BidiStreamingExchangeTimeStreamingClient {
     }
 }
 
-public client class BidiStreamingTimestampServiceTimestampCaller {
-    private grpc:Caller caller;
+public isolated client class BidiStreamingTimestampServiceTimestampCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -212,8 +212,8 @@ public client class BidiStreamingTimestampServiceTimestampCaller {
     }
 }
 
-public client class BidiStreamingTimestampServiceBiDiGreetingCaller {
-    private grpc:Caller caller;
+public isolated client class BidiStreamingTimestampServiceBiDiGreetingCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

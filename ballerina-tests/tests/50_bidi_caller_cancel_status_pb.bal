@@ -52,8 +52,8 @@ public isolated client class HelloWorld50Client {
     }
 }
 
-public client class SendStringStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class SendStringStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -96,8 +96,8 @@ public client class SendStringStreamingClient {
     }
 }
 
-public client class HelloWorld50BooleanCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld50BooleanCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -128,8 +128,8 @@ public client class HelloWorld50BooleanCaller {
     }
 }
 
-public client class HelloWorld50StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld50StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

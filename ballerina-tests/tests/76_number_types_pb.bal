@@ -199,8 +199,8 @@ public isolated client class TypesServiceClient {
     }
 }
 
-public client class TypesServiceRepeatedTypesMessageCaller {
-    private grpc:Caller caller;
+public isolated client class TypesServiceRepeatedTypesMessageCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -231,8 +231,8 @@ public client class TypesServiceRepeatedTypesMessageCaller {
     }
 }
 
-public client class TypesServiceTypesMessageCaller {
-    private grpc:Caller caller;
+public isolated client class TypesServiceTypesMessageCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -263,8 +263,8 @@ public client class TypesServiceTypesMessageCaller {
     }
 }
 
-public client class TypesServiceIntCaller {
-    private grpc:Caller caller;
+public isolated client class TypesServiceIntCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

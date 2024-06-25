@@ -71,8 +71,8 @@ public class StringStream {
     }
 }
 
-public client class HelloWorldStringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -98,8 +98,8 @@ public client class HelloWorldStringCaller {
     }
 }
 
-public client class CustomCaller {
-    private grpc:Caller caller;
+public isolated client class CustomCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

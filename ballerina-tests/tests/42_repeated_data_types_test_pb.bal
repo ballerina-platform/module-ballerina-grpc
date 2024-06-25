@@ -571,8 +571,8 @@ public class BytesArrMsgStream {
     }
 }
 
-public client class DataTypesServiceInt64ArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceInt64ArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -603,8 +603,8 @@ public client class DataTypesServiceInt64ArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceInt32ArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceInt32ArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -635,8 +635,8 @@ public client class DataTypesServiceInt32ArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceBytesArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceBytesArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -667,8 +667,8 @@ public client class DataTypesServiceBytesArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceStringArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceStringArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -699,8 +699,8 @@ public client class DataTypesServiceStringArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceFixed32ArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceFixed32ArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -731,8 +731,8 @@ public client class DataTypesServiceFixed32ArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceFixed64ArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceFixed64ArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -763,8 +763,8 @@ public client class DataTypesServiceFixed64ArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceUnsignedInt64ArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceUnsignedInt64ArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -795,8 +795,8 @@ public client class DataTypesServiceUnsignedInt64ArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceFloatArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceFloatArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -827,8 +827,8 @@ public client class DataTypesServiceFloatArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceBooleanArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceBooleanArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -859,8 +859,8 @@ public client class DataTypesServiceBooleanArrMsgCaller {
     }
 }
 
-public client class DataTypesServiceDoubleArrMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DataTypesServiceDoubleArrMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

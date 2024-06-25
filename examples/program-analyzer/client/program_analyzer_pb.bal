@@ -45,8 +45,8 @@ public isolated client class BalProgramAnalyzerClient {
     }
 }
 
-public client class BalProgramAnalyzerStringCaller {
-    private grpc:Caller caller;
+public isolated client class BalProgramAnalyzerStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

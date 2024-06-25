@@ -244,8 +244,8 @@ public isolated client class AnonService4Client {
     }
 }
 
-public client class Hello2StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Hello2StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -288,8 +288,8 @@ public client class Hello2StreamingClient {
     }
 }
 
-//public client class Hello2StreamingClient {
-//    private grpc:StreamingClient sClient;
+//public isolated client class Hello2StreamingClient {
+//    private final grpc:StreamingClient sClient;
 //
 //    isolated function init(grpc:StreamingClient sClient) {
 //        self.sClient = sClient;
@@ -332,8 +332,8 @@ public client class Hello2StreamingClient {
 //    }
 //}
 
-public client class AnonService1StringCaller {
-    private grpc:Caller caller;
+public isolated client class AnonService1StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -364,8 +364,8 @@ public client class AnonService1StringCaller {
     }
 }
 
-public client class AnonService2StringCaller {
-    private grpc:Caller caller;
+public isolated client class AnonService2StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -396,8 +396,8 @@ public client class AnonService2StringCaller {
     }
 }
 
-public client class AnonService3StringCaller {
-    private grpc:Caller caller;
+public isolated client class AnonService3StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -428,8 +428,8 @@ public client class AnonService3StringCaller {
     }
 }
 
-public client class AnonService4StringCaller {
-    private grpc:Caller caller;
+public isolated client class AnonService4StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

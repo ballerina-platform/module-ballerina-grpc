@@ -33,8 +33,8 @@ public isolated client class ChatClient {
     }
 }
 
-public client class ChatStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ChatStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -77,8 +77,8 @@ public client class ChatStreamingClient {
     }
 }
 
-public client class ChatStringCaller {
-    private grpc:Caller caller;
+public isolated client class ChatStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

@@ -86,8 +86,8 @@ public isolated client class helloWorldWithNestedMessageNestedEnumClient {
     }
 }
 
-public client class HelloWorldWithNestedMessageNestedEnumByeResponse58Caller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldWithNestedMessageNestedEnumByeResponse58Caller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -118,8 +118,8 @@ public client class HelloWorldWithNestedMessageNestedEnumByeResponse58Caller {
     }
 }
 
-public client class HelloWorldWithNestedMessageNestedEnumHelloResponse58Caller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldWithNestedMessageNestedEnumHelloResponse58Caller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

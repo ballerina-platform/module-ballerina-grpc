@@ -130,8 +130,8 @@ public isolated client class DurationHandlerClient {
     }
 }
 
-public client class ClientStreamingStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ClientStreamingStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -174,8 +174,8 @@ public client class ClientStreamingStreamingClient {
     }
 }
 
-public client class BidirectionalStreamingStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidirectionalStreamingStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -218,8 +218,8 @@ public client class BidirectionalStreamingStreamingClient {
     }
 }
 
-public client class DurationHandlerDurationMsgCaller {
-    private grpc:Caller caller;
+public isolated client class DurationHandlerDurationMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -250,8 +250,8 @@ public client class DurationHandlerDurationMsgCaller {
     }
 }
 
-public client class DurationHandlerDurationCaller {
-    private grpc:Caller caller;
+public isolated client class DurationHandlerDurationCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -282,8 +282,8 @@ public client class DurationHandlerDurationCaller {
     }
 }
 
-public client class DurationHandlerStringCaller {
-    private grpc:Caller caller;
+public isolated client class DurationHandlerStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

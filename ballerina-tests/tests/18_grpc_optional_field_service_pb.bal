@@ -58,8 +58,8 @@ public isolated client class CheckoutServiceClient {
     }
 }
 
-public client class CheckoutServicePlaceOrderResponseCaller {
-    private grpc:Caller caller;
+public isolated client class CheckoutServicePlaceOrderResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

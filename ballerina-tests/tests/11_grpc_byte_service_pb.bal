@@ -58,8 +58,8 @@ public isolated client class ByteServiceClient {
     }
 }
 
-public client class ByteServiceByteCaller {
-    private grpc:Caller caller;
+public isolated client class ByteServiceByteCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

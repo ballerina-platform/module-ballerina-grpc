@@ -58,8 +58,8 @@ public isolated client class MessageServiceClient {
     }
 }
 
-public client class MessageServiceMessageStateCaller {
-    private grpc:Caller caller;
+public isolated client class MessageServiceMessageStateCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
