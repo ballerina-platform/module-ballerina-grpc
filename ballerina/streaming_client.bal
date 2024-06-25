@@ -18,8 +18,8 @@ import ballerina/jballerina.java;
 
 # The base client used in the generated client code to provide the gRPC streaming client actions for
 # interacting  with the gRPC server.
-public client class StreamingClient {
-    stream<anydata, Error?>? serverStream = ();
+public isolated client class StreamingClient {
+    private stream<anydata, Error?>? serverStream = ();
 
     # Sends the request message to the server.
     # ```ballerina
@@ -62,33 +62,35 @@ public client class StreamingClient {
     isolated remote function receive() returns [anydata, map<string|string[]>]|Error? {
         map<string|string[]> headers = {};
         if externIsBidirectional(self) {
-            if self.serverStream is stream<anydata, Error?> {
-                var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
-                map<string|string[]>? headerMap = externGetHeaderMap(self, true);
-                if headerMap is map<string|string[]> {
-                    headers = headerMap;
-                }
-                if nextRecord is record {|anydata value;|} {
-                    return [nextRecord.value, headers];
-                } else {
-                    return nextRecord;
-                }
-            } else {
-                anydata|stream<anydata, Error?> result = check externReceive(self);
-                if result is stream<anydata, Error?> {
-                    self.serverStream = result;
+            lock {
+                if self.serverStream is stream<anydata, Error?> {
                     var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
-                    var headerMap = externGetHeaderMap(self, true);
+                    map<string|string[]>? headerMap = externGetHeaderMap(self, true);
                     if headerMap is map<string|string[]> {
-                        headers = headerMap;
+                        headers = headerMap.clone();
                     }
                     if nextRecord is record {|anydata value;|} {
-                        return [nextRecord.value, headers];
+                        return [nextRecord.value.clone(), headers.clone()];
                     } else {
                         return nextRecord;
                     }
+                } else {
+                    anydata|stream<anydata, Error?> result = check externReceive(self);
+                    if result is stream<anydata, Error?> {
+                        self.serverStream = result;
+                        var nextRecord = (<stream<anydata, Error?>>self.serverStream).next();
+                        var headerMap = externGetHeaderMap(self, true);
+                        if headerMap is map<string|string[]> {
+                            headers = headerMap.clone();
+                        }
+                        if nextRecord is record {|anydata value;|} {
+                            return [nextRecord.value.clone(), headers.clone()];
+                        } else {
+                            return nextRecord;
+                        }
+                    }
+                    return error DataMismatchError("Expected a stream but found an anydata type.");
                 }
-                return error DataMismatchError("Expected a stream but found an anydata type.");
             }
         } else {
             anydata|stream<anydata, Error?> result = check externReceive(self);
