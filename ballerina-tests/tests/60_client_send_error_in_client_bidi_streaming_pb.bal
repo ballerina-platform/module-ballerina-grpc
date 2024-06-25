@@ -40,8 +40,8 @@ public isolated client class ErrorSendServiceClient {
     }
 }
 
-public client class SendErrorClientStreamingStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class SendErrorClientStreamingStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -84,8 +84,8 @@ public client class SendErrorClientStreamingStreamingClient {
     }
 }
 
-public client class SendErrorBidiStreamingStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class SendErrorBidiStreamingStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -128,8 +128,8 @@ public client class SendErrorBidiStreamingStreamingClient {
     }
 }
 
-public client class ErrorSendServiceIntCaller {
-    private grpc:Caller caller;
+public isolated client class ErrorSendServiceIntCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

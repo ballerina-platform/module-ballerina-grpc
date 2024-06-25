@@ -156,8 +156,8 @@ public isolated client class AnyTypeServerClient {
     }
 }
 
-public client class ClientStreamingCallStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ClientStreamingCallStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -200,8 +200,8 @@ public client class ClientStreamingCallStreamingClient {
     }
 }
 
-public client class BidirectionalStreamingCallStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidirectionalStreamingCallStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -244,8 +244,8 @@ public client class BidirectionalStreamingCallStreamingClient {
     }
 }
 
-public client class AnyTypeServerAnyCaller {
-    private grpc:Caller caller;
+public isolated client class AnyTypeServerAnyCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

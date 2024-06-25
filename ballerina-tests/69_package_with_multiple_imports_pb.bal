@@ -105,8 +105,8 @@ public isolated client class packagingServiceClient {
     }
 }
 
-public client class Hello3StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Hello3StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -173,8 +173,8 @@ public class ResMessage2Stream {
     }
 }
 
-public client class Hello4StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Hello4StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -217,8 +217,8 @@ public client class Hello4StreamingClient {
     }
 }
 
-public client class Hello5StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Hello5StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -261,8 +261,8 @@ public client class Hello5StreamingClient {
     }
 }
 
-public client class PackagingServiceRootMessageCaller {
-    private grpc:Caller caller;
+public isolated client class PackagingServiceRootMessageCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -293,8 +293,8 @@ public client class PackagingServiceRootMessageCaller {
     }
 }
 
-public client class PackagingServiceResMessage2Caller {
-    private grpc:Caller caller;
+public isolated client class PackagingServiceResMessage2Caller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

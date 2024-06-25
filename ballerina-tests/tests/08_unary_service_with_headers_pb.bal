@@ -58,8 +58,8 @@ public isolated client class HelloWorld101Client {
     }
 }
 
-public client class HelloWorld101StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld101StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

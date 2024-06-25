@@ -92,8 +92,8 @@ public isolated client class Chat41Client {
     }
 }
 
-public client class Chat41StringCaller {
-    private grpc:Caller caller;
+public isolated client class Chat41StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

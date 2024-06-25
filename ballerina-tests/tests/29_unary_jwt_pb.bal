@@ -86,8 +86,8 @@ public isolated client class HelloWorld29Client {
     }
 }
 
-public client class HelloWorld29StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld29StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

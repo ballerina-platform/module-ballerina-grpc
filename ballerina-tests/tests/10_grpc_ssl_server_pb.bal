@@ -58,8 +58,8 @@ public isolated client class GrpcMutualSslServiceClient {
     }
 }
 
-public client class GrpcMutualSslServiceStringCaller {
-    private grpc:Caller caller;
+public isolated client class GrpcMutualSslServiceStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

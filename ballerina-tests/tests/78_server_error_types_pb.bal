@@ -57,8 +57,8 @@ public isolated client class ServerErrorTypesServiceClient {
     }
 }
 
-public client class ServerErrorTypesServiceNilCaller {
-    private grpc:Caller caller;
+public isolated client class ServerErrorTypesServiceNilCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

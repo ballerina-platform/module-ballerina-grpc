@@ -97,8 +97,8 @@ public isolated client class SimpleServiceWithAnnotationClient {
     }
 }
 
-public client class ClientStreamingWithAnnotatedDataStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ClientStreamingWithAnnotatedDataStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -165,8 +165,8 @@ public class SimpleResponseWithAnnotationStream {
     }
 }
 
-public client class BidirectionalStreamingWithAnnotatedDataStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidirectionalStreamingWithAnnotatedDataStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -209,8 +209,8 @@ public client class BidirectionalStreamingWithAnnotatedDataStreamingClient {
     }
 }
 
-public client class SimpleServiceWithAnnotationSimpleResponseWithAnnotationCaller {
-    private grpc:Caller caller;
+public isolated client class SimpleServiceWithAnnotationSimpleResponseWithAnnotationCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

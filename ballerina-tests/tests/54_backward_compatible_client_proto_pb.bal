@@ -84,8 +84,8 @@ public isolated client class ProductCatalogClient {
     }
 }
 
-public client class ProductCatalogStringCaller {
-    private grpc:Caller caller;
+public isolated client class ProductCatalogStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -116,8 +116,8 @@ public client class ProductCatalogStringCaller {
     }
 }
 
-public client class ProductCatalogProductCaller {
-    private grpc:Caller caller;
+public isolated client class ProductCatalogProductCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

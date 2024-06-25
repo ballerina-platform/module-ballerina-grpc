@@ -21,11 +21,7 @@ import ballerina/jballerina.java;
 # + instanceId - The connection ID
 public isolated client class Caller {
 
-    private final int instanceId;
-
-    function init(int instanceId) {
-        self.instanceId = instanceId;
-    }
+    private int instanceId = -1;
 
     # Returns the unique identification of the caller.
     # ```ballerina
@@ -34,7 +30,9 @@ public isolated client class Caller {
     #
     # + return - caller ID
     public isolated function getId() returns int {
-        return self.instanceId;
+        lock {
+            return self.instanceId;
+        }
     }
 
     # Sends the outbound response to the caller.

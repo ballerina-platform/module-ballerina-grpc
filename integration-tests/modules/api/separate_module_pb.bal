@@ -100,8 +100,8 @@ public isolated client class SeparateModuleServiceClient {
     }
 }
 
-public client class ClientStreamingStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ClientStreamingStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -168,8 +168,8 @@ public class SMResStream {
     }
 }
 
-public client class Bidirectional1StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Bidirectional1StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -212,8 +212,8 @@ public client class Bidirectional1StreamingClient {
     }
 }
 
-public client class Bidirectional2StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Bidirectional2StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -256,8 +256,8 @@ public client class Bidirectional2StreamingClient {
     }
 }
 
-public client class SeparateModuleServiceSMResCaller {
-    private grpc:Caller caller;
+public isolated client class SeparateModuleServiceSMResCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

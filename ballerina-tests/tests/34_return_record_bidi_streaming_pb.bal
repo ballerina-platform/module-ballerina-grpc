@@ -35,8 +35,8 @@ public isolated client class HelloWorld34Client {
     }
 }
 
-public client class SayHello34StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class SayHello34StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -79,8 +79,8 @@ public client class SayHello34StreamingClient {
     }
 }
 
-public client class HelloWorld34SampleMsg34Caller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld34SampleMsg34Caller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

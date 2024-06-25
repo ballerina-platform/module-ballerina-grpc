@@ -84,8 +84,8 @@ public class SampleMsg32Stream {
     }
 }
 
-public client class HelloWorld32SampleMsg32Caller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld32SampleMsg32Caller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

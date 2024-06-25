@@ -60,8 +60,8 @@ public isolated client class LocationServiceClient {
     }
 }
 
-public client class LocationServiceLocationDetailCaller {
-    private grpc:Caller caller;
+public isolated client class LocationServiceLocationDetailCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

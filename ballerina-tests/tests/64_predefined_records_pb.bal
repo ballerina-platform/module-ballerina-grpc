@@ -164,8 +164,8 @@ public isolated client class PredefinedRecordsClient {
     }
 }
 
-public client class PredefinedRecordsTimestampCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedRecordsTimestampCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -196,8 +196,8 @@ public client class PredefinedRecordsTimestampCaller {
     }
 }
 
-public client class PredefinedRecordsEmptyCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedRecordsEmptyCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -228,8 +228,8 @@ public client class PredefinedRecordsEmptyCaller {
     }
 }
 
-public client class PredefinedRecordsStructCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedRecordsStructCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -260,8 +260,8 @@ public client class PredefinedRecordsStructCaller {
     }
 }
 
-public client class PredefinedRecordsDurationCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedRecordsDurationCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -292,8 +292,8 @@ public client class PredefinedRecordsDurationCaller {
     }
 }
 
-public client class PredefinedRecordsAnyCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedRecordsAnyCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

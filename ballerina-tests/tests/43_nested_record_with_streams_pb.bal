@@ -99,8 +99,8 @@ public isolated client class NestedMsgServiceClient {
     }
 }
 
-public client class NestedMsgClientStreamingStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class NestedMsgClientStreamingStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -167,8 +167,8 @@ public class NestedMsgStream {
     }
 }
 
-public client class NestedMsgBidirectionalStreamingStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class NestedMsgBidirectionalStreamingStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -211,8 +211,8 @@ public client class NestedMsgBidirectionalStreamingStreamingClient {
     }
 }
 
-public client class NestedMsgServiceStringCaller {
-    private grpc:Caller caller;
+public isolated client class NestedMsgServiceStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -243,8 +243,8 @@ public client class NestedMsgServiceStringCaller {
     }
 }
 
-public client class NestedMsgServiceNestedMsgCaller {
-    private grpc:Caller caller;
+public isolated client class NestedMsgServiceNestedMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
