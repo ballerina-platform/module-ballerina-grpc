@@ -149,8 +149,8 @@ public abstract class ServerCallHandler {
      */
     BObject getConnectionParameter(ServiceResource resource, StreamObserver responseObserver) {
         // generate client responder struct on request message with response observer and response msg type.
-        BObject clientEndpoint = ValueCreator.createObjectValue(getModule(),
-                GrpcConstants.CALLER, responseObserver.hashCode());
+        BObject clientEndpoint = ValueCreator.createObjectValue(getModule(), GrpcConstants.CALLER);
+        clientEndpoint.set(GrpcConstants.CALLER_ID, responseObserver.hashCode());
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_OBSERVER, responseObserver);
         clientEndpoint.addNativeData(GrpcConstants.RESPONSE_MESSAGE_DEFINITION, methodDescriptor.getOutputType());
         String serviceName = resource.getServiceName();

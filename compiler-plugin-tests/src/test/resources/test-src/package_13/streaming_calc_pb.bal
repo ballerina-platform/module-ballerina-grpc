@@ -16,8 +16,8 @@
 
 import ballerina/grpc;
 
-public client class StreamingCalcServiceIntCaller {
-    private grpc:Caller caller;
+public isolated client class StreamingCalcServiceIntCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
