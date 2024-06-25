@@ -19,14 +19,13 @@ import ballerina/jballerina.java;
 # The base client used in the generated client code to provide remote functions for interacting with the caller.
 #
 # + instanceId - The connection ID
-# + remoteDetails - The remote details
-# + local - The local details
-public client class Caller {
+public isolated client class Caller {
 
-    public Remote remoteDetails = {};
-    public Local local = {};
+    private final int instanceId;
 
-    private int instanceId = -1;
+    function init(int instanceId) {
+        self.instanceId = instanceId;
+    }
 
     # Returns the unique identification of the caller.
     # ```ballerina
@@ -100,21 +99,3 @@ isolated function externSendError(Caller endpointClient, Error err) returns Erro
 @java:Method {
     'class: "io.ballerina.stdlib.grpc.nativeimpl.caller.FunctionUtils"
 } external;
-
-# Presents a read-only view of the remote address.
-#
-# + host - The remote host name/IP
-# + port - The remote port
-public type Remote record {|
-    string host = "";
-    int port = 0;
-|};
-
-# Presents a read-only view of the local address.
-#
-# + host - The local host name/IP
-# + port - The local port
-public type Local record {|
-    string host = "";
-    int port = 0;
-|};
