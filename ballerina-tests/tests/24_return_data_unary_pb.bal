@@ -281,8 +281,8 @@ public class SampleMsg24Stream {
     }
 }
 
-public client class HelloWorld24BooleanCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld24BooleanCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -313,8 +313,8 @@ public client class HelloWorld24BooleanCaller {
     }
 }
 
-public client class HelloWorld24ByteCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld24ByteCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -345,8 +345,8 @@ public client class HelloWorld24ByteCaller {
     }
 }
 
-public client class HelloWorld24StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld24StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -377,8 +377,8 @@ public client class HelloWorld24StringCaller {
     }
 }
 
-public client class HelloWorld24SampleMsg24Caller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld24SampleMsg24Caller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -409,8 +409,8 @@ public client class HelloWorld24SampleMsg24Caller {
     }
 }
 
-public client class HelloWorld24IntCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld24IntCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -441,8 +441,8 @@ public client class HelloWorld24IntCaller {
     }
 }
 
-public client class HelloWorld24FloatCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld24FloatCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

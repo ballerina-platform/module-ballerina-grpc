@@ -35,8 +35,8 @@ public isolated client class HelloWorld37Client {
     }
 }
 
-public client class CallWithDeadlineStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class CallWithDeadlineStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -79,8 +79,8 @@ public client class CallWithDeadlineStreamingClient {
     }
 }
 
-public client class HelloWorld37StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld37StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

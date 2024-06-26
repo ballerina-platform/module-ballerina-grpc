@@ -535,8 +535,8 @@ public isolated client class AdServiceClient {
     }
 }
 
-public client class CartServiceEmptyCaller {
-    private grpc:Caller caller;
+public isolated client class CartServiceEmptyCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -567,8 +567,8 @@ public client class CartServiceEmptyCaller {
     }
 }
 
-public client class CartServiceCartCaller {
-    private grpc:Caller caller;
+public isolated client class CartServiceCartCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -599,8 +599,8 @@ public client class CartServiceCartCaller {
     }
 }
 
-public client class RecommendationServiceListRecommendationsResponseCaller {
-    private grpc:Caller caller;
+public isolated client class RecommendationServiceListRecommendationsResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -631,8 +631,8 @@ public client class RecommendationServiceListRecommendationsResponseCaller {
     }
 }
 
-public client class ProductCatalogServiceListProductsResponseCaller {
-    private grpc:Caller caller;
+public isolated client class ProductCatalogServiceListProductsResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -663,8 +663,8 @@ public client class ProductCatalogServiceListProductsResponseCaller {
     }
 }
 
-public client class ProductCatalogServiceSearchProductsResponseCaller {
-    private grpc:Caller caller;
+public isolated client class ProductCatalogServiceSearchProductsResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -695,8 +695,8 @@ public client class ProductCatalogServiceSearchProductsResponseCaller {
     }
 }
 
-public client class ProductCatalogServiceProductCaller {
-    private grpc:Caller caller;
+public isolated client class ProductCatalogServiceProductCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -727,8 +727,8 @@ public client class ProductCatalogServiceProductCaller {
     }
 }
 
-public client class ShippingServiceGetQuoteResponseCaller {
-    private grpc:Caller caller;
+public isolated client class ShippingServiceGetQuoteResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -759,8 +759,8 @@ public client class ShippingServiceGetQuoteResponseCaller {
     }
 }
 
-public client class ShippingServiceShipOrderResponseCaller {
-    private grpc:Caller caller;
+public isolated client class ShippingServiceShipOrderResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -791,8 +791,8 @@ public client class ShippingServiceShipOrderResponseCaller {
     }
 }
 
-public client class CurrencyServiceGetSupportedCurrenciesResponseCaller {
-    private grpc:Caller caller;
+public isolated client class CurrencyServiceGetSupportedCurrenciesResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -823,8 +823,8 @@ public client class CurrencyServiceGetSupportedCurrenciesResponseCaller {
     }
 }
 
-public client class CurrencyServiceMoneyCaller {
-    private grpc:Caller caller;
+public isolated client class CurrencyServiceMoneyCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -855,8 +855,8 @@ public client class CurrencyServiceMoneyCaller {
     }
 }
 
-public client class PaymentServiceChargeResponseCaller {
-    private grpc:Caller caller;
+public isolated client class PaymentServiceChargeResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -887,8 +887,8 @@ public client class PaymentServiceChargeResponseCaller {
     }
 }
 
-public client class EmailServiceEmptyCaller {
-    private grpc:Caller caller;
+public isolated client class EmailServiceEmptyCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -919,8 +919,8 @@ public client class EmailServiceEmptyCaller {
     }
 }
 
-public client class CheckoutServicePlaceOrderResponseCaller {
-    private grpc:Caller caller;
+public isolated client class CheckoutServicePlaceOrderResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -951,8 +951,8 @@ public client class CheckoutServicePlaceOrderResponseCaller {
     }
 }
 
-public client class AdServiceAdResponseCaller {
-    private grpc:Caller caller;
+public isolated client class AdServiceAdResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

@@ -59,8 +59,8 @@ public isolated client class UpdatedServiceClient {
     }
 }
 
-public client class UpdatedServiceGetClassResponseCaller {
-    private grpc:Caller caller;
+public isolated client class UpdatedServiceGetClassResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -91,8 +91,8 @@ public client class UpdatedServiceGetClassResponseCaller {
     }
 }
 
-public client class UpdatedServiceGroupCaller {
-    private grpc:Caller caller;
+public isolated client class UpdatedServiceGroupCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

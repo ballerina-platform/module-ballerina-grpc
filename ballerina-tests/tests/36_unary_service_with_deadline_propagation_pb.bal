@@ -97,8 +97,8 @@ public isolated client class HelloWorld36S2Client {
     }
 }
 
-public client class HelloWorld36S1StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld36S1StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -129,8 +129,8 @@ public client class HelloWorld36S1StringCaller {
     }
 }
 
-public client class HelloWorld36S2StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld36S2StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

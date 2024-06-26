@@ -153,8 +153,8 @@ public isolated client class TimestampServiceClient {
     }
 }
 
-public client class ClientStreamTimeStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ClientStreamTimeStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -197,8 +197,8 @@ public client class ClientStreamTimeStreamingClient {
     }
 }
 
-public client class TimestampServiceTimestampCaller {
-    private grpc:Caller caller;
+public isolated client class TimestampServiceTimestampCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -229,8 +229,8 @@ public client class TimestampServiceTimestampCaller {
     }
 }
 
-public client class TimestampServiceGreetingCaller {
-    private grpc:Caller caller;
+public isolated client class TimestampServiceGreetingCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

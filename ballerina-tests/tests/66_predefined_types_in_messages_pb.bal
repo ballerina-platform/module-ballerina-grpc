@@ -144,8 +144,8 @@ public isolated client class PredefinedTypesInServiceClient {
     }
 }
 
-public client class PredefinedTypesInServiceStructMessageResponseCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedTypesInServiceStructMessageResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -176,8 +176,8 @@ public client class PredefinedTypesInServiceStructMessageResponseCaller {
     }
 }
 
-public client class PredefinedTypesInServiceTimestampMessageResponseCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedTypesInServiceTimestampMessageResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -208,8 +208,8 @@ public client class PredefinedTypesInServiceTimestampMessageResponseCaller {
     }
 }
 
-public client class PredefinedTypesInServiceAnyMessageResponseCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedTypesInServiceAnyMessageResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -240,8 +240,8 @@ public client class PredefinedTypesInServiceAnyMessageResponseCaller {
     }
 }
 
-public client class PredefinedTypesInServiceDurationMessageResponseCaller {
-    private grpc:Caller caller;
+public isolated client class PredefinedTypesInServiceDurationMessageResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

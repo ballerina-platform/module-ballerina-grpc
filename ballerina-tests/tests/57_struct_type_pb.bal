@@ -281,8 +281,8 @@ public isolated client class StructServiceClient {
     }
 }
 
-public client class ClientStreamStructType1StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ClientStreamStructType1StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -325,8 +325,8 @@ public client class ClientStreamStructType1StreamingClient {
     }
 }
 
-public client class ClientStreamStructType2StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ClientStreamStructType2StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -393,8 +393,8 @@ public class StructMsgStream {
     }
 }
 
-public client class BidirectionalStreamStructType1StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidirectionalStreamStructType1StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -437,8 +437,8 @@ public client class BidirectionalStreamStructType1StreamingClient {
     }
 }
 
-public client class BidirectionalStreamStructType2StreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidirectionalStreamStructType2StreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -481,8 +481,8 @@ public client class BidirectionalStreamStructType2StreamingClient {
     }
 }
 
-public client class StructServiceStructMsgCaller {
-    private grpc:Caller caller;
+public isolated client class StructServiceStructMsgCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -513,8 +513,8 @@ public client class StructServiceStructMsgCaller {
     }
 }
 
-public client class StructServiceStructCaller {
-    private grpc:Caller caller;
+public isolated client class StructServiceStructCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -545,8 +545,8 @@ public client class StructServiceStructCaller {
     }
 }
 
-public client class StructServiceStringCaller {
-    private grpc:Caller caller;
+public isolated client class StructServiceStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

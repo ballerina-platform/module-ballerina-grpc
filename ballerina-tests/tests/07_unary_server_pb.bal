@@ -242,8 +242,8 @@ public isolated client class HelloWorld100Client {
     }
 }
 
-public client class HelloWorld100BooleanCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld100BooleanCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -274,8 +274,8 @@ public client class HelloWorld100BooleanCaller {
     }
 }
 
-public client class HelloWorld100StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld100StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -306,8 +306,8 @@ public client class HelloWorld100StringCaller {
     }
 }
 
-public client class HelloWorld100IntCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld100IntCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -338,8 +338,8 @@ public client class HelloWorld100IntCaller {
     }
 }
 
-public client class HelloWorld100NilCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld100NilCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -362,8 +362,8 @@ public client class HelloWorld100NilCaller {
     }
 }
 
-public client class HelloWorld100FloatCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld100FloatCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -394,8 +394,8 @@ public client class HelloWorld100FloatCaller {
     }
 }
 
-public client class HelloWorld100ResponseCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld100ResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

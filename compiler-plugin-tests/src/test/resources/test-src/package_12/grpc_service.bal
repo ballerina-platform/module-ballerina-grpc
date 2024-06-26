@@ -44,8 +44,8 @@ public type ContextString record {|
     map<string|string[]> headers;
 |};
 
-public client class HelloWorldStringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

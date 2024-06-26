@@ -58,8 +58,8 @@ public isolated client class HelloWorld31Client {
     }
 }
 
-public client class HelloWorld31SampleMsg31Caller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld31SampleMsg31Caller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

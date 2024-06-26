@@ -171,8 +171,8 @@ public isolated client class HelloWorld55EmptyScopeClient {
     }
 }
 
-public client class Hello55ClientStreamingStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Hello55ClientStreamingStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -215,8 +215,8 @@ public client class Hello55ClientStreamingStreamingClient {
     }
 }
 
-public client class Hello55BiDiWithCallerStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Hello55BiDiWithCallerStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -259,8 +259,8 @@ public client class Hello55BiDiWithCallerStreamingClient {
     }
 }
 
-public client class Hello55BiDiWithReturnStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Hello55BiDiWithReturnStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -303,8 +303,8 @@ public client class Hello55BiDiWithReturnStreamingClient {
     }
 }
 
-public client class HelloWorld55StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld55StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -335,8 +335,8 @@ public client class HelloWorld55StringCaller {
     }
 }
 
-public client class HelloWorld55EmptyScopeStringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld55EmptyScopeStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

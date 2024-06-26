@@ -98,8 +98,8 @@ public isolated client class HeadersServiceClient {
     }
 }
 
-public client class ClientStrStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ClientStrStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -166,8 +166,8 @@ public class HSResStream {
     }
 }
 
-public client class BidirectionalStrStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class BidirectionalStrStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -210,8 +210,8 @@ public client class BidirectionalStrStreamingClient {
     }
 }
 
-public client class HeadersServiceHSResCaller {
-    private grpc:Caller caller;
+public isolated client class HeadersServiceHSResCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

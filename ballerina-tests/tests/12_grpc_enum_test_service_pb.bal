@@ -59,8 +59,8 @@ public isolated client class TestEnumServiceClient {
     }
 }
 
-public client class TestEnumServiceStringCaller {
-    private grpc:Caller caller;
+public isolated client class TestEnumServiceStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

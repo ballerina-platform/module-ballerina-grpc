@@ -86,8 +86,8 @@ public isolated client class OneofFieldServiceClient {
     }
 }
 
-public client class OneofFieldServiceZZZCaller {
-    private grpc:Caller caller;
+public isolated client class OneofFieldServiceZZZCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -118,8 +118,8 @@ public client class OneofFieldServiceZZZCaller {
     }
 }
 
-public client class OneofFieldServiceResponse1Caller {
-    private grpc:Caller caller;
+public isolated client class OneofFieldServiceResponse1Caller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

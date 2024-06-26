@@ -95,8 +95,8 @@ public isolated client class HelloBallerinaClient {
     }
 }
 
-public client class HelloWorldStringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -127,8 +127,8 @@ public client class HelloWorldStringCaller {
     }
 }
 
-public client class HelloBallerinaStringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloBallerinaStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

@@ -35,8 +35,8 @@ public isolated client class HelloWorld26Client {
     }
 }
 
-//public client class LotsOfGreetingsStreamingClient {
-//    private grpc:StreamingClient sClient;
+//public isolated client class LotsOfGreetingsStreamingClient {
+//    private final grpc:StreamingClient sClient;
 //
 //    isolated function init(grpc:StreamingClient sClient) {
 //        self.sClient = sClient;
@@ -79,8 +79,8 @@ public isolated client class HelloWorld26Client {
 //    }
 //}
 
-public client class HelloWorld26StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld26StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

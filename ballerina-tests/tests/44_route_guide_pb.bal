@@ -98,8 +98,8 @@ public isolated client class RouteGuideClient {
     }
 }
 
-public client class RecordRouteStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class RecordRouteStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -166,8 +166,8 @@ public class FeatureStream {
     }
 }
 
-public client class RouteChatStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class RouteChatStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -210,8 +210,8 @@ public client class RouteChatStreamingClient {
     }
 }
 
-public client class RouteGuideRouteSummaryCaller {
-    private grpc:Caller caller;
+public isolated client class RouteGuideRouteSummaryCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -242,8 +242,8 @@ public client class RouteGuideRouteSummaryCaller {
     }
 }
 
-public client class RouteGuideRouteNoteCaller {
-    private grpc:Caller caller;
+public isolated client class RouteGuideRouteNoteCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -274,8 +274,8 @@ public client class RouteGuideRouteNoteCaller {
     }
 }
 
-public client class RouteGuideFeatureCaller {
-    private grpc:Caller caller;
+public isolated client class RouteGuideFeatureCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

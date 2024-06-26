@@ -144,8 +144,8 @@ public isolated client class RepeatedTypesServiceClient {
     }
 }
 
-public client class RepeatedTypesServiceDurationArrayResponseCaller {
-    private grpc:Caller caller;
+public isolated client class RepeatedTypesServiceDurationArrayResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -176,8 +176,8 @@ public client class RepeatedTypesServiceDurationArrayResponseCaller {
     }
 }
 
-public client class RepeatedTypesServiceTimestampArrayResponseCaller {
-    private grpc:Caller caller;
+public isolated client class RepeatedTypesServiceTimestampArrayResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -208,8 +208,8 @@ public client class RepeatedTypesServiceTimestampArrayResponseCaller {
     }
 }
 
-public client class RepeatedTypesServiceAnyArrayResponseCaller {
-    private grpc:Caller caller;
+public isolated client class RepeatedTypesServiceAnyArrayResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -240,8 +240,8 @@ public client class RepeatedTypesServiceAnyArrayResponseCaller {
     }
 }
 
-public client class RepeatedTypesServiceStructArrayResponseCaller {
-    private grpc:Caller caller;
+public isolated client class RepeatedTypesServiceStructArrayResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

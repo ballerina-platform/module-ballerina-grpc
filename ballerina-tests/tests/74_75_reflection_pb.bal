@@ -35,8 +35,8 @@ public isolated client class ServerReflectionClient {
     }
 }
 
-public client class ServerReflectionInfoStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class ServerReflectionInfoStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -79,8 +79,8 @@ public client class ServerReflectionInfoStreamingClient {
     }
 }
 
-public client class ServerReflectionServerReflectionResponseCaller {
-    private grpc:Caller caller;
+public isolated client class ServerReflectionServerReflectionResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

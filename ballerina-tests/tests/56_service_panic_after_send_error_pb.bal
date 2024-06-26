@@ -63,8 +63,8 @@ public isolated client class HelloWorld56Client {
     }
 }
 
-public client class Hello56BiDiStreamingClient {
-    private grpc:StreamingClient sClient;
+public isolated client class Hello56BiDiStreamingClient {
+    private final grpc:StreamingClient sClient;
 
     isolated function init(grpc:StreamingClient sClient) {
         self.sClient = sClient;
@@ -107,8 +107,8 @@ public client class Hello56BiDiStreamingClient {
     }
 }
 
-public client class HelloWorld56StringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorld56StringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

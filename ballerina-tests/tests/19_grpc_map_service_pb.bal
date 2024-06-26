@@ -111,8 +111,8 @@ public isolated client class NegotiatorClient {
     }
 }
 
-public client class NegotiatorNilCaller {
-    private grpc:Caller caller;
+public isolated client class NegotiatorNilCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -135,8 +135,8 @@ public client class NegotiatorNilCaller {
     }
 }
 
-public client class NegotiatorHandshakeResponseCaller {
-    private grpc:Caller caller;
+public isolated client class NegotiatorHandshakeResponseCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

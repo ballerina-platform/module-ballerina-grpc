@@ -87,8 +87,8 @@ public isolated client class OrderManagementClient {
     }
 }
 
-public client class OrderManagementOrderCaller {
-    private grpc:Caller caller;
+public isolated client class OrderManagementOrderCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -119,8 +119,8 @@ public client class OrderManagementOrderCaller {
     }
 }
 
-public client class OrderManagementStringCaller {
-    private grpc:Caller caller;
+public isolated client class OrderManagementStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;

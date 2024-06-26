@@ -169,8 +169,8 @@ public isolated client class HelloWorldClient {
     }
 }
 
-public client class HelloWorldStringCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldStringCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -201,8 +201,8 @@ public client class HelloWorldStringCaller {
     }
 }
 
-public client class HelloWorldNilCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldNilCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -225,8 +225,8 @@ public client class HelloWorldNilCaller {
     }
 }
 
-public client class HelloWorldPersonCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldPersonCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -257,8 +257,8 @@ public client class HelloWorldPersonCaller {
     }
 }
 
-public client class HelloWorldStockNamesCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldStockNamesCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -289,8 +289,8 @@ public client class HelloWorldStockNamesCaller {
     }
 }
 
-public client class HelloWorldStockQuotesCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldStockQuotesCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
@@ -321,8 +321,8 @@ public client class HelloWorldStockQuotesCaller {
     }
 }
 
-public client class HelloWorldStockQuoteCaller {
-    private grpc:Caller caller;
+public isolated client class HelloWorldStockQuoteCaller {
+    private final grpc:Caller caller;
 
     public isolated function init(grpc:Caller caller) {
         self.caller = caller;
