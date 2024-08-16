@@ -14,4 +14,4 @@ max_replicas=1
 
 [[cloud.config.maps]]
 file="./resources/route_guide_db.json"
-mount_path="/home/ballerina/resources/route_guide_db.json"
+mount_dir="/home/ballerina/resources"
