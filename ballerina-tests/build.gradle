@@ -207,7 +207,7 @@ task stopLdapServer() {
             if (stdOut.toString().contains("openldap-server")) {
                 println "Stopping LDAP server."
                 exec {
-                    commandLine 'sh', '-c', "docker-compose -f tests/resources/openldap/compose.yml rm -svf"
+                    commandLine 'sh', '-c', "docker compose -f tests/resources/openldap/compose.yml rm -svf"
                     standardOutput = stdOut
                 }
                 println stdOut.toString()
