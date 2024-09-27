@@ -250,6 +250,7 @@ isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns grpc:
 
         string|grpc:Error? err = strClient->receiveString();
         test:assertTrue(err is grpc:Error);
-        test:assertTrue((<grpc:Error>err).message().startsWith("Connection refused: "));
+        test:assertTrue((<grpc:Error>err).message().startsWith("SSL connection failed:"),
+        msg = "Failed with error: " + (<grpc:Error>err).message());
     }
 }
