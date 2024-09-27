@@ -151,8 +151,8 @@ path = "./lib/netty-tcnative-boringssl-static-2.0.65.Final-osx-x86_64.jar"
 [[platform.java17.dependency]]
 groupId = "com.google.protobuf"
 artifactId = "protobuf-java"
-version = "3.20.3"
-path = "./lib/protobuf-java-3.20.3.jar"
+version = "3.25.5"
+path = "./lib/protobuf-java-3.25.5.jar"
 
 [[platform.java17.dependency]]
 groupId = "com.google.api.grpc"
