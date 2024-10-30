@@ -239,7 +239,7 @@ public class ServicesBuilderUtils {
             if (descriptorData == null) {
                 descriptorData = annotationMap.getStringValue(StringUtils.fromString("descriptor"));
             }
-            BMap<BString, BString> descMap = (BMap<BString, BString>) annotationMap.getMapValue(
+            BMap<BString, Object> descMap = (BMap<BString, Object>) annotationMap.getMapValue(
                     StringUtils.fromString("descMap"));
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
@@ -258,9 +258,9 @@ public class ServicesBuilderUtils {
             } else if (type.getFields().containsKey("value")) {
                 descriptorData = service.getStringValue(StringUtils.fromString("value"));
             }
-            BMap<BString, BString> descMap = null;
+            BMap<BString, Object> descMap = null;
             if (type.getFields().containsKey("descMap")) {
-                descMap = (BMap<BString, BString>) service.getMapValue(StringUtils.fromString("descMap"));
+                descMap = service.getMapValue(StringUtils.fromString("descMap"));
             }
             if (descriptorData == null || descMap == null) {
                 return null;
@@ -273,8 +273,7 @@ public class ServicesBuilderUtils {
 
     }
 
-    private static Descriptors.FileDescriptor getFileDescriptor(
-            BString descriptorData, BMap<BString, BString> descMap)
+    private static Descriptors.FileDescriptor getFileDescriptor(BString descriptorData, BMap<BString, Object> descMap)
             throws InvalidProtocolBufferException, Descriptors.DescriptorValidationException, GrpcServerException {
 
         byte[] descriptor = hexStringToByteArray(descriptorData.getValue());
@@ -291,14 +290,15 @@ public class ServicesBuilderUtils {
         List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             String dependencyKey = dependency.toStringUtf8();
-            if (descMap == null || descMap.size() == 0) {
+            if (descMap == null || descMap.isEmpty()) {
                 Descriptors.FileDescriptor dependentDescriptor = StandardDescriptorBuilder.getFileDescriptor
                         (dependencyKey);
                 if (dependentDescriptor != null) {
                     fileDescriptors.add(dependentDescriptor);
                 }
             } else if (descMap.containsKey(StringUtils.fromString(dependencyKey))) {
-                fileDescriptors.add(getFileDescriptor(descMap.get(StringUtils.fromString(dependencyKey)), descMap));
+                fileDescriptors.add(getFileDescriptor((BString) descMap.get(StringUtils.fromString(dependencyKey)),
+                        descMap));
             }
         }
         return Descriptors.FileDescriptor.buildFrom(descriptorProto,

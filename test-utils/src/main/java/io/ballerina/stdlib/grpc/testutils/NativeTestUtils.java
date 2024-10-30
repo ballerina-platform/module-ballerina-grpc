@@ -204,7 +204,7 @@ public final class NativeTestUtils {
         return externRegister(null, serviceEndpoint, null, null);
     }
 
-    public static Object externInvokeNextResultErrorCase(BObject streamIterator) {
+    public static Object externInvokeNextResultErrorCase(Environment env, BObject streamIterator) {
         BlockingQueue b = new BlockingQueue() {
             @Override
             public boolean add(Object o) {
@@ -305,7 +305,7 @@ public final class NativeTestUtils {
         };
         streamIterator.addNativeData(GrpcConstants.MESSAGE_QUEUE, b);
         try {
-            nextResult(streamIterator);
+            nextResult(env, streamIterator);
         } catch (Exception e) {
             return e;
         }

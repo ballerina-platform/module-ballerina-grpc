@@ -20,12 +20,12 @@ package io.ballerina.stdlib.grpc.listener;
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.TypeTags;
-import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.TypeUtils;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObservabilityConstants;
@@ -173,8 +173,9 @@ public abstract class ServerCallHandler {
 
     void onMessageInvoke(ServiceResource resource, Message request, StreamObserver responseObserver,
                          ObserverContext context) {
-        Callback callback = new UnaryCallableUnitCallBack(resource.getRuntime(), responseObserver, isEmptyResponse(),
-                this.methodDescriptor.getOutputType(), context);
+        UnaryCallableUnitCallBack callback =
+                new UnaryCallableUnitCallBack(resource.getRuntime(), responseObserver, isEmptyResponse(),
+                        this.methodDescriptor.getOutputType(), context);
         Object requestParam = request != null ? request.getbMessage() : null;
         HttpHeaders headers = request != null ? request.getHeaders() : null;
         Object[] requestParams = computeResourceParams(resource, requestParam, headers, responseObserver);
@@ -186,29 +187,32 @@ public abstract class ServerCallHandler {
 
         String functionName = resource.getFunctionName();
         ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(resource.getService()));
-
-        boolean isEmpty = isEmpty(requestParams);
-        if (isEmpty) {
-            if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
-                resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
-                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                        resource.getReturnType());
-            } else {
-                resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
-                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                        resource.getReturnType());
+        Thread.startVirtualThread(() -> {
+            try {
+                boolean isEmpty = isEmpty(requestParams);
+                Object result;
+                if (isEmpty) {
+                    if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
+                        result = resource.getRuntime().startIsolatedWorker(resource.getService(), functionName, null,
+                                GrpcConstants.ON_MESSAGE_METADATA, properties).get();
+                    } else {
+                        result = resource.getRuntime().startNonIsolatedWorker(resource.getService(), functionName, null,
+                                GrpcConstants.ON_MESSAGE_METADATA, properties).get();
+                    }
+                } else {
+                    if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
+                        result = resource.getRuntime().startIsolatedWorker(resource.getService(), functionName, null,
+                                GrpcConstants.ON_MESSAGE_METADATA, properties, requestParams).get();
+                    } else {
+                        result = resource.getRuntime().startNonIsolatedWorker(resource.getService(), functionName, null,
+                                GrpcConstants.ON_MESSAGE_METADATA, properties, requestParams).get();
+                    }
+                }
+                callback.notifySuccess(result);
+            } catch (BError error) {
+                callback.notifyFailure(error);
             }
-        } else {
-            if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
-                resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), functionName, null,
-                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                        resource.getReturnType(), requestParams);
-            } else {
-                resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), functionName, null,
-                        GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                        resource.getReturnType(), requestParams);
-            }
-        }
+        });
     }
 
     Boolean isEmpty(Object[] requestParams) {
@@ -230,12 +234,11 @@ public abstract class ServerCallHandler {
         int i = 0;
         if ((signatureParamSize >= 1) && (signatureParams.get(0).getTag() == TypeTags.OBJECT_TYPE_TAG) &&
                 signatureParams.get(0).getName().contains(CALLER_TYPE)) {
-            paramValues = new Object[signatureParams.size() * 2];
+            paramValues = new Object[signatureParams.size()];
             paramValues[i] = getConnectionParameter(resource, responseObserver);
-            paramValues[i + 1] = true;
-            i = i + 2;
+            i = i + 1;
         } else {
-            paramValues = new Object[2];
+            paramValues = new Object[1];
         }
         if (resource.isHeaderRequired()) {
             BMap headerValues = MessageUtils.createHeaderMap(headers);
@@ -268,11 +271,9 @@ public abstract class ServerCallHandler {
                             MessageUtils.getContextTypeName(resource.getRpcInputType()), valueMap);
                 }
                 paramValues[i] = contentContext;
-                paramValues[i + 1] = true;
             }
         } else if (requestParam != null) {
             paramValues[i] = requestParam;
-            paramValues[i + 1] = true;
         }
         return paramValues;
     }
