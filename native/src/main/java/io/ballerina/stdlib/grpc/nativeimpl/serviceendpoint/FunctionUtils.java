@@ -209,26 +209,28 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
         return null;
     }
 
-    public static Object nextResult(BObject streamIterator) {
-
-        BlockingQueue<?> messageQueue = (BlockingQueue<?>) streamIterator.getNativeData(GrpcConstants.MESSAGE_QUEUE);
-        try {
-            Message nextMessage = (Message) messageQueue.take();
-            if (nextMessage.getHeaders() != null) {
-                streamIterator.addNativeData(GrpcConstants.HEADERS,
-                        MessageUtils.createHeaderMap(nextMessage.getHeaders()));
+    public static Object nextResult(Environment env, BObject streamIterator) {
+        return env.yieldAndRun(() -> {
+            BlockingQueue<?> messageQueue =
+                    (BlockingQueue<?>) streamIterator.getNativeData(GrpcConstants.MESSAGE_QUEUE);
+            try {
+                Message nextMessage = (Message) messageQueue.take();
+                if (nextMessage.getHeaders() != null) {
+                    streamIterator.addNativeData(GrpcConstants.HEADERS,
+                            MessageUtils.createHeaderMap(nextMessage.getHeaders()));
+                }
+                if (nextMessage.isError()) {
+                    return MessageUtils.getConnectorError(nextMessage.getError());
+                } else {
+                    return nextMessage.getbMessage();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                String message = "Internal error occurred. The current thread got interrupted";
+                throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
+                        .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription(message)));
             }
-            if (nextMessage.isError()) {
-                return MessageUtils.getConnectorError(nextMessage.getError());
-            } else {
-                return nextMessage.getbMessage();
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            String message = "Internal error occurred. The current thread got interrupted";
-            throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
-                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription(message)));
-        }
+        });
     }
 
     public static Object closeStream(Environment env, BObject streamIterator) {

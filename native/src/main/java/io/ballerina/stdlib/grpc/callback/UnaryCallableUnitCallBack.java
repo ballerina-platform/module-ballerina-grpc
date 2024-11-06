@@ -18,7 +18,6 @@
 package io.ballerina.stdlib.grpc.callback;
 
 import com.google.protobuf.Descriptors;
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.Runtime;
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.types.ObjectType;
@@ -56,11 +55,11 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
 
     private static final Logger LOG = LoggerFactory.getLogger(UnaryCallableUnitCallBack.class);
 
-    private Runtime runtime;
-    private StreamObserver requestSender;
-    private boolean emptyResponse;
-    private Descriptors.Descriptor outputType;
-    private ObserverContext observerContext;
+    private final Runtime runtime;
+    private final StreamObserver requestSender;
+    private final boolean emptyResponse;
+    private final Descriptors.Descriptor outputType;
+    private final ObserverContext observerContext;
 
 
     public UnaryCallableUnitCallBack(Runtime runtime, StreamObserver requestSender, boolean isEmptyResponse,
@@ -72,9 +71,7 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         this.observerContext = context;
     }
 
-    @Override
     public void notifySuccess(Object response) {
-        super.notifySuccess(response);
         // check whether connection is closed.
         if (requestSender instanceof ServerCallHandler.ServerCallStreamObserver) {
             ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
@@ -120,17 +117,25 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                 ReturnStreamUnitCallBack returnStreamUnitCallBack = new ReturnStreamUnitCallBack(
                         runtime, requestSender, outputType, bObject, headers);
                 ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(bObject));
-                if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
-                    runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null, null,
-                            returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
-                } else {
-                    runtime.invokeMethodAsyncSequentially(bObject, STREAMING_NEXT_FUNCTION, null, null,
-                            returnStreamUnitCallBack, null, PredefinedTypes.TYPE_NULL);
-                }
+                Thread.startVirtualThread(() -> {
+                    try {
+                        Object result;
+                        if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
+                            result = runtime.startIsolatedWorker(bObject, STREAMING_NEXT_FUNCTION, null, null, null)
+                                    .get();
+                        } else {
+                            result = runtime.startNonIsolatedWorker(bObject, STREAMING_NEXT_FUNCTION, null, null,
+                                    null).get();
+                        }
+                        returnStreamUnitCallBack.notifySuccess(result);
+                    } catch (BError error) {
+                        returnStreamUnitCallBack.notifyFailure(error);
+                    }
+                });
             } else {
                 // If content is null and remote function doesn't return empty response means. response is already sent
                 // to client via caller object, but connection is not closed already by calling complete function.
-                // Hence closing the connection.
+                // Hence, closing the connection.
                 if (content == null) {
                     requestSender.onCompleted();
                 } else {
@@ -151,7 +156,6 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         }
     }
 
-    @Override
     public void notifyFailure(BError error) {
         if (requestSender instanceof ServerCallHandler.ServerCallStreamObserver) {
             ServerCallHandler.ServerCallStreamObserver serverCallStreamObserver = (ServerCallHandler
@@ -176,7 +180,6 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
         if (observerContext != null) {
             observerContext.addProperty(PROPERTY_KEY_HTTP_STATUS_CODE, HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
-        super.notifyFailure(error);
         if (isPanic) {
             System.exit(1);
         }
@@ -187,10 +190,10 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
      *
      */
     public class ReturnStreamUnitCallBack extends AbstractCallableUnitCallBack {
-        private StreamObserver requestSender;
-        private Descriptors.Descriptor outputType;
-        private Runtime runtime;
-        private BObject bObject;
+        private final StreamObserver requestSender;
+        private final Descriptors.Descriptor outputType;
+        private final Runtime runtime;
+        private final BObject bObject;
         private HttpHeaders headers;
 
         public ReturnStreamUnitCallBack(Runtime runtime, StreamObserver requestSender,
@@ -202,7 +205,6 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
             this.headers = headers;
         }
 
-        @Override
         public void notifySuccess(Object response) {
             if (response != null) {
                 Message msg;
@@ -218,22 +220,27 @@ public class UnaryCallableUnitCallBack extends AbstractCallableUnitCallBack {
                 }
                 requestSender.onNext(msg);
                 ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(bObject));
-                if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
-                    runtime.invokeMethodAsyncConcurrently(bObject, STREAMING_NEXT_FUNCTION, null, null,
-                            this, null, PredefinedTypes.TYPE_NULL);
-                } else {
-                    runtime.invokeMethodAsyncSequentially(bObject, STREAMING_NEXT_FUNCTION, null, null,
-                            this, null, PredefinedTypes.TYPE_NULL);
-                }
+                Thread.startVirtualThread(() -> {
+                    try {
+                        Object result;
+                        if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
+                            result = runtime.startIsolatedWorker(bObject, STREAMING_NEXT_FUNCTION, null, null, null)
+                                    .get();
+                        } else {
+                            result = runtime.startNonIsolatedWorker(bObject, STREAMING_NEXT_FUNCTION, null, null, null)
+                                    .get();
+                        }
+                        this.notifySuccess(result);
+                    } catch (BError error) {
+                        this.notifyFailure(error);
+                    }
+                });
             } else {
                 requestSender.onCompleted();
             }
-
         }
 
-        @Override
         public void notifyFailure(BError error) {
-            super.notifyFailure(error);
         }
     }
 }

@@ -19,16 +19,17 @@
 package io.ballerina.stdlib.grpc;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.Future;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * {@code DataContext} is the wrapper to hold {@code Strand} and {@code Future}.
  */
 public class DataContext {
-    private Environment environment;
-    private Future future;
+    private final Environment environment;
+    private final CompletableFuture<Object> future;
 
-    public DataContext(Environment env, Future future) {
+    public DataContext(Environment env, CompletableFuture<Object> future) {
         this.environment = env;
         this.future = future;
     }
@@ -37,7 +38,7 @@ public class DataContext {
         return environment;
     }
 
-    public Future getFuture() {
+    public CompletableFuture<Object> getFuture() {
         return future;
     }
 }
