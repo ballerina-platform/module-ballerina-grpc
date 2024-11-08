@@ -51,6 +51,7 @@ public class ServerConnectorListener implements HttpConnectorListener {
 
     private static final Logger log = LoggerFactory.getLogger(ServerConnectorListener.class);
     private static final String SERVER_CONNECTOR_GRPC = "grpc";
+    private static final String GRPC_PROTOCOL = "grpc";
 
     private final ServicesRegistry servicesRegistry;
     private Map<String, Long> messageSizeMap;
@@ -151,7 +152,7 @@ public class ServerConnectorListener implements HttpConnectorListener {
         observerContext.addProperty(PROPERTY_TRACE_PROPERTIES, httpHeaders);
         observerContext.addTag(TAG_KEY_HTTP_METHOD,
                 (String) inboundMessage.getProperty(HttpConstants.HTTP_REQUEST_METHOD.getValue()));
-        observerContext.addTag(TAG_KEY_PROTOCOL, (String) inboundMessage.getProperty(HttpConstants.PROTOCOL));
+        observerContext.addTag(TAG_KEY_PROTOCOL, GRPC_PROTOCOL);
         observerContext.addTag(TAG_KEY_HTTP_URL, inboundMessage.getPath());
         return observerContext;
     }
