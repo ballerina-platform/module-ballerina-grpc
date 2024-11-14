@@ -18,7 +18,6 @@
 package io.ballerina.stdlib.grpc.listener;
 
 import com.google.protobuf.Descriptors;
-import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
