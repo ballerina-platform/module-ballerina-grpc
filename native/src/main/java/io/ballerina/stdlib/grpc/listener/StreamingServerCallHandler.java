@@ -19,6 +19,7 @@
 package io.ballerina.stdlib.grpc.listener;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ObjectType;
@@ -190,14 +191,9 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(service));
         Thread.startVirtualThread(() -> {
             try {
-                Object result;
-                if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
-                    result = resource.getRuntime().startIsolatedWorker(service, functionName, null,
-                            GrpcConstants.ON_MESSAGE_METADATA, properties, requestParams).get();
-                } else {
-                    result = resource.getRuntime().startNonIsolatedWorker(service, functionName, null,
-                            GrpcConstants.ON_MESSAGE_METADATA, properties, requestParams).get();
-                }
+                boolean isConcurrentSafe = serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName);
+                StrandMetadata metadata = new StrandMetadata(isConcurrentSafe, properties);
+                Object result = resource.getRuntime().callMethod(service, functionName, metadata, requestParams);
                 callback.notifySuccess(result);
             } catch (BError error) {
                 callback.notifyFailure(error);
