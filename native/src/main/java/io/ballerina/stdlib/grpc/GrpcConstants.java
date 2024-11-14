@@ -16,7 +16,6 @@
 package io.ballerina.stdlib.grpc;
 
 import com.google.protobuf.DescriptorProtos;
-import io.ballerina.runtime.api.async.StrandMetadata;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BString;
 
@@ -25,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_BUILTIN_PKG_PREFIX;
 import static io.ballerina.runtime.api.constants.RuntimeConstants.ORG_NAME_SEPARATOR;
 import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 
@@ -37,7 +35,7 @@ import static io.ballerina.stdlib.grpc.nativeimpl.ModuleUtils.getModule;
 public class GrpcConstants {
     //gRPC package name.
     public static final String PROTOCOL_PACKAGE_GRPC = "grpc";
-    public static final String PROTOCOL_PACKAGE_VERSION_GRPC = getModule().getVersion();
+    public static final String PROTOCOL_PACKAGE_VERSION_GRPC = getModule().getMajorVersion();
     public static final String ORG_NAME = "ballerina";
     public static final String PROTOCOL_STRUCT_PACKAGE_GRPC = ORG_NAME + ORG_NAME_SEPARATOR +
             "grpc:" + PROTOCOL_PACKAGE_VERSION_GRPC;
@@ -239,11 +237,6 @@ public class GrpcConstants {
 
     //Observability tag keys
     public static final String TAG_KEY_GRPC_ERROR_MESSAGE = "grpc.error_message";
-
-    // Strand meta data
-    public static final StrandMetadata ON_MESSAGE_METADATA =
-            new StrandMetadata(BALLERINA_BUILTIN_PKG_PREFIX, PROTOCOL_PACKAGE_GRPC, PROTOCOL_PACKAGE_VERSION_GRPC,
-                               ON_MESSAGE_RESOURCE);
 
     public static final BString ENDPOINT_CONFIG_SECURESOCKET = StringUtils.fromString("secureSocket");
     public static final BString SECURESOCKET_CONFIG_DISABLE_SSL = StringUtils.fromString("enable");

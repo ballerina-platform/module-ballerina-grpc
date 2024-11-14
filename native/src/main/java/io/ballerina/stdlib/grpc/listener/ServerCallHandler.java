@@ -18,12 +18,14 @@
 package io.ballerina.stdlib.grpc.listener;
 
 import com.google.protobuf.Descriptors;
-import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
 import io.ballerina.runtime.api.types.ObjectType;
+import io.ballerina.runtime.api.types.PredefinedTypes;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.types.TypeTags;
 import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
@@ -190,23 +192,14 @@ public abstract class ServerCallHandler {
         Thread.startVirtualThread(() -> {
             try {
                 boolean isEmpty = isEmpty(requestParams);
+                boolean isConcurrentSafe = serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName);
+                StrandMetadata metadata = new StrandMetadata(isConcurrentSafe, properties);
                 Object result;
                 if (isEmpty) {
-                    if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
-                        result = resource.getRuntime().startIsolatedWorker(resource.getService(), functionName, null,
-                                GrpcConstants.ON_MESSAGE_METADATA, properties).get();
-                    } else {
-                        result = resource.getRuntime().startNonIsolatedWorker(resource.getService(), functionName, null,
-                                GrpcConstants.ON_MESSAGE_METADATA, properties).get();
-                    }
+                    result = resource.getRuntime().callMethod(resource.getService(), functionName, metadata);
                 } else {
-                    if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
-                        result = resource.getRuntime().startIsolatedWorker(resource.getService(), functionName, null,
-                                GrpcConstants.ON_MESSAGE_METADATA, properties, requestParams).get();
-                    } else {
-                        result = resource.getRuntime().startNonIsolatedWorker(resource.getService(), functionName, null,
-                                GrpcConstants.ON_MESSAGE_METADATA, properties, requestParams).get();
-                    }
+                    result = resource.getRuntime().callMethod(resource.getService(), functionName, metadata,
+                            requestParams);
                 }
                 callback.notifySuccess(result);
             } catch (BError error) {

@@ -19,6 +19,7 @@ package io.ballerina.stdlib.grpc.callback;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Runtime;
+import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.utils.StringUtils;
@@ -110,13 +111,10 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
             ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(bObject));
             Thread.startVirtualThread(() -> {
                 try {
-                    Object result;
-                    if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
-                        result = runtime.startIsolatedWorker(bObject, STREAMING_NEXT_FUNCTION, null, null, null).get();
-                    } else {
-                        result = runtime.startNonIsolatedWorker(bObject, STREAMING_NEXT_FUNCTION, null, null, null)
-                                .get();
-                    }
+                    boolean isConcurrentSafe = serviceObjectType.isIsolated() &&
+                            serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION);
+                    StrandMetadata metadata = new StrandMetadata(isConcurrentSafe, null);
+                    Object result = runtime.callMethod(bObject, STREAMING_NEXT_FUNCTION, metadata);
                     returnStreamUnitCallBack.notifySuccess(result);
                 } catch (BError error) {
                     returnStreamUnitCallBack.notifyFailure(error);
@@ -209,14 +207,10 @@ public class StreamingCallableUnitCallBack extends AbstractCallableUnitCallBack 
                 ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(bObject));
                 Thread.startVirtualThread(() -> {
                     try {
-                        Object result;
-                        if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION)) {
-                            result = runtime.startIsolatedWorker(bObject, STREAMING_NEXT_FUNCTION, null, null, null)
-                                    .get();
-                        } else {
-                            result = runtime.startNonIsolatedWorker(bObject, STREAMING_NEXT_FUNCTION, null, null, null)
-                                    .get();
-                        }
+                        boolean isConcurrentSafe = serviceObjectType.isIsolated() &&
+                                serviceObjectType.isIsolated(STREAMING_NEXT_FUNCTION);
+                        StrandMetadata metadata = new StrandMetadata(isConcurrentSafe, null);
+                        Object result = runtime.callMethod(bObject, STREAMING_NEXT_FUNCTION, metadata);
                         this.notifySuccess(result);
                     } catch (BError error) {
                         this.notifyFailure(error);
