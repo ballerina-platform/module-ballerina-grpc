@@ -482,6 +482,9 @@ public class GrpcUtil {
             return balFuture.get();
         } catch (BError error) {
             throw error;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ErrorCreator.createError(e);
         } catch (Throwable throwable) {
             throw ErrorCreator.createError(throwable);
         }

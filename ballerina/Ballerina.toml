@@ -16,11 +16,11 @@ graalvmCompatible = true
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-ersion = "1.12.2"
-path = "../native/build/libs/grpc-native-1.12.2-SNAPSHOT.jar"
+version = "1.13.0"
+path = "../native/build/libs/grpc-native-1.13.0-SNAPSHOT.jar"
 
 [[platform.java21.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.12.2-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.13.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
