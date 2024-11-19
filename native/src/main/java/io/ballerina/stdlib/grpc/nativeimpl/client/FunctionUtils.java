@@ -52,6 +52,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.CLIENT_CONNECTOR;
 import static io.ballerina.stdlib.grpc.GrpcConstants.CONFIG;
@@ -60,6 +61,7 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.MAX_INBOUND_MESSAGE_SIZE;
 import static io.ballerina.stdlib.grpc.GrpcConstants.METHOD_DESCRIPTORS;
 import static io.ballerina.stdlib.grpc.GrpcConstants.SERVICE_STUB;
 import static io.ballerina.stdlib.grpc.GrpcUtil.getConnectionManager;
+import static io.ballerina.stdlib.grpc.GrpcUtil.getResult;
 import static io.ballerina.stdlib.grpc.GrpcUtil.populatePoolingConfig;
 import static io.ballerina.stdlib.grpc.GrpcUtil.populateSenderConfigurations;
 import static io.ballerina.stdlib.grpc.MessageUtils.convertToHttpHeaders;
@@ -230,7 +232,6 @@ public class FunctionUtils extends AbstractExecute {
         HttpHeaders headers = convertToHttpHeaders(headerValues);
         requestMsg.setHeaders(headers);
         Stub stub = (Stub) connectionStub;
-        DataContext dataContext = null;
 
         Map<String, Long> messageSizeMap = new HashMap<>();
         messageSizeMap.put(MAX_INBOUND_MESSAGE_SIZE, (Long) clientEndpoint.getMapValue(CONFIG)
@@ -238,24 +239,24 @@ public class FunctionUtils extends AbstractExecute {
         try {
             MethodDescriptor.MethodType methodType = getMethodType(methodDescriptor);
             if (methodType.equals(MethodDescriptor.MethodType.UNARY)) {
-
-                dataContext = new DataContext(env, env.markAsync());
-                stub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()),
-                        dataContext, messageSizeMap);
+                return env.yieldAndRun(() -> {
+                    try {
+                        CompletableFuture<Object> future = new CompletableFuture<>();
+                        DataContext dataContext = new DataContext(env, future);
+                        stub.executeUnary(requestMsg, methodDescriptors.get(methodName.getValue()),
+                                dataContext, messageSizeMap);
+                        return getResult(future);
+                    } catch (Exception e) {
+                        return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
+                    }
+                });
             } else {
                 return notifyErrorReply(INTERNAL, "Error while executing the client call. Method type " +
                         methodType.name() + " not supported");
             }
         } catch (Exception e) {
-            try {
-                if (dataContext != null) {
-                    dataContext.getFuture().complete(e);
-                }
-            } finally {
-                return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
-            }
+            return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }
-        return null;
     }
 
     /**
@@ -307,22 +308,25 @@ public class FunctionUtils extends AbstractExecute {
         HttpHeaders headers = convertToHttpHeaders(headerValues);
         requestMsg.setHeaders(headers);
         Stub stub = (Stub) connectionStub;
-        DataContext dataContext = null;
 
         Map<String, Long> messageSizeMap = new HashMap<>();
         messageSizeMap.put(MAX_INBOUND_MESSAGE_SIZE, (Long) clientEndpoint.getMapValue(CONFIG)
                 .get(StringUtils.fromString((MAX_INBOUND_MESSAGE_SIZE))));
         try {
-            dataContext = new DataContext(env, env.markAsync());
-            stub.executeServerStreaming(requestMsg, methodDescriptors.get(methodName.getValue()),
-                    dataContext, messageSizeMap);
+            return env.yieldAndRun(() -> {
+                try {
+                    CompletableFuture<Object> future = new CompletableFuture<>();
+                    DataContext dataContext = new DataContext(env, future);
+                    stub.executeServerStreaming(requestMsg, methodDescriptors.get(methodName.getValue()),
+                            dataContext, messageSizeMap);
+                    return getResult(future);
+                } catch (Exception e) {
+                    return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
+                }
+            });
         } catch (Exception e) {
-            if (dataContext != null) {
-                dataContext.getFuture().complete(e);
-            }
             return notifyErrorReply(INTERNAL, "gRPC Client Connector Error :" + e.getMessage());
         }
-        return null;
     }
 
     /**
