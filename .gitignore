@@ -50,3 +50,6 @@ examples/**/Dependencies.toml
 load-tests/**/Dependencies.toml
 integration-tests/Dependencies.toml
 ballerina-tests/Dependencies.toml
+
+# Cache directory created by the trivy scan
+.cache/
