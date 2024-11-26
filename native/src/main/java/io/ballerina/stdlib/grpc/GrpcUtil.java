@@ -18,10 +18,12 @@
 
 package io.ballerina.stdlib.grpc;
 
-import io.ballerina.runtime.api.TypeTags;
+import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.types.TypeTags;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
@@ -40,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_VERSION;
@@ -472,5 +475,18 @@ public class GrpcUtil {
             return "Struct";
         }
         return type.getName();
+    }
+
+    public static Object getResult(CompletableFuture<Object> balFuture) {
+        try {
+            return balFuture.get();
+        } catch (BError error) {
+            throw error;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ErrorCreator.createError(e);
+        } catch (Throwable throwable) {
+            throw ErrorCreator.createError(throwable);
+        }
     }
 }
