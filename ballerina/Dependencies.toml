@@ -55,7 +55,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "data.jsondata"
-version = "0.3.0"
+version = "1.0.0"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
