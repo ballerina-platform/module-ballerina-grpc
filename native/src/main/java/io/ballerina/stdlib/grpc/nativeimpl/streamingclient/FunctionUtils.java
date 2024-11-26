@@ -20,9 +20,9 @@ package io.ballerina.stdlib.grpc.nativeimpl.streamingclient;
 
 import com.google.protobuf.Descriptors;
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.PredefinedTypes;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
@@ -175,7 +175,7 @@ public class FunctionUtils {
      * @param streamingConnection streaming connection instance.
      * @return In streaming scenarios, return an `anydata`.
      */
-    public static Object externReceive(BObject streamingConnection) {
+    public static Object externReceive(Environment env, BObject streamingConnection) {
 
         Boolean isStreamCancelled = (Boolean) streamingConnection.getNativeData(GrpcConstants.IS_STREAM_CANCELLED);
         if (isStreamCancelled != null && isStreamCancelled) {
@@ -200,14 +200,21 @@ public class FunctionUtils {
                     return ValueCreator.createStreamValue(TypeCreator.createStreamType(PredefinedTypes.TYPE_ANYDATA),
                             streamIterator);
                 } else {
-                    Message nextMessage = (Message) messageQueue.take();
-                    streamingConnection.addNativeData(GrpcConstants.HEADERS,
-                            MessageUtils.createHeaderMap(nextMessage.getHeaders()));
-                    if (nextMessage.isError()) {
-                        return MessageUtils.getConnectorError(nextMessage.getError());
-                    } else {
-                        return nextMessage.getbMessage();
-                    }
+                    return env.yieldAndRun(() -> {
+                        try {
+                            Message nextMessage = (Message) messageQueue.take();
+                            streamingConnection.addNativeData(GrpcConstants.HEADERS,
+                                    MessageUtils.createHeaderMap(nextMessage.getHeaders()));
+                            if (nextMessage.isError()) {
+                                return MessageUtils.getConnectorError(nextMessage.getError());
+                            } else {
+                                return nextMessage.getbMessage();
+                            }
+                        } catch (Exception e) {
+                            LOG.error("Error while sending request message to server.", e);
+                            return MessageUtils.getConnectorError(e);
+                        }
+                    });
                 }
             } catch (Exception e) {
                 LOG.error("Error while sending request message to server.", e);

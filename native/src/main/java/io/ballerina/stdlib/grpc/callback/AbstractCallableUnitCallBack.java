@@ -18,7 +18,6 @@
 
 package io.ballerina.stdlib.grpc.callback;
 
-import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.stdlib.grpc.GrpcConstants;
 import io.ballerina.stdlib.grpc.Message;
@@ -26,26 +25,12 @@ import io.ballerina.stdlib.grpc.Status;
 import io.ballerina.stdlib.grpc.StreamObserver;
 import io.ballerina.stdlib.grpc.exception.StatusRuntimeException;
 
-import java.util.concurrent.Semaphore;
-
 /**
  * Abstract call back class registered for gRPC service in B7a executor.
  *
  * @since 0.995.0
  */
-public class AbstractCallableUnitCallBack implements Callback {
-
-    public final Semaphore available = new Semaphore(1, true);
-
-    @Override
-    public void notifySuccess(Object o) {
-        available.release();
-    }
-
-    @Override
-    public void notifyFailure(io.ballerina.runtime.api.values.BError error) {
-        available.release();
-    }
+public class AbstractCallableUnitCallBack {
 
     /**
      * Handles failures in GRPC callable unit callback.

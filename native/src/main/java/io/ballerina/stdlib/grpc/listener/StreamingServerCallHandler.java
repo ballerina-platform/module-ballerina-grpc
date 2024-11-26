@@ -19,11 +19,13 @@
 package io.ballerina.stdlib.grpc.listener;
 
 import com.google.protobuf.Descriptors;
+import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.TypeUtils;
+import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.observability.ObservabilityConstants;
@@ -123,7 +125,7 @@ public class StreamingServerCallHandler extends ServerCallHandler {
         private final ServerCallStreamObserver responseObserver;
         private boolean halfClosed = false;
 
-        // Non private to avoid synthetic class
+        // Non-private to avoid synthetic class
         StreamingServerCallListener(
                 StreamObserver requestObserver,
                 ServerCallStreamObserver responseObserver) {
@@ -185,15 +187,17 @@ public class StreamingServerCallHandler extends ServerCallHandler {
                 responseObserver, isEmptyResponse(), this.methodDescriptor.getOutputType(), context);
 
         String functionName = resource.getFunctionName();
-        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(resource.getService()));
-        if (serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName)) {
-            resource.getRuntime().invokeMethodAsyncConcurrently(resource.getService(), resource.getFunctionName(), null,
-                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                    resource.getReturnType(), requestParams);
-        } else {
-            resource.getRuntime().invokeMethodAsyncSequentially(resource.getService(), resource.getFunctionName(), null,
-                    GrpcConstants.ON_MESSAGE_METADATA, callback, properties,
-                    resource.getReturnType(), requestParams);
-        }
+        BObject service = resource.getService();
+        ObjectType serviceObjectType = (ObjectType) TypeUtils.getReferredType(TypeUtils.getType(service));
+        Thread.startVirtualThread(() -> {
+            try {
+                boolean isConcurrentSafe = serviceObjectType.isIsolated() && serviceObjectType.isIsolated(functionName);
+                StrandMetadata metadata = new StrandMetadata(isConcurrentSafe, properties);
+                Object result = resource.getRuntime().callMethod(service, functionName, metadata, requestParams);
+                callback.notifySuccess(result);
+            } catch (BError error) {
+                callback.notifyFailure(error);
+            }
+        });
     }
 }
