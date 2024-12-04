@@ -17,6 +17,7 @@
 import ballerina/grpc;
 import ballerina/test;
 
+// Disabled due to this issue: https://github.com/ballerina-platform/ballerina-library/issues/7436
 @test:Config {enable: false}
 isolated function testInvokeUnavailableService() returns grpc:Error? {
     HelloWorld16Client helloWorld16BlockingEp = check new ("http://localhost:9106");
