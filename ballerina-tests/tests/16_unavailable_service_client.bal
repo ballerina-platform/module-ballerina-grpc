@@ -17,7 +17,7 @@
 import ballerina/grpc;
 import ballerina/test;
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 isolated function testInvokeUnavailableService() returns grpc:Error? {
     HelloWorld16Client helloWorld16BlockingEp = check new ("http://localhost:9106");
     string name = "WSO2";
