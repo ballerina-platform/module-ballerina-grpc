@@ -49,11 +49,11 @@ public class OutboundMessage {
     private final HttpCarbonMessage responseMessage;
     private int statusCode = NULL_STATUS_CODE;
     private boolean outboundClosed;
-    private final ThreadLocal<MessageFramer> framer;
+    private final MessageFramer framer;
 
     public OutboundMessage(HttpCarbonMessage responseMessage) {
         this.responseMessage = responseMessage;
-        this.framer = ThreadLocal.withInitial(() -> new MessageFramer(responseMessage));
+        this.framer = new MessageFramer(responseMessage);
     }
 
     OutboundMessage(InboundMessage inboundMessage) {
@@ -68,7 +68,7 @@ public class OutboundMessage {
         responseMessage.setHeader(CONTENT_TYPE_KEY, GrpcConstants.CONTENT_TYPE_GRPC);
         responseMessage.setHeader(TE_KEY, GrpcConstants.TE_TRAILERS);
         this.responseMessage = responseMessage;
-        this.framer = ThreadLocal.withInitial(() -> new MessageFramer(responseMessage));
+        this.framer = new MessageFramer(responseMessage);
     }
 
     /**
@@ -237,7 +237,7 @@ public class OutboundMessage {
     }
 
     final MessageFramer framer() {
-        return framer.get();
+        return framer;
     }
 
     public boolean isReady() {
