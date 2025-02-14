@@ -17,10 +17,10 @@ graalvmCompatible = true
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
 version = "1.12.3"
-path = "../native/build/libs/grpc-native-1.12.3-SNAPSHOT.jar"
+path = "../native/build/libs/grpc-native-1.12.3.jar"
 
 [[platform.java17.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.12.3-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.12.3.jar"
 scope = "testOnly"
 
 [[platform.java17.dependency]]
@@ -35,7 +35,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.12.6"
-path = "./lib/http-native-2.12.6-20250214-071700-5812ac0.jar"
+path = "./lib/http-native-2.12.6.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.netty"
