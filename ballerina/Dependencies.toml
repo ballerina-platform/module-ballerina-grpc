@@ -68,7 +68,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "grpc"
-version = "1.10.10"
+version = "1.10.11"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "crypto"},
@@ -94,7 +94,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.10.14"
+version = "2.10.20"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "auth"},
