@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - [Move SSL context creation to the client initialization](https://github.com/ballerina-platform/ballerina-library/issues/1798)
+- [Update netty tcnative version](https://github.com/ballerina-platform/ballerina-library/issues/7650)
 
 ## [1.13.2] - 2025-02-14
 
