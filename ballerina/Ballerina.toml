@@ -24,7 +24,7 @@ path = "../test-utils/build/libs/grpc-test-utils-1.14.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
-path = "./lib/ballerina-cli-2201.12.0-20250221-092200-b3de4372.jar"
+path = "./lib/ballerina-cli-2201.12.0-20250228-201300-8d411a0f.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
@@ -163,11 +163,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java21.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.12.0-20250221-092200-b3de4372"
-path = "./lib/formatter-core-2201.12.0-20250221-092200-b3de4372.jar"
+version = "2201.12.0-20250228-201300-8d411a0f"
+path = "./lib/formatter-core-2201.12.0-20250228-201300-8d411a0f.jar"
 
 [[platform.java21.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.12.0-20250221-092200-b3de4372"
-path = "./lib/ballerina-parser-2201.12.0-20250221-092200-b3de4372.jar"
+version = "2201.12.0-20250228-201300-8d411a0f"
+path = "./lib/ballerina-parser-2201.12.0-20250228-201300-8d411a0f.jar"
