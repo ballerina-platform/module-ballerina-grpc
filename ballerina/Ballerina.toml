@@ -17,14 +17,14 @@ graalvmCompatible = true
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
 version = "1.14.0"
-path = "../native/build/libs/grpc-native-1.14.0-SNAPSHOT.jar"
+path = "../native/build/libs/grpc-native-1.14.0.jar"
 
 [[platform.java21.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.14.0-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.14.0.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
-path = "./lib/ballerina-cli-2201.12.0-20250311-124800-b9003fed.jar"
+path = "./lib/ballerina-cli-2201.12.0.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
@@ -35,7 +35,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.14.0"
-path = "./lib/http-native-2.14.0-20250311-152000-c0b9408.jar"
+path = "./lib/http-native-2.14.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
@@ -163,11 +163,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java21.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.12.0-20250311-124800-b9003fed"
-path = "./lib/formatter-core-2201.12.0-20250311-124800-b9003fed.jar"
+version = "2201.12.0"
+path = "./lib/formatter-core-2201.12.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.12.0-20250311-124800-b9003fed"
-path = "./lib/ballerina-parser-2201.12.0-20250311-124800-b9003fed.jar"
+version = "2201.12.0"
+path = "./lib/ballerina-parser-2201.12.0.jar"
