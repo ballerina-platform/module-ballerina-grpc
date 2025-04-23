@@ -17,14 +17,14 @@ graalvmCompatible = true
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
 version = "1.14.0"
-path = "../native/build/libs/grpc-native-1.14.0-SNAPSHOT.jar"
+path = "../native/build/libs/grpc-native-1.14.0.jar"
 
 [[platform.java21.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.14.0-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.14.0.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
-path = "./lib/ballerina-cli-2201.12.0-20250228-201300-8d411a0f.jar"
+path = "./lib/ballerina-cli-2201.12.0.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
@@ -35,7 +35,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.14.0"
-path = "./lib/http-native-2.14.0-20250305-195600-c559baa.jar"
+path = "./lib/http-native-2.14.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
@@ -106,20 +106,20 @@ path = "./lib/commons-pool-1.5.6.wso2v1.jar"
 [[platform.java21.dependency]]
 groupId = "org.bouncycastle"
 artifactId = "bcprov-jdk18on"
-version = "1.78"
-path = "./lib/bcprov-jdk18on-1.78.jar"
+version = "1.80"
+path = "./lib/bcprov-jdk18on-1.80.jar"
 
 [[platform.java21.dependency]]
 groupId = "org.bouncycastle"
 artifactId = "bcpkix-jdk18on"
-version = "1.78"
-path = "./lib/bcpkix-jdk18on-1.78.jar"
+version = "1.80"
+path = "./lib/bcpkix-jdk18on-1.80.jar"
 
 [[platform.java21.dependency]]
 groupId = "org.bouncycastle"
 artifactId = "bcutil-jdk18on"
-version = "1.78"
-path = "./lib/bcutil-jdk18on-1.78.jar"
+version = "1.80"
+path = "./lib/bcutil-jdk18on-1.80.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
@@ -163,11 +163,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java21.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.12.0-20250228-201300-8d411a0f"
-path = "./lib/formatter-core-2201.12.0-20250228-201300-8d411a0f.jar"
+version = "2201.12.0"
+path = "./lib/formatter-core-2201.12.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.12.0-20250228-201300-8d411a0f"
-path = "./lib/ballerina-parser-2201.12.0-20250228-201300-8d411a0f.jar"
+version = "2201.12.0"
+path = "./lib/ballerina-parser-2201.12.0.jar"
