@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- [Address `CVE-2025-55163` Netty vulnerability](https://github.com/ballerina-platform/ballerina-library/issues/8174)
+
+## [1.14.0] - 2025-03-16
+
 ### Changed
 
 - [Move SSL context creation to the client initialization](https://github.com/ballerina-platform/ballerina-library/issues/1798)
