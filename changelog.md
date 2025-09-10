@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.14.2] - 2025-09-09
+
 ### Fixed
 
 - [Address `CVE-2025-58056` and `CVE-2025-58057` security vulnerabilities in Netty](https://github.com/ballerina-platform/ballerina-library/issues/8214)
