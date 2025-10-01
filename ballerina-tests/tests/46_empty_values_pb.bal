@@ -88,8 +88,6 @@ public isolated client class ClientStrWithEmptyStreamingClient {
         var response = check self.sClient->receive();
         if response is () {
             return response;
-        } else {
-            _ = response;
         }
     }
 
