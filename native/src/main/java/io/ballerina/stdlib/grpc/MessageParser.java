@@ -92,4 +92,28 @@ public class MessageParser {
         }
         return fieldDescriptors;
     }
+
+    /**
+     * Safely gets enum value descriptor, handling missing enum values gracefully.
+     * 
+     * @param enumType The enum type descriptor
+     * @param number The enum value number
+     * @return The enum value descriptor
+     * @throws RuntimeException if the enum value is not found
+     */
+    public static Descriptors.EnumValueDescriptor safeGetEnumValue(Descriptors.EnumDescriptor enumType, int number) {
+        try {
+            Descriptors.EnumValueDescriptor enumValue = enumType.findValueByNumber(number);
+            if (enumValue == null) {
+                throw Status.Code.INVALID_ARGUMENT.toStatus()
+                    .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                    .asRuntimeException();
+            }
+            return enumValue;
+        } catch (IllegalArgumentException e) {
+            throw Status.Code.INVALID_ARGUMENT.toStatus()
+                .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                .asRuntimeException();
+        }
+    }
 }
