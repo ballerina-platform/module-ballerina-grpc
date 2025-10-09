@@ -287,8 +287,10 @@ public final class ClientCall {
                 message.close();
             } catch (Exception ex) {
                 MessageUtils.closeQuietly(message);
+                String errorMessage = ex.getMessage() != null ? ex.getMessage() : 
+                        ex.getClass().getSimpleName() + " occurred while parsing message";
                 Status status = Status.Code.CANCELLED.toStatus().withCause(ex).withDescription("Failed to read " +
-                        "message. " + ex.getMessage());
+                        "message. " + errorMessage);
                 close(status, new DefaultHttpHeaders());
             }
         }
