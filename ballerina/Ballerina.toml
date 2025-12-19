@@ -40,14 +40,14 @@ path = "./lib/http-native-2.14.5.jar"
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-common"
-version = "4.1.126.Final"
-path = "./lib/netty-common-4.1.126.Final.jar"
+version = "4.1.129.Final"
+path = "./lib/netty-common-4.1.129.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-buffer"
-version = "4.1.126.Final"
-path = "./lib/netty-buffer-4.1.126.Final.jar"
+version = "4.1.129.Final"
+path = "./lib/netty-buffer-4.1.129.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
@@ -58,26 +58,26 @@ path = "./lib/netty-transport-4.1.126.Final.jar"
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-resolver"
-version = "4.1.126.Final"
-path = "./lib/netty-resolver-4.1.126.Final.jar"
+version = "4.1.129.Final"
+path = "./lib/netty-resolver-4.1.129.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-handler"
-version = "4.1.126.Final"
-path = "./lib/netty-handler-4.1.126.Final.jar"
+version = "4.1.129.Final"
+path = "./lib/netty-handler-4.1.129.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-codec-http"
-version = "4.1.126.Final"
-path = "./lib/netty-codec-http-4.1.126.Final.jar"
+version = "4.1.129.Final"
+path = "./lib/netty-codec-http-4.1.129.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-codec"
-version = "4.1.126.Final"
-path = "./lib/netty-codec-4.1.126.Final.jar"
+version = "4.1.129.Final"
+path = "./lib/netty-codec-4.1.129.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
@@ -88,14 +88,14 @@ path = "./lib/netty-handler-proxy-4.1.126.Final.jar"
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-codec-http2"
-version = "4.1.126.Final"
-path = "./lib/netty-codec-http2-4.1.126.Final.jar"
+version = "4.1.129.Final"
+path = "./lib/netty-codec-http2-4.1.129.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-transport-native-unix-common"
-version = "4.1.126.Final"
-path = "./lib/netty-transport-native-unix-common-4.1.126.Final.jar"
+version = "4.1.129.Final"
+path = "./lib/netty-transport-native-unix-common-4.1.129.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "commons.pool.wso2"
