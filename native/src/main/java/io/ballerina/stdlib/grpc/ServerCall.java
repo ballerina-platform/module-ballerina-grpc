@@ -214,8 +214,10 @@ public final class ServerCall {
             } catch (StatusRuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
+                String errorMessage = ex.getMessage() != null ? ex.getMessage() : 
+                        ex.getClass().getSimpleName() + " occurred while parsing message";
                 throw Status.Code.CANCELLED.toStatus().withCause(ex).withDescription("Failed to dispatch inbound " +
-                        "message. " + ex.getMessage()).asRuntimeException();
+                        "message. " + errorMessage).asRuntimeException();
             } finally {
                 MessageUtils.closeQuietly(message);
             }
