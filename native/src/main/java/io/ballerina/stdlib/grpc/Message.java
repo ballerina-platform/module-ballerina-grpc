@@ -744,22 +744,26 @@ public class Message {
                                 } else {
                                     bBMap.put(bFieldName, stringArray);
                                 }
+                                Descriptors.EnumValueDescriptor enumValueDescriptor = 
+                                        readAndValidateEnum(input, fieldDescriptor);
                                 stringArray.add(stringArray.size(),
-                                        StringUtils.fromString(
-                                        fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
+                                        StringUtils.fromString(enumValueDescriptor.toString()));
                                 bBMap.put(bFieldName, stringArray);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                String bValue = fieldDescriptor.getEnumType().findValueByNumber(input
-                                        .readEnum()).toString();
+                                Descriptors.EnumValueDescriptor enumValueDescriptor = 
+                                        readAndValidateEnum(input, fieldDescriptor);
+                                String bValue = enumValueDescriptor.toString();
                                 updateBBMap(bBMap, fieldDescriptor,
                                         StringUtils.fromString(bValue));
                             } else {
-                                bBMap.put(bFieldName, StringUtils.fromString(
-                                        fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
+                                Descriptors.EnumValueDescriptor enumValueDescriptor = 
+                                        readAndValidateEnum(input, fieldDescriptor);
+                                bBMap.put(bFieldName, StringUtils.fromString(enumValueDescriptor.toString()));
                             }
                         } else {
-                            bMessage = StringUtils.fromString(
-                                    fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString());
+                            Descriptors.EnumValueDescriptor enumValueDescriptor = 
+                                    readAndValidateEnum(input, fieldDescriptor);
+                            bMessage = StringUtils.fromString(enumValueDescriptor.toString());
                         }
                         break;
                     }
@@ -1942,5 +1946,74 @@ public class Message {
             hexChars[j * 2 + 1] = "0123456789ABCDEF".toCharArray()[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    /**
+     * Read and validate an enum value from the input stream.
+     *
+     * @param input the coded input stream
+     * @param fieldDescriptor the field descriptor for the enum field
+     * @return the validated enum value descriptor
+     * @throws IOException if an I/O error occurs
+     */
+    private Descriptors.EnumValueDescriptor readAndValidateEnum(
+            CodedInputStream input,
+            Descriptors.FieldDescriptor fieldDescriptor) throws IOException {
+        int enumValue = input.readEnum();
+        Descriptors.EnumValueDescriptor enumValueDescriptor =
+                fieldDescriptor.getEnumType().findValueByNumber(enumValue);
+        if (enumValueDescriptor == null) {
+            throw Status.Code.INVALID_ARGUMENT.toStatus()
+                    .withDescription(buildEnumErrorMessage(fieldDescriptor, enumValue))
+                    .asRuntimeException();
+        }
+        return enumValueDescriptor;
+    }
+
+    /**
+     * Build a descriptive error message for unknown enum values.
+     *
+     * @param fieldDescriptor the field descriptor for the enum field
+     * @param enumValue the numeric value received
+     * @return descriptive error message
+     */
+    private static String buildEnumErrorMessage(Descriptors.FieldDescriptor fieldDescriptor, int enumValue) {
+        if (fieldDescriptor == null || fieldDescriptor.getEnumType() == null) {
+            return String.format("Unknown enum value %d for field (descriptor unavailable)", enumValue);
+        }
+
+        Descriptors.EnumDescriptor enumType = fieldDescriptor.getEnumType();
+        List<Descriptors.EnumValueDescriptor> values = enumType.getValues();
+
+        if (values.isEmpty()) {
+            return String.format("Unknown enum value %d for field '%s' in enum '%s' (no valid values defined)",
+                    enumValue, fieldDescriptor.getName(), enumType.getFullName());
+        }
+
+        int displayLimit = Math.min(values.size(), 10);
+        StringBuilder availableValues = new StringBuilder();
+
+        for (int i = 0; i < displayLimit; i++) {
+            if (i > 0) {
+                availableValues.append(", ");
+            }
+            availableValues.append(values.get(i).getNumber())
+                    .append(" (")
+                    .append(values.get(i).getName())
+                    .append(")");
+        }
+
+        if (values.size() > displayLimit) {
+            availableValues.append(", ... and ").append(values.size() - displayLimit).append(" more");
+        }
+
+        return String.format(
+                "Unknown enum value %d for field '%s' in enum '%s'. Expected one of: [%s]. " +
+                "This usually indicates a mismatch between client and server proto definitions.",
+                enumValue,
+                fieldDescriptor.getName(),
+                enumType.getFullName(),
+                availableValues.toString()
+        );
     }
 }
