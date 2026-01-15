@@ -744,22 +744,26 @@ public class Message {
                                 } else {
                                     bBMap.put(bFieldName, stringArray);
                                 }
+                                Descriptors.EnumValueDescriptor enumValueDescriptor = 
+                                        readAndValidateEnum(input, fieldDescriptor);
                                 stringArray.add(stringArray.size(),
-                                        StringUtils.fromString(
-                                        fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
+                                        StringUtils.fromString(enumValueDescriptor.toString()));
                                 bBMap.put(bFieldName, stringArray);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                String bValue = fieldDescriptor.getEnumType().findValueByNumber(input
-                                        .readEnum()).toString();
+                                Descriptors.EnumValueDescriptor enumValueDescriptor = 
+                                        readAndValidateEnum(input, fieldDescriptor);
+                                String bValue = enumValueDescriptor.toString();
                                 updateBBMap(bBMap, fieldDescriptor,
                                         StringUtils.fromString(bValue));
                             } else {
-                                bBMap.put(bFieldName, StringUtils.fromString(
-                                        fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
+                                Descriptors.EnumValueDescriptor enumValueDescriptor = 
+                                        readAndValidateEnum(input, fieldDescriptor);
+                                bBMap.put(bFieldName, StringUtils.fromString(enumValueDescriptor.toString()));
                             }
                         } else {
-                            bMessage = StringUtils.fromString(
-                                    fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString());
+                            Descriptors.EnumValueDescriptor enumValueDescriptor = 
+                                    readAndValidateEnum(input, fieldDescriptor);
+                            bMessage = StringUtils.fromString(enumValueDescriptor.toString());
                         }
                         break;
                     }
@@ -785,9 +789,8 @@ public class Message {
                                 type.getTag() == TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA).getTag()) {
                             recordType = null;
                         } else {
-                            throw Status.Code.INTERNAL.toStatus().withDescription("Error while decoding request " +
-                                    "message. record type is not supported : " +
-                                    fieldDescriptor.getType()).asRuntimeException();
+                            validateMessageFieldType(fieldDescriptor, type);
+                            recordType = null;
                         }
                         if (bBMap != null) {
                             if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDS) ||
@@ -799,8 +802,7 @@ public class Message {
                             } else if (fieldDescriptor.isRepeated()) {
                                 BArray valueArray = bBMap.get(bFieldName) != null ?
                                         (BArray) bBMap.get(bFieldName) : null;
-                                Type fieldType = getReferredType(recordType.getFields()
-                                        .get(bFieldName.getValue()).getFieldType());
+                                Type fieldType = getFieldTypeWithValidation(recordType, fieldDescriptor, bFieldName);
                                 if (valueArray == null || valueArray.size() == 0) {
                                     valueArray = ValueCreator.createArrayValue((ArrayType) fieldType);
                                     bBMap.put(bFieldName, valueArray);
@@ -808,8 +810,7 @@ public class Message {
                                 valueArray.add(valueArray.size(), readMessage(fieldDescriptor,
                                         getReferredType(((ArrayType) fieldType).getElementType()), input).bMessage);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                Type fieldType = getReferredType(recordType.getFields()
-                                        .get(bFieldName.getValue()).getFieldType());
+                                Type fieldType = getFieldTypeWithValidation(recordType, fieldDescriptor, bFieldName);
                                 Object bValue = readMessage(fieldDescriptor, fieldType, input).bMessage;
                                 updateBBMap(bBMap, fieldDescriptor, bValue);
                             } else if (fieldDescriptor.getMessageType().getFullName().equals(GOOGLE_PROTOBUF_STRUCT) &&
@@ -817,8 +818,7 @@ public class Message {
                                 Type fieldType = TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA);
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             } else {
-                                Type fieldType = getReferredType(recordType.getFields()
-                                        .get(bFieldName.getValue()).getFieldType());
+                                Type fieldType = getFieldTypeWithValidation(recordType, fieldDescriptor, bFieldName);
                                 bBMap.put(bFieldName, readMessage(fieldDescriptor, fieldType, input).bMessage);
                             }
                         } else if (fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_VALUE)) {
@@ -833,15 +833,23 @@ public class Message {
                             bMessage = readMessage(fieldDescriptor,
                                     TypeCreator.createMapType(PredefinedTypes.TYPE_ANYDATA), input).bMessage;
                         } else {
-                            Type fieldType = getReferredType(recordType.getFields()
-                                    .get(bFieldName.getValue()).getFieldType());
+                            Type fieldType = getFieldTypeWithValidation(recordType, fieldDescriptor, bFieldName);
                             bMessage = readMessage(fieldDescriptor, fieldType, input).bMessage;
                         }
                         break;
                     }
                     default: {
-                        throw Status.Code.INTERNAL.toStatus().withDescription("Error while decoding request message. " +
-                                "Field type is not supported : " + fieldDescriptor.getType()).asRuntimeException();
+                        throw Status.Code.INTERNAL.toStatus()
+                                .withDescription(String.format(
+                                        "Unsupported field type %s for field '%s' (tag %d) in message '%s'. " +
+                                        "This field type is not yet implemented in the gRPC library. " +
+                                        "Supported types: double, float, int32, int64, uint32, uint64, sint32, sint64, " +
+                                        "fixed32, fixed64, sfixed32, sfixed64, bool, string, bytes, enum, message.",
+                                        fieldDescriptor.getType(),
+                                        fieldDescriptor.getName(),
+                                        fieldDescriptor.getNumber(),
+                                        fieldDescriptor.getContainingType().getFullName()))
+                                .asRuntimeException();
                     }
                 }
             } else {
@@ -1942,5 +1950,155 @@ public class Message {
             hexChars[j * 2 + 1] = "0123456789ABCDEF".toCharArray()[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    /**
+     * Read and validate an enum value from the input stream.
+     *
+     * @param input the coded input stream
+     * @param fieldDescriptor the field descriptor for the enum field
+     * @return the validated enum value descriptor
+     * @throws IOException if an I/O error occurs
+     */
+    private Descriptors.EnumValueDescriptor readAndValidateEnum(
+            CodedInputStream input,
+            Descriptors.FieldDescriptor fieldDescriptor) throws IOException {
+        int enumValue = input.readEnum();
+        Descriptors.EnumValueDescriptor enumValueDescriptor =
+                fieldDescriptor.getEnumType().findValueByNumber(enumValue);
+        if (enumValueDescriptor == null) {
+            throw Status.Code.INVALID_ARGUMENT.toStatus()
+                    .withDescription(buildEnumErrorMessage(fieldDescriptor, enumValue))
+                    .asRuntimeException();
+        }
+        return enumValueDescriptor;
+    }
+
+    /**
+     * Build a descriptive error message for unknown enum values.
+     *
+     * @param fieldDescriptor the field descriptor for the enum field
+     * @param enumValue the numeric value received
+     * @return descriptive error message
+     */
+    private static String buildEnumErrorMessage(Descriptors.FieldDescriptor fieldDescriptor, int enumValue) {
+        if (fieldDescriptor == null || fieldDescriptor.getEnumType() == null) {
+            return String.format("Unknown enum value %d for field (descriptor unavailable)", enumValue);
+        }
+
+        Descriptors.EnumDescriptor enumType = fieldDescriptor.getEnumType();
+        List<Descriptors.EnumValueDescriptor> values = enumType.getValues();
+
+        if (values.isEmpty()) {
+            return String.format("Unknown enum value %d for field '%s' in enum '%s' (no valid values defined)",
+                    enumValue, fieldDescriptor.getName(), enumType.getFullName());
+        }
+
+        int displayLimit = Math.min(values.size(), 10);
+        StringBuilder availableValues = new StringBuilder();
+
+        for (int i = 0; i < displayLimit; i++) {
+            if (i > 0) {
+                availableValues.append(", ");
+            }
+            availableValues.append(values.get(i).getNumber())
+                    .append(" (")
+                    .append(values.get(i).getName())
+                    .append(")");
+        }
+
+        if (values.size() > displayLimit) {
+            availableValues.append(", ... and ").append(values.size() - displayLimit).append(" more");
+        }
+
+        return String.format(
+                "Unknown enum value %d for field '%s' in enum '%s'. Expected one of: [%s]. " +
+                "This usually indicates a mismatch between client and server proto definitions.",
+                enumValue,
+                fieldDescriptor.getName(),
+                enumType.getFullName(),
+                availableValues.toString()
+        );
+    }
+
+    /**
+     * Safely get field type from record with validation.
+     *
+     * @param recordType the record type to get field from
+     * @param fieldDescriptor the proto field descriptor
+     * @param bFieldName the field name as BString
+     * @return the field type
+     * @throws StatusRuntimeException if field doesn't exist in record
+     */
+    private Type getFieldTypeWithValidation(
+            RecordType recordType,
+            Descriptors.FieldDescriptor fieldDescriptor,
+            BString bFieldName) {
+
+        Map<String, Field> fields = recordType.getFields();
+        if (fields == null || !fields.containsKey(bFieldName.getValue())) {
+            throw Status.Code.INVALID_ARGUMENT.toStatus()
+                    .withDescription(String.format(
+                            "Field '%s' (tag %d) exists in server proto for message '%s' " +
+                            "but is not defined in client proto. " +
+                            "This indicates a proto version mismatch. " +
+                            "Client proto may be outdated. Available fields in client: [%s]",
+                            fieldDescriptor.getName(),
+                            fieldDescriptor.getNumber(),
+                            fieldDescriptor.getContainingType().getFullName(),
+                            fields != null ? String.join(", ", fields.keySet()) : "none"))
+                    .asRuntimeException();
+        }
+
+        Field field = fields.get(bFieldName.getValue());
+        return getReferredType(field.getFieldType());
+    }
+
+    /**
+     * Validate that expected type is compatible with MESSAGE field type.
+     *
+     * @param fieldDescriptor the proto field descriptor
+     * @param expectedType the expected Ballerina type
+     * @throws StatusRuntimeException if types are incompatible
+     */
+    private void validateMessageFieldType(
+            Descriptors.FieldDescriptor fieldDescriptor,
+            Type expectedType) {
+
+        if (!(expectedType instanceof RecordType || expectedType instanceof MapType ||
+              expectedType instanceof TupleType || expectedType instanceof AnydataType ||
+              expectedType.getTag() == TypeCreator.createArrayType(PredefinedTypes.TYPE_ANYDATA).getTag())) {
+            
+            String expectedTypeName;
+            switch (expectedType.getTag()) {
+                case TypeTags.STRING_TAG:
+                    expectedTypeName = "string";
+                    break;
+                case TypeTags.INT_TAG:
+                    expectedTypeName = "integer";
+                    break;
+                case TypeTags.FLOAT_TAG:
+                    expectedTypeName = "float";
+                    break;
+                case TypeTags.BOOLEAN_TAG:
+                    expectedTypeName = "boolean";
+                    break;
+                default:
+                    expectedTypeName = expectedType.getName();
+            }
+            
+            throw Status.Code.INVALID_ARGUMENT.toStatus()
+                    .withDescription(String.format(
+                            "Type mismatch for field '%s' (tag %d) in message '%s': " +
+                            "server sent nested message of type '%s', " +
+                            "but client expects primitive type '%s'. " +
+                            "This indicates a proto definition mismatch between client and server.",
+                            fieldDescriptor.getName(),
+                            fieldDescriptor.getNumber(),
+                            fieldDescriptor.getContainingType().getFullName(),
+                            fieldDescriptor.getMessageType().getFullName(),
+                            expectedTypeName))
+                    .asRuntimeException();
+        }
     }
 }
