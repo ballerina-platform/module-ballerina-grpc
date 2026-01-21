@@ -251,8 +251,8 @@ public class Message {
                         bBMap.put(bFieldName, null);
                     } else if (entry.getValue().getType().toProto().getNumber() ==
                             DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM_VALUE) {
-                        bBMap.put(bFieldName, StringUtils
-                                .fromString(entry.getValue().getEnumType().findValueByNumber(0).toString()));
+                        bBMap.put(bFieldName, StringUtils.fromString(
+                            MessageParser.safeGetEnumValue(entry.getValue().getEnumType(), 0).toString()));
                     }
                 }
             } else {
@@ -744,22 +744,72 @@ public class Message {
                                 } else {
                                     bBMap.put(bFieldName, stringArray);
                                 }
-                                stringArray.add(stringArray.size(),
-                                        StringUtils.fromString(
-                                        fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
+                                try {
+                                    // Add null check for findValueByNumber result
+                                    Descriptors.EnumValueDescriptor enumValue = MessageParser.safeGetEnumValue(
+                                        fieldDescriptor.getEnumType(), input.readEnum());
+                                    if (enumValue == null) {
+                                        throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                            .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                                            .asRuntimeException();
+                                    }
+                                    stringArray.add(stringArray.size(), 
+                                        StringUtils.fromString(enumValue.toString()));
+                                } catch (IllegalArgumentException e) {
+                                    throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                        .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                                        .asRuntimeException();
+                                }
                                 bBMap.put(bFieldName, stringArray);
                             } else if (fieldDescriptor.getContainingOneof() != null) {
-                                String bValue = fieldDescriptor.getEnumType().findValueByNumber(input
-                                        .readEnum()).toString();
-                                updateBBMap(bBMap, fieldDescriptor,
+                                try {
+                                    Descriptors.EnumValueDescriptor enumValue = MessageParser.safeGetEnumValue(
+                                        fieldDescriptor.getEnumType(), input.readEnum());
+                                    if (enumValue == null) {
+                                        throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                            .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                                            .asRuntimeException();
+                                    }
+                                    String bValue = enumValue.toString();
+                                    updateBBMap(bBMap, fieldDescriptor,
                                         StringUtils.fromString(bValue));
+                                } catch (IllegalArgumentException e) {
+                                    throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                        .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                                        .asRuntimeException();
+                                }
                             } else {
-                                bBMap.put(bFieldName, StringUtils.fromString(
-                                        fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString()));
+                                try {
+                                    Descriptors.EnumValueDescriptor enumValue = MessageParser.safeGetEnumValue(
+                                        fieldDescriptor.getEnumType(), input.readEnum());
+                                    if (enumValue == null) {
+                                        throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                            .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                                            .asRuntimeException();
+                                    }
+                                    bBMap.put(bFieldName, StringUtils.fromString(
+                                        enumValue.toString()));
+                                } catch (IllegalArgumentException e) {
+                                    throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                        .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                                        .asRuntimeException();
+                                }
                             }
                         } else {
-                            bMessage = StringUtils.fromString(
-                                    fieldDescriptor.getEnumType().findValueByNumber(input.readEnum()).toString());
+                            try {
+                                Descriptors.EnumValueDescriptor enumValue = MessageParser.safeGetEnumValue(
+                                    fieldDescriptor.getEnumType(), input.readEnum());
+                                if (enumValue == null) {
+                                    throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                        .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                                        .asRuntimeException();
+                                }
+                                bMessage = StringUtils.fromString(enumValue.toString());
+                            } catch (IllegalArgumentException e) {
+                                throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                    .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                                    .asRuntimeException();
+                            }
                         }
                         break;
                     }
@@ -1339,15 +1389,85 @@ public class Message {
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM_VALUE: {
-                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
-                        Object bValue = bBMap.get(bFieldName);
-                        output.writeEnum(fieldDescriptor.getNumber(), fieldDescriptor.getEnumType()
-                                .findValueByName(((BString) bValue).getValue()).getNumber());
+                    if (bBMap != null) {
+                        if (fieldDescriptor.isRepeated()) {
+                            BArray stringArray = ValueCreator.createArrayValue(stringArrayType);
+                            if (bBMap.containsKey(bFieldName)) {
+                                stringArray = (BArray) bBMap.get(bFieldName);
+                            } else {
+                                bBMap.put(bFieldName, stringArray);
+                            }
+                            try {
+                                // Add null check for findValueByNumber result
+                                Descriptors.EnumValueDescriptor enumValue = MessageParser.safeGetEnumValue(
+                                    fieldDescriptor.getEnumType(), input.readEnum());
+                                if (enumValue == null) {
+                                    throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                        .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                                        .asRuntimeException();
+                                }
+                                stringArray.add(stringArray.size(), 
+                                    StringUtils.fromString(enumValue.toString()));
+                            } catch (IllegalArgumentException e) {
+                                throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                    .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                                    .asRuntimeException();
+                            }
+                            bBMap.put(bFieldName, stringArray);
+                        } else if (fieldDescriptor.getContainingOneof() != null) {
+                            try {
+                                Descriptors.EnumValueDescriptor enumValue = MessageParser.safeGetEnumValue(
+                                    fieldDescriptor.getEnumType(), input.readEnum());
+                                if (enumValue == null) {
+                                    throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                        .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                                        .asRuntimeException();
+                                }
+                                String bValue = enumValue.toString();
+                                updateBBMap(bBMap, fieldDescriptor,
+                                    StringUtils.fromString(bValue));
+                            } catch (IllegalArgumentException e) {
+                                throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                    .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                                    .asRuntimeException();
+                            }
+                        } else {
+                            try {
+                                Descriptors.EnumValueDescriptor enumValue = MessageParser.safeGetEnumValue(
+                                    fieldDescriptor.getEnumType(), input.readEnum());
+                                if (enumValue == null) {
+                                    throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                        .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                                        .asRuntimeException();
+                                }
+                                bBMap.put(bFieldName, StringUtils.fromString(
+                                    enumValue.toString()));
+                            } catch (IllegalArgumentException e) {
+                                throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                    .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                                    .asRuntimeException();
+                            }
+                        }
+                    } else {
+                        try {
+                            Descriptors.EnumValueDescriptor enumValue = MessageParser.safeGetEnumValue(
+                                fieldDescriptor.getEnumType(), input.readEnum());
+                            if (enumValue == null) {
+                                throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                    .withDescription("Invalid enum value received from server. The enum value is not defined in the client proto definition.")
+                                    .asRuntimeException();
+                            }
+                            bMessage = StringUtils.fromString(enumValue.toString());
+                        } catch (IllegalArgumentException e) {
+                            throw Status.Code.INVALID_ARGUMENT.toStatus()
+                                .withDescription("Failed to parse enum value. The server sent an enum value that is not defined in the client proto definition: " + e.getMessage())
+                                .asRuntimeException();
+                        }
                     }
                     break;
                 }
                 case DescriptorProtos.FieldDescriptorProto.Type.TYPE_BYTES_VALUE: {
-                    if (bBMap != null && bBMap.containsKey(bFieldName)) {
+                    if (bBMap != null) {
                         Object bValue = bBMap.get(bFieldName);
                         if (bValue instanceof BArray && !GOOGLE_PROTOBUF_ANY_MESSAGE_NAME.equals(this.messageName)) {
                             BArray valueArray = (BArray) bValue;
@@ -1469,7 +1589,7 @@ public class Message {
                                 size += com.google.protobuf.CodedOutputStream.computeInt64Size(
                                         fieldDescriptor.getNumber(), valueArray.getInt(i));
                             }
-                        } else {
+                        } else
                             size += com.google.protobuf.CodedOutputStream.computeInt64Size(
                                     fieldDescriptor.getNumber(), (long) bValue);
                         }
@@ -1706,7 +1826,7 @@ public class Message {
                             size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(),
                                     ((BString) bValue).getValue());
                         }
-                    } else if (bMessage instanceof BArray &&
+                    } else if (bArray != null &&
                             fieldDescriptor.getFullName().equals(GOOGLE_PROTOBUF_STRUCT_FIELDSENTRY_KEY)) {
                         size += CodedOutputStream.computeStringSize(fieldDescriptor.getNumber(),
                                 ((BArray) bMessage).getBString(0).getValue());
@@ -1944,3 +2064,4 @@ public class Message {
         return new String(hexChars);
     }
 }
+
