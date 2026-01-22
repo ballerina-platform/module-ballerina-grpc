@@ -1,7 +1,7 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.14.3"
+version = "1.14.4"
 distribution = "2201.12.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
@@ -16,11 +16,11 @@ graalvmCompatible = true
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.14.3"
-path = "../native/build/libs/grpc-native-1.14.3.jar"
+version = "1.14.4"
+path = "../native/build/libs/grpc-native-1.14.4-SNAPSHOT.jar"
 
 [[platform.java21.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.14.3.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.14.4-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
