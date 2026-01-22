@@ -80,6 +80,9 @@ public class GrpcUtil {
 
     private static final Logger log = LoggerFactory.getLogger(GrpcUtil.class);
 
+    private static final int BUFFER_SIZE = 1048576;
+    private static final int BACK_LOG = 100;
+
     public static ConnectionManager getConnectionManager(BMap<BString, Long> poolStruct) {
 
         ConnectionManager poolManager = (ConnectionManager) poolStruct.getNativeData(CONNECTION_MANAGER);
@@ -233,6 +236,8 @@ public class GrpcUtil {
             listenerConfiguration.setServerHeader(getServerName());
         }
 
+        setSocketConfig(listenerConfiguration);
+
         if (sslConfig != null) {
             return setSslConfig(sslConfig, listenerConfiguration);
         }
@@ -244,6 +249,12 @@ public class GrpcUtil {
         listenerConfiguration.setSocketReuse(true);
         listenerConfiguration.setTcpNoDelay(true);
         return listenerConfiguration;
+    }
+
+    private static void setSocketConfig(ListenerConfiguration listenerConfiguration) {
+        listenerConfiguration.setReceiveBufferSize(BUFFER_SIZE);
+        listenerConfiguration.setSendBufferSize(BUFFER_SIZE);
+        listenerConfiguration.setSoBackLog(BACK_LOG);
     }
 
     private static String getServerName() {
