@@ -4,7 +4,45 @@ This file contains all the notable changes done to the Ballerina gRPC package th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.14.3] - 2026-01-09
+
+### Fixed
+
+- [Address `CVE-2025-67735`, `CVE-2025-12183` and `CVE-2025-66566` security vulnerabilities](https://github.com/ballerina-platform/ballerina-library/issues/8538)
+
+## [1.14.2] - 2025-09-09
+
+### Fixed
+
+- [Address `CVE-2025-58056` and `CVE-2025-58057` security vulnerabilities in Netty](https://github.com/ballerina-platform/ballerina-library/issues/8214)
+
+## [1.14.1] - 2025-08-21
+
+### Fixed
+
+- [Address `CVE-2025-55163` Netty vulnerability](https://github.com/ballerina-platform/ballerina-library/issues/8174)
+
+## [1.14.0] - 2025-03-16
+
+### Changed
+
+- [Move SSL context creation to the client initialization](https://github.com/ballerina-platform/ballerina-library/issues/1798)
+- [Update netty tcnative version](https://github.com/ballerina-platform/ballerina-library/issues/7650)
+- [Update bouncy castle version to `1.80`](https://github.com/ballerina-platform/ballerina-library/issues/7683)
+
+## [1.13.2] - 2025-02-14
+
+### Changed
+
+- [Downgrade netty tcnative version](https://github.com/ballerina-platform/ballerina-library/issues/7584)
+
+## [1.13.1] - 2025-02-11
+
+### Fixed
+
+- [Address Netty security vulnerabilities: `CVE-2025-24970` and `CVE-2025-25193`](https://github.com/ballerina-platform/ballerina-library/issues/7571)
+
+## [1.13.0] - 2025-02-07
 
 ### Fixed
 

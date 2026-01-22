@@ -1,8 +1,8 @@
 [package]
 org = "ballerina"
 name = "grpc"
-version = "1.13.0"
-distribution = "2201.11.0"
+version = "1.14.3"
+distribution = "2201.12.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -16,15 +16,15 @@ graalvmCompatible = true
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "grpc-native"
-version = "1.13.0"
-path = "../native/build/libs/grpc-native-1.13.0-SNAPSHOT.jar"
+version = "1.14.3"
+path = "../native/build/libs/grpc-native-1.14.3.jar"
 
 [[platform.java21.dependency]]
-path = "../test-utils/build/libs/grpc-test-utils-1.13.0-SNAPSHOT.jar"
+path = "../test-utils/build/libs/grpc-test-utils-1.14.3.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
-path = "./lib/ballerina-cli-2201.11.0-20241204-163800-0d1e4836.jar"
+path = "./lib/ballerina-cli-2201.12.0.jar"
 scope = "testOnly"
 
 [[platform.java21.dependency]]
@@ -34,68 +34,68 @@ scope = "testOnly"
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.13.0"
-path = "./lib/http-native-2.13.0-20241205-101300-81ebb2d.jar"
+version = "2.14.9"
+path = "./lib/http-native-2.14.9.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-common"
-version = "4.1.115.Final"
-path = "./lib/netty-common-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-common-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-buffer"
-version = "4.1.115.Final"
-path = "./lib/netty-buffer-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-buffer-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-transport"
-version = "4.1.115.Final"
-path = "./lib/netty-transport-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-transport-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-resolver"
-version = "4.1.115.Final"
-path = "./lib/netty-resolver-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-resolver-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-handler"
-version = "4.1.115.Final"
-path = "./lib/netty-handler-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-handler-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-codec-http"
-version = "4.1.115.Final"
-path = "./lib/netty-codec-http-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-codec-http-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-codec"
-version = "4.1.115.Final"
-path = "./lib/netty-codec-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-codec-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-handler-proxy"
-version = "4.1.115.Final"
-path = "./lib/netty-handler-proxy-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-handler-proxy-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-codec-http2"
-version = "4.1.115.Final"
-path = "./lib/netty-codec-http2-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-codec-http2-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-transport-native-unix-common"
-version = "4.1.115.Final"
-path = "./lib/netty-transport-native-unix-common-4.1.115.Final.jar"
+version = "4.1.130.Final"
+path = "./lib/netty-transport-native-unix-common-4.1.130.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "commons.pool.wso2"
@@ -106,47 +106,47 @@ path = "./lib/commons-pool-1.5.6.wso2v1.jar"
 [[platform.java21.dependency]]
 groupId = "org.bouncycastle"
 artifactId = "bcprov-jdk18on"
-version = "1.78"
-path = "./lib/bcprov-jdk18on-1.78.jar"
+version = "1.80"
+path = "./lib/bcprov-jdk18on-1.80.jar"
 
 [[platform.java21.dependency]]
 groupId = "org.bouncycastle"
 artifactId = "bcpkix-jdk18on"
-version = "1.78"
-path = "./lib/bcpkix-jdk18on-1.78.jar"
+version = "1.80"
+path = "./lib/bcpkix-jdk18on-1.80.jar"
 
 [[platform.java21.dependency]]
 groupId = "org.bouncycastle"
 artifactId = "bcutil-jdk18on"
-version = "1.78"
-path = "./lib/bcutil-jdk18on-1.78.jar"
+version = "1.80"
+path = "./lib/bcutil-jdk18on-1.80.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-tcnative-classes"
-version = "2.0.65.Final"
-path = "./lib/netty-tcnative-classes-2.0.65.Final.jar"
+version = "2.0.74.Final"
+path = "./lib/netty-tcnative-classes-2.0.74.Final.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
 artifactId = "netty-tcnative-boringssl-static"
-version = "2.0.65.Final"
-path = "./lib/netty-tcnative-boringssl-static-2.0.65.Final.jar"
+version = "2.0.74.Final"
+path = "./lib/netty-tcnative-boringssl-static-2.0.74.Final.jar"
 
 [[platform.java21.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-2.0.65.Final-windows-x86_64.jar"
+path = "./lib/netty-tcnative-boringssl-static-2.0.74.Final-windows-x86_64.jar"
 
 [[platform.java21.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-2.0.65.Final-linux-aarch_64.jar"
+path = "./lib/netty-tcnative-boringssl-static-2.0.74.Final-linux-aarch_64.jar"
 
 [[platform.java21.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-2.0.65.Final-linux-x86_64.jar"
+path = "./lib/netty-tcnative-boringssl-static-2.0.74.Final-linux-x86_64.jar"
 
 [[platform.java21.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-2.0.65.Final-osx-aarch_64.jar"
+path = "./lib/netty-tcnative-boringssl-static-2.0.74.Final-osx-aarch_64.jar"
 
 [[platform.java21.dependency]]
-path = "./lib/netty-tcnative-boringssl-static-2.0.65.Final-osx-x86_64.jar"
+path = "./lib/netty-tcnative-boringssl-static-2.0.74.Final-osx-x86_64.jar"
 
 [[platform.java21.dependency]]
 groupId = "com.google.protobuf"
@@ -163,11 +163,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java21.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.11.0-20241204-163800-0d1e4836"
-path = "./lib/formatter-core-2201.11.0-20241204-163800-0d1e4836.jar"
+version = "2201.12.0"
+path = "./lib/formatter-core-2201.12.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.11.0-20241204-163800-0d1e4836"
-path = "./lib/ballerina-parser-2201.11.0-20241204-163800-0d1e4836.jar"
+version = "2201.12.0"
+path = "./lib/ballerina-parser-2201.12.0.jar"

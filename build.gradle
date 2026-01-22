@@ -17,10 +17,10 @@
  */
 
 plugins {
-    id "com.github.spotbugs" version "${githubSpotbugsVersion}"
-    id "com.github.johnrengelman.shadow" version "${githubJohnrengelmanShadowVersion}"
-    id "de.undercouch.download" version "${underCouchDownloadVersion}"
-    id "net.researchgate.release" version "${researchgateReleaseVersion}"
+    id "com.github.spotbugs"
+    id "com.github.johnrengelman.shadow"
+    id "de.undercouch.download"
+    id "net.researchgate.release"
 }
 
 allprojects {
@@ -67,9 +67,13 @@ subprojects {
 
     configurations {
         ballerinaStdLibs
-    
+        jbalTools
     }
     dependencies {
+        /* JBallerina Tools */
+        jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
+            transitive = false
+        }
 
         /* Standard libraries */
         ballerinaStdLibs "io.ballerina.stdlib:constraint-ballerina:${stdlibConstraintVersion}"
