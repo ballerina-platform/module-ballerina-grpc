@@ -152,7 +152,7 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
         try {
             serverConnectorFuture.sync();
         } catch (Exception ex) {
-            return MessageUtils.getConnectorError(new StatusRuntimeException(Status
+            throw MessageUtils.getConnectorError(new StatusRuntimeException(Status
                     .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription(
                             "Failed to start server connector '" + serverConnector.getConnectorID()
                                     + "'. " + ex.getMessage())));
@@ -192,9 +192,15 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
      */
     public static Object gracefulStop(BObject serverEndpoint) {
 
-        getServerConnector(serverEndpoint).stop();
-        serverEndpoint.addNativeData(GrpcConstants.CONNECTOR_STARTED, false);
-        return null;
+        try {
+            getServerConnector(serverEndpoint).stop();
+            serverEndpoint.addNativeData(GrpcConstants.CONNECTOR_STARTED, false);
+            return null;
+        } catch (Exception ex) {
+            return MessageUtils.getConnectorError(new StatusRuntimeException(Status
+                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription(
+                            "Failed to stop server connector gracefully. " + ex.getMessage())));
+        }
     }
 
     /**
@@ -204,9 +210,16 @@ public class FunctionUtils extends AbstractGrpcNativeFunction {
      * @return Error if there is an error while stopping the server, else returns nil.
      */
     public static Object immediateStop(BObject serverEndpoint) {
-        getServerConnector(serverEndpoint).immediateStop();
-        serverEndpoint.addNativeData(GrpcConstants.CONNECTOR_STARTED, false);
-        return null;
+
+        try {
+            getServerConnector(serverEndpoint).immediateStop();
+            serverEndpoint.addNativeData(GrpcConstants.CONNECTOR_STARTED, false);
+            return null;
+        } catch (Exception ex) {
+            return MessageUtils.getConnectorError(new StatusRuntimeException(Status
+                    .fromCode(Status.Code.INTERNAL.toStatus().getCode()).withDescription(
+                            "Failed to stop server connector immediately. " + ex.getMessage())));
+        }
     }
 
     public static Object nextResult(Environment env, BObject streamIterator) {
