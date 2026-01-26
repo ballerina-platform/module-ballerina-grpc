@@ -372,7 +372,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "url"
-version = "2.6.0"
+version = "2.6.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
