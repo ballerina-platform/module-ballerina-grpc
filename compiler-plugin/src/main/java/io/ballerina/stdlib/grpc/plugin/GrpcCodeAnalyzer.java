@@ -29,5 +29,6 @@ public class GrpcCodeAnalyzer extends CodeAnalyzer {
     @Override
     public void init(CodeAnalysisContext codeAnalysisContext) {
         codeAnalysisContext.addSyntaxNodeAnalysisTask(new GrpcServiceValidator(), SyntaxKind.SERVICE_DECLARATION);
+        codeAnalysisContext.addSyntaxNodeAnalysisTask(new GrpcServiceAnalysisTask(), SyntaxKind.SERVICE_DECLARATION);
     }
 }
