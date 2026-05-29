@@ -17,6 +17,12 @@
  */
 
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
+
+abstract class IntegrationTestsExecHelper {
+    @Inject abstract ExecOperations getExecOperations()
+}
 
 apply plugin: 'java'
 
@@ -25,9 +31,10 @@ description = 'Ballerina - gRPC Examples'
 def ballerinaDist = "${project.rootDir}/target/ballerina-runtime"
 
 task runIntegrationTests {
+    def execHelper = project.objects.newInstance(IntegrationTestsExecHelper)
     doLast {
         try {
-            exec {
+            execHelper.execOperations.exec {
                 workingDir project.projectDir
                 if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                     commandLine 'cmd', '/c', "${ballerinaDist}/bin/bal.bat test --offline && exit %%ERRORLEVEL%%"

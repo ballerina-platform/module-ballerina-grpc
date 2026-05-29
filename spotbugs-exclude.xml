@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~ Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~ WSO2 Inc. licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file except
@@ -16,22 +16,6 @@
   ~ under the License.
   -->
 <FindBugsFilter>
-    <Match>
-        <Class name="io.ballerina.stdlib.grpc.protobuf.cmd.GrpcCmd" />
-        <Method name="readProperties" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
-    </Match>
-    <Match>
-        <Class name="io.ballerina.stdlib.grpc.protobuf.cmd.GrpcCmd" />
-        <Method name="exportResource" />
-        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
-    </Match>
-    <Match>
-        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
-    </Match>
-    <Match>
-        <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
-    </Match>
     <!-- Pre-existing issues surfaced by SpotBugs 4.9.x (bundled in plugin >= 6.2.0) -->
     <Match>
         <BugCode name="THROWS"/>
