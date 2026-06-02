@@ -4,7 +4,14 @@ This file contains all the notable changes done to the Ballerina gRPC package th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [1.14.6] - 2026-05-11
+
+### Fixed
+
+- [Address `CVE-2026-42583`, `CVE-2026-42584`, `CVE-2026-42587`, `CVE-2026-41417`, `CVE-2026-42580`, `CVE-2026-42581`, `CVE-2026-42585`, `CVE-2026-42587` and `CVE-2026-42578` Netty vulnerabilities](https://github.com/ballerina-platform/ballerina-library/issues/8785)
+- [Address `CVE-2026-5588`, `CVE-2026-5598` and `CVE-2026-0636` Bouncy Caste  vulnerabilities](https://github.com/ballerina-platform/ballerina-library/issues/8774)
+
+## [1.14.5] - 2026-04-07
 
 ### Fixed
 
