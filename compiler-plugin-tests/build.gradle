@@ -83,6 +83,10 @@ compileJava {
     }
 }
 
+tasks.named('compileTestJava') {
+    dependsOn(':grpc-compiler-plugin:shadowJar')
+}
+
 jacoco {
     toolVersion = "${jacocoVersion}"
     reportsDirectory = file("$buildDir/reports/jacoco")
