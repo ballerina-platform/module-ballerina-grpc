@@ -16,6 +16,12 @@
  */
 
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
+
+abstract class BallerinaTestsExecHelper {
+    @Inject abstract ExecOperations getExecOperations()
+}
 
 plugins {
     id 'jacoco'
@@ -146,6 +152,7 @@ task initializeVariables {
 }
 
 task ballerinaTest {
+    def execHelper = project.objects.newInstance(BallerinaTestsExecHelper)
     inputs.dir file(project.projectDir)
     dependsOn(":${packageName}-${packageOrg}:build")
     dependsOn(updateTomlFiles)
@@ -158,7 +165,7 @@ task ballerinaTest {
     finalizedBy(revertTomlFiles)
 
     doLast {
-        exec {
+        execHelper.execOperations.exec {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -174,16 +181,17 @@ task ballerinaTest {
 }
 
 task startBallerinaGRPCServer() {
+    def execHelper = project.objects.newInstance(BallerinaTestsExecHelper)
     doLast {
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
             def stdOut = new ByteArrayOutputStream()
-            exec {
+            execHelper.execOperations.exec {
                 commandLine 'sh', '-c', "docker ps --filter name=bal-grpc-server"
                 standardOutput = stdOut
             }
             if (!stdOut.toString().contains("bal-grpc-server")) {
                 println "Starting Ballerina gRPC server."
-                exec {
+                execHelper.execOperations.exec {
                     commandLine 'sh', '-c', "docker run --rm -d --name bal-grpc-server -p 9172:9172 -d dilansachi/grpc_ballerina_docker_service:latest"
                     standardOutput = stdOut
                 }
@@ -197,16 +205,17 @@ task startBallerinaGRPCServer() {
 }
 
 task stopLdapServer() {
+    def execHelper = project.objects.newInstance(BallerinaTestsExecHelper)
     doLast {
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
             def stdOut = new ByteArrayOutputStream()
-            exec {
+            execHelper.execOperations.exec {
                 commandLine 'sh', '-c', "docker ps --filter name=openldap-server"
                 standardOutput = stdOut
             }
             if (stdOut.toString().contains("openldap-server")) {
                 println "Stopping LDAP server."
-                exec {
+                execHelper.execOperations.exec {
                     commandLine 'sh', '-c', "docker compose -f tests/resources/openldap/compose.yml rm -svf"
                     standardOutput = stdOut
                 }
@@ -220,16 +229,17 @@ task stopLdapServer() {
 }
 
 task stopBallerinaGRPCServer() {
+    def execHelper = project.objects.newInstance(BallerinaTestsExecHelper)
     doLast {
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
             def stdOut = new ByteArrayOutputStream()
-            exec {
+            execHelper.execOperations.exec {
                 commandLine 'sh', '-c', "docker ps --filter name=bal-grpc-server"
                 standardOutput = stdOut
             }
             if (stdOut.toString().contains("bal-grpc-server")) {
                 println "Stopping Ballerina gRPC server."
-                exec {
+                execHelper.execOperations.exec {
                     commandLine 'sh', '-c', "docker stop bal-grpc-server"
                     standardOutput = stdOut
                 }
@@ -245,9 +255,10 @@ task stopBallerinaGRPCServer() {
 def testContainerName = "go_grpc_simple_server"
 
 def checkGoServerStatus(containerName) {
+    def execHelper = project.objects.newInstance(BallerinaTestsExecHelper)
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
         def stdOut = new ByteArrayOutputStream()
-        exec {
+        execHelper.execOperations.exec {
             commandLine 'sh', '-c', "docker inspect ${containerName} | grep \"Running\""
             standardOutput = stdOut
         }
@@ -260,16 +271,17 @@ def checkGoServerStatus(containerName) {
 }
 
 task startGoServer() {
+    def execHelper = project.objects.newInstance(BallerinaTestsExecHelper)
     doLast {
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
             def stdOut = new ByteArrayOutputStream()
-            exec {
+            execHelper.execOperations.exec {
                 commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
                 standardOutput = stdOut
             }
             if (!stdOut.toString().contains(testContainerName)) {
                 println "Starting Golang gRPC server."
-                exec {
+                execHelper.execOperations.exec {
                     commandLine 'sh', '-c', "docker run --rm -d --name ${testContainerName} -p 50051:50051 -d dilansachi/go_grpc_simple_server:latest"
                 }
                 def healthCheck = 1;
@@ -290,17 +302,18 @@ task startGoServer() {
 }
 
 task stopGoServer() {
+    def execHelper = project.objects.newInstance(BallerinaTestsExecHelper)
     doLast {
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
             def stdOut = new ByteArrayOutputStream()
-            exec {
+            execHelper.execOperations.exec {
                 commandLine 'sh', '-c', "docker ps --filter name=${testContainerName}"
                 standardOutput = stdOut
             }
             if (stdOut.toString().contains(testContainerName)) {
                 println "Stopping Golang gRPC server."
                 try {
-                    exec {
+                    execHelper.execOperations.exec {
                         commandLine 'sh', '-c', "docker stop ${testContainerName}"
                         standardOutput = stdOut
                     }
