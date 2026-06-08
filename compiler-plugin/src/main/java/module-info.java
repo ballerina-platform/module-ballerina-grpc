@@ -21,4 +21,8 @@ module io.ballerina.stdlib.grpc.plugin {
     requires io.ballerina.parser;
     requires io.ballerina.tools.api;
     requires io.ballerina.stdlib.grpc;
+    requires com.fasterxml.jackson.databind;
+    requires io.ballerina.runtime;
+    requires com.fasterxml.jackson.dataformat.yaml;
+    requires com.google.protobuf;
 }
