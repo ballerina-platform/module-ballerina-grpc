@@ -18,9 +18,6 @@
 
 package io.ballerina.stdlib.grpc.plugin.endpointyaml.generator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.ballerina.compiler.api.SemanticModel;
 import io.ballerina.compiler.api.symbols.ModuleSymbol;
 import io.ballerina.compiler.api.symbols.Symbol;
@@ -41,22 +38,15 @@ import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.ServiceDeclarationNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
-import io.ballerina.projects.Package;
-import io.ballerina.projects.Project;
+import io.ballerina.projects.plugins.EndpointArtifact;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.runtime.api.utils.IdentifierUtils;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
-
-import static io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.FileNameGeneratorUtil.resolveContractFileName;
 
 public class EndpointYamlGenerator {
     private final ServiceDeclarationNode node;
@@ -66,10 +56,7 @@ public class EndpointYamlGenerator {
     private int port;
     final PackageMemberVisitor packageMemberVisitor = new PackageMemberVisitor();
 
-    private static final String ARTIFACT = "artifact";
     private static final String GRPC = "GRPC";
-    private static final String YAML_EXTENSION = ".yaml";
-    private static final String ENDPOINT_SUFFIX = "_endpoint";
 
     private record ListenerInfo(Optional<ParenthesizedArgList> argList) {
     }
@@ -242,39 +229,14 @@ public class EndpointYamlGenerator {
         return basePath.toString();
     }
 
-    public void writeEndpointYaml() throws IOException {
-        Endpoint ep = getEndpoint();
-        Path outPath = resolveOutputPath();
-        String fileName = buildEndpointFileName(outPath);
-        Path path = outPath.resolve(ARTIFACT).resolve(fileName + YAML_EXTENSION).toAbsolutePath();
-        writeYaml(path, new EndpointWrapper(ep));
+    public void addEndpointArtifact() {
+        Endpoint endpoint = getEndpoint();
+        context.addEndpointArtifact(new EndpointArtifact(getEndpointName(), endpoint.getPort(), endpoint.getBasePath(),
+                endpoint.getType(), endpoint.getSchemaPath()));
     }
 
-    private Path resolveOutputPath() throws IOException {
-        Package currentPackage = this.context.currentPackage();
-        Project project = currentPackage.project();
-        Path outPath = project.targetDir();
-        Files.createDirectories(outPath.resolve(ARTIFACT));
-        return outPath;
-    }
-
-    private String buildEndpointFileName(Path outPath) {
-        String base = schemaFileName.split("\\.")[0] + ENDPOINT_SUFFIX;
-        return resolveContractFileName(outPath.resolve(ARTIFACT), base);
-    }
-
-    private void writeYaml(Path path, EndpointWrapper wrapper) {
-        YAMLFactory yamlFactory = YAMLFactory.builder()
-                .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-                .build();
-        ObjectMapper mapper = new ObjectMapper(yamlFactory);
-        mapper.findAndRegisterModules();
-
-        try (Writer writer = Files.newBufferedWriter(path)) {
-            mapper.writeValue(writer, wrapper);
-        } catch (IOException e) {
-            e.printStackTrace(System.out);
-        }
+    private String getEndpointName() {
+        return schemaFileName.split("\\.")[0];
     }
 
     private Optional<String> getPortValue(ExpressionNode expression, SemanticModel semanticModel,

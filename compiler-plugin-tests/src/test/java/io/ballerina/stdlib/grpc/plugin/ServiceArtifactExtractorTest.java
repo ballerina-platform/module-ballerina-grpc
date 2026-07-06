@@ -7,6 +7,7 @@ import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.directory.BuildProject;
 import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.environment.EnvironmentBuilder;
+import io.ballerina.projects.plugins.EndpointArtifact;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -28,20 +29,19 @@ public class ServiceArtifactExtractorTest {
     private static final Path DISTRIBUTION_PATH = Paths.get("../", "target", "ballerina-runtime")
             .toAbsolutePath();
     private static final String ARTIFACT_DIR = "artifact";
-    private static final String ENDPOINT_SUFFIX = "_endpoint.yaml";
     private static final String PROTO_SUFFIX = ".proto";
 
     @Test
     public void testExportEndpointsForSimpleService() throws Exception {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_20");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             assertNoCompilationErrors(diagnosticResult);
 
             Path artifactDir = projectDirPath.resolve("target").resolve(ARTIFACT_DIR);
             Assert.assertTrue(Files.exists(artifactDir), "Artifact directory should exist");
-            assertArtifactCount(artifactDir, ENDPOINT_SUFFIX, 1L,
-                    "Expected one endpoint YAML for package_20");
+            assertEndpointArtifactCount(project, 1L, "Expected one endpoint artifact for package_20");
             assertArtifactCount(artifactDir, PROTO_SUFFIX, 1L,
                     "Expected one proto file for package_20");
         } finally {
@@ -53,12 +53,14 @@ public class ServiceArtifactExtractorTest {
     public void testBuildWithoutExportEndpointsFlag() throws Exception {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_20");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, false);
+            BuildProject project = loadProject(projectDirPath, false);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             assertNoCompilationErrors(diagnosticResult);
 
             Path artifactDir = projectDirPath.resolve("target").resolve(ARTIFACT_DIR);
             Assert.assertTrue(Files.notExists(artifactDir),
                     "Artifact directory should not be generated without --export-endpoints");
+            assertEndpointArtifactCount(project, 0L, "Endpoint artifacts should not be added without export flag");
         } finally {
             deleteDirectories(projectDirPath);
         }
@@ -68,7 +70,8 @@ public class ServiceArtifactExtractorTest {
     public void testExportEndpointsWithCompilationErrors() throws Exception {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_03");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             Assert.assertNotEquals(diagnosticResult.errorCount(), 0);
         } finally {
             deleteDirectories(projectDirPath);
@@ -79,13 +82,13 @@ public class ServiceArtifactExtractorTest {
     public void testExportEndpointsForMultipleGrpcServicesAcrossFiles() throws Exception {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_14");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             assertNoInvalidServiceNameErrors(diagnosticResult);
 
             Path artifactDir = projectDirPath.resolve("target").resolve(ARTIFACT_DIR);
             Assert.assertTrue(Files.exists(artifactDir), "Artifact directory should exist");
-            assertArtifactCount(artifactDir, ENDPOINT_SUFFIX, 2L,
-                    "Expected endpoint artifacts for both services in package_14");
+            assertEndpointArtifactCount(project, 2L, "Expected endpoint artifacts for both services in package_14");
             assertArtifactCount(artifactDir, PROTO_SUFFIX, 2L,
                     "Expected proto artifacts for both services in package_14");
         } finally {
@@ -97,13 +100,14 @@ public class ServiceArtifactExtractorTest {
     public void testExportEndpointsForMultipleServicesInSingleFile() throws Exception {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_28");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             assertNoCompilationErrors(diagnosticResult);
 
             Path artifactDir = projectDirPath.resolve("target").resolve(ARTIFACT_DIR);
             Assert.assertTrue(Files.exists(artifactDir), "Artifact directory should exist");
-            assertArtifactCount(artifactDir, ENDPOINT_SUFFIX, 1L,
-                    "Expected one endpoint YAML from the single gRPC service in the file");
+            assertEndpointArtifactCount(project, 1L,
+                    "Expected one endpoint artifact from the single gRPC service in the file");
             assertArtifactCount(artifactDir, PROTO_SUFFIX, 1L,
                     "Expected one proto artifact from the single gRPC service in the file");
         } finally {
@@ -115,25 +119,18 @@ public class ServiceArtifactExtractorTest {
     public void testEndpointYamlFallbackNamingForEmptyServiceNames() throws Exception {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_14");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             assertNoInvalidServiceNameErrors(diagnosticResult);
 
-            Path artifactDir = projectDirPath.resolve("target").resolve(ARTIFACT_DIR);
-            Assert.assertTrue(Files.exists(artifactDir), "Artifact directory should exist");
+            List<String> endpointNames = project.endpointArtifacts().stream()
+                    .map(EndpointArtifact::name)
+                    .toList();
 
-            List<String> endpointFiles;
-            try (Stream<Path> paths = Files.walk(artifactDir)) {
-                endpointFiles = paths
-                        .map(this::safeFileName)
-                        .filter(fileName -> fileName.endsWith(ENDPOINT_SUFFIX))
-                        .toList();
-            }
-
-            Assert.assertEquals(endpointFiles.size(), 2,
-                    "Expected endpoint YAML artifacts for both services with empty names");
-            Assert.assertTrue(endpointFiles.stream()
-                            .allMatch(fileName -> fileName.matches(".+_[0-9]+_endpoint\\.yaml")),
-                    "Endpoint YAML files should use fallback hash-based naming for empty service names");
+            Assert.assertEquals(endpointNames.size(), 2,
+                    "Expected endpoint artifacts for both services with empty names");
+            Assert.assertTrue(endpointNames.stream().allMatch(fileName -> fileName.matches(".+_[0-9]+")),
+                    "Endpoint artifacts should use fallback hash-based naming for empty service names");
         } finally {
             deleteDirectories(projectDirPath);
         }
@@ -160,11 +157,18 @@ public class ServiceArtifactExtractorTest {
         return ProjectEnvironmentBuilder.getBuilder(environment);
     }
 
-    private static DiagnosticResult getDiagnosticResults(Path projectDirPath, boolean isExportEndpoints) {
+    private static BuildProject loadProject(Path projectDirPath, boolean isExportEndpoints) {
         BuildOptions buildOptions = BuildOptions.builder().setExportEndpoints(isExportEndpoints).build();
-        BuildProject project = BuildProject.load(getEnvironmentBuilder(), projectDirPath, buildOptions);
+        return BuildProject.load(getEnvironmentBuilder(), projectDirPath, buildOptions);
+    }
+
+    private static DiagnosticResult getDiagnosticResults(BuildProject project) {
         PackageCompilation compilation = project.currentPackage().getCompilation();
         return compilation.diagnosticResult();
+    }
+
+    private static void assertEndpointArtifactCount(BuildProject project, long expectedCount, String message) {
+        Assert.assertEquals(project.endpointArtifacts().size(), expectedCount, message);
     }
 
     private void deleteDirectories(Path projectDirPath) throws IOException {

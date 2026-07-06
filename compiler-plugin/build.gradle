@@ -35,8 +35,6 @@ dependencies {
 
     implementation project(":grpc-native")
 
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
     implementation "com.google.protobuf:protobuf-java:${googleProtobuf}"
 
 }

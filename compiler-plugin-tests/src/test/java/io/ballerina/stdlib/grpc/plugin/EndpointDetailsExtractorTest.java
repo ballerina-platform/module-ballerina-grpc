@@ -25,6 +25,7 @@ import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.directory.BuildProject;
 import io.ballerina.projects.environment.Environment;
 import io.ballerina.projects.environment.EnvironmentBuilder;
+import io.ballerina.projects.plugins.EndpointArtifact;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -48,12 +49,12 @@ public class EndpointDetailsExtractorTest {
     public void testHardcodedPortExtraction() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_10");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             Path artifactDir = projectDirPath.resolve(TARGET_DIR).resolve(ARTIFACT_DIR);
             Assert.assertTrue(Files.exists(artifactDir));
-            Path endpointYaml = artifactDir.resolve("grpc_service_HelloWorld_endpoint.yaml");
             assertNoCompilationErrors(diagnosticResult);
-            assertEndpointPort(endpointYaml, 9090);
+            assertEndpointPort(project, "grpc_service_HelloWorld.proto", 9090);
         } finally {
             deleteDirectories(projectDirPath);
         }
@@ -63,12 +64,12 @@ public class EndpointDetailsExtractorTest {
     public void testConfigurablePortWithDefaultValue() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_24");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             Path artifactDir = projectDirPath.resolve(TARGET_DIR).resolve(ARTIFACT_DIR);
             Assert.assertTrue(Files.exists(artifactDir));
-            Path endpointYaml = artifactDir.resolve("grpc_unary_blocking_service_HelloWorld_endpoint.yaml");
             assertNoCompilationErrors(diagnosticResult);
-            assertEndpointPort(endpointYaml, 9090);
+            assertEndpointPort(project, "grpc_unary_blocking_service_HelloWorld.proto", 9090);
         } finally {
             deleteDirectories(projectDirPath);
         }
@@ -78,11 +79,11 @@ public class EndpointDetailsExtractorTest {
     public void testConfigurablePortWithRequiredValue()  throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_25");
         try {
-            getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            getDiagnosticResults(project);
             Path artifactDir = projectDirPath.resolve(TARGET_DIR).resolve(ARTIFACT_DIR);
             Assert.assertTrue(Files.exists(artifactDir));
-            Path endpointYaml = artifactDir.resolve("grpc_unary_blocking_service_HelloWorld_endpoint.yaml");
-            assertEndpointPort(endpointYaml, 0);
+            assertEndpointPort(project, "grpc_unary_blocking_service_HelloWorld.proto", 0);
         } finally {
             deleteDirectories(projectDirPath);
         }
@@ -92,21 +93,22 @@ public class EndpointDetailsExtractorTest {
     public void testServiceArtifactEndpointYamlContainsExpectedPortForMultipleServices() throws Exception {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_26");
         try {
-            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            BuildProject project = loadProject(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(project);
             Assert.assertEquals(diagnosticResult.errorCount(), 0);
-            assertEndpointPort(projectDirPath.resolve(TARGET_DIR).resolve(ARTIFACT_DIR)
-                            .resolve("helloballerina_service_HelloBallerina_endpoint.yaml"),
-                    8091);
-            assertEndpointPort(projectDirPath.resolve(TARGET_DIR).resolve(ARTIFACT_DIR)
-                    .resolve("helloworld_service_HelloWorld_endpoint.yaml"), 9090);
+            assertEndpointPort(project, "helloballerina_service_HelloBallerina.proto", 8091);
+            assertEndpointPort(project, "helloworld_service_HelloWorld.proto", 9090);
         } finally {
             deleteDirectories(projectDirPath);
         }
     }
 
-    private static DiagnosticResult getDiagnosticResults(Path projectDirPath, boolean isExportEndpoints) {
+    private static BuildProject loadProject(Path projectDirPath, boolean isExportEndpoints) {
         BuildOptions buildOptions = BuildOptions.builder().setExportEndpoints(isExportEndpoints).build();
-        BuildProject project = BuildProject.load(getEnvironmentBuilder(), projectDirPath, buildOptions);
+        return BuildProject.load(getEnvironmentBuilder(), projectDirPath, buildOptions);
+    }
+
+    private static DiagnosticResult getDiagnosticResults(BuildProject project) {
         PackageCompilation compilation = project.currentPackage().getCompilation();
         return compilation.diagnosticResult();
     }
@@ -116,15 +118,12 @@ public class EndpointDetailsExtractorTest {
         return ProjectEnvironmentBuilder.getBuilder(environment);
     }
 
-    private static void assertEndpointPort(Path endpointYaml, int expectedPort) throws IOException {
-        try (Stream<String> lines = Files.lines(endpointYaml)) {
-            String portLine = lines.map(String::trim)
-                    .filter(line -> line.startsWith("port:"))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("No port field found in: " + endpointYaml));
-            int actualPort = Integer.parseInt(portLine.substring("port:".length()).trim());
-            Assert.assertEquals(actualPort, expectedPort, "Unexpected endpoint port in " + endpointYaml);
-        }
+    private static void assertEndpointPort(BuildProject project, String schemaPath, int expectedPort) {
+        EndpointArtifact endpointArtifact = project.endpointArtifacts().stream()
+                .filter(artifact -> schemaPath.equals(artifact.schemaPath()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("No endpoint artifact found for: " + schemaPath));
+        Assert.assertEquals(endpointArtifact.port(), expectedPort, "Unexpected endpoint port in " + schemaPath);
     }
 
     private void deleteDirectories(Path projectDirPath) throws IOException {

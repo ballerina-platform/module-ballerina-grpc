@@ -54,7 +54,7 @@ public class GrpcServiceAnalysisTask implements AnalysisTask<SyntaxNodeAnalysisC
 
         if (isBallerinaGrpcService(serviceDeclarationSymbol) && isExportEndpoints) {
             try {
-                endpointYamlGeneratorGrpc.writeEndpointYaml();
+                endpointYamlGeneratorGrpc.addEndpointArtifact();
                 protoFileExporter.exportProtoFile();
             } catch (IOException e) {
                 context.reportDiagnostic(
