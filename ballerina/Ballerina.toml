@@ -2,7 +2,7 @@
 org = "ballerina"
 name = "grpc"
 version = "1.14.7"
-distribution = "2201.14.0-20260527-050400-74f7e6bf"
+distribution = "2201.14.0"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
