@@ -10,6 +10,11 @@ icon = "icon.png"
 license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 
+[[dependency]]
+org = "ballerina"
+name = "http"
+version = "2.16.1"
+
 [platform.java21]
 graalvmCompatible = true
 
