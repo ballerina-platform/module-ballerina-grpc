@@ -25,6 +25,7 @@ import io.ballerina.projects.BuildOptions;
 import io.ballerina.projects.Project;
 import io.ballerina.projects.plugins.AnalysisTask;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
+import io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.Endpoint;
 import io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.EndpointYamlGenerator;
 import io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.ProtoFileExporter;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
@@ -32,12 +33,22 @@ import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import static io.ballerina.stdlib.grpc.plugin.GrpcCompilerPluginConstants.GRPC_EXPORTED_ENDPOINTS;
 import static io.ballerina.stdlib.grpc.plugin.GrpcServiceValidator.isBallerinaGrpcService;
 
 public class GrpcServiceAnalysisTask implements AnalysisTask<SyntaxNodeAnalysisContext> {
+    private final Map<String, Object> ctxData;
+
+    public GrpcServiceAnalysisTask(Map<String, Object> ctxData) {
+        this.ctxData = ctxData;
+    }
+
     @Override
+    @SuppressWarnings("unchecked")
     public void perform(SyntaxNodeAnalysisContext context) {
         ServiceDeclarationNode serviceNode = (ServiceDeclarationNode) context.node();
 
@@ -61,7 +72,8 @@ public class GrpcServiceAnalysisTask implements AnalysisTask<SyntaxNodeAnalysisC
         ProtoFileExporter protoFileExporter = new ProtoFileExporter(context);
 
         try {
-            endpointYamlGeneratorGrpc.writeEndpointYamls();
+            List<Endpoint> collectedEndpoints = (List<Endpoint>) ctxData.get(GRPC_EXPORTED_ENDPOINTS);
+            collectedEndpoints.addAll(endpointYamlGeneratorGrpc.getEndpoints());
             protoFileExporter.exportProtoFile();
         } catch (IOException e) {
             context.reportDiagnostic(
