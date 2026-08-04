@@ -37,6 +37,7 @@ import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class ServiceDescExtractor {
 
@@ -146,14 +147,29 @@ public class ServiceDescExtractor {
         try {
             DescriptorProtos.FileDescriptorSet set =
                     DescriptorProtos.FileDescriptorSet.parseFrom(bytes);
-            if (set.getFileCount() > 0) {
-                DescriptorProtos.FileDescriptorProto fds =
-                        set.getFile(set.getFileCount() - 1);
-                this.fileDescriptor.set(fds);
-            }
+            selectRootFileDescriptor(set).ifPresent(this.fileDescriptor::set);
         } catch (InvalidProtocolBufferException e) {
             debug("Not a valid FileDescriptorSet: " + e.getMessage());
         }
+    }
+
+    /**
+     * A {@code FileDescriptorSet} bundles a proto file together with its transitive imports; the file that
+     * actually declares the service being analyzed is the one nothing else in the set depends on, not
+     * necessarily the last entry (ordering is not guaranteed by the encoder).
+     */
+    private Optional<DescriptorProtos.FileDescriptorProto> selectRootFileDescriptor(
+            DescriptorProtos.FileDescriptorSet set) {
+        if (set.getFileCount() == 0) {
+            return Optional.empty();
+        }
+        Set<String> dependencyNames = set.getFileList().stream()
+                .flatMap(file -> file.getDependencyList().stream())
+                .collect(Collectors.toSet());
+        return set.getFileList().stream()
+                .filter(file -> !dependencyNames.contains(file.getName()))
+                .findFirst()
+                .or(() -> Optional.of(set.getFile(set.getFileCount() - 1)));
     }
 
     private static String sanitizeHex(String raw) {

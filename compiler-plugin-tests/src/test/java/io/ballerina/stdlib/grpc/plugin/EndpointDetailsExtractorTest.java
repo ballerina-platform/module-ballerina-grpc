@@ -75,14 +75,18 @@ public class EndpointDetailsExtractorTest {
     }
 
     @Test
-    public void testConfigurablePortWithRequiredValue()  throws IOException {
+    public void testConfigurablePortWithRequiredValue() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_25");
         try {
-            getDiagnosticResults(projectDirPath, true);
+            DiagnosticResult diagnosticResult = getDiagnosticResults(projectDirPath, true);
+            assertNoCompilationErrors(diagnosticResult);
+
             Path artifactDir = projectDirPath.resolve(TARGET_DIR).resolve(ARTIFACT_DIR);
             Assert.assertTrue(Files.exists(artifactDir));
             Path endpointYaml = artifactDir.resolve("grpc_unary_blocking_service_HelloWorld_endpoint.yaml");
-            assertEndpointPort(endpointYaml, 0);
+            Assert.assertTrue(Files.notExists(endpointYaml),
+                    "No endpoint YAML should be generated when the required port cannot be resolved "
+                            + "(no bogus port-0 entry)");
         } finally {
             deleteDirectories(projectDirPath);
         }

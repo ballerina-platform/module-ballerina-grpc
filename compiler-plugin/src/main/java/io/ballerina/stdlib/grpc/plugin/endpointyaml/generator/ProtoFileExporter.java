@@ -23,6 +23,9 @@ import io.ballerina.compiler.api.SemanticModel;
 import io.ballerina.projects.Package;
 import io.ballerina.projects.Project;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
+import io.ballerina.tools.diagnostics.DiagnosticFactory;
+import io.ballerina.tools.diagnostics.DiagnosticInfo;
+import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,6 +44,13 @@ public class ProtoFileExporter {
     public void exportProtoFile() throws IOException {
         ServiceDescExtractor descExtractor = new ServiceDescExtractor(this.semanticModel, context);
         AtomicReference<DescriptorProtos.FileDescriptorProto> fds = descExtractor.extract();
+        if (fds.get() == null) {
+            context.reportDiagnostic(DiagnosticFactory.createDiagnostic(
+                    new DiagnosticInfo("GRPC_PLUGIN_DEBUG",
+                            "[grpc-plugin] no proto descriptor available for export", DiagnosticSeverity.WARNING),
+                    context.node().location()));
+            return;
+        }
         FileNameGeneratorUtil fileNameGeneratorUtil = new FileNameGeneratorUtil(this.context);
         String filePath = fileNameGeneratorUtil.getFileName();
         Package currentPackage = this.context.currentPackage();

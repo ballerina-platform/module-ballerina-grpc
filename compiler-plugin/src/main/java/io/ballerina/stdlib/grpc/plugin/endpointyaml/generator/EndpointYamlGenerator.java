@@ -53,6 +53,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -63,7 +65,6 @@ public class EndpointYamlGenerator {
     private final SyntaxNodeAnalysisContext context;
     private final String schemaFileName;
 
-    private int port;
     final PackageMemberVisitor packageMemberVisitor = new PackageMemberVisitor();
 
     private static final String ARTIFACT = "artifact";
@@ -77,6 +78,9 @@ public class EndpointYamlGenerator {
     private record ListenerResolution(Optional<ParenthesizedArgList> argList) {
     }
 
+    private record PositionalPortResolution(int nextIndex, Optional<Integer> port) {
+    }
+
     public EndpointYamlGenerator(SyntaxNodeAnalysisContext context) {
         this.node = (ServiceDeclarationNode) context.node();
         this.context = context;
@@ -85,15 +89,22 @@ public class EndpointYamlGenerator {
         this.schemaFileName = fileNameGeneratorUtil.getFileName();
     }
 
-    public Endpoint getEndpoint() {
+    public List<Endpoint> getEndpoints() {
         String moduleName = context.moduleId().moduleName();
         ensureModuleVisited(moduleName);
 
-        ListenerInfo listenerInfo = resolveListenerInfo(moduleName);
-        port = resolvePort(listenerInfo.argList());
+        List<ListenerInfo> listenerInfos = resolveListenerInfo(moduleName);
         String basePath = buildBasePath();
 
-        return new Endpoint(port, basePath, GRPC, this.schemaFileName);
+        List<Endpoint> endpoints = new ArrayList<>();
+        for (ListenerInfo listenerInfo : listenerInfos) {
+            Optional<Integer> port = resolvePort(listenerInfo.argList());
+            if (port.isEmpty()) {
+                continue;
+            }
+            endpoints.add(new Endpoint(port.get(), basePath, GRPC, this.schemaFileName));
+        }
+        return endpoints;
     }
 
     private void ensureModuleVisited(String moduleName) {
@@ -115,12 +126,13 @@ public class EndpointYamlGenerator {
 
     }
 
-    private ListenerInfo resolveListenerInfo(String moduleName) {
-        Optional<ParenthesizedArgList> argList = Optional.empty();
+    private List<ListenerInfo> resolveListenerInfo(String moduleName) {
+        List<ListenerInfo> listenerInfos = new ArrayList<>();
         SemanticModel semanticModel = context.semanticModel();
 
         for (ExpressionNode raw : node.expressions()) {
             ExpressionNode expr = unwrapCheckExpression(raw);
+            Optional<ParenthesizedArgList> argList;
 
             if (expr.kind().equals(SyntaxKind.EXPLICIT_NEW_EXPRESSION)) {
                 ExplicitNewExpressionNode explicit = (ExplicitNewExpressionNode) expr;
@@ -131,10 +143,13 @@ public class EndpointYamlGenerator {
             } else if (isNameReference(expr)) {
                 ListenerResolution resolution = resolveNamedListener(expr, moduleName, semanticModel);
                 argList = resolution.argList();
+            } else {
+                continue;
             }
+            listenerInfos.add(new ListenerInfo(argList));
         }
 
-        return new ListenerInfo(argList);
+        return listenerInfos;
     }
 
     private ExpressionNode unwrapCheckExpression(ExpressionNode expr) {
@@ -192,18 +207,19 @@ public class EndpointYamlGenerator {
         };
     }
 
-    private int resolvePort(Optional<ParenthesizedArgList> argListOpt) {
+    private Optional<Integer> resolvePort(Optional<ParenthesizedArgList> argListOpt) {
         if (argListOpt.isEmpty()) {
-            return 0;
+            return Optional.empty();
         }
         SeparatedNodeList<FunctionArgumentNode> arguments = argListOpt.get().arguments();
-        int index = resolvePortFromPositionalArgs(arguments);
-        resolvePortFromNamedArgs(arguments, index);
-        return port;
+        PositionalPortResolution positional = resolvePortFromPositionalArgs(arguments);
+        Optional<Integer> namedPort = resolvePortFromNamedArgs(arguments, positional.nextIndex());
+        return namedPort.isPresent() ? namedPort : positional.port();
     }
 
-    private int resolvePortFromPositionalArgs(SeparatedNodeList<FunctionArgumentNode> arguments) {
+    private PositionalPortResolution resolvePortFromPositionalArgs(SeparatedNodeList<FunctionArgumentNode> arguments) {
         int index = 0;
+        Optional<Integer> resolvedPort = Optional.empty();
         for (; index < arguments.size(); index++) {
             FunctionArgumentNode arg = arguments.get(index);
             if (arg instanceof NamedArgumentNode) {
@@ -211,27 +227,24 @@ public class EndpointYamlGenerator {
             }
             if (index == 0) {
                 PositionalArgumentNode portArg = (PositionalArgumentNode) arg;
-                String portVal = getPortValue(portArg.expression(), context.semanticModel(), context).orElse(null);
-                if (portVal != null) {
-                    port = Integer.parseInt(portVal);
-                }
+                resolvedPort = getPortValue(portArg.expression(), context.semanticModel(), context)
+                        .map(Integer::parseInt);
             }
         }
-        return index;
+        return new PositionalPortResolution(index, resolvedPort);
     }
 
-    private void resolvePortFromNamedArgs(SeparatedNodeList<FunctionArgumentNode> arguments, int startIndex) {
+    private Optional<Integer> resolvePortFromNamedArgs(SeparatedNodeList<FunctionArgumentNode> arguments,
+                                                       int startIndex) {
         for (int i = startIndex; i < arguments.size(); i++) {
             FunctionArgumentNode arg = arguments.get(i);
             if (arg instanceof NamedArgumentNode namedArg &&
                     namedArg.argumentName().toString().trim().equals("port")) {
-                String portValue = getPortValue(namedArg.expression(), context.semanticModel(), context)
-                        .orElse(null);
-                if (portValue != null) {
-                    port = Integer.parseInt(portValue);
-                }
+                return getPortValue(namedArg.expression(), context.semanticModel(), context)
+                        .map(Integer::parseInt);
             }
         }
+        return Optional.empty();
     }
 
     private String buildBasePath() {
@@ -242,12 +255,13 @@ public class EndpointYamlGenerator {
         return basePath.toString();
     }
 
-    public void writeEndpointYaml() throws IOException {
-        Endpoint ep = getEndpoint();
-        Path outPath = resolveOutputPath();
-        String fileName = buildEndpointFileName(outPath);
-        Path path = outPath.resolve(ARTIFACT).resolve(fileName + YAML_EXTENSION).toAbsolutePath();
-        writeYaml(path, new EndpointWrapper(ep));
+    public void writeEndpointYamls() throws IOException {
+        for (Endpoint endpoint : getEndpoints()) {
+            Path outPath = resolveOutputPath();
+            String fileName = buildEndpointFileName(outPath);
+            Path path = outPath.resolve(ARTIFACT).resolve(fileName + YAML_EXTENSION).toAbsolutePath();
+            writeYaml(path, new EndpointWrapper(endpoint));
+        }
     }
 
     private Path resolveOutputPath() throws IOException {
@@ -263,7 +277,7 @@ public class EndpointYamlGenerator {
         return resolveContractFileName(outPath.resolve(ARTIFACT), base);
     }
 
-    private void writeYaml(Path path, EndpointWrapper wrapper) {
+    private void writeYaml(Path path, EndpointWrapper wrapper) throws IOException {
         YAMLFactory yamlFactory = YAMLFactory.builder()
                 .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
                 .build();
@@ -273,7 +287,7 @@ public class EndpointYamlGenerator {
         try (Writer writer = Files.newBufferedWriter(path)) {
             mapper.writeValue(writer, wrapper);
         } catch (IOException e) {
-            e.printStackTrace(System.out);
+            throw new IOException("Failed to write endpoint yaml to " + path, e);
         }
     }
 

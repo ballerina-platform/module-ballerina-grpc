@@ -103,16 +103,20 @@ public class ProtoFileWriter {
             writeMessage(writer, nested, inner);
         }
 
-        // Fields
+        // Fields (excluding ones that belong to a oneof - those are written below, inside their own block)
         for (DescriptorProtos.FieldDescriptorProto field : message.getFieldList()) {
+            if (field.hasOneofIndex()) {
+                continue;
+            }
             writeField(writer, field, inner);
         }
 
         // Oneofs
-        for (DescriptorProtos.OneofDescriptorProto oneof : message.getOneofDeclList()) {
+        for (int oneofIndex = 0; oneofIndex < message.getOneofDeclCount(); oneofIndex++) {
+            DescriptorProtos.OneofDescriptorProto oneof = message.getOneofDecl(oneofIndex);
             writer.println(inner + "oneof " + oneof.getName() + " {");
             for (DescriptorProtos.FieldDescriptorProto field : message.getFieldList()) {
-                if (field.hasOneofIndex()) {
+                if (field.hasOneofIndex() && field.getOneofIndex() == oneofIndex) {
                     writeField(writer, field, inner + "  ");
                 }
             }
@@ -126,7 +130,7 @@ public class ProtoFileWriter {
     private static void writeField(PrintWriter writer,
                                    DescriptorProtos.FieldDescriptorProto field,
                                    String indent) {
-        String label = getLabel(field.getLabel());
+        String label = getLabel(field);
         String type  = getType(field);
 
         String line = indent;
@@ -163,9 +167,13 @@ public class ProtoFileWriter {
         writer.println();
     }
 
-    private static String getLabel(DescriptorProtos.FieldDescriptorProto.Label label) {
-        return switch (label) {
-            case LABEL_OPTIONAL -> "optional";
+    private static String getLabel(DescriptorProtos.FieldDescriptorProto field) {
+        if (field.hasOneofIndex()) {
+            // Never valid inside a oneof - membership in the oneof already implies "optional" semantics.
+            return "";
+        }
+        return switch (field.getLabel()) {
+            case LABEL_OPTIONAL -> field.getProto3Optional() ? "optional" : "";
             case LABEL_REQUIRED -> "required";
             case LABEL_REPEATED -> "repeated";
         };

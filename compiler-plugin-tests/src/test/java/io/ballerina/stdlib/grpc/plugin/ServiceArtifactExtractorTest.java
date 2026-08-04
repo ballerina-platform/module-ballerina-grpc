@@ -132,7 +132,7 @@ public class ServiceArtifactExtractorTest {
             Assert.assertEquals(endpointFiles.size(), 2,
                     "Expected endpoint YAML artifacts for both services with empty names");
             Assert.assertTrue(endpointFiles.stream()
-                            .allMatch(fileName -> fileName.matches(".+_[0-9]+_endpoint\\.yaml")),
+                            .allMatch(fileName -> fileName.matches(".+_-?[0-9]+_endpoint\\.yaml")),
                     "Endpoint YAML files should use fallback hash-based naming for empty service names");
         } finally {
             deleteDirectories(projectDirPath);

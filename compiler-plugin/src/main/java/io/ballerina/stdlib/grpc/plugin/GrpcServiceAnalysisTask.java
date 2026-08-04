@@ -46,29 +46,41 @@ public class GrpcServiceAnalysisTask implements AnalysisTask<SyntaxNodeAnalysisC
             return;
         }
 
-        EndpointYamlGenerator endpointYamlGeneratorGrpc = new EndpointYamlGenerator(context);
-        ProtoFileExporter protoFileExporter = new ProtoFileExporter(context);
-
         Project project = context.currentPackage().project();
         boolean isExportEndpoints = shouldExportEndpoints(project);
 
-        if (isBallerinaGrpcService(serviceDeclarationSymbol) && isExportEndpoints) {
-            try {
-                endpointYamlGeneratorGrpc.writeEndpointYaml();
-                protoFileExporter.exportProtoFile();
-            } catch (IOException e) {
-                context.reportDiagnostic(
-                    DiagnosticFactory.createDiagnostic(
-                        new DiagnosticInfo(
-                                "GRPC_PLUGIN_DEBUG",
-                                "[grpc-plugin] " + e.getMessage(),
-                                DiagnosticSeverity.ERROR
-                        ),
-                        serviceNode.location()
-                    )
-                );
-            }
+        if (!isBallerinaGrpcService(serviceDeclarationSymbol) || !isExportEndpoints) {
+            return;
         }
+
+        if (hasCompilationErrors(context)) {
+            return;
+        }
+
+        EndpointYamlGenerator endpointYamlGeneratorGrpc = new EndpointYamlGenerator(context);
+        ProtoFileExporter protoFileExporter = new ProtoFileExporter(context);
+
+        try {
+            endpointYamlGeneratorGrpc.writeEndpointYamls();
+            protoFileExporter.exportProtoFile();
+        } catch (IOException e) {
+            context.reportDiagnostic(
+                DiagnosticFactory.createDiagnostic(
+                    new DiagnosticInfo(
+                            "GRPC_PLUGIN_DEBUG",
+                            "[grpc-plugin] " + e.getMessage(),
+                            DiagnosticSeverity.ERROR
+                    ),
+                    serviceNode.location()
+                )
+            );
+        }
+    }
+
+    private boolean hasCompilationErrors(SyntaxNodeAnalysisContext context) {
+        return context.compilation().diagnosticResult()
+                .diagnostics().stream()
+                .anyMatch(d -> DiagnosticSeverity.ERROR.equals(d.diagnosticInfo().severity()));
     }
 
     private boolean shouldExportEndpoints(Project project) {
@@ -76,8 +88,8 @@ public class GrpcServiceAnalysisTask implements AnalysisTask<SyntaxNodeAnalysisC
         try {
             return buildOptions.exportEndpoints();
         } catch (NoSuchMethodError e) {
-            // Older runtimes may not expose this option. Fall back to enabled to preserve plugin behavior.
-            return true;
+            // Older runtimes may not expose this option. Preserve the opt-in default (disabled).
+            return false;
         }
     }
 }
