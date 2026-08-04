@@ -72,8 +72,12 @@ public class GrpcServiceAnalysisTask implements AnalysisTask<SyntaxNodeAnalysisC
         ProtoFileExporter protoFileExporter = new ProtoFileExporter(context);
 
         try {
+            List<Endpoint> resolvedEndpoints = endpointYamlGeneratorGrpc.getEndpoints();
+            if (endpointYamlGeneratorGrpc.hasReportedError()) {
+                return;
+            }
             List<Endpoint> collectedEndpoints = (List<Endpoint>) ctxData.get(GRPC_EXPORTED_ENDPOINTS);
-            collectedEndpoints.addAll(endpointYamlGeneratorGrpc.getEndpoints());
+            collectedEndpoints.addAll(resolvedEndpoints);
             protoFileExporter.exportProtoFile();
         } catch (IOException e) {
             context.reportDiagnostic(

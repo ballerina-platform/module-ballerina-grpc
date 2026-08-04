@@ -61,6 +61,8 @@ public class EndpointYamlGenerator {
     private final SyntaxNodeAnalysisContext context;
     private final String schemaFileName;
 
+    private boolean hasReportedError;
+
     final PackageMemberVisitor packageMemberVisitor = new PackageMemberVisitor();
 
     private static final String ARTIFACT = "artifact";
@@ -100,6 +102,15 @@ public class EndpointYamlGenerator {
             endpoints.add(new Endpoint(basePath, port.get(), basePath, GRPC, this.schemaFileName));
         }
         return endpoints;
+    }
+
+    /**
+     * Indicates whether the last {@link #getEndpoints()} call reported a compilation error
+     * (e.g. an unresolvable required port). Callers should skip exporting artifacts for this
+     * service when this returns {@code true}, rather than exporting from a partial result.
+     */
+    public boolean hasReportedError() {
+        return hasReportedError;
     }
 
     private void ensureModuleVisited(String moduleName) {
@@ -222,8 +233,8 @@ public class EndpointYamlGenerator {
             }
             if (index == 0) {
                 PositionalArgumentNode portArg = (PositionalArgumentNode) arg;
-                resolvedPort = getPortValue(portArg.expression(), context.semanticModel(), context)
-                        .map(Integer::parseInt);
+                resolvedPort = parsePortValue(
+                        getPortValue(portArg.expression(), context.semanticModel(), context));
             }
         }
         return new PositionalPortResolution(index, resolvedPort);
@@ -235,11 +246,22 @@ public class EndpointYamlGenerator {
             FunctionArgumentNode arg = arguments.get(i);
             if (arg instanceof NamedArgumentNode namedArg &&
                     namedArg.argumentName().toString().trim().equals("port")) {
-                return getPortValue(namedArg.expression(), context.semanticModel(), context)
-                        .map(Integer::parseInt);
+                return parsePortValue(getPortValue(namedArg.expression(), context.semanticModel(), context));
             }
         }
         return Optional.empty();
+    }
+
+    private Optional<Integer> parsePortValue(Optional<String> portValue) {
+        if (portValue.isEmpty()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(Integer.parseInt(portValue.get()));
+        } catch (NumberFormatException e) {
+            reportInvalidPortConfigDiagnostic(context);
+            return Optional.empty();
+        }
     }
 
     private String buildBasePath() {
@@ -340,11 +362,23 @@ public class EndpointYamlGenerator {
     }
 
     private void reportMissingPortConfigDiagnostic(SyntaxNodeAnalysisContext context) {
+        hasReportedError = true;
         DiagnosticInfo diagnosticInfo = new DiagnosticInfo(
                 "PORT_CONFIGURATION_BEING_NULL",
                 "The configurable value provided for the port should have a " +
                         "default value to generate the server details" +
                 "when --export-endpoints flag presents",
+                DiagnosticSeverity.ERROR
+        );
+        context.reportDiagnostic(DiagnosticFactory.createDiagnostic(diagnosticInfo, context.node().location()));
+    }
+
+    private void reportInvalidPortConfigDiagnostic(SyntaxNodeAnalysisContext context) {
+        hasReportedError = true;
+        DiagnosticInfo diagnosticInfo = new DiagnosticInfo(
+                "INVALID_PORT_CONFIGURATION",
+                "The configured port value is not a valid integer; unable to generate the server details " +
+                        "when --export-endpoints flag presents",
                 DiagnosticSeverity.ERROR
         );
         context.reportDiagnostic(DiagnosticFactory.createDiagnostic(diagnosticInfo, context.node().location()));
