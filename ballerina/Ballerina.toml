@@ -13,7 +13,7 @@ export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timest
 [[dependency]]
 org = "ballerina"
 name = "http"
-version = "2.16.1"
+version = "2.16.6"
 
 [platform.java21]
 graalvmCompatible = true
@@ -39,8 +39,8 @@ scope = "testOnly"
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
-version = "2.16.1"
-path = "./lib/http-native-2.16.1.jar"
+version = "2.16.6"
+path = "./lib/http-native-2.16.6.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
