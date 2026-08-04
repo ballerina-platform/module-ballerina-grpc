@@ -181,12 +181,6 @@ public class ServiceArtifactExtractorTest {
         }
     }
 
-    private long countOccurrences(Path file, String needle) throws IOException {
-        try (Stream<String> lines = Files.lines(file)) {
-            return lines.filter(line -> line.contains(needle)).count();
-        }
-    }
-
     private static ProjectEnvironmentBuilder getEnvironmentBuilder() {
         Environment environment = EnvironmentBuilder.getBuilder().setBallerinaHome(DISTRIBUTION_PATH).build();
         return ProjectEnvironmentBuilder.getBuilder(environment);
@@ -201,9 +195,9 @@ public class ServiceArtifactExtractorTest {
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         if (diagnosticResult.errorCount() == 0) {
             JBallerinaBackend jBallerinaBackend = JBallerinaBackend.from(compilation, JvmTarget.JAVA_21);
-            Path executablePath = project.targetDir().resolve("bin").resolve("output.jar");
-            Files.createDirectories(executablePath.getParent());
-            jBallerinaBackend.emit(JBallerinaBackend.OutputType.EXEC, executablePath);
+            Path binDir = project.targetDir().resolve("bin");
+            Files.createDirectories(binDir);
+            jBallerinaBackend.emit(JBallerinaBackend.OutputType.EXEC, binDir.resolve("output.jar"));
         }
         return diagnosticResult;
     }
