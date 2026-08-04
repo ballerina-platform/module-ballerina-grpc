@@ -41,8 +41,6 @@ import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.ServiceDeclarationNode;
 import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.compiler.syntax.tree.SyntaxTree;
-import io.ballerina.projects.Package;
-import io.ballerina.projects.Project;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.runtime.api.utils.IdentifierUtils;
 import io.ballerina.tools.diagnostics.DiagnosticFactory;
@@ -58,8 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.FileNameGeneratorUtil.resolveContractFileName;
-
 public class EndpointYamlGenerator {
     private final ServiceDeclarationNode node;
     private final SyntaxNodeAnalysisContext context;
@@ -69,8 +65,7 @@ public class EndpointYamlGenerator {
 
     private static final String ARTIFACT = "artifact";
     private static final String GRPC = "GRPC";
-    private static final String YAML_EXTENSION = ".yaml";
-    private static final String ENDPOINT_SUFFIX = "_endpoint";
+    private static final String ENDPOINTS_FILE_NAME = "endpoints.yaml";
 
     private record ListenerInfo(Optional<ParenthesizedArgList> argList) {
     }
@@ -102,7 +97,7 @@ public class EndpointYamlGenerator {
             if (port.isEmpty()) {
                 continue;
             }
-            endpoints.add(new Endpoint(port.get(), basePath, GRPC, this.schemaFileName));
+            endpoints.add(new Endpoint(basePath, port.get(), basePath, GRPC, this.schemaFileName));
         }
         return endpoints;
     }
@@ -255,29 +250,13 @@ public class EndpointYamlGenerator {
         return basePath.toString();
     }
 
-    public void writeEndpointYamls() throws IOException {
-        for (Endpoint endpoint : getEndpoints()) {
-            Path outPath = resolveOutputPath();
-            String fileName = buildEndpointFileName(outPath);
-            Path path = outPath.resolve(ARTIFACT).resolve(fileName + YAML_EXTENSION).toAbsolutePath();
-            writeYaml(path, new EndpointWrapper(endpoint));
-        }
-    }
-
-    private Path resolveOutputPath() throws IOException {
-        Package currentPackage = this.context.currentPackage();
-        Project project = currentPackage.project();
-        Path outPath = project.targetDir();
+    public static void writeEndpointsYaml(Path outPath, List<Endpoint> endpoints) throws IOException {
         Files.createDirectories(outPath.resolve(ARTIFACT));
-        return outPath;
+        Path path = outPath.resolve(ARTIFACT).resolve(ENDPOINTS_FILE_NAME).toAbsolutePath();
+        writeYaml(path, new EndpointsWrapper(endpoints));
     }
 
-    private String buildEndpointFileName(Path outPath) {
-        String base = schemaFileName.split("\\.")[0] + ENDPOINT_SUFFIX;
-        return resolveContractFileName(outPath.resolve(ARTIFACT), base);
-    }
-
-    private void writeYaml(Path path, EndpointWrapper wrapper) throws IOException {
+    private static void writeYaml(Path path, EndpointsWrapper wrapper) throws IOException {
         YAMLFactory yamlFactory = YAMLFactory.builder()
                 .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
                 .build();
@@ -287,7 +266,7 @@ public class EndpointYamlGenerator {
         try (Writer writer = Files.newBufferedWriter(path)) {
             mapper.writeValue(writer, wrapper);
         } catch (IOException e) {
-            throw new IOException("Failed to write endpoint yaml to " + path, e);
+            throw new IOException("Failed to write endpoints yaml to " + path, e);
         }
     }
 

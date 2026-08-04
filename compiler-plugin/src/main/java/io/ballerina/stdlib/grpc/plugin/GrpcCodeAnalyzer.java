@@ -22,13 +22,22 @@ import io.ballerina.compiler.syntax.tree.SyntaxKind;
 import io.ballerina.projects.plugins.CodeAnalysisContext;
 import io.ballerina.projects.plugins.CodeAnalyzer;
 
+import java.util.Map;
+
 /**
  * NATS Code Analyzer.
  */
 public class GrpcCodeAnalyzer extends CodeAnalyzer {
+    private final Map<String, Object> ctxData;
+
+    public GrpcCodeAnalyzer(Map<String, Object> ctxData) {
+        this.ctxData = ctxData;
+    }
+
     @Override
     public void init(CodeAnalysisContext codeAnalysisContext) {
         codeAnalysisContext.addSyntaxNodeAnalysisTask(new GrpcServiceValidator(), SyntaxKind.SERVICE_DECLARATION);
-        codeAnalysisContext.addSyntaxNodeAnalysisTask(new GrpcServiceAnalysisTask(), SyntaxKind.SERVICE_DECLARATION);
+        codeAnalysisContext.addSyntaxNodeAnalysisTask(
+                new GrpcServiceAnalysisTask(ctxData), SyntaxKind.SERVICE_DECLARATION);
     }
 }
