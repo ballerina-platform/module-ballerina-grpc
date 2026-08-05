@@ -18,9 +18,6 @@
 
 package io.ballerina.stdlib.grpc.plugin.endpointyaml.generator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.ballerina.compiler.api.SemanticModel;
 import io.ballerina.compiler.api.symbols.ModuleSymbol;
 import io.ballerina.compiler.api.symbols.Symbol;
@@ -47,17 +44,13 @@ import io.ballerina.tools.diagnostics.DiagnosticFactory;
 import io.ballerina.tools.diagnostics.DiagnosticInfo;
 import io.ballerina.tools.diagnostics.DiagnosticSeverity;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * Generates the endpoint entry for a single gRPC service declaration to be included in {@code endpoints.yaml}.
+ * Generates the endpoint entry for a single gRPC service declaration.
  */
 public class EndpointYamlGenerator {
     private final ServiceDeclarationNode node;
@@ -68,9 +61,7 @@ public class EndpointYamlGenerator {
 
     final PackageMemberVisitor packageMemberVisitor = new PackageMemberVisitor();
 
-    private static final String ARTIFACT = "artifact";
     private static final String GRPC = "GRPC";
-    private static final String ENDPOINTS_FILE_NAME = "endpoints.yaml";
 
     private record ListenerInfo(Optional<ParenthesizedArgList> argList) {
     }
@@ -273,26 +264,6 @@ public class EndpointYamlGenerator {
             basePath.append(identifierNode.toString().replace("\"", "").trim());
         }
         return basePath.toString();
-    }
-
-    public static void writeEndpointsYaml(Path outPath, List<Endpoint> endpoints) throws IOException {
-        Files.createDirectories(outPath.resolve(ARTIFACT));
-        Path path = outPath.resolve(ARTIFACT).resolve(ENDPOINTS_FILE_NAME).toAbsolutePath();
-        writeYaml(path, new EndpointsWrapper(endpoints));
-    }
-
-    private static void writeYaml(Path path, EndpointsWrapper wrapper) throws IOException {
-        YAMLFactory yamlFactory = YAMLFactory.builder()
-                .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-                .build();
-        ObjectMapper mapper = new ObjectMapper(yamlFactory);
-        mapper.findAndRegisterModules();
-
-        try (Writer writer = Files.newBufferedWriter(path)) {
-            mapper.writeValue(writer, wrapper);
-        } catch (IOException e) {
-            throw new IOException("Failed to write endpoints yaml to " + path, e);
-        }
     }
 
     private Optional<String> getPortValue(ExpressionNode expression, SemanticModel semanticModel,

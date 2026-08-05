@@ -27,7 +27,7 @@
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
     <Match>
-        <Class name="io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.EndpointsYamlWriterTask"/>
+        <Class name="io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.EndpointMetadataTask"/>
         <Field name="ctxData"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
