@@ -25,7 +25,24 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Writes a {@link DescriptorProtos.FileDescriptorProto} back out as {@code .proto} source text.
+ */
 public class ProtoFileWriter {
+
+    private static final String KEYWORD_SYNTAX = "syntax";
+    private static final String KEYWORD_PACKAGE = "package";
+    private static final String KEYWORD_IMPORT = "import";
+    private static final String KEYWORD_MESSAGE = "message";
+    private static final String KEYWORD_ENUM = "enum";
+    private static final String KEYWORD_SERVICE = "service";
+    private static final String KEYWORD_ONEOF = "oneof";
+    private static final String KEYWORD_RPC = "rpc";
+    private static final String KEYWORD_RETURNS = "returns";
+    private static final String KEYWORD_STREAM = "stream";
+    private static final String OPTION_JAVA_PACKAGE = "option java_package";
+    private static final String OPTION_JAVA_OUTER_CLASSNAME = "option java_outer_classname";
+    private static final String OPTION_JAVA_MULTIPLE_FILES = "option java_multiple_files";
 
     private ProtoFileWriter() {
     }
@@ -38,18 +55,18 @@ public class ProtoFileWriter {
 
         try (PrintWriter writer = new PrintWriter(outputPath, StandardCharsets.UTF_8)) {
             // Syntax
-            writer.println("syntax = \"" + proto.getSyntax() + "\";");
+            writer.println(KEYWORD_SYNTAX + " = \"" + proto.getSyntax() + "\";");
             writer.println();
 
             // Package
             if (!proto.getPackage().isEmpty()) {
-                writer.println("package " + proto.getPackage() + ";");
+                writer.println(KEYWORD_PACKAGE + " " + proto.getPackage() + ";");
                 writer.println();
             }
 
             // Imports
             for (String dep : proto.getDependencyList()) {
-                writer.println("import \"" + dep + "\";");
+                writer.println(KEYWORD_IMPORT + " \"" + dep + "\";");
             }
             if (!proto.getDependencyList().isEmpty()) {
                 writer.println();
@@ -59,13 +76,13 @@ public class ProtoFileWriter {
             if (proto.hasOptions()) {
                 DescriptorProtos.FileOptions opts = proto.getOptions();
                 if (opts.hasJavaPackage()) {
-                    writer.println("option java_package = \"" + opts.getJavaPackage() + "\";");
+                    writer.println(OPTION_JAVA_PACKAGE + " = \"" + opts.getJavaPackage() + "\";");
                 }
                 if (opts.hasJavaOuterClassname()) {
-                    writer.println("option java_outer_classname = \"" + opts.getJavaOuterClassname() + "\";");
+                    writer.println(OPTION_JAVA_OUTER_CLASSNAME + " = \"" + opts.getJavaOuterClassname() + "\";");
                 }
                 if (opts.hasJavaMultipleFiles()) {
-                    writer.println("option java_multiple_files = " + opts.getJavaMultipleFiles() + ";");
+                    writer.println(OPTION_JAVA_MULTIPLE_FILES + " = " + opts.getJavaMultipleFiles() + ";");
                 }
                 writer.println();
             }
@@ -90,7 +107,7 @@ public class ProtoFileWriter {
     private static void writeMessage(PrintWriter writer,
                                      DescriptorProtos.DescriptorProto message,
                                      String indent) {
-        writer.println(indent + "message " + message.getName() + " {");
+        writer.println(indent + KEYWORD_MESSAGE + " " + message.getName() + " {");
         String inner = indent + "  ";
 
         // Nested enums
@@ -114,7 +131,7 @@ public class ProtoFileWriter {
         // Oneofs
         for (int oneofIndex = 0; oneofIndex < message.getOneofDeclCount(); oneofIndex++) {
             DescriptorProtos.OneofDescriptorProto oneof = message.getOneofDecl(oneofIndex);
-            writer.println(inner + "oneof " + oneof.getName() + " {");
+            writer.println(inner + KEYWORD_ONEOF + " " + oneof.getName() + " {");
             for (DescriptorProtos.FieldDescriptorProto field : message.getFieldList()) {
                 if (field.hasOneofIndex() && field.getOneofIndex() == oneofIndex) {
                     writeField(writer, field, inner + "  ");
@@ -144,7 +161,7 @@ public class ProtoFileWriter {
     private static void writeEnum(PrintWriter writer,
                                   DescriptorProtos.EnumDescriptorProto enumType,
                                   String indent) {
-        writer.println(indent + "enum " + enumType.getName() + " {");
+        writer.println(indent + KEYWORD_ENUM + " " + enumType.getName() + " {");
         for (DescriptorProtos.EnumValueDescriptorProto value : enumType.getValueList()) {
             writer.println(indent + "  " + value.getName() + " = " + value.getNumber() + ";");
         }
@@ -154,13 +171,13 @@ public class ProtoFileWriter {
 
     private static void writeService(PrintWriter writer,
                                      DescriptorProtos.ServiceDescriptorProto service) {
-        writer.println("service " + service.getName() + " {");
+        writer.println(KEYWORD_SERVICE + " " + service.getName() + " {");
         for (DescriptorProtos.MethodDescriptorProto method : service.getMethodList()) {
-            String clientStream = method.getClientStreaming() ? "stream " : "";
-            String serverStream = method.getServerStreaming() ? "stream " : "";
-            writer.println("  rpc " + method.getName()
+            String clientStream = method.getClientStreaming() ? KEYWORD_STREAM + " " : "";
+            String serverStream = method.getServerStreaming() ? KEYWORD_STREAM + " " : "";
+            writer.println("  " + KEYWORD_RPC + " " + method.getName()
                     + " (" + clientStream + method.getInputType().replaceFirst("^\\.", "") + ")"
-                    + " returns (" + serverStream + method.getOutputType()
+                    + " " + KEYWORD_RETURNS + " (" + serverStream + method.getOutputType()
                     .replaceFirst("^\\.", "") + ");");
         }
         writer.println("}");

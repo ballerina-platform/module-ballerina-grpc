@@ -32,6 +32,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Exports the {@code .proto} schema of a single gRPC service declaration to disk.
+ */
 public class ProtoFileExporter {
     private static final String ARTIFACT = "artifact";
     private final SyntaxNodeAnalysisContext context;

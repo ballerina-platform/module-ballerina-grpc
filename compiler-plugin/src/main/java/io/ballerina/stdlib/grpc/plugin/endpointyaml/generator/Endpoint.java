@@ -18,6 +18,9 @@
 
 package io.ballerina.stdlib.grpc.plugin.endpointyaml.generator;
 
+/**
+ * Represents the metadata of a single gRPC endpoint exported to {@code endpoints.yaml}.
+ */
 public class Endpoint {
     private final String name;
     private final int port;

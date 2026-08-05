@@ -39,6 +39,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+/**
+ * Extracts the {@link DescriptorProtos.FileDescriptorProto} referenced by a gRPC service
+ * declaration's {@code @grpc:Descriptor}/{@code @grpc:ServiceDescriptor} annotation.
+ */
 public class ServiceDescExtractor {
 
     private static final Set<String> DESCRIPTOR_ANNOTATION_NAMES = Set.of(

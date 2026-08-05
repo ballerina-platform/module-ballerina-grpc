@@ -56,6 +56,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Generates the endpoint entry for a single gRPC service declaration to be included in {@code endpoints.yaml}.
+ */
 public class EndpointYamlGenerator {
     private final ServiceDeclarationNode node;
     private final SyntaxNodeAnalysisContext context;

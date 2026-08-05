@@ -35,7 +35,7 @@ import java.util.Map;
 
 import static io.ballerina.stdlib.grpc.plugin.GrpcCompilerPluginConstants.GRPC_EXPORTED_ENDPOINTS;
 
-/*
+/**
  * Writes every endpoint collected by {@link GrpcServiceAnalysisTask} during code analysis into a single,
  * consolidated endpoints.yaml, once for the whole compilation after code generation has completed.
  */

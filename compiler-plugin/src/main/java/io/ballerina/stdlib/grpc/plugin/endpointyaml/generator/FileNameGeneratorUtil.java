@@ -42,6 +42,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Generates unique file names for the exported {@code .proto} schema files and endpoint entries.
+ */
 public class FileNameGeneratorUtil {
 
     private static final String SLASH = "/";

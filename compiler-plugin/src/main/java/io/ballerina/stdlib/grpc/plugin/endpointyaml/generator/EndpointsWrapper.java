@@ -20,8 +20,8 @@ package io.ballerina.stdlib.grpc.plugin.endpointyaml.generator;
 
 import java.util.List;
 
-/*
- * Represents the wrapper class to serialize the consolidated list of endpoints
+/**
+ * Represents the wrapper class to serialize the consolidated list of endpoints.
  */
 public class EndpointsWrapper {
     private final List<Endpoint> endpoints;

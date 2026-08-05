@@ -23,7 +23,7 @@ import io.ballerina.projects.plugins.CompilerLifecycleListener;
 
 import java.util.Map;
 
-/*
+/**
  * Registers the {@code EndpointsYamlWriterTask} to run once the whole compilation's code generation
  * has completed, so it can aggregate every service's endpoint details into a single endpoints.yaml.
  */

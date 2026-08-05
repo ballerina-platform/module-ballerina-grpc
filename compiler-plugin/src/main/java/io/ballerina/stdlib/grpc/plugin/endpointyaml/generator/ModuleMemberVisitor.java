@@ -39,6 +39,10 @@ import java.util.Optional;
 
 import static io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.EndpointYamlGenerator.unescapeIdentifier;
 
+/**
+ * Visits the members of a single module to collect listener and variable declarations
+ * referenced by gRPC service declarations.
+ */
 public class ModuleMemberVisitor extends NodeVisitor {
     private final Map<String, VariableDeclaredValue> variableDeclarations = new LinkedHashMap<>();
     private final Map<String, ListenerDeclarationNode> listenerDeclarations = new LinkedHashMap<>();

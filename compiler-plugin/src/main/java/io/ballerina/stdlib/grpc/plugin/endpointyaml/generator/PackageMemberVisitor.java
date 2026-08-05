@@ -27,6 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Visits the modules of a package, delegating to a {@link ModuleMemberVisitor} per module,
+ * so listener and variable declarations can be resolved across the whole package.
+ */
 public class PackageMemberVisitor extends NodeVisitor {
 
     private Map<String, ModuleMemberVisitor> moduleVisitors = new LinkedHashMap<>();
