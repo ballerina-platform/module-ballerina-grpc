@@ -35,8 +35,6 @@ dependencies {
 
     implementation project(":grpc-native")
 
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
     implementation "com.google.protobuf:protobuf-java:${googleProtobuf}"
 
 }
@@ -46,11 +44,6 @@ shadowJar {
 
     dependencies {
         include(dependency("com.google.protobuf:protobuf-java"))
-        include(dependency("com.fasterxml.jackson.core:jackson-databind"))
-        include(dependency("com.fasterxml.jackson.core:jackson-core"))
-        include(dependency("com.fasterxml.jackson.core:jackson-annotations"))
-        include(dependency("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"))
-        include(dependency("org.yaml:snakeyaml"))
     }
     mergeServiceFiles()
 }
