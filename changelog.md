@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- [Update Netty version to 4.1.137.Final and Netty tcnative version to 2.0.83.Final](https://github.com/ballerina-platform/ballerina-library/issues/9093)
+- [Update Netty version to 4.1.137.Final](https://github.com/ballerina-platform/ballerina-library/issues/9093)
 
 ## [1.14.3] - 2026-01-09
 
