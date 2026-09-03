@@ -10,6 +10,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Update Netty version to 4.1.137.Final and Netty tcnative version to 2.0.83.Final](https://github.com/ballerina-platform/ballerina-library/issues/9093)
 
+## [1.14.7] - 2026-07-24
+
+### Fixed
+
+- [Update Netty version to 4.1.136.Final and Netty tcnative version to 2.0.79.Final](https://github.com/ballerina-platform/ballerina-library/issues/8924)
+
+## [1.14.6] - 2026-05-11
+
+### Fixed
+
+- [Address `CVE-2026-42583`, `CVE-2026-42584`, `CVE-2026-42587`, `CVE-2026-41417`, `CVE-2026-42580`, `CVE-2026-42581`, `CVE-2026-42585`, `CVE-2026-42587` and `CVE-2026-42578` Netty vulnerabilities](https://github.com/ballerina-platform/ballerina-library/issues/8785)
+- [Address `CVE-2026-5588`, `CVE-2026-5598` and `CVE-2026-0636` Bouncy Caste  vulnerabilities](https://github.com/ballerina-platform/ballerina-library/issues/8774)
+
+## [1.14.5] - 2026-04-07
+
+### Fixed
+
+- [Address `CVE-2026-33870` and `CVE-2026-33871` Netty vulnerability in Standard Libraries](https://github.com/ballerina-platform/ballerina-library/issues/8738)
+
+## [1.14.4] - 2026-01-26
+
+### Fixed
+
+- [Address gRPC server startup issue after netty update](https://github.com/ballerina-platform/ballerina-library/issues/8568)
+
 ## [1.14.3] - 2026-01-09
 
 ### Fixed

@@ -21,4 +21,6 @@ module io.ballerina.stdlib.grpc.plugin {
     requires io.ballerina.parser;
     requires io.ballerina.tools.api;
     requires io.ballerina.stdlib.grpc;
+    requires io.ballerina.runtime;
+    requires com.google.protobuf;
 }
