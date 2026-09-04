@@ -235,6 +235,52 @@ task startLdapServer() {
     }
 }
 
+// jballerina-tools bundles its own default versions of several stdlib packages (e.g. observe, http,
+// data.jsondata). copyStdlibs only overlays our pinned versions on top without removing the bundled
+// ones, so both end up coexisting under target/ballerina-runtime/repo/bala. That confuses project
+// loading that bypasses Dependencies.toml-based resolution (e.g. ProjectEnvironmentBuilder-based
+// compiler-plugin tests), causing ClassNotFoundException/NoClassDefFoundError. Remove the bundled
+// version for every package we pin, right after it's extracted and before our version is overlaid.
+tasks.named('unpackJballerinaTools').configure {
+    doLast {
+        def pinnedVersions = [
+            'auth'         : stdlibAuthVersion,
+            'cache'        : stdlibCacheVersion,
+            'constraint'   : stdlibConstraintVersion,
+            'crypto'       : stdlibCryptoVersion,
+            'data.jsondata': stdlibDataJsonDataVersion,
+            'file'         : stdlibFileVersion,
+            'http'         : stripBallerinaExtensionVersion("${project.stdlibHttpVersion}"),
+            'io'           : stdlibIoVersion,
+            'jwt'          : stdlibJwtVersion,
+            'log'          : stdlibLogVersion,
+            'mime'         : stdlibMimeVersion,
+            'oauth2'       : stdlibOAuth2Version,
+            'observe'      : observeVersion,
+            'os'           : stdlibOsVersion,
+            'protobuf'     : stdlibProtobufVersion,
+            'random'       : stdlibRandomVersion,
+            'task'         : stdlibTaskVersion,
+            'url'          : stdlibUrlVersion,
+            'uuid'         : stdlibUuidVersion,
+        ]
+        [file("${project.rootDir}/target/ballerina-runtime/repo/bala/ballerina"),
+         file("${project.projectDir}/build/jballerina-tools-${ballerinaLangVersion}/repo/bala/ballerina")].each { balaRoot ->
+            if (balaRoot.exists()) {
+                pinnedVersions.each { pkgName, pinnedVersion ->
+                    def pkgDir = new File(balaRoot, pkgName)
+                    if (pkgDir.exists()) {
+                        pkgDir.listFiles().findAll { it.isDirectory() && it.name != pinnedVersion }.each { staleDir ->
+                            println("Removing bundled ${pkgName}:${staleDir.name} (pinned version is ${pinnedVersion})")
+                            delete staleDir
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 updateTomlFiles.dependsOn copyStdlibs
 
 build.dependsOn "generatePomFileForMavenPublication"
