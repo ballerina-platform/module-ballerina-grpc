@@ -92,24 +92,6 @@ jacoco {
     reportsDirectory = file("$buildDir/reports/jacoco")
 }
 
-// TEMPORARY diagnostic for https://github.com/ballerina-platform/module-ballerina-grpc/pull/1768:
-// print what's actually in the ballerina.home distribution this test suite loads projects against,
-// to see the real package/version layout on CI instead of guessing from local state.
-tasks.named('test').configure {
-    doFirst {
-        def balaRoot = file("${project.rootDir}/target/ballerina-runtime/repo/bala/ballerina")
-        println("[diag] balaRoot=${balaRoot} exists=${balaRoot.exists()}")
-        if (balaRoot.exists()) {
-            balaRoot.listFiles().sort { it.name }.each { pkgDir ->
-                if (pkgDir.isDirectory()) {
-                    def versions = pkgDir.listFiles()?.findAll { it.isDirectory() }*.name
-                    println("[diag] ${pkgDir.name}: ${versions}")
-                }
-            }
-        }
-    }
-}
-
 jacocoTestReport {
     reports {
         xml.required = true
