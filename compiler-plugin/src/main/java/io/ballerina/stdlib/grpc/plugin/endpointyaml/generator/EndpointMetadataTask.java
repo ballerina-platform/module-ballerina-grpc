@@ -20,6 +20,13 @@ package io.ballerina.stdlib.grpc.plugin.endpointyaml.generator;
 
 import io.ballerina.projects.plugins.CompilerLifecycleEventContext;
 import io.ballerina.projects.plugins.CompilerLifecycleTask;
+import io.ballerina.tools.diagnostics.DiagnosticFactory;
+import io.ballerina.tools.diagnostics.DiagnosticInfo;
+import io.ballerina.tools.diagnostics.DiagnosticSeverity;
+import io.ballerina.tools.diagnostics.Location;
+import io.ballerina.tools.text.LinePosition;
+import io.ballerina.tools.text.LineRange;
+import io.ballerina.tools.text.TextRange;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -35,6 +42,9 @@ import static io.ballerina.stdlib.grpc.plugin.GrpcCompilerPluginConstants.GRPC_E
 public class EndpointMetadataTask implements CompilerLifecycleTask<CompilerLifecycleEventContext> {
     private static final String ENDPOINT_META_INFO_CLASS = "io.ballerina.projects.plugins.EndpointMetaInfo";
     private static final String ADD_ENDPOINT_METADATA_METHOD = "addEndpointMetadata";
+    private static final String ENDPOINT_METADATA_WARNING_CODE = "GRPC_WARNING_101";
+    private static final String ENDPOINT_METADATA_WARNING = "the Ballerina version is not supported for " +
+            "endpoints.yaml. Try using Ballerina 2201.13.6 or above";
 
     private final Map<String, Object> ctxData;
 
@@ -49,23 +59,39 @@ public class EndpointMetadataTask implements CompilerLifecycleTask<CompilerLifec
         if (endpoints == null || endpoints.isEmpty()) {
             return;
         }
-        for (Endpoint endpoint : endpoints) {
-            addEndpointMetadata(context, endpoint);
+        try {
+            for (Endpoint endpoint : endpoints) {
+                addEndpointMetadata(context, endpoint);
+            }
+        } catch (ReflectiveOperationException | SecurityException e) {
+            DiagnosticInfo diagnosticInfo = new DiagnosticInfo(ENDPOINT_METADATA_WARNING_CODE,
+                    ENDPOINT_METADATA_WARNING, DiagnosticSeverity.WARNING);
+            context.reportDiagnostic(DiagnosticFactory.createDiagnostic(diagnosticInfo, new NullLocation()));
         }
     }
 
-    private void addEndpointMetadata(CompilerLifecycleEventContext context, Endpoint endpoint) {
-        try {
-            Class<?> endpointMetaInfoClass = Class.forName(ENDPOINT_META_INFO_CLASS);
-            Constructor<?> constructor = endpointMetaInfoClass.getConstructor(String.class, int.class, String.class,
-                    String.class, String.class);
-            Object endpointMetaInfo = constructor.newInstance(endpoint.getName(), endpoint.getPort(),
-                    endpoint.getBasePath(), endpoint.getType(), endpoint.getSchemaPath());
-            Method method = context.getClass().getMethod(ADD_ENDPOINT_METADATA_METHOD, endpointMetaInfoClass);
-            method.setAccessible(true);
-            method.invoke(context, endpointMetaInfo);
-        } catch (ReflectiveOperationException | SecurityException e) {
-            // Endpoint metadata export is supported only with newer Ballerina lang versions.
+    private void addEndpointMetadata(CompilerLifecycleEventContext context, Endpoint endpoint)
+            throws ReflectiveOperationException {
+        Class<?> endpointMetaInfoClass = Class.forName(ENDPOINT_META_INFO_CLASS);
+        Constructor<?> constructor = endpointMetaInfoClass.getConstructor(String.class, int.class, String.class,
+                String.class, String.class);
+        Object endpointMetaInfo = constructor.newInstance(endpoint.getName(), endpoint.getPort(),
+                endpoint.getBasePath(), endpoint.getType(), endpoint.getSchemaPath());
+        Method method = context.getClass().getMethod(ADD_ENDPOINT_METADATA_METHOD, endpointMetaInfoClass);
+        method.setAccessible(true);
+        method.invoke(context, endpointMetaInfo);
+    }
+
+    private static class NullLocation implements Location {
+        @Override
+        public LineRange lineRange() {
+            LinePosition position = LinePosition.from(0, 0);
+            return LineRange.from("", position, position);
+        }
+
+        @Override
+        public TextRange textRange() {
+            return TextRange.from(0, 0);
         }
     }
 }
