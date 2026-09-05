@@ -75,11 +75,6 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_FLOAT_MESSAGE;
  */
 public class ServicesBuilderUtils {
 
-    private static void diagPrint(String msg) {
-        java.io.PrintStream diagOut = System.err;
-        diagOut.println(msg);
-    }
-
     public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapBySymbol = new HashMap<>();
     public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapByFilename = new HashMap<>();
 
@@ -94,7 +89,6 @@ public class ServicesBuilderUtils {
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
                                                                Object annotationData) throws GrpcServerException {
 
-        diagPrint("[DIAG] registering service, servicePath=" + servicePath);
         Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
         MessageRegistry.getInstance().setFileDescriptor(fileDescriptor);
         if (fileDescriptor == null) {
@@ -257,10 +251,6 @@ public class ServicesBuilderUtils {
                     StringUtils.fromString("descMap"));
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
-            diagPrint("[DIAG] descriptor parse failure: " + e.getClass().getName() + ": " + e.getMessage());
-            diagPrint("[DIAG] Descriptors.class loader=" + Descriptors.class.getClassLoader()
-                    + " location=" + Descriptors.class.getProtectionDomain().getCodeSource());
-            diagPrint("[DIAG] ServicesBuilderUtils.class loader=" + ServicesBuilderUtils.class.getClassLoader());
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
@@ -285,10 +275,6 @@ public class ServicesBuilderUtils {
             }
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
-            diagPrint("[DIAG] descriptor parse failure: " + e.getClass().getName() + ": " + e.getMessage());
-            diagPrint("[DIAG] Descriptors.class loader=" + Descriptors.class.getClassLoader()
-                    + " location=" + Descriptors.class.getProtectionDomain().getCodeSource());
-            diagPrint("[DIAG] ServicesBuilderUtils.class loader=" + ServicesBuilderUtils.class.getClassLoader());
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
@@ -303,10 +289,6 @@ public class ServicesBuilderUtils {
             throw new GrpcServerException("Error while reading the service proto descriptor. input descriptor string " +
                     "is null.");
         }
-        String hex = descriptorData.getValue();
-        diagPrint("[DIAG] parsing descriptor, hexLen=" + hex.length() + ", byteLen=" + descriptor.length
-                + ", head=" + (hex.length() > 40 ? hex.substring(0, 40) : hex)
-                + ", tail=" + (hex.length() > 40 ? hex.substring(hex.length() - 40) : hex));
         DescriptorProtos.FileDescriptorProto descriptorProto = DescriptorProtos.FileDescriptorProto.parseFrom
                 (descriptor);
         if (descriptorProto == null) {
@@ -315,7 +297,6 @@ public class ServicesBuilderUtils {
         }
         Descriptors.FileDescriptor cached = builtFileDescriptorsByName.get(descriptorProto.getName());
         if (cached != null) {
-            diagPrint("[DIAG] reusing cached FileDescriptor for " + descriptorProto.getName());
             return cached;
         }
         List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
@@ -332,10 +313,6 @@ public class ServicesBuilderUtils {
                 }
             }
         }
-        diagPrint("[DIAG] buildFrom name=" + descriptorProto.getName() + " declaredDeps="
-                + descriptorProto.getDependencyList() + " resolvedDeps="
-                + fileDescriptors.stream().map(Descriptors.FileDescriptor::getName)
-                        .collect(java.util.stream.Collectors.toList()));
         Descriptors.FileDescriptor built = Descriptors.FileDescriptor.buildFrom(descriptorProto,
                 fileDescriptors.toArray(Descriptors.FileDescriptor[]::new), true);
         builtFileDescriptorsByName.put(descriptorProto.getName(), built);
