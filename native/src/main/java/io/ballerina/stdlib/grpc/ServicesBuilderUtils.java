@@ -308,15 +308,15 @@ public class ServicesBuilderUtils {
         List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             String dependencyKey = dependency.toStringUtf8();
-            if (descMap == null || descMap.isEmpty()) {
+            if (descMap != null && descMap.containsKey(StringUtils.fromString(dependencyKey))) {
+                fileDescriptors.add(getFileDescriptor((BString) descMap.get(StringUtils.fromString(dependencyKey)),
+                        descMap));
+            } else {
                 Descriptors.FileDescriptor dependentDescriptor = StandardDescriptorBuilder.getFileDescriptor
                         (dependencyKey);
                 if (dependentDescriptor != null) {
                     fileDescriptors.add(dependentDescriptor);
                 }
-            } else if (descMap.containsKey(StringUtils.fromString(dependencyKey))) {
-                fileDescriptors.add(getFileDescriptor((BString) descMap.get(StringUtils.fromString(dependencyKey)),
-                        descMap));
             }
         }
         return Descriptors.FileDescriptor.buildFrom(descriptorProto,
