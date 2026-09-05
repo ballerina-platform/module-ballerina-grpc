@@ -4,4 +4,4 @@ name = "package_28"
 version = "0.1.0"
 
 [build-options]
-observabilityIncluded = false
+observabilityIncluded = true
