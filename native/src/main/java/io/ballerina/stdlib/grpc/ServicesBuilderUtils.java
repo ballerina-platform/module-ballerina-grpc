@@ -46,8 +46,6 @@ import io.ballerina.stdlib.grpc.listener.ServerCallHandler;
 import io.ballerina.stdlib.grpc.listener.StreamingServerCallHandler;
 import io.ballerina.stdlib.grpc.listener.UnaryServerCallHandler;
 import io.ballerina.stdlib.protobuf.nativeimpl.ProtoTypesUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,7 +75,10 @@ import static io.ballerina.stdlib.grpc.GrpcConstants.WRAPPER_FLOAT_MESSAGE;
  */
 public class ServicesBuilderUtils {
 
-    private static final Logger diagLog = LoggerFactory.getLogger(ServicesBuilderUtils.class);
+    private static void diagPrint(String msg) {
+        java.io.PrintStream diagOut = System.err;
+        diagOut.println(msg);
+    }
 
     public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapBySymbol = new HashMap<>();
     public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapByFilename = new HashMap<>();
@@ -85,7 +86,7 @@ public class ServicesBuilderUtils {
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
                                                                Object annotationData) throws GrpcServerException {
 
-        diagLog.error("[DIAG] registering service, servicePath={}", servicePath);
+        diagPrint("[DIAG] registering service, servicePath=" + servicePath);
         Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
         MessageRegistry.getInstance().setFileDescriptor(fileDescriptor);
         if (fileDescriptor == null) {
@@ -248,7 +249,7 @@ public class ServicesBuilderUtils {
                     StringUtils.fromString("descMap"));
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
-            diagLog.error("[DIAG] descriptor parse failure: {}: {}", e.getClass().getName(), e.getMessage(), e);
+            diagPrint("[DIAG] descriptor parse failure: " + e.getClass().getName() + ": " + e.getMessage());
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
@@ -273,7 +274,7 @@ public class ServicesBuilderUtils {
             }
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
-            diagLog.error("[DIAG] descriptor parse failure: {}: {}", e.getClass().getName(), e.getMessage(), e);
+            diagPrint("[DIAG] descriptor parse failure: " + e.getClass().getName() + ": " + e.getMessage());
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
@@ -289,9 +290,9 @@ public class ServicesBuilderUtils {
                     "is null.");
         }
         String hex = descriptorData.getValue();
-        diagLog.error("[DIAG] parsing descriptor, hexLen={}, byteLen={}, head={}, tail={}", hex.length(),
-                descriptor.length, hex.length() > 40 ? hex.substring(0, 40) : hex,
-                hex.length() > 40 ? hex.substring(hex.length() - 40) : hex);
+        diagPrint("[DIAG] parsing descriptor, hexLen=" + hex.length() + ", byteLen=" + descriptor.length
+                + ", head=" + (hex.length() > 40 ? hex.substring(0, 40) : hex)
+                + ", tail=" + (hex.length() > 40 ? hex.substring(hex.length() - 40) : hex));
         DescriptorProtos.FileDescriptorProto descriptorProto = DescriptorProtos.FileDescriptorProto.parseFrom
                 (descriptor);
         if (descriptorProto == null) {
