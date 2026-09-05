@@ -83,6 +83,14 @@ public class ServicesBuilderUtils {
     public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapBySymbol = new HashMap<>();
     public static HashMap<String, Descriptors.FileDescriptor> fileDescriptorHashMapByFilename = new HashMap<>();
 
+    // Caches FileDescriptors built from raw proto bytes, keyed by the proto file's own declared name (e.g.
+    // "parent.proto"). getFileDescriptor() can be invoked more than once for the same underlying proto file
+    // within a single JVM run (e.g. once per service registration attempt); rebuilding from scratch each time
+    // is unnecessary and, since protobuf-java's Descriptors.FileDescriptor.buildFrom() is not safe to call
+    // twice for a file with the same name, unreliable. Reuse the first successfully-built FileDescriptor.
+    private static final java.util.concurrent.ConcurrentHashMap<String, Descriptors.FileDescriptor>
+            builtFileDescriptorsByName = new java.util.concurrent.ConcurrentHashMap<>();
+
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
                                                                Object annotationData) throws GrpcServerException {
 
@@ -305,6 +313,11 @@ public class ServicesBuilderUtils {
             throw new GrpcServerException("Error while reading the service proto descriptor. File proto descriptor is" +
                     " null.");
         }
+        Descriptors.FileDescriptor cached = builtFileDescriptorsByName.get(descriptorProto.getName());
+        if (cached != null) {
+            diagPrint("[DIAG] reusing cached FileDescriptor for " + descriptorProto.getName());
+            return cached;
+        }
         List<Descriptors.FileDescriptor> fileDescriptors = new ArrayList<>();
         for (ByteString dependency : descriptorProto.getDependencyList().asByteStringList()) {
             String dependencyKey = dependency.toStringUtf8();
@@ -323,8 +336,10 @@ public class ServicesBuilderUtils {
                 + descriptorProto.getDependencyList() + " resolvedDeps="
                 + fileDescriptors.stream().map(Descriptors.FileDescriptor::getName)
                         .collect(java.util.stream.Collectors.toList()));
-        return Descriptors.FileDescriptor.buildFrom(descriptorProto,
+        Descriptors.FileDescriptor built = Descriptors.FileDescriptor.buildFrom(descriptorProto,
                 fileDescriptors.toArray(Descriptors.FileDescriptor[]::new), true);
+        builtFileDescriptorsByName.put(descriptorProto.getName(), built);
+        return built;
     }
 
     /**
