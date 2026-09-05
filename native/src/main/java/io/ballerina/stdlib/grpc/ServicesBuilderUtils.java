@@ -250,6 +250,9 @@ public class ServicesBuilderUtils {
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
             diagPrint("[DIAG] descriptor parse failure: " + e.getClass().getName() + ": " + e.getMessage());
+            diagPrint("[DIAG] Descriptors.class loader=" + Descriptors.class.getClassLoader()
+                    + " location=" + Descriptors.class.getProtectionDomain().getCodeSource());
+            diagPrint("[DIAG] ServicesBuilderUtils.class loader=" + ServicesBuilderUtils.class.getClassLoader());
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
@@ -275,6 +278,9 @@ public class ServicesBuilderUtils {
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
             diagPrint("[DIAG] descriptor parse failure: " + e.getClass().getName() + ": " + e.getMessage());
+            diagPrint("[DIAG] Descriptors.class loader=" + Descriptors.class.getClassLoader()
+                    + " location=" + Descriptors.class.getProtectionDomain().getCodeSource());
+            diagPrint("[DIAG] ServicesBuilderUtils.class loader=" + ServicesBuilderUtils.class.getClassLoader());
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
