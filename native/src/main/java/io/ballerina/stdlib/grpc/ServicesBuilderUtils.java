@@ -81,6 +81,7 @@ public class ServicesBuilderUtils {
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
                                                                Object annotationData) throws GrpcServerException {
 
+        System.err.println("[DIAG] registering service, servicePath=" + servicePath);
         Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
         MessageRegistry.getInstance().setFileDescriptor(fileDescriptor);
         if (fileDescriptor == null) {
@@ -243,6 +244,9 @@ public class ServicesBuilderUtils {
                     StringUtils.fromString("descMap"));
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
+            System.err.println("[DIAG] descriptor parse failure: " + e.getClass().getName() + ": " +
+                    e.getMessage());
+            e.printStackTrace();
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
@@ -267,6 +271,9 @@ public class ServicesBuilderUtils {
             }
             return getFileDescriptor(descriptorData, descMap);
         } catch (IOException | Descriptors.DescriptorValidationException e) {
+            System.err.println("[DIAG] descriptor parse failure: " + e.getClass().getName() + ": " +
+                    e.getMessage());
+            e.printStackTrace();
             throw new GrpcServerException("Error while reading the service proto descriptor. check the service " +
                     "implementation. ", e);
         }
