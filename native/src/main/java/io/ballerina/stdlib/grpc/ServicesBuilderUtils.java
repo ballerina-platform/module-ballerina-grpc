@@ -288,6 +288,10 @@ public class ServicesBuilderUtils {
             throw new GrpcServerException("Error while reading the service proto descriptor. input descriptor string " +
                     "is null.");
         }
+        String hex = descriptorData.getValue();
+        diagLog.error("[DIAG] parsing descriptor, hexLen={}, byteLen={}, head={}, tail={}", hex.length(),
+                descriptor.length, hex.length() > 40 ? hex.substring(0, 40) : hex,
+                hex.length() > 40 ? hex.substring(hex.length() - 40) : hex);
         DescriptorProtos.FileDescriptorProto descriptorProto = DescriptorProtos.FileDescriptorProto.parseFrom
                 (descriptor);
         if (descriptorProto == null) {
