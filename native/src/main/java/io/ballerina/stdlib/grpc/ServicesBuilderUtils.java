@@ -319,6 +319,10 @@ public class ServicesBuilderUtils {
                 }
             }
         }
+        diagPrint("[DIAG] buildFrom name=" + descriptorProto.getName() + " declaredDeps="
+                + descriptorProto.getDependencyList() + " resolvedDeps="
+                + fileDescriptors.stream().map(Descriptors.FileDescriptor::getName)
+                        .collect(java.util.stream.Collectors.toList()));
         return Descriptors.FileDescriptor.buildFrom(descriptorProto,
                 fileDescriptors.toArray(Descriptors.FileDescriptor[]::new), true);
     }
