@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static io.ballerina.stdlib.grpc.GrpcConstants.ANN_PROTOBUF_DESCRIPTOR;
@@ -80,29 +81,37 @@ public class ServicesBuilderUtils {
 
     // Caches FileDescriptors built from raw proto bytes, keyed by the proto file's own declared name (e.g.
     // "parent.proto"). getFileDescriptor() can be invoked more than once for the same underlying proto file
-    // within a single JVM run (e.g. once per service registration attempt); rebuilding from scratch each time
-    // is unnecessary and, since protobuf-java's Descriptors.FileDescriptor.buildFrom() is not safe to call
-    // twice for a file with the same name, unreliable. Reuse the first successfully-built FileDescriptor.
-    private static final java.util.concurrent.ConcurrentHashMap<String, Descriptors.FileDescriptor>
-            builtFileDescriptorsByName = new java.util.concurrent.ConcurrentHashMap<>();
+    // while registering a single service (e.g. once via the service's own descriptor and again via a
+    // request/response type's descriptor annotation, or twice through a diamond dependency); rebuilding from
+    // scratch each time is unnecessary and, since protobuf-java's Descriptors.FileDescriptor.buildFrom() is not
+    // safe to call twice for a file with the same name, unreliable. The cache is scoped per registerService()
+    // call (via ThreadLocal, cleared once that call completes) rather than kept for the JVM's lifetime, so
+    // unrelated services registered with a same-named but different proto file never share a cached entry.
+    private static final ThreadLocal<Map<String, Descriptors.FileDescriptor>> builtFileDescriptorsByName =
+            ThreadLocal.withInitial(HashMap::new);
 
     public static ServerServiceDefinition getServiceDefinition(Runtime runtime, BObject service, Object servicePath,
                                                                Object annotationData) throws GrpcServerException {
 
-        Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
-        MessageRegistry.getInstance().setFileDescriptor(fileDescriptor);
-        if (fileDescriptor == null) {
-            fileDescriptor = getDescriptorFromService(service);
+        try {
+            Descriptors.FileDescriptor fileDescriptor = getDescriptor(annotationData);
+            MessageRegistry.getInstance().setFileDescriptor(fileDescriptor);
+            if (fileDescriptor == null) {
+                fileDescriptor = getDescriptorFromService(service);
+            }
+            if (fileDescriptor == null) {
+                throw new GrpcServerException("Couldn't find the service descriptor.");
+            }
+            String serviceName = getServiceName(servicePath);
+            Descriptors.ServiceDescriptor serviceDescriptor = fileDescriptor.findServiceByName(serviceName);
+            if (serviceDescriptor == null) {
+                throw new GrpcServerException("Couldn't find the service descriptor for the service: " +
+                        serviceName);
+            }
+            return getServiceDefinition(runtime, service, serviceDescriptor);
+        } finally {
+            builtFileDescriptorsByName.remove();
         }
-        if (fileDescriptor == null) {
-            throw new GrpcServerException("Couldn't find the service descriptor.");
-        }
-        String serviceName = getServiceName(servicePath);
-        Descriptors.ServiceDescriptor serviceDescriptor = fileDescriptor.findServiceByName(serviceName);
-        if (serviceDescriptor == null) {
-            throw new GrpcServerException("Couldn't find the service descriptor for the service: " + serviceName);
-        }
-        return getServiceDefinition(runtime, service, serviceDescriptor);
     }
 
     private static String getServiceName(Object servicePath) throws GrpcServerException {
@@ -295,7 +304,8 @@ public class ServicesBuilderUtils {
             throw new GrpcServerException("Error while reading the service proto descriptor. File proto descriptor is" +
                     " null.");
         }
-        Descriptors.FileDescriptor cached = builtFileDescriptorsByName.get(descriptorProto.getName());
+        Map<String, Descriptors.FileDescriptor> builtDescriptors = builtFileDescriptorsByName.get();
+        Descriptors.FileDescriptor cached = builtDescriptors.get(descriptorProto.getName());
         if (cached != null) {
             return cached;
         }
@@ -315,7 +325,7 @@ public class ServicesBuilderUtils {
         }
         Descriptors.FileDescriptor built = Descriptors.FileDescriptor.buildFrom(descriptorProto,
                 fileDescriptors.toArray(Descriptors.FileDescriptor[]::new), true);
-        builtFileDescriptorsByName.put(descriptorProto.getName(), built);
+        builtDescriptors.put(descriptorProto.getName(), built);
         return built;
     }
 
