@@ -4,6 +4,12 @@ This file contains all the notable changes done to the Ballerina gRPC package th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- [Update Netty version to 4.1.137.Final and Netty tcnative version to 2.0.83.Final](https://github.com/ballerina-platform/ballerina-library/issues/9093)
+
 ## [1.14.7] - 2026-07-24
 
 ### Fixed
