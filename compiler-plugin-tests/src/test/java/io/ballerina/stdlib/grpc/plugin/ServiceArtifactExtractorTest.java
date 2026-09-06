@@ -118,6 +118,12 @@ public class ServiceArtifactExtractorTest {
     @Test
     public void testExportEndpointsForMultipleServicesInSingleFile() throws Exception {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_28");
+        // package_28 ships a committed Dependencies.toml pinning `http` to this repo's resolved version -
+        // deleteDirectories() unconditionally removes it, so back it up and restore it afterward to keep the
+        // fixture intact for subsequent runs (see #1770 review).
+        Path dependenciesFile = projectDirPath.resolve("Dependencies.toml");
+        byte[] originalDependenciesToml = Files.exists(dependenciesFile) ? Files.readAllBytes(dependenciesFile) :
+                null;
         try {
             DiagnosticResult diagnosticResult = buildProject(projectDirPath, true);
             assertNoCompilationErrors(diagnosticResult);
@@ -131,6 +137,9 @@ public class ServiceArtifactExtractorTest {
                     "Expected one proto artifact from the single gRPC service in the file");
         } finally {
             deleteDirectories(projectDirPath);
+            if (originalDependenciesToml != null) {
+                Files.write(dependenciesFile, originalDependenciesToml);
+            }
         }
     }
 
