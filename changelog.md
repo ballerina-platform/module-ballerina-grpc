@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [Fix service proto descriptor resolution failing for cross-file enum imports](https://github.com/ballerina-platform/module-ballerina-grpc/pull/1770)
+- [Update Netty version to 4.1.137.Final and Netty tcnative version to 2.0.83.Final](https://github.com/ballerina-platform/ballerina-library/issues/9093)
 
 ## [1.14.7] - 2026-07-24
 
