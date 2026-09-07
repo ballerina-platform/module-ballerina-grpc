@@ -1,0 +1,176 @@
+{
+  "version": "v1.0",
+
+  "listeners": [
+    {
+      "id": "$listener",
+      "doc": "gRPC listener that dispatches each inbound RPC call to the matching remote method by RPC name.",
+      "type": { "name": "Listener" },
+      "services": ["$service"],
+      "multipleServicesAllowed": true,
+      "multipleServicesOfSameTypeAllowed": true
+    }
+  ],
+
+  "serviceTypes": [
+    {
+      "id": "$service",
+      "doc": "A gRPC service generated from a proto definition. One remote method per RPC, its calling convention (unary or streaming in either direction) determined by its params and return shape.",
+      "type": { "name": "Service" },
+      "concrete": false,
+      "multipleListenersAllowed": true,
+      "annotations": ["$descriptor", "$serviceConfig"],
+      "identifier": { "presence": "required", "form": ["stringLiteral"] },
+      "handlers": {
+        "backedByConcreteType": false,
+        "options": [
+          {
+            "id": "$service.unary",
+            "name": "*",
+            "kind": "remote",
+            "addMode": "many",
+            "doc": "Handles a simple RPC, one request message in and one response message out. The method name is the RPC name from the proto definition. Return the response directly, or take a caller and send through it, in which case the method returns error? instead.",
+            "params": [
+              {
+                "id": "$service.unary.caller",
+                "name": "caller",
+                "doc": "Generated caller for this RPC, used to send the response asynchronously. Must come first when present. Declaring it changes the return type to error?.",
+                "type": { "name": "Caller" },
+                "presence": "optional"
+              },
+              {
+                "id": "$service.unary.request",
+                "name": "request",
+                "doc": "The inbound request message. Absent when the RPC input is google.protobuf.Empty.",
+                "type": { "name": "anydata", "builtin": true },
+                "presence": "optional"
+              }
+            ],
+            "returns": {
+              "id": "$service.unary.returns",
+              "type": [{ "name": "anydata", "builtin": true }, { "name": "error", "builtin": true }, { "name": "()", "builtin": true }],
+              "dataBinding": { "typedescs": [{ "constraint": { "name": "anydata", "builtin": true }, "shapes": [{ "form": "bare" }] }] }
+            }
+          },
+          {
+            "id": "$service.serverStreaming",
+            "name": "*",
+            "kind": "remote",
+            "addMode": "many",
+            "doc": "Handles a server streaming RPC, one request message in and a stream of response messages out. Return the stream directly, or take a caller and send each message through it, in which case the method returns error? instead.",
+            "params": [
+              {
+                "id": "$service.serverStreaming.caller",
+                "name": "caller",
+                "doc": "Generated caller for this RPC, used to send each response message. Must come first when present. Declaring it changes the return type to error?.",
+                "type": { "name": "Caller" },
+                "presence": "optional"
+              },
+              {
+                "id": "$service.serverStreaming.request",
+                "name": "request",
+                "doc": "The inbound request message. Absent when the RPC input is google.protobuf.Empty.",
+                "type": { "name": "anydata", "builtin": true },
+                "presence": "optional"
+              }
+            ],
+            "returns": {
+              "id": "$service.serverStreaming.returns",
+              "type": [
+                {
+                  "shape": "stream",
+                  "elementType": { "name": "anydata", "builtin": true },
+                  "completionType": [{ "name": "Error" }, { "name": "()", "builtin": true }]
+                },
+                { "name": "error", "builtin": true },
+                { "name": "()", "builtin": true }
+              ],
+              "dataBinding": {
+                "typedescs": [{ "constraint": { "name": "anydata", "builtin": true }, "shapes": [{ "form": "stream", "element": "bare" }] }]
+              }
+            }
+          },
+          {
+            "id": "$service.clientStreaming",
+            "name": "*",
+            "kind": "remote",
+            "addMode": "many",
+            "doc": "Handles a client streaming RPC, a stream of request messages in and one response message out. Return the response directly, or take a caller and send through it, in which case the method returns error? instead.",
+            "params": [
+              {
+                "id": "$service.clientStreaming.caller",
+                "name": "caller",
+                "doc": "Generated caller for this RPC, used to send the response asynchronously. Must come first when present. Declaring it changes the return type to error?.",
+                "type": { "name": "Caller" },
+                "presence": "optional"
+              },
+              {
+                "id": "$service.clientStreaming.clientStream",
+                "name": "clientStream",
+                "doc": "The inbound request messages, consumed as a stream.",
+                "type": {
+                  "shape": "stream",
+                  "elementType": { "name": "anydata", "builtin": true },
+                  "completionType": [{ "name": "Error" }, { "name": "()", "builtin": true }]
+                },
+                "presence": "required"
+              }
+            ],
+            "returns": {
+              "id": "$service.clientStreaming.returns",
+              "type": [{ "name": "anydata", "builtin": true }, { "name": "error", "builtin": true }, { "name": "()", "builtin": true }],
+              "dataBinding": { "typedescs": [{ "constraint": { "name": "anydata", "builtin": true }, "shapes": [{ "form": "bare" }] }] }
+            }
+          },
+          {
+            "id": "$service.bidiStreaming",
+            "name": "*",
+            "kind": "remote",
+            "addMode": "many",
+            "doc": "Handles a bidirectional streaming RPC, with request and response messages flowing independently in both directions. Taking a caller is the practical form here, since it lets responses be sent while the request stream is still being consumed.",
+            "params": [
+              {
+                "id": "$service.bidiStreaming.caller",
+                "name": "caller",
+                "doc": "Generated caller for this RPC, used to send response messages while the request stream is still open. Must come first when present. Declaring it changes the return type to error?.",
+                "type": { "name": "Caller" },
+                "presence": "optional"
+              },
+              {
+                "id": "$service.bidiStreaming.clientStream",
+                "name": "clientStream",
+                "doc": "The inbound request messages, consumed as a stream.",
+                "type": {
+                  "shape": "stream",
+                  "elementType": { "name": "anydata", "builtin": true },
+                  "completionType": [{ "name": "Error" }, { "name": "()", "builtin": true }]
+                },
+                "presence": "required"
+              }
+            ],
+            "returns": {
+              "id": "$service.bidiStreaming.returns",
+              "type": [
+                {
+                  "shape": "stream",
+                  "elementType": { "name": "anydata", "builtin": true },
+                  "completionType": [{ "name": "Error" }, { "name": "()", "builtin": true }]
+                },
+                { "name": "error", "builtin": true },
+                { "name": "()", "builtin": true }
+              ],
+              "dataBinding": {
+                "typedescs": [{ "constraint": { "name": "anydata", "builtin": true }, "shapes": [{ "form": "stream", "element": "bare" }] }]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+
+  "annotations": [
+    { "id": "$descriptor", "type": { "name": "Descriptor" }, "attachPoint": "service", "presence": "required" },
+    { "id": "$serviceConfig", "type": { "name": "ServiceConfig" }, "attachPoint": "service", "presence": "optional" }
+  ]
+}
