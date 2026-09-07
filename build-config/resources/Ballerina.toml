@@ -9,6 +9,7 @@ repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
 icon = "icon.png"
 license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
+include = ["metadata"]
 
 [platform.java21]
 graalvmCompatible = true
