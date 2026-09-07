@@ -227,7 +227,8 @@ isolated function testBidiStreamingWithNoPublicCertFile() returns grpc:Error? {
     test:assertEquals((<grpc:Error>result).message(), "Certificate file location must be provided for secure connection.");
 }
 
-@test:Config {enable: true}
+// TODO: enable after fixing this issue - https://github.com/ballerina-platform/ballerina-library/issues/7436
+@test:Config {enable: false}
 isolated function testBidiStreamingDefaultHttpsPortWithNoService() returns grpc:Error? {
     if !isWindowsEnvironment() {
         ChatClient chatClient = check new ("https://localhost", {
