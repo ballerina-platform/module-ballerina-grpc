@@ -4,11 +4,12 @@ name = "grpc"
 version = "@toml.version@"
 distribution = "@ballerinalang.version@"
 authors = ["Ballerina"]
-keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming"]
+keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming", "Type/Connector", "Type/Trigger", "Area/Built-in", "Area/Communication", "Name/gRPC"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
 icon = "icon.png"
 license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
+include = ["metadata"]
 
 [platform.java21]
 graalvmCompatible = true
