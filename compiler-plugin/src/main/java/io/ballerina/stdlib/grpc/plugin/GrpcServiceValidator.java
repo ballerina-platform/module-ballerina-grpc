@@ -103,7 +103,7 @@ public class GrpcServiceValidator implements AnalysisTask<SyntaxNodeAnalysisCont
 
     }
 
-    private boolean isBallerinaGrpcService(ServiceDeclarationSymbol serviceDeclarationSymbol) {
+    public static boolean isBallerinaGrpcService(ServiceDeclarationSymbol serviceDeclarationSymbol) {
 
         List<TypeSymbol> listenerTypes = serviceDeclarationSymbol.listenerTypes();
         for (TypeSymbol listenerType : listenerTypes) {

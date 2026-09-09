@@ -20,6 +20,14 @@ package io.ballerina.stdlib.grpc.plugin;
 
 import io.ballerina.projects.plugins.CompilerPlugin;
 import io.ballerina.projects.plugins.CompilerPluginContext;
+import io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.Endpoint;
+import io.ballerina.stdlib.grpc.plugin.endpointyaml.generator.GrpcEndpointsLifecycleListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+
+import static io.ballerina.stdlib.grpc.plugin.GrpcCompilerPluginConstants.GRPC_EXPORTED_ENDPOINTS;
 
 /**
  * gRPC Compiler plugin.
@@ -28,6 +36,9 @@ public class GrpcCompilerPlugin extends CompilerPlugin {
 
     @Override
     public void init(CompilerPluginContext compilerPluginContext) {
-        compilerPluginContext.addCodeAnalyzer(new GrpcCodeAnalyzer());
+        Map<String, Object> ctxData = compilerPluginContext.userData();
+        ctxData.put(GRPC_EXPORTED_ENDPOINTS, Collections.synchronizedList(new ArrayList<Endpoint>()));
+        compilerPluginContext.addCodeAnalyzer(new GrpcCodeAnalyzer(ctxData));
+        compilerPluginContext.addCompilerLifecycleListener(new GrpcEndpointsLifecycleListener(ctxData));
     }
 }
