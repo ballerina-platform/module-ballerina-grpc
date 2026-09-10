@@ -32,6 +32,7 @@ public final class GrpcCompilerPluginConstants {
     public static final String GRPC_DESCRIPTOR_ANNOTATION_NAME = "Descriptor";
     public static final String BALLERINA_ORG_NAME = "ballerina";
     public static final String GRPC_PACKAGE_NAME = "grpc";
+    public static final String GRPC_EXPORTED_ENDPOINTS = "GrpcExportedEndpoints";
 
     /**
      * Compilation errors: Diagnostic error messages and IDs.

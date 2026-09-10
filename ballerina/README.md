@@ -1,10 +1,12 @@
 ## Overview
 
-This module provides APIs for connecting and interacting with gRPC endpoints. 
+This module provides APIs for connecting to and interacting with gRPC endpoints, an inter-process communication technology layered over HTTP/2 that uses Protocol Buffers for efficient message marshaling.
 
-gRPC is an inter-process communication technology that allows you to connect, invoke, and operate distributed, heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC highly efficient on wire and a simple service definition framework.
+## Key Features
 
-When you develop a gRPC application, the first thing you do is define a service definition using Protocol Buffers.
+- gRPC client and service definitions via Protocol Buffers
+- Support for unary, server-streaming, client-streaming, and bidirectional-streaming communication patterns
+- Advanced use cases including interceptors and deadlines
 
 ### Protocol buffers
 This is a mechanism to serialize the structured data introduced by Google and used by the gRPC framework. Defining the service using Protocol Buffers includes defining remote methods in the service and defining message types that are sent across the network. A sample service definition is shown below.

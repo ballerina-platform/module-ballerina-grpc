@@ -1,5 +1,4 @@
-Ballerina gRPC Library
-===================
+# Ballerina gRPC Library
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-grpc/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-grpc/actions/workflows/build-timestamped-master.yml)
   [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-grpc/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-grpc)
@@ -8,11 +7,9 @@ Ballerina gRPC Library
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-grpc.svg)](https://github.com/ballerina-platform/module-ballerina-grpc/commits/master)
   [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/grpc.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fgrpc)
 
-This library provides APIs for connecting and interacting with gRPC endpoints.
+## Overview
 
-gRPC is an inter-process communication technology that allows you to connect, invoke, and operate distributed, heterogeneous applications as easily as making a local function call. The gRPC protocol is layered over HTTP/2 and uses Protocol Buffers for marshaling/unmarshaling messages. This makes gRPC highly efficient on wire and a simple service definition framework.
-
-When you develop a gRPC application, the first thing you do is define a service definition using Protocol Buffers.
+This module provides APIs for connecting to and interacting with gRPC endpoints, an inter-process communication technology layered over HTTP/2 that uses Protocol Buffers for efficient message marshaling.
 
 ### Protocol buffers
 This is a mechanism to serialize the structured data introduced by Google and used by the gRPC framework. Defining the service using Protocol Buffers includes defining remote methods in the service and defining message types that are sent across the network. A sample service definition is shown below.
@@ -392,7 +389,7 @@ Execute the commands below to build from source.
 
 ## Contribute to Ballerina
 
-As an open source project, Ballerina welcomes contributions from the community. 
+As an open-source project, Ballerina welcomes contributions from the community. 
 
 For more information, go to the [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
 
