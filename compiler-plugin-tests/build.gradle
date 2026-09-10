@@ -38,8 +38,7 @@ dependencies {
 
     // Temporary workaround: the pinned `http` compiler-plugin nightly (stdlibHttpVersion in
     // gradle.properties) fails with a ClassNotFoundException for these transitive dependencies
-    // when analyzing an http:Service. The proper fix belongs in the http module's own packaging;
-    // remove once a fixed http build is pinned.
+    // when analyzing an http:Service. We should move combine test case to the distribution
     testImplementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
     testImplementation "io.swagger.core.v3:swagger-core:${swaggerVersion}"
