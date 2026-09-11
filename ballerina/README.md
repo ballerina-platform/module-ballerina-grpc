@@ -2,7 +2,7 @@
 
 This module provides APIs for connecting to and interacting with gRPC endpoints, an inter-process communication technology layered over HTTP/2 that uses Protocol Buffers for efficient message marshaling.
 
-## Key Features
+### Key Features
 
 - gRPC client and service definitions via Protocol Buffers
 - Support for unary, server-streaming, client-streaming, and bidirectional-streaming communication patterns
