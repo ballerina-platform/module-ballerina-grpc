@@ -116,6 +116,6 @@ release {
     }
 }
 
-task build {
+tasks.named('build') {
     dependsOn('grpc-ballerina:build')
 }
