@@ -35,6 +35,14 @@ dependencies {
     testImplementation project(":grpc-native")
     testImplementation project(":grpc-compiler-plugin")
     testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+
+    // Temporary workaround: the pinned `http` compiler-plugin nightly (stdlibHttpVersion in
+    // gradle.properties) fails with a ClassNotFoundException for these transitive dependencies
+    // when analyzing an http:Service. We should move combine test case to the distribution
+    testImplementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+    testImplementation "io.swagger.core.v3:swagger-core:${swaggerVersion}"
+    testImplementation "io.swagger.core.v3:swagger-models:${swaggerVersion}"
 }
 
 tasks.withType(Checkstyle) {
