@@ -52,7 +52,7 @@ public class ServiceArtifactExtractorTest {
     private static final String PROTO_SUFFIX = ".proto";
 
     @Test
-    public void testExportEndpointsForSimpleService() throws Exception {
+    public void testExportEndpointsForSimpleService() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_20");
         try {
             DiagnosticResult diagnosticResult = buildProject(projectDirPath, true);
@@ -70,7 +70,7 @@ public class ServiceArtifactExtractorTest {
     }
 
     @Test
-    public void testBuildWithoutExportEndpointsFlag() throws Exception {
+    public void testBuildWithoutExportEndpointsFlag() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_20");
         try {
             DiagnosticResult diagnosticResult = buildProject(projectDirPath, false);
@@ -85,7 +85,7 @@ public class ServiceArtifactExtractorTest {
     }
 
     @Test
-    public void testExportEndpointsWithCompilationErrors() throws Exception {
+    public void testExportEndpointsWithCompilationErrors() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_03");
         try {
             DiagnosticResult diagnosticResult = buildProject(projectDirPath, true);
@@ -96,7 +96,7 @@ public class ServiceArtifactExtractorTest {
     }
 
     @Test
-    public void testExportEndpointsForMultipleGrpcServicesAcrossFiles() throws Exception {
+    public void testExportEndpointsForMultipleGrpcServicesAcrossFiles() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_14");
         try {
             DiagnosticResult diagnosticResult = buildProject(projectDirPath, true);
@@ -116,7 +116,7 @@ public class ServiceArtifactExtractorTest {
     }
 
     @Test
-    public void testExportEndpointsForMultipleServicesInSingleFile() throws Exception {
+    public void testExportEndpointsForMultipleServicesInSingleFile() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_28");
         // package_28 ships a committed Dependencies.toml pinning `http` to this repo's resolved version -
         // deleteDirectories() unconditionally removes it, so back it up and restore it afterward to keep the
@@ -144,7 +144,7 @@ public class ServiceArtifactExtractorTest {
     }
 
     @Test
-    public void testEndpointYamlFallbackNamingForEmptyServiceNames() throws Exception {
+    public void testEndpointYamlFallbackNamingForEmptyServiceNames() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_14");
         try {
             DiagnosticResult diagnosticResult = buildProject(projectDirPath, true);

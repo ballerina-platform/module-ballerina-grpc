@@ -95,7 +95,7 @@ public class EndpointDetailsExtractorTest {
     }
 
     @Test
-    public void testServiceArtifactEndpointYamlContainsExpectedPortForMultipleServices() throws Exception {
+    public void testServiceArtifactEndpointYamlContainsExpectedPortForMultipleServices() throws IOException {
         Path projectDirPath = RESOURCE_DIRECTORY.resolve("package_26");
         try {
             DiagnosticResult diagnosticResult = buildProject(projectDirPath, true);
