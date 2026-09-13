@@ -66,7 +66,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "file"
-version = "1.13.0"
+version = "1.13.1"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "io"},
@@ -104,13 +104,12 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.16.7"
+version = "2.18.0"
 scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "cache"},
 	{org = "ballerina", name = "constraint"},
-	{org = "ballerina", name = "crypto"},
 	{org = "ballerina", name = "data.jsondata"},
 	{org = "ballerina", name = "file"},
 	{org = "ballerina", name = "io"},
@@ -126,7 +125,6 @@ dependencies = [
 	{org = "ballerina", name = "log"},
 	{org = "ballerina", name = "mime"},
 	{org = "ballerina", name = "oauth2"},
-	{org = "ballerina", name = "observe"},
 	{org = "ballerina", name = "time"},
 	{org = "ballerina", name = "url"}
 ]
