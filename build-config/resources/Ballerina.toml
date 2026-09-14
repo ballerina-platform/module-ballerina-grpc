@@ -76,9 +76,33 @@ path = "./lib/netty-codec-http-@netty.version@.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
-artifactId = "netty-codec"
+artifactId = "netty-codec-base"
 version = "@netty.version@"
-path = "./lib/netty-codec-@netty.version@.jar"
+path = "./lib/netty-codec-base-@netty.version@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.netty"
+artifactId = "netty-codec-compression"
+version = "@netty.version@"
+path = "./lib/netty-codec-compression-@netty.version@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.netty"
+artifactId = "netty-handler-ssl-ocsp"
+version = "@netty.version@"
+path = "./lib/netty-handler-ssl-ocsp-@netty.version@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.netty"
+artifactId = "netty-resolver-dns"
+version = "@netty.version@"
+path = "./lib/netty-resolver-dns-@netty.version@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.netty"
+artifactId = "netty-codec-dns"
+version = "@netty.version@"
+path = "./lib/netty-codec-dns-@netty.version@.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.netty"
