@@ -18,6 +18,8 @@
 
 module io.ballerina.stdlib.grpc {
     requires io.netty.codec.http;
+    requires io.netty.codec;
+    requires io.netty.common;
     requires org.slf4j;
     requires io.netty.buffer;
     requires org.apache.commons.lang3;
