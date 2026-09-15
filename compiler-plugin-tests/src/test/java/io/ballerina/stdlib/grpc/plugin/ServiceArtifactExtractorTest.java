@@ -21,7 +21,6 @@ package io.ballerina.stdlib.grpc.plugin;
 import io.ballerina.projects.BuildOptions;
 import io.ballerina.projects.DiagnosticResult;
 import io.ballerina.projects.JBallerinaBackend;
-import io.ballerina.projects.JvmTarget;
 import io.ballerina.projects.PackageCompilation;
 import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.directory.BuildProject;
@@ -203,7 +202,7 @@ public class ServiceArtifactExtractorTest {
         PackageCompilation compilation = project.currentPackage().getCompilation();
         DiagnosticResult diagnosticResult = compilation.diagnosticResult();
         if (diagnosticResult.errorCount() == 0) {
-            JBallerinaBackend jBallerinaBackend = JBallerinaBackend.from(compilation, JvmTarget.JAVA_21);
+            JBallerinaBackend jBallerinaBackend = JBallerinaBackend.from(compilation, TestUtils.getJvmTarget());
             Path binDir = project.targetDir().resolve("bin");
             Files.createDirectories(binDir);
             jBallerinaBackend.emit(JBallerinaBackend.OutputType.EXEC, binDir.resolve("output.jar"));
