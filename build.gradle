@@ -18,7 +18,7 @@
 
 plugins {
     id "com.github.spotbugs"
-    id "com.github.johnrengelman.shadow"
+    id "com.gradleup.shadow" version "${gradleUpShadow}"
     id "de.undercouch.download"
     id "net.researchgate.release"
 }
@@ -116,6 +116,14 @@ release {
     }
 }
 
-task build {
-    dependsOn('grpc-ballerina:build')
+if (tasks.names.contains('build')) {
+    tasks.named('build') {
+        dependsOn('grpc-ballerina:build')
+
+    }
+} else {
+    tasks.register('build') {
+        dependsOn('grpc-ballerina:build')
+
+    }
 }
