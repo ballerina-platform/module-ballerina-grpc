@@ -11,7 +11,7 @@ license = ["Apache-2.0"]
 export = ["grpc", "grpc.types.duration", "grpc.types.struct", "grpc.types.timestamp", "grpc.types.wrappers", "grpc.types.any"]
 include = ["metadata"]
 
-[platform.java21]
+[platform.java25]
 graalvmCompatible = true
 
 [[platform.java25.dependency]]
