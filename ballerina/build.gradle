@@ -61,6 +61,7 @@ ballerina {
     packageOrganization = packageOrg
     module = packageName
     langVersion = ballerinaLangVersion
+    platform = 'java25'
 }
 
 configurations {
