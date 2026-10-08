@@ -6,8 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.15.2] - 2026-10-06
+
+### Fixed
+
+- Update Bouncy Castle version to 1.85 to address `CVE-2026-8763` and `CVE-2026-13506` vulnerabilities
+- Update the `file` module version to 1.13.1
+
+## [1.15.1] - 2026-09-08
+
 ### Changed
+
 - [[#9132] Updated Keywords and Reformat README for Connector Store Discoverability](https://github.com/ballerina-platform/ballerina-library/issues/9132)
+
+## [1.15.0] - 2026-09-07
 
 ### Fixed
 
