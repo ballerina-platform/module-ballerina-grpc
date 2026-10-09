@@ -2,7 +2,7 @@
 org = "ballerina"
 name = "grpc"
 version = "1.16.0"
-distribution = "2201.14.0-20260916-095600-2ad98357"
+distribution = "2201.14.0-20260917-124200-7f273e6a"
 authors = ["Ballerina"]
 keywords = ["network", "grpc", "protobuf", "server-streaming", "client-streaming", "bidirectional-streaming", "Type/Connector", "Type/Trigger", "Area/Built-in", "Area/Communication", "Name/gRPC"]
 repository = "https://github.com/ballerina-platform/module-ballerina-grpc"
@@ -25,7 +25,7 @@ path = "../test-utils/build/libs/grpc-test-utils-1.16.0-SNAPSHOT.jar"
 scope = "testOnly"
 
 [[platform.java25.dependency]]
-path = "./lib/ballerina-cli-2201.14.0-20260916-095600-2ad98357.jar"
+path = "./lib/ballerina-cli-2201.14.0-20260917-124200-7f273e6a.jar"
 scope = "testOnly"
 
 [[platform.java25.dependency]]
@@ -36,7 +36,7 @@ scope = "testOnly"
 groupId = "io.ballerina.stdlib"
 artifactId = "http-native"
 version = "2.18.0"
-path = "./lib/http-native-2.18.0-20260916-144900-eb135c7.jar"
+path = "./lib/http-native-2.18.0-20261008-203000-07258b7.jar"
 
 [[platform.java25.dependency]]
 groupId = "io.netty"
@@ -188,11 +188,11 @@ path = "./lib/proto-google-common-protos-1.17.0.jar"
 [[platform.java25.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "formatter-core"
-version = "2201.14.0-20260916-095600-2ad98357"
-path = "./lib/formatter-core-2201.14.0-20260916-095600-2ad98357.jar"
+version = "2201.14.0-20260917-124200-7f273e6a"
+path = "./lib/formatter-core-2201.14.0-20260917-124200-7f273e6a.jar"
 
 [[platform.java25.dependency]]
 groupId = "org.ballerinalang"
 artifactId = "ballerina-parser"
-version = "2201.14.0-20260916-095600-2ad98357"
-path = "./lib/ballerina-parser-2201.14.0-20260916-095600-2ad98357.jar"
+version = "2201.14.0-20260917-124200-7f273e6a"
+path = "./lib/ballerina-parser-2201.14.0-20260917-124200-7f273e6a.jar"
