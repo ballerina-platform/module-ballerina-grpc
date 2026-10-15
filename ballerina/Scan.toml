@@ -1,0 +1,7 @@
+# The secret-detection rules match on identifier names (auth, authorization, UNAUTHENTICATED, ...),
+# which flags header names, scheme prefixes and gRPC status codes here. No secret values are embedded.
+[rule]
+exclude = [
+    "ballerina:13",
+    "ballerina:14"
+]
