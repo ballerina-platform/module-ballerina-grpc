@@ -4,11 +4,15 @@ This file contains all the notable changes done to the Ballerina gRPC package th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.16.1] - 2026-10-16
 
 ### Changed
 - [Upgrade protobuf-java to 4.36.2 to remove `sun.misc.Unsafe` warnings on JDK 24+](https://github.com/ballerina-platform/ballerina-library/issues/9311)
 - [[#9301] Regroup standard library packages under new Area categories](https://github.com/ballerina-platform/ballerina-library/issues/9301)
+
+## [1.16.0] - 2026-10-09
+
+### Changed
 - [Migrate to Netty 4.2.18.Final ahead of the Netty 4.1 end of life](https://github.com/ballerina-platform/ballerina-library/issues/9152)
 - Replace the `netty-codec` dependency with `netty-codec-base` and `netty-codec-compression`, and add `netty-handler-ssl-ocsp` with `netty-resolver-dns` and `netty-codec-dns`, following the Netty 4.2 module split
 - Declare the `io.netty.codec` and `io.netty.common` JPMS modules explicitly, which Netty 4.2 requires now that it ships real modules rather than automatic ones
