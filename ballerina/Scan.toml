@@ -1,0 +1,8 @@
+# bal scan rules excluded for this package (false positives):
+# - ballerina:13 / ballerina:14 match identifier names containing words such as "auth", "authorization",
+#   "token" or "UNAUTHENTICATED". The flagged code is the public `AUTH_HEADER` / `AUTH_SCHEME_BASIC` /
+#   `AUTH_SCHEME_BEARER` constants (header and scheme names), error code constants, and local variables
+#   holding values computed at runtime (`authHeader`, `authn`, `token = AUTH_SCHEME_BASIC + " " + result`).
+#   None of them is a secret, and renaming the public constants would break the API.
+[rule]
+exclude = ["ballerina:13", "ballerina:14"]
