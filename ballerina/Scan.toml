@@ -4,5 +4,8 @@
 #   `AUTH_SCHEME_BEARER` constants (header and scheme names), error code constants, and local variables
 #   holding values computed at runtime (`authHeader`, `authn`, `token = AUTH_SCHEME_BASIC + " " + result`).
 #   None of them is a secret, and renaming the public constants would break the API.
+# TODO: replace this rule exclusion with a targeted scan suppression (with a reason) once `bal scan` supports it
+# (planned for v0.13.0), and fix the false positives on the scan tool side: a secret-named identifier should only be
+# reported when it is assigned a fixed value.
 [rule]
 exclude = ["ballerina:13", "ballerina:14"]
